@@ -150,10 +150,13 @@ def run_monitor_loop():
                     if m['status'] == 'HOLDING':
                         success, sell_price, order_id = trader.execute_sell(m['symbol'], m['quantity'])
                         if success:
-                            # 🔥 立即同步数据库
                             MonitorDB.record_sell_action(m['monitor_id'], m['position_id'], sell_price, "EOD")
-                    MonitorDB.force_finish_all(m['symbol'])
-                break  # 退出循环
+                            MonitorDB.force_finish_all(m['symbol'])
+                        else:
+                            print(f"⚠️ [{m['symbol']}] EOD sell FAILED!")
+                    else:
+                        MonitorDB.force_finish_all(m['symbol'])
+                break
 
             # 4. 遍历处理每个股票
             for m in monitors:
@@ -183,7 +186,15 @@ def run_monitor_loop():
                         success, sell_price, order_id = trader.execute_sell(sym, m['quantity'])
                         if success:
                             MonitorDB.record_sell_action(m['monitor_id'], m['position_id'], sell_price, "CIRCUIT_BREAKER")
-                    MonitorDB.force_finish_all(sym)  # 标记为 FINISHED
+                            MonitorDB.force_finish_all(sym)
+                            print(f"✅ [{sym}] Circuit breaker executed successfully")
+                        else:
+                            # ⚠️ 卖出失败，保持状态，下次继续尝试
+                            print(f"⚠️ [{sym}] Circuit breaker sell FAILED! Will retry next loop")
+                            # 不调用force_finish_all，让它下次继续尝试卖出
+                    else:
+                        # 如果不是HOLDING状态，直接标记结束
+                        MonitorDB.force_finish_all(sym)
                     continue
 
                 # =========================================

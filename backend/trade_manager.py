@@ -16,13 +16,13 @@ class StrategyLogic:
             return True, f"HARD_STOP: Price {current_price:.2f} < Cost Floor {hard_stop_price:.2f}"
 
         # 计算相对于开盘价的涨幅
-        max_gain_pct = (max_price_seen - base_open_price) / base_open_price
+        max_gain_pct = (max_price_seen - cost_price) / cost_price
 
         # 2. 阶段 2: 利润锁定 (开盘涨幅 >= 2.5%)
         # 规则: 锁住 80% 的利润
         if max_gain_pct >= 0.025:
-            profit_from_open = max_price_seen - base_open_price
-            stop_price = base_open_price + (profit_from_open * 0.8)
+            profit_from_open = max_price_seen - cost_price
+            stop_price = cost_price + (profit_from_open * 0.8)
             stop_price = max(stop_price, hard_stop_price)  # 安全兜底，不能低于硬止损
 
             if current_price < stop_price:
@@ -31,7 +31,7 @@ class StrategyLogic:
         # 3. 阶段 1: 震荡保护 (开盘涨幅 < 2%)
         # 规则: 允许回撤 1%
         else:
-            buffer = base_open_price * 0.01
+            buffer = cost_price * 0.01
             stop_price = max_price_seen - buffer
 
             # 只有当动态止盈线 > 硬止损线时才生效
@@ -58,7 +58,7 @@ class StrategyLogic:
         # 3. 逼近前高逻辑 (防止在深渊中买入)
         # 如果是当天第一次买，默认通过；如果是回马枪，必须在当日高点附近
         if entry_count > 0:
-            near_high = current_price >= (max_price_seen * 0.98)
+            near_high = current_price >= (max_price_seen * 0.99)
         else:
             near_high = True
 

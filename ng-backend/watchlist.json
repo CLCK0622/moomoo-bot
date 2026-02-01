@@ -1,0 +1,15 @@
+{
+  "symbols": [
+    "AMZN",
+    "AAPL",
+    "TSLA",
+    "MU",
+    "AMD",
+    "META",
+    "SCCO",
+    "GEV",
+    "LLY",
+    "ASML"
+  ],
+  "description": "美股日内交易监控列表，策略会从这里选择最先触发买入条件的5只股票"
+}

@@ -59,7 +59,7 @@ def close_all_positions():
             return
 
         # 过滤出有持仓的股票（数量 > 0）
-        active_positions = positions[positions['qty'] > 0].copy()
+        active_positions = positions[positions['qty'] != 0].copy()
 
         if active_positions.empty:
             print("✅ No active positions to close!")
@@ -88,10 +88,17 @@ def close_all_positions():
 
         for idx, pos in active_positions.iterrows():
             code = pos['code']
-            qty = int(pos['qty'])
+            qty_raw = pos['qty']
             stock_name = pos['stock_name']
 
-            print(f"📤 Selling {code} ({stock_name}) - Qty: {qty}")
+            if qty_raw > 0:
+                side = TrdSide.SELL  # 多头 -> 卖出平仓
+                qty = int(qty_raw)
+            else:
+                side = TrdSide.BUY  # 空头 -> 买入回补
+                qty = int(abs(qty_raw))  # 数量必须取绝对值，不能传负数给 API
+
+            print(f"📤 Closing {code} ({stock_name}) - Side: {side}, Qty: {qty}")
 
             try:
                 # 下市价卖单
@@ -99,7 +106,7 @@ def close_all_positions():
                     price=0.0,  # 市价单价格设为0
                     qty=qty,
                     code=code,
-                    trd_side=TrdSide.SELL,  # 卖出
+                    trd_side=side,  # 卖出
                     order_type=OrderType.MARKET,  # 市价单
                     trd_env=TARGET_ENV,
                     acc_id=TARGET_ACC_ID

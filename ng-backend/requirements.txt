@@ -1,0 +1,13 @@
+# ORB + Keltner Channel 美股日内交易策略
+# 依赖包列表
+
+# Moomoo OpenD SDK
+futu-api>=6.3.3208
+
+# 数据处理
+pandas>=2.0.0
+numpy>=1.24.0
+
+# 时区处理
+pytz>=2023.3
+

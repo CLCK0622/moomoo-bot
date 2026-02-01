@@ -270,35 +270,73 @@ class MonitorDB:
         conn.close()
 
     @staticmethod
-    def auto_select_daily_targets():
+    def auto_select_daily_targets(approved_symbols=None):
         """
-        每天 9:29 自动执行：
-        1. 重置今日所有目标为 REJECTED
-        2. 按 sentimentScore 降序选出前 5 名设置为 APPROVED
+        设置今日交易目标
+
+        Args:
+            approved_symbols: 指定要APPROVED的股票列表，如果为None则自动选前5名
+
+        逻辑：
+        1. 如果提供了approved_symbols，将这些股票设置为APPROVED，其他为REJECTED
+        2. 如果没有提供，按sentimentScore降序选前5名设置为APPROVED，其他为REJECTED
         """
         conn = get_db_connection()
         cur = conn.cursor()
 
-        # 1. 重置今日状态
-        cur.execute("""
-            UPDATE "DailyCandidate" SET status = 'REJECTED' WHERE date = CURRENT_DATE
-        """)
+        if approved_symbols:
+            # 使用指定的股票列表
+            print(f"🎯 Setting {len(approved_symbols)} specified stocks as APPROVED...")
 
-        # 2. 选出前5名 (PostgreSQL 语法)
-        cur.execute("""
-            UPDATE "DailyCandidate"
-            SET status = 'APPROVED'
-            WHERE id IN (
-                SELECT id FROM "DailyCandidate" 
-                WHERE date = CURRENT_DATE 
-                ORDER BY "sentimentScore" DESC 
-                LIMIT 5
-            )
-        """)
+            # 1. 先将所有今日候选设置为REJECTED
+            cur.execute("""
+                UPDATE "DailyCandidate" SET status = 'REJECTED' WHERE date = CURRENT_DATE
+            """)
 
-        conn.commit()
+            # 2. 将指定的股票设置为APPROVED
+            if approved_symbols:
+                cur.execute("""
+                    UPDATE "DailyCandidate"
+                    SET status = 'APPROVED'
+                    WHERE date = CURRENT_DATE AND symbol = ANY(%s)
+                """, (approved_symbols,))
+
+            conn.commit()
+
+            # 打印结果
+            for sym in approved_symbols:
+                print(f"   ✅ {sym} -> APPROVED")
+
+            cur.execute("""
+                SELECT COUNT(*) FROM "DailyCandidate" 
+                WHERE date = CURRENT_DATE AND status = 'REJECTED'
+            """)
+            rejected_count = cur.fetchone()[0]
+            print(f"   ❌ {rejected_count} other stocks -> REJECTED")
+
+        else:
+            # 自动选择前5名
+            # 1. 重置今日状态
+            cur.execute("""
+                UPDATE "DailyCandidate" SET status = 'REJECTED' WHERE date = CURRENT_DATE
+            """)
+
+            # 2. 选出前5名 (PostgreSQL 语法)
+            cur.execute("""
+                UPDATE "DailyCandidate"
+                SET status = 'APPROVED'
+                WHERE id IN (
+                    SELECT id FROM "DailyCandidate" 
+                    WHERE date = CURRENT_DATE 
+                    ORDER BY "sentimentScore" DESC 
+                    LIMIT 5
+                )
+            """)
+
+            conn.commit()
+            print("✅ Daily targets auto-selected: Top 5 APPROVED, others REJECTED.")
+
         conn.close()
-        print("✅ Daily targets auto-selected: Top 5 APPROVED, others REJECTED.")
 
     @staticmethod
     def force_finish_all(symbol):
@@ -313,3 +351,8 @@ class MonitorDB:
         """, (symbol,))
         conn.commit()
         conn.close()
+
+        # 买入 9:35，条件为大于vwap且涨的快（保留）
+        # 止盈按照今日总盈亏计算
+        # 移除 price floor 条件
+        # 赚到 1% 硬性止损改成成本价
