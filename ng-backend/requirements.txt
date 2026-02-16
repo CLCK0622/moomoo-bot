@@ -11,3 +11,10 @@ numpy>=1.24.0
 # 时区处理
 pytz>=2023.3
 
+# AI Monitor Dependencies
+openai
+beautifulsoup4
+duckduckgo-search>=5.0.0
+lxml
+python-dotenv
+requests

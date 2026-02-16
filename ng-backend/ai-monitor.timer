@@ -1,0 +1,17 @@
+[Unit]
+Description=Run AI Monitor Analysis Daily at 07:00 and 18:00 US/Eastern
+
+[Timer]
+# US Eastern Time: 07:00 and 18:00
+# If the server is in UTC, these times need to be adjusted or use Timezone if systemd supports it.
+# Newer systemd versions support specifying timezone in OnCalendar.
+# To be safe and explicit for Ubuntu 24.04 (which has recent systemd), we can try timezone spec if supported,
+# or just rely on the user setting the system timezone.
+# For now, we assume the system timezone is set to match the desired local time or we map it.
+# User asked for "US East 18:00 and 07:00".
+OnCalendar=*-*-* 07:00:00
+OnCalendar=*-*-* 18:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

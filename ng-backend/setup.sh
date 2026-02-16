@@ -1,44 +1,90 @@
 #!/bin/bash
-# 项目环境初始化脚本
 
-echo "================================"
-echo "ORB + Keltner Channel 策略"
-echo "环境初始化脚本"
-echo "================================"
+# setup.sh - Deploy AI Monitor on Ubuntu 24
+# Run as root or with sudo
 
-# 检查 Python 版本
-echo "检查 Python 版本..."
-python3 --version
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run as root (sudo ./setup.sh)"
+  exit 1
+fi
 
-# 创建虚拟环境
-echo "创建虚拟环境..."
-python3 -m venv venv
+PROJECT_DIR=$(pwd)
+VENV_DIR="$PROJECT_DIR/venv"
+SERVICE_FILE="ai-monitor.service"
+TIMER_FILE="ai-monitor.timer"
 
-# 激活虚拟环境
-echo "激活虚拟环境..."
-source venv/bin/activate
+echo "🚀 Starting deployment in $PROJECT_DIR..."
 
-# 升级 pip
-echo "升级 pip..."
-pip install --upgrade pip
+# 1. Install System Dependencies
+echo "📦 Installing system dependencies..."
+apt update
+apt install -y python3 python3-venv python3-pip
 
-# 安装依赖
-echo "安装依赖包..."
-pip install -r requirements.txt
+# 2. Setup Virtual Environment
+if [ ! -d "$VENV_DIR" ]; then
+    echo "🐍 Creating virtual environment..."
+    python3 -m venv "$VENV_DIR"
+else
+    echo "🐍 Virtual environment exists, skipping creation."
+fi
 
+# 3. Install Python Requirements
+echo "📥 Installing python requirements..."
+"$VENV_DIR/bin/pip" install --upgrade pip
+"$VENV_DIR/bin/pip" install -r requirements.txt
+
+# 4. Create/Update Systemd Service Files with Correct Paths
+echo "⚙️ Configuring systemd service..."
+
+# Create Service File content dynamically
+cat > "$SERVICE_FILE" <<EOF
+[Unit]
+Description=Moomoo Bot AI Monitor Analysis Service
+After=network.target
+
+[Service]
+Type=oneshot
+User=$SUDO_USER
+WorkingDirectory=$PROJECT_DIR
+ExecStart=$VENV_DIR/bin/python ai-monitor/run_analysis.py
+StandardOutput=append:$PROJECT_DIR/ai-monitor.log
+StandardError=append:$PROJECT_DIR/ai-monitor.err
+EnvironmentFile=$PROJECT_DIR/.env
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Create Timer File content
+cat > "$TIMER_FILE" <<EOF
+[Unit]
+Description=Run AI Monitor Analysis Daily at 07:00 and 18:00 US/Eastern
+
+[Timer]
+# Schedule: 07:00 and 18:00 (Local Time of VM)
+OnCalendar=*-*-* 07:00:00
+OnCalendar=*-*-* 18:00:00
+Persistent=true
+Unit=ai-monitor.service
+
+[Install]
+WantedBy=timers.target
+EOF
+
+# 5. Install Systemd Files
+echo "🔧 Installing systemd units..."
+cp "$SERVICE_FILE" /etc/systemd/system/
+cp "$TIMER_FILE" /etc/systemd/system/
+
+systemctl daemon-reload
+systemctl enable "$TIMER_FILE"
+systemctl start "$TIMER_FILE"
+
+echo "✅ Deployment Complete!"
+echo "   - Service: $SERVICE_FILE"
+echo "   - Timer:   $TIMER_FILE"
+echo "   - Logs:    $PROJECT_DIR/ai-monitor.log"
+echo "   - Next run: systemctl list-timers ai-monitor.timer"
 echo ""
-echo "================================"
-echo "环境初始化完成！"
-echo "================================"
-echo ""
-echo "使用说明："
-echo "1. 确保 Moomoo OpenD 已启动（默认端口 11111）"
-echo "2. 激活虚拟环境：source venv/bin/activate"
-echo "3. 运行策略：python main.py"
-echo "4. 停止策略：Ctrl+C"
-echo ""
-echo "配置文件："
-echo "- config.py: 策略参数配置"
-echo "- watchlist.json: 监控股票列表"
-echo ""
-
+echo "⚠️  IMPORTANT: Ensure your .env file is populated with OPENAI_API_KEY!"
+echo "⚠️  IMPORTANT: Ensure FutuOpenD is running and accessible if market data is required."

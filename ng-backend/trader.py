@@ -207,12 +207,35 @@ class MoomooTrader:
                 order_id = data.iloc[0]['order_id']
                 logger.info(f"下单成功 {symbol} {side} {quantity}股 @ {price if price > 0 else '市价'}, 订单ID: {order_id}")
                 return order_id
-            else:
-                logger.error(f"下单失败 {symbol}: {data}")
-                return None
-
         except Exception as e:
             logger.error(f"下单异常 {symbol}: {e}")
+            return None
+
+    def check_order_status(self, order_id: str) -> Optional[dict]:
+        """
+        查询订单状态
+
+        Args:
+            order_id: 订单ID
+
+        Returns:
+            订单状态字典 {'status': OrderStatus, 'filled_qty': float, 'avg_price': float} 或 None
+        """
+        try:
+            ret, data = self.trade_ctx.order_list_query(
+                order_id=order_id,
+                trd_env=self.trd_env
+            )
+            if ret == 0 and not data.empty:
+                row = data.iloc[0]
+                return {
+                    'status': row['order_status'],
+                    'filled_qty': row['dealt_qty'],
+                    'avg_price': row['dealt_avg_price']
+                }
+            return None
+        except Exception as e:
+            logger.error(f"查询订单状态异常 {order_id}: {e}")
             return None
 
     def get_positions(self) -> Dict[str, Dict]:

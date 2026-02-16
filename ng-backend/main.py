@@ -142,8 +142,10 @@ def main():
                 continue
 
             # 更新所有股票的K线数据
+            # 更新所有股票的K线数据 和 检查挂单状态
             for symbol in watchlist:
                 strategy.update_kline_data(symbol)
+                strategy.check_pending_orders(symbol)
 
             # 09:45 计算并锁定 ORB
             if is_after_orb_period(current_time) and not orb_calculated:

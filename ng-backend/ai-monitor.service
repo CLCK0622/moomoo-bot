@@ -1,0 +1,15 @@
+[Unit]
+Description=Moomoo Bot AI Monitor Analysis Service
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/moomoo-bot
+# Assuming setup.sh creates a venv in the current directory
+ExecStart=/opt/moomoo-bot/venv/bin/python ai-monitor/run_analysis.py
+StandardOutput=append:/var/log/ai-monitor.log
+StandardError=append:/var/log/ai-monitor.err
+
+[Install]
+WantedBy=multi-user.target

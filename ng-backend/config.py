@@ -58,3 +58,7 @@ LOG_FILE = 'strategy.log'
 # ==================== Watchlist 文件 ====================
 WATCHLIST_FILE = 'watchlist.json'
 
+
+# ==================== AI Monitor Configuration ====================
+NITTER_INSTANCE = "https://nitter.poast.org"
+MODEL_EXECUTIVE = "gpt-4o"

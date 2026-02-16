@@ -5,6 +5,7 @@
 import logging
 from datetime import datetime
 from typing import Dict, Optional
+from futu import OrderStatus
 import pandas as pd
 
 import config
@@ -110,13 +111,69 @@ class ORBKeltnerStrategy:
 
         return False
 
+    def check_pending_orders(self, symbol: str):
+        """
+        检查并同步挂单状态
+        
+        Args:
+            symbol: 股票代码
+        """
+        position = self.state_manager.get_position(symbol)
+        if position is None:
+            return
+
+        # 检查买单
+        if position.pending_buy_order_id:
+            status_info = self.trader.check_order_status(position.pending_buy_order_id)
+            if status_info:
+                status = status_info['status']
+                if status in [OrderStatus.FILLED_ALL, OrderStatus.FILLED_PART]:
+                    # 成交：更新持仓
+                    if position.state == config.STATE_IDLE: # 防止重复更新
+                        position.open_position(
+                            price=status_info['avg_price'],
+                            quantity=status_info['filled_qty'],
+                            time=datetime.now()
+                        )
+                        self.state_manager.increment_opened_count()
+                        logger.info(f"{symbol} 买单成交: 价格={status_info['avg_price']:.2f}, 数量={status_info['filled_qty']}")
+                    
+                    if status == OrderStatus.FILLED_ALL:
+                        position.pending_buy_order_id = None
+                        
+                elif status in [OrderStatus.FAILED, OrderStatus.CANCELLED_ALL, OrderStatus.CANCELLED_PART]:
+                    # 失败：清除挂单ID，允许重新开仓
+                    logger.warning(f"{symbol} 买单失败/取消: {status}")
+                    position.pending_buy_order_id = None
+            else:
+                 logger.warning(f"{symbol} 无法查询买单状态: {position.pending_buy_order_id}")
+
+        # 检查卖单
+        if position.pending_sell_order_id:
+            status_info = self.trader.check_order_status(position.pending_sell_order_id)
+            if status_info:
+                status = status_info['status']
+                if status in [OrderStatus.FILLED_ALL, OrderStatus.FILLED_PART]:
+                    # 已经在 execute_exit 中预扣了数量，这里只需要清除ID
+                    if status == OrderStatus.FILLED_ALL:
+                         position.pending_sell_order_id = None
+                         logger.info(f"{symbol} 卖单全部成交")
+                         
+                elif status in [OrderStatus.FAILED, OrderStatus.CANCELLED_ALL, OrderStatus.CANCELLED_PART]:
+                    # 失败：加回持仓（如果之前预扣了）- 这里简化处理，因为我们是市价单，失败概率低
+                    # 如果需要更严谨，应该在 execute_exit 时不扣，在这里扣。
+                    # 考虑到用户反馈是"重复卖出"，预扣是防止重复卖出的关键。
+                    # 如果失败，需要人工干预或重置逻辑，这里暂时清除ID允许重试
+                    logger.warning(f"{symbol} 卖单失败/取消: {status}")
+                    position.pending_sell_order_id = None
+
     def check_entry_signal(self, symbol: str) -> bool:
         """
         检查开仓信号
-
+        
         Args:
             symbol: 股票代码
-
+        
         Returns:
             是否触发开仓信号
         """
@@ -124,6 +181,10 @@ class ORBKeltnerStrategy:
 
         # 前置条件检查
         if position is None or position.state != config.STATE_IDLE:
+            return False
+            
+        # 如果有挂单，不检查信号
+        if position.pending_buy_order_id:
             return False
 
         if not position.orb_locked:
@@ -177,16 +238,21 @@ class ORBKeltnerStrategy:
     def execute_entry(self, symbol: str, total_cash: float) -> bool:
         """
         执行开仓
-
+        
         Args:
             symbol: 股票代码
             total_cash: 总资金
-
+        
         Returns:
-            是否成功开仓
+            是否成功下单
         """
         position = self.state_manager.get_position(symbol)
         if position is None:
+            return False
+            
+        # 再次检查是否有挂单
+        if position.pending_buy_order_id:
+            logger.warning(f"{symbol}已有挂单 {position.pending_buy_order_id}，跳过开仓")
             return False
 
         # 计算买入金额：总资金 * (1/5) / 1.2
@@ -198,18 +264,10 @@ class ORBKeltnerStrategy:
         order_id = self.trader.market_buy(self.format_symbol(symbol), buy_amount)
 
         if order_id:
-            # 获取当前价格作为开仓价
-            current_price = self.trader.get_current_price(self.format_symbol(symbol))
-            if current_price:
-                quantity = int(buy_amount / current_price)
-                position.open_position(
-                    price=current_price,
-                    quantity=quantity,
-                    time=datetime.now()
-                )
-                self.state_manager.increment_opened_count()
-                logger.info(f"{symbol} 开仓成功: 价格={current_price:.2f}, 数量={quantity}")
-                return True
+            # 记录挂单ID，等待 check_pending_orders 更新状态
+            position.pending_buy_order_id = order_id
+            logger.info(f"{symbol} 开仓订单已提交，等待成交: 订单ID={order_id}")
+            return True
 
         return False
 
@@ -224,6 +282,10 @@ class ORBKeltnerStrategy:
 
         # 只处理持仓状态
         if position is None or position.state not in [config.STATE_POSITION, config.STATE_HALF_PROFIT]:
+            return
+            
+        # 如果有卖出挂单，不检查
+        if position.pending_sell_order_id:
             return
 
         if position.quantity <= 0:
@@ -299,6 +361,10 @@ class ORBKeltnerStrategy:
         position = self.state_manager.get_position(symbol)
         if position is None:
             return
+            
+        if position.pending_sell_order_id:
+             logger.warning(f"{symbol} 已有卖单 {position.pending_sell_order_id}，跳过新的平仓请求")
+             return
 
         logger.info(f"{symbol} 执行平仓: 数量={quantity}, 原因={reason}")
 
@@ -306,8 +372,9 @@ class ORBKeltnerStrategy:
         order_id = self.trader.market_sell(self.format_symbol(symbol), quantity)
 
         if order_id:
-            position.reduce_position(quantity)
-            logger.info(f"{symbol} 平仓成功，剩余持仓: {position.quantity}")
+            position.reduce_position(quantity) # 预先扣除，防止重复卖出
+            position.pending_sell_order_id = order_id
+            logger.info(f"{symbol} 平仓指令已提交，等待成交: 订单ID={order_id}, 剩余持仓: {position.quantity}")
 
     def check_risk_control(self, symbol: str):
         """

@@ -29,6 +29,10 @@ class PositionState:
     # 止盈标记
     tp1_triggered: bool = False         # TP1 是否已触发
     tp2_triggered: bool = False         # TP2 是否已触发
+    
+    # 挂单状态
+    pending_buy_order_id: Optional[str] = None   # 待成交买单ID
+    pending_sell_order_id: Optional[str] = None  # 待成交卖单ID
 
     # 风控
     max_drawdown: float = 0.0           # 最大浮亏比例
@@ -46,6 +50,8 @@ class PositionState:
         self.orb_locked = False
         self.tp1_triggered = False
         self.tp2_triggered = False
+        self.pending_buy_order_id = None
+        self.pending_sell_order_id = None
         self.max_drawdown = 0.0
 
     def set_orb(self, orb_high: float, orb_low: float, orb_mid: float):
