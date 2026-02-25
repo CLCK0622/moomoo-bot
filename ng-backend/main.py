@@ -129,6 +129,7 @@ def main():
     # 标记变量
     orb_calculated = False      # ORB 是否已计算
     force_closed = False        # 是否已强制平仓
+    daily_total_cash = None     # 当日初始可用资金
 
     try:
         while True:
@@ -138,8 +139,20 @@ def main():
             # 检查是否在交易时段
             if not is_market_open(current_time):
                 logger.info(f"当前时间 {current_time.strftime('%H:%M:%S')} 不在交易时段，等待...")
+                daily_total_cash = None  # 跨日重置
+                orb_calculated = False   # 跨日重置
+                force_closed = False     # 跨日重置
                 time.sleep(60)
                 continue
+                
+            # 每天在交易时段首次执行时获取一次资金
+            if daily_total_cash is None:
+                daily_total_cash = trader.get_account_cash()
+                if daily_total_cash <= 0:
+                    logger.error("获取账户资金失败或资金为0，10秒后重试")
+                    time.sleep(10)
+                    continue
+                logger.info(f"已获取当日可用本金: ${daily_total_cash:.2f}")
 
             # 更新所有股票的K线数据
             # 更新所有股票的K线数据 和 检查挂单状态
@@ -161,8 +174,8 @@ def main():
                 logger.info("收盘清仓完成，程序即将退出")
                 break
 
-            # 获取账户可用资金
-            total_cash = trader.get_account_cash()
+            # 使用开盘初次获取的资金进行开仓计算，避免频繁调用 API 触发流控报错
+            total_cash = daily_total_cash
 
             # 检查开仓信号（只检查空仓的股票）
             if is_after_orb_period(current_time) and not force_closed:

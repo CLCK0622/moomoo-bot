@@ -155,7 +155,9 @@ class MoomooTrader:
                 cash = data.iloc[0]['cash']
                 logger.info(f"账户可用现金: ${cash:.2f}")
                 return cash
-            return 0.0
+            else:
+                logger.error(f"查询账户现金失败: ret={ret}, data={data}")
+                return 0.0
         except Exception as e:
             logger.error(f"查询账户现金异常: {e}")
             return 0.0
