@@ -11,14 +11,16 @@ import datetime
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 class BaseAgent:
-    def __init__(self, model, reasoning="low"):
+    def __init__(self, model):
         self.model = model
-        self.reasoning = reasoning
 
     def call_llm(self, system, user):
         try:
             resp = client.chat.completions.create(
                 model=self.model,
+                # reasoning={
+                #     "effort": "medium"
+                # },
                 messages=[{"role": "system", "content": system}, {"role": "user", "content": user}]
             )
             content = resp.choices[0].message.content

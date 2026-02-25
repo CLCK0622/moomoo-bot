@@ -95,13 +95,21 @@ def search_nitter_broad(queries):
 
 # --- 4. Market Data (综合行情) ---
 # 这一部分保持你之前最新的全量数据逻辑
-MOOMOO_HOST = '127.0.0.1'
+MOOMOO_HOST = '192.168.64.1'
 MOOMOO_PORT = 11111
 
 
 def get_market_context_comprehensive(symbol):
     moomoo_symbol = f"US.{symbol}"
     try:
+        print(f"DEBUG_TEST: Attempting connect to Host={MOOMOO_HOST}, Port={MOOMOO_PORT}")
+        import socket
+        s = socket.socket()
+        s.settimeout(3)
+        s.connect((MOOMOO_HOST, MOOMOO_PORT))
+        print("DEBUG_TEST: Socket connection SUCCESS!")
+        s.close()
+
         quote_ctx = OpenQuoteContext(host=MOOMOO_HOST, port=MOOMOO_PORT)
 
         # Subscribe first

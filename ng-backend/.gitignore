@@ -46,3 +46,5 @@ strategy.log
 *.csv
 *.xlsx
 
+.env
+.env.*

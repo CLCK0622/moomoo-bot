@@ -9,7 +9,7 @@ from futu import *
 logging.basicConfig(level=logging.CRITICAL)
 
 # Configuration
-HOST = '127.0.0.1'
+HOST = '192.168.64.1'
 PORT = 11111
 WATCHLIST_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'watchlist.json')
 
