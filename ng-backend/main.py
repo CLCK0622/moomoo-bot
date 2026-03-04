@@ -131,10 +131,17 @@ def main():
     force_closed = False        # 是否已强制平仓
     daily_total_cash = None     # 当日初始可用资金
 
+    # ===== 节流控制：避免触发 Moomoo OpenD API 频率限制 =====
+    # watchlist 有 61 只股票，每次全量刷新 K 线 = 122 次 API 调用
+    # K 线数据按 60 秒间隔更新（1m K 线本身就是 60 秒才变化一次）
+    KLINE_UPDATE_INTERVAL = 60   # K 线更新间隔（秒）
+    last_kline_update = 0.0      # 上次 K 线更新的时间戳
+
     try:
         while True:
             # 获取当前时间（美东时间）
             current_time = datetime.now(config.ET_TIMEZONE)
+            now_ts = time.time()
 
             # 检查是否在交易时段
             if not is_market_open(current_time):
@@ -142,6 +149,7 @@ def main():
                 daily_total_cash = None  # 跨日重置
                 orb_calculated = False   # 跨日重置
                 force_closed = False     # 跨日重置
+                last_kline_update = 0.0  # 跨日重置
                 time.sleep(60)
                 continue
                 
@@ -154,10 +162,15 @@ def main():
                     continue
                 logger.info(f"已获取当日可用本金: ${daily_total_cash:.2f}")
 
-            # 更新所有股票的K线数据
-            # 更新所有股票的K线数据 和 检查挂单状态
+            # ===== K 线更新（每 60 秒一次）=====
+            if now_ts - last_kline_update >= KLINE_UPDATE_INTERVAL:
+                for symbol in watchlist:
+                    strategy.update_kline_data(symbol)
+                last_kline_update = now_ts
+                logger.debug(f"K线数据已更新（{len(watchlist)} 只股票）")
+
+            # 检查挂单状态
             for symbol in watchlist:
-                strategy.update_kline_data(symbol)
                 strategy.check_pending_orders(symbol)
 
             # 09:45 计算并锁定 ORB
@@ -174,7 +187,7 @@ def main():
                 logger.info("收盘清仓完成，程序即将退出")
                 break
 
-            # 使用开盘初次获取的资金进行开仓计算，避免频繁调用 API 触发流控报错
+            # 使用开盘初次获取的资金进行开仓计算
             total_cash = daily_total_cash
 
             # 检查开仓信号（只检查空仓的股票）
