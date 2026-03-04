@@ -50,8 +50,28 @@ def fetch_quotes():
         market_ref_symbol = futu_symbols[0] if futu_symbols else 'US.AAPL'
         ret_state, state_data = quote_ctx.get_market_state([market_ref_symbol])
         market_state = "UNKNOWN"
+        market_phase = "CLOSED"  # default
         if ret_state == RET_OK:
             market_state = state_data['market_state'][0]
+            
+            # Map raw MarketState to simplified phase for frontend
+            # See futu.common.constant.MarketState for all values
+            TRADING_STATES = {'MORNING', 'AFTERNOON'}
+            PRE_STATES = {'PRE_MARKET_BEGIN', 'PRE_MARKET_END', 'WAITING_OPEN', 'AUCTION'}
+            POST_STATES = {'AFTER_HOURS_BEGIN', 'AFTER_HOURS_END'}
+            OVERNIGHT_STATES = {'OVERNIGHT', 'NIGHT_OPEN', 'NIGHT', 'NIGHT_END'}
+            
+            state_str = str(market_state)
+            if state_str in TRADING_STATES:
+                market_phase = "REGULAR"
+            elif state_str in PRE_STATES:
+                market_phase = "PRE"
+            elif state_str in POST_STATES:
+                market_phase = "POST"
+            elif state_str in OVERNIGHT_STATES:
+                market_phase = "OVERNIGHT"
+            else:
+                market_phase = "CLOSED"
         
         ret, data = quote_ctx.get_market_snapshot(futu_symbols)
         
@@ -100,6 +120,7 @@ def fetch_quotes():
             print(json.dumps({
                 "status": "ok", 
                 "market_state": str(market_state),
+                "market_phase": market_phase,
                 "data": results
             }))
         else:

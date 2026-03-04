@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import {
@@ -32,79 +32,42 @@ interface StockCardProps {
     disabled?: boolean;
     preMarket?: { price: number; change: number };
     postMarket?: { price: number; change: number };
+    marketPhase?: string;
     sentiment?: SentimentData;
     isLoadingSentiment?: boolean;
 }
 
-export function StockCard({ symbol, price, change, onRemove, disabled, preMarket, postMarket, sentiment, isLoadingSentiment }: StockCardProps) {
-    const [isExtendedHours, setIsExtendedHours] = useState(false);
-    const [marketPhase, setMarketPhase] = useState<"PRE" | "REGULAR" | "POST" | "CLOSED">("REGULAR");
+export function StockCard({ symbol, price, change, onRemove, disabled, preMarket, postMarket, marketPhase = "CLOSED", sentiment, isLoadingSentiment }: StockCardProps) {
     const [isRemoveOpen, setIsRemoveOpen] = useState(false);
 
-    useEffect(() => {
-        const checkTime = () => {
-            const now = new Date();
-
-            // Convert to US Eastern Time for market logic
-            const etNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
-            const hours = etNow.getHours();
-            const minutes = etNow.getMinutes();
-            const time = hours * 60 + minutes;
-
-            // Market Hours (ET)
-            // Pre: 04:00 - 09:30
-            // Regular: 09:30 - 16:00
-            // Post: 16:00 - 20:00
-
-            if (time >= 4 * 60 && time < 9 * 60 + 30) {
-                setMarketPhase("PRE");
-                setIsExtendedHours(true);
-            } else if (time >= 9 * 60 + 30 && time < 16 * 60) {
-                setMarketPhase("REGULAR");
-                setIsExtendedHours(false);
-            } else if (time >= 16 * 60 && time < 20 * 60) {
-                setMarketPhase("POST");
-                setIsExtendedHours(true);
-            } else {
-                setMarketPhase("CLOSED");
-                // If closed, usually show Post market if available, or just Regular close
-                // User said "If NOT trading hours", show extended.
-                // Weekends are "CLOSED", usually show Friday's Post or Close.
-                // Let's default to POST view if data exists, else Regular.
-                setIsExtendedHours(true);
-            }
-        };
-
-        checkTime();
-        const interval = setInterval(checkTime, 60000);
-        return () => clearInterval(interval);
-    }, []);
-
-    // Determine what to display
+    // Determine what to display based on API-provided market phase
     let mainPrice = price;
     let mainChange = change;
-    let label = "Close";
+    let label = "收盘";
 
-    // By default show regular data
-    // If extended hours AND we have valid extended data, switch
-
-    const showExtended = isExtendedHours;
-
-    if (showExtended) {
-        if (marketPhase === "PRE" && preMarket && preMarket.price > 0) {
-            mainPrice = preMarket.price;
-            mainChange = preMarket.change;
-            label = "盘前";
-        } else if ((marketPhase === "POST" || marketPhase === "CLOSED") && postMarket && postMarket.price > 0) {
+    if (marketPhase === "REGULAR") {
+        label = "交易中";
+    } else if (marketPhase === "PRE" && preMarket && preMarket.price > 0) {
+        mainPrice = preMarket.price;
+        mainChange = preMarket.change;
+        label = "盘前";
+    } else if (marketPhase === "POST" && postMarket && postMarket.price > 0) {
+        mainPrice = postMarket.price;
+        mainChange = postMarket.change;
+        label = "盘后";
+    } else if (marketPhase === "OVERNIGHT" && postMarket && postMarket.price > 0) {
+        mainPrice = postMarket.price;
+        mainChange = postMarket.change;
+        label = "夜盘";
+    } else if (marketPhase === "CLOSED") {
+        // If closed and postMarket data available, show it
+        if (postMarket && postMarket.price > 0) {
             mainPrice = postMarket.price;
             mainChange = postMarket.change;
             label = "盘后";
         } else {
-            // Fallback to regular if extended data is missing/zero
             label = "收盘";
         }
-    } else {
-        label = "交易中";
     }
 
     const isPositive = mainChange >= 0;

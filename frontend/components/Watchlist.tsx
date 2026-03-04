@@ -31,6 +31,7 @@ interface PriceData {
 interface ApiResponse {
     status: "ok" | "error";
     data?: PriceData[];
+    market_phase?: string;
     message?: string;
 }
 
@@ -43,6 +44,7 @@ export function Watchlist() {
     const [error, setError] = useState<string | null>(null);
     const [apiError, setApiError] = useState<string | null>(null);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+    const [marketPhase, setMarketPhase] = useState<string>("CLOSED");
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     // Sentiment State
@@ -188,6 +190,9 @@ export function Watchlist() {
                 });
                 setPrices(newPrices);
                 setLastUpdated(new Date());
+                if (response.market_phase) {
+                    setMarketPhase(response.market_phase);
+                }
             }
         } catch (err: any) {
             setApiError(err.message || "Failed to connect to data source");
@@ -399,6 +404,7 @@ export function Watchlist() {
                         change={prices[symbol]?.change || 0}
                         preMarket={prices[symbol]?.preMarket}
                         postMarket={prices[symbol]?.postMarket}
+                        marketPhase={marketPhase}
                         onRemove={removeSymbol}
                         disabled={isRestricted}
                         sentiment={sentimentData[symbol]}
