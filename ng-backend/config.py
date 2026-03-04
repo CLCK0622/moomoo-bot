@@ -6,7 +6,7 @@ from datetime import time
 
 # ==================== 交易环境配置 ====================
 # Moomoo 配置
-MOOMOO_HOST = '192.168.64.1'  # OpenD 服务地址
+MOOMOO_HOST = '127.0.0.1'  # OpenD 服务地址
 MOOMOO_PORT = 11111        # OpenD 端口
 MARKET = 'US'              # 美股市场
 TRADE_ENV = 1              # 0=真实环境, 1=模拟环境（先用模拟盘）
