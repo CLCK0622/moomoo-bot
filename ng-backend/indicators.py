@@ -231,13 +231,42 @@ class SignalGenerator:
         return current_price >= target
 
     @staticmethod
+    def check_trailing_profit_stop(
+        current_price: float,
+        entry_price: float,
+        max_profit_price: float,
+        keep_ratio: float = 0.2
+    ) -> bool:
+        """
+        检查追踪止盈（TP2 后半仓使用）
+
+        条件：利润从峰值回撤，仅剩 keep_ratio（20%）时平仓
+        即 current_price <= entry_price + (max_profit_price - entry_price) * keep_ratio
+
+        Args:
+            current_price: 当前价格
+            entry_price: 开仓价格
+            max_profit_price: TP2 后记录的最高价
+            keep_ratio: 保留利润比例（0.2 = 20%）
+
+        Returns:
+            是否触发追踪止盈
+        """
+        if max_profit_price <= entry_price:
+            return False
+
+        # 止盈线 = 入场价 + 峰值利润 * 保留比例
+        trailing_stop_price = entry_price + (max_profit_price - entry_price) * keep_ratio
+        return current_price <= trailing_stop_price
+
+    @staticmethod
     def check_trend_reversal(
         df_15m: pd.DataFrame,
         kc_middle: pd.Series,
         bars: int = 2
     ) -> bool:
         """
-        检查趋势反转（移动止盈）
+        检查趋势反转（移动止盈）- 当前策略已弃用，保留备用
 
         条件：连续 N 根15分钟K线收盘价都低于 KC中轨
 
@@ -257,4 +286,5 @@ class SignalGenerator:
 
         # 检查所有收盘价是否都低于 KC 中轨
         return all(recent_closes < recent_kc_middle)
+
 

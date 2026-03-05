@@ -36,6 +36,7 @@ class PositionState:
 
     # 风控
     max_drawdown: float = 0.0           # 最大浮亏比例
+    max_profit_price: float = 0.0       # TP2 后追踪的最高价格
 
     def reset(self):
         """重置状态（用于次日重新开始）"""
@@ -53,6 +54,7 @@ class PositionState:
         self.pending_buy_order_id = None
         self.pending_sell_order_id = None
         self.max_drawdown = 0.0
+        self.max_profit_price = 0.0
 
     def set_orb(self, orb_high: float, orb_low: float, orb_mid: float):
         """锁定 ORB 数据"""
@@ -87,6 +89,11 @@ class PositionState:
             drawdown = (current_price - self.entry_price) / self.entry_price
             if drawdown < self.max_drawdown:
                 self.max_drawdown = drawdown
+
+    def update_max_profit_price(self, current_price: float):
+        """更新 TP2 后的最高价（用于追踪止盈）"""
+        if current_price > self.max_profit_price:
+            self.max_profit_price = current_price
 
 
 class StateManager:

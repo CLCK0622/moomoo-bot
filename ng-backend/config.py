@@ -34,8 +34,9 @@ KC_ATR_MULTIPLIER = 2.0     # KC 带宽倍数
 
 # 止损止盈参数
 STOP_LOSS_RATIO = 0.03      # 账户止损 3%
-TP1_REDUCE_RATIO = 0.5      # 第一目标止盈减仓 50%
+TP1_REDUCE_RATIO = 0.5      # TP2 触发时减仓比例 50%
 TP2_ATR_MULTIPLIER = 3.0    # 第二目标 = KC中轨 + 3*ATR
+TRAILING_PROFIT_KEEP_RATIO = 0.2  # TP2 后半仓追踪止盈：利润回撤到峰值的 20% 时清仓
 
 # 趋势反转确认
 TREND_REVERSAL_BARS = 2     # 连续2根15分钟K线跌破KC中轨

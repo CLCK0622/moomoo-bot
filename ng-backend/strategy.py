@@ -273,7 +273,15 @@ class ORBKeltnerStrategy:
 
     def check_exit_signals(self, symbol: str):
         """
-        检查所有退出信号（止损、止盈、趋势反转）
+        检查所有退出信号
+
+        退出逻辑（按优先级）：
+        1. 止损：跌破 ORB_Low（TP1 触发后改为跌破入场价）
+        2. TP1（1:1 盈亏比）：不减仓，止损上移至入场价（保本止损）
+        3. TP2（KC中轨+3ATR）：减仓 50%，剩余半仓追踪止盈
+        4. 追踪止盈（TP2 后）：利润回撤至峰值的 20% 时清仓
+        5. 账户止损 3%（在 check_risk_control 中处理）
+        6. 15:55 强制平仓（在 force_close_all 中处理）
 
         Args:
             symbol: 股票代码
@@ -316,35 +324,61 @@ class ORBKeltnerStrategy:
         if kc_middle.empty or atr.empty:
             return
 
-        # 场景1：初始止损（跌破 ORB_Mid）
-        if self.signal_gen.check_stop_loss(current_price, position.orb_mid):
-            logger.warning(f"{symbol} 触发止损: 价格={current_price:.2f} < ORB_Mid={position.orb_mid:.2f}")
-            self.execute_exit(symbol, position.quantity, "止损")
-            return
+        # ===== 场景 1：止损 =====
+        if position.tp1_triggered:
+            # TP1 已触发：止损线上移至入场价（保本止损）
+            if current_price < position.entry_price:
+                logger.warning(f"{symbol} 触发保本止损: 价格={current_price:.2f} < 入场价={position.entry_price:.2f}")
+                self.execute_exit(symbol, position.quantity, "保本止损")
+                return
+        else:
+            # TP1 未触发：止损线在 ORB_Low
+            if self.signal_gen.check_stop_loss(current_price, position.orb_low):
+                logger.warning(f"{symbol} 触发止损: 价格={current_price:.2f} < ORB_Low={position.orb_low:.2f}")
+                self.execute_exit(symbol, position.quantity, "止损")
+                return
 
-        # 场景2：第一目标止盈（TP1）
+        # ===== 场景 2：TP1（1:1 盈亏比）—— 不减仓，止损上移至入场价 =====
         if position.state == config.STATE_POSITION and not position.tp1_triggered:
-            if self.signal_gen.check_tp1(current_price, position.entry_price, position.orb_mid):
-                logger.info(f"{symbol} 触发 TP1: 价格={current_price:.2f}")
-                reduce_qty = int(position.quantity * config.TP1_REDUCE_RATIO)
-                self.execute_exit(symbol, reduce_qty, "TP1减仓")
+            if self.signal_gen.check_tp1(current_price, position.entry_price, position.orb_low):
+                logger.info(f"{symbol} 触发 TP1: 价格={current_price:.2f}，止损上移至入场价={position.entry_price:.2f}")
                 position.tp1_triggered = True
+                # 不减仓，不改状态，仅标记 TP1 已触发（止损逻辑在上方自动生效）
+                return
+
+        # ===== 场景 3：TP2（KC中轨 + 3*ATR）—— 减仓 50%，剩余追踪止盈 =====
+        if position.state == config.STATE_POSITION and not position.tp2_triggered:
+            if self.signal_gen.check_tp2(current_price, kc_middle.iloc[-1], atr.iloc[-1], config.TP2_ATR_MULTIPLIER):
+                logger.info(f"{symbol} 触发 TP2: 价格={current_price:.2f}，减仓 50%")
+                reduce_qty = int(position.quantity * config.TP1_REDUCE_RATIO)
+                if reduce_qty > 0:
+                    self.execute_exit(symbol, reduce_qty, "TP2减仓")
+                position.tp2_triggered = True
+                position.max_profit_price = current_price  # 开始追踪最高价
                 position.state = config.STATE_HALF_PROFIT
                 return
 
-        # 场景3：第二目标止盈（TP2）
-        if position.state == config.STATE_HALF_PROFIT and not position.tp2_triggered:
-            if self.signal_gen.check_tp2(current_price, kc_middle.iloc[-1], atr.iloc[-1], config.TP2_ATR_MULTIPLIER):
-                logger.info(f"{symbol} 触发 TP2: 价格={current_price:.2f}")
-                self.execute_exit(symbol, position.quantity, "TP2全平")
-                position.tp2_triggered = True
-                return
+        # ===== 场景 4：追踪止盈（TP2 后半仓）—— 利润回撤至峰值 20% 时清仓 =====
+        if position.state == config.STATE_HALF_PROFIT and position.tp2_triggered:
+            # 持续更新最高价
+            position.update_max_profit_price(current_price)
 
-        # 场景4：趋势反转（连续2根15分钟K线跌破KC中轨）
-        if self.signal_gen.check_trend_reversal(df_15m, kc_middle, config.TREND_REVERSAL_BARS):
-            logger.warning(f"{symbol} 触发趋势反转信号")
-            self.execute_exit(symbol, position.quantity, "趋势反转")
-            return
+            # 检查是否触发追踪止盈
+            if self.signal_gen.check_trailing_profit_stop(
+                current_price,
+                position.entry_price,
+                position.max_profit_price,
+                config.TRAILING_PROFIT_KEEP_RATIO
+            ):
+                trailing_stop = position.entry_price + (position.max_profit_price - position.entry_price) * config.TRAILING_PROFIT_KEEP_RATIO
+                logger.info(
+                    f"{symbol} 触发追踪止盈: 价格={current_price:.2f}, "
+                    f"峰值={position.max_profit_price:.2f}, "
+                    f"追踪线={trailing_stop:.2f}"
+                )
+                self.execute_exit(symbol, position.quantity, "追踪止盈")
+                position.state = config.STATE_DONE  # 不再买入
+                return
 
     def execute_exit(self, symbol: str, quantity: int, reason: str):
         """
