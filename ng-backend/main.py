@@ -14,6 +14,8 @@ import json
 import time
 from datetime import datetime, timedelta
 from typing import List
+import signal
+import sys
 
 import config
 from trader import MoomooTrader
@@ -96,6 +98,14 @@ def main():
     logger.info("="*60)
     logger.info("ORB + Keltner Channel 策略启动")
     logger.info("="*60)
+
+    # 注册信号处理，捕获外部的 SIGTERM (kill) 以便排查无故退出
+    def handle_sigterm(signum, frame):
+        logger.warning(f"收到终止信号 ({signum})，准备安全退出并清理资源...")
+        sys.exit(0)
+    
+    signal.signal(signal.SIGTERM, handle_sigterm)
+    signal.signal(signal.SIGINT, handle_sigterm)
 
     # 加载监控列表
     watchlist = load_watchlist()
