@@ -319,7 +319,7 @@ export function Watchlist() {
                             <div key={idx.symbol} className="flex-1 min-w-[120px] max-w-[220px] bg-white rounded-xl p-3 shadow-sm border border-slate-100 shrink-0 text-center flex flex-col justify-center">
                                 <div className="text-xs text-slate-500 font-medium mb-1">{name}</div>
                                 <div className="text-lg font-bold text-slate-900">{idx.price.toFixed(2)}</div>
-                                <div className={`text-xs font-medium flex items-center ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                                <div className={`text-xs font-medium flex justify-center items-center ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
                                     {isPositive ? '+' : ''}{idx.change.toFixed(2)}%
                                 </div>
                             </div>
