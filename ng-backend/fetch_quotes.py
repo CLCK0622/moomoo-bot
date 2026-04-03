@@ -27,7 +27,6 @@ def get_watchlist():
 
 def fetch_quotes():
     symbols = get_watchlist()
-    print(f"Fetching quotes for: {symbols}", file=sys.stderr)
     
     if not symbols:
         print(json.dumps([]))

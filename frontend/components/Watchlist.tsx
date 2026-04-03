@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface WatchlistData {
     symbols: string[];
@@ -76,6 +78,20 @@ export function Watchlist() {
     // Log Viewer State
     const [isLogOpen, setIsLogOpen] = useState(false);
     const [logs, setLogs] = useState("");
+
+    // Modal State
+    const [selectedSentimentSymbol, setSelectedSentimentSymbol] = useState<string | null>(null);
+
+    const getSignalColor = (signal: string) => {
+        const s = signal.toUpperCase().replace("_", " ");
+        if (s.includes("STRONG BUY")) return "bg-emerald-800 hover:bg-emerald-900 text-white shadow-sm border-transparent";
+        if (s.includes("STRONG SELL")) return "bg-red-900 hover:bg-red-950 text-white shadow-sm border-transparent";
+        switch (s) {
+            case "BUY": return "bg-green-500 hover:bg-green-600 text-white border-transparent";
+            case "SELL": return "bg-red-500 hover:bg-red-600 text-white border-transparent";
+            default: return "bg-yellow-500 hover:bg-yellow-600 text-white border-transparent";
+        }
+    };
 
     // Poll logs when modal is open
     useEffect(() => {
@@ -295,12 +311,12 @@ export function Watchlist() {
         <div className="w-full max-w-[1600px] mx-auto p-4 md:p-8">
             {/* Market Indices Top Bar */}
             {indices && indices.length > 0 && (
-                <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 mb-8 -mx-4 px-4 md:mx-0 md:px-0 hide-scrollbar">
+                <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 mb-8 -mx-4 px-4 md:mx-0 md:px-0 hide-scrollbar justify-center items-stretch w-full">
                     {indices.map((idx) => {
                         const name = INDEX_NAMES[idx.symbol] || idx.symbol;
                         const isPositive = idx.change >= 0;
                         return (
-                            <div key={idx.symbol} className="min-w-[140px] bg-white rounded-xl p-3 shadow-sm border border-slate-100 shrink-0">
+                            <div key={idx.symbol} className="flex-1 min-w-[120px] max-w-[220px] bg-white rounded-xl p-3 shadow-sm border border-slate-100 shrink-0 text-center flex flex-col justify-center">
                                 <div className="text-xs text-slate-500 font-medium mb-1">{name}</div>
                                 <div className="text-lg font-bold text-slate-900">{idx.price.toFixed(2)}</div>
                                 <div className={`text-xs font-medium flex items-center ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
@@ -581,8 +597,12 @@ export function Watchlist() {
                                     }
 
                                     return (
-                                        <tr key={symbol} className="hover:bg-slate-50/70 transition-colors">
-                                            <td className="px-5 py-4 font-bold text-slate-900">{symbol}</td>
+                                        <tr 
+                                            key={symbol} 
+                                            className="hover:bg-slate-50/70 transition-colors cursor-pointer group"
+                                            onClick={() => setSelectedSentimentSymbol(symbol)}
+                                        >
+                                            <td className="px-5 py-4 font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{symbol}</td>
                                             <td className="px-5 py-4 font-semibold text-slate-800">${price.toFixed(2)}</td>
                                             <td className={cn("px-5 py-4 font-medium", isPositive ? 'text-green-500' : isNegative ? 'text-red-500' : 'text-slate-500')}>
                                                 {isPositive ? '+' : ''}{change.toFixed(2)}%
@@ -599,7 +619,7 @@ export function Watchlist() {
                                                 <Button 
                                                     variant="ghost" 
                                                     size="sm"
-                                                    onClick={() => removeSymbol(symbol)}
+                                                    onClick={(e) => { e.stopPropagation(); removeSymbol(symbol); }}
                                                     disabled={isRestricted}
                                                     className="text-slate-400 hover:text-red-500 hover:bg-red-50"
                                                 >
@@ -623,6 +643,57 @@ export function Watchlist() {
                     <AlertCircle size={20} className="mr-2" />
                     {error}
                 </div>
+            )}
+
+            {/* Centralized Sentiment Modal for List View */}
+            {selectedSentimentSymbol && (
+                <Dialog open={selectedSentimentSymbol !== null} onOpenChange={(open) => !open && setSelectedSentimentSymbol(null)}>
+                    <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                                {selectedSentimentSymbol} AI 分析报告
+                                {sentimentData[selectedSentimentSymbol] ? (
+                                    <Badge className={getSignalColor(sentimentData[selectedSentimentSymbol].signal)}>
+                                        {sentimentData[selectedSentimentSymbol].signal}
+                                    </Badge>
+                                ) : (
+                                    <Badge variant="outline" className="text-slate-400">Waiting...</Badge>
+                                )}
+                            </DialogTitle>
+                            {sentimentData[selectedSentimentSymbol] && (
+                                <DialogDescription>
+                                    更新时间: {new Date(sentimentData[selectedSentimentSymbol].updated_at).toLocaleString()}
+                                </DialogDescription>
+                            )}
+                        </DialogHeader>
+                        
+                        <ScrollArea className="h-[400px] w-full rounded-md border p-4 bg-slate-50 mt-2">
+                            {isLoadingSentiment ? (
+                                <div className="flex flex-col gap-4">
+                                    <Skeleton className="h-6 w-1/3" />
+                                    <Skeleton className="h-24 w-full" />
+                                </div>
+                            ) : sentimentData[selectedSentimentSymbol] ? (
+                                <div className="space-y-4">
+                                    {sentimentData[selectedSentimentSymbol].catalyst_cn && (
+                                        <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                                            <h4 className="font-semibold mb-1 text-slate-900">核心驱动</h4>
+                                            <p className="text-slate-600 text-sm leading-relaxed">{sentimentData[selectedSentimentSymbol].catalyst_cn}</p>
+                                        </div>
+                                    )}
+
+                                    <div className="whitespace-pre-wrap text-slate-700 text-sm leading-relaxed">
+                                        {sentimentData[selectedSentimentSymbol].summary}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex justify-center items-center h-full text-slate-400">
+                                    暂无分析数据
+                                </div>
+                            )}
+                        </ScrollArea>
+                    </DialogContent>
+                </Dialog>
             )}
         </div>
     );
