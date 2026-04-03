@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { StockCard } from "./StockCard";
-import { Plus, AlertCircle, Loader2, RefreshCw, XCircle, Terminal, Maximize2 } from "lucide-react";
+import { Plus, AlertCircle, Loader2, RefreshCw, XCircle, Terminal, Maximize2, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
     Dialog,
@@ -69,6 +69,9 @@ export function Watchlist() {
     // Service Status State
     const [serviceStatus, setServiceStatus] = useState<"running" | "stopped" | "unknown">("unknown");
     const [isTogglingService, setIsTogglingService] = useState(false);
+
+    // View Mode State
+    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
     // Log Viewer State
     const [isLogOpen, setIsLogOpen] = useState(false);
@@ -289,7 +292,7 @@ export function Watchlist() {
     }
 
     return (
-        <div className="max-w-5xl mx-auto p-6 md:p-8">
+        <div className="w-full max-w-[1600px] mx-auto p-4 md:p-8">
             {/* Market Indices Top Bar */}
             {indices && indices.length > 0 && (
                 <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 mb-8 -mx-4 px-4 md:mx-0 md:px-0 hide-scrollbar">
@@ -428,6 +431,22 @@ export function Watchlist() {
                 </div>
 
                 <div className="flex gap-3">
+                    {/* View Mode Toggle */}
+                    <div className="flex bg-slate-100 rounded-lg p-1 border border-slate-200">
+                        <button 
+                            onClick={() => setViewMode("grid")}
+                            className={cn("px-3 py-1.5 text-sm font-medium rounded-md transition-all", viewMode === "grid" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700")}
+                        >
+                            卡片
+                        </button>
+                        <button 
+                            onClick={() => setViewMode("list")}
+                            className={cn("px-3 py-1.5 text-sm font-medium rounded-md transition-all", viewMode === "list" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700")}
+                        >
+                            列表
+                        </button>
+                    </div>
+                
                     {/* Service Control Button */}
                     <Button
                         variant={serviceStatus === "running" ? "destructive" : "default"}
@@ -511,23 +530,93 @@ export function Watchlist() {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                {symbols.map((symbol) => (
-                    <StockCard
-                        key={symbol}
-                        symbol={symbol}
-                        price={prices[symbol]?.price || 0}
-                        change={prices[symbol]?.change || 0}
-                        preMarket={prices[symbol]?.preMarket}
-                        postMarket={prices[symbol]?.postMarket}
-                        marketPhase={marketPhase}
-                        onRemove={removeSymbol}
-                        disabled={isRestricted}
-                        sentiment={sentimentData[symbol]}
-                        isLoadingSentiment={isLoadingSentiment}
-                    />
-                ))}
-            </div>
+            {viewMode === "grid" ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-12">
+                    {symbols.map((symbol) => (
+                        <StockCard
+                            key={symbol}
+                            symbol={symbol}
+                            price={prices[symbol]?.price || 0}
+                            change={prices[symbol]?.change || 0}
+                            preMarket={prices[symbol]?.preMarket}
+                            postMarket={prices[symbol]?.postMarket}
+                            marketPhase={marketPhase}
+                            onRemove={removeSymbol}
+                            disabled={isRestricted}
+                            sentiment={sentimentData[symbol]}
+                            isLoadingSentiment={isLoadingSentiment}
+                        />
+                    ))}
+                </div>
+            ) : (
+                <div className="mb-12 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm whitespace-nowrap">
+                            <thead className="bg-slate-50 text-slate-600 border-b border-slate-100">
+                                <tr>
+                                    <th className="px-5 py-3 font-medium">代码</th>
+                                    <th className="px-5 py-3 font-medium">当前价格</th>
+                                    <th className="px-5 py-3 font-medium">涨跌幅</th>
+                                    <th className="px-5 py-3 font-medium">盘前/盘后</th>
+                                    <th className="px-5 py-3 font-medium">市场状态</th>
+                                    <th className="px-5 py-3 font-medium text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {symbols.map((symbol) => {
+                                    const p = prices[symbol];
+                                    const price = p?.price || 0;
+                                    const change = p?.change || 0;
+                                    const isPositive = change > 0;
+                                    const isNegative = change < 0;
+                                    
+                                    let extStr = "-";
+                                    let extClass = "text-slate-500";
+                                    if (marketPhase === "PRE" && p?.preMarket?.price) {
+                                        extStr = `$${p.preMarket.price.toFixed(2)} (${p.preMarket.change >= 0 ? '+' : ''}${p.preMarket.change.toFixed(2)}%)`;
+                                        extClass = p.preMarket.change >= 0 ? 'text-green-600' : 'text-red-600';
+                                    } else if (marketPhase === "POST" && p?.postMarket?.price) {
+                                        extStr = `$${p.postMarket.price.toFixed(2)} (${p.postMarket.change >= 0 ? '+' : ''}${p.postMarket.change.toFixed(2)}%)`;
+                                        extClass = p.postMarket.change >= 0 ? 'text-green-600' : 'text-red-600';
+                                    }
+
+                                    return (
+                                        <tr key={symbol} className="hover:bg-slate-50/70 transition-colors">
+                                            <td className="px-5 py-4 font-bold text-slate-900">{symbol}</td>
+                                            <td className="px-5 py-4 font-semibold text-slate-800">${price.toFixed(2)}</td>
+                                            <td className={cn("px-5 py-4 font-medium", isPositive ? 'text-green-500' : isNegative ? 'text-red-500' : 'text-slate-500')}>
+                                                {isPositive ? '+' : ''}{change.toFixed(2)}%
+                                            </td>
+                                            <td className={cn("px-5 py-4 font-medium", extClass)}>
+                                                {extStr}
+                                            </td>
+                                            <td className="px-5 py-4 text-slate-500 text-xs">
+                                                <span className={cn("px-2 py-1 rounded", marketPhase === "REGULAR" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600")}>
+                                                    {marketPhase}
+                                                </span>
+                                            </td>
+                                            <td className="px-5 py-4 text-right">
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="sm"
+                                                    onClick={() => removeSymbol(symbol)}
+                                                    disabled={isRestricted}
+                                                    className="text-slate-400 hover:text-red-500 hover:bg-red-50"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                                {symbols.length === 0 && (
+                                    <tr><td colSpan={6} className="text-center py-8 text-slate-400">暂无自选股</td></tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
 
             {error && (
                 <div className="mt-6 bg-red-50 text-red-600 px-4 py-3 rounded-lg flex items-center">

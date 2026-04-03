@@ -37,15 +37,11 @@ def fetch_quotes():
     # Assuming US market for now as per previous context
     futu_symbols = [f"US.{s}" for s in symbols]
 
-    # Add indices and commodities
-    indices_symbols = ['US.SPX', 'US.IXIC', 'US.DJI', 'US.VIX', 'US.GCmain', 'US.CLmain', 'US.DXmain']
-
     try:
         quote_ctx = OpenQuoteContext(host=HOST, port=PORT)
         
         # Subscribe individually so failure of indices doesn't affect watchlist
         quote_ctx.subscribe(futu_symbols, [SubType.QUOTE], subscribe_push=False)
-        quote_ctx.subscribe(indices_symbols, [SubType.QUOTE], subscribe_push=False)
         
         # Get Market State (using first symbol as reference, usually US.AAPL or similar)
         # We need a US stock to check US market status. 
@@ -78,7 +74,6 @@ def fetch_quotes():
                 market_phase = "CLOSED"
         
         ret, data = quote_ctx.get_market_snapshot(futu_symbols)
-        ret_i, data_i = quote_ctx.get_market_snapshot(indices_symbols)
         
         quote_ctx.close()
 
@@ -121,28 +116,30 @@ def fetch_quotes():
                     }
                 })
             
-            # Process indices data (only if successful)
+            # Fetch indices data using yfinance
             indices_data = []
-            if ret_i == RET_OK:
-                for _, row in data_i.iterrows():
-                    code = row['code'].split('.')[-1]
-                    last = row['last_price']
-                    prev_close = row['prev_close_price']
-                    
-                    change = 0
-                    change_rate = 0
-                    if prev_close > 0:
+            try:
+                import yfinance as yf
+                mapping = {'^SPX':'SPX', '^IXIC':'IXIC', '^DJI':'DJI', '^VIX':'VIX', 'GC=F':'GCmain', 'CL=F':'CLmain', 'DX-Y.NYB':'DXmain'}
+                y_symbols = list(mapping.keys())
+                tickers = yf.Tickers(' '.join(y_symbols))
+                
+                # Fetch history sequentially to avoid large thread pool overhead for 7 symbols
+                for sym, t in tickers.tickers.items():
+                    hist = t.history(period="5d")
+                    if not hist.empty and len(hist) >= 2:
+                        last = float(hist['Close'].iloc[-1])
+                        prev_close = float(hist['Close'].iloc[-2])
                         change = last - prev_close
                         change_rate = (change / prev_close) * 100
-                        
-                    indices_data.append({
-                        "symbol": code,
-                        "price": last,
-                        "change": change_rate,
-                        "changeAmount": change
-                    })
-            else:
-                print(f"Indices fetch failed: {data_i}", file=sys.stderr)
+                        indices_data.append({
+                            "symbol": mapping.get(sym, sym),
+                            "price": last,
+                            "change": change_rate,
+                            "changeAmount": change
+                        })
+            except Exception as e:
+                print(f"Indices fetch failed: {e}", file=sys.stderr)
             
             
             # wrapper object to include global market state
