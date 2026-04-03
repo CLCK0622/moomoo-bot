@@ -174,10 +174,18 @@ def main():
 
             # ===== K 线更新（每 60 秒一次）=====
             if now_ts - last_kline_update >= KLINE_UPDATE_INTERVAL:
+                current_prices = {}
                 for symbol in watchlist:
                     strategy.update_kline_data(symbol)
+                    df_1m = strategy.kline_cache_1m.get(symbol)
+                    if df_1m is not None and not df_1m.empty:
+                        current_prices[symbol] = df_1m['close'].iloc[-1]
+
                 last_kline_update = now_ts
                 logger.debug(f"K线数据已更新（{len(watchlist)} 只股票）")
+                
+                # 输出交易日志到 JSON
+                state_manager.generate_trading_logs(daily_total_cash, current_prices)
 
             # 检查挂单状态
             for symbol in watchlist:

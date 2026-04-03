@@ -37,11 +37,16 @@ def fetch_quotes():
     # Assuming US market for now as per previous context
     futu_symbols = [f"US.{s}" for s in symbols]
 
+    # Add indices and commodities
+    # SPX, Nasdaq 100/Composite, Dow, VIX, Gold (GCmain), Crude Oil (CLmain), USD Index (DXmain)
+    indices_symbols = ['US.SPX', 'US.IXIC', 'US.DJI', 'US.VIX', 'US.GCmain', 'US.CLmain', 'US.DXmain']
+    all_symbols = futu_symbols + indices_symbols
+
     try:
         quote_ctx = OpenQuoteContext(host=HOST, port=PORT)
         
         # Subscribe to quotes to ensure we have permission/access
-        ret_sub, err_message = quote_ctx.subscribe(futu_symbols, [SubType.QUOTE], subscribe_push=False)
+        ret_sub, err_message = quote_ctx.subscribe(all_symbols, [SubType.QUOTE], subscribe_push=False)
         
         # Get Market State (using first symbol as reference, usually US.AAPL or similar)
         # We need a US stock to check US market status. 
@@ -73,7 +78,7 @@ def fetch_quotes():
             else:
                 market_phase = "CLOSED"
         
-        ret, data = quote_ctx.get_market_snapshot(futu_symbols)
+        ret, data = quote_ctx.get_market_snapshot(all_symbols)
         
         quote_ctx.close()
 
@@ -116,12 +121,24 @@ def fetch_quotes():
                     }
                 })
             
+            # Separate watchlist from indices
+            watchlist_data = []
+            indices_data = []
+            indices_codes = [s.split('.')[-1] for s in indices_symbols]
+            
+            for item in results:
+                if item["symbol"] in indices_codes:
+                    indices_data.append(item)
+                else:
+                    watchlist_data.append(item)
+            
             # wrapper object to include global market state
             print(json.dumps({
                 "status": "ok", 
                 "market_state": str(market_state),
                 "market_phase": market_phase,
-                "data": results
+                "data": watchlist_data,
+                "indices": indices_data
             }))
         else:
             # Output the error to stdout so the API can read it

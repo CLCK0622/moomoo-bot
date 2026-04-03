@@ -159,6 +159,28 @@ class ORBKeltnerStrategy:
                          position.pending_sell_order_id = None
                          logger.info(f"{symbol} 卖单全部成交")
                          
+                         # 处理收益和日志数据
+                         sold_price = status_info['avg_price']
+                         sold_qty = status_info['filled_qty']
+                         reason = position.last_sell_reason
+                         
+                         position.realized_pnl += (sold_price - position.entry_price) * sold_qty
+                         
+                         if position.sell_price_1 == 0.0:
+                             # 第一笔卖出
+                             if reason == "TP2减仓":
+                                 position.sell_price_1 = sold_price
+                                 position.sell_reason = "tp1"
+                             else:
+                                 # 只有一笔卖出的情况
+                                 position.sell_price = sold_price
+                                 position.sell_reason = reason
+                         else:
+                             # 已经有第一笔卖出记录，则这必定属于"tp1"之后的第二笔卖出
+                             position.sell_price_2 = sold_price
+                             position.sell_reason = "tp1" # 保证整体原因是 tp1
+                         
+                         
                 elif status in [OrderStatus.FAILED, OrderStatus.CANCELLED_ALL, OrderStatus.CANCELLED_PART]:
                     # 失败：加回持仓（如果之前预扣了）- 这里简化处理，因为我们是市价单，失败概率低
                     # 如果需要更严谨，应该在 execute_exit 时不扣，在这里扣。
@@ -401,6 +423,7 @@ class ORBKeltnerStrategy:
              return
 
         logger.info(f"{symbol} 执行平仓: 数量={quantity}, 原因={reason}")
+        position.last_sell_reason = reason
 
         # 市价卖出
         order_id = self.trader.market_sell(self.format_symbol(symbol), quantity)

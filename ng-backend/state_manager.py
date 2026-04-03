@@ -35,8 +35,15 @@ class PositionState:
     pending_sell_order_id: Optional[str] = None  # 待成交卖单ID
 
     # 风控
-    max_drawdown: float = 0.0           # 最大浮亏比例
     max_profit_price: float = 0.0       # TP2 后追踪的最高价格
+
+    # 交易日志需要的记录
+    last_sell_reason: str = ""          # 等待成交的卖出原因
+    sell_reason: str = ""               # 实际展示的卖出原因 (如 tp1, 止损等)
+    sell_price_1: float = 0.0           # 第一笔卖出价 (如果是分批)
+    sell_price_2: float = 0.0           # 第二笔卖出价 (如果是分批)
+    sell_price: float = 0.0             # 单次卖出价
+    realized_pnl: float = 0.0           # 已实现盈亏金额 (美元)
 
     def reset(self):
         """重置状态（用于次日重新开始）"""
@@ -55,6 +62,12 @@ class PositionState:
         self.pending_sell_order_id = None
         self.max_drawdown = 0.0
         self.max_profit_price = 0.0
+        self.last_sell_reason = ""
+        self.sell_reason = ""
+        self.sell_price_1 = 0.0
+        self.sell_price_2 = 0.0
+        self.sell_price = 0.0
+        self.realized_pnl = 0.0
 
     def set_orb(self, orb_high: float, orb_low: float, orb_mid: float):
         """锁定 ORB 数据"""
@@ -139,4 +152,71 @@ class StateManager:
         for pos in self.positions.values():
             pos.reset()
         self.opened_positions_count = 0
+
+    def generate_trading_logs(self, daily_total_cash: float, current_prices: Dict[str, float]) -> None:
+        """
+        生成当前状态的交易日志并保存到 trading_logs.json
+        """
+        import json
+        from datetime import datetime
+
+        logs = []
+        total_realized_pnl = 0.0
+
+        for symbol, pos in self.positions.items():
+            if pos.state == config.STATE_IDLE and pos.initial_quantity == 0:
+                continue # 未开仓过的股票
+
+            # 计算 PNL
+            cur_price = current_prices.get(symbol, pos.entry_price)
+            # 当前浮动盈亏 = (当前价 - 入场价) * 剩余持仓
+            floating_pnl = (cur_price - pos.entry_price) * pos.quantity
+            # 总盈亏 = 已实现盈亏 + 浮动盈亏
+            total_trade_pnl = pos.realized_pnl + floating_pnl
+            
+            # 使用初始成本计算该笔交易的收益率
+            initial_cost = pos.entry_price * pos.initial_quantity
+            trade_return_rate = total_trade_pnl / initial_cost if initial_cost > 0 else 0.0
+
+            # 累计总实盘盈亏
+            total_realized_pnl += pos.realized_pnl
+
+            # 构造日志记录
+            item = {
+                "股票代码": symbol.split('.')[-1], # US.AAPL -> AAPL
+                "买入价格": round(pos.entry_price, 2),
+                "卖出原因": pos.sell_reason,
+                "收益率": f"{trade_return_rate * 100:.2f}%"
+            }
+
+            if pos.sell_reason == "tp1":
+                if pos.sell_price_1 > 0:
+                    item["卖出价格 1"] = round(pos.sell_price_1, 2)
+                if pos.sell_price_2 > 0:
+                    item["卖出价格 2"] = round(pos.sell_price_2, 2)
+            elif pos.sell_reason:
+                if pos.sell_price > 0:
+                    item["卖出价格"] = round(pos.sell_price, 2)
+                # 只有一笔卖出时，也可以显示两个卖出价格的空字段或者不显示，这里按照要求显示一个
+            
+            logs.append(item)
+
+        # 当日总收益率 (Realized PNL / 初始本金)
+        if daily_total_cash and daily_total_cash > 0:
+            today_return = total_realized_pnl / daily_total_cash
+        else:
+            today_return = 0.0
+
+        res = {
+            "date": datetime.now(config.ET_TIMEZONE).strftime("%Y-%m-%d"),
+            "今日总收益率": f"{today_return * 100:.2f}%",
+            "logs": logs
+        }
+
+        try:
+            with open("trading_logs.json", "w", encoding="utf-8") as f:
+                json.dump(res, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            print(f"写入 trading_logs.json 失败: {e}")
+
 

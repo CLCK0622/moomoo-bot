@@ -31,13 +31,27 @@ interface PriceData {
 interface ApiResponse {
     status: "ok" | "error";
     data?: PriceData[];
+    indices?: PriceData[];
     market_phase?: string;
     message?: string;
 }
 
+const INDEX_NAMES: Record<string, string> = {
+    'SPX': '标普500',
+    'IXIC': '纳斯达克',
+    'DJI': '道琼斯',
+    'VIX': '恐慌指数',
+    'GCmain': '黄金',
+    'CLmain': '原油',
+    'DXmain': '美元',
+    'DXY': '美元'
+};
+
 export function Watchlist() {
     const [symbols, setSymbols] = useState<string[]>([]);
     const [prices, setPrices] = useState<Record<string, PriceData>>({});
+    const [indices, setIndices] = useState<PriceData[]>([]);
+    const [tradingLogs, setTradingLogs] = useState<any>(null);
     const [newSymbol, setNewSymbol] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [isRestricted, setIsRestricted] = useState(false);
@@ -172,6 +186,18 @@ export function Watchlist() {
         }
     };
 
+    const fetchTradingLogs = useCallback(async () => {
+        try {
+            const res = await fetch("/api/trading-logs");
+            if (res.ok) {
+                const data = await res.json();
+                setTradingLogs(data);
+            }
+        } catch (e) {
+            console.error("Failed to fetch logs:", e);
+        }
+    }, []);
+
     const fetchPrices = useCallback(async () => {
         setIsRefreshing(true);
         setApiError(null);
@@ -189,6 +215,9 @@ export function Watchlist() {
                     newPrices[p.symbol] = p;
                 });
                 setPrices(newPrices);
+                if (response.indices) {
+                    setIndices(response.indices);
+                }
                 setLastUpdated(new Date());
                 if (response.market_phase) {
                     setMarketPhase(response.market_phase);
@@ -205,10 +234,14 @@ export function Watchlist() {
     useEffect(() => {
         if (symbols.length > 0) {
             fetchPrices(); // Initial fetch
-            const interval = setInterval(fetchPrices, 30000);
+            fetchTradingLogs();
+            const interval = setInterval(() => {
+                fetchPrices();
+                fetchTradingLogs();
+            }, 30000);
             return () => clearInterval(interval);
         }
-    }, [symbols, fetchPrices]);
+    }, [symbols, fetchPrices, fetchTradingLogs]);
 
     const updateWatchlist = async (newSymbols: string[]) => {
         try {
@@ -257,6 +290,89 @@ export function Watchlist() {
 
     return (
         <div className="max-w-5xl mx-auto p-6 md:p-8">
+            {/* Market Indices Top Bar */}
+            {indices && indices.length > 0 && (
+                <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 mb-8 -mx-4 px-4 md:mx-0 md:px-0 hide-scrollbar">
+                    {indices.map((idx) => {
+                        const name = INDEX_NAMES[idx.symbol] || idx.symbol;
+                        const isPositive = idx.change >= 0;
+                        return (
+                            <div key={idx.symbol} className="min-w-[140px] bg-white rounded-xl p-3 shadow-sm border border-slate-100 shrink-0">
+                                <div className="text-xs text-slate-500 font-medium mb-1">{name}</div>
+                                <div className="text-lg font-bold text-slate-900">{idx.price.toFixed(2)}</div>
+                                <div className={`text-xs font-medium flex items-center ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                                    {isPositive ? '+' : ''}{idx.change.toFixed(2)}%
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+
+            {/* Trading Logs Section */}
+            {tradingLogs && (
+                <div className="mb-10">
+                    <h2 className="text-xl font-bold mb-4 text-slate-800">
+                        {tradingLogs.date === new Date().toLocaleDateString('en-CA') 
+                            ? "今日交易日志" 
+                            : `${tradingLogs.date} 交易日志 (上一个交易日)`}
+                    </h2>
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div className="p-4 border-b border-slate-100 flex justify-between bg-slate-50/50">
+                            <span className="font-semibold text-slate-600">
+                                当日总收益率 (已打平): 
+                                <span className={cn("ml-2", tradingLogs["今日总收益率"]?.startsWith('-') ? 'text-red-500' : 'text-green-500')}>
+                                    {tradingLogs["今日总收益率"] || '0.00%'}
+                                </span>
+                            </span>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm whitespace-nowrap">
+                                <thead className="bg-slate-50 text-slate-600 border-b border-slate-100">
+                                    <tr>
+                                        <th className="px-4 py-3 font-medium">股票代码</th>
+                                        <th className="px-4 py-3 font-medium">买入价格</th>
+                                        <th className="px-4 py-3 font-medium">卖出原因</th>
+                                        <th className="px-4 py-3 font-medium">卖出首价</th>
+                                        <th className="px-4 py-3 font-medium">卖出次价</th>
+                                        <th className="px-4 py-3 font-medium">独笔卖出价</th>
+                                        <th className="px-4 py-3 font-medium">单票收益率</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {tradingLogs.logs && tradingLogs.logs.length > 0 ? (
+                                        tradingLogs.logs.map((log: any, i: number) => (
+                                            <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                                                <td className="px-4 py-3 font-semibold text-slate-900">{log["股票代码"]}</td>
+                                                <td className="px-4 py-3 text-slate-700">${log["买入价格"]}</td>
+                                                <td className="px-4 py-3">
+                                                    <span className={cn(
+                                                        "px-2 py-1 bg-slate-100 rounded text-slate-700 text-xs font-medium",
+                                                        log["卖出原因"] === 'tp1' ? 'bg-blue-50 text-blue-700' : ''
+                                                    )}>
+                                                        {log["卖出原因"] || '-'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-slate-700">{log["卖出价格 1"] ? `$${log["卖出价格 1"]}` : '-'}</td>
+                                                <td className="px-4 py-3 text-slate-700">{log["卖出价格 2"] ? `$${log["卖出价格 2"]}` : '-'}</td>
+                                                <td className="px-4 py-3 text-slate-700">{log["卖出价格"] ? `$${log["卖出价格"]}` : '-'}</td>
+                                                <td className={cn("px-4 py-3 font-medium", log["收益率"]?.startsWith('-') ? 'text-red-500' : 'text-green-500')}>
+                                                    {log["收益率"]}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={7} className="px-4 py-8 text-center text-slate-400">当日暂无交易记录</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
                     <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight flex items-center gap-4">
