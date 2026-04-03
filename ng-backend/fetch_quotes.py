@@ -38,15 +38,14 @@ def fetch_quotes():
     futu_symbols = [f"US.{s}" for s in symbols]
 
     # Add indices and commodities
-    # SPX, Nasdaq 100/Composite, Dow, VIX, Gold (GCmain), Crude Oil (CLmain), USD Index (DXmain)
     indices_symbols = ['US.SPX', 'US.IXIC', 'US.DJI', 'US.VIX', 'US.GCmain', 'US.CLmain', 'US.DXmain']
-    all_symbols = futu_symbols + indices_symbols
 
     try:
         quote_ctx = OpenQuoteContext(host=HOST, port=PORT)
         
-        # Subscribe to quotes to ensure we have permission/access
-        ret_sub, err_message = quote_ctx.subscribe(all_symbols, [SubType.QUOTE], subscribe_push=False)
+        # Subscribe individually so failure of indices doesn't affect watchlist
+        quote_ctx.subscribe(futu_symbols, [SubType.QUOTE], subscribe_push=False)
+        quote_ctx.subscribe(indices_symbols, [SubType.QUOTE], subscribe_push=False)
         
         # Get Market State (using first symbol as reference, usually US.AAPL or similar)
         # We need a US stock to check US market status. 
@@ -78,7 +77,8 @@ def fetch_quotes():
             else:
                 market_phase = "CLOSED"
         
-        ret, data = quote_ctx.get_market_snapshot(all_symbols)
+        ret, data = quote_ctx.get_market_snapshot(futu_symbols)
+        ret_i, data_i = quote_ctx.get_market_snapshot(indices_symbols)
         
         quote_ctx.close()
 
@@ -86,8 +86,8 @@ def fetch_quotes():
             # Debug: Print all columns to spy on available data
             # logging.debug(f"Columns: {data.columns.tolist()}") 
             
-            # Process data
-            results = []
+            # Process watchlist data
+            watchlist_data = []
             for _, row in data.iterrows():
                 code = row['code'].split('.')[-1]
                 last = row['last_price']
@@ -106,7 +106,7 @@ def fetch_quotes():
                     change = last - prev_close
                     change_rate = (change / prev_close) * 100
                     
-                results.append({
+                watchlist_data.append({
                     "symbol": code,
                     "price": last,
                     "change": change_rate,
@@ -121,16 +121,29 @@ def fetch_quotes():
                     }
                 })
             
-            # Separate watchlist from indices
-            watchlist_data = []
+            # Process indices data (only if successful)
             indices_data = []
-            indices_codes = [s.split('.')[-1] for s in indices_symbols]
+            if ret_i == RET_OK:
+                for _, row in data_i.iterrows():
+                    code = row['code'].split('.')[-1]
+                    last = row['last_price']
+                    prev_close = row['prev_close_price']
+                    
+                    change = 0
+                    change_rate = 0
+                    if prev_close > 0:
+                        change = last - prev_close
+                        change_rate = (change / prev_close) * 100
+                        
+                    indices_data.append({
+                        "symbol": code,
+                        "price": last,
+                        "change": change_rate,
+                        "changeAmount": change
+                    })
+            else:
+                print(f"Indices fetch failed: {data_i}", file=sys.stderr)
             
-            for item in results:
-                if item["symbol"] in indices_codes:
-                    indices_data.append(item)
-                else:
-                    watchlist_data.append(item)
             
             # wrapper object to include global market state
             print(json.dumps({
