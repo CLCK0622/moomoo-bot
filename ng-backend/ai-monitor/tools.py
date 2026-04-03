@@ -95,7 +95,7 @@ def search_nitter_broad(queries):
 
 # --- 4. Market Data (综合行情) ---
 # 这一部分保持你之前最新的全量数据逻辑
-MOOMOO_HOST = '192.168.64.1'
+MOOMOO_HOST = '127.0.0.1'
 MOOMOO_PORT = 11111
 
 
