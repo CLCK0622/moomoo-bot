@@ -49,8 +49,13 @@ def test_account_cash():
         print(f"  data =\n{data}\n")
         
         if ret == 0 and hasattr(data, 'empty') and not data.empty:
-            cash = data.iloc[0]['cash']
-            print(f"  ✅ 可用现金 (cash): ${cash:.2f}")
+            row = data.iloc[0]
+            if 'us_cash' in data.columns and getattr(config, 'MARKET', 'US') == 'US':
+                cash = row['us_cash']
+                print(f"  ✅ 可用现金 (us_cash 自动识别为美元): ${cash:.2f}")
+            else:
+                cash = row['cash']
+                print(f"  ✅ 可用现金 (cash): ${cash:.2f}")
             
             # 打印更多字段帮助调试
             print(f"\n  所有字段:")
