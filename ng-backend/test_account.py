@@ -73,7 +73,12 @@ def test_account_cash():
     print(f"\n[3/3] 模拟开仓计算...")
     try:
         if ret == 0 and hasattr(data, 'empty') and not data.empty:
-            cash = data.iloc[0]['cash']
+            row = data.iloc[0]
+            if 'us_cash' in data.columns and getattr(config, 'MARKET', 'US') == 'US':
+                cash = row['us_cash']
+            else:
+                cash = row['cash']
+                
             buy_amount = (cash * config.POSITION_SIZE_RATIO) / config.MARGIN_FREEZE_RATIO
             print(f"  总资金: ${cash:.2f}")
             print(f"  POSITION_SIZE_RATIO: {config.POSITION_SIZE_RATIO}")
