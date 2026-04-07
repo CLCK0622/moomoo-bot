@@ -161,7 +161,13 @@ class MoomooTrader:
         try:
             ret, data = self.trade_ctx.accinfo_query(trd_env=self.trd_env)
             if ret == 0 and not data.empty:
-                cash = data.iloc[0]['cash']
+                row = data.iloc[0]
+                # 这里针对美股，优先获取美元现金 us_cash
+                if 'us_cash' in data.columns and getattr(config, 'MARKET', 'US') == 'US':
+                    cash = row['us_cash']
+                else:
+                    cash = row['cash']
+                
                 logger.info(f"账户可用现金: ${cash:.2f}")
                 return cash
             return 0.0
