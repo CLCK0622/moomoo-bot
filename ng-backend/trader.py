@@ -56,6 +56,15 @@ class MoomooTrader:
                 security_firm=SecurityFirm.FUTUSG  # Moomoo SG
             )
 
+            # ===== 实盘自动解锁交易密码 =====
+            if self.trd_env == TrdEnv.REAL:
+                ret, data = self.trade_ctx.unlock_trade(config.TRADE_PASSWORD, password_md5=None, is_unlock=True)
+                if ret != 0:
+                    logger.error(f"解锁实盘交易失败，请检查密码是否正确: {data}")
+                    return False
+                logger.info("✅ 实盘交易已成功解锁")
+            # ===============================
+
             logger.info("成功连接到 Moomoo OpenD")
             return True
 

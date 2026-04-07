@@ -1,16 +1,21 @@
 """
 配置文件 - 策略参数与环境设置
 """
+import os
 import pytz
 from datetime import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ==================== 交易环境配置 ====================
 # Moomoo 配置
 MOOMOO_HOST = '127.0.0.1'  # OpenD 服务地址
 MOOMOO_PORT = 11111        # OpenD 端口
 MARKET = 'US'              # 美股市场
-TRADE_ENV = 1              # 0=真实环境, 1=模拟环境（先用模拟盘）
+TRADE_ENV = 0              # 0=真实环境, 1=模拟环境
 SECURITY_FIRM = 2          # 2=Moomoo SG
+TRADE_PASSWORD = os.getenv('TRADE_PASSWORD', '')  # 在 .env 中填入你的富途交易密码
 
 # ==================== 时区与交易时段 ====================
 ET_TIMEZONE = pytz.timezone('America/New_York')  # 美东时区
