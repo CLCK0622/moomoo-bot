@@ -202,8 +202,7 @@ def main():
             if is_force_close_time(current_time) and not force_closed:
                 strategy.force_close_all()
                 force_closed = True
-                logger.info("收盘清仓完成，程序即将退出")
-                break
+                logger.info("已触发收盘清仓，将继续运行以等待订单成交日志生成...")
 
             # 使用开盘初次获取的资金进行开仓计算
             total_cash = daily_total_cash
