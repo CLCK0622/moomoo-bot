@@ -35,6 +35,7 @@ class PositionState:
     pending_sell_order_id: Optional[str] = None  # 待成交卖单ID
 
     # 风控
+    max_drawdown: float = 0.0           # 最大浮亏比例
     max_profit_price: float = 0.0       # TP2 后追踪的最高价格
 
     # 交易日志需要的记录
