@@ -126,29 +126,46 @@ def fetch_quotes():
                 # Fetch history sequentially to avoid large thread pool overhead for 7 symbols
                 for sym, t in tickers.tickers.items():
                     hist = t.history(period="5d")
-                    if not hist.empty and len(hist) >= 2:
-                        last = float(hist['Close'].iloc[-1])
-                        prev_close = float(hist['Close'].iloc[-2])
-                        change = last - prev_close
-                        change_rate = (change / prev_close) * 100
-                        indices_data.append({
-                            "symbol": mapping.get(sym, sym),
-                            "price": last,
-                            "change": change_rate,
-                            "changeAmount": change
-                        })
+                    if not hist.empty and 'Close' in hist:
+                        # Drop missing data which causes NaN downstream
+                        hist = hist.dropna(subset=['Close'])
+                        if len(hist) >= 2:
+                            last = float(hist['Close'].iloc[-1])
+                            prev_close = float(hist['Close'].iloc[-2])
+                            
+                            # Double check it is not nan
+                            if pd.notna(last) and pd.notna(prev_close):
+                                change = last - prev_close
+                                change_rate = (change / prev_close) * 100
+                                indices_data.append({
+                                    "symbol": mapping.get(sym, sym),
+                                    "price": last,
+                                    "change": change_rate,
+                                    "changeAmount": change
+                                })
             except Exception as e:
-                print(f"Indices fetch failed: {e}", file=sys.stderr)
+                pass # suppress stderr to avoid pm2 logging
             
+            
+            import math
+            def sanitize_json(obj):
+                if isinstance(obj, float) and math.isnan(obj):
+                    return None
+                elif isinstance(obj, dict):
+                    return {k: sanitize_json(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [sanitize_json(v) for v in obj]
+                return obj
             
             # wrapper object to include global market state
-            print(json.dumps({
+            payload = {
                 "status": "ok", 
                 "market_state": str(market_state),
                 "market_phase": market_phase,
                 "data": watchlist_data,
                 "indices": indices_data
-            }))
+            }
+            print(json.dumps(sanitize_json(payload)))
         else:
             # Output the error to stdout so the API can read it
             print(json.dumps({"status": "error", "message": str(data)}))
