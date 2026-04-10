@@ -21986,3 +21986,1175 @@ ResourceWarning: Enable tracemalloc to get the object allocation traceback
   ddgs = DDGS()
 /home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
   ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/venv/lib/python3.12/site-packages/futu/common/network_manager.py:185: DeprecationWarning: setDaemon() is deprecated, set the daemon attribute instead
+  self._thread.setDaemon(True)
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/venv/lib/python3.12/site-packages/futu/common/network_manager.py:185: DeprecationWarning: setDaemon() is deprecated, set the daemon attribute instead
+  self._thread.setDaemon(True)
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/venv/lib/python3.12/site-packages/futu/common/network_manager.py:185: DeprecationWarning: setDaemon() is deprecated, set the daemon attribute instead
+  self._thread.setDaemon(True)
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/venv/lib/python3.12/site-packages/futu/common/network_manager.py:185: DeprecationWarning: setDaemon() is deprecated, set the daemon attribute instead
+  self._thread.setDaemon(True)
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/venv/lib/python3.12/site-packages/futu/common/network_manager.py:185: DeprecationWarning: setDaemon() is deprecated, set the daemon attribute instead
+  self._thread.setDaemon(True)
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/venv/lib/python3.12/site-packages/futu/common/network_manager.py:185: DeprecationWarning: setDaemon() is deprecated, set the daemon attribute instead
+  self._thread.setDaemon(True)
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/venv/lib/python3.12/site-packages/futu/common/network_manager.py:185: DeprecationWarning: setDaemon() is deprecated, set the daemon attribute instead
+  self._thread.setDaemon(True)
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
+/home/clck/moomoo-bot/ng-backend/ai-monitor/tools.py:47: RuntimeWarning: This package (`duckduckgo_search`) has been renamed to `ddgs`! Use `pip install ddgs` instead.
+  ddgs = DDGS()
