@@ -163,6 +163,7 @@ class StateManager:
 
         logs = []
         total_realized_pnl = 0.0
+        total_floating_pnl = 0.0
 
         for symbol, pos in self.positions.items():
             if pos.state == config.STATE_IDLE and pos.initial_quantity == 0:
@@ -172,6 +173,7 @@ class StateManager:
             cur_price = current_prices.get(symbol, pos.entry_price)
             # 当前浮动盈亏 = (当前价 - 入场价) * 剩余持仓
             floating_pnl = (cur_price - pos.entry_price) * pos.quantity
+            total_floating_pnl += floating_pnl
             # 总盈亏 = 已实现盈亏 + 浮动盈亏
             total_trade_pnl = pos.realized_pnl + floating_pnl
             
@@ -202,15 +204,18 @@ class StateManager:
             
             logs.append(item)
 
-        # 当日总收益率 (Realized PNL / 初始本金)
+        # 当日总收益率
         if daily_total_cash and daily_total_cash > 0:
-            today_return = total_realized_pnl / daily_total_cash
+            today_realized_return = total_realized_pnl / daily_total_cash
+            today_floating_return = (total_realized_pnl + total_floating_pnl) / daily_total_cash
         else:
-            today_return = 0.0
+            today_realized_return = 0.0
+            today_floating_return = 0.0
 
         res = {
             "date": datetime.now(config.ET_TIMEZONE).strftime("%Y-%m-%d"),
-            "今日总收益率": f"{today_return * 100:.2f}%",
+            "今日已实现收益率": f"{today_realized_return * 100:.2f}%",
+            "今日浮动总收益率": f"{today_floating_return * 100:.2f}%",
             "logs": logs
         }
 

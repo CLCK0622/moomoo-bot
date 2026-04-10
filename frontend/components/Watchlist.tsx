@@ -338,12 +338,20 @@ export function Watchlist() {
                     </h2>
                     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                         <div className="p-4 border-b border-slate-100 flex justify-between bg-slate-50/50">
-                            <span className="font-semibold text-slate-600">
-                                当日总收益率 (已打平): 
-                                <span className={cn("ml-2", tradingLogs["今日总收益率"]?.startsWith('-') ? 'text-red-500' : 'text-green-500')}>
-                                    {tradingLogs["今日总收益率"] || '0.00%'}
+                            <div className="flex gap-6">
+                                <span className="font-semibold text-slate-600">
+                                    当日浮动总收益: 
+                                    <span className={cn("ml-2 font-bold", tradingLogs["今日浮动总收益率"]?.startsWith('-') ? 'text-red-500' : 'text-green-500')}>
+                                        {tradingLogs["今日浮动总收益率"] || '0.00%'}
+                                    </span>
                                 </span>
-                            </span>
+                                <span className="font-semibold text-slate-600">
+                                    当前已实现收益: 
+                                    <span className={cn("ml-2 font-bold", tradingLogs["今日已实现收益率"]?.startsWith('-') ? 'text-red-500' : 'text-green-500')}>
+                                        {tradingLogs["今日已实现收益率"] || '0.00%'}
+                                    </span>
+                                </span>
+                            </div>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm whitespace-nowrap">
