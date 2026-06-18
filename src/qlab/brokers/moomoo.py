@@ -231,7 +231,10 @@ class MoomooTradeGateway:
             raise MoomooConfigError(f"unlock_trade failed: {data}")
         self._unlocked = True
         # unlock PIN is low-entropy (often 6 digits) — mask it fully, keep no tail.
-        self.log.info("trade account unlocked (pwd=%s)", mask_secret(self.config.unlock_pwd, keep=0))
+        self.log.info(
+            "trade account unlocked (pwd=%s)",
+            mask_secret(self.config.unlock_pwd, keep=0),
+        )
 
     # --- actions --------------------------------------------------------------
     def account_info(self) -> dict:

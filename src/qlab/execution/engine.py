@@ -81,11 +81,31 @@ class ExecutionEngine:
         self.risk.register_equity(equity_before)
 
         positions = self.broker.positions()
-        # Build the desired order per signalled symbol.
         target = {s.symbol: s.target_weight for s in sigset.signals}
-        gross_now = sum(
-            abs(p.qty * marks.get(s, p.avg_price)) for s, p in positions.items()
-        ) / equity_before if equity_before else 0.0
+
+        # Projected book (symbol -> qty) carried across the whole cycle so gross
+        # exposure and position count are validated *cumulatively* — each order is
+        # checked against the book left by the orders already accepted this cycle,
+        # not against a single pre-cycle snapshot. Holdings not in the signal set
+        # stay in the book and keep contributing to gross / position count.
+        book: dict[str, float] = {s: p.qty for s, p in positions.items()}
+
+        def price_of(s: str) -> float | None:
+            p = positions.get(s)
+            return marks.get(s, p.avg_price if p else None)
+
+        def gross_of(bk: dict[str, float]) -> float:
+            if not equity_before:
+                return 0.0
+            total = 0.0
+            for s, q in bk.items():
+                px = price_of(s)
+                if px:
+                    total += abs(q * px)
+            return total / equity_before
+
+        def n_positions_of(bk: dict[str, float]) -> int:
+            return len([s for s, q in bk.items() if abs(q) > 1e-9])
 
         for sig in sigset.signals:
             sym = sig.symbol
@@ -94,54 +114,82 @@ class ExecutionEngine:
                 record.skipped.append({"symbol": sym, "reason": "no mark price"})
                 continue
 
-            # Abnormal-market / staleness halt for this symbol's quote.
+            # Abnormal-market / staleness halt for this symbol's quote (latches).
             mkt = self.risk.check_market(
                 Quote(sym, price, prev_closes.get(sym), quote_ages.get(sym, 0.0))
             )
 
-            cur_qty = positions.get(sym).qty if sym in positions else 0.0
-            cur_weight = (cur_qty * price) / equity_before if equity_before else 0.0
+            cur_qty = book.get(sym, 0.0)
             target_weight = self.risk_clamp(target.get(sym, 0.0))
             target_qty = self._round_lot((target_weight * equity_before) / price)
-            delta = target_qty - cur_qty
-            if abs(delta) < self.lot:
+            if abs(target_qty - cur_qty) < self.lot:
                 record.skipped.append({"symbol": sym, "reason": "within lot tolerance"})
                 continue
 
-            side = "BUY" if delta > 0 else "SELL"
-            increases = abs(target_qty) > abs(cur_qty) and (target_qty * cur_qty >= 0)
-            weight_after = target_weight
-            gross_after = gross_now - abs(cur_weight) + abs(weight_after)
-            n_after = len([s for s, w in target.items() if abs(w) > 1e-9])
+            # A direction flip (long↔short) is split into two legs: first close to
+            # flat (a de-risk leg, exempt), then open the full reverse position (an
+            # increase leg that must clear every cap). Treating the net delta as one
+            # order would mis-classify the flip as "not increasing exposure" (the
+            # qty crosses zero) and let an arbitrarily large reverse position bypass
+            # the position-weight / gross / intraday gates entirely.
+            if cur_qty != 0.0 and target_qty != 0.0 and (cur_qty > 0) != (target_qty > 0):
+                legs = [(cur_qty, 0.0), (0.0, target_qty)]
+            else:
+                legs = [(cur_qty, target_qty)]
 
-            if not mkt.allowed and increases:
-                record.rejected.append(
-                    {"symbol": sym, "side": side, "qty": abs(delta), "reason": mkt.reason}
+            for from_qty, to_qty in legs:
+                leg_delta = to_qty - from_qty
+                if abs(leg_delta) < self.lot:
+                    continue
+                side = "BUY" if leg_delta > 0 else "SELL"
+                increases = abs(to_qty) > abs(from_qty)
+                weight_after = (to_qty * price) / equity_before if equity_before else 0.0
+                projected = dict(book)
+                if abs(to_qty) > 1e-9:
+                    projected[sym] = to_qty
+                else:
+                    projected.pop(sym, None)
+                gross_after = gross_of(projected)
+                n_after = n_positions_of(projected)
+
+                if not mkt.allowed and increases:
+                    record.rejected.append(
+                        {"symbol": sym, "side": side, "qty": abs(leg_delta), "reason": mkt.reason}
+                    )
+                    continue
+
+                decision = self.risk.pretrade_check(
+                    increases_exposure=increases,
+                    symbol_weight_after=weight_after,
+                    gross_after=gross_after,
+                    n_positions_after=n_after,
+                    intraday_pnl_pct=intraday_pnl_pct,
                 )
-                continue
+                if not decision.allowed:
+                    record.rejected.append(
+                        {"symbol": sym, "side": side, "qty": abs(leg_delta),
+                         "reason": decision.reason}
+                    )
+                    continue
 
-            decision = self.risk.pretrade_check(
-                increases_exposure=increases,
-                symbol_weight_after=weight_after,
-                gross_after=gross_after,
-                n_positions_after=n_after,
-                intraday_pnl_pct=intraday_pnl_pct,
-            )
-            if not decision.allowed:
-                record.rejected.append(
-                    {"symbol": sym, "side": side, "qty": abs(delta), "reason": decision.reason}
-                )
-                continue
+                # Accepted: commit the projection so subsequent orders this cycle
+                # accumulate against it.
+                prev_book = book
+                book = projected
 
-            if self.mode == "dry_run":
-                record.filled.append(
-                    {"symbol": sym, "side": side, "qty": abs(delta), "price": price,
-                     "status": "dry_run"}
-                )
-                continue
+                if self.mode == "dry_run":
+                    record.filled.append(
+                        {"symbol": sym, "side": side, "qty": abs(leg_delta), "price": price,
+                         "status": "dry_run"}
+                    )
+                    continue
 
-            result = self.broker.place_market_order(sym, side, abs(delta), price)
-            self._record_result(record, result)
+                result = self.broker.place_market_order(sym, side, abs(leg_delta), price)
+                self._record_result(record, result)
+                if result.status != "filled":
+                    # Broker rejected the fill — roll the projection back so the
+                    # cumulative book reflects only orders that actually filled.
+                    book = prev_book
 
         record.equity_after = self.broker.equity(marks)
         record.halted = self.risk.halted
