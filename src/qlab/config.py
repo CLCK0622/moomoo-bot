@@ -92,11 +92,36 @@ class MoomooConfig:
 
 
 @dataclass(frozen=True)
+class RiskConfig:
+    """风控硬栏杆 (EVO-13 执行层; 缺一视为未完成)。所有阈值正数表示幅度。"""
+
+    max_position_weight: float = 0.25  # 单标的仓位上限 (占权益)
+    max_gross_exposure: float = 1.0  # 总仓位上限 (Σ|weight|)
+    max_positions: int = 5  # 最多并发持仓数 (对齐 quant-strategies max_positions)
+    intraday_loss_limit: float = 0.05  # 日内损失阈值 (占基准权益) -> 停新开仓
+    drawdown_breaker: float = 0.20  # 20% 回撤熔断
+    abnormal_move_pct: float = 0.15  # 单 bar 异常波动阈值 -> 停机
+    stale_quote_seconds: float = 120.0  # 行情过期阈值 (秒) -> 停机
+
+
+@dataclass(frozen=True)
+class ExecutionConfig:
+    """执行层默认安全: dry_run / paper / 模拟盘优先, 实盘默认关闭。"""
+
+    mode: str = "paper"  # dry_run | paper | live (live 还需 moomoo.allow_orders)
+    initial_cash: float = 100_000.0
+    slippage_bps: float = 1.0
+    commission_per_trade: float = 1.0
+
+
+@dataclass(frozen=True)
 class AppConfig:
     cost: CostConfig = field(default_factory=CostConfig)
     backtest: BacktestConfig = field(default_factory=BacktestConfig)
     metric: MetricConfig = field(default_factory=MetricConfig)
     gate: GateConfig = field(default_factory=GateConfig)
+    risk: RiskConfig = field(default_factory=RiskConfig)
+    execution: ExecutionConfig = field(default_factory=ExecutionConfig)
     moomoo: MoomooConfig = field(default_factory=MoomooConfig)
     fixtures_dir: str = "fixtures"
     artifacts_dir: str = "artifacts"  # where trained models / reports are written
@@ -176,11 +201,28 @@ def load_config(overrides: Mapping[str, str] | None = None) -> AppConfig:
         connect_retries=_as_int(_get(overrides, env, "MOOMOO_CONNECT_RETRIES"), 3),
         connect_backoff_seconds=_as_float(_get(overrides, env, "MOOMOO_CONNECT_BACKOFF"), 0.5),
     )
+    risk = RiskConfig(
+        max_position_weight=_as_float(_get(overrides, env, "QLAB_MAX_POSITION_WEIGHT"), 0.25),
+        max_gross_exposure=_as_float(_get(overrides, env, "QLAB_MAX_GROSS"), 1.0),
+        max_positions=_as_int(_get(overrides, env, "QLAB_MAX_POSITIONS"), 5),
+        intraday_loss_limit=_as_float(_get(overrides, env, "QLAB_INTRADAY_LOSS_LIMIT"), 0.05),
+        drawdown_breaker=_as_float(_get(overrides, env, "QLAB_DRAWDOWN_BREAKER"), 0.20),
+        abnormal_move_pct=_as_float(_get(overrides, env, "QLAB_ABNORMAL_MOVE"), 0.15),
+        stale_quote_seconds=_as_float(_get(overrides, env, "QLAB_STALE_QUOTE_SEC"), 120.0),
+    )
+    execution = ExecutionConfig(
+        mode=_get(overrides, env, "QLAB_EXEC_MODE") or "paper",
+        initial_cash=_as_float(_get(overrides, env, "QLAB_EXEC_CASH"), 100_000.0),
+        slippage_bps=_as_float(_get(overrides, env, "QLAB_EXEC_SLIPPAGE_BPS"), 1.0),
+        commission_per_trade=_as_float(_get(overrides, env, "QLAB_EXEC_COMMISSION"), 1.0),
+    )
     return AppConfig(
         cost=cost,
         backtest=backtest,
         metric=metric,
         gate=gate,
+        risk=risk,
+        execution=execution,
         moomoo=moomoo,
         fixtures_dir=_get(overrides, env, "QLAB_FIXTURES_DIR") or "fixtures",
         artifacts_dir=_get(overrides, env, "QLAB_ARTIFACTS_DIR") or "artifacts",

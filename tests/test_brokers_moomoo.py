@@ -30,6 +30,18 @@ class FakeTradeCtx:
         self.calls.append(("place", kw))
         return (0, {"order_id": ["OID123"], "code": [kw["code"]]})
 
+    def position_list_query(self, trd_env):
+        self.calls.append(("positions", trd_env))
+        return (0, [{"code": "US.AAPL", "qty": 100, "cost_price": 50.0}])
+
+    def order_list_query(self, trd_env):
+        self.calls.append(("orders", trd_env))
+        return (0, [{"order_id": "OID1", "code": "US.AAPL", "qty": 100}])
+
+    def modify_order(self, **kw):
+        self.calls.append(("modify", kw))
+        return (0, {"order_id": [kw.get("order_id")]})
+
     def cancel_all_order(self):
         self.cancelled = True
 
@@ -133,6 +145,33 @@ class TestAccountInfo(unittest.TestCase):
         info = gw.account_info()
         self.assertEqual(info["cash"], 1000.0)
         self.assertEqual(info["total_assets"], 2000.0)
+
+
+class TestPositionsOrdersCancel(unittest.TestCase):
+    def test_positions(self):
+        gw, _ = _gateway(_sim_config())
+        pos = gw.positions()
+        self.assertEqual(pos[0]["code"], "US.AAPL")
+        self.assertEqual(pos[0]["qty"], 100)
+
+    def test_open_orders(self):
+        gw, _ = _gateway(_sim_config())
+        orders = gw.open_orders()
+        self.assertEqual(orders[0]["order_id"], "OID1")
+
+    def test_cancel_order(self):
+        gw, ctx = _gateway(_sim_config())
+        gw.cancel_order("OID1")
+        modify = [c for c in ctx.calls if c[0] == "modify"][0][1]
+        self.assertEqual(modify["order_id"], "OID1")
+        self.assertEqual(modify["modify_order_op"], "CANCEL")
+
+    def test_cancel_blocked_by_kill_switch(self):
+        ks = KillSwitch()
+        ks.trip("halt")
+        gw, _ = _gateway(_sim_config(), kill_switch=ks)
+        with self.assertRaises(SafetyError):
+            gw.cancel_order("OID1")
 
 
 class FakeQuoteCtx:

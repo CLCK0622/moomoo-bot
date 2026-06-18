@@ -73,13 +73,14 @@ quant-skeleton/
 │   ├── backtest/{engine,walk_forward}.py   # 回测引擎 + Walk-Forward 主口径
 │   ├── model/{base,momentum}.py
 │   ├── brokers/guardrails.py         # 安全栏杆: 急停/限频/脱敏/重连
-│   ├── brokers/moomoo.py             # moomoo OpenD 真实适配 (quote + trade gateway)
+│   ├── brokers/moomoo.py             # moomoo OpenD 真实适配 (quote/account/持仓/下单/撤单/查单)
+│   ├── execution/{signals,broker,risk,engine,session,moomoo_broker}.py  # 执行层 + 风控
 │   ├── metrics/{core,trades,gates}.py   # v1.0 §2 指标 + §3 四关 (纯函数, 逐项单测)
 │   ├── report/{metrics,report}.py        # 旧版简报
 │   ├── report/evaluation_card.py         # v1.0 评估卡组装/渲染 (B/C/D/E)
 │   ├── pipeline.py         # run_backtest / train_and_backtest / evaluate_candidate
-│   └── cli.py              # python -m qlab.cli {backtest,train,report,card}
-└── tests/                  # 101 用例，含端到端链路 + 安全栏杆 + 插件
+│   └── cli.py              # python -m qlab.cli {backtest,train,report,card,execute}
+└── tests/                  # 131 用例: 链路 + 指标门禁 + 安全栏杆 + 执行层风控 + 插件
 ```
 
 ## 安装依赖
@@ -152,9 +153,48 @@ print(out.metrics.annualized_return, out.metrics.max_drawdown)
 - `load_strategy("package.module:Attr", **params)` —— 解析外部包里的 Strategy 类/实例/工厂。
 - `FunctionStrategy(name, fn)` —— 包装一个 `bars -> list[float]` 的权重函数。
 
-接入后一律走 `pipeline.evaluate_candidate` 的成本×2 / walk-forward / 四关门禁复核。
-**不采信任何来源的收益声明**（如 quant-strategies 的「约年化 45%」）——验证只认门禁结论。
-本轮只预留接入位，不真正接入。
+> 注：当 quant-strategies 作为**用户已有研究成果走实盘落地**时（EVO-13 现口径），走下面的执行层
+> 接入（signal handoff），**不重跑历史回测**；只做轻量核对。上面这条 `evaluate_candidate` 复核仅在把
+> 外部代码当「新候选方向」时才用。
+
+## 执行层（`qlab.execution`）— signals → 风控 → 券商（paper / live）
+
+把研究侧的策略信号落到**可观测/可控/可审查**的执行层。接入边界是一个轻量的 **signal handoff**
+（`fixtures/signals.json` 的目标权重列表），**不在执行层重跑回测**；只做轻量 sanity 核对
+（`sanity_check`：权重范围、是否超 `max_positions`、gross、是否在 universe 内）。
+
+- `execution/signals.py` —— `TargetSignal` / `SignalSet` / `load_signals` / `sanity_check`
+- `execution/broker.py` —— `Broker` 抽象 + `PaperBroker`（确定性模拟成交，paper/dry-run 默认venue）
+- `execution/risk.py` —— `RiskManager` 风控硬栏杆
+- `execution/engine.py` —— `ExecutionEngine`：对账目标权重 → 逐单过风控 → 路由券商 → `RunRecord`
+- `execution/moomoo_broker.py` —— 把 `MoomooTradeGateway` 适配成 `Broker`（live 模式，默认不走）
+
+**执行默认安全**：模式 `dry_run`（只算不下单）/ `paper`（模拟成交，默认）/ `live`（真实 OpenD，需显式）。
+
+**风控硬栏杆（EVO-13 §4，缺一视为未完成）** —— 全部在 `RiskManager` + broker 层：
+
+| 栏杆 | 落点 |
+| --- | --- |
+| 凭据只走环境变量，仓库零 key | `MoomooConfig`（`MOOMOO_*`）；`.env` 已 gitignore |
+| 全局 kill switch | `brokers.guardrails.KillSwitch`（进程+文件+env），风控/券商双重检查 |
+| 仓位上限 | 单标的权重上限 + gross 上限 + `max_positions` |
+| 日内损失阈值 | 触发即停新开仓（仍允许减仓/平仓） |
+| 20% 回撤熔断 | 峰值-谷值回撤 ≥20% 锁定停机 |
+| 异常行情停机 | 单 bar 异常波动 / 行情过期 → 停机 |
+| 日志脱敏 | `mask_secret()` |
+| 限频 / 连接重连降级 | `RateLimiter` / `call_with_retry` |
+
+注：halt 只挡**加仓**，始终放行**减仓/平仓**以便去风险。
+
+```bash
+# paper 跑通（离线，marks 取自 fixture 行情）
+PYTHONPATH=src python3 -m qlab.cli execute --signals fixtures/signals.json --mode paper
+# 只算不下单
+PYTHONPATH=src python3 -m qlab.cli execute --mode dry_run
+```
+
+> ⚠️ live 模式真实下单默认关闭，且依赖外部资源（真实/模拟盘 key、OpenD 权限、账户授权）——这些是
+> **blocker**，已在 issue 列清，未自行 mock 充数。本轮验证只到 paper / dry-run。
 
 ## 自检（build / test / lint）
 

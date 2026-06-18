@@ -1,0 +1,10 @@
+{
+  "source": "fixture (illustrative; not a quant-strategies export)",
+  "generated_at": "2026-06-18",
+  "note": "Target-weight handoff for the execution layer. Symbols are from the quant-strategies universe; weights are illustrative and make no performance claim.",
+  "signals": [
+    {"symbol": "TSLA", "target_weight": 0.2, "ts": "2026-06-18", "reason": "vwap_reversion"},
+    {"symbol": "NVDA", "target_weight": 0.2, "ts": "2026-06-18", "reason": "gap_and_go"},
+    {"symbol": "AAPL", "target_weight": 0.2, "ts": "2026-06-18", "reason": "ema_cross"}
+  ]
+}

@@ -17,6 +17,8 @@ import os
 import sys
 
 from .config import load_config
+from .execution.session import run_execution
+from .execution.signals import load_signals, sanity_check
 from .model.momentum import MomentumModel
 from .pipeline import evaluate_candidate, run_backtest, train_and_backtest
 from .report.evaluation_card import to_markdown, write_card
@@ -71,6 +73,13 @@ def build_parser() -> argparse.ArgumentParser:
     cd.add_argument("--walk-forward", action="store_true", help="run the WF 主口径 (needs --model)")
     cd.add_argument("--out-dir", default=None, help="write card files here (else print markdown)")
 
+    ex = sub.add_parser("execute", help="run a default-safe execution cycle from a signals file")
+    ex.add_argument("--signals", default="fixtures/signals.json", help="signal handoff JSON")
+    ex.add_argument(
+        "--mode", default=None, choices=["dry_run", "paper", "live"],
+        help="execution mode (default from config; live needs explicit gateway enable)",
+    )
+
     return parser
 
 
@@ -119,6 +128,31 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(paths, ensure_ascii=False, indent=2))
         else:
             print(to_markdown(ev))
+        return 0
+
+    if args.command == "execute":
+        sigset = load_signals(args.signals)
+        universe = [s.symbol for s in sigset.signals]
+        issues = sanity_check(
+            sigset, universe=universe, max_positions=config.risk.max_positions,
+            max_gross=config.risk.max_gross_exposure,
+        )
+        mode = args.mode or config.execution.mode
+        record = run_execution(sigset, config, mode=mode)
+        out = {
+            "mode": record.mode,
+            "signal_source": sigset.source,
+            "sanity_issues": issues,
+            "equity_before": round(record.equity_before, 2),
+            "equity_after": round(record.equity_after, 2),
+            "halted": record.halted,
+            "halt_reason": record.halt_reason,
+            "filled": record.filled,
+            "rejected": record.rejected,
+            "skipped": record.skipped,
+            "positions_after": record.positions_after,
+        }
+        print(json.dumps(out, ensure_ascii=False, indent=2))
         return 0
 
     return 1

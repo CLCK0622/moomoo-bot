@@ -58,6 +58,7 @@ def _trd_tokens(config: MoomooConfig, *, live: bool):
             "market_order": "MARKET",
             "us": "US",
             "firm": config.security_firm,
+            "cancel_op": "CANCEL",
         }
     futu = _load_futu()
     return {
@@ -67,6 +68,7 @@ def _trd_tokens(config: MoomooConfig, *, live: bool):
         "market_order": futu.OrderType.MARKET,
         "us": futu.TrdMarket.US,
         "firm": getattr(futu.SecurityFirm, config.security_firm, None),
+        "cancel_op": futu.ModifyOrderOp.CANCEL,
     }
 
 
@@ -271,6 +273,56 @@ class MoomooTradeGateway:
         )
         return ack
 
+    def positions(self) -> list[dict]:
+        """Current holdings via position_list_query (read-only; no order guardrails)."""
+        if not self.config.enabled:
+            raise MoomooConfigError("moomoo gateway disabled (MOOMOO_ENABLED).")
+        ctx = self.connect()
+        tokens = _trd_tokens(self.config, live=self._context_factory is None)
+        ret, data = call_with_retry(
+            lambda: ctx.position_list_query(trd_env=tokens["env"]),
+            retries=self.config.connect_retries,
+            backoff_seconds=self.config.connect_backoff_seconds,
+        )
+        if ret != _RET_OK:
+            raise MoomooConfigError(f"position_list_query failed: {data}")
+        return _all_rows(data)
+
+    def open_orders(self) -> list[dict]:
+        """Open/working orders via order_list_query (read-only)."""
+        if not self.config.enabled:
+            raise MoomooConfigError("moomoo gateway disabled (MOOMOO_ENABLED).")
+        ctx = self.connect()
+        tokens = _trd_tokens(self.config, live=self._context_factory is None)
+        ret, data = call_with_retry(
+            lambda: ctx.order_list_query(trd_env=tokens["env"]),
+            retries=self.config.connect_retries,
+            backoff_seconds=self.config.connect_backoff_seconds,
+        )
+        if ret != _RET_OK:
+            raise MoomooConfigError(f"order_list_query failed: {data}")
+        return _all_rows(data)
+
+    def cancel_order(self, order_id: str) -> dict:
+        """Cancel a working order. Requires the same enable/kill guardrails as trading."""
+        if not self.config.enabled:
+            raise MoomooConfigError("moomoo gateway disabled (MOOMOO_ENABLED).")
+        self.kill.require_clear()
+        ctx = self.connect()
+        self._ensure_unlocked()
+        tokens = _trd_tokens(self.config, live=self._context_factory is None)
+        ret, data = ctx.modify_order(
+            modify_order_op=tokens.get("cancel_op", "CANCEL"),
+            order_id=order_id,
+            qty=0,
+            price=0,
+            trd_env=tokens["env"],
+        )
+        if ret != _RET_OK:
+            raise MoomooConfigError(f"cancel_order failed for {order_id}: {data}")
+        self.log.info("order cancelled id=%s", mask_secret(str(order_id), keep=4))
+        return _first_row(data)
+
     def submit_target_position(
         self, symbol: str, target_shares: float, current_shares: float = 0.0
     ) -> dict | None:
@@ -310,3 +362,13 @@ def _first_row(data) -> dict:
         records = data.to_dict("records")
         return records[0] if records else {}
     return dict(data) if data else {}
+
+
+def _all_rows(data) -> list[dict]:
+    """Normalise a futu DataFrame (or fake list-of-dicts) to a list of row dicts."""
+    to_dict = getattr(data, "to_dict", None)
+    if callable(to_dict):  # pragma: no cover - pandas path
+        return list(data.to_dict("records"))
+    if isinstance(data, list):
+        return [dict(r) for r in data]
+    return []
