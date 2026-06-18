@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+# Ad-hoc run outputs are ignored; the curated SAMPLE_paper_run/ is kept.
+reports/*
+!reports/SAMPLE_paper_run/
+data/cache/
+*.parquet

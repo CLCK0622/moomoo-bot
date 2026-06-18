@@ -1,0 +1,28 @@
+{
+  "mode": "paper",
+  "symbols": [
+    "TSLA",
+    "NVDA",
+    "AAPL",
+    "MSFT",
+    "AMD"
+  ],
+  "initial_capital": 100000.0,
+  "commission_per_order": 1.0,
+  "slippage_pct": 0.0002,
+  "opend_host": "127.0.0.1",
+  "opend_port": 11111,
+  "trd_env": "SIMULATE",
+  "security_firm": "FUTUSG",
+  "allow_live": false,
+  "risk": {
+    "max_positions": 5,
+    "per_symbol_max_notional": 25000.0,
+    "per_strategy_max_notional": 100000.0,
+    "intraday_loss_limit_pct": 0.03,
+    "drawdown_breaker_pct": 0.2,
+    "max_price_move_halt_pct": 0.25,
+    "trading_start": "09:30",
+    "trading_end": "16:00"
+  }
+}
