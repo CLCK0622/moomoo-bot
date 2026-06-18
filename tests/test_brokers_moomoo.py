@@ -128,6 +128,18 @@ class TestGatewayGuardrails(unittest.TestCase):
         with self.assertRaises(ValueError):
             gw.place_market_order("AAPL", "BUY", 0)
 
+    def test_max_order_qty_cap(self):
+        gw, ctx = _gateway(_sim_config(max_order_qty=100))
+        gw.place_market_order("AAPL", "BUY", 100)  # at the cap: allowed
+        with self.assertRaises(SafetyError):
+            gw.place_market_order("AAPL", "BUY", 101)  # over the cap: blocked
+        # the rejected order must not have reached the broker
+        self.assertEqual(len([c for c in ctx.calls if c[0] == "place"]), 1)
+
+    def test_no_qty_cap_by_default(self):
+        gw, _ = _gateway(_sim_config())  # max_order_qty None -> uncapped
+        gw.place_market_order("AAPL", "BUY", 1_000_000)
+
 
 class TestTargetPosition(unittest.TestCase):
     def test_buy_sell_and_noop(self):

@@ -86,6 +86,10 @@ class MoomooConfig:
     # 限频: 滚动窗口内最多多少笔下单
     max_orders_per_window: int = 30
     order_window_seconds: float = 30.0
+    # 胖手指硬上限: 单笔最大下单数量 (股数)。None=不限。限频只管笔数，挡不住
+    # 单笔超大单；engine 层 RiskManager 管名义/敞口，这里在 gateway 最底层再加
+    # 一道与数量正交的绝对闸门 (直连 gateway 绕过 RiskManager 时也兜底)。设了才生效。
+    max_order_qty: float | None = None
     # 连接异常重连
     connect_retries: int = 3
     connect_backoff_seconds: float = 0.5
@@ -151,6 +155,12 @@ def _as_bool(value: str | None, default: bool) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _as_optional_float(value: str | None) -> float | None:
+    if value is None or value == "":
+        return None
+    return float(value)
+
+
 def load_config(overrides: Mapping[str, str] | None = None) -> AppConfig:
     """Build an :class:`AppConfig` from env vars (and optional explicit overrides).
 
@@ -161,6 +171,9 @@ def load_config(overrides: Mapping[str, str] | None = None) -> AppConfig:
     - ``QLAB_FIXTURES_DIR``, ``QLAB_ARTIFACTS_DIR``
     - ``MOOMOO_HOST``, ``MOOMOO_PORT``, ``MOOMOO_TRADE_ENV``, ``MOOMOO_ENABLED``
     - ``MOOMOO_ACCOUNT_ID``, ``MOOMOO_UNLOCK_PWD``  (secrets — env only)
+    - ``MOOMOO_ALLOW_ORDERS``, ``MOOMOO_ALLOW_REAL``, ``MOOMOO_KILL_SWITCH_FILE``
+    - ``MOOMOO_MAX_ORDERS``, ``MOOMOO_ORDER_WINDOW_SEC``, ``MOOMOO_MAX_ORDER_QTY``
+    - ``MOOMOO_CONNECT_RETRIES``, ``MOOMOO_CONNECT_BACKOFF``, ``MOOMOO_SECURITY_FIRM``
     """
     overrides = dict(overrides or {})
     env = os.environ
@@ -196,6 +209,7 @@ def load_config(overrides: Mapping[str, str] | None = None) -> AppConfig:
         allow_orders=_as_bool(_get(overrides, env, "MOOMOO_ALLOW_ORDERS"), False),
         allow_real=_as_bool(_get(overrides, env, "MOOMOO_ALLOW_REAL"), False),
         kill_switch_file=_get(overrides, env, "MOOMOO_KILL_SWITCH_FILE"),
+        max_order_qty=_as_optional_float(_get(overrides, env, "MOOMOO_MAX_ORDER_QTY")),
         max_orders_per_window=_as_int(_get(overrides, env, "MOOMOO_MAX_ORDERS"), 30),
         order_window_seconds=_as_float(_get(overrides, env, "MOOMOO_ORDER_WINDOW_SEC"), 30.0),
         connect_retries=_as_int(_get(overrides, env, "MOOMOO_CONNECT_RETRIES"), 3),

@@ -25,6 +25,12 @@ class TestMaskSecret(unittest.TestCase):
         self.assertEqual(mask_secret("762185", keep=2), "****85")
         self.assertNotIn("762185", mask_secret("762185"))
 
+    def test_keep_zero_fully_masks(self):
+        # keep=0 must leak no tail (a 6-digit PIN's last 2 digits are too much).
+        self.assertEqual(mask_secret("123456", keep=0), "******")
+        self.assertEqual(mask_secret("secret", keep=-1), "******")
+        self.assertNotIn("56", mask_secret("123456", keep=0))
+
 
 class TestKillSwitch(unittest.TestCase):
     def test_trip_reset_in_process(self):

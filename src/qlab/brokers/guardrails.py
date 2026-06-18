@@ -26,12 +26,15 @@ class SafetyError(RuntimeError):
 def mask_secret(value: str | None, *, keep: int = 2) -> str:
     """Mask a secret for logging: keep at most the last ``keep`` chars.
 
-    ``None``/empty -> ``"<unset>"``. Short values are fully masked so nothing
-    sensitive (account id, unlock password, token) is ever logged in the clear.
+    ``None``/empty -> ``"<unset>"``. ``keep <= 0`` (or values no longer than
+    ``keep``) are fully masked so nothing sensitive (account id, unlock password,
+    token) is ever logged in the clear. ``keep=0`` is the right choice for
+    low-entropy secrets such as a 6-digit unlock PIN, where even the tail leaks
+    too much.
     """
     if not value:
         return "<unset>"
-    if len(value) <= keep:
+    if keep <= 0 or len(value) <= keep:
         return "*" * len(value)
     return "*" * (len(value) - keep) + value[-keep:]
 

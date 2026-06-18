@@ -182,6 +182,11 @@ class MoomooTradeGateway:
             raise MoomooConfigError("MOOMOO_ACCOUNT_ID not set.")
         if qty is None or qty <= 0:
             raise ValueError("order qty must be positive")
+        max_qty = self.config.max_order_qty  # 胖手指硬上限 (与限频正交; engine 风控之下再加一道)
+        if max_qty is not None and qty > max_qty:
+            raise SafetyError(
+                f"order qty {qty} exceeds per-order cap {max_qty} (MOOMOO_MAX_ORDER_QTY)."
+            )
         if self.config.trade_env == "REAL":  # 模式隔离
             if not self.config.allow_real:
                 raise SafetyError("REAL trading not allowed (MOOMOO_ALLOW_REAL=false).")
@@ -225,7 +230,8 @@ class MoomooTradeGateway:
         if ret != _RET_OK:
             raise MoomooConfigError(f"unlock_trade failed: {data}")
         self._unlocked = True
-        self.log.info("trade account unlocked (pwd=%s)", mask_secret(self.config.unlock_pwd))
+        # unlock PIN is low-entropy (often 6 digits) — mask it fully, keep no tail.
+        self.log.info("trade account unlocked (pwd=%s)", mask_secret(self.config.unlock_pwd, keep=0))
 
     # --- actions --------------------------------------------------------------
     def account_info(self) -> dict:
