@@ -17,7 +17,7 @@ import os
 import sys
 
 from .config import load_config
-from .execution.session import run_execution
+from .execution.session import run_execution, run_execution_path
 from .execution.signals import load_signals, sanity_check
 from .model.momentum import MomentumModel
 from .pipeline import evaluate_candidate, run_backtest, train_and_backtest
@@ -79,6 +79,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--mode", default=None, choices=["dry_run", "paper", "live"],
         help="execution mode (default from config; live needs explicit gateway enable)",
     )
+    ex.add_argument(
+        "--single", action="store_true",
+        help="one-shot snapshot on the latest bar (skips the multi-period risk path)",
+    )
 
     return parser
 
@@ -138,20 +142,50 @@ def main(argv: list[str] | None = None) -> int:
             max_gross=config.risk.max_gross_exposure,
         )
         mode = args.mode or config.execution.mode
-        record = run_execution(sigset, config, mode=mode)
-        out = {
-            "mode": record.mode,
-            "signal_source": sigset.source,
-            "sanity_issues": issues,
-            "equity_before": round(record.equity_before, 2),
-            "equity_after": round(record.equity_after, 2),
-            "halted": record.halted,
-            "halt_reason": record.halt_reason,
-            "filled": record.filled,
-            "rejected": record.rejected,
-            "skipped": record.skipped,
-            "positions_after": record.positions_after,
-        }
+        if args.single:
+            # One-shot snapshot: path-dependent breakers stay dormant (no equity series).
+            record = run_execution(sigset, config, mode=mode)
+            out = {
+                "mode": record.mode,
+                "signal_source": sigset.source,
+                "sanity_issues": issues,
+                "cycles": 1,
+                "equity_before": round(record.equity_before, 2),
+                "equity_after": round(record.equity_after, 2),
+                "halted": record.halted,
+                "halt_reason": record.halt_reason,
+                "filled": record.filled,
+                "rejected": record.rejected,
+                "skipped": record.skipped,
+                "positions_after": record.positions_after,
+            }
+        else:
+            # Default: replay the fixture history through ONE persistent RiskManager so
+            # the intraday-loss / drawdown / stale-quote breakers are fed a real equity
+            # series and quote ages instead of constant defaults.
+            records = run_execution_path(sigset, config, mode=mode)
+            if not records:
+                print(json.dumps({"error": "no market frames for signalled symbols"}))
+                return 1
+            final = records[-1]
+            halted_at = next((i for i, r in enumerate(records) if r.halted), None)
+            surfaced = records[halted_at] if halted_at is not None else final
+            out = {
+                "mode": final.mode,
+                "signal_source": sigset.source,
+                "sanity_issues": issues,
+                "cycles": len(records),
+                "equity_before": round(records[0].equity_before, 2),
+                "equity_after": round(final.equity_after, 2),
+                "filled_count": sum(len(r.filled) for r in records),
+                "rejected_count": sum(len(r.rejected) for r in records),
+                "halted": surfaced.halted,
+                "halt_reason": surfaced.halt_reason,
+                "halted_at_cycle": halted_at,
+                # Reasons are the actionable bit; cap the sample so the path stays readable.
+                "rejected_sample": surfaced.rejected[:5],
+                "positions_after": final.positions_after,
+            }
         print(json.dumps(out, ensure_ascii=False, indent=2))
         return 0
 
