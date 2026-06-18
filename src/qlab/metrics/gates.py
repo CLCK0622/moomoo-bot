@@ -168,7 +168,13 @@ def gate3_rolling(
         )
     annuals: list[float] = []
     mdds: list[float] = []
-    for start in range(0, len(equity) - w, step):
+    starts = list(range(0, len(equity) - w, step))
+    # Anchor a final window ending at the last bar so a non-step-aligned tail
+    # (the trailing <step bars) is not silently dropped from the distribution.
+    last_start = len(equity) - 1 - w
+    if not starts or starts[-1] != last_start:
+        starts.append(last_start)
+    for start in starts:
         window = equity[start : start + w + 1]
         annuals.append(geometric_cagr(window, periods_per_year))
         mdds.append(max_drawdown(window))

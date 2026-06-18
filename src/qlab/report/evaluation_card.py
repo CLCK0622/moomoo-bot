@@ -7,9 +7,29 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 
 from ..pipeline import EvaluationResult
+
+
+def _json_safe(value):
+    """Recursively coerce non-finite floats (inf/-inf/NaN) to ``None``.
+
+    The card dict may carry ``float('inf')`` for ratios with zero denominator
+    (e.g. profit_factor on a zero-loss candidate). Standard JSON has no token
+    for these, and ``json.dump`` would emit non-standard ``Infinity``/``NaN``
+    that strict downstream parsers reject. Markdown rendering keeps its ``∞``;
+    only the JSON form is normalised here. ``null`` is the JSON-portable choice
+    (an unbounded ratio is "undefined" to a strict consumer).
+    """
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, dict):
+        return {k: _json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(v) for v in value]
+    return value
 
 _DISCLAIMER = (
     "> ⚠️ 本评估卡仅用 fixture（合成/样例行情）验证**工程流程与指标计算口径**，"
@@ -222,5 +242,15 @@ def write_card(ev: EvaluationResult, out_dir: str, *, basename: str | None = Non
     with open(md_path, "w", encoding="utf-8") as fh:
         fh.write(to_markdown(ev))
     with open(json_path, "w", encoding="utf-8") as fh:
-        json.dump(build_card_dict(ev), fh, ensure_ascii=False, indent=2, sort_keys=True)
+        # Normalise inf/NaN to null in the dict, then force allow_nan=False so any
+        # non-finite value that slipped through surfaces as an error instead of
+        # silently writing invalid JSON.
+        json.dump(
+            _json_safe(build_card_dict(ev)),
+            fh,
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+            allow_nan=False,
+        )
     return {"markdown": md_path, "json": json_path}

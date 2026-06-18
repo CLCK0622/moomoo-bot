@@ -160,7 +160,7 @@ def load_config(overrides: Mapping[str, str] | None = None) -> AppConfig:
     - ``QLAB_COMMISSION_RATE``, ``QLAB_SLIPPAGE_BPS``, ``QLAB_MIN_COMMISSION``
     - ``QLAB_FIXTURES_DIR``, ``QLAB_ARTIFACTS_DIR``
     - ``MOOMOO_HOST``, ``MOOMOO_PORT``, ``MOOMOO_TRADE_ENV``, ``MOOMOO_ENABLED``
-    - ``MOOMOO_ACCOUNT_ID``, ``MOOMOO_UNLOCK_PWD_MD5``  (secrets — env only)
+    - ``MOOMOO_ACCOUNT_ID``, ``MOOMOO_UNLOCK_PWD``  (secrets — env only)
     """
     overrides = dict(overrides or {})
     env = os.environ

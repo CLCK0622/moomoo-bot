@@ -63,5 +63,55 @@ class TestCardRendering(unittest.TestCase):
             self.assertIn("C_core_metrics", data)
 
 
+class TestCardJsonInfSerialization(unittest.TestCase):
+    """Regression: a zero-loss (all-wins) candidate must still write strict JSON.
+
+    With every closed trade profitable, ``trade_stats`` sets profit_factor and
+    profit_loss_ratio to ``float('inf')``. The JSON card must coerce those to
+    ``null`` and never emit non-standard ``Infinity``/``NaN`` tokens, so strict
+    ``json.loads`` succeeds for downstream consumers.
+    """
+
+    def _all_wins_ev(self):
+        from qlab.metrics.trades import trade_stats
+
+        # All-profit round trips → inf ratios, exercising the JSON path.
+        stats = trade_stats([100.0, 50.0, 25.0])
+        self.assertEqual(stats.profit_factor, float("inf"))
+        self.assertEqual(stats.profit_loss_ratio, float("inf"))
+
+        ev = evaluate_candidate("DEMO", strategy=SmaCrossStrategy(10, 30))
+        # Inject the inf-bearing trade stats into the core metrics.
+        ev.core.profit_factor = stats.profit_factor
+        ev.core.profit_loss_ratio = stats.profit_loss_ratio
+        return ev
+
+    def test_build_card_dict_carries_inf(self):
+        ev = self._all_wins_ev()
+        d = build_card_dict(ev)
+        self.assertEqual(d["C_core_metrics"]["profit_factor"], float("inf"))
+
+    def test_written_json_is_strictly_parseable_and_finite(self):
+        ev = self._all_wins_ev()
+        with tempfile.TemporaryDirectory() as out:
+            paths = write_card(ev, out)
+            with open(paths["json"], encoding="utf-8") as fh:
+                raw = fh.read()
+            # No non-standard JSON tokens in the serialized text.
+            self.assertNotIn("Infinity", raw)
+            self.assertNotIn("NaN", raw)
+            # Strict parser must accept it (json.loads rejects Infinity/NaN-free text only).
+            data = json.loads(raw)
+            core = data["C_core_metrics"]
+            self.assertIsNone(core["profit_factor"])
+            self.assertIsNone(core["profit_loss_ratio"])
+
+    def test_markdown_still_shows_infinity_symbol(self):
+        # Markdown rendering keeps ∞ — only the JSON path is normalised.
+        ev = self._all_wins_ev()
+        md = to_markdown(ev)
+        self.assertIn("∞", md)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -80,7 +80,7 @@ quant-skeleton/
 │   ├── report/evaluation_card.py         # v1.0 评估卡组装/渲染 (B/C/D/E)
 │   ├── pipeline.py         # run_backtest / train_and_backtest / evaluate_candidate
 │   └── cli.py              # python -m qlab.cli {backtest,train,report,card,execute}
-└── tests/                  # 131 用例: 链路 + 指标门禁 + 安全栏杆 + 执行层风控 + 插件
+└── tests/                  # 134 用例: 链路 + 指标门禁 + 安全栏杆 + 执行层风控 + 插件
 ```
 
 ## 安装依赖
@@ -202,7 +202,7 @@ PYTHONPATH=src python3 -m qlab.cli execute --mode dry_run
 make check          # = build + test + lint
 # 或分开：
 make build          # py_compile 全部源码
-make test           # python -m unittest discover -s tests -t .   （29 用例，零依赖）
+make test           # python -m unittest discover -s tests -t .   （134 用例，零依赖）
 make lint           # ruff check（需 pip install ruff）
 # pytest 亦可（已配置 pythonpath）：python -m pytest
 ```
