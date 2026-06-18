@@ -21,7 +21,9 @@ qlab/
     config.py             # env-driven ExecConfig + RiskLimits (NO secrets in repo)
     risk.py               # RiskManager — kill switch, caps, intraday loss, 20% DD breaker, …
     observability.py      # JSONL channels: signals/orders/fills/positions/equity/
-                          #   broker_events/errors/heartbeat (credential-redacted)
+                          #   broker_events/errors/heartbeat (credential-redacted).
+                          #   equity + positions logged per-bar (1m MTM) -> 1m
+                          #   equity curve / 1m max-drawdown is recomputable.
     engine.py             # ExecutionEngine — signal→risk→broker→observability tick loop
     run_paper.py          # CLI (paper-first)
     brokers/

@@ -155,9 +155,21 @@ class ExecutionEngine:
                 self.state[sym] = self.adapter.new_position_state(fill_px, qty, esig.orb_low, now)
                 self.strategy_of[sym] = strat
 
-        # update prev prices
+        # update prev prices (this bar's close is the latest mark)
         for sym, row in rows.items():
             self._prev_price[sym] = float(row["close"])
+
+        # --- per-bar (1m) mark-to-market observability ---
+        # Emit AFTER fills + marks so 户部 can recompute the 1m equity curve and
+        # 1m max-drawdown independently. MTM = cash + positions marked at the
+        # current bar close (PaperBroker.get_account / OpenD nominal price).
+        mtm_equity = self._equity()
+        self.risk.update_equity(mtm_equity)        # keep the DD breaker on the 1m mark
+        intraday_pnl = mtm_equity - self.risk.day_start_equity
+        self.obs.equity(time=str(now), equity=mtm_equity, mark_to_market=True,
+                        intraday_pnl=intraday_pnl, open_positions=len(self.state),
+                        kill_switch=self.risk.kill_switch, peak_equity=self.risk.peak_equity)
+        self.snapshot_positions(now)               # per-bar open-position snapshot
 
     def emit_heartbeat(self, when, equity: float) -> None:
         """Periodic liveness signal — call from the live loop on a timer, or
@@ -219,12 +231,13 @@ class ExecutionEngine:
                 if rows:
                     last_time = next(iter(rows.values()))["time"]
                 self.on_bar(rows)
+            # per-bar equity/positions are written inside on_bar (1m MTM). Here we
+            # only keep an in-memory daily marker for the summary + a session
+            # heartbeat (a live loop would heartbeat on a wall-clock timer).
             eq = self._equity()
             self.equity_curve.append({"date": str(date), "equity": eq,
                                       "kill_switch": self.risk.kill_switch})
-            self.obs.equity(date=str(date), equity=eq, kill_switch=self.risk.kill_switch)
-            self.snapshot_positions(last_time)   # end-of-day open positions
-            self.emit_heartbeat(last_time, eq)   # once per session in replay
+            self.emit_heartbeat(last_time, eq)
 
         return self.summary()
 

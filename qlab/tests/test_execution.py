@@ -109,6 +109,29 @@ def test_engine_paper_replay_produces_observability(tmp_path: Path):
     assert (tmp_path / "equity.jsonl").read_text().strip() != ""
 
 
+def test_equity_and_positions_logged_per_bar_mtm(tmp_path: Path):
+    """户部 gate: equity + positions must be 1m mark-to-market, not EOD."""
+    cfg = ExecConfig(mode="paper", symbols=["AAA", "BBB"], initial_capital=100_000)
+    eng = ExecutionEngine(cfg, tmp_path, also_stdout=False)
+    summary = eng.run_replay(_fixture())
+    eng.close()
+
+    eq = [json.loads(l) for l in (tmp_path / "equity.jsonl").read_text().splitlines()]
+    # far more equity rows than trading days => intrabar (1m) granularity, not EOD
+    assert len(eq) > summary["trading_days"] * 50
+    assert all(r["mark_to_market"] for r in eq)
+    # multiple distinct timestamps within a single trading day
+    day0 = sorted({r["time"][:10] for r in eq})[0]
+    assert len({r["time"] for r in eq if r["time"].startswith(day0)}) > 50
+    # equity actually moves intrabar (MTM), not flat-until-EOD
+    assert len({round(r["equity"], 2) for r in eq}) > summary["trading_days"]
+
+    pos = (tmp_path / "positions.jsonl").read_text().splitlines()
+    assert pos, "per-bar position snapshots must be logged while holding"
+    prow = json.loads(pos[0])
+    assert {"time", "symbol", "qty", "entry_price", "last_price", "unrealized"} <= prow.keys()
+
+
 def test_engine_dry_run_logs_intended_orders_only(tmp_path: Path):
     cfg = ExecConfig(mode="dry_run", symbols=["AAA"], initial_capital=100_000)
     eng = ExecutionEngine(cfg, tmp_path)
