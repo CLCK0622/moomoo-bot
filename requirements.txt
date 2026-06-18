@@ -1,0 +1,7 @@
+# The core qlab engine has NO runtime dependencies — it is stdlib-only so the
+# whole pipeline runs and tests/lint pass with zero installs.
+#
+# Optional layers (install only what you need):
+#   pip install -e ".[analysis]"   # pandas / numpy convenience helpers
+#   pip install -e ".[moomoo]"     # futu-api for moomoo US OpenD live data/trade
+#   pip install -e ".[dev]"        # pytest + ruff for self-checks

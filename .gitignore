@@ -1,2 +1,8 @@
-*/.env
-*/.env.*
+__pycache__/
+*.pyc
+.env
+artifacts/
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/

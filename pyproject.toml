@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qlab"
+version = "0.1.0"
+description = "理财方向探索 — 策略验证工程骨架 (data / strategy / backtest / model / report)"
+readme = "README.md"
+requires-python = ">=3.9"
+# Core engine is stdlib-only on purpose; extras are optional integration layers.
+dependencies = []
+
+[project.optional-dependencies]
+# Real data analysis convenience layer (not required by the core engine).
+analysis = ["pandas>=1.3", "numpy>=1.21"]
+# moomoo US OpenD live quote/trade integration.
+moomoo = ["futu-api>=7.0"]
+# Dev tooling for self-checks.
+dev = ["pytest>=7", "ruff>=0.5"]
+
+[project.scripts]
+qlab = "qlab.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# Report rendering is mostly CJK display strings (full-width chars push the byte
+# column past 100 while staying visually short); wrapping the f-strings hurts more
+# than it helps, so line-length is relaxed only for this render-only module.
+"src/qlab/report/evaluation_card.py" = ["E501"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
