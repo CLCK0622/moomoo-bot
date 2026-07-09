@@ -9,5 +9,6 @@ reports/*
 !reports/SAMPLE_paper_run/
 !reports/opend_probe/
 !reports/opend_session_live/
+!reports/SAMPLE_events_synth/
 data/cache/
 *.parquet

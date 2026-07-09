@@ -1,0 +1,2482 @@
+{
+  "issue": "EVO-24",
+  "candidates": {
+    "4": "PEAD post-earnings drift",
+    "5": "close-to-open overnight drift"
+  },
+  "provenance": {
+    "bars": {
+      "source": "synthetic_daily_seeded",
+      "seed": 7,
+      "date_range": [
+        "2019-01-02",
+        "2024-12-31"
+      ],
+      "performance_meaningful": false,
+      "note": "DETERMINISTIC SYNTHETIC DAILY BARS with injected earnings drift \u2014 harness validation only. Returns here are an artifact of the generator, NOT strategy performance."
+    },
+    "events": {
+      "source": "synthetic_seeded",
+      "seed": 7,
+      "date_range": [
+        "2019-01-02",
+        "2024-12-31"
+      ],
+      "quarters_per_year": 4,
+      "performance_meaningful": false,
+      "note": "DETERMINISTIC SYNTHETIC EARNINGS CALENDAR \u2014 harness validation only. Announcement times and surprises are generator artifacts."
+    },
+    "options": {
+      "source": "missing",
+      "performance_meaningful": false,
+      "note": "No historical options chain is available in this workspace (no OpenD option-chain feed, no vendor). Negative-branch trades cannot be priced and are recorded as blocked/missing-data. They are NEVER converted to a naked short."
+    },
+    "config": {
+      "mode": "pead",
+      "hold": 10,
+      "max_concurrent": 10,
+      "surprise_mode": "quantile",
+      "quantile": 0.2,
+      "dead_zone": 0.0,
+      "min_adv": 2000000.0,
+      "cost_bps_per_side": 10.0,
+      "cost_mult": 1.0,
+      "P": 252,
+      "rf_annual": 0.0
+    }
+  },
+  "performance_meaningful": false,
+  "overall_verdict": "\u9700\u8865\u8bc1\u636e",
+  "verdict_reason": "synthetic harness data \u2014 numbers are self-tests, not performance; supply real earnings/bar/options data to obtain a real verdict.",
+  "runs": [
+    {
+      "mode": "pead",
+      "hold": 5,
+      "card_C_core_metrics": {
+        "cagr": 0.008787003054324005,
+        "max_drawdown": 0.011978469276059722,
+        "sharpe": 1.2558093980225697,
+        "sortino": 2.1675670268286114,
+        "annualized_turnover": 1.3242116296400581,
+        "n_bars": 1496,
+        "n_years": 5.936507936507937,
+        "max_underwater_bars": 402,
+        "median_underwater_bars": 2.0,
+        "unrecovered": false,
+        "num_trades": 40,
+        "win_rate": 0.75,
+        "profit_factor": 3.025391242387541,
+        "avg_winner": 0.02603359858022444,
+        "avg_loser": 0.02581510604196722,
+        "expectancy": 0.013071422424676524
+      },
+      "card_B_cost_stress": {
+        "cost_bps_per_side_base": 10.0,
+        "base_cagr": 0.008787003054324005,
+        "base_mdd": 0.011978469276059722,
+        "cost_x2_cagr": 0.007445544868445397,
+        "cost_x2_mdd": 0.012769226027649294,
+        "cost_x2_still_passes_gate1": false,
+        "turnover_annualized_two_sided": 1.3242116296400581
+      },
+      "card_D_gates": {
+        "gate1_full_sample": {
+          "cagr": 0.008787003054324005,
+          "mdd": 0.011978469276059722,
+          "passed": false
+        },
+        "gate2_yearly": {
+          "years": [
+            {
+              "year": 2019,
+              "cagr": -0.0023738201931009506,
+              "mdd": 0.011978469276059722,
+              "n_bars": 235,
+              "full_year": true
+            },
+            {
+              "year": 2020,
+              "cagr": 0.012861974577545121,
+              "mdd": 0.00580681844442521,
+              "n_bars": 262,
+              "full_year": true
+            },
+            {
+              "year": 2021,
+              "cagr": 0.009821282645178453,
+              "mdd": 0.0022025354133816677,
+              "n_bars": 261,
+              "full_year": true
+            },
+            {
+              "year": 2022,
+              "cagr": 0.01685283497600909,
+              "mdd": 0.0018431817302357878,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2023,
+              "cagr": 0.0046857569214440176,
+              "mdd": 0.003518159411159738,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2024,
+              "cagr": 0.01008063027581807,
+              "mdd": 0.003196371925898611,
+              "n_bars": 218,
+              "full_year": true
+            }
+          ],
+          "worst_year_cagr": -0.0023738201931009506,
+          "combined_cagr": 0.008787003054324005,
+          "passed": false
+        },
+        "gate3_rolling": {
+          "n_windows": 57,
+          "cagr_min": -0.0004330320350953709,
+          "cagr_p25": 0.004649904752193068,
+          "cagr_median": 0.008207530040875488,
+          "cagr_p75": 0.012812757760390259,
+          "cagr_max": 0.023774224265483035,
+          "hit_frac": 0.0,
+          "neg_frac": 0.05263157894736842,
+          "rolling_mdd_max": 0.011978469276059722,
+          "passed": false
+        },
+        "gate4_walk_forward": {
+          "folds": 8,
+          "fold_detail": [
+            {
+              "train": [
+                "2019-01-11",
+                "2021-01-11"
+              ],
+              "test": [
+                "2021-01-11",
+                "2021-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2019-07-11",
+                "2021-07-11"
+              ],
+              "test": [
+                "2021-07-11",
+                "2022-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2020-01-11",
+                "2022-01-11"
+              ],
+              "test": [
+                "2022-01-11",
+                "2022-07-11"
+              ],
+              "n_train": 66,
+              "n_test": 17,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2020-07-11",
+                "2022-07-11"
+              ],
+              "test": [
+                "2022-07-11",
+                "2023-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2021-01-11",
+                "2023-01-11"
+              ],
+              "test": [
+                "2023-01-11",
+                "2023-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2021-07-11",
+                "2023-07-11"
+              ],
+              "test": [
+                "2023-07-11",
+                "2024-01-11"
+              ],
+              "n_train": 66,
+              "n_test": 18,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-01-11",
+                "2024-01-11"
+              ],
+              "test": [
+                "2024-01-11",
+                "2024-07-11"
+              ],
+              "n_train": 68,
+              "n_test": 16,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-07-11",
+                "2024-07-11"
+              ],
+              "test": [
+                "2024-07-11",
+                "2025-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            }
+          ],
+          "oos_gate1": {
+            "cagr": 0.013993383150873173,
+            "mdd": 0.003518159411159849,
+            "passed": false
+          },
+          "oos_gate2": {
+            "years": [
+              {
+                "year": 2021,
+                "cagr": 0.01755767227042626,
+                "mdd": 0.0022025354133816677,
+                "n_bars": 150,
+                "full_year": false
+              },
+              {
+                "year": 2022,
+                "cagr": 0.01885002196234309,
+                "mdd": 0.0018431817302357878,
+                "n_bars": 215,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.005550712093504995,
+                "mdd": 0.003518159411159738,
+                "n_bars": 213,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": 0.013360928566668262,
+                "mdd": 0.003196371925898611,
+                "n_bars": 165,
+                "full_year": true
+              }
+            ],
+            "worst_year_cagr": 0.005550712093504995,
+            "combined_cagr": 0.013993383150873173,
+            "passed": false
+          },
+          "oos_gate3": {
+            "n_windows": 34,
+            "cagr_min": -0.003180693155523273,
+            "cagr_p25": 0.005498935855644094,
+            "cagr_median": 0.00924260818086442,
+            "cagr_p75": 0.026290943744482487,
+            "cagr_max": 0.036224236715096225,
+            "hit_frac": 0.0,
+            "neg_frac": 0.058823529411764705,
+            "rolling_mdd_max": 0.003518159411160071,
+            "passed": false
+          },
+          "oos_cagr": 0.013993383150873173,
+          "oos_mdd": 0.003518159411159849,
+          "passed": false
+        },
+        "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
+      },
+      "diagnostics": {
+        "n_events": 200,
+        "signs": {
+          "-1": 40,
+          "0": 120,
+          "1": 40
+        },
+        "reasons": {
+          "options_chain_unavailable_blocked": 40,
+          "neutral_surprise": 120,
+          "long_ok": 40
+        },
+        "n_long_feasible": 40,
+        "n_admitted": 40,
+        "capacity_skipped": 0,
+        "negative_branch": {
+          "count": 40,
+          "blocked_missing_options": 40,
+          "realized": 0,
+          "reference_return_mean": 0.010346467986120317,
+          "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+        }
+      },
+      "negative_branch": {
+        "count": 40,
+        "blocked_missing_options": 40,
+        "realized": 0,
+        "reference_return_mean": 0.010346467986120317,
+        "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+      }
+    },
+    {
+      "mode": "pead",
+      "hold": 10,
+      "card_C_core_metrics": {
+        "cagr": 0.014330216062863554,
+        "max_drawdown": 0.011713148576643295,
+        "sharpe": 1.46742915583086,
+        "sortino": 2.4554731129384537,
+        "annualized_turnover": 1.2999290571883417,
+        "n_bars": 1501,
+        "n_years": 5.9563492063492065,
+        "max_underwater_bars": 259,
+        "median_underwater_bars": 2.0,
+        "unrecovered": true,
+        "num_trades": 40,
+        "win_rate": 0.775,
+        "profit_factor": 4.051343467588388,
+        "avg_winner": 0.03668055023986246,
+        "avg_loser": 0.0311857334495679,
+        "expectancy": 0.021410636409740634
+      },
+      "card_B_cost_stress": {
+        "cost_bps_per_side_base": 10.0,
+        "base_cagr": 0.014330216062863554,
+        "base_mdd": 0.011713148576643295,
+        "cost_x2_cagr": 0.012985650959038475,
+        "cost_x2_mdd": 0.012503979306707103,
+        "cost_x2_still_passes_gate1": false,
+        "turnover_annualized_two_sided": 1.2999290571883417
+      },
+      "card_D_gates": {
+        "gate1_full_sample": {
+          "cagr": 0.014330216062863554,
+          "mdd": 0.011713148576643295,
+          "passed": false
+        },
+        "gate2_yearly": {
+          "years": [
+            {
+              "year": 2019,
+              "cagr": 0.0007872918267692874,
+              "mdd": 0.011713148576643295,
+              "n_bars": 235,
+              "full_year": true
+            },
+            {
+              "year": 2020,
+              "cagr": 0.029559627971427416,
+              "mdd": 0.004027046316790628,
+              "n_bars": 262,
+              "full_year": true
+            },
+            {
+              "year": 2021,
+              "cagr": 0.008341630978193626,
+              "mdd": 0.005054036166531217,
+              "n_bars": 261,
+              "full_year": true
+            },
+            {
+              "year": 2022,
+              "cagr": 0.02089345651688057,
+              "mdd": 0.004079567288017172,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2023,
+              "cagr": 0.012217846760660622,
+              "mdd": 0.002743438348647431,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2024,
+              "cagr": 0.012807022660131784,
+              "mdd": 0.005981355749758999,
+              "n_bars": 223,
+              "full_year": true
+            }
+          ],
+          "worst_year_cagr": 0.0007872918267692874,
+          "combined_cagr": 0.014330216062863554,
+          "passed": false
+        },
+        "gate3_rolling": {
+          "n_windows": 58,
+          "cagr_min": 0.00294222916797815,
+          "cagr_p25": 0.009009163199220127,
+          "cagr_median": 0.012481319592617224,
+          "cagr_p75": 0.021644666451405115,
+          "cagr_max": 0.03114041570582393,
+          "hit_frac": 0.0,
+          "neg_frac": 0.0,
+          "rolling_mdd_max": 0.011713148576643295,
+          "passed": false
+        },
+        "gate4_walk_forward": {
+          "folds": 8,
+          "fold_detail": [
+            {
+              "train": [
+                "2019-01-11",
+                "2021-01-11"
+              ],
+              "test": [
+                "2021-01-11",
+                "2021-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2019-07-11",
+                "2021-07-11"
+              ],
+              "test": [
+                "2021-07-11",
+                "2022-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2020-01-11",
+                "2022-01-11"
+              ],
+              "test": [
+                "2022-01-11",
+                "2022-07-11"
+              ],
+              "n_train": 66,
+              "n_test": 17,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2020-07-11",
+                "2022-07-11"
+              ],
+              "test": [
+                "2022-07-11",
+                "2023-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2021-01-11",
+                "2023-01-11"
+              ],
+              "test": [
+                "2023-01-11",
+                "2023-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2021-07-11",
+                "2023-07-11"
+              ],
+              "test": [
+                "2023-07-11",
+                "2024-01-11"
+              ],
+              "n_train": 66,
+              "n_test": 18,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-01-11",
+                "2024-01-11"
+              ],
+              "test": [
+                "2024-01-11",
+                "2024-07-11"
+              ],
+              "n_train": 68,
+              "n_test": 16,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-07-11",
+                "2024-07-11"
+              ],
+              "test": [
+                "2024-07-11",
+                "2025-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            }
+          ],
+          "oos_gate1": {
+            "cagr": 0.017412635366532037,
+            "mdd": 0.005981355749758888,
+            "passed": false
+          },
+          "oos_gate2": {
+            "years": [
+              {
+                "year": 2021,
+                "cagr": 0.01402293680750466,
+                "mdd": 0.005054036166531217,
+                "n_bars": 160,
+                "full_year": true
+              },
+              {
+                "year": 2022,
+                "cagr": 0.023202046090285755,
+                "mdd": 0.004079567288017172,
+                "n_bars": 220,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.013557609830789463,
+                "mdd": 0.002743438348647542,
+                "n_bars": 223,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": 0.01629412475127978,
+                "mdd": 0.005981355749758999,
+                "n_bars": 180,
+                "full_year": true
+              }
+            ],
+            "worst_year_cagr": 0.013557609830789463,
+            "combined_cagr": 0.017412635366532037,
+            "passed": false
+          },
+          "oos_gate3": {
+            "n_windows": 34,
+            "cagr_min": 0.004821402409288966,
+            "cagr_p25": 0.011355478332867708,
+            "cagr_median": 0.013496950787242334,
+            "cagr_p75": 0.024264714860894987,
+            "cagr_max": 0.03557528453353331,
+            "hit_frac": 0.0,
+            "neg_frac": 0.0,
+            "rolling_mdd_max": 0.005981355749758999,
+            "passed": false
+          },
+          "oos_cagr": 0.017412635366532037,
+          "oos_mdd": 0.005981355749758888,
+          "passed": false
+        },
+        "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
+      },
+      "diagnostics": {
+        "n_events": 200,
+        "signs": {
+          "-1": 40,
+          "0": 120,
+          "1": 40
+        },
+        "reasons": {
+          "options_chain_unavailable_blocked": 40,
+          "neutral_surprise": 120,
+          "long_ok": 40
+        },
+        "n_long_feasible": 40,
+        "n_admitted": 40,
+        "capacity_skipped": 0,
+        "negative_branch": {
+          "count": 40,
+          "blocked_missing_options": 40,
+          "realized": 0,
+          "reference_return_mean": 0.020209828976377475,
+          "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+        }
+      },
+      "negative_branch": {
+        "count": 40,
+        "blocked_missing_options": 40,
+        "realized": 0,
+        "reference_return_mean": 0.020209828976377475,
+        "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+      }
+    },
+    {
+      "mode": "pead",
+      "hold": 20,
+      "card_C_core_metrics": {
+        "cagr": 0.02078085919767303,
+        "max_drawdown": 0.014018422918061102,
+        "sharpe": 1.5047580984871023,
+        "sortino": 2.4347026803515814,
+        "annualized_turnover": 1.28041255443698,
+        "n_bars": 1511,
+        "n_years": 5.996031746031746,
+        "max_underwater_bars": 175,
+        "median_underwater_bars": 4.0,
+        "unrecovered": false,
+        "num_trades": 40,
+        "win_rate": 0.725,
+        "profit_factor": 4.115284526868951,
+        "avg_winner": 0.0574337006879682,
+        "avg_loser": 0.03679359689638642,
+        "expectancy": 0.03152119385227068
+      },
+      "card_B_cost_stress": {
+        "cost_bps_per_side_base": 10.0,
+        "base_cagr": 0.02078085919767303,
+        "base_mdd": 0.014018422918061102,
+        "cost_x2_cagr": 0.019436728969639105,
+        "cost_x2_mdd": 0.014511719030161241,
+        "cost_x2_still_passes_gate1": false,
+        "turnover_annualized_two_sided": 1.28041255443698
+      },
+      "card_D_gates": {
+        "gate1_full_sample": {
+          "cagr": 0.02078085919767303,
+          "mdd": 0.014018422918061102,
+          "passed": false
+        },
+        "gate2_yearly": {
+          "years": [
+            {
+              "year": 2019,
+              "cagr": 0.002696926301276603,
+              "mdd": 0.014018422918061102,
+              "n_bars": 235,
+              "full_year": true
+            },
+            {
+              "year": 2020,
+              "cagr": 0.029620203291541802,
+              "mdd": 0.005774147375783634,
+              "n_bars": 262,
+              "full_year": true
+            },
+            {
+              "year": 2021,
+              "cagr": 0.010634743122814871,
+              "mdd": 0.008091971793264374,
+              "n_bars": 261,
+              "full_year": true
+            },
+            {
+              "year": 2022,
+              "cagr": 0.02715378636966248,
+              "mdd": 0.00502329702678983,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2023,
+              "cagr": 0.021120486714953035,
+              "mdd": 0.0052676613584204945,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2024,
+              "cagr": 0.0348346246500868,
+              "mdd": 0.00681402625800398,
+              "n_bars": 233,
+              "full_year": true
+            }
+          ],
+          "worst_year_cagr": 0.002696926301276603,
+          "combined_cagr": 0.02078085919767303,
+          "passed": false
+        },
+        "gate3_rolling": {
+          "n_windows": 58,
+          "cagr_min": -0.0024395007960803516,
+          "cagr_p25": 0.01408161530286195,
+          "cagr_median": 0.0209575839063616,
+          "cagr_p75": 0.024662568862509338,
+          "cagr_max": 0.03419947562491665,
+          "hit_frac": 0.0,
+          "neg_frac": 0.034482758620689655,
+          "rolling_mdd_max": 0.014018422918061102,
+          "passed": false
+        },
+        "gate4_walk_forward": {
+          "folds": 8,
+          "fold_detail": [
+            {
+              "train": [
+                "2019-01-11",
+                "2021-01-11"
+              ],
+              "test": [
+                "2021-01-11",
+                "2021-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2019-07-11",
+                "2021-07-11"
+              ],
+              "test": [
+                "2021-07-11",
+                "2022-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2020-01-11",
+                "2022-01-11"
+              ],
+              "test": [
+                "2022-01-11",
+                "2022-07-11"
+              ],
+              "n_train": 66,
+              "n_test": 17,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2020-07-11",
+                "2022-07-11"
+              ],
+              "test": [
+                "2022-07-11",
+                "2023-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2021-01-11",
+                "2023-01-11"
+              ],
+              "test": [
+                "2023-01-11",
+                "2023-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2021-07-11",
+                "2023-07-11"
+              ],
+              "test": [
+                "2023-07-11",
+                "2024-01-11"
+              ],
+              "n_train": 66,
+              "n_test": 18,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-01-11",
+                "2024-01-11"
+              ],
+              "test": [
+                "2024-01-11",
+                "2024-07-11"
+              ],
+              "n_train": 68,
+              "n_test": 16,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-07-11",
+                "2024-07-11"
+              ],
+              "test": [
+                "2024-07-11",
+                "2025-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            }
+          ],
+          "oos_gate1": {
+            "cagr": 0.025256330725888843,
+            "mdd": 0.010880147121727135,
+            "passed": false
+          },
+          "oos_gate2": {
+            "years": [
+              {
+                "year": 2021,
+                "cagr": 0.015795456643070693,
+                "mdd": 0.008091971793264374,
+                "n_bars": 180,
+                "full_year": true
+              },
+              {
+                "year": 2022,
+                "cagr": 0.029270813401754525,
+                "mdd": 0.00502329702678983,
+                "n_bars": 230,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.015054187806557984,
+                "mdd": 0.010028788151604906,
+                "n_bars": 235,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": 0.03896775036926736,
+                "mdd": 0.00681402625800398,
+                "n_bars": 210,
+                "full_year": true
+              }
+            ],
+            "worst_year_cagr": 0.015054187806557984,
+            "combined_cagr": 0.025256330725888843,
+            "passed": false
+          },
+          "oos_gate3": {
+            "n_windows": 34,
+            "cagr_min": 0.009638592128764722,
+            "cagr_p25": 0.01533201950954205,
+            "cagr_median": 0.022269229762884923,
+            "cagr_p75": 0.0319136247216914,
+            "cagr_max": 0.04494460595578542,
+            "hit_frac": 0.0,
+            "neg_frac": 0.0,
+            "rolling_mdd_max": 0.01088014712172769,
+            "passed": false
+          },
+          "oos_cagr": 0.025256330725888843,
+          "oos_mdd": 0.010880147121727135,
+          "passed": false
+        },
+        "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
+      },
+      "diagnostics": {
+        "n_events": 200,
+        "signs": {
+          "-1": 40,
+          "0": 120,
+          "1": 40
+        },
+        "reasons": {
+          "options_chain_unavailable_blocked": 39,
+          "neutral_surprise": 120,
+          "long_ok": 40,
+          "insufficient_bars_for_hold": 1
+        },
+        "n_long_feasible": 40,
+        "n_admitted": 40,
+        "capacity_skipped": 0,
+        "negative_branch": {
+          "count": 39,
+          "blocked_missing_options": 39,
+          "realized": 0,
+          "reference_return_mean": 0.01939976273086785,
+          "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+        }
+      },
+      "negative_branch": {
+        "count": 39,
+        "blocked_missing_options": 39,
+        "realized": 0,
+        "reference_return_mean": 0.01939976273086785,
+        "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+      }
+    },
+    {
+      "mode": "pead",
+      "hold": 30,
+      "card_C_core_metrics": {
+        "cagr": 0.023302237831304362,
+        "max_drawdown": 0.01525502309675153,
+        "sharpe": 1.403535865670112,
+        "sortino": 2.2177048021783152,
+        "annualized_turnover": 1.2538930092548053,
+        "n_bars": 1521,
+        "n_years": 6.035714285714286,
+        "max_underwater_bars": 135,
+        "median_underwater_bars": 4.0,
+        "unrecovered": true,
+        "num_trades": 40,
+        "win_rate": 0.75,
+        "profit_factor": 4.5492623210183485,
+        "avg_winner": 0.06005704842581337,
+        "avg_loser": 0.03960447487167743,
+        "expectancy": 0.03514166760144067
+      },
+      "card_B_cost_stress": {
+        "cost_bps_per_side_base": 10.0,
+        "base_cagr": 0.023302237831304362,
+        "base_mdd": 0.01525502309675153,
+        "cost_x2_cagr": 0.02196366126370819,
+        "cost_x2_mdd": 0.01564916331695787,
+        "cost_x2_still_passes_gate1": false,
+        "turnover_annualized_two_sided": 1.2538930092548053
+      },
+      "card_D_gates": {
+        "gate1_full_sample": {
+          "cagr": 0.023302237831304362,
+          "mdd": 0.01525502309675153,
+          "passed": false
+        },
+        "gate2_yearly": {
+          "years": [
+            {
+              "year": 2019,
+              "cagr": 0.021289131477465917,
+              "mdd": 0.01525502309675153,
+              "n_bars": 235,
+              "full_year": true
+            },
+            {
+              "year": 2020,
+              "cagr": 0.030721955055965422,
+              "mdd": 0.00581524546109391,
+              "n_bars": 262,
+              "full_year": true
+            },
+            {
+              "year": 2021,
+              "cagr": 0.0024260746015349888,
+              "mdd": 0.01011276714327991,
+              "n_bars": 261,
+              "full_year": true
+            },
+            {
+              "year": 2022,
+              "cagr": 0.035378690044325145,
+              "mdd": 0.004855867422486337,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2023,
+              "cagr": 0.015644202616745817,
+              "mdd": 0.007879941310086735,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2024,
+              "cagr": 0.03673435008684178,
+              "mdd": 0.007412301173636782,
+              "n_bars": 243,
+              "full_year": true
+            }
+          ],
+          "worst_year_cagr": 0.0024260746015349888,
+          "combined_cagr": 0.023302237831304362,
+          "passed": false
+        },
+        "gate3_rolling": {
+          "n_windows": 58,
+          "cagr_min": -0.003068174730064599,
+          "cagr_p25": 0.015538843923391554,
+          "cagr_median": 0.02015441349577274,
+          "cagr_p75": 0.027993968991026796,
+          "cagr_max": 0.03944206726860333,
+          "hit_frac": 0.0,
+          "neg_frac": 0.017241379310344827,
+          "rolling_mdd_max": 0.01525502309675153,
+          "passed": false
+        },
+        "gate4_walk_forward": {
+          "folds": 8,
+          "fold_detail": [
+            {
+              "train": [
+                "2019-01-11",
+                "2021-01-11"
+              ],
+              "test": [
+                "2021-01-11",
+                "2021-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2019-07-11",
+                "2021-07-11"
+              ],
+              "test": [
+                "2021-07-11",
+                "2022-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2020-01-11",
+                "2022-01-11"
+              ],
+              "test": [
+                "2022-01-11",
+                "2022-07-11"
+              ],
+              "n_train": 66,
+              "n_test": 17,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2020-07-11",
+                "2022-07-11"
+              ],
+              "test": [
+                "2022-07-11",
+                "2023-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2021-01-11",
+                "2023-01-11"
+              ],
+              "test": [
+                "2023-01-11",
+                "2023-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2021-07-11",
+                "2023-07-11"
+              ],
+              "test": [
+                "2023-07-11",
+                "2024-01-11"
+              ],
+              "n_train": 66,
+              "n_test": 18,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-01-11",
+                "2024-01-11"
+              ],
+              "test": [
+                "2024-01-11",
+                "2024-07-11"
+              ],
+              "n_train": 68,
+              "n_test": 16,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-07-11",
+                "2024-07-11"
+              ],
+              "test": [
+                "2024-07-11",
+                "2025-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            }
+          ],
+          "oos_gate1": {
+            "cagr": 0.02377646751054585,
+            "mdd": 0.011688108541439868,
+            "passed": false
+          },
+          "oos_gate2": {
+            "years": [
+              {
+                "year": 2021,
+                "cagr": 0.0034679359361571294,
+                "mdd": 0.01011276714327991,
+                "n_bars": 200,
+                "full_year": true
+              },
+              {
+                "year": 2022,
+                "cagr": 0.036955180017786526,
+                "mdd": 0.004855867422486337,
+                "n_bars": 240,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.010942397987051988,
+                "mdd": 0.010002691904452354,
+                "n_bars": 245,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": 0.03974067767728329,
+                "mdd": 0.007412301173636782,
+                "n_bars": 239,
+                "full_year": true
+              }
+            ],
+            "worst_year_cagr": 0.0034679359361571294,
+            "combined_cagr": 0.02377646751054585,
+            "passed": false
+          },
+          "oos_gate3": {
+            "n_windows": 35,
+            "cagr_min": 0.006074408616342231,
+            "cagr_p25": 0.016277532382287907,
+            "cagr_median": 0.02237834410847217,
+            "cagr_p75": 0.03137994559748736,
+            "cagr_max": 0.0471096876790118,
+            "hit_frac": 0.0,
+            "neg_frac": 0.0,
+            "rolling_mdd_max": 0.01168810854144009,
+            "passed": false
+          },
+          "oos_cagr": 0.02377646751054585,
+          "oos_mdd": 0.011688108541439868,
+          "passed": false
+        },
+        "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
+      },
+      "diagnostics": {
+        "n_events": 200,
+        "signs": {
+          "-1": 40,
+          "0": 120,
+          "1": 40
+        },
+        "reasons": {
+          "options_chain_unavailable_blocked": 38,
+          "neutral_surprise": 120,
+          "long_ok": 40,
+          "insufficient_bars_for_hold": 2
+        },
+        "n_long_feasible": 40,
+        "n_admitted": 40,
+        "capacity_skipped": 0,
+        "negative_branch": {
+          "count": 38,
+          "blocked_missing_options": 38,
+          "realized": 0,
+          "reference_return_mean": 0.026054587224857213,
+          "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+        }
+      },
+      "negative_branch": {
+        "count": 38,
+        "blocked_missing_options": 38,
+        "realized": 0,
+        "reference_return_mean": 0.026054587224857213,
+        "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+      }
+    },
+    {
+      "mode": "close_to_open",
+      "hold": 5,
+      "card_C_core_metrics": {
+        "cagr": -0.000932787551603087,
+        "max_drawdown": 0.010135394263802389,
+        "sharpe": -0.24628358017964289,
+        "sortino": -0.32742341577819023,
+        "annualized_turnover": 6.7640200013111835,
+        "n_bars": 1497,
+        "n_years": 5.940476190476191,
+        "max_underwater_bars": 1492,
+        "median_underwater_bars": 1.0,
+        "unrecovered": true,
+        "num_trades": 40,
+        "win_rate": 0.4,
+        "profit_factor": 0.7813195315795022,
+        "avg_winner": 0.01237979590796097,
+        "avg_loser": 0.010563152383109453,
+        "expectancy": -0.0013859730666812833
+      },
+      "card_B_cost_stress": {
+        "cost_bps_per_side_base": 10.0,
+        "base_cagr": -0.000932787551603087,
+        "base_mdd": 0.010135394263802389,
+        "cost_x2_cagr": -0.007638304565207088,
+        "cost_x2_mdd": 0.045126781851444475,
+        "cost_x2_still_passes_gate1": false,
+        "turnover_annualized_two_sided": 6.7640200013111835
+      },
+      "card_D_gates": {
+        "gate1_full_sample": {
+          "cagr": -0.000932787551603087,
+          "mdd": 0.010135394263802389,
+          "passed": false
+        },
+        "gate2_yearly": {
+          "years": [
+            {
+              "year": 2019,
+              "cagr": -0.005377830415897122,
+              "mdd": 0.007507356234300988,
+              "n_bars": 235,
+              "full_year": true
+            },
+            {
+              "year": 2020,
+              "cagr": 0.0020328849805117954,
+              "mdd": 0.003057272430200708,
+              "n_bars": 262,
+              "full_year": true
+            },
+            {
+              "year": 2021,
+              "cagr": -0.0035687519411491397,
+              "mdd": 0.005913125310567202,
+              "n_bars": 261,
+              "full_year": true
+            },
+            {
+              "year": 2022,
+              "cagr": 0.001745569431931271,
+              "mdd": 0.0020630291082698315,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2023,
+              "cagr": -0.0017444223786491353,
+              "mdd": 0.004930158415804131,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2024,
+              "cagr": 0.001241383963070719,
+              "mdd": 0.002655653986473494,
+              "n_bars": 219,
+              "full_year": true
+            }
+          ],
+          "worst_year_cagr": -0.005377830415897122,
+          "combined_cagr": -0.000932787551603087,
+          "passed": false
+        },
+        "gate3_rolling": {
+          "n_windows": 57,
+          "cagr_min": -0.005012888872257482,
+          "cagr_p25": -0.0029060266623230913,
+          "cagr_median": -0.0017377445785803358,
+          "cagr_p75": 0.001051671375011054,
+          "cagr_max": 0.0046375440908470456,
+          "hit_frac": 0.0,
+          "neg_frac": 0.6666666666666666,
+          "rolling_mdd_max": 0.007507356234300988,
+          "passed": false
+        },
+        "gate4_walk_forward": {
+          "folds": 8,
+          "fold_detail": [
+            {
+              "train": [
+                "2019-01-11",
+                "2021-01-11"
+              ],
+              "test": [
+                "2021-01-11",
+                "2021-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2019-07-11",
+                "2021-07-11"
+              ],
+              "test": [
+                "2021-07-11",
+                "2022-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2020-01-11",
+                "2022-01-11"
+              ],
+              "test": [
+                "2022-01-11",
+                "2022-07-11"
+              ],
+              "n_train": 66,
+              "n_test": 17,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2020-07-11",
+                "2022-07-11"
+              ],
+              "test": [
+                "2022-07-11",
+                "2023-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2021-01-11",
+                "2023-01-11"
+              ],
+              "test": [
+                "2023-01-11",
+                "2023-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2021-07-11",
+                "2023-07-11"
+              ],
+              "test": [
+                "2023-07-11",
+                "2024-01-11"
+              ],
+              "n_train": 66,
+              "n_test": 18,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-01-11",
+                "2024-01-11"
+              ],
+              "test": [
+                "2024-01-11",
+                "2024-07-11"
+              ],
+              "n_train": 68,
+              "n_test": 16,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-07-11",
+                "2024-07-11"
+              ],
+              "test": [
+                "2024-07-11",
+                "2025-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            }
+          ],
+          "oos_gate1": {
+            "cagr": -0.0008476061847051408,
+            "mdd": 0.008260001293463493,
+            "passed": false
+          },
+          "oos_gate2": {
+            "years": [
+              {
+                "year": 2021,
+                "cagr": -0.006120078898779302,
+                "mdd": 0.005913125310567202,
+                "n_bars": 152,
+                "full_year": true
+              },
+              {
+                "year": 2022,
+                "cagr": 0.0021015217794186913,
+                "mdd": 0.0020630291082698315,
+                "n_bars": 216,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": -0.00176110522883266,
+                "mdd": 0.00493015841580402,
+                "n_bars": 215,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": 0.0013211524523817353,
+                "mdd": 0.002655653986473494,
+                "n_bars": 168,
+                "full_year": true
+              }
+            ],
+            "worst_year_cagr": -0.006120078898779302,
+            "combined_cagr": -0.0008476061847051408,
+            "passed": false
+          },
+          "oos_gate3": {
+            "n_windows": 34,
+            "cagr_min": -0.00633480023142674,
+            "cagr_p25": -0.002826254450172039,
+            "cagr_median": -0.0017529966211620174,
+            "cagr_p75": 0.00021417529467243623,
+            "cagr_max": 0.0026199411560976493,
+            "hit_frac": 0.0,
+            "neg_frac": 0.7352941176470589,
+            "rolling_mdd_max": 0.006254545019173552,
+            "passed": false
+          },
+          "oos_cagr": -0.0008476061847051408,
+          "oos_mdd": 0.008260001293463493,
+          "passed": false
+        },
+        "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
+      },
+      "diagnostics": {
+        "n_events": 200,
+        "signs": {
+          "-1": 40,
+          "0": 120,
+          "1": 40
+        },
+        "reasons": {
+          "options_chain_unavailable_blocked": 40,
+          "neutral_surprise": 120,
+          "long_ok": 40
+        },
+        "n_long_feasible": 40,
+        "n_admitted": 40,
+        "capacity_skipped": 0,
+        "negative_branch": {
+          "count": 40,
+          "blocked_missing_options": 40,
+          "realized": 0,
+          "reference_return_mean": 0.00923136795324164,
+          "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+        }
+      },
+      "negative_branch": {
+        "count": 40,
+        "blocked_missing_options": 40,
+        "realized": 0,
+        "reference_return_mean": 0.00923136795324164,
+        "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+      }
+    },
+    {
+      "mode": "close_to_open",
+      "hold": 10,
+      "card_C_core_metrics": {
+        "cagr": -0.00414520957002984,
+        "max_drawdown": 0.03341797296544735,
+        "sharpe": -0.7904914559336313,
+        "sortino": -1.0288426743947732,
+        "annualized_turnover": 13.689641723483735,
+        "n_bars": 1502,
+        "n_years": 5.9603174603174605,
+        "max_underwater_bars": 1497,
+        "median_underwater_bars": 1.0,
+        "unrecovered": true,
+        "num_trades": 40,
+        "win_rate": 0.375,
+        "profit_factor": 0.46408172715943613,
+        "avg_winner": 0.014178733095948963,
+        "avg_loser": 0.01833133984748919,
+        "expectancy": -0.006140062493699882
+      },
+      "card_B_cost_stress": {
+        "cost_bps_per_side_base": 10.0,
+        "base_cagr": -0.00414520957002984,
+        "base_mdd": 0.03341797296544735,
+        "cost_x2_cagr": -0.017424908869819844,
+        "cost_x2_mdd": 0.10025441876948049,
+        "cost_x2_still_passes_gate1": false,
+        "turnover_annualized_two_sided": 13.689641723483735
+      },
+      "card_D_gates": {
+        "gate1_full_sample": {
+          "cagr": -0.00414520957002984,
+          "mdd": 0.03341797296544735,
+          "passed": false
+        },
+        "gate2_yearly": {
+          "years": [
+            {
+              "year": 2019,
+              "cagr": -0.019716068436020584,
+              "mdd": 0.019818470768015795,
+              "n_bars": 235,
+              "full_year": true
+            },
+            {
+              "year": 2020,
+              "cagr": -0.0010397184368499124,
+              "mdd": 0.00578009142053959,
+              "n_bars": 262,
+              "full_year": true
+            },
+            {
+              "year": 2021,
+              "cagr": -0.005377247974643229,
+              "mdd": 0.00816927388022115,
+              "n_bars": 261,
+              "full_year": true
+            },
+            {
+              "year": 2022,
+              "cagr": -0.001582853386819183,
+              "mdd": 0.005940404698822288,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2023,
+              "cagr": 0.0009401051773965108,
+              "mdd": 0.0069785772405441815,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2024,
+              "cagr": 0.001285949701989031,
+              "mdd": 0.003919890932426173,
+              "n_bars": 224,
+              "full_year": true
+            }
+          ],
+          "worst_year_cagr": -0.019716068436020584,
+          "combined_cagr": -0.00414520957002984,
+          "passed": false
+        },
+        "gate3_rolling": {
+          "n_windows": 58,
+          "cagr_min": -0.01718005243934717,
+          "cagr_p25": -0.005424776351205807,
+          "cagr_median": -0.0025694786582614038,
+          "cagr_p75": -0.0005048392547528646,
+          "cagr_max": 0.0037481007133552957,
+          "hit_frac": 0.0,
+          "neg_frac": 0.7758620689655172,
+          "rolling_mdd_max": 0.019818470768015795,
+          "passed": false
+        },
+        "gate4_walk_forward": {
+          "folds": 8,
+          "fold_detail": [
+            {
+              "train": [
+                "2019-01-11",
+                "2021-01-11"
+              ],
+              "test": [
+                "2021-01-11",
+                "2021-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2019-07-11",
+                "2021-07-11"
+              ],
+              "test": [
+                "2021-07-11",
+                "2022-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2020-01-11",
+                "2022-01-11"
+              ],
+              "test": [
+                "2022-01-11",
+                "2022-07-11"
+              ],
+              "n_train": 66,
+              "n_test": 17,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2020-07-11",
+                "2022-07-11"
+              ],
+              "test": [
+                "2022-07-11",
+                "2023-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2021-01-11",
+                "2023-01-11"
+              ],
+              "test": [
+                "2023-01-11",
+                "2023-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2021-07-11",
+                "2023-07-11"
+              ],
+              "test": [
+                "2023-07-11",
+                "2024-01-11"
+              ],
+              "n_train": 66,
+              "n_test": 18,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-01-11",
+                "2024-01-11"
+              ],
+              "test": [
+                "2024-01-11",
+                "2024-07-11"
+              ],
+              "n_train": 68,
+              "n_test": 16,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-07-11",
+                "2024-07-11"
+              ],
+              "test": [
+                "2024-07-11",
+                "2025-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            }
+          ],
+          "oos_gate1": {
+            "cagr": -0.0020214771775547424,
+            "mdd": 0.015527106241924327,
+            "passed": false
+          },
+          "oos_gate2": {
+            "years": [
+              {
+                "year": 2021,
+                "cagr": -0.008649099728654797,
+                "mdd": 0.00816927388022115,
+                "n_bars": 162,
+                "full_year": true
+              },
+              {
+                "year": 2022,
+                "cagr": -0.0018619202632896847,
+                "mdd": 0.005940404698822288,
+                "n_bars": 221,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": -2.884022823512744e-05,
+                "mdd": 0.007639157531369345,
+                "n_bars": 225,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": 0.0012302587202370763,
+                "mdd": 0.003919890932426173,
+                "n_bars": 183,
+                "full_year": true
+              }
+            ],
+            "worst_year_cagr": -0.008649099728654797,
+            "combined_cagr": -0.0020214771775547424,
+            "passed": false
+          },
+          "oos_gate3": {
+            "n_windows": 34,
+            "cagr_min": -0.01314501736013085,
+            "cagr_p25": -0.004240229806258156,
+            "cagr_median": -0.001760584864129,
+            "cagr_p75": -0.00012144862418325686,
+            "cagr_max": 0.005046895125582651,
+            "hit_frac": 0.0,
+            "neg_frac": 0.8235294117647058,
+            "rolling_mdd_max": 0.010186943172217244,
+            "passed": false
+          },
+          "oos_cagr": -0.0020214771775547424,
+          "oos_mdd": 0.015527106241924327,
+          "passed": false
+        },
+        "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
+      },
+      "diagnostics": {
+        "n_events": 200,
+        "signs": {
+          "-1": 40,
+          "0": 120,
+          "1": 40
+        },
+        "reasons": {
+          "options_chain_unavailable_blocked": 40,
+          "neutral_surprise": 120,
+          "long_ok": 40
+        },
+        "n_long_feasible": 40,
+        "n_admitted": 40,
+        "capacity_skipped": 0,
+        "negative_branch": {
+          "count": 40,
+          "blocked_missing_options": 40,
+          "realized": 0,
+          "reference_return_mean": 0.012304617446550004,
+          "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+        }
+      },
+      "negative_branch": {
+        "count": 40,
+        "blocked_missing_options": 40,
+        "realized": 0,
+        "reference_return_mean": 0.012304617446550004,
+        "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+      }
+    },
+    {
+      "mode": "close_to_open",
+      "hold": 20,
+      "card_C_core_metrics": {
+        "cagr": -0.011884743142223875,
+        "max_drawdown": 0.07681048135532209,
+        "sharpe": -1.6643625873741912,
+        "sortino": -2.1006638792627412,
+        "annualized_turnover": 27.997270332366835,
+        "n_bars": 1512,
+        "n_years": 6.0,
+        "max_underwater_bars": 1507,
+        "median_underwater_bars": 1.0,
+        "unrecovered": true,
+        "num_trades": 40,
+        "win_rate": 0.25,
+        "profit_factor": 0.24384248986913892,
+        "avg_winner": 0.022805659817135206,
+        "avg_loser": 0.031175397732328688,
+        "expectancy": -0.017680133344962712
+      },
+      "card_B_cost_stress": {
+        "cost_bps_per_side_base": 10.0,
+        "base_cagr": -0.011884743142223875,
+        "base_mdd": 0.07681048135532209,
+        "cost_x2_cagr": -0.03789236442869515,
+        "cost_x2_mdd": 0.20805716306707067,
+        "cost_x2_still_passes_gate1": false,
+        "turnover_annualized_two_sided": 27.997270332366835
+      },
+      "card_D_gates": {
+        "gate1_full_sample": {
+          "cagr": -0.011884743142223875,
+          "mdd": 0.07681048135532209,
+          "passed": false
+        },
+        "gate2_yearly": {
+          "years": [
+            {
+              "year": 2019,
+              "cagr": -0.037243976557215674,
+              "mdd": 0.035649784499502624,
+              "n_bars": 235,
+              "full_year": true
+            },
+            {
+              "year": 2020,
+              "cagr": -0.01321929947542888,
+              "mdd": 0.014874438614548735,
+              "n_bars": 262,
+              "full_year": true
+            },
+            {
+              "year": 2021,
+              "cagr": -0.013372472072032293,
+              "mdd": 0.014412380967494753,
+              "n_bars": 261,
+              "full_year": true
+            },
+            {
+              "year": 2022,
+              "cagr": -0.00588814934191384,
+              "mdd": 0.012594642958302482,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2023,
+              "cagr": 0.00116138449639136,
+              "mdd": 0.009803440070056846,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2024,
+              "cagr": -0.0032044643569090203,
+              "mdd": 0.008916956381574193,
+              "n_bars": 234,
+              "full_year": true
+            }
+          ],
+          "worst_year_cagr": -0.037243976557215674,
+          "combined_cagr": -0.011884743142223875,
+          "passed": false
+        },
+        "gate3_rolling": {
+          "n_windows": 58,
+          "cagr_min": -0.03972859501099091,
+          "cagr_p25": -0.015188732988301312,
+          "cagr_median": -0.010207353379934225,
+          "cagr_p75": -0.0046712365901800945,
+          "cagr_max": 0.001156932174328107,
+          "hit_frac": 0.0,
+          "neg_frac": 0.9137931034482759,
+          "rolling_mdd_max": 0.042341263698967735,
+          "passed": false
+        },
+        "gate4_walk_forward": {
+          "folds": 8,
+          "fold_detail": [
+            {
+              "train": [
+                "2019-01-11",
+                "2021-01-11"
+              ],
+              "test": [
+                "2021-01-11",
+                "2021-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2019-07-11",
+                "2021-07-11"
+              ],
+              "test": [
+                "2021-07-11",
+                "2022-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2020-01-11",
+                "2022-01-11"
+              ],
+              "test": [
+                "2022-01-11",
+                "2022-07-11"
+              ],
+              "n_train": 66,
+              "n_test": 17,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2020-07-11",
+                "2022-07-11"
+              ],
+              "test": [
+                "2022-07-11",
+                "2023-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2021-01-11",
+                "2023-01-11"
+              ],
+              "test": [
+                "2023-01-11",
+                "2023-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2021-07-11",
+                "2023-07-11"
+              ],
+              "test": [
+                "2023-07-11",
+                "2024-01-11"
+              ],
+              "n_train": 66,
+              "n_test": 18,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-01-11",
+                "2024-01-11"
+              ],
+              "test": [
+                "2024-01-11",
+                "2024-07-11"
+              ],
+              "n_train": 68,
+              "n_test": 16,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-07-11",
+                "2024-07-11"
+              ],
+              "test": [
+                "2024-07-11",
+                "2025-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            }
+          ],
+          "oos_gate1": {
+            "cagr": -0.009630732961036115,
+            "mdd": 0.03651637580380107,
+            "passed": false
+          },
+          "oos_gate2": {
+            "years": [
+              {
+                "year": 2021,
+                "cagr": -0.019121208711116555,
+                "mdd": 0.014412380967494753,
+                "n_bars": 182,
+                "full_year": true
+              },
+              {
+                "year": 2022,
+                "cagr": -0.006624900535573519,
+                "mdd": 0.012594642958302482,
+                "n_bars": 231,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": -0.006861761370306918,
+                "mdd": 0.01702128335819264,
+                "n_bars": 236,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": -0.007799301549455739,
+                "mdd": 0.008916956381574193,
+                "n_bars": 213,
+                "full_year": true
+              }
+            ],
+            "worst_year_cagr": -0.019121208711116555,
+            "combined_cagr": -0.009630732961036115,
+            "passed": false
+          },
+          "oos_gate3": {
+            "n_windows": 34,
+            "cagr_min": -0.02114818605333635,
+            "cagr_p25": -0.013942177735262518,
+            "cagr_median": -0.009066844701288213,
+            "cagr_p75": -0.00521942716265314,
+            "cagr_max": 0.0021157748351607886,
+            "hit_frac": 0.0,
+            "neg_frac": 0.9705882352941176,
+            "rolling_mdd_max": 0.018601492366495886,
+            "passed": false
+          },
+          "oos_cagr": -0.009630732961036115,
+          "oos_mdd": 0.03651637580380107,
+          "passed": false
+        },
+        "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
+      },
+      "diagnostics": {
+        "n_events": 200,
+        "signs": {
+          "-1": 40,
+          "0": 120,
+          "1": 40
+        },
+        "reasons": {
+          "options_chain_unavailable_blocked": 39,
+          "neutral_surprise": 120,
+          "long_ok": 40,
+          "insufficient_bars_for_hold": 1
+        },
+        "n_long_feasible": 40,
+        "n_admitted": 40,
+        "capacity_skipped": 0,
+        "negative_branch": {
+          "count": 39,
+          "blocked_missing_options": 39,
+          "realized": 0,
+          "reference_return_mean": 0.0156381496901596,
+          "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+        }
+      },
+      "negative_branch": {
+        "count": 39,
+        "blocked_missing_options": 39,
+        "realized": 0,
+        "reference_return_mean": 0.0156381496901596,
+        "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+      }
+    },
+    {
+      "mode": "close_to_open",
+      "hold": 30,
+      "card_C_core_metrics": {
+        "cagr": -0.023471606843844306,
+        "max_drawdown": 0.13787998228855924,
+        "sharpe": -2.6266410406562803,
+        "sortino": -3.153372224704392,
+        "annualized_turnover": 43.382396235204894,
+        "n_bars": 1522,
+        "n_years": 6.0396825396825395,
+        "max_underwater_bars": 1517,
+        "median_underwater_bars": 1.0,
+        "unrecovered": true,
+        "num_trades": 40,
+        "win_rate": 0.15,
+        "profit_factor": 0.09846648776613465,
+        "avg_winner": 0.02555471038312751,
+        "avg_loser": 0.04579887914966421,
+        "expectancy": -0.035095840719745454
+      },
+      "card_B_cost_stress": {
+        "cost_bps_per_side_base": 10.0,
+        "base_cagr": -0.023471606843844306,
+        "base_mdd": 0.13787998228855924,
+        "cost_x2_cagr": -0.061527074780245106,
+        "cost_x2_mdd": 0.31883952239260127,
+        "cost_x2_still_passes_gate1": false,
+        "turnover_annualized_two_sided": 43.382396235204894
+      },
+      "card_D_gates": {
+        "gate1_full_sample": {
+          "cagr": -0.023471606843844306,
+          "mdd": 0.13787998228855924,
+          "passed": false
+        },
+        "gate2_yearly": {
+          "years": [
+            {
+              "year": 2019,
+              "cagr": -0.05629934895115174,
+              "mdd": 0.0534610673919278,
+              "n_bars": 235,
+              "full_year": true
+            },
+            {
+              "year": 2020,
+              "cagr": -0.03147988424604853,
+              "mdd": 0.03312899497577393,
+              "n_bars": 262,
+              "full_year": true
+            },
+            {
+              "year": 2021,
+              "cagr": -0.027672054921224043,
+              "mdd": 0.029835135946800206,
+              "n_bars": 261,
+              "full_year": true
+            },
+            {
+              "year": 2022,
+              "cagr": -0.010386660264541159,
+              "mdd": 0.01823665439331168,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2023,
+              "cagr": -0.005810258771525967,
+              "mdd": 0.013943040711260402,
+              "n_bars": 260,
+              "full_year": true
+            },
+            {
+              "year": 2024,
+              "cagr": -0.009890072790291748,
+              "mdd": 0.01353491195281642,
+              "n_bars": 244,
+              "full_year": true
+            }
+          ],
+          "worst_year_cagr": -0.05629934895115174,
+          "combined_cagr": -0.023471606843844306,
+          "passed": false
+        },
+        "gate3_rolling": {
+          "n_windows": 59,
+          "cagr_min": -0.061099433092910216,
+          "cagr_p25": -0.02941055317021407,
+          "cagr_median": -0.024010738410742638,
+          "cagr_p75": -0.009731507630023117,
+          "cagr_max": -0.004766522637834725,
+          "hit_frac": 0.0,
+          "neg_frac": 1.0,
+          "rolling_mdd_max": 0.06367973041337527,
+          "passed": false
+        },
+        "gate4_walk_forward": {
+          "folds": 8,
+          "fold_detail": [
+            {
+              "train": [
+                "2019-01-11",
+                "2021-01-11"
+              ],
+              "test": [
+                "2021-01-11",
+                "2021-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2019-07-11",
+                "2021-07-11"
+              ],
+              "test": [
+                "2021-07-11",
+                "2022-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 3
+            },
+            {
+              "train": [
+                "2020-01-11",
+                "2022-01-11"
+              ],
+              "test": [
+                "2022-01-11",
+                "2022-07-11"
+              ],
+              "n_train": 66,
+              "n_test": 17,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2020-07-11",
+                "2022-07-11"
+              ],
+              "test": [
+                "2022-07-11",
+                "2023-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 17,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2021-01-11",
+                "2023-01-11"
+              ],
+              "test": [
+                "2023-01-11",
+                "2023-07-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            },
+            {
+              "train": [
+                "2021-07-11",
+                "2023-07-11"
+              ],
+              "test": [
+                "2023-07-11",
+                "2024-01-11"
+              ],
+              "n_train": 66,
+              "n_test": 18,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-01-11",
+                "2024-01-11"
+              ],
+              "test": [
+                "2024-01-11",
+                "2024-07-11"
+              ],
+              "n_train": 68,
+              "n_test": 16,
+              "n_admitted": 2
+            },
+            {
+              "train": [
+                "2022-07-11",
+                "2024-07-11"
+              ],
+              "test": [
+                "2024-07-11",
+                "2025-01-11"
+              ],
+              "n_train": 67,
+              "n_test": 16,
+              "n_admitted": 4
+            }
+          ],
+          "oos_gate1": {
+            "cagr": -0.01998210324807026,
+            "mdd": 0.07324970937521891,
+            "passed": false
+          },
+          "oos_gate2": {
+            "years": [
+              {
+                "year": 2021,
+                "cagr": -0.03560904037212487,
+                "mdd": 0.029835135946800206,
+                "n_bars": 202,
+                "full_year": true
+              },
+              {
+                "year": 2022,
+                "cagr": -0.011200922982886441,
+                "mdd": 0.01823665439331168,
+                "n_bars": 241,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": -0.019574472091004935,
+                "mdd": 0.02663590784182379,
+                "n_bars": 246,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": -0.01592816780936379,
+                "mdd": 0.01634585674130673,
+                "n_bars": 241,
+                "full_year": true
+              }
+            ],
+            "worst_year_cagr": -0.03560904037212487,
+            "combined_cagr": -0.01998210324807026,
+            "passed": false
+          },
+          "oos_gate3": {
+            "n_windows": 35,
+            "cagr_min": -0.0344339159307252,
+            "cagr_p25": -0.024131399842315993,
+            "cagr_median": -0.01941815616569631,
+            "cagr_p75": -0.011634846442506619,
+            "cagr_max": -0.004419552105369706,
+            "hit_frac": 0.0,
+            "neg_frac": 1.0,
+            "rolling_mdd_max": 0.03213807836166127,
+            "passed": false
+          },
+          "oos_cagr": -0.01998210324807026,
+          "oos_mdd": 0.07324970937521891,
+          "passed": false
+        },
+        "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
+      },
+      "diagnostics": {
+        "n_events": 200,
+        "signs": {
+          "-1": 40,
+          "0": 120,
+          "1": 40
+        },
+        "reasons": {
+          "options_chain_unavailable_blocked": 38,
+          "neutral_surprise": 120,
+          "long_ok": 40,
+          "insufficient_bars_for_hold": 2
+        },
+        "n_long_feasible": 40,
+        "n_admitted": 40,
+        "capacity_skipped": 0,
+        "negative_branch": {
+          "count": 38,
+          "blocked_missing_options": 38,
+          "realized": 0,
+          "reference_return_mean": 0.020484912553388322,
+          "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+        }
+      },
+      "negative_branch": {
+        "count": 38,
+        "blocked_missing_options": 38,
+        "realized": 0,
+        "reference_return_mean": 0.020484912553388322,
+        "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
+      }
+    }
+  ],
+  "card_E_bias_self_check": {
+    "survivorship": "NOT controlled \u2014 needs point-in-time universe (gap).",
+    "look_ahead": "controlled \u2014 entry is T+1 open after the reaction bar; quantile thresholds fit on train only in walk-forward.",
+    "overfitting": "hold \u2208 {5,10,20,30} and quantile are searched; must survive walk-forward OOS.",
+    "multiple_testing": "record #holds\u00d7#modes\u00d7#quantiles tried; apply a haircut before any PASS.",
+    "sample_period": "synthetic",
+    "liquidity": "min ADV floor = 2000000 USD; capacity via turnover.",
+    "adjustment_quality": "requires split/dividend-adjusted bars (gap on real data)."
+  },
+  "card_F_conclusion": {
+    "one_liner": "Reproducible, look-ahead-free earnings-drift backtest package for candidates 4+5 is delivered and runs end-to-end; a real verdict is blocked on real earnings/bar/options data.",
+    "confidence": "low",
+    "negative_branch_status": "defined-risk options only; blocked (missing chain), never a naked short."
+  },
+  "data_gap_list": [
+    {
+      "gap": "real_earnings_timestamps",
+      "blocks": "everything (event definition)",
+      "detail": "No real earnings-announcement timestamps with correct bmo/amc tagging are available in this workspace. Needed: per-symbol announcement datetime (Eastern) + session. Sources: SEC EDGAR 8-K filing timestamps (free), or a vendor earnings calendar. Feed via CsvEventSource."
+    },
+    {
+      "gap": "real_daily_open_close_bars",
+      "blocks": "candidate 5 (close-to-open) and all returns",
+      "detail": "close-to-open requires reproducible daily open AND close per session. OpenD supplies these via request_history_kline(K_DAY) \u2014 the fetcher exists at vendor/qstrat/data/fetcher.py; add '1d': KLType.K_DAY to TIMEFRAME_MAP, persist to <symbol>_1d.parquet, load via ParquetDailyBarSource. Free alternatives: Stooq daily. Must be split/dividend adjusted."
+    },
+    {
+      "gap": "historical_options_chain",
+      "blocks": "negative branch (defined-risk short)",
+      "detail": "No historical options chain (strikes, expiries, bid/ask, IV). Without it the negative branch CANNOT be priced or settled and is recorded blocked/missing-data \u2014 it is NEVER converted to a naked short. Source: OpenD option chain + historical option quotes, or a vendor. Feed via an OptionsChainSource implementation."
+    },
+    {
+      "gap": "point_in_time_universe",
+      "blocks": "survivorship-bias control",
+      "detail": "Backtest universe must be the point-in-time membership including delisted/acquired names, not today's survivors. Needs a historical constituents source."
+    },
+    {
+      "gap": "analyst_consensus_estimates",
+      "blocks": "surprise sign quality (optional)",
+      "detail": "Consensus EPS estimates would give a cleaner surprise sign (SUE). Absent, the package falls back to the post-announcement abnormal-return quantile proxy (as EVO-24 specifies), which is noisier."
+    }
+  ],
+  "risk_register": [
+    {
+      "risk": "timestamp_error",
+      "severity": "high",
+      "detail": "A bmo/amc mislabel or a timezone error flips which bar is the reaction bar and can inject look-ahead. Entry timing is built to be T+1-open conservative, but it is only as correct as the announcement timestamps fed in."
+    },
+    {
+      "risk": "survivorship_bias",
+      "severity": "high",
+      "detail": "Until a point-in-time universe is supplied, results computed on surviving names will overstate returns."
+    },
+    {
+      "risk": "liquidity",
+      "severity": "medium",
+      "detail": "PEAD/overnight names can be thin; a min-ADV floor is enforced and capacity must be reported, but real slippage on small caps can exceed the modeled bps."
+    },
+    {
+      "risk": "options_data_gap",
+      "severity": "high",
+      "detail": "The entire negative branch is unrealized here. Any full-strategy return that pretends to capture negative-surprise drift without a priced defined-risk structure is invalid."
+    },
+    {
+      "risk": "overfitting_multiple_testing",
+      "severity": "medium",
+      "detail": "Holding-period (5/10/20/30) and quantile are searched; the winner must survive walk-forward OOS and a multiple-testing haircut before any PASS."
+    },
+    {
+      "risk": "short_sample",
+      "severity": "medium",
+      "detail": "EVO-12 \u00a75.5 wants \u22655y incl. a bull/bear. Short windows yield low-confidence conclusions."
+    }
+  ]
+}
