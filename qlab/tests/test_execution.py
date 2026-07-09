@@ -142,6 +142,45 @@ def test_engine_dry_run_logs_intended_orders_only(tmp_path: Path):
     assert (tmp_path / "fills.jsonl").read_text().strip() == ""  # no fills in dry_run
 
 
+def test_order_carries_latency_fields():
+    o = Order("AAA", Side.BUY, 1)
+    d = o.to_dict()
+    assert {"submit_ts", "ack_ts", "latency_ms"} <= d.keys()
+    assert d["submit_ts"] is None  # unset until the live adapter times a call
+
+
+def test_opend_reconcile_detects_deviation(monkeypatch):
+    """Reconciliation diff logic (no gateway needed)."""
+    from qlab.brokers.moomoo_opend import MoomooOpenDBroker
+    from qlab.brokers.base import Position
+
+    events = []
+
+    class _Obs:
+        def broker_event(self, broker, event, **kw):
+            events.append((event, kw))
+
+    b = MoomooOpenDBroker(logger=_Obs())
+    monkeypatch.setattr(b, "get_positions",
+                        lambda: {"AAA": Position("AAA", 10, 100.0, 101.0)})
+    r = b.reconcile_positions({"AAA": 8, "BBB": 5})
+    assert not r["in_sync"] and r["n_diffs"] == 2
+    assert r["diffs"]["AAA"]["delta"] == 2    # broker 10 vs engine 8
+    assert r["diffs"]["BBB"]["delta"] == -5   # engine 5 vs broker 0
+    assert any(ev == "position_reconcile" for ev, _ in events)
+
+
+def test_opend_reconcile_in_sync(monkeypatch):
+    from qlab.brokers.moomoo_opend import MoomooOpenDBroker
+
+    class _Obs:
+        def broker_event(self, *a, **k): pass
+
+    b = MoomooOpenDBroker(logger=_Obs())
+    monkeypatch.setattr(b, "get_positions", lambda: {})
+    assert b.reconcile_positions({})["in_sync"] is True
+
+
 def test_engine_respects_credentials_redaction(tmp_path: Path):
     cfg = ExecConfig(mode="paper", symbols=["AAA"])
     eng = ExecutionEngine(cfg, tmp_path)

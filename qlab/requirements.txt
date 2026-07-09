@@ -1,7 +1,9 @@
-# qlab harness runtime deps (the deterministic core needs only pandas/numpy/pyarrow).
-# moomoo-api is intentionally NOT required: the live-gateway data path is isolated
-# and the harness runs fully without it.
+# qlab harness runtime deps (paper/dry_run + offline suite need only these).
 pandas>=2.0,<2.2
 numpy>=1.25,<2.0
 pyarrow>=14.0.0
 pytest>=7.4.0
+
+# --- opend/live extra (install only to run --mode opend_paper|live or the
+# --- opend_probe against a real OpenD gateway; NOT needed for paper/tests):
+# moomoo-api==10.08.6808   # match your installed OpenD gateway version

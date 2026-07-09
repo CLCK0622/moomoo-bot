@@ -159,6 +159,16 @@ class ExecutionEngine:
         for sym, row in rows.items():
             self._prev_price[sym] = float(row["close"])
 
+        # --- periodic position reconciliation (live/opend: engine vs broker) ---
+        self._bar_count = getattr(self, "_bar_count", 0) + 1
+        every = getattr(self.cfg, "reconcile_every_bars", 0)
+        if (every and self._bar_count % every == 0
+                and hasattr(self.broker, "reconcile_positions")):
+            try:
+                self.broker.reconcile_positions({s: st["shares"] for s, st in self.state.items()})
+            except Exception as e:  # never let reconciliation kill the loop
+                self.obs.error("reconcile", str(e))
+
         # --- per-bar (1m) mark-to-market observability ---
         # Emit AFTER fills + marks so 户部 can recompute the 1m equity curve and
         # 1m max-drawdown independently. MTM = cash + positions marked at the

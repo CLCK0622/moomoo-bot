@@ -104,6 +104,24 @@ the author's logic, not a reimplementation. Exits call the vendored
 `ExitManager.evaluate` directly for the same reason. Per the brief we do **not**
 re-run the author's full multi-month backtest.
 
+## Real OpenD evidence (SIMULATE)
+
+`python -m qlab.opend_probe` collects first-hand real-environment metrics against
+a live OpenD gateway + SIMULATE account, safely even when the market is closed
+(resting far-limit orders, qty 1, cancelled immediately, flat-after sweep):
+
+- order submit→ack **latency P50/P95/max**, cancel latency (first-hand
+  `submit_ts`/`ack_ts`/`latency_ms` on every order — see `brokers/base.py::Order`
+  and `MoomooOpenDBroker.place_order`);
+- accept/reject rate, disconnects;
+- **position reconciliation** (`MoomooOpenDBroker.reconcile_positions`, also wired
+  into the live loop every `reconcile_every_bars` bars) — first-hand source for
+  the "position deviation" metric.
+
+Fill rate / actual slippage / partial-fill behaviour require the **US regular
+session** and are reported as DEFERRED, never fabricated. Latest committed run:
+`reports/opend_probe/` (2026-07-09, after-hours; P50 ≈ 562 ms).
+
 ## Status / blocker
 
 The paper path is proven end-to-end (`reports/SAMPLE_paper_run/`, synthetic

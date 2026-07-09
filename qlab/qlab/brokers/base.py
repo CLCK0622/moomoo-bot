@@ -71,6 +71,12 @@ class Order:
     reason: str = ""
     strategy: str = ""
     create_ts: float = field(default_factory=time.time)
+    # first-hand order-path latency instrumentation (set by the live adapter):
+    # submit_ts = wall time just before the broker SDK call; ack_ts = wall time
+    # when the gateway acknowledged; latency_ms = monotonic submit->ack round trip.
+    submit_ts: Optional[float] = None
+    ack_ts: Optional[float] = None
+    latency_ms: Optional[float] = None
 
     def to_dict(self) -> dict:
         d = asdict(self)

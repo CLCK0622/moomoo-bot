@@ -152,6 +152,31 @@ class MoomooOpenDBroker:
             time.sleep(self.retry_backoff ** attempt)
         raise BrokerError(f"{what} failed after {self.max_retries}: {last}")
 
+    def _timed_call(self, fn, rl, what: str):
+        """Like _call, but returns first-hand submit->ack timing of the winning
+        attempt: (data, submit_ts, ack_ts, latency_ms). submit_ts/ack_ts are wall
+        clock; latency_ms is a monotonic round-trip (immune to clock skew)."""
+        last = None
+        for attempt in range(1, self.max_retries + 1):
+            rl.acquire()
+            submit_ts, submit_perf = time.time(), time.perf_counter()
+            try:
+                ret, data = fn()
+            except Exception as e:
+                last = e
+                self._emit("call_retry", what=what, attempt=attempt, error=str(e))
+                time.sleep(self.retry_backoff ** attempt)
+                continue
+            ack_perf, ack_ts = time.perf_counter(), time.time()
+            latency_ms = (ack_perf - submit_perf) * 1000.0
+            if ret == self._sdk.RET_OK:
+                return data, submit_ts, ack_ts, latency_ms
+            last = data
+            self._emit("call_error", what=what, attempt=attempt, ret=str(data),
+                       latency_ms=latency_ms)
+            time.sleep(self.retry_backoff ** attempt)
+        raise BrokerError(f"{what} failed after {self.max_retries}: {last}")
+
     # --- market data ---
     def get_snapshot(self, symbols: list[str]) -> dict[str, Snapshot]:
         codes = [f"{self.market}.{s}" for s in symbols]
@@ -204,24 +229,47 @@ class MoomooOpenDBroker:
         otype = sdk.OrderType.MARKET if order.order_type == OrderType.MARKET else sdk.OrderType.NORMAL
         price = 0 if order.order_type == OrderType.MARKET else (order.limit_price or 0)
         code = f"{self.market}.{order.symbol}"
-        data = self._call(
+        data, submit_ts, ack_ts, latency_ms = self._timed_call(
             lambda: self._trade_ctx.place_order(
                 price=price, qty=order.qty, code=code, trd_side=side,
                 trd_env=self._trd_env, order_type=otype),
             self._trade_rl, "place_order")
         order.order_id = str(data["order_id"][0]) if "order_id" in data else None
         order.status = OrderStatus.SUBMITTED
+        order.submit_ts, order.ack_ts, order.latency_ms = submit_ts, ack_ts, latency_ms
         self._emit("order_submitted", order_id=order.order_id, symbol=order.symbol,
-                   side=order.side.value, qty=order.qty, reason=order.reason)
+                   side=order.side.value, qty=order.qty, reason=order.reason,
+                   submit_ts=submit_ts, ack_ts=ack_ts, latency_ms=latency_ms)
         return order
 
-    def cancel_order(self, order_id: str) -> None:
+    def cancel_order(self, order_id: str) -> float:
         sdk = self._sdk
-        self._call(
+        _, submit_ts, ack_ts, latency_ms = self._timed_call(
             lambda: self._trade_ctx.modify_order(
                 sdk.ModifyOrderOp.CANCEL, order_id, 0, 0, trd_env=self._trd_env),
             self._trade_rl, "cancel_order")
-        self._emit("order_cancelled", order_id=order_id)
+        self._emit("order_cancelled", order_id=order_id, submit_ts=submit_ts,
+                   ack_ts=ack_ts, latency_ms=latency_ms)
+        return latency_ms
+
+    # --- position reconciliation (first-hand deviation source) ---
+    def reconcile_positions(self, engine_positions: dict) -> dict:
+        """Compare engine intent (symbol -> qty) against the broker's truth and
+        emit a ``position_reconcile`` broker_event. This is the first-hand source
+        for the 'position deviation' metric."""
+        broker = self.get_positions()
+        broker_qty = {s: p.qty for s, p in broker.items()}
+        syms = set(engine_positions) | set(broker_qty)
+        diffs = {}
+        for s in sorted(syms):
+            e = int(engine_positions.get(s, 0))
+            b = int(broker_qty.get(s, 0))
+            if e != b:
+                diffs[s] = {"engine": e, "broker": b, "delta": b - e}
+        result = {"in_sync": not diffs, "n_diffs": len(diffs), "diffs": diffs,
+                  "engine_positions": engine_positions, "broker_positions": broker_qty}
+        self._emit("position_reconcile", **result)
+        return result
 
     def query_order(self, order_id: str) -> Order:
         data = self._call(

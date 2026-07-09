@@ -4,8 +4,9 @@ __pycache__/
 .venv/
 venv/
 .env
-# Ad-hoc run outputs are ignored; the curated SAMPLE_paper_run/ is kept.
+# Ad-hoc run outputs are ignored; curated sample + real-evidence dirs are kept.
 reports/*
 !reports/SAMPLE_paper_run/
+!reports/opend_probe/
 data/cache/
 *.parquet

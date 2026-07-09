@@ -47,6 +47,7 @@ class ExecConfig:
     trd_env: str = "SIMULATE"               # SIMULATE | REAL (REAL also needs --i-understand-live)
     security_firm: str = "FUTUSG"
     allow_live: bool = False                # hard gate; LIVE refused unless True
+    reconcile_every_bars: int = 15          # engine.state vs broker positions (0=off)
     risk: RiskLimits = field(default_factory=RiskLimits)
 
     @classmethod
