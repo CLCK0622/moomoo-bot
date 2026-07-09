@@ -24,7 +24,8 @@ from .observability import Observability
 from .params import default_params
 from .risk import RiskManager
 from .signals import SignalAdapter
-from .brokers.base import (BrokerError, Order, OrderType, Side, TrdMode)
+from .brokers.base import (BrokerError, BrokerConnectionError, Order, OrderType,
+                           Side, TrdMode)
 from .brokers.paper import PaperBroker
 
 
@@ -58,25 +59,61 @@ class ExecutionEngine:
         self.strategy_of: dict[str, str] = {}
         self._prev_price: dict[str, float] = {}
         self._day_realized = 0.0
+        self._last_equity = cfg.initial_capital     # fallback when account read fails
+        self._halt_logged = False
         self.equity_curve: list[dict] = []
         self.obs.text(f"engine init mode={cfg.mode} broker={self.broker.name} "
                       f"symbols={len(cfg.symbols)}")
+
+    # --- connection / halt lifecycle ---
+    def connect(self) -> None:
+        """Connect the broker; a gateway failure trips the kill switch."""
+        try:
+            self.broker.connect()
+        except BrokerConnectionError as e:
+            self.risk.on_connection_error("connect")
+            self.obs.error("connect", str(e))
+            raise
+
+    def _log_halt(self, when=None) -> bool:
+        """Emit a single engine_halted event once the kill switch is set."""
+        if self.risk.kill_switch and not self._halt_logged:
+            self._halt_logged = True
+            self.obs.broker_event("engine", "engine_halted", reason=self.risk.kill_reason,
+                                  time=str(when) if when is not None else None)
+        return self.risk.kill_switch
 
     # --- helpers ---
     def _equity(self) -> float:
         if self.dry_run:
             return self.cfg.initial_capital
-        return self.broker.get_account().total_assets
+        try:
+            eq = self.broker.get_account().total_assets
+            self._last_equity = eq
+            return eq
+        except BrokerConnectionError as e:
+            # account read failed after retries -> real outage -> global kill switch
+            self.risk.on_connection_error("account")
+            self.obs.error("get_account", str(e))
+            return self._last_equity
 
     def _position_size(self, equity: float, price: float) -> int:
         budget = min(equity / self.cfg.risk.max_positions,
-                     self.cfg.risk.per_symbol_max_notional)
+                     self.cfg.risk.per_symbol_max_notional,
+                     self.cfg.risk.per_symbol_max_pct * equity)
         return int(budget // price) if price > 0 else 0
 
     def _strategy_notional(self, strategy: str) -> float:
         total = 0.0
         for sym, st in self.state.items():
             if self.strategy_of.get(sym) == strategy:
+                total += st["shares"] * self._prev_price.get(sym, st["entry_price"])
+        return total
+
+    def _industry_notional(self, industry: str) -> float:
+        total = 0.0
+        for sym, st in self.state.items():
+            if self.cfg.industry_of(sym) == industry:
                 total += st["shares"] * self._prev_price.get(sym, st["entry_price"])
         return total
 
@@ -87,15 +124,31 @@ class ExecutionEngine:
         sample = next(iter(rows.values()))
         now = sample["time"]
 
+        # global halt: once the kill switch is set (connection loss, drawdown
+        # breaker, or abnormal-market halt) the engine stops trading entirely.
+        if self.risk.kill_switch:
+            self._log_halt(now)
+            return
+
         # mark + abnormal-move detection
         for sym, row in rows.items():
             price = float(row["close"])
-            if not self.dry_run:
+            if not self.dry_run and hasattr(self.broker, "mark"):
                 self.broker.mark(sym, price, now)
             prev = self._prev_price.get(sym)
             if prev and prev > 0 and abs(price - prev) / prev >= self.cfg.risk.max_price_move_halt_pct:
+                move = abs(price - prev) / prev
                 self.obs.broker_event("market", "abnormal_move", symbol=sym,
-                                      prev=prev, price=price)
+                                      prev=prev, price=price, move=round(move, 4))
+                if self.cfg.risk.abnormal_move_global_halt:
+                    # EVO-10 / final-review: abnormal market -> GLOBAL halt,
+                    # not a per-symbol soft block.
+                    self.risk.on_market_halt(f"{sym} move={move:.1%}")
+        # abnormal move (or an account-read failure during marking) may have
+        # tripped the switch -> halt this bar before any trading.
+        if self.risk.kill_switch:
+            self._log_halt(now)
+            return
 
         equity = self._equity()
         self.risk.update_equity(equity)
@@ -139,11 +192,13 @@ class ExecutionEngine:
                 continue
             notional = qty * price
             strat = esig.strategy
+            industry = self.cfg.industry_of(sym)
             decision = self.risk.check_entry(
                 symbol=sym, strategy=strat, notional=notional, now=now,
                 n_positions=len(self.state), equity=equity,
                 strategy_notional=self._strategy_notional(strat),
-                last_price=price, prev_price=self._prev_price.get(sym))
+                last_price=price, prev_price=self._prev_price.get(sym),
+                industry=industry, industry_notional=self._industry_notional(industry))
             self.obs.signal(kind="entry", symbol=sym, time=str(now), reason=esig.reason,
                             price=price, score=esig.score, qty=qty,
                             risk_ok=decision.allowed, risk_reason=decision.reason)
@@ -166,7 +221,10 @@ class ExecutionEngine:
                 and hasattr(self.broker, "reconcile_positions")):
             try:
                 self.broker.reconcile_positions({s: st["shares"] for s, st in self.state.items()})
-            except Exception as e:  # never let reconciliation kill the loop
+            except BrokerConnectionError as e:  # reconcile round-trip failed -> outage
+                self.risk.on_connection_error("reconcile")
+                self.obs.error("reconcile", str(e))
+            except Exception as e:  # non-connection issue: log, don't halt
                 self.obs.error("reconcile", str(e))
 
         # --- per-bar (1m) mark-to-market observability ---
@@ -207,7 +265,14 @@ class ExecutionEngine:
             return order
         try:
             order = self.broker.place_order(order)
+        except BrokerConnectionError as e:
+            # order path lost the gateway -> global kill switch + halt
+            self.risk.on_connection_error("order")
+            self.obs.error("place_order", str(e), symbol=symbol, side=side.value,
+                           qty=qty, connection=True)
+            return None
         except BrokerError as e:
+            # business reject (insufficient funds, bad request) -> local, no halt
             self.obs.error("place_order", str(e), symbol=symbol, side=side.value, qty=qty)
             return None
         self.obs.order(intended=False, **order.to_dict())
@@ -227,6 +292,7 @@ class ExecutionEngine:
             dates.update(df["date"].unique())
         all_dates = sorted(dates)
 
+        halted = False
         for date in all_dates:
             day = {s: df[df["date"] == date].sort_values("time").reset_index(drop=True)
                    for s, df in prepared.items()}
@@ -234,6 +300,10 @@ class ExecutionEngine:
             if not day:
                 continue
             self.risk.start_new_day(self._equity())
+            # reset the abnormal-move reference each session so an overnight gap
+            # (prior close vs next open) is not mistaken for an intraday flash move
+            # that would trip the global halt. (Strategy is flat EOD.)
+            self._prev_price.clear()
             n_bars = max(len(d) for d in day.values())
             last_time = date
             for i in range(n_bars):
@@ -241,6 +311,10 @@ class ExecutionEngine:
                 if rows:
                     last_time = next(iter(rows.values()))["time"]
                 self.on_bar(rows)
+                if self.risk.kill_switch:      # global halt -> stop trading entirely
+                    self._log_halt(last_time)
+                    halted = True
+                    break
             # per-bar equity/positions are written inside on_bar (1m MTM). Here we
             # only keep an in-memory daily marker for the summary + a session
             # heartbeat (a live loop would heartbeat on a wall-clock timer).
@@ -248,21 +322,29 @@ class ExecutionEngine:
             self.equity_curve.append({"date": str(date), "equity": eq,
                                       "kill_switch": self.risk.kill_switch})
             self.emit_heartbeat(last_time, eq)
+            if halted:
+                break
 
         return self.summary()
 
     def summary(self) -> dict:
-        acct = None if self.dry_run else self.broker.get_account()
-        fills = [] if self.dry_run else [f.to_dict() for f in self.broker.fills]
+        acct = None
+        if not self.dry_run:
+            try:
+                acct = self.broker.get_account()
+            except BrokerConnectionError:
+                acct = None  # gateway down at teardown -> report last-known equity
+        fills = [] if self.dry_run else [f.to_dict() for f in getattr(self.broker, "fills", [])]
         return {
             "mode": self.cfg.mode,
             "broker": self.broker.name,
-            "final_equity": (acct.total_assets if acct else self.cfg.initial_capital),
+            "final_equity": (acct.total_assets if acct else self._last_equity),
             "realized_pnl": (acct.realized_pnl if acct else 0.0),
             "num_fills": len(fills),
             "open_positions": len(self.state),
             "kill_switch": self.risk.kill_switch,
             "kill_reason": self.risk.kill_reason,
+            "halted": self._halt_logged,
             "trading_days": len(self.equity_curve),
         }
 

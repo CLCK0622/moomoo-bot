@@ -8,7 +8,8 @@ import pandas as pd
 import pytest
 
 from qlab.brokers.paper import PaperBroker
-from qlab.brokers.base import Order, OrderType, Side, OrderStatus, BrokerError
+from qlab.brokers.base import (Order, OrderType, Side, OrderStatus, BrokerError,
+                               BrokerConnectionError)
 from qlab.config import ExecConfig, RiskLimits
 from qlab.risk import RiskManager
 from qlab.engine import ExecutionEngine
@@ -87,6 +88,88 @@ def test_abnormal_move_halt():
                        n_positions=0, equity=100_000, strategy_notional=0,
                        last_price=140, prev_price=100)  # +40%
     assert not d.allowed and "abnormal_move" in d.reason
+
+
+# --- EVO-10 exposure caps (per-symbol 10% / industry 25% / strategy 30%) ---
+def test_per_symbol_pct_cap_binds_below_notional_backstop():
+    # 10% of 100k = 10k binds even though the $25k notional backstop is looser
+    rm = _rm(per_symbol_max_pct=0.10, per_symbol_max_notional=25_000)
+    over = rm.check_entry(symbol="AAA", strategy="orb", notional=12_000, now=T,
+                          n_positions=0, equity=100_000, strategy_notional=0,
+                          last_price=100, prev_price=100)
+    assert not over.allowed and "per_symbol_cap" in over.reason
+    ok = rm.check_entry(symbol="AAA", strategy="orb", notional=9_000, now=T,
+                        n_positions=0, equity=100_000, strategy_notional=0,
+                        last_price=100, prev_price=100)
+    assert ok.allowed
+
+
+def test_industry_cap_enforced():
+    rm = _rm(per_industry_max_pct=0.25)  # 25k on 100k equity
+    over = rm.check_entry(symbol="NVDA", strategy="orb", notional=8_000, now=T,
+                          n_positions=2, equity=100_000, strategy_notional=0,
+                          last_price=100, prev_price=100,
+                          industry="semiconductors", industry_notional=20_000)
+    assert not over.allowed and "per_industry_cap" in over.reason
+    ok = rm.check_entry(symbol="NVDA", strategy="orb", notional=8_000, now=T,
+                        n_positions=2, equity=100_000, strategy_notional=0,
+                        last_price=100, prev_price=100,
+                        industry="semiconductors", industry_notional=15_000)
+    assert ok.allowed
+
+
+def test_per_strategy_pct_cap():
+    rm = _rm(per_strategy_max_pct=0.30, per_strategy_max_notional=100_000)
+    over = rm.check_entry(symbol="AAA", strategy="orb", notional=5_000, now=T,
+                          n_positions=0, equity=100_000, strategy_notional=28_000,
+                          last_price=100, prev_price=100)
+    assert not over.allowed and "per_strategy_cap" in over.reason
+
+
+# --- final-review condition 1: connection error -> kill switch -> engine halts ---
+class _DisconnectingBroker(PaperBroker):
+    """PaperBroker whose account read fails like a lost gateway."""
+    def get_account(self):
+        raise BrokerConnectionError("simulated OpenD disconnect")
+
+
+def test_connection_error_trips_kill_switch_and_halts(tmp_path: Path):
+    cfg = ExecConfig(mode="paper", symbols=["AAA", "BBB"], initial_capital=100_000)
+    eng = ExecutionEngine(cfg, tmp_path, also_stdout=False)
+    eng.broker = _DisconnectingBroker(100_000)   # inject a broker that loses the gateway
+    summary = eng.run_replay(_fixture())
+    eng.close()
+    assert summary["kill_switch"] is True
+    assert summary["kill_reason"].startswith("connection_error")
+    assert summary["halted"] is True
+    assert summary["num_fills"] == 0             # halted before any trading
+    assert summary["trading_days"] <= 1          # loop stopped almost immediately
+    events = (tmp_path / "broker_events.jsonl").read_text()
+    assert "engine_halted" in events and "kill_switch" in events
+
+
+# --- final-review condition 2: abnormal market -> GLOBAL halt (not per-symbol) ---
+def test_abnormal_move_triggers_global_halt(tmp_path: Path):
+    cfg = ExecConfig(mode="paper", symbols=["AAA"], initial_capital=100_000)
+    assert cfg.risk.abnormal_move_global_halt is True  # default
+    eng = ExecutionEngine(cfg, tmp_path, also_stdout=False)
+
+    def bar(ts, close):
+        return {"AAA": pd.Series({"time": pd.Timestamp(ts), "close": float(close),
+                                  "symbol": "AAA"})}
+
+    eng.on_bar(bar("2025-01-02 10:00:00", 100.0))   # establishes prev price
+    assert not eng.risk.kill_switch
+    eng.on_bar(bar("2025-01-02 10:01:00", 140.0))   # +40% single-bar move
+    assert eng.risk.kill_switch is True
+    assert eng.risk.kill_reason.startswith("market_halt")
+    # subsequent bars are a no-op (engine halted, not just this symbol blocked)
+    before = eng._bar_count if hasattr(eng, "_bar_count") else 0
+    eng.on_bar(bar("2025-01-02 10:02:00", 141.0))
+    assert (getattr(eng, "_bar_count", 0)) == before  # on_bar returned early
+    eng.close()
+    events = (tmp_path / "broker_events.jsonl").read_text()
+    assert "abnormal_move" in events and "engine_halted" in events
 
 
 # --- Engine replay (end-to-end paper trading, no OpenD) ---

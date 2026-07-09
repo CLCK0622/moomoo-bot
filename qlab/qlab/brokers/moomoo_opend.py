@@ -19,8 +19,8 @@ from typing import Optional
 
 import pandas as pd
 
-from .base import (Account, BrokerError, Order, OrderStatus, OrderType,
-                   Position, Side, Snapshot)
+from .base import (Account, BrokerError, BrokerConnectionError, Order,
+                   OrderStatus, OrderType, Position, Side, Snapshot)
 
 
 def _load_sdk():
@@ -112,7 +112,8 @@ class MoomooOpenDBroker:
                 self._emit("connect_retry", attempt=attempt, error=str(e))
                 time.sleep(self.retry_backoff ** attempt)
         else:
-            raise BrokerError(f"OpenD connect failed after {self.max_retries}: {last_err}")
+            raise BrokerConnectionError(
+                f"OpenD connect failed after {self.max_retries}: {last_err}")
 
         # REAL trading requires an explicit unlock with an env-only password.
         if self.trd_env_name == "REAL":
@@ -136,20 +137,23 @@ class MoomooOpenDBroker:
     # --- retry helper for transient SDK calls ---
     def _call(self, fn, rl, what: str):
         last = None
+        last_was_conn = False  # True if the final failure was a transport exception
         for attempt in range(1, self.max_retries + 1):
             rl.acquire()
             try:
                 ret, data = fn()
-            except Exception as e:  # transport hiccup
-                last = e
+            except Exception as e:  # transport hiccup / disconnect
+                last, last_was_conn = e, True
                 self._emit("call_retry", what=what, attempt=attempt, error=str(e))
                 time.sleep(self.retry_backoff ** attempt)
                 continue
             if ret == self._sdk.RET_OK:
                 return data
-            last = data
+            last, last_was_conn = data, False  # business error (reject / bad request)
             self._emit("call_error", what=what, attempt=attempt, ret=str(data))
             time.sleep(self.retry_backoff ** attempt)
+        if last_was_conn:
+            raise BrokerConnectionError(f"{what} connection failed after {self.max_retries}: {last}")
         raise BrokerError(f"{what} failed after {self.max_retries}: {last}")
 
     def _timed_call(self, fn, rl, what: str):
@@ -157,13 +161,14 @@ class MoomooOpenDBroker:
         attempt: (data, submit_ts, ack_ts, latency_ms). submit_ts/ack_ts are wall
         clock; latency_ms is a monotonic round-trip (immune to clock skew)."""
         last = None
+        last_was_conn = False
         for attempt in range(1, self.max_retries + 1):
             rl.acquire()
             submit_ts, submit_perf = time.time(), time.perf_counter()
             try:
                 ret, data = fn()
             except Exception as e:
-                last = e
+                last, last_was_conn = e, True
                 self._emit("call_retry", what=what, attempt=attempt, error=str(e))
                 time.sleep(self.retry_backoff ** attempt)
                 continue
@@ -171,10 +176,12 @@ class MoomooOpenDBroker:
             latency_ms = (ack_perf - submit_perf) * 1000.0
             if ret == self._sdk.RET_OK:
                 return data, submit_ts, ack_ts, latency_ms
-            last = data
+            last, last_was_conn = data, False
             self._emit("call_error", what=what, attempt=attempt, ret=str(data),
                        latency_ms=latency_ms)
             time.sleep(self.retry_backoff ** attempt)
+        if last_was_conn:
+            raise BrokerConnectionError(f"{what} connection failed after {self.max_retries}: {last}")
         raise BrokerError(f"{what} failed after {self.max_retries}: {last}")
 
     # --- market data ---

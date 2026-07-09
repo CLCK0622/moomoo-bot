@@ -132,6 +132,13 @@ class BrokerError(Exception):
     """Raised for non-retryable broker failures (rejects, auth, bad request)."""
 
 
+class BrokerConnectionError(BrokerError):
+    """Transport / gateway failure — connect lost, retries exhausted on an
+    exception, or a disconnect. Distinct from a business reject: the engine
+    routes this to ``RiskManager.on_connection_error`` -> global kill switch,
+    whereas a plain ``BrokerError`` (e.g. an order reject) is handled locally."""
+
+
 class Broker(Protocol):
     name: str
 

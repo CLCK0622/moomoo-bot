@@ -1,11 +1,12 @@
 {
   "mode": "paper",
   "broker": "paper",
-  "final_equity": 106698.81963955257,
-  "realized_pnl": 6698.81963955261,
-  "num_fills": 64,
+  "final_equity": 103426.6745545555,
+  "realized_pnl": 3426.674554555483,
+  "num_fills": 50,
   "open_positions": 0,
   "kill_switch": false,
   "kill_reason": "",
+  "halted": false,
   "trading_days": 7
 }

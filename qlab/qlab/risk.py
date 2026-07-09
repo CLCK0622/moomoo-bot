@@ -1,12 +1,15 @@
 """Mandatory risk controls — every entry passes through here.
 
-Enforces: global kill switch, per-symbol & per-strategy notional caps, global
-position cap, intraday loss limit (blocks new entries), 20% drawdown circuit
-breaker (trips the kill switch), abnormal single-bar move halt (per symbol),
-trading-session validation, and connection-failure halt.
+Enforces: global kill switch, per-symbol / per-industry / per-strategy exposure
+caps (EVO-10: 10% / 25% / 30% of equity, with absolute notional backstops),
+global position cap, intraday loss limit (blocks new entries), 20% drawdown
+circuit breaker (trips the kill switch), abnormal single-bar move -> GLOBAL halt
+(the engine wires this to ``on_market_halt``; a per-symbol soft block remains as
+the fallback when ``abnormal_move_global_halt`` is disabled), trading-session
+validation, and connection-failure halt (``on_connection_error`` -> kill switch).
 
 Fail-closed: any unknown/ambiguous state denies new entries. Exits are never
-blocked (you must always be able to flatten / reduce risk).
+blocked by ``check_entry`` (you must always be able to flatten / reduce risk).
 """
 from __future__ import annotations
 
@@ -69,7 +72,8 @@ class RiskManager:
     def check_entry(self, *, symbol: str, strategy: str, notional: float,
                     now: pd.Timestamp, n_positions: int, equity: float,
                     strategy_notional: float, last_price: float,
-                    prev_price: float | None) -> RiskDecision:
+                    prev_price: float | None, industry: str = "",
+                    industry_notional: float = 0.0) -> RiskDecision:
         if self.kill_switch:
             return RiskDecision(False, f"kill_switch:{self.kill_reason}")
         if not self.session_open(now):
@@ -82,13 +86,28 @@ class RiskManager:
 
         if n_positions >= self.limits.max_positions:
             return RiskDecision(False, "max_positions")
-        if notional > self.limits.per_symbol_max_notional:
-            return RiskDecision(False, f"per_symbol_cap {notional:.0f}>"
-                                       f"{self.limits.per_symbol_max_notional:.0f}")
-        if strategy_notional + notional > self.limits.per_strategy_max_notional:
-            return RiskDecision(False, "per_strategy_cap")
 
-        # abnormal single-bar move -> skip this symbol (likely bad print / halt)
+        # EVO-10 exposure caps: enforce % of equity AND the absolute notional
+        # backstop — the tighter binds.
+        sym_cap = min(self.limits.per_symbol_max_notional,
+                      self.limits.per_symbol_max_pct * equity)
+        if notional > sym_cap:
+            return RiskDecision(False, f"per_symbol_cap {notional:.0f}>{sym_cap:.0f}")
+
+        ind_cap = self.limits.per_industry_max_pct * equity
+        if industry and industry_notional + notional > ind_cap:
+            return RiskDecision(False, f"per_industry_cap[{industry}] "
+                                       f"{industry_notional + notional:.0f}>{ind_cap:.0f}")
+
+        strat_cap = min(self.limits.per_strategy_max_notional,
+                        self.limits.per_strategy_max_pct * equity)
+        if strategy_notional + notional > strat_cap:
+            return RiskDecision(False, f"per_strategy_cap "
+                                       f"{strategy_notional + notional:.0f}>{strat_cap:.0f}")
+
+        # abnormal single-bar move. With global halt enabled (default) the engine
+        # already tripped the kill switch, so this is a backstop that also covers
+        # the legacy per-symbol soft-block mode (abnormal_move_global_halt=False).
         if prev_price and prev_price > 0:
             move = abs(last_price - prev_price) / prev_price
             if move >= self.limits.max_price_move_halt_pct:

@@ -66,12 +66,12 @@ def main(argv=None):
             # without an OpenD gateway — surfaced as a precise blocker (not a crash).
             from .brokers.base import BrokerError
             try:
-                engine.broker.connect()
+                engine.connect()  # gateway failure trips the kill switch
                 summary = {"mode": args.mode, "status": "connected",
                            "note": "attach a realtime bar loop calling engine.on_bar(rows)"}
             except BrokerError as e:
-                engine.obs.error("connect", str(e), mode=args.mode)
-                summary = {"mode": args.mode, "status": "BLOCKED", "blocker": str(e)}
+                summary = {"mode": args.mode, "status": "BLOCKED", "blocker": str(e),
+                           "kill_switch": engine.risk.kill_switch}
     finally:
         if args.mode in ("dry_run", "paper"):
             (Path(args.out) / "summary.json").write_text(json.dumps(engine.summary(), indent=2, default=str))

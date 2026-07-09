@@ -1,7 +1,7 @@
-{"ts": 1781795297.527711, "time": "2025-01-02 15:59:00", "equity": 101115.14373455796, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 101125.33613868717}
-{"ts": 1781795297.606835, "time": "2025-01-03 15:59:00", "equity": 102435.77891056253, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 102705.29670380703}
-{"ts": 1781795297.677121, "time": "2025-01-06 15:59:00", "equity": 103572.91630027263, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 103698.21584254965}
-{"ts": 1781795297.7504919, "time": "2025-01-07 15:59:00", "equity": 103387.39815246842, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 104152.23722160075}
-{"ts": 1781795297.826151, "time": "2025-01-08 15:59:00", "equity": 105713.48208021998, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 105802.47270311223}
-{"ts": 1781795297.917484, "time": "2025-01-09 15:59:00", "equity": 105686.57503466474, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 106309.82549802415}
-{"ts": 1781795297.9936519, "time": "2025-01-10 15:59:00", "equity": 106698.81963955257, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 106999.71215117766}
+{"ts": 1783622623.49153, "time": "2025-01-02 15:59:00", "equity": 100544.34805405104, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 100550.37426945174}
+{"ts": 1783622623.573035, "time": "2025-01-03 15:59:00", "equity": 100954.50604198485, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 101080.58868925698}
+{"ts": 1783622623.645548, "time": "2025-01-06 15:59:00", "equity": 101511.19715719027, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 101573.17429113749}
+{"ts": 1783622623.721316, "time": "2025-01-07 15:59:00", "equity": 101621.29714441262, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 101885.48561219186}
+{"ts": 1783622623.800169, "time": "2025-01-08 15:59:00", "equity": 102752.59970580383, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 102797.15689615184}
+{"ts": 1783622623.882271, "time": "2025-01-09 15:59:00", "equity": 103009.76831988805, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 103137.0032780907}
+{"ts": 1783622623.958325, "time": "2025-01-10 15:59:00", "equity": 103426.6745545555, "kill_switch": false, "kill_reason": "", "open_positions": 0, "peak_equity": 103537.75873567339}

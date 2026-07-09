@@ -70,15 +70,37 @@ observability channels.
 `--i-understand-live` **and** `MOOMOO_TRADING_PASSWORD` in the env for
 `unlock_trade`. Absent any one, the engine refuses to start.
 
-## Risk controls (all enforced in `risk.py`, every entry passes through)
+## Risk controls (all enforced in `risk.py` + wired in `engine.py`)
 
-- **Global kill switch** (manual + auto-tripped by the breakers below).
-- **20% drawdown circuit breaker** → trips the kill switch.
-- **Intraday loss limit** (% of day-start equity) → blocks new entries.
-- **Per-symbol** and **per-strategy** notional caps; **global max positions**.
-- **Abnormal single-bar move** halt (skips a symbol on likely bad print / halt).
-- **Trading-session validation** (entries only inside RTH).
-- **Connection-error / market-halt** → kill switch. Exits are *never* blocked.
+- **Global kill switch** (manual + auto-tripped by the breakers below); once set,
+  `engine.on_bar` / `run_replay` **halt the engine** (stop all trading), emitting
+  an `engine_halted` broker_event.
+- **Connection failure → kill switch (end-to-end).** A `BrokerConnectionError`
+  from any broker path — **connect / account / order / reconcile** — is routed to
+  `risk.on_connection_error()` and trips the kill switch (a business *reject* stays
+  local and does not halt). Wired at `engine.connect`, `engine._equity`,
+  `engine._submit`, and the reconcile hook.
+- **Abnormal single-bar move → GLOBAL halt** (default `abnormal_move_global_halt=
+  True`), via `risk.on_market_halt()` — not a per-symbol soft block. Set the flag
+  False to fall back to the legacy per-symbol soft block.
+- **20% drawdown circuit breaker** → kill switch. **Intraday loss limit** → blocks
+  new entries. **Trading-session validation** (entries only inside RTH).
+- **EVO-10 exposure caps** — **per-symbol 10% / per-industry 25% / per-strategy 30%
+  of equity**, each enforced alongside an absolute notional backstop; the **tighter
+  binds**. Industry from `ExecConfig.industry_map` (unmapped symbol → its own
+  bucket, so it's only bound by the per-symbol cap).
+
+  *EVO-10 tradeoff (recorded, not silently changed):* the pre-existing caps were
+  absolute **notional** (`per_symbol_max_notional` $25k, `per_strategy_max_notional`
+  $100k). Rather than replace them, the % caps are **added and enforced jointly**
+  (min of pct·equity and notional), so behaviour only ever gets *more* conservative
+  and both semantics stay configurable. Consequence to note: per-symbol 10% with
+  `max_positions=5` bounds deployment to ≤50% of equity (5×10%) — intentional
+  diversification, not a bug. Industry classification is a static map for the
+  default universe; extend it (or wire an OpenD `get_stock_basicinfo` lookup) when
+  the universe grows.
+
+Exits are *never* blocked by `check_entry`.
 
 ## Credentials & logging
 
