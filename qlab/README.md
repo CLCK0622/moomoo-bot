@@ -75,6 +75,17 @@ observability channels.
 - **Global kill switch** (manual + auto-tripped by the breakers below); once set,
   `engine.on_bar` / `run_replay` **halt the engine** (stop all trading), emitting
   an `engine_halted` broker_event.
+- **Unified kill gate.** `on_bar` re-checks the switch (`_halt_if_killed`) after
+  *every* step that can trip it — mark/quote, account read, drawdown breaker,
+  reconcile, and the trailing MTM read — so a trip mid-bar aborts the bar in the
+  **same call** (no exit/entry order slips through) and `engine_halted` lands in
+  that call, not on the next bar.
+- **Tradeoff (flagged for 都察院): kill switch = FULL STOP, including exits — no
+  auto-flatten on halt.** On a connection loss orders can't be sent; into an
+  abnormal/halted market they'd get unsafe fills; forced liquidation is a
+  deliberate operator action. So no "flatten-then-stop" is kept for any trip
+  point (incl. the drawdown breaker). Consequence: after a kill, `place_order`
+  is called 0 times and open positions are left as-is for the operator.
 - **Connection failure → kill switch (end-to-end).** A `BrokerConnectionError`
   from any broker path — **connect / account / order / reconcile** — is routed to
   `risk.on_connection_error()` and trips the kill switch (a business *reject* stays

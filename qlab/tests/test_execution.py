@@ -172,6 +172,114 @@ def test_abnormal_move_triggers_global_halt(tmp_path: Path):
     assert "abnormal_move" in events and "engine_halted" in events
 
 
+# --- targeted recheck: unified kill gate — no order slips through on the same
+# bar, engine_halted lands in the SAME on_bar call, for EVERY trip point. ---
+class _SpyBroker(PaperBroker):
+    """Counts place_order calls and can inject a gateway loss on a chosen path."""
+    def __init__(self, *a, fail_account=False, fail_account_after=None,
+                 fail_reconcile=False, **k):
+        super().__init__(*a, **k)
+        self.place_calls = 0
+        self._acct_calls = 0
+        self.fail_account = fail_account
+        self.fail_account_after = fail_account_after
+        self.fail_reconcile = fail_reconcile
+
+    def get_account(self):
+        self._acct_calls += 1
+        if self.fail_account:
+            raise BrokerConnectionError("injected account read failure")
+        if self.fail_account_after is not None and self._acct_calls > self.fail_account_after:
+            raise BrokerConnectionError("injected trailing account failure")
+        return super().get_account()
+
+    def place_order(self, order):
+        self.place_calls += 1
+        return super().place_order(order)
+
+    def reconcile_positions(self, engine_positions):
+        if self.fail_reconcile:
+            raise BrokerConnectionError("injected reconcile failure")
+        return {"in_sync": True, "n_diffs": 0, "diffs": {}, "broker_positions": {}}
+
+
+def _engine(tmp_path, broker, **cfg_kw):
+    cfg = ExecConfig(mode="paper", symbols=["AAA"], initial_capital=100_000, **cfg_kw)
+    eng = ExecutionEngine(cfg, tmp_path, also_stdout=False)
+    eng.broker = broker
+    return eng
+
+
+def _seed_open_position(eng):
+    eng.state["AAA"] = eng.adapter.new_position_state(
+        100.0, 10, 95.0, pd.Timestamp("2025-01-02 10:00"))
+    eng.strategy_of["AAA"] = "orb_breakout"
+
+
+def _eod_bar():   # 15:55 -> ExitManager eod_close fires for any open position
+    return {"AAA": pd.Series({"time": pd.Timestamp("2025-01-02 15:55:00"),
+                              "close": 101.0, "symbol": "AAA"})}
+
+
+def _plain_bar(close=100.0, ts="2025-01-02 10:00:00"):
+    return {"AAA": pd.Series({"time": pd.Timestamp(ts), "close": float(close),
+                              "symbol": "AAA"})}
+
+
+def _events(tmp_path):
+    return (tmp_path / "broker_events.jsonl").read_text()
+
+
+def test_account_read_failure_halts_before_exit_no_order(tmp_path: Path):
+    """THE flagged gap: kill tripped at `equity=self._equity()` must gate the
+    EXIT scan on the SAME bar, with an open position that would otherwise sell."""
+    spy = _SpyBroker(100_000, fail_account=True)
+    eng = _engine(tmp_path, spy)
+    _seed_open_position(eng)          # exit would fire at 15:55
+    eng.on_bar(_eod_bar())
+    assert eng.risk.kill_switch is True
+    assert eng.risk.kill_reason.startswith("connection_error")
+    assert spy.place_calls == 0       # <-- no SELL slipped through on this bar
+    assert "engine_halted" in _events(tmp_path)   # landed in THIS on_bar call
+    assert "AAA" in eng.state         # position untouched (not flattened)
+    eng.close()
+
+
+def test_drawdown_breaker_halts_same_bar_no_order(tmp_path: Path):
+    spy = _SpyBroker(79_000)          # equity 79k vs peak 100k -> 21% DD
+    eng = _engine(tmp_path, spy)
+    _seed_open_position(eng)
+    eng.on_bar(_eod_bar())
+    assert eng.risk.kill_switch and "drawdown" in eng.risk.kill_reason
+    assert spy.place_calls == 0
+    assert "engine_halted" in _events(tmp_path)
+    eng.close()
+
+
+def test_reconcile_failure_halts_same_call(tmp_path: Path):
+    spy = _SpyBroker(100_000, fail_reconcile=True)
+    eng = _engine(tmp_path, spy, reconcile_every_bars=1)
+    eng.on_bar(_plain_bar())          # no entry/exit; reconcile runs at bar end
+    assert eng.risk.kill_switch and eng.risk.kill_reason.startswith("connection_error")
+    assert "engine_halted" in _events(tmp_path)   # same call, not next bar
+    # next bar is a no-op (GATE 0)
+    bc = getattr(eng, "_bar_count", 0)
+    eng.on_bar(_plain_bar(ts="2025-01-02 10:01:00"))
+    assert getattr(eng, "_bar_count", 0) == bc
+    eng.close()
+
+
+def test_trailing_mtm_failure_halts_same_call(tmp_path: Path):
+    # first account read (equity) ok, the trailing MTM read fails -> halt same call
+    spy = _SpyBroker(100_000, fail_account_after=1)
+    eng = _engine(tmp_path, spy)
+    eng.on_bar(_plain_bar())
+    assert eng.risk.kill_switch and eng.risk.kill_reason.startswith("connection_error")
+    assert spy.place_calls == 0
+    assert "engine_halted" in _events(tmp_path)   # emitted in the SAME on_bar call
+    eng.close()
+
+
 # --- Engine replay (end-to-end paper trading, no OpenD) ---
 def _fixture(symbols=("AAA", "BBB"), seed=7):
     from qlab.synthetic import generate_symbol

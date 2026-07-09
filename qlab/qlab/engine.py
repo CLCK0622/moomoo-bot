@@ -83,6 +83,17 @@ class ExecutionEngine:
                                   time=str(when) if when is not None else None)
         return self.risk.kill_switch
 
+    def _halt_if_killed(self, now) -> bool:
+        """Unified kill gate. Call after EVERY step in on_bar that can trip the
+        switch (quote/mark, account read, drawdown breaker, reconcile, MTM). If
+        the switch is set it logs engine_halted in THIS call and returns True so
+        the caller aborts the bar immediately — no exit/entry/reconcile/MTM order
+        activity slips through on the same bar."""
+        if self.risk.kill_switch:
+            self._log_halt(now)
+            return True
+        return False
+
     # --- helpers ---
     def _equity(self) -> float:
         if self.dry_run:
@@ -124,13 +135,11 @@ class ExecutionEngine:
         sample = next(iter(rows.values()))
         now = sample["time"]
 
-        # global halt: once the kill switch is set (connection loss, drawdown
-        # breaker, or abnormal-market halt) the engine stops trading entirely.
-        if self.risk.kill_switch:
-            self._log_halt(now)
+        # GATE 0 — entered already halted (a prior bar / startup tripped it).
+        if self._halt_if_killed(now):
             return
 
-        # mark + abnormal-move detection
+        # mark + abnormal-move detection (quote/market trip point)
         for sym, row in rows.items():
             price = float(row["close"])
             if not self.dry_run and hasattr(self.broker, "mark"):
@@ -144,16 +153,25 @@ class ExecutionEngine:
                     # EVO-10 / final-review: abnormal market -> GLOBAL halt,
                     # not a per-symbol soft block.
                     self.risk.on_market_halt(f"{sym} move={move:.1%}")
-        # abnormal move (or an account-read failure during marking) may have
-        # tripped the switch -> halt this bar before any trading.
-        if self.risk.kill_switch:
-            self._log_halt(now)
+        # GATE 1 — abnormal-market halt from the mark/quote step.
+        if self._halt_if_killed(now):
             return
 
+        # account read (may trip the connection kill switch inside _equity) and
+        # the 1m drawdown breaker.
         equity = self._equity()
         self.risk.update_equity(equity)
+        # GATE 2 — account-read connection loss OR drawdown breaker just tripped.
+        # This is the fix for the flagged gap: without it, a kill set here still
+        # fell through into the EXIT scan and placed one SELL on the same bar.
+        if self._halt_if_killed(now):
+            return
 
-        # --- EXIT scan (always; never blocked by risk) ---
+        # --- EXIT scan ---
+        # Not blocked by the per-entry risk caps (you can always reduce risk),
+        # but the kill switch DOES stop this whole bar via the gates above/below:
+        # once halted, no orders (incl. exits) are sent. See the flatten-on-halt
+        # tradeoff note at the top of run_replay's halt handling.
         for sym in list(self.state.keys()):
             if sym not in rows:
                 continue
@@ -226,6 +244,9 @@ class ExecutionEngine:
                 self.obs.error("reconcile", str(e))
             except Exception as e:  # non-connection issue: log, don't halt
                 self.obs.error("reconcile", str(e))
+        # GATE 3 — reconcile round-trip lost the gateway.
+        if self._halt_if_killed(now):
+            return
 
         # --- per-bar (1m) mark-to-market observability ---
         # Emit AFTER fills + marks so 户部 can recompute the 1m equity curve and
@@ -238,6 +259,9 @@ class ExecutionEngine:
                         intraday_pnl=intraday_pnl, open_positions=len(self.state),
                         kill_switch=self.risk.kill_switch, peak_equity=self.risk.peak_equity)
         self.snapshot_positions(now)               # per-bar open-position snapshot
+        # GATE 4 — trailing MTM account read / drawdown breaker tripped: land
+        # engine_halted in THIS call, not on the next bar / run_replay outer.
+        self._halt_if_killed(now)
 
     def emit_heartbeat(self, when, equity: float) -> None:
         """Periodic liveness signal — call from the live loop on a timer, or
@@ -311,6 +335,13 @@ class ExecutionEngine:
                 if rows:
                     last_time = next(iter(rows.values()))["time"]
                 self.on_bar(rows)
+                # Halt semantics / TRADEOFF (flagged for 都察院): kill switch = FULL
+                # STOP, including exits — we do NOT auto-flatten on halt. Rationale:
+                # on a connection loss orders can't be sent at all; into an abnormal/
+                # halted market they'd get unsafe fills; and forced liquidation is a
+                # deliberate operator action, not an automatic reaction. So no
+                # "flatten-then-stop" is kept for any trip point (incl. the drawdown
+                # breaker). This matches the anchor: kill set -> place_order == 0.
                 if self.risk.kill_switch:      # global halt -> stop trading entirely
                     self._log_halt(last_time)
                     halted = True
