@@ -181,6 +181,22 @@ def test_opend_reconcile_in_sync(monkeypatch):
     assert b.reconcile_positions({})["in_sync"] is True
 
 
+def test_signed_slippage_bps_convention():
+    """+bps = worse execution (buy above ref / sell below ref)."""
+    from qlab.opend_session_probe import signed_slippage_bps
+    # buy filled above reference -> positive (worse)
+    assert signed_slippage_bps(Side.BUY, 100.10, 100.00) > 0
+    # buy filled below reference -> negative (better)
+    assert signed_slippage_bps(Side.BUY, 99.90, 100.00) < 0
+    # sell filled below reference -> positive (worse)
+    assert signed_slippage_bps(Side.SELL, 99.90, 100.00) > 0
+    # sell filled above reference -> negative (better)
+    assert signed_slippage_bps(Side.SELL, 100.10, 100.00) < 0
+    assert signed_slippage_bps(Side.BUY, 100.0, 0.0) is None
+    # magnitude: 10 bps
+    assert abs(signed_slippage_bps(Side.BUY, 100.10, 100.00) - 10.0) < 1e-6
+
+
 def test_engine_respects_credentials_redaction(tmp_path: Path):
     cfg = ExecConfig(mode="paper", symbols=["AAA"])
     eng = ExecutionEngine(cfg, tmp_path)

@@ -118,9 +118,20 @@ a live OpenD gateway + SIMULATE account, safely even when the market is closed
   into the live loop every `reconcile_every_bars` bars) — first-hand source for
   the "position deviation" metric.
 
-Fill rate / actual slippage / partial-fill behaviour require the **US regular
-session** and are reported as DEFERRED, never fabricated. Latest committed run:
-`reports/opend_probe/` (2026-07-09, after-hours; P50 ≈ 562 ms).
+`python -m qlab.opend_session_probe` (fill-lag-safe) captures the **session-only**
+metrics during US regular hours — measured slippage, fill rate, partial-fill
+behaviour, SIMULATE fill latency — via marketable cross-price orders polled to
+terminal and a close-out that flattens the **actual** position (no fill race).
+
+Committed runs:
+- `reports/opend_probe/` — order-path latency/reject/reconcile (after-hours safe; P50 ≈ 562 ms).
+- `reports/opend_session_live/` — in-session slippage/fill-rate/partial-fill (AFTERNOON).
+
+> ⚠️ **SIMULATE ≠ real market.** The in-session slippage/fill/latency numbers
+> characterise the OpenD adapter + the **SIMULATE matching engine**, NOT real
+> market impact/slippage. Near-zero slippage, whole-lot matching, and seconds-scale
+> fill lag are SIMULATE traits — not proof that real execution cost is acceptable.
+> Real execution quality needs real fills (out of scope, controlled). No PnL claim.
 
 ## Status / blocker
 

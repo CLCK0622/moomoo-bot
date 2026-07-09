@@ -285,6 +285,21 @@ class MoomooOpenDBroker:
         o.avg_fill_price = float(row.get("dealt_avg_price", 0) or 0)
         return o
 
+    def order_status(self, order_id: str) -> dict:
+        """Raw terminal-aware status for polling: order_status string plus
+        dealt_qty / dealt_avg_price. Used by the session probe's status_trail."""
+        data = self._call(
+            lambda: self._trade_ctx.order_list_query(order_id=order_id, trd_env=self._trd_env),
+            self._trade_rl, "order_status")
+        if data is None or len(data) == 0:
+            return {"order_status": "NONE", "dealt_qty": 0, "dealt_avg_price": 0.0}
+        row = data.iloc[0]
+        return {
+            "order_status": str(row.get("order_status", "")),
+            "dealt_qty": int(float(row.get("dealt_qty", 0) or 0)),
+            "dealt_avg_price": float(row.get("dealt_avg_price", 0) or 0),
+        }
+
     def query_open_orders(self) -> list[Order]:
         data = self._call(lambda: self._trade_ctx.order_list_query(trd_env=self._trd_env),
                           self._trade_rl, "order_list_query")
