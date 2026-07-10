@@ -1,0 +1,56 @@
+{
+  "issue": "EVO-162",
+  "candidate": "C1 cross-sectional residual reversal (large-cap, weekly, market-neutral stat-arb)",
+  "role": "户部 data/statistics foundation — frozen before any backtest result",
+  "freeze_date": "2026-07-10",
+  "source": {
+    "provider": "moomoo OpenD",
+    "ktype": "K_DAY",
+    "autype": "qfq",
+    "mode": "quote-only, TrdEnv.SIMULATE hard-lock, no live credential",
+    "external_sources": "none (Fama-French/CRSP/Compustat, borrow feeds, PIT membership all OUT OF SCOPE this round)"
+  },
+  "depth_probe": {
+    "reference": "reports/opend_kline_depth/report.json (EVO-159 verified)",
+    "daily_floor": "2006-06-26",
+    "latest": "2026-07-09",
+    "bars_per_symbol_approx": 5040,
+    "years_approx": 20,
+    "weekly_resample": "last OpenD trading day of each ISO week (no separate weekly feed)",
+    "stress_coverage": ["2007-08", "2008", "2018Q4", "2020-03", "2022", "2025-26"]
+  },
+  "quota": {
+    "historical_k": "300 symbols / 30-day rolling window (per-account); re-pull of a counted code costs 0",
+    "rate_req_per_s_approx": 3.6,
+    "binding_constraint": "300-symbol quota (drives the universe<=300 hard constraint)"
+  },
+  "frozen_universe": {
+    "n_stocks": 250,
+    "selection_rule": "US common stocks with moomoo US quote and >=156wk OpenD daily history as of 2026-07-10; rank by 60-trading-day average dollar volume (close*volume); take top 250; exclude non-borrowable (replace with next-ranked, logged before results)",
+    "factor_etfs": ["SPY", "IWM", "IVE", "IVW"],
+    "total_fetched_symbols_max": 254,
+    "hard_cap": 300,
+    "resolved_list_artifact": "RESIDUAL_UNIVERSE_RESOLVED.txt (committed to branch BEFORE results; no mid-evaluation swap)",
+    "survivorship_caveat": "large-and-liquid-as-of-2026 over a 2006-> window is survivorship-biased; a weekly dollar-neutral long-short on residuals is far less sensitive than a long-only level bet, but the bias is disclosed and cannot turn a fail into a pass; a point-in-time universe (external, out of scope) would be needed for a clean verdict"
+  },
+  "availability_at_freeze": {
+    "present_in_workspace": ["SPY", "QQQ", "IWM", "AAPL", "AMZN", "BAC", "CSCO", "CVX", "GOOGL", "GS", "HD", "INTC", "JNJ", "JPM", "KO", "META", "MSFT", "NVDA", "ORCL", "PFE", "PG", "WMT"],
+    "n_present": 22,
+    "missing": "the remaining >=248 frozen-universe stocks + value/growth factor ETFs IVE, IVW",
+    "consequence": "19 tradable names cannot form honest deciles for a cross-sectional residual regression (need N >> K). Engine is reproducible; any run on the present subset is labelled 数据不足 and is NEVER达标. Full fetch runs on a host with OpenD reachable (<=300 symbols within quota).",
+    "data_dir": "data/daily_full/ (schema: date, open, high, low, close, volume)"
+  },
+  "factor_model": {
+    "frequency": "weekly",
+    "factors": {"MKT": "SPY weekly return", "SMB": "IWM - SPY weekly", "HML": "IVE - IVW weekly"},
+    "beta_estimation": "rolling OLS on trailing 156 weeks (min 104 valid) of {1, MKT, SMB, HML}; re-estimated each rebalance; strictly past data (genuine OOS by construction)",
+    "residual": "eps_i = r_i - (alpha_i + beta_i . f), 3-factor",
+    "signal": "formation F=1 week; signal = -eps of most recent week (short-term residual reversal); cross-sectional winsorize 1/99 pct then rank",
+    "sources": ["Blitz/Huij/Lansdorp/Verbeek Short-Term Residual Reversal SSRN 1911449", "de Groot/Huij/Zhou SSRN 1605049", "Blitz/Huij/Martens 2011 residual momentum"]
+  },
+  "handoff": {
+    "engineering": "工部 (squad 385f536d-07bd-42d5-b64a-5565c7ac0faf) — writes swing/residual_signals.py + residual_evaluate.py + run_residual.py following THIS frozen spec; no parameter tuning in parallel",
+    "risk_review": "锦衣卫 (squad dbc54c9b-0aad-47bf-a5de-85af6bda7eef) — EVO-10 short-leg red-line review BEFORE the short leg runs (不过不跑)",
+    "prereg_doc": "RESIDUAL_REVERSAL_EVAL_PREREGISTRATION.md (this commit, git timestamp precedes any results commit)"
+  }
+}
