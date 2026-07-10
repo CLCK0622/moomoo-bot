@@ -11,6 +11,8 @@ reports/*
 !reports/opend_session_live/
 !reports/SAMPLE_events_synth/
 !reports/opend_kline_depth/
+!reports/swing_s5_fomc/
+!reports/swing_s1_meanrev/
 data/cache/
 *.parquet
 # EVO-24: the delivered adjusted daily bars ARE committed (real OpenD qfq data)
