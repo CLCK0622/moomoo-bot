@@ -104,8 +104,13 @@ def three_gate_verdict(g1: dict, g2: dict, g3: dict) -> str:
     return "稳定性不足未过线"
 
 
+MIN_FIT_FOR_CONFIDENT_QUANTILE = 5   # QuantileThresholds.fit falls back below this
+
+
 def walk_forward(bt, *, train_months: int = 24, test_months: int = 6,
-                 step_months: int = 6) -> dict:
+                 step_months: int = 6, exclude_low_conf: bool = True,
+                 significance: bool = True, sig_n_boot: int = 2000,
+                 sig_alpha: float = 0.05, sig_seed: int = 12345) -> dict:
     """Rolling walk-forward (EVO-12 §3 关4, main 口径).
 
     For each fold: fit the surprise thresholds on the *training* window's events
@@ -113,6 +118,20 @@ def walk_forward(bt, *, train_months: int = 24, test_months: int = 6,
     needs no fit). The test windows' daily returns are stitched into one OOS
     equity curve, on which gates 1–3 are recomputed. No future information ever
     reaches a test window.
+
+    EVO-149 cleanups / item B:
+    * A fold whose training set is too small for a real quantile fit (``n_fit <
+      MIN_FIT_FOR_CONFIDENT_QUANTILE`` → the ``±2%`` fallback band fires) is a
+      low-confidence fold; by default its OOS returns are EXCLUDED from the
+      stitched curve (recorded, not silently mixed into the OOS statistics).
+    * ``passed`` now requires g1 AND g2 AND g3 — consistent with
+      :func:`three_gate_verdict` (the old ``g1 and g3`` silently dropped g2).
+    * The OOS curve carries a bootstrap significance block (item B): a bare point
+      pass is not enough — ``significant_pass`` also requires the OOS CAGR to
+      *significantly* clear the hurdle.
+    * Slot capacity resets per test window (positions do not carry across folds);
+      with holds ≤ 30d and 6-month windows the boundary effect is negligible —
+      recorded here for the record.
     """
     if not bt._prepared:
         bt.prepare()
@@ -127,6 +146,7 @@ def walk_forward(bt, *, train_months: int = 24, test_months: int = 6,
     oos_ret = {}          # date -> summed slot-weighted return (disjoint folds)
     oos_notional = {}
     folds = []
+    n_excluded_low_conf = 0
     cursor = t0
     train = pd.DateOffset(months=train_months)
     test = pd.DateOffset(months=test_months)
@@ -141,14 +161,24 @@ def walk_forward(bt, *, train_months: int = 24, test_months: int = 6,
         if not test_idx:
             continue
         thr = None
+        n_fit = None
+        low_conf = False
         if bt.surprise_mode == "quantile":
             thr = QuantileThresholds.fit([bt._reactions[i] for i in train_idx], bt.quantile)
+            n_fit = thr.n_fit
+            low_conf = thr.n_fit < MIN_FIT_FOR_CONFIDENT_QUANTILE
         res = bt.run(event_idx=test_idx, thresholds=thr)
         eq = res["equity"]
+        excluded = bool(low_conf and exclude_low_conf)
         folds.append({"train": [str(train_lo.date()), str(train_hi.date())],
                       "test": [str(test_lo.date()), str(test_hi.date())],
                       "n_train": len(train_idx), "n_test": len(test_idx),
-                      "n_admitted": res["diagnostics"]["n_admitted"]})
+                      "n_admitted": res["diagnostics"]["n_admitted"],
+                      "quantile_n_fit": n_fit, "low_confidence": low_conf,
+                      "excluded_from_oos": excluded})
+        if excluded:
+            n_excluded_low_conf += 1
+            continue
         if len(eq) == 0:
             continue
         for _, row in eq.iterrows():
@@ -156,9 +186,18 @@ def walk_forward(bt, *, train_months: int = 24, test_months: int = 6,
             oos_ret[d] = oos_ret.get(d, 0.0) + float(row["ret"])
             oos_notional[d] = oos_notional.get(d, 0.0) + float(row["traded_notional"])
 
+    slot_note = ("slot capacity resets per test window (no cross-fold position "
+                 "carry); negligible for holds ≤ 30d and 6-month windows.")
     if not oos_ret:
+        degen = None
+        if significance:
+            from .significance import bootstrap_significance
+            degen = bootstrap_significance([], P=bt.P, hurdle=CAGR_HURDLE,
+                                           rf_annual=bt.rf_annual, alpha=sig_alpha).to_dict()
         return {"folds": len(folds), "fold_detail": folds, "passed": False,
-                "reason": "no_out_of_sample_returns"}
+                "significant_pass": False, "oos_significance": degen,
+                "n_excluded_low_conf": n_excluded_low_conf,
+                "slot_reset_note": slot_note, "reason": "no_out_of_sample_returns"}
 
     idx = pd.DatetimeIndex(sorted(oos_ret))
     ret = np.array([oos_ret[d] for d in idx])
@@ -169,10 +208,25 @@ def walk_forward(bt, *, train_months: int = 24, test_months: int = 6,
     g1 = gate1_full_sample(oos_equity, bt.P)
     g2 = gate2_yearly(oos_equity, bt.P)
     g3 = gate3_rolling(oos_equity, bt.P)
+    point_pass = bool(g1["passed"] and g2["passed"] and g3["passed"])
+
+    sig = None
+    significant_pass = point_pass
+    if significance:
+        from .significance import bootstrap_significance
+        sig = bootstrap_significance(
+            ret, P=bt.P, hurdle=CAGR_HURDLE, rf_annual=bt.rf_annual,
+            n_boot=sig_n_boot, alpha=sig_alpha, seed=sig_seed).to_dict()
+        significant_pass = bool(point_pass and sig["significant_beats_hurdle"])
+
     return {
         "folds": len(folds), "fold_detail": folds,
+        "n_excluded_low_conf": n_excluded_low_conf,
+        "slot_reset_note": slot_note,
         "oos_gate1": g1, "oos_gate2": g2, "oos_gate3": g3,
         "oos_cagr": g1["cagr"], "oos_mdd": g1["mdd"],
-        "passed": bool(g1["passed"] and g3["passed"]),
+        "passed": point_pass,                 # point pass (g1 ∧ g2 ∧ g3)
+        "oos_significance": sig,              # item B: bootstrap CI + p-values
+        "significant_pass": significant_pass, # point pass AND significantly beats hurdle
         "oos_equity": oos_equity,
     }
