@@ -200,6 +200,101 @@ OTEX
 WCN
 GOLD
 
+# ===== 5-letter -Y unsponsored-ADR long tail (ADDENDUM C; 都水-verified 2026-07-11, 户部-reviewed) =====
+# These 87 were surfaced by the operative MARKET_VAL pre-screen (US volume fields unsupported →
+# addendum A (ii) fallback), which ranks by market cap and pulls mega-cap FOREIGN OTC ADRs into the
+# stage-0 top-296 (87/296 = 29%). Each was verified foreign via OpenD get_stock_basicinfo name.
+# 户部 reviewed the full list + KEEP carve-out and endorses the classification. The mechanical RULE
+# (ADDENDUM C: name-token ∪ 5-letter -Y/-F foreign suffix, KEEP re-domiciled US-primary) is the
+# primary口径 that 都水 applies deterministically to catch refill waves beyond this snapshot.
+AAGIY
+ABBNY
+ACGBY
+AIQUY
+ALIZY
+ANZGY
+ARZGY
+ATEYY
+ATLCY
+ATLKY
+AXAHY
+BACHY
+BAESY
+BCMXY
+BNPQY
+BYDDY
+CAIXY
+CFRUY
+CGXYY
+CHDRY
+CHGCY
+CICHY
+CIHKY
+CMWAY
+CSUAY
+CYATY
+DBSDY
+DHLGY
+DTEGY
+EADSY
+ENGIY
+ENLAY
+ESLOY
+FRCOY
+HESAY
+HTHIY
+IBDRY
+IDCBY
+IDEXY
+IFNNY
+ISNPY
+ITFCY
+ITOCY
+JAPAY
+JPPTY
+KDDIY
+KXIAY
+LOBLY
+LRLCY
+LVMUY
+METRY
+MGCLY
+MHVIY
+MIELY
+MITSY
+MKKGY
+MQBKY
+MRAAY
+MTSUY
+NABZY
+NRDBY
+NSRGY
+NTTYY
+OVCHY
+PBR.A
+PCRHY
+PNGAY
+PROSY
+PSTVY
+RCRUY
+RHHBY
+RYCEY
+SAFRY
+SBGSY
+SHECY
+SIEGY
+TCEHY
+TKOMY
+TOELY
+UNCRY
+VCISY
+VLVLY
+WBKCY
+WFAFY
+XIACY
+ZIJMY
+ZURVY
+
 # ===== KEEP — do NOT exclude (US-primary common, tax-domiciled abroad; documentation only) =====
 # ACN MDT LIN ETN JCI CB AON APTV AER FERG CRH FLUT  — US-primary ordinary shares, US-session
 #   price formation, US operating exposure; treated as US common (kept in the universe).

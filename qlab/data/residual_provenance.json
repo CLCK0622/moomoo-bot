@@ -39,8 +39,16 @@
         "problem": "moomoo classes US-listed ADRs as SecurityType.STOCK, stock_child_type=N/A (营缮/都水 verified on live gateway 2026-07-11); NO field flags an ADR/foreign issuer, so §A2 ADR exclusion cannot be automated — needs a curated list.",
         "户部_decision": "belt-and-suspenders: curate out KNOWN large foreign-primary names + disclose residual unidentified foreign issuers in stage-0 top-296 as a bounded, per-run-disclosed compromise that cannot turn a fail into a pass. Truer to §A2 'exclude ADR' than pure acceptance.",
         "criterion": "EXCLUDE issuers whose price-forming primary listing is a non-US market (true ADR / foreign ordinary from Asia/Europe/LatAm/Israel/Canada) — US-factor residual contaminated by un-modeled foreign factors; KEEP US-primary ordinary common even if tax-domiciled abroad (ACN/MDT/LIN/ETN/CB/AER/FERG/CRH/FLUT/YUMC/MELI).",
-        "artifact": "RESIDUAL_ADR_EXCLUDE.txt (145 tickers, frozen before results; fed to resolve_universe stage-0 via --exclude-file). Residual-disclosure mandatory in resolve/run log.",
-        "non_blocking_point1": "stage-0 volume-field: use snapshot dollar-volume if get_stock_filter exposes a filterable volume field (i), else MARKET_VAL fallback (ii, looser but bounded, disclosed) — 都水 confirms on host, folded into the run."
+        "artifact": "RESIDUAL_ADR_EXCLUDE.txt (145 sponsored/exchange ADRs + 87 -Y unsponsored-OTC-ADR tail appended in addendum C, frozen before results; fed to resolve_universe stage-0 via --exclude-file). Residual-disclosure mandatory in resolve/run log.",
+        "non_blocking_point1": "RESOLVED on host: operative pre-screen key = MARKET_VAL (US TURNOVER/VOLUME/AVG_VOLUME all 'filter field not supported' — addendum A (ii) fallback). Superset market-cap-pre-screened; final 250 60d-dollar-volume-ranked; selection effect disclosed in RESIDUAL_UNIVERSE_SUPERSET_296.json.",
+        "addendum_C_adr_rule": {
+          "doc": "RESIDUAL_REVERSAL_PREREG_ADDENDUM_C_adr_rule.md (frozen before any resolved-list / real result)",
+          "trigger": "MARKET_VAL fallback pulls mega-cap foreign OTC ADRs into stage-0 top-296; the 145-list caught sponsored ADRs but missed the 5-letter -Y unsponsored-OTC tail (87/296 = 29%, only 209 clean <250). 都水 stopped, froze nothing, gave evidence; §A2 author must be 户部.",
+          "户部_decision": "path (b) 户部-endorsed DETERMINISTIC rule (auditable/reproducible/auto-refill) over manual per-wave fold. 都水 = deterministic executor + full trace; rule + reviewed 87-list = 户部口径; 都察院 audits rule + classification log.",
+          "rule": "EXCLUDE if R0(on RESIDUAL_ADR_EXCLUDE.txt) OR R1(name contains ADR/ADS/DEPOSITARY/UNSPON/SPON ADR) OR R2(5-letter ticker ending Y=ADR or F=foreign-ordinary) OR R3(dotted foreign preferred e.g. PBR.A); EVERY hit verified via get_stock_basicinfo; a US-domiciled/US-primary name is KEPT (carve-out). KEEP carve-out: CB/AON/SLB/CRH/LIN/MELI/BRK.A/BRK.B/ACN/MDT/ETN/JCI/AER/FERG/FLUT/YUMC.",
+          "户部_review": "reviewed + ENDORSED 都水's 87 hits (all foreign, get_stock_basicinfo-verified; discriminating: IDEXY=IDEX-ASA-Norway excluded vs US IDEX Corp=IEX kept; WFAFY=Wesfarmers excluded vs Wells Fargo=WFC kept). 87 appended to exclude file.",
+          "process": "都水 applies rule + per-name verify + iterate-refill from rank 297+ until 296 clean; commit RESIDUAL_UNIVERSE_ADR_CLASSIFICATION.json + refill trace alongside resolved universe BEFORE results. Clean<250 -> 数据不足, never padded."
+        }
       }
     },
     "factor_etfs": ["SPY", "IWM", "IVE", "IVW"],
