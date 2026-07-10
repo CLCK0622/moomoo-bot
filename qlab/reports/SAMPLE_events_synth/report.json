@@ -48,6 +48,136 @@
   "performance_meaningful": false,
   "overall_verdict": "\u9700\u8865\u8bc1\u636e",
   "verdict_reason": "synthetic harness data \u2014 numbers are self-tests, not performance; supply real earnings/bar/options data to obtain a real verdict.",
+  "preregistration": {
+    "mode": "pead",
+    "hold": 10,
+    "quantile": 0.2,
+    "max_concurrent": 10
+  },
+  "multiple_testing": {
+    "method": "preregistered_primary + bonferroni + benjamini_hochberg + deflated_sharpe",
+    "alpha": 0.05,
+    "family_size": 8,
+    "primary_spec": {
+      "mode": "pead",
+      "hold": 10,
+      "quantile": 0.2,
+      "max_concurrent": 10
+    },
+    "primary_found": true,
+    "primary_cell": {
+      "mode": "pead",
+      "hold": 10,
+      "is_primary": true,
+      "p_value_raw": 1.0,
+      "p_value_bonferroni": 1.0,
+      "p_value_bh": 1.0,
+      "gates_passed_point": false,
+      "survives_bonferroni": false,
+      "survives_bh": false
+    },
+    "deflated_sharpe": {
+      "dsr": 0.15890457522922397,
+      "sr0_annual": 2.2536773225263027,
+      "n_trials": 8,
+      "expected_max_z": 1.4590140769452864,
+      "significant": false
+    },
+    "per_cell": [
+      {
+        "mode": "pead",
+        "hold": 5,
+        "is_primary": false,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "pead",
+        "hold": 10,
+        "is_primary": true,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "pead",
+        "hold": 20,
+        "is_primary": false,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "pead",
+        "hold": 30,
+        "is_primary": false,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "close_to_open",
+        "hold": 5,
+        "is_primary": false,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "close_to_open",
+        "hold": 10,
+        "is_primary": false,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "close_to_open",
+        "hold": 20,
+        "is_primary": false,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "close_to_open",
+        "hold": 30,
+        "is_primary": false,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      }
+    ],
+    "verdict_basis": "primary_only",
+    "primary_survives_haircut": false,
+    "note": "PASS is decided ONLY by the pre-registered primary cell surviving the Bonferroni haircut; all other cells are robustness evidence. any_full_pass (best-of-grid) is deliberately NOT used."
+  },
+  "robustness_bh_survivors": 0,
   "runs": [
     {
       "mode": "pead",
@@ -55,8 +185,8 @@
       "card_C_core_metrics": {
         "cagr": 0.008787003054324005,
         "max_drawdown": 0.011978469276059722,
-        "sharpe": 1.2558093980225697,
-        "sortino": 2.1675670268286114,
+        "sharpe": 1.2558093980225695,
+        "sortino": 2.1675670268286105,
         "annualized_turnover": 1.3242116296400581,
         "n_bars": 1496,
         "n_years": 5.936507936507937,
@@ -65,10 +195,10 @@
         "unrecovered": false,
         "num_trades": 40,
         "win_rate": 0.75,
-        "profit_factor": 3.025391242387541,
-        "avg_winner": 0.02603359858022444,
+        "profit_factor": 3.0253912423875406,
+        "avg_winner": 0.026033598580224433,
         "avg_loser": 0.02581510604196722,
-        "expectancy": 0.013071422424676524
+        "expectancy": 0.01307142242467652
       },
       "card_B_cost_stress": {
         "cost_bps_per_side_base": 10.0,
@@ -160,7 +290,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -173,7 +306,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -186,7 +322,10 @@
               ],
               "n_train": 66,
               "n_test": 17,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -199,7 +338,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -212,7 +354,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -225,7 +370,10 @@
               ],
               "n_train": 66,
               "n_test": 18,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -238,7 +386,10 @@
               ],
               "n_train": 68,
               "n_test": 16,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 68,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -251,9 +402,14 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             }
           ],
+          "n_excluded_low_conf": 0,
+          "slot_reset_note": "slot capacity resets per test window (no cross-fold position carry); negligible for holds \u2264 30d and 6-month windows.",
           "oos_gate1": {
             "cagr": 0.013993383150873173,
             "mdd": 0.003518159411159849,
@@ -308,7 +464,28 @@
           },
           "oos_cagr": 0.013993383150873173,
           "oos_mdd": 0.003518159411159849,
-          "passed": false
+          "passed": false,
+          "oos_significance": {
+            "n": 743,
+            "n_boot": 2000,
+            "block_len": 9,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.013993383150873173,
+            "cagr_ci_low": 0.0062441908514519195,
+            "cagr_ci_high": 0.022085611791194865,
+            "sharpe_point": 1.8414370884756435,
+            "sharpe_ci_low": 0.9088514176659205,
+            "sharpe_ci_high": 2.641874290651547,
+            "skew": 1.3297420453512305,
+            "kurtosis": 15.098260679957894,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.0004997501249375312,
+            "significant_beats_hurdle": false,
+            "significant_positive": true,
+            "degenerate": false
+          },
+          "significant_pass": false
         },
         "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
       },
@@ -331,7 +508,7 @@
           "count": 40,
           "blocked_missing_options": 40,
           "realized": 0,
-          "reference_return_mean": 0.010346467986120317,
+          "reference_return_mean": 0.010346467986120319,
           "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
         }
       },
@@ -339,7 +516,7 @@
         "count": 40,
         "blocked_missing_options": 40,
         "realized": 0,
-        "reference_return_mean": 0.010346467986120317,
+        "reference_return_mean": 0.010346467986120319,
         "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
       }
     },
@@ -454,7 +631,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -467,7 +647,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -480,7 +663,10 @@
               ],
               "n_train": 66,
               "n_test": 17,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -493,7 +679,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -506,7 +695,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -519,7 +711,10 @@
               ],
               "n_train": 66,
               "n_test": 18,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -532,7 +727,10 @@
               ],
               "n_train": 68,
               "n_test": 16,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 68,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -545,9 +743,14 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             }
           ],
+          "n_excluded_low_conf": 0,
+          "slot_reset_note": "slot capacity resets per test window (no cross-fold position carry); negligible for holds \u2264 30d and 6-month windows.",
           "oos_gate1": {
             "cagr": 0.017412635366532037,
             "mdd": 0.005981355749758888,
@@ -602,7 +805,28 @@
           },
           "oos_cagr": 0.017412635366532037,
           "oos_mdd": 0.005981355749758888,
-          "passed": false
+          "passed": false,
+          "oos_significance": {
+            "n": 783,
+            "n_boot": 2000,
+            "block_len": 9,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.017412635366532037,
+            "cagr_ci_low": 0.006530259023603924,
+            "cagr_ci_high": 0.027954349456920127,
+            "sharpe_point": 1.7007411999053472,
+            "sharpe_ci_low": 0.6887347890909221,
+            "sharpe_ci_high": 2.5789466573406736,
+            "skew": 0.6586151105539,
+            "kurtosis": 8.415230463096359,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.0004997501249375312,
+            "significant_beats_hurdle": false,
+            "significant_positive": true,
+            "degenerate": false
+          },
+          "significant_pass": false
         },
         "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
       },
@@ -625,7 +849,7 @@
           "count": 40,
           "blocked_missing_options": 40,
           "realized": 0,
-          "reference_return_mean": 0.020209828976377475,
+          "reference_return_mean": 0.02020982897637747,
           "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
         }
       },
@@ -633,7 +857,7 @@
         "count": 40,
         "blocked_missing_options": 40,
         "realized": 0,
-        "reference_return_mean": 0.020209828976377475,
+        "reference_return_mean": 0.02020982897637747,
         "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
       }
     },
@@ -643,8 +867,8 @@
       "card_C_core_metrics": {
         "cagr": 0.02078085919767303,
         "max_drawdown": 0.014018422918061102,
-        "sharpe": 1.5047580984871023,
-        "sortino": 2.4347026803515814,
+        "sharpe": 1.5047580984871014,
+        "sortino": 2.4347026803515806,
         "annualized_turnover": 1.28041255443698,
         "n_bars": 1511,
         "n_years": 5.996031746031746,
@@ -653,10 +877,10 @@
         "unrecovered": false,
         "num_trades": 40,
         "win_rate": 0.725,
-        "profit_factor": 4.115284526868951,
-        "avg_winner": 0.0574337006879682,
-        "avg_loser": 0.03679359689638642,
-        "expectancy": 0.03152119385227068
+        "profit_factor": 4.115284526868954,
+        "avg_winner": 0.05743370068796818,
+        "avg_loser": 0.036793596896386394,
+        "expectancy": 0.03152119385227067
       },
       "card_B_cost_stress": {
         "cost_bps_per_side_base": 10.0,
@@ -724,7 +948,7 @@
         },
         "gate3_rolling": {
           "n_windows": 58,
-          "cagr_min": -0.0024395007960803516,
+          "cagr_min": -0.0024395007960802406,
           "cagr_p25": 0.01408161530286195,
           "cagr_median": 0.0209575839063616,
           "cagr_p75": 0.024662568862509338,
@@ -748,7 +972,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -761,7 +988,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -774,7 +1004,10 @@
               ],
               "n_train": 66,
               "n_test": 17,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -787,7 +1020,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -800,7 +1036,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -813,7 +1052,10 @@
               ],
               "n_train": 66,
               "n_test": 18,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -826,7 +1068,10 @@
               ],
               "n_train": 68,
               "n_test": 16,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 68,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -839,9 +1084,14 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             }
           ],
+          "n_excluded_low_conf": 0,
+          "slot_reset_note": "slot capacity resets per test window (no cross-fold position carry); negligible for holds \u2264 30d and 6-month windows.",
           "oos_gate1": {
             "cagr": 0.025256330725888843,
             "mdd": 0.010880147121727135,
@@ -896,7 +1146,28 @@
           },
           "oos_cagr": 0.025256330725888843,
           "oos_mdd": 0.010880147121727135,
-          "passed": false
+          "passed": false,
+          "oos_significance": {
+            "n": 855,
+            "n_boot": 2000,
+            "block_len": 9,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.025256330725888843,
+            "cagr_ci_low": 0.011862271112351618,
+            "cagr_ci_high": 0.03946017298744223,
+            "sharpe_point": 1.7376975250537199,
+            "sharpe_ci_low": 0.853599764885612,
+            "sharpe_ci_high": 2.631398066049047,
+            "skew": 0.2972019754276935,
+            "kurtosis": 5.482274014395431,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.0004997501249375312,
+            "significant_beats_hurdle": false,
+            "significant_positive": true,
+            "degenerate": false
+          },
+          "significant_pass": false
         },
         "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
       },
@@ -920,7 +1191,7 @@
           "count": 39,
           "blocked_missing_options": 39,
           "realized": 0,
-          "reference_return_mean": 0.01939976273086785,
+          "reference_return_mean": 0.01939976273086783,
           "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
         }
       },
@@ -928,7 +1199,7 @@
         "count": 39,
         "blocked_missing_options": 39,
         "realized": 0,
-        "reference_return_mean": 0.01939976273086785,
+        "reference_return_mean": 0.01939976273086783,
         "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
       }
     },
@@ -936,11 +1207,11 @@
       "mode": "pead",
       "hold": 30,
       "card_C_core_metrics": {
-        "cagr": 0.023302237831304362,
+        "cagr": 0.023302237831304584,
         "max_drawdown": 0.01525502309675153,
         "sharpe": 1.403535865670112,
-        "sortino": 2.2177048021783152,
-        "annualized_turnover": 1.2538930092548053,
+        "sortino": 2.217704802178315,
+        "annualized_turnover": 1.253893009254805,
         "n_bars": 1521,
         "n_years": 6.035714285714286,
         "max_underwater_bars": 135,
@@ -948,23 +1219,23 @@
         "unrecovered": true,
         "num_trades": 40,
         "win_rate": 0.75,
-        "profit_factor": 4.5492623210183485,
-        "avg_winner": 0.06005704842581337,
-        "avg_loser": 0.03960447487167743,
-        "expectancy": 0.03514166760144067
+        "profit_factor": 4.549262321018346,
+        "avg_winner": 0.06005704842581339,
+        "avg_loser": 0.03960447487167747,
+        "expectancy": 0.035141667601440676
       },
       "card_B_cost_stress": {
         "cost_bps_per_side_base": 10.0,
-        "base_cagr": 0.023302237831304362,
+        "base_cagr": 0.023302237831304584,
         "base_mdd": 0.01525502309675153,
         "cost_x2_cagr": 0.02196366126370819,
         "cost_x2_mdd": 0.01564916331695787,
         "cost_x2_still_passes_gate1": false,
-        "turnover_annualized_two_sided": 1.2538930092548053
+        "turnover_annualized_two_sided": 1.253893009254805
       },
       "card_D_gates": {
         "gate1_full_sample": {
-          "cagr": 0.023302237831304362,
+          "cagr": 0.023302237831304584,
           "mdd": 0.01525502309675153,
           "passed": false
         },
@@ -972,14 +1243,14 @@
           "years": [
             {
               "year": 2019,
-              "cagr": 0.021289131477465917,
+              "cagr": 0.02128913147746614,
               "mdd": 0.01525502309675153,
               "n_bars": 235,
               "full_year": true
             },
             {
               "year": 2020,
-              "cagr": 0.030721955055965422,
+              "cagr": 0.030721955055964978,
               "mdd": 0.00581524546109391,
               "n_bars": 262,
               "full_year": true
@@ -1000,7 +1271,7 @@
             },
             {
               "year": 2023,
-              "cagr": 0.015644202616745817,
+              "cagr": 0.01564420261674604,
               "mdd": 0.007879941310086735,
               "n_bars": 260,
               "full_year": true
@@ -1014,15 +1285,15 @@
             }
           ],
           "worst_year_cagr": 0.0024260746015349888,
-          "combined_cagr": 0.023302237831304362,
+          "combined_cagr": 0.023302237831304584,
           "passed": false
         },
         "gate3_rolling": {
           "n_windows": 58,
           "cagr_min": -0.003068174730064599,
-          "cagr_p25": 0.015538843923391554,
-          "cagr_median": 0.02015441349577274,
-          "cagr_p75": 0.027993968991026796,
+          "cagr_p25": 0.015538843923391776,
+          "cagr_median": 0.02015441349577285,
+          "cagr_p75": 0.027993968991026963,
           "cagr_max": 0.03944206726860333,
           "hit_frac": 0.0,
           "neg_frac": 0.017241379310344827,
@@ -1043,7 +1314,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1056,7 +1330,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1069,7 +1346,10 @@
               ],
               "n_train": 66,
               "n_test": 17,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1082,7 +1362,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1095,7 +1378,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1108,7 +1394,10 @@
               ],
               "n_train": 66,
               "n_test": 18,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1121,7 +1410,10 @@
               ],
               "n_train": 68,
               "n_test": 16,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 68,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1134,9 +1426,14 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             }
           ],
+          "n_excluded_low_conf": 0,
+          "slot_reset_note": "slot capacity resets per test window (no cross-fold position carry); negligible for holds \u2264 30d and 6-month windows.",
           "oos_gate1": {
             "cagr": 0.02377646751054585,
             "mdd": 0.011688108541439868,
@@ -1160,7 +1457,7 @@
               },
               {
                 "year": 2023,
-                "cagr": 0.010942397987051988,
+                "cagr": 0.010942397987052432,
                 "mdd": 0.010002691904452354,
                 "n_bars": 245,
                 "full_year": true
@@ -1179,8 +1476,8 @@
           },
           "oos_gate3": {
             "n_windows": 35,
-            "cagr_min": 0.006074408616342231,
-            "cagr_p25": 0.016277532382287907,
+            "cagr_min": 0.006074408616342453,
+            "cagr_p25": 0.016277532382288018,
             "cagr_median": 0.02237834410847217,
             "cagr_p75": 0.03137994559748736,
             "cagr_max": 0.0471096876790118,
@@ -1191,7 +1488,28 @@
           },
           "oos_cagr": 0.02377646751054585,
           "oos_mdd": 0.011688108541439868,
-          "passed": false
+          "passed": false,
+          "oos_significance": {
+            "n": 924,
+            "n_boot": 2000,
+            "block_len": 10,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.02377646751054585,
+            "cagr_ci_low": 0.008007288252051093,
+            "cagr_ci_high": 0.03975981757412538,
+            "sharpe_point": 1.3910142409408366,
+            "sharpe_ci_low": 0.48647693353723753,
+            "sharpe_ci_high": 2.2709083032508945,
+            "skew": 0.12942434984139134,
+            "kurtosis": 4.355727051896873,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.0004997501249375312,
+            "significant_beats_hurdle": false,
+            "significant_positive": true,
+            "degenerate": false
+          },
+          "significant_pass": false
         },
         "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
       },
@@ -1215,7 +1533,7 @@
           "count": 38,
           "blocked_missing_options": 38,
           "realized": 0,
-          "reference_return_mean": 0.026054587224857213,
+          "reference_return_mean": 0.026054587224857217,
           "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
         }
       },
@@ -1223,7 +1541,7 @@
         "count": 38,
         "blocked_missing_options": 38,
         "realized": 0,
-        "reference_return_mean": 0.026054587224857213,
+        "reference_return_mean": 0.026054587224857217,
         "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
       }
     },
@@ -1232,9 +1550,9 @@
       "hold": 5,
       "card_C_core_metrics": {
         "cagr": -0.000932787551603087,
-        "max_drawdown": 0.010135394263802389,
-        "sharpe": -0.24628358017964289,
-        "sortino": -0.32742341577819023,
+        "max_drawdown": 0.01013539426380261,
+        "sharpe": -0.24628358017964344,
+        "sortino": -0.32742341577819106,
         "annualized_turnover": 6.7640200013111835,
         "n_bars": 1497,
         "n_years": 5.940476190476191,
@@ -1243,15 +1561,15 @@
         "unrecovered": true,
         "num_trades": 40,
         "win_rate": 0.4,
-        "profit_factor": 0.7813195315795022,
+        "profit_factor": 0.7813195315795017,
         "avg_winner": 0.01237979590796097,
-        "avg_loser": 0.010563152383109453,
-        "expectancy": -0.0013859730666812833
+        "avg_loser": 0.010563152383109458,
+        "expectancy": -0.0013859730666812868
       },
       "card_B_cost_stress": {
         "cost_bps_per_side_base": 10.0,
         "base_cagr": -0.000932787551603087,
-        "base_mdd": 0.010135394263802389,
+        "base_mdd": 0.01013539426380261,
         "cost_x2_cagr": -0.007638304565207088,
         "cost_x2_mdd": 0.045126781851444475,
         "cost_x2_still_passes_gate1": false,
@@ -1260,15 +1578,15 @@
       "card_D_gates": {
         "gate1_full_sample": {
           "cagr": -0.000932787551603087,
-          "mdd": 0.010135394263802389,
+          "mdd": 0.01013539426380261,
           "passed": false
         },
         "gate2_yearly": {
           "years": [
             {
               "year": 2019,
-              "cagr": -0.005377830415897122,
-              "mdd": 0.007507356234300988,
+              "cagr": -0.0053778304158973445,
+              "mdd": 0.00750735623430121,
               "n_bars": 235,
               "full_year": true
             },
@@ -1308,20 +1626,20 @@
               "full_year": true
             }
           ],
-          "worst_year_cagr": -0.005377830415897122,
+          "worst_year_cagr": -0.0053778304158973445,
           "combined_cagr": -0.000932787551603087,
           "passed": false
         },
         "gate3_rolling": {
           "n_windows": 57,
-          "cagr_min": -0.005012888872257482,
-          "cagr_p25": -0.0029060266623230913,
+          "cagr_min": -0.005012888872257704,
+          "cagr_p25": -0.0029060266623232023,
           "cagr_median": -0.0017377445785803358,
           "cagr_p75": 0.001051671375011054,
           "cagr_max": 0.0046375440908470456,
           "hit_frac": 0.0,
           "neg_frac": 0.6666666666666666,
-          "rolling_mdd_max": 0.007507356234300988,
+          "rolling_mdd_max": 0.00750735623430121,
           "passed": false
         },
         "gate4_walk_forward": {
@@ -1338,7 +1656,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1351,7 +1672,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1364,7 +1688,10 @@
               ],
               "n_train": 66,
               "n_test": 17,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1377,7 +1704,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1390,7 +1720,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1403,7 +1736,10 @@
               ],
               "n_train": 66,
               "n_test": 18,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1416,7 +1752,10 @@
               ],
               "n_train": 68,
               "n_test": 16,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 68,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1429,9 +1768,14 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             }
           ],
+          "n_excluded_low_conf": 0,
+          "slot_reset_note": "slot capacity resets per test window (no cross-fold position carry); negligible for holds \u2264 30d and 6-month windows.",
           "oos_gate1": {
             "cagr": -0.0008476061847051408,
             "mdd": 0.008260001293463493,
@@ -1486,7 +1830,28 @@
           },
           "oos_cagr": -0.0008476061847051408,
           "oos_mdd": 0.008260001293463493,
-          "passed": false
+          "passed": false,
+          "oos_significance": {
+            "n": 751,
+            "n_boot": 2000,
+            "block_len": 9,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": -0.0008476061847051408,
+            "cagr_ci_low": -0.004872739030163648,
+            "cagr_ci_high": 0.0031752103139954615,
+            "sharpe_point": -0.20101272725872843,
+            "sharpe_ci_low": -1.1305210229382612,
+            "sharpe_ci_high": 0.7596248943029869,
+            "skew": -0.8741494511984922,
+            "kurtosis": 19.622324541675205,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.6476761619190404,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "significant_pass": false
         },
         "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
       },
@@ -1509,7 +1874,7 @@
           "count": 40,
           "blocked_missing_options": 40,
           "realized": 0,
-          "reference_return_mean": 0.00923136795324164,
+          "reference_return_mean": 0.009231367953241637,
           "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
         }
       },
@@ -1517,7 +1882,7 @@
         "count": 40,
         "blocked_missing_options": 40,
         "realized": 0,
-        "reference_return_mean": 0.00923136795324164,
+        "reference_return_mean": 0.009231367953241637,
         "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
       }
     },
@@ -1526,10 +1891,10 @@
       "hold": 10,
       "card_C_core_metrics": {
         "cagr": -0.00414520957002984,
-        "max_drawdown": 0.03341797296544735,
-        "sharpe": -0.7904914559336313,
-        "sortino": -1.0288426743947732,
-        "annualized_turnover": 13.689641723483735,
+        "max_drawdown": 0.03341797296544757,
+        "sharpe": -0.7904914559336317,
+        "sortino": -1.0288426743947734,
+        "annualized_turnover": 13.689641723483737,
         "n_bars": 1502,
         "n_years": 5.9603174603174605,
         "max_underwater_bars": 1497,
@@ -1537,32 +1902,32 @@
         "unrecovered": true,
         "num_trades": 40,
         "win_rate": 0.375,
-        "profit_factor": 0.46408172715943613,
-        "avg_winner": 0.014178733095948963,
-        "avg_loser": 0.01833133984748919,
-        "expectancy": -0.006140062493699882
+        "profit_factor": 0.46408172715943574,
+        "avg_winner": 0.014178733095948947,
+        "avg_loser": 0.018331339847489185,
+        "expectancy": -0.0061400624936998865
       },
       "card_B_cost_stress": {
         "cost_bps_per_side_base": 10.0,
         "base_cagr": -0.00414520957002984,
-        "base_mdd": 0.03341797296544735,
+        "base_mdd": 0.03341797296544757,
         "cost_x2_cagr": -0.017424908869819844,
         "cost_x2_mdd": 0.10025441876948049,
         "cost_x2_still_passes_gate1": false,
-        "turnover_annualized_two_sided": 13.689641723483735
+        "turnover_annualized_two_sided": 13.689641723483737
       },
       "card_D_gates": {
         "gate1_full_sample": {
           "cagr": -0.00414520957002984,
-          "mdd": 0.03341797296544735,
+          "mdd": 0.03341797296544757,
           "passed": false
         },
         "gate2_yearly": {
           "years": [
             {
               "year": 2019,
-              "cagr": -0.019716068436020584,
-              "mdd": 0.019818470768015795,
+              "cagr": -0.019716068436020806,
+              "mdd": 0.019818470768016017,
               "n_bars": 235,
               "full_year": true
             },
@@ -1602,20 +1967,20 @@
               "full_year": true
             }
           ],
-          "worst_year_cagr": -0.019716068436020584,
+          "worst_year_cagr": -0.019716068436020806,
           "combined_cagr": -0.00414520957002984,
           "passed": false
         },
         "gate3_rolling": {
           "n_windows": 58,
-          "cagr_min": -0.01718005243934717,
+          "cagr_min": -0.017180052439347282,
           "cagr_p25": -0.005424776351205807,
           "cagr_median": -0.0025694786582614038,
           "cagr_p75": -0.0005048392547528646,
           "cagr_max": 0.0037481007133552957,
           "hit_frac": 0.0,
           "neg_frac": 0.7758620689655172,
-          "rolling_mdd_max": 0.019818470768015795,
+          "rolling_mdd_max": 0.019818470768016017,
           "passed": false
         },
         "gate4_walk_forward": {
@@ -1632,7 +1997,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1645,7 +2013,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1658,7 +2029,10 @@
               ],
               "n_train": 66,
               "n_test": 17,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1671,7 +2045,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1684,7 +2061,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1697,7 +2077,10 @@
               ],
               "n_train": 66,
               "n_test": 18,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1710,7 +2093,10 @@
               ],
               "n_train": 68,
               "n_test": 16,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 68,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1723,9 +2109,14 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             }
           ],
+          "n_excluded_low_conf": 0,
+          "slot_reset_note": "slot capacity resets per test window (no cross-fold position carry); negligible for holds \u2264 30d and 6-month windows.",
           "oos_gate1": {
             "cagr": -0.0020214771775547424,
             "mdd": 0.015527106241924327,
@@ -1780,7 +2171,28 @@
           },
           "oos_cagr": -0.0020214771775547424,
           "oos_mdd": 0.015527106241924327,
-          "passed": false
+          "passed": false,
+          "oos_significance": {
+            "n": 791,
+            "n_boot": 2000,
+            "block_len": 9,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": -0.0020214771775547424,
+            "cagr_ci_low": -0.008390663486614214,
+            "cagr_ci_high": 0.004131493866828532,
+            "sharpe_point": -0.35473279655192136,
+            "sharpe_ci_low": -1.4763767201666687,
+            "sharpe_ci_high": 0.7180785389703993,
+            "skew": -0.20787157421837288,
+            "kurtosis": 10.771939839452097,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.7391304347826086,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "significant_pass": false
         },
         "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
       },
@@ -1803,7 +2215,7 @@
           "count": 40,
           "blocked_missing_options": 40,
           "realized": 0,
-          "reference_return_mean": 0.012304617446550004,
+          "reference_return_mean": 0.01230461744655,
           "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
         }
       },
@@ -1811,7 +2223,7 @@
         "count": 40,
         "blocked_missing_options": 40,
         "realized": 0,
-        "reference_return_mean": 0.012304617446550004,
+        "reference_return_mean": 0.01230461744655,
         "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
       }
     },
@@ -1819,8 +2231,8 @@
       "mode": "close_to_open",
       "hold": 20,
       "card_C_core_metrics": {
-        "cagr": -0.011884743142223875,
-        "max_drawdown": 0.07681048135532209,
+        "cagr": -0.011884743142223986,
+        "max_drawdown": 0.07681048135532231,
         "sharpe": -1.6643625873741912,
         "sortino": -2.1006638792627412,
         "annualized_turnover": 27.997270332366835,
@@ -1831,15 +2243,15 @@
         "unrecovered": true,
         "num_trades": 40,
         "win_rate": 0.25,
-        "profit_factor": 0.24384248986913892,
-        "avg_winner": 0.022805659817135206,
+        "profit_factor": 0.24384248986913917,
+        "avg_winner": 0.022805659817135226,
         "avg_loser": 0.031175397732328688,
-        "expectancy": -0.017680133344962712
+        "expectancy": -0.01768013334496271
       },
       "card_B_cost_stress": {
         "cost_bps_per_side_base": 10.0,
-        "base_cagr": -0.011884743142223875,
-        "base_mdd": 0.07681048135532209,
+        "base_cagr": -0.011884743142223986,
+        "base_mdd": 0.07681048135532231,
         "cost_x2_cagr": -0.03789236442869515,
         "cost_x2_mdd": 0.20805716306707067,
         "cost_x2_still_passes_gate1": false,
@@ -1847,16 +2259,16 @@
       },
       "card_D_gates": {
         "gate1_full_sample": {
-          "cagr": -0.011884743142223875,
-          "mdd": 0.07681048135532209,
+          "cagr": -0.011884743142223986,
+          "mdd": 0.07681048135532231,
           "passed": false
         },
         "gate2_yearly": {
           "years": [
             {
               "year": 2019,
-              "cagr": -0.037243976557215674,
-              "mdd": 0.035649784499502624,
+              "cagr": -0.037243976557215897,
+              "mdd": 0.035649784499502846,
               "n_bars": 235,
               "full_year": true
             },
@@ -1896,20 +2308,20 @@
               "full_year": true
             }
           ],
-          "worst_year_cagr": -0.037243976557215674,
-          "combined_cagr": -0.011884743142223875,
+          "worst_year_cagr": -0.037243976557215897,
+          "combined_cagr": -0.011884743142223986,
           "passed": false
         },
         "gate3_rolling": {
           "n_windows": 58,
-          "cagr_min": -0.03972859501099091,
+          "cagr_min": -0.03972859501099102,
           "cagr_p25": -0.015188732988301312,
           "cagr_median": -0.010207353379934225,
           "cagr_p75": -0.0046712365901800945,
           "cagr_max": 0.001156932174328107,
           "hit_frac": 0.0,
           "neg_frac": 0.9137931034482759,
-          "rolling_mdd_max": 0.042341263698967735,
+          "rolling_mdd_max": 0.04234126369896796,
           "passed": false
         },
         "gate4_walk_forward": {
@@ -1926,7 +2338,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1939,7 +2354,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1952,7 +2370,10 @@
               ],
               "n_train": 66,
               "n_test": 17,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1965,7 +2386,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1978,7 +2402,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -1991,7 +2418,10 @@
               ],
               "n_train": 66,
               "n_test": 18,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -2004,7 +2434,10 @@
               ],
               "n_train": 68,
               "n_test": 16,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 68,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -2017,9 +2450,14 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             }
           ],
+          "n_excluded_low_conf": 0,
+          "slot_reset_note": "slot capacity resets per test window (no cross-fold position carry); negligible for holds \u2264 30d and 6-month windows.",
           "oos_gate1": {
             "cagr": -0.009630732961036115,
             "mdd": 0.03651637580380107,
@@ -2074,7 +2512,28 @@
           },
           "oos_cagr": -0.009630732961036115,
           "oos_mdd": 0.03651637580380107,
-          "passed": false
+          "passed": false,
+          "oos_significance": {
+            "n": 862,
+            "n_boot": 2000,
+            "block_len": 10,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": -0.009630732961036115,
+            "cagr_ci_low": -0.018830787877697864,
+            "cagr_ci_high": -0.0009740968572367531,
+            "sharpe_point": -1.2487363823670112,
+            "sharpe_ci_low": -2.3403117475751216,
+            "sharpe_ci_high": -0.11660697108553386,
+            "skew": -0.4407706861611812,
+            "kurtosis": 6.982336835236979,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.9860069965017492,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "significant_pass": false
         },
         "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
       },
@@ -2098,7 +2557,7 @@
           "count": 39,
           "blocked_missing_options": 39,
           "realized": 0,
-          "reference_return_mean": 0.0156381496901596,
+          "reference_return_mean": 0.015638149690159604,
           "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
         }
       },
@@ -2106,7 +2565,7 @@
         "count": 39,
         "blocked_missing_options": 39,
         "realized": 0,
-        "reference_return_mean": 0.0156381496901596,
+        "reference_return_mean": 0.015638149690159604,
         "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
       }
     },
@@ -2115,7 +2574,7 @@
       "hold": 30,
       "card_C_core_metrics": {
         "cagr": -0.023471606843844306,
-        "max_drawdown": 0.13787998228855924,
+        "max_drawdown": 0.13787998228855936,
         "sharpe": -2.6266410406562803,
         "sortino": -3.153372224704392,
         "annualized_turnover": 43.382396235204894,
@@ -2126,15 +2585,15 @@
         "unrecovered": true,
         "num_trades": 40,
         "win_rate": 0.15,
-        "profit_factor": 0.09846648776613465,
+        "profit_factor": 0.09846648776613462,
         "avg_winner": 0.02555471038312751,
-        "avg_loser": 0.04579887914966421,
-        "expectancy": -0.035095840719745454
+        "avg_loser": 0.045798879149664226,
+        "expectancy": -0.03509584071974547
       },
       "card_B_cost_stress": {
         "cost_bps_per_side_base": 10.0,
         "base_cagr": -0.023471606843844306,
-        "base_mdd": 0.13787998228855924,
+        "base_mdd": 0.13787998228855936,
         "cost_x2_cagr": -0.061527074780245106,
         "cost_x2_mdd": 0.31883952239260127,
         "cost_x2_still_passes_gate1": false,
@@ -2143,7 +2602,7 @@
       "card_D_gates": {
         "gate1_full_sample": {
           "cagr": -0.023471606843844306,
-          "mdd": 0.13787998228855924,
+          "mdd": 0.13787998228855936,
           "passed": false
         },
         "gate2_yearly": {
@@ -2164,8 +2623,8 @@
             },
             {
               "year": 2021,
-              "cagr": -0.027672054921224043,
-              "mdd": 0.029835135946800206,
+              "cagr": -0.027672054921224154,
+              "mdd": 0.029835135946800317,
               "n_bars": 261,
               "full_year": true
             },
@@ -2199,7 +2658,7 @@
           "n_windows": 59,
           "cagr_min": -0.061099433092910216,
           "cagr_p25": -0.02941055317021407,
-          "cagr_median": -0.024010738410742638,
+          "cagr_median": -0.02401073841074275,
           "cagr_p75": -0.009731507630023117,
           "cagr_max": -0.004766522637834725,
           "hit_frac": 0.0,
@@ -2221,7 +2680,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -2234,7 +2696,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 3
+              "n_admitted": 3,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -2247,7 +2712,10 @@
               ],
               "n_train": 66,
               "n_test": 17,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -2260,7 +2728,10 @@
               ],
               "n_train": 67,
               "n_test": 17,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -2273,7 +2744,10 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -2286,7 +2760,10 @@
               ],
               "n_train": 66,
               "n_test": 18,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 66,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -2299,7 +2776,10 @@
               ],
               "n_train": 68,
               "n_test": 16,
-              "n_admitted": 2
+              "n_admitted": 2,
+              "quantile_n_fit": 68,
+              "low_confidence": false,
+              "excluded_from_oos": false
             },
             {
               "train": [
@@ -2312,9 +2792,14 @@
               ],
               "n_train": 67,
               "n_test": 16,
-              "n_admitted": 4
+              "n_admitted": 4,
+              "quantile_n_fit": 67,
+              "low_confidence": false,
+              "excluded_from_oos": false
             }
           ],
+          "n_excluded_low_conf": 0,
+          "slot_reset_note": "slot capacity resets per test window (no cross-fold position carry); negligible for holds \u2264 30d and 6-month windows.",
           "oos_gate1": {
             "cagr": -0.01998210324807026,
             "mdd": 0.07324970937521891,
@@ -2324,8 +2809,8 @@
             "years": [
               {
                 "year": 2021,
-                "cagr": -0.03560904037212487,
-                "mdd": 0.029835135946800206,
+                "cagr": -0.03560904037212498,
+                "mdd": 0.029835135946800317,
                 "n_bars": 202,
                 "full_year": true
               },
@@ -2351,25 +2836,46 @@
                 "full_year": true
               }
             ],
-            "worst_year_cagr": -0.03560904037212487,
+            "worst_year_cagr": -0.03560904037212498,
             "combined_cagr": -0.01998210324807026,
             "passed": false
           },
           "oos_gate3": {
             "n_windows": 35,
-            "cagr_min": -0.0344339159307252,
+            "cagr_min": -0.03443391593072531,
             "cagr_p25": -0.024131399842315993,
             "cagr_median": -0.01941815616569631,
             "cagr_p75": -0.011634846442506619,
             "cagr_max": -0.004419552105369706,
             "hit_frac": 0.0,
             "neg_frac": 1.0,
-            "rolling_mdd_max": 0.03213807836166127,
+            "rolling_mdd_max": 0.03213807836166138,
             "passed": false
           },
           "oos_cagr": -0.01998210324807026,
           "oos_mdd": 0.07324970937521891,
-          "passed": false
+          "passed": false,
+          "oos_significance": {
+            "n": 930,
+            "n_boot": 2000,
+            "block_len": 10,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": -0.01998210324807026,
+            "cagr_ci_low": -0.03089914944623964,
+            "cagr_ci_high": -0.00908838397835911,
+            "sharpe_point": -2.157646211768287,
+            "sharpe_ci_low": -3.261246985766155,
+            "sharpe_ci_high": -1.0199068702987872,
+            "skew": -0.49947237791004084,
+            "kurtosis": 5.483959550730984,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 1.0,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "significant_pass": false
         },
         "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807"
       },
@@ -2393,7 +2899,7 @@
           "count": 38,
           "blocked_missing_options": 38,
           "realized": 0,
-          "reference_return_mean": 0.020484912553388322,
+          "reference_return_mean": 0.020484912553388336,
           "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
         }
       },
@@ -2401,7 +2907,7 @@
         "count": 38,
         "blocked_missing_options": 38,
         "realized": 0,
-        "reference_return_mean": 0.020484912553388322,
+        "reference_return_mean": 0.020484912553388336,
         "note": "negative branch is defined-risk options only; blocked here for lack of an options chain \u2014 NEVER a naked short. Reference return is the (non-realizable) underlying drift, for sizing the future options study only."
       }
     }
@@ -2409,8 +2915,9 @@
   "card_E_bias_self_check": {
     "survivorship": "NOT controlled \u2014 needs point-in-time universe (gap).",
     "look_ahead": "controlled \u2014 entry is T+1 open after the reaction bar; quantile thresholds fit on train only in walk-forward.",
-    "overfitting": "hold \u2208 {5,10,20,30} and quantile are searched; must survive walk-forward OOS.",
-    "multiple_testing": "record #holds\u00d7#modes\u00d7#quantiles tried; apply a haircut before any PASS.",
+    "overfitting": "hold \u2208 {5,10,20,30} and quantile are searched; the winner must survive walk-forward OOS AND the multiple-testing haircut.",
+    "multiple_testing": "IMPLEMENTED (item A): PASS is decided ONLY by the pre-registered primary spec surviving a Bonferroni/BH + deflated-Sharpe haircut over the 8-cell family; any_full_pass (best-of-grid) is removed. quantile and max_concurrent are part of the registered spec \u2014 no post-hoc tuning.",
+    "significance": "IMPLEMENTED (item B): OOS CAGR/Sharpe carry a moving-block bootstrap CI and p-values; a gate 'significant_pass' requires the OOS return to significantly beat the hurdle, not merely clear it on a point estimate.",
     "sample_period": "synthetic",
     "liquidity": "min ADV floor = 2000000 USD; capacity via turnover.",
     "adjustment_quality": "requires split/dividend-adjusted bars (gap on real data)."
