@@ -25,3 +25,4 @@ data/cache/
 # EVO-25 candidate-8: committed ETP execution snapshots + carry report
 !data/vix_etp/*.parquet
 !reports/carry_vixts_svxy/
+!reports/carry_vixts_svix/
