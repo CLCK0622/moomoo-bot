@@ -58,6 +58,14 @@
     "signal": "formation F=1 week; signal = -eps of most recent week (short-term residual reversal); cross-sectional winsorize 1/99 pct then rank",
     "sources": ["Blitz/Huij/Lansdorp/Verbeek Short-Term Residual Reversal SSRN 1911449", "de Groot/Huij/Zhou SSRN 1605049", "Blitz/Huij/Martens 2011 residual momentum"]
   },
+  "shortleg_risk_口径": {
+    "doc": "RESIDUAL_REVERSAL_PREREG_ADDENDUM_B_shortleg_risk.md (frozen before any real result)",
+    "锦衣卫_verdict": "EVO-10 conditional PASS on b0b80a6 — short leg is dollar+beta-neutral, diversified, borrowable-cash, non-naked, book-level max loss bounded/quantifiable; may run in SIMULATE backtest; 3 prerequisites reconciled by 户部 in addendum B",
+    "B1_single_sector_net_cap": "MONITOR-ONLY (was 'enforced hard cap'): compute+disclose realized max single-sector net exposure per run, flag >10% gross, never silently drop. Rationale: 3f primary intentionally NOT sector-neutral (that is the §12 4f family cell); risk already bounded by single-name<=2.5% gross + >=20 names/leg + dollar/beta-neutral + 2.0x cap + 10% vol target + breaker; hard cap would inject a post-hoc optimizer distorting the frozen equal-weight decile. Sector labels = static-GICS reference metadata for the diagnostic ONLY, never signal/verdict; if unavailable, disclose 'unmeasured OpenD-only'.",
+    "B2_plus25_short_stop": "reclassified as LIVE-EXECUTION OVERLAY, NOT active in SIMULATE weekly-hold backtest (conservative: no stop = full adverse move, no risk underestimate). Every result MUST disclose this; cannot be claimed as an active tail limit.",
+    "B3_gap_risk": "filed as live-transition requirement (out of scope this SIMULATE round): if leaving SIMULATE, model stop as next-open fill (not guaranteed +25% exit) + fresh 锦衣卫 review. Bounded now (single-name <=2.5% gross).",
+    "scope_guard": "review covers SIMULATE/quote-only only; any live credential/order path voids it and requires fresh 锦衣卫 review."
+  },
   "handoff": {
     "engineering": "工部 (squad 385f536d-07bd-42d5-b64a-5565c7ac0faf) — writes swing/residual_signals.py + residual_evaluate.py + run_residual.py following THIS frozen spec; no parameter tuning in parallel",
     "risk_review": "锦衣卫 (squad dbc54c9b-0aad-47bf-a5de-85af6bda7eef) — EVO-10 short-leg red-line review BEFORE the short leg runs (不过不跑)",
