@@ -1,0 +1,98 @@
+{
+  "issue": "EVO-162",
+  "candidate": "C1 cross-sectional residual reversal (large-cap, weekly, market-neutral stat-arb)",
+  "preregistration_commit": "e25d890",
+  "signal_source": "moomoo OpenD qfq daily bars (quote-only, TrdEnv.SIMULATE)",
+  "execution_source": "same OpenD daily bars; open(T+1) execution, open-to-open returns",
+  "decision_cost_multiple": "x2",
+  "universe_resolved": false,
+  "universe_frozen_size": 20,
+  "universe_present": [
+    "AAPL",
+    "AMZN",
+    "BAC",
+    "CSCO",
+    "CVX",
+    "GOOGL",
+    "GS",
+    "HD",
+    "INTC",
+    "JNJ",
+    "JPM",
+    "KO",
+    "META",
+    "MSFT",
+    "NVDA",
+    "ORCL",
+    "PFE",
+    "PG",
+    "QQQ",
+    "WMT"
+  ],
+  "universe_missing_count": 0,
+  "factor_etfs_present": [
+    "SPY",
+    "IWM"
+  ],
+  "factor_etfs_missing": [
+    "IVE",
+    "IVW"
+  ],
+  "tail_windows": [
+    "2007-08_quantquake",
+    "2008_gfc",
+    "2018Q4_selloff",
+    "2020-03_covid",
+    "2022_ratehike_bear",
+    "2025-2026_recent"
+  ],
+  "family": [
+    "resid_F1_E156_decile_3f",
+    "resid_F2_E156_decile_3f",
+    "resid_F4_E156_decile_3f",
+    "resid_F1_E104_decile_3f",
+    "resid_F1_E156_quintile_3f",
+    "resid_F1_E156_decile_4f"
+  ],
+  "primary_cell": "resid_F1_E156_decile_3f",
+  "overall_verdict": "\u6570\u636e\u4e0d\u8db3-\u65e0\u6cd5\u8bc4\u4f30",
+  "verdict_reason": "factor ETFs missing=['IVE', 'IVW']; only 20/20 frozen-universe stocks have real OpenD bars. The 3-factor residual model needs all of ['SPY', 'IWM', 'IVE', 'IVW'] plus cross-sectional breadth (N\u226bK); it cannot be built on the present data. Engine is reproducible; NO\u8fbe\u6807 claim is possible.",
+  "data_complete": false,
+  "runs": [],
+  "benchmarks": {
+    "SPY_buy_and_hold": {
+      "cagr": 0.10548365189318365,
+      "mdd": 0.567004396865151
+    },
+    "equal_weight_universe_buy_and_hold": {
+      "cagr": 0.18370796421162328,
+      "mdd": 0.47831045245730097,
+      "present_symbols": [
+        "AAPL",
+        "AMZN",
+        "BAC",
+        "CSCO",
+        "CVX",
+        "GOOGL",
+        "GS",
+        "HD",
+        "INTC",
+        "JNJ",
+        "JPM",
+        "KO",
+        "META",
+        "MSFT",
+        "NVDA",
+        "ORCL",
+        "PFE",
+        "PG",
+        "QQQ",
+        "WMT"
+      ]
+    },
+    "cash": {
+      "cagr": 0.0,
+      "mdd": 0.0
+    }
+  }
+}
