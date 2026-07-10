@@ -1,7 +1,7 @@
 {
   "issue": "EVO-162",
   "candidate": "C1 cross-sectional residual reversal (large-cap, weekly, market-neutral stat-arb)",
-  "preregistration_commit": "e25d890",
+  "preregistration_commit": "ce80f4c",
   "signal_source": "moomoo OpenD qfq daily bars (quote-only, TrdEnv.SIMULATE)",
   "execution_source": "same OpenD daily bars; open(T+1) execution, open-to-open returns",
   "decision_cost_multiple": "x2",
@@ -55,6 +55,17 @@
     "resid_F1_E156_decile_4f"
   ],
   "primary_cell": "resid_F1_E156_decile_3f",
+  "addendum_b": {
+    "source": "RESIDUAL_REVERSAL_PREREG_ADDENDUM_B_shortleg_risk.md (frozen 9deba65)",
+    "B1_single_sector_net_exposure": {
+      "measured": false,
+      "computed": false,
+      "note": "no primary run on the present data (data-insufficient); single-sector net exposure not computed. MONITOR-ONLY diagnostic (addendum B1): the single-sector net cap is disclosed, NOT enforced. The 3-factor primary is intentionally market/size/value-neutral but NOT sector-neutral (sector-neutralization is the separate \u00a712 4-factor family cell); a hard cap here would contaminate the frozen equal-weight-decile construction. Sector-tilt risk is already bounded by single-name \u22642.5% gross (\u226520 names/leg) + dollar/beta-neutrality + 2.0\u00d7 gross hard cap + 10% ann. vol target + 8%/5-day breaker \u2014 the vol target caps total book risk regardless of the tilt's source. A static current-GICS map, when supplied, is a REPORTING-ONLY input, never in the signal / sizing / verdict."
+    },
+    "B2_short_stop": "main\u53e3\u5f84 backtest = weekly-hold to the next rebalance, NO intraday +25% stop exercised; the +25% single-name short stop is a LIVE-EXECUTION OVERLAY not active in this SIMULATE run and cannot be claimed as an active tail limit (addendum B2). No-stop is conservative \u2014 the book eats the full adverse move, so risk is not underestimated.",
+    "B3_gap_risk": "live-transition requirement (addendum B3, no action this SIMULATE round): if the strategy leaves SIMULATE/quote-only, the +25% stop must be modeled as fills-at-the-next-open-after-trigger (NOT a guaranteed +25% exit \u2014 an overnight/M&A gap can pierce it) and that transition triggers a FRESH \u9526\u8863\u536b red-line review. Gap loss is bounded now: single-name \u22642.5% gross \u21d2 even a +100% overnight gap \u2248 2.5% NAV single-name loss.",
+    "short_leg_review": "\u9526\u8863\u536b EVO-10 review on b0b80a6 = conditional PASS (9deba65): the short leg is a dollar+beta-neutral, diversified, borrowable-cash hedged structure with a bounded, quantifiable book-level max loss \u21d2 NOT an EVO-10 infinite/undefined-risk exclusion; it MAY run in the SIMULATE backtest (no forced long-only/defined-risk fallback). Scope guard: this covers SIMULATE/quote-only ONLY \u2014 the instant the short leg leaves SIMULATE or adds any live credential / order path, the review is void and a fresh \u9526\u8863\u536b review is required."
+  },
   "overall_verdict": "\u6570\u636e\u4e0d\u8db3-\u65e0\u6cd5\u8bc4\u4f30",
   "verdict_reason": "factor ETFs missing=['IVE', 'IVW']; only 20/20 frozen-universe stocks have real OpenD bars. The 3-factor residual model needs all of ['SPY', 'IWM', 'IVE', 'IVW'] plus cross-sectional breadth (N\u226bK); it cannot be built on the present data. Engine is reproducible; NO\u8fbe\u6807 claim is possible.",
   "data_complete": false,

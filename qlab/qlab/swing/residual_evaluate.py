@@ -60,6 +60,109 @@ def _mode(spec: dict) -> str:
             f"{_cut_name(spec['cut'])}_{spec['factor_set']}")
 
 
+# --------------------------------------------------------------------------- #
+# ADDENDUM B (short-leg risk口径 reconciliation, frozen 9deba65) — report disclosures
+# --------------------------------------------------------------------------- #
+ADDENDUM_B_SOURCE = "RESIDUAL_REVERSAL_PREREG_ADDENDUM_B_shortleg_risk.md (frozen 9deba65)"
+
+# B1: the frozen §6 "single-sector net cap ≤10% gross" is MONITOR-ONLY — computed & disclosed
+# per run, flagged if >10%, never enforced as a sizing cap (that would partially sector-neutralize
+# the 3f primary and blur it against its own §12 4f robustness cell).
+_B1_MONITOR_NOTE = (
+    "MONITOR-ONLY diagnostic (addendum B1): the single-sector net cap is disclosed, NOT enforced. "
+    "The 3-factor primary is intentionally market/size/value-neutral but NOT sector-neutral "
+    "(sector-neutralization is the separate §12 4-factor family cell); a hard cap here would "
+    "contaminate the frozen equal-weight-decile construction. Sector-tilt risk is already bounded "
+    "by single-name ≤2.5% gross (≥20 names/leg) + dollar/beta-neutrality + 2.0× gross hard cap + "
+    "10% ann. vol target + 8%/5-day breaker — the vol target caps total book risk regardless of "
+    "the tilt's source. A static current-GICS map, when supplied, is a REPORTING-ONLY input, never "
+    "in the signal / sizing / verdict.")
+
+# B2: the frozen §6 "+25% per-name short stop" is honestly relabeled — the SIMULATE weekly
+# backtest holds to the next rebalance with NO intraday stop (conservative: eats the full adverse
+# move, so it does NOT underestimate risk); the stop is a live-execution overlay, not exercised.
+B2_SHORT_STOP_DISCLOSURE = (
+    "main口径 backtest = weekly-hold to the next rebalance, NO intraday +25% stop exercised; the "
+    "+25% single-name short stop is a LIVE-EXECUTION OVERLAY not active in this SIMULATE run and "
+    "cannot be claimed as an active tail limit (addendum B2). No-stop is conservative — the book "
+    "eats the full adverse move, so risk is not underestimated.")
+
+# B3: gap risk is a live-transition requirement, out of scope this SIMULATE round (recorded only).
+B3_GAP_RISK_NOTE = (
+    "live-transition requirement (addendum B3, no action this SIMULATE round): if the strategy "
+    "leaves SIMULATE/quote-only, the +25% stop must be modeled as fills-at-the-next-open-after-"
+    "trigger (NOT a guaranteed +25% exit — an overnight/M&A gap can pierce it) and that transition "
+    "triggers a FRESH 锦衣卫 red-line review. Gap loss is bounded now: single-name ≤2.5% gross ⇒ "
+    "even a +100% overnight gap ≈ 2.5% NAV single-name loss.")
+
+# 锦衣卫 EVO-10 conditional-PASS context (addendum B intro) — factual disclosure, changes no logic.
+SHORT_LEG_REVIEW_CONTEXT = (
+    "锦衣卫 EVO-10 review on b0b80a6 = conditional PASS (9deba65): the short leg is a dollar+beta-"
+    "neutral, diversified, borrowable-cash hedged structure with a bounded, quantifiable book-level "
+    "max loss ⇒ NOT an EVO-10 infinite/undefined-risk exclusion; it MAY run in the SIMULATE "
+    "backtest (no forced long-only/defined-risk fallback). Scope guard: this covers SIMULATE/"
+    "quote-only ONLY — the instant the short leg leaves SIMULATE or adds any live credential / "
+    "order path, the review is void and a fresh 锦衣卫 review is required.")
+
+
+def _sector_net_exposure(weights_df: pd.DataFrame, sectors: dict | None) -> dict:
+    """B1 diagnostic: realized max single-sector net exposure as a fraction of gross (monitor-only).
+
+    ``weights_df`` carries signed notional per symbol per day (from ``residual_curve``). For each
+    day and GICS sector, net = Σ signed weights in that sector; the diagnostic is
+    ``max_over(days, sectors) |net| / gross``. Flagged if > 10% gross. Never enforced, never
+    silently dropped: with no sector map it reports ``measured=False`` and relies on the bounding
+    stack + the §12 4f cell (锦衣卫 prerequisite #1).
+    """
+    if not sectors:
+        return {"measured": False, "computed": True, "monitor_only": True, "cap_enforced": False,
+                "threshold_frac_gross": 0.10,
+                "note": "single-sector net exposure UNMEASURED under OpenD-only (no static GICS map "
+                        "supplied). " + _B1_MONITOR_NOTE + " See the §12 4f cell for the sector-"
+                        "neutral robustness check."}
+    syms = [c for c in weights_df.columns if c != "date"]
+    W = weights_df[syms].to_numpy(float)
+    sec_of = [str(sectors.get(s) or sectors.get(s.upper()) or "UNKNOWN") for s in syms]
+    mapped = int(sum(1 for s in sec_of if s != "UNKNOWN"))
+    gross = np.abs(W).sum(axis=1)
+    realized_max, worst_sector, worst_idx = 0.0, None, -1
+    for sec in sorted({s for s in sec_of if s != "UNKNOWN"}):
+        cols = [j for j, s in enumerate(sec_of) if s == sec]
+        net = W[:, cols].sum(axis=1)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            frac = np.where(gross > 0, np.abs(net) / gross, 0.0)
+        j = int(np.argmax(frac))
+        if frac[j] > realized_max:
+            realized_max, worst_sector, worst_idx = float(frac[j]), sec, j
+    dates = pd.DatetimeIndex(weights_df["date"])
+    return {
+        "measured": True, "computed": True, "monitor_only": True, "cap_enforced": False,
+        "threshold_frac_gross": 0.10,
+        "realized_max_single_sector_net_frac_gross": realized_max,
+        "breaches_10pct_flag": bool(realized_max > 0.10),
+        "worst_sector": worst_sector,
+        "worst_date": str(dates[worst_idx].date()) if worst_idx >= 0 else None,
+        "n_sectors_mapped": len({s for s in sec_of if s != "UNKNOWN"}),
+        "symbols_mapped": mapped, "symbols_total": len(syms),
+        "sector_map_coverage": round(mapped / len(syms), 3) if syms else 0.0,
+        "note": _B1_MONITOR_NOTE,
+    }
+
+
+def _addendum_b_block(b1_sector_diag: dict | None) -> dict:
+    """Assemble the addendum-B disclosure block carried by EVERY report (all branches)."""
+    return {
+        "source": ADDENDUM_B_SOURCE,
+        "B1_single_sector_net_exposure": b1_sector_diag if b1_sector_diag is not None else {
+            "measured": False, "computed": False,
+            "note": "no primary run on the present data (data-insufficient); single-sector net "
+                    "exposure not computed. " + _B1_MONITOR_NOTE},
+        "B2_short_stop": B2_SHORT_STOP_DISCLOSURE,
+        "B3_gap_risk": B3_GAP_RISK_NOTE,
+        "short_leg_review": SHORT_LEG_REVIEW_CONTEXT,
+    }
+
+
 def _window_stats(equity_df: pd.DataFrame, lo: str, hi: str, P: int) -> dict:
     w = equity_df[(equity_df["date"] >= pd.Timestamp(lo)) & (equity_df["date"] <= pd.Timestamp(hi))]
     if len(w) < 2:
@@ -90,6 +193,7 @@ def _cell(stock_frames, factor_frames, universe, spec, *, P, alpha, n_boot, seed
         out["unavailable"] = ("4-factor industry-demean cell needs a GICS sector map "
                               "(external, out of scope this round) — recorded N/A, not run.")
         return out
+    weights_df = None
     for cm, tag in ((1.0, "x1"), (2.0, "x2")):
         try:
             res = residual_curve(stock_frames, factor_frames, universe, p,
@@ -100,11 +204,15 @@ def _cell(stock_frames, factor_frames, universe, spec, *, P, alpha, n_boot, seed
         except ValueError as exc:
             out["unavailable"] = f"数据不足 (engine): {exc}"
             return out
+        if weights_df is None:
+            weights_df = res["weights_df"]          # cost-independent ⇒ compute B1 once per cell
         eq, tl = res["equity_df"], res["trade_log"]
         ev = evaluate_curve(eq, tl, P=P, hurdle=CAGR_HURDLE, alpha=alpha, n_boot=n_boot, seed=seed)
         ev["diagnostics"] = res["diagnostics"]
         ev["stress"] = {name: _window_stats(eq, lo, hi, P) for name, (lo, hi) in STRESS_WINDOWS.items()}
         out["cost_variants"][tag] = ev
+    # B1 (addendum B): realized max single-sector net exposure per run — monitor-only diagnostic
+    out["sector_net_exposure"] = _sector_net_exposure(weights_df, sectors)
     return out
 
 
@@ -165,6 +273,9 @@ def build_residual_report(stock_frames, factor_frames, universe, *,
         "tail_windows": list(STRESS_WINDOWS.keys()),
         "family": [_mode(s) for s in FAMILY],
         "primary_cell": _mode(PRIMARY),
+        # addendum B disclosures ride on EVERY branch (incl. data-insufficient); B1 is filled with
+        # the primary cell's realized sector exposure below once a primary run exists.
+        "addendum_b": _addendum_b_block(None),
     }
 
     # Hard factor gap: the 3-factor primary口径 cannot even be built ⇒ engine reproducible,
@@ -276,6 +387,8 @@ def build_residual_report(stock_frames, factor_frames, universe, *,
         "primary_stress": stress,
         "multiple_testing": mt, "runs": runs,
         "benchmarks": _benchmarks(stock_frames, factor_frames, universe, P=P),
+        # B1 (addendum B): surface the PRIMARY cell's realized single-sector net exposure
+        "addendum_b": _addendum_b_block(prun.get("sector_net_exposure")),
         "notes": [
             "NO-FIT (hard gate #2 clause #4): F / E / factor set / decile count / rebalance / vol "
             "target / breaker / caps are literature conventions (Blitz–Huij–Lansdorp–Verbeek 2011; "
@@ -292,8 +405,14 @@ def build_residual_report(stock_frames, factor_frames, universe, *,
             "(incl. 2007-08 quant-quake + 2008 GFC); a breach is a direct negative, never averaged.",
             "N is the FROZEN universe size — an un-fetched / excluded symbol is a permanently-absent "
             "cross-section slot (data gap), never a silent re-size; a < min-names/leg week is 数据不足.",
-            "Short-leg PASS clause 5 (§13) is 锦衣卫's EVO-10 review (不过不跑); code writes both the "
-            "long-short and the long-only/defined-risk fallback path.",
+            "Short-leg PASS clause 5 (§13) is 锦衣卫's EVO-10 review; conditional PASS on b0b80a6 "
+            "(addendum B / 9deba65) ⇒ the short leg MAY run in SIMULATE (no forced fallback). The "
+            "long-only / defined-risk path stays coded as a fallback for the live-transition case.",
+            "ADDENDUM B (9deba65): single-sector net cap is MONITOR-ONLY — realized max is computed "
+            "& disclosed per run and flagged if >10% gross, NEVER enforced as a sizing cap (B1, see "
+            "addendum_b); the +25% single-name short stop is a LIVE-EXECUTION OVERLAY not exercised "
+            "in this weekly-hold SIMULATE run and cannot be claimed as an active tail limit (B2); "
+            "gap risk is a live-transition requirement with no action this round (B3).",
             "SURVIVORSHIP: 'large & liquid as of 2026' over 2006→ is survivorship-biased; a weekly "
             "dollar-neutral residual long-short is far less sensitive than a long-only level bet, but "
             "the bias is disclosed and cannot turn a fail into a pass (§2).",
