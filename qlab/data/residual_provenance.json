@@ -26,12 +26,22 @@
   },
   "frozen_universe": {
     "n_stocks": 250,
-    "selection_rule": "US common stocks with moomoo US quote and >=156wk OpenD daily history as of 2026-07-10; rank by 60-trading-day average dollar volume (close*volume); take top 250; exclude non-borrowable (replace with next-ranked, logged before results)",
+    "selection_rule": "SUPERSEDED by addendum_A (concrete two-stage口径). Original intent: US common stocks, >=156wk OpenD history, rank by 60-day dollar volume, top 250, borrowable.",
+    "addendum_A_selection": {
+      "doc": "RESIDUAL_REVERSAL_PREREG_ADDENDUM_A_universe.md (frozen before any resolved-list / real-result commit)",
+      "reason": "under OpenD <=300 historical-K quota, bars for the full multi-thousand candidate pool cannot be pulled to rank by dollar volume; a zero-quota pre-screen is forced, and its key is a survivorship/selection judgment (户部口径). US TURNOVER not a get_stock_filter field (都水 verified).",
+      "stage0_zero_quota_prescreen": "get_stock_filter US market: (1) security type = US-domiciled common stock (exclude ADR/foreign, ETF/ETN/CEF, preferred, warrant, unit, pre-merger SPAC; REITs kept); (2) market cap >= $10B (large-cap floor, operationalizes prereg 'large-cap'); (3) rank survivors by dollar-volume proxy, priority (i) snapshot dollar-volume = close x zero-quota filterable share-volume field if exposed, else (ii) MARKET_VAL fallback; take top 296.",
+      "stage1_quota_fetch_and_rank": "fetch top-296 + 4 factor ETFs (<=300, quote-only SIMULATE); rank the 296 by prereg-literal 60-trading-day mean(close*volume); apply dedup + borrow substitution; take top 250.",
+      "dedup_and_borrow": "per issuer keep only the single class with higher 60d dollar volume (tie<5% -> alphabetical first); walk-down borrow substitution (skip non-borrowable, take next-ranked, log each); if <250 clean survivors, universe is that smaller count labelled honestly, never padded.",
+      "selection_effect_record": "resolved commit MUST log: pre-screen key used, superset size 296, 296th-name cut value (both keys), and per-step exclusion counts. Names outside stage-0 top-296 that would enter the 60d top-250 are unobservable under quota — bounded, disclosed, cannot turn a fail into a pass.",
+      "engineering_path": "(b) deterministic code pre-screen: 营缮 encodes into resolve_universe; 都水 runs once on OpenD host; resolved list committed BEFORE results."
+    },
     "factor_etfs": ["SPY", "IWM", "IVE", "IVW"],
-    "total_fetched_symbols_max": 254,
+    "total_fetched_symbols_max": 300,
+    "candidate_superset": 296,
     "hard_cap": 300,
     "resolved_list_artifact": "RESIDUAL_UNIVERSE_RESOLVED.txt (committed to branch BEFORE results; no mid-evaluation swap)",
-    "survivorship_caveat": "large-and-liquid-as-of-2026 over a 2006-> window is survivorship-biased; a weekly dollar-neutral long-short on residuals is far less sensitive than a long-only level bet, but the bias is disclosed and cannot turn a fail into a pass; a point-in-time universe (external, out of scope) would be needed for a clean verdict"
+    "survivorship_caveat": "large-and-liquid-as-of-2026 over a 2006-> window is survivorship-biased; a weekly dollar-neutral long-short on residuals is far less sensitive than a long-only level bet, but the bias is disclosed and cannot turn a fail into a pass; a point-in-time universe (external, out of scope) would be needed for a clean verdict. The stage-0 zero-quota pre-screen (addendum_A) adds a bounded, disclosed selection effect on top."
   },
   "availability_at_freeze": {
     "present_in_workspace": ["SPY", "QQQ", "IWM", "AAPL", "AMZN", "BAC", "CSCO", "CVX", "GOOGL", "GS", "HD", "INTC", "JNJ", "JPM", "KO", "META", "MSFT", "NVDA", "ORCL", "PFE", "PG", "WMT"],
