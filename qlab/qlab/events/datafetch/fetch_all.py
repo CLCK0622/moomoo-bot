@@ -67,10 +67,16 @@ def _fetch_prices(args, out_dir, manifest):
     if args.price_source == "opend":
         from .opend_daily import OpenDUnavailable, fetch_daily_parquet
         try:
-            written = fetch_daily_parquet(args.symbols, args.start, args.end,
-                                          data_dir=daily_dir)
+            result = fetch_daily_parquet(args.symbols, args.start, args.end,
+                                         data_dir=daily_dir, pause=args.price_pause)
+            written, blocked = result["written"], result["failed"]
+            for sym, meta in written.items():
+                print(f"[prices] {sym}: {meta['rows']} bars → {meta['path']}")
+            for sym, why in blocked.items():
+                print(f"[prices] {sym}: FAILED — {why}")
         except OpenDUnavailable as exc:
             blocked = {s.upper(): str(exc) for s in args.symbols}
+            print(f"[prices] OpenD unavailable: {exc}")
     else:
         backend = price_mod.BACKENDS[args.price_source]
         import requests
@@ -110,14 +116,25 @@ def main(argv=None):
 
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
-    manifest = {"start": args.start, "end": args.end, "symbols": args.symbols}
+
+    # Merge into any existing manifest so a `--what earnings` run does not wipe a
+    # prior `--what prices` section (and vice versa) — the manifest is cumulative
+    # provenance, and re-pulling just to rebuild it would waste OpenD quota.
+    manifest_path = out_dir / "fetch_manifest.json"
+    manifest = {}
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text())
+        except Exception:  # noqa: BLE001 — a corrupt manifest is not fatal
+            manifest = {}
+    manifest.update({"start": args.start, "end": args.end, "symbols": args.symbols})
 
     if args.what in ("earnings", "all"):
         _fetch_earnings(args, out_dir, manifest)
     if args.what in ("prices", "all"):
         _fetch_prices(args, out_dir, manifest)
 
-    (out_dir / "fetch_manifest.json").write_text(json.dumps(manifest, indent=2, default=str))
+    manifest_path.write_text(json.dumps(manifest, indent=2, default=str))
     print(f"[manifest] → {out_dir / 'fetch_manifest.json'}")
     return 0
 

@@ -7,7 +7,7 @@ existing sinks with no change to the backtest:
 | Gap | Sink | Source (this package) | Status in this workspace |
 |-----|------|-----------------------|--------------------------|
 | #1 real earnings timestamps (bmo/amc) | `CsvEventSource` → `data/earnings.csv` | SEC EDGAR 8-K **item 2.02** | ✅ **fetched & committed** (473 events, 19 symbols, 2019–2024) |
-| #2 real adjusted daily open/close bars | `ParquetDailyBarSource` → `data/daily/<sym>_1d.parquet` | Stooq / Nasdaq / Yahoo **or** OpenD | ⛔ **blocked here** — see [Blockers](#blockers). Fetchers wired & unit-tested; run on a non-blocked host |
+| #2 real adjusted daily open/close bars | `ParquetDailyBarSource` → `data/daily/<sym>_1d.parquet` | **OpenD** (`request_history_kline` K_DAY, qfq) — Stooq/Nasdaq/Yahoo fallback | ✅ **fetched & committed** via the live OpenD gateway on this runtime (19 symbols × 1510 qfq-adjusted bars, 2019–2024). Free sources remain IP-blocked here (fallback for gateway-less hosts) |
 | #3 historical options chain | negative branch | — | left as gap (compliance): negative branch stays `blocked`, never naked short |
 
 The backtest only ever reads the on-disk CSV/parquet, so a missing/unreachable
@@ -63,43 +63,56 @@ Per-symbol counts and any 0-count symbols are in `data/fetch_manifest.json`.
 
 ---
 
-## Gap #2 — adjusted daily bars — WIRED, BLOCKED ON EGRESS/GATEWAY
+## Gap #2 — adjusted daily bars — DELIVERED via OpenD
 
 `ParquetDailyBarSource` needs `[date, open, high, low, close, volume]` with
 **split- AND dividend-adjusted** OHLC. Adjustment is mandatory: candidate 5
 computes `overnight = open[t+1]/close[t]`; an unadjusted split day would inject a
 fake ±hundreds-of-percent overnight gap.
 
+**Delivered on this runtime via the live moomoo OpenD gateway** (`--price-source
+opend`): 19 symbols × **1510 qfq-adjusted daily bars** each, 2019-01-02 →
+2024-12-31, committed under `data/daily/`. Adjustment verified: AAPL is
+continuous across its 2020-08-31 4:1 split and NVDA across its 2024-06-10 10:1
+split (no split-day jump); the largest 1-day moves are real events (AAPL 12.9%
+on the 2020-03-16 COVID crash, NVDA 24.4% on its 2023-05-25 earnings gap), not
+adjustment artifacts. `data/fetch_manifest.json` records `written` (19) /
+`blocked` (0) per symbol.
+
 Four interchangeable backends, each returning `(DataFrame | None, note)` so a
 blocked source is an honest gap, not fake data:
 
 | Backend | Endpoint | Adjustment | `--price-source` |
 |---------|----------|-----------|------------------|
+| **OpenD** (used) | `request_history_kline(K_DAY)` via moomoo SDK | **qfq (split+dividend, SDK default)** | `opend` |
 | Stooq | `q/d/l` CSV (SHA-256 PoW solved in-code) | split + dividend | `stooq` |
 | Nasdaq | `api/quote/.../historical` JSON | split | `nasdaq` |
 | Yahoo | `v8/finance/chart` JSON (`adjclose`-rescaled) | split + dividend | `yahoo` |
-| OpenD | `request_history_kline(K_DAY)` via moomoo SDK | adjusted (`autype`) | `opend` |
 
-### Run it (from a non-blocked host)
+### Reproduce (host with a reachable OpenD gateway + `moomoo-api` installed)
 
 ```bash
-# free source (residential / non-datacenter egress IP):
-python -m qlab.events.datafetch.fetch_all --what prices --price-source stooq \
-    --start 2019-01-01 --end 2024-12-31 --out data
-
-# or via OpenD (host with a reachable OpenD gateway + moomoo-api installed):
 python -m qlab.events.datafetch.fetch_all --what prices --price-source opend \
     --start 2019-01-01 --end 2024-12-31 --out data
+# free fallback for a gateway-less but non-IP-blocked host:
+#   --price-source stooq   (see Blockers for the egress-IP caveat here)
 ```
+
+Historical-K quota is counted by **distinct symbol per 30 days**; the fetch is a
+single one-shot pass and never retries a symbol, so the committed parquet exists
+precisely to avoid re-pulling on the downstream real-run step.
 
 ### OpenD path — vendored file untouched
 
 `vendor/qstrat/data/fetcher.py` ships `TIMEFRAME_MAP = {"1m", "15m"}` only.
-`opend_daily.py` adds `"1d": KLType.K_DAY` **from the outside** at import time
-(`TIMEFRAME_MAP.setdefault("1d", KLType.K_DAY)`) — the vendored source stays
-byte-for-byte unchanged, so an upstream re-sync never conflicts. Without the
-moomoo SDK / a live gateway it raises `OpenDUnavailable`, which `fetch_all`
-records as a blocker rather than crashing.
+`opend_daily.py` puts `vendor/qstrat` on `sys.path` (the same idiom as
+`qlab/runner.py`), imports the vendored `data.fetcher` verbatim, then adds
+`"1d": KLType.K_DAY` **from the outside** (`TIMEFRAME_MAP.setdefault(...)`) — the
+vendored source stays byte-for-byte unchanged, so an upstream re-sync never
+conflicts. Without the moomoo SDK / a live gateway it raises `OpenDUnavailable`,
+which `fetch_all` records per symbol rather than crashing. Only
+`OpenQuoteContext` is opened (read-only quote); **no** trade context / unlock /
+order, and the gateway process is never restarted, reconfigured, or logged out.
 
 ---
 
@@ -107,36 +120,36 @@ records as a blocker rather than crashing.
 
 Precise state as of **2026-07-10** in this workspace:
 
-1. **All free price sources block this egress IP.** Empirically:
+1. **Gap #2 is unblocked here** — a live moomoo OpenD gateway (v10.8.6808) is
+   running on this runtime, and `moomoo-api==10.08.6808` (→ `moomoo_api==10.8.6808`,
+   `import moomoo`) is installed in the venv. The bars are fetched and committed.
+   Note the SDK is `moomoo-api` (NOT `futu-api`, which exposes `import futu`).
+2. **Free price sources still block this egress IP** (kept wired as the fallback
+   for a gateway-less host). Empirically:
    - Stooq → solves the JS proof-of-work, then `Access denied` (IP-level block).
    - Yahoo `v8/chart` → HTTP `429 Too Many Requests` on every request.
    - Nasdaq `api/quote` → HTTP 200 but `totalRecords: 0` (datacenter soft-block).
    - FMP demo key → 401 (only unlocks its own AAPL demo).
-   This is a datacenter-IP reputation block, **not** a code bug — the same
-   fetchers work from a normal/residential IP. Pushing past PoW + IP blocks would
-   be anti-bot evasion and was deliberately not attempted.
-2. **OpenD is unreachable here.** No OpenD gateway, no `moomoo-api` SDK, no
-   account — OpenD is unreachable even in SIMULATE mode from this workspace
-   (per EVO-8). `opend` source raises `OpenDUnavailable`.
+   Datacenter-IP reputation block, **not** a code bug. Pushing past PoW + IP
+   blocks would be anti-bot evasion and was deliberately not attempted.
 
-### What to run where to unblock a real verdict
+### Downstream real run (both gaps' data now on the branch)
 
-- **On a host with normal internet egress** (any laptop / residential VPS):
-  `python -m qlab.events.datafetch.fetch_all --what prices --price-source stooq --start 2019-01-01 --end 2024-12-31 --out data`
-  → writes `data/daily/<sym>_1d.parquet` for the 19 symbols.
-- **On a host with a running OpenD gateway** (+ `pip install moomoo-api` matching
-  the gateway): same command with `--price-source opend`.
-- Then the **real backtest** goes end-to-end with zero code change:
-  ```bash
-  python -m qlab.events.run_events --source parquet \
-      --data-dir data/daily --events-csv data/earnings.csv \
-      --symbols AAPL MSFT NVDA AMZN GOOGL META CSCO INTC ORCL \
-               JPM BAC GS WMT HD KO PG JNJ PFE CVX \
-      --mode both --hold 5 10 20 30 --out qlab/reports/events_real
-  ```
+The real backtest goes end-to-end with zero code change, reading the committed
+`data/earnings.csv` + `data/daily/*.parquet`:
 
-`*.parquet` is git-ignored by repo convention (bars are regenerated, not
-committed); `data/earnings.csv` **is** committed as the delivered gap-#1 artifact.
+```bash
+python -m qlab.events.run_events --source parquet \
+    --data-dir data/daily --events-csv data/earnings.csv \
+    --symbols AAPL MSFT NVDA AMZN GOOGL META CSCO INTC ORCL \
+             JPM BAC GS WMT HD KO PG JNJ PFE CVX \
+    --mode both --hold 5 10 20 30 --out qlab/reports/events_real
+```
+
+The delivered daily-bar `*.parquet` under `data/daily/` **is** committed (an
+explicit `!data/daily/*.parquet` negation in `.gitignore`) so this real-run step
+reads them from the branch without re-hitting the 30-day historical-K quota;
+other ad-hoc parquet stays ignored. `data/earnings.csv` is likewise committed.
 
 ---
 

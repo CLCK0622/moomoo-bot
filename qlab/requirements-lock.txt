@@ -1,4 +1,7 @@
+certifi==2026.6.17
+charset-normalizer==3.4.9
 exceptiongroup==1.3.1
+idna==3.18
 iniconfig==2.1.0
 numpy==1.26.4
 packaging==26.2
@@ -8,6 +11,17 @@ pyarrow==21.0.0
 pytest==8.4.2
 python-dateutil==2.9.0.post0
 pytz==2026.2
+requests==2.32.5
 six==1.17.0
 tomli==2.4.1
 tzdata==2026.2
+urllib3==2.6.3
+
+# --- OpenD-only extra (not needed for offline suite / SEC / free price sources).
+# Install on a host with a reachable OpenD gateway to run
+# `qlab.events.datafetch.fetch_all --price-source opend`. Verified on this
+# runtime against OpenD v10.8.6808:
+#   moomoo_api==10.8.6808        # requires: pandas, protobuf, PyCryptodome, simplejson
+#   protobuf==6.33.6
+#   PyCryptodome (SDK pins its own)
+#   simplejson  (SDK pins its own)

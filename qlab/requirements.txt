@@ -3,7 +3,11 @@ pandas>=2.0,<2.2
 numpy>=1.25,<2.0
 pyarrow>=14.0.0
 pytest>=7.4.0
+requests>=2.31            # qlab.events.datafetch: SEC EDGAR + free price fetchers
 
-# --- opend/live extra (install only to run --mode opend_paper|live or the
-# --- opend_probe against a real OpenD gateway; NOT needed for paper/tests):
-# moomoo-api==10.08.6808   # match your installed OpenD gateway version
+# --- opend/live extra (install to run --mode opend_paper|live, the opend_probe,
+# --- OR `qlab.events.datafetch.fetch_all --price-source opend` for daily bars —
+# --- all need a reachable OpenD gateway; NOT needed for paper/tests/free sources):
+# moomoo-api==10.08.6808   # match your OpenD gateway version. Verified working on
+#                          # OpenD v10.8.6808 (pip resolves to moomoo_api==10.8.6808);
+#                          # provides `import moomoo` (NOT `import futu` — that is futu-api).

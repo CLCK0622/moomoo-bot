@@ -20,9 +20,91 @@
     "PG",
     "JNJ",
     "PFE",
-    "CVX",
-    "XOM"
+    "CVX"
   ],
+  "prices": {
+    "source": "opend",
+    "data_dir": "data/daily",
+    "written": {
+      "AAPL": {
+        "path": "data/daily/AAPL_1d.parquet",
+        "rows": 1510
+      },
+      "MSFT": {
+        "path": "data/daily/MSFT_1d.parquet",
+        "rows": 1510
+      },
+      "NVDA": {
+        "path": "data/daily/NVDA_1d.parquet",
+        "rows": 1510
+      },
+      "AMZN": {
+        "path": "data/daily/AMZN_1d.parquet",
+        "rows": 1510
+      },
+      "GOOGL": {
+        "path": "data/daily/GOOGL_1d.parquet",
+        "rows": 1510
+      },
+      "META": {
+        "path": "data/daily/META_1d.parquet",
+        "rows": 1510
+      },
+      "CSCO": {
+        "path": "data/daily/CSCO_1d.parquet",
+        "rows": 1510
+      },
+      "INTC": {
+        "path": "data/daily/INTC_1d.parquet",
+        "rows": 1510
+      },
+      "ORCL": {
+        "path": "data/daily/ORCL_1d.parquet",
+        "rows": 1510
+      },
+      "JPM": {
+        "path": "data/daily/JPM_1d.parquet",
+        "rows": 1510
+      },
+      "BAC": {
+        "path": "data/daily/BAC_1d.parquet",
+        "rows": 1510
+      },
+      "GS": {
+        "path": "data/daily/GS_1d.parquet",
+        "rows": 1510
+      },
+      "WMT": {
+        "path": "data/daily/WMT_1d.parquet",
+        "rows": 1510
+      },
+      "HD": {
+        "path": "data/daily/HD_1d.parquet",
+        "rows": 1510
+      },
+      "KO": {
+        "path": "data/daily/KO_1d.parquet",
+        "rows": 1510
+      },
+      "PG": {
+        "path": "data/daily/PG_1d.parquet",
+        "rows": 1510
+      },
+      "JNJ": {
+        "path": "data/daily/JNJ_1d.parquet",
+        "rows": 1510
+      },
+      "PFE": {
+        "path": "data/daily/PFE_1d.parquet",
+        "rows": 1510
+      },
+      "CVX": {
+        "path": "data/daily/CVX_1d.parquet",
+        "rows": 1510
+      }
+    },
+    "blocked": {}
+  },
   "earnings": {
     "path": "data/earnings.csv",
     "source": "sec_8k_2.02",
@@ -46,8 +128,7 @@
       "ORCL",
       "PFE",
       "PG",
-      "WMT",
-      "XOM"
+      "WMT"
     ],
     "symbols_missing": [],
     "events_per_symbol": {
@@ -75,33 +156,6 @@
       "amc": 198,
       "bmo": 249,
       "intraday": 26
-    }
-  },
-  "prices": {
-    "source": "stooq",
-    "data_dir": "data/daily",
-    "written": {},
-    "blocked": {
-      "AAPL": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "MSFT": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "NVDA": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "AMZN": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "GOOGL": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "META": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "CSCO": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "INTC": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "ORCL": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "JPM": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "BAC": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "GS": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "WMT": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "HD": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "KO": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "PG": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "JNJ": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "PFE": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "CVX": "stooq: access denied (IP blocked) \u2014 run from a normal host",
-      "XOM": "stooq: access denied (IP blocked) \u2014 run from a normal host"
     }
   }
 }
