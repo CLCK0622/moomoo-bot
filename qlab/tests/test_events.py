@@ -5,6 +5,7 @@ performance — the tests assert *mechanics*, not returns clearing a hurdle.
 """
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -17,7 +18,12 @@ from qlab.events.options import MissingOptionsChainSource, OptionQuote, price_be
 from qlab.events.surprise import QuantileThresholds, analyst_sign
 from qlab.events.metrics import evo12_metrics, _cagr, _max_drawdown
 from qlab.events.backtest import EventDriftBacktester
-from qlab.events.gates import gate1_full_sample, gate3_rolling, walk_forward
+from qlab.events.gates import (gate1_full_sample, gate2_yearly, gate3_rolling,
+                               walk_forward)
+from qlab.events.significance import bootstrap_significance
+from qlab.events.multiple_testing import (PrimarySpec, haircut_family, bonferroni,
+                                          benjamini_hochberg, deflated_sharpe_ratio,
+                                          _norm_ppf, _norm_cdf)
 from qlab.events import run_events
 
 
@@ -315,3 +321,146 @@ class _Args:
     trading_days = 252
     rf = 0.0
     out = "reports/_test_events"
+    # EVO-149 A/B additions
+    primary_mode = "pead"
+    primary_hold = 10
+    mt_alpha = 0.05
+    sig_nboot = 300
+
+
+# ==========================================================================
+# EVO-149 P0 — item B (OOS significance) and item A (multiple-testing haircut)
+# ==========================================================================
+
+# ---------- item B: bootstrap significance ----------
+def test_significance_strong_drift_is_significant():
+    rng = np.random.RandomState(0)
+    ret = 0.004 + 0.01 * rng.randn(300)            # strong positive drift
+    r = bootstrap_significance(ret, P=252, hurdle=0.50, n_boot=800, seed=1)
+    assert r.degenerate is False
+    assert r.n == 300 and r.block_len >= 1
+    assert r.cagr_ci_low <= r.cagr_point <= r.cagr_ci_high     # CI brackets the point
+    assert r.p_cagr_below_hurdle < 0.05                        # confidently beats hurdle
+    assert r.significant_beats_hurdle is True
+    assert r.significant_positive is True
+
+
+def test_significance_noise_is_not_significant():
+    rng = np.random.RandomState(1)
+    ret = 0.01 * rng.randn(300)                    # zero-mean noise
+    r = bootstrap_significance(ret, P=252, hurdle=0.50, n_boot=800, seed=2)
+    assert r.significant_beats_hurdle is False
+    assert r.p_cagr_below_hurdle > 0.05
+
+
+def test_significance_degenerate_short_series():
+    r = bootstrap_significance([0.01, 0.02], P=252, hurdle=0.50)
+    assert r.degenerate is True
+    assert r.significant_beats_hurdle is False and r.significant_positive is False
+    assert r.p_cagr_below_hurdle == 1.0
+
+
+def test_walk_forward_carries_significance_and_cleanup_fields():
+    bt = _make_bt()
+    wf = walk_forward(bt, train_months=12, test_months=6, step_months=6, sig_n_boot=200)
+    # item B: OOS significance block + significant_pass are always present
+    assert "oos_significance" in wf
+    assert "significant_pass" in wf and isinstance(wf["significant_pass"], bool)
+    # minor cleanups: slot-reset note + low-confidence bookkeeping
+    assert "slot_reset_note" in wf and "n_excluded_low_conf" in wf
+    for f in wf["fold_detail"]:
+        for k in ("low_confidence", "quantile_n_fit", "excluded_from_oos"):
+            assert k in f
+
+
+# ---------- item A: multiple-testing corrections ----------
+def test_bonferroni_values():
+    assert bonferroni([0.01, 0.04, 0.5, 0.9]) == [0.04, 0.16, 1.0, 1.0]
+
+
+def test_benjamini_hochberg_values():
+    adj = benjamini_hochberg([0.01, 0.04, 0.5, 0.9])
+    assert adj == pytest.approx([0.04, 0.08, 2.0 / 3.0, 0.9], abs=1e-6)
+    assert adj[0] <= adj[1] <= adj[2] <= adj[3]      # monotone (already-sorted input)
+
+
+def test_norm_ppf_cdf_roundtrip():
+    for p in (0.01, 0.25, 0.5, 0.75, 0.975, 0.999):
+        assert _norm_cdf(_norm_ppf(p)) == pytest.approx(p, abs=1e-6)
+    assert _norm_ppf(0.975) == pytest.approx(1.959964, abs=1e-4)
+
+
+def test_deflated_sharpe_more_trials_lowers_dsr():
+    base = deflated_sharpe_ratio(2.0, n_obs=250, n_trials=1, sharpe_std_trials=0.5)
+    many = deflated_sharpe_ratio(2.0, n_obs=250, n_trials=50, sharpe_std_trials=0.5)
+    assert 0.0 <= many["dsr"] <= 1.0
+    assert many["dsr"] < base["dsr"]                 # more trials → harder to be significant
+    assert many["sr0_annual"] > base["sr0_annual"]   # higher expected-max benchmark
+
+
+def test_primary_spec_matches():
+    p = PrimarySpec(mode="pead", hold=10)
+    assert p.matches({"mode": "pead", "hold": 10}) is True
+    assert p.matches({"mode": "pead", "hold": 5}) is False
+    assert p.matches({"mode": "close_to_open", "hold": 10}) is False
+
+
+def test_haircut_is_primary_only_not_best_of_grid():
+    primary = PrimarySpec(mode="pead", hold=10)
+    # a NON-primary cell is a strong winner; the pre-registered primary is weak
+    cells = [
+        {"mode": "pead", "hold": 10, "p_value": 0.40, "oos_sharpe": 0.5,
+         "oos_n": 200, "gates_passed": True},                    # primary, weak
+        {"mode": "close_to_open", "hold": 5, "p_value": 0.001, "oos_sharpe": 3.0,
+         "oos_n": 200, "gates_passed": True},                    # great, but NOT primary
+    ]
+    h = haircut_family(cells, primary, alpha=0.05)
+    assert h["verdict_basis"] == "primary_only"
+    assert h["primary_found"] is True
+    # best-of-grid would PASS on the great non-primary cell; primary-only must NOT
+    assert h["primary_survives_haircut"] is False
+    # make the primary itself strong → now it survives
+    cells[0]["p_value"] = 0.001
+    assert haircut_family(cells, primary, alpha=0.05)["primary_survives_haircut"] is True
+
+
+def test_haircut_bonferroni_penalizes_best_of_eight():
+    primary = PrimarySpec(mode="pead", hold=10)
+    cells = [
+        {"mode": "pead", "hold": 10, "p_value": 0.02, "oos_sharpe": 1.0,
+         "oos_n": 100, "gates_passed": True},
+        {"mode": "pead", "hold": 5, "p_value": 0.5, "oos_sharpe": 0.5,
+         "oos_n": 100, "gates_passed": False},
+        {"mode": "close_to_open", "hold": 10, "p_value": 0.9, "oos_sharpe": 0.1,
+         "oos_n": 100, "gates_passed": False},
+        {"mode": "close_to_open", "hold": 5, "p_value": 0.8, "oos_sharpe": 0.2,
+         "oos_n": 100, "gates_passed": False},
+    ]
+    h = haircut_family(cells, primary, alpha=0.05)
+    pc = h["primary_cell"]
+    assert pc["p_value_raw"] == 0.02
+    assert pc["p_value_bonferroni"] == pytest.approx(0.08)   # 0.02 × family_size(4)
+    assert pc["survives_bonferroni"] is False               # 0.08 > 0.05: naive pass killed
+    assert h["primary_survives_haircut"] is False
+
+
+# ---------- item A + B wired into report.json ----------
+def test_report_carries_haircut_and_significance_fields():
+    rep = run_events.build_report(_Args())
+    # item A: pre-registration + haircut block
+    assert rep["preregistration"]["mode"] == "pead" and rep["preregistration"]["hold"] == 10
+    mt = rep["multiple_testing"]
+    assert mt["verdict_basis"] == "primary_only"        # any_full_pass is gone
+    assert mt["primary_found"] is True
+    assert mt["family_size"] == len(rep["runs"])
+    assert "primary_survives_haircut" in mt
+    assert "deflated_sharpe" in mt and "per_cell" in mt
+    # item B: every run carries an OOS significance block
+    for r in rep["runs"]:
+        wf = r["card_D_gates"]["gate4_walk_forward"]
+        assert "oos_significance" in wf and "significant_pass" in wf
+    # synthetic remains honest
+    assert rep["overall_verdict"] == "需补证据"
+    # card_E documents both as IMPLEMENTED
+    assert "IMPLEMENTED" in rep["card_E_bias_self_check"]["multiple_testing"]
+    assert "IMPLEMENTED" in rep["card_E_bias_self_check"]["significance"]
