@@ -34,7 +34,14 @@
       "stage1_quota_fetch_and_rank": "fetch top-296 + 4 factor ETFs (<=300, quote-only SIMULATE); rank the 296 by prereg-literal 60-trading-day mean(close*volume); apply dedup + borrow substitution; take top 250.",
       "dedup_and_borrow": "per issuer keep only the single class with higher 60d dollar volume (tie<5% -> alphabetical first); walk-down borrow substitution (skip non-borrowable, take next-ranked, log each); if <250 clean survivors, universe is that smaller count labelled honestly, never padded.",
       "selection_effect_record": "resolved commit MUST log: pre-screen key used, superset size 296, 296th-name cut value (both keys), and per-step exclusion counts. Names outside stage-0 top-296 that would enter the 60d top-250 are unobservable under quota — bounded, disclosed, cannot turn a fail into a pass.",
-      "engineering_path": "(b) deterministic code pre-screen: 营缮 encodes into resolve_universe; 都水 runs once on OpenD host; resolved list committed BEFORE results."
+      "engineering_path": "(b) deterministic code pre-screen: 营缮 encodes into resolve_universe; 都水 runs once on OpenD host; resolved list committed BEFORE results.",
+      "adr_exclusion_口径": {
+        "problem": "moomoo classes US-listed ADRs as SecurityType.STOCK, stock_child_type=N/A (营缮/都水 verified on live gateway 2026-07-11); NO field flags an ADR/foreign issuer, so §A2 ADR exclusion cannot be automated — needs a curated list.",
+        "户部_decision": "belt-and-suspenders: curate out KNOWN large foreign-primary names + disclose residual unidentified foreign issuers in stage-0 top-296 as a bounded, per-run-disclosed compromise that cannot turn a fail into a pass. Truer to §A2 'exclude ADR' than pure acceptance.",
+        "criterion": "EXCLUDE issuers whose price-forming primary listing is a non-US market (true ADR / foreign ordinary from Asia/Europe/LatAm/Israel/Canada) — US-factor residual contaminated by un-modeled foreign factors; KEEP US-primary ordinary common even if tax-domiciled abroad (ACN/MDT/LIN/ETN/CB/AER/FERG/CRH/FLUT/YUMC/MELI).",
+        "artifact": "RESIDUAL_ADR_EXCLUDE.txt (145 tickers, frozen before results; fed to resolve_universe stage-0 via --exclude-file). Residual-disclosure mandatory in resolve/run log.",
+        "non_blocking_point1": "stage-0 volume-field: use snapshot dollar-volume if get_stock_filter exposes a filterable volume field (i), else MARKET_VAL fallback (ii, looser but bounded, disclosed) — 都水 confirms on host, folded into the run."
+      }
     },
     "factor_etfs": ["SPY", "IWM", "IVE", "IVW"],
     "total_fetched_symbols_max": 300,

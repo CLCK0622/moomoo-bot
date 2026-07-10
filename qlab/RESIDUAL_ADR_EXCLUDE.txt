@@ -1,0 +1,206 @@
+# EVO-162 C1 — curated ADR / foreign-primary EXCLUDE list (户部 §A2口径, FROZEN)
+#
+# Purpose: operationalizes prereg ADDENDUM A §A2 "exclude ADR / foreign ordinaries".
+# moomoo classifies US-listed ADRs as SecurityType.STOCK with stock_child_type='N/A'
+# (verified by 营缮/都水 on a live OpenD gateway 2026-07-11) — NO field flags an ADR /
+# foreign issuer, so §A2 exclusion cannot be automated and needs THIS curated list, fed
+# to resolve_universe stage-0 via --exclude-file. Frozen before any resolved-universe
+# list and any real result (git chronology preserved).
+#
+# 户部 DECISION (belt-and-suspenders, per 工部's routed-back §A2 question):
+#   curate out the KNOWN large foreign-primary names (this file) AND honestly disclose
+#   any residual unidentified foreign issuer that ranks into the stage-0 top-296 as a
+#   BOUNDED, per-run-disclosed compromise that CANNOT turn a fail into a pass (same
+#   discipline as survivorship). "Curate what we can; disclose what we can't." This is
+#   truer to §A2's "exclude ADR" intent than pure acceptance of contamination.
+#
+# CRITERION (contamination-based, not mere legal domicile):
+#   EXCLUDE  = issuers whose PRICE-FORMING primary listing is a non-US market (true ADR /
+#              foreign ordinary cross-listed from Asia / Europe / LatAm / Israel / Canada);
+#              their US line lags/arbitrages a foreign close + FX, so the US-factor
+#              (SPY/IWM/IVE/IVW) residual is contaminated by un-modeled foreign factors,
+#              which breaks the neutralization the residual-reversal signal depends on.
+#   KEEP     = US-PRIMARY-listed ordinary common even if the issuer is tax-domiciled
+#              abroad (Ireland/Bermuda/Switzerland/re-domiciled) — price is formed in the
+#              US session as ordinary shares, so foreign-factor contamination is minimal.
+#              (Documented KEEP examples at the bottom so they are not mistakenly added.)
+#
+# Residual-disclosure requirement for the resolve/run log (mandatory): report any stage-0
+# top-296 name NOT on this list that is later identified as foreign-primary, as the bounded
+# residual ADR contamination. Also disclose the total count excluded by this list.
+#
+# Format: one ticker per line; blank lines and #-comments ignored by resolve_universe.
+# ADDENDUM-A seed (TSM/LYG/RACE) is already hard-coded in the resolver; repeated here for
+# a single source of truth. Over-listing a name absent from the 296 is a harmless no-op.
+
+# ===== China (HK/China primary; US ADR) =====
+BABA
+PDD
+JD
+BIDU
+NTES
+TCOM
+BILI
+TME
+NIO
+LI
+XPEV
+BEKE
+ZTO
+HTHT
+GDS
+VIPS
+YMM
+KC
+TAL
+EDU
+FUTU
+TIGR
+QFIN
+MOMO
+LU
+ZLAB
+ATHM
+
+# ===== Taiwan =====
+TSM
+UMC
+ASX
+HIMX
+
+# ===== Japan =====
+TM
+SONY
+HMC
+MUFG
+SMFG
+MFG
+NMR
+TAK
+SFTBY
+NTDOY
+
+# ===== Korea =====
+KB
+SHG
+PKX
+
+# ===== India =====
+INFY
+WIT
+IBN
+HDB
+RDY
+
+# ===== Europe (UK / EU; home-market primary) =====
+ASML
+NVO
+SAP
+ARM
+SHEL
+BP
+TTE
+UL
+AZN
+GSK
+NVS
+SNY
+DEO
+BTI
+NGG
+RIO
+BHP
+GLNCY
+BUD
+SAN
+BBVA
+LYG
+BCS
+HSBC
+DB
+ING
+UBS
+E
+EQNR
+STLA
+RACE
+SPOT
+RELX
+ERIC
+NOK
+PHG
+STM
+TEF
+VOD
+WPP
+PSO
+
+# ===== Australia =====
+WDS
+
+# ===== Latin America (ex-US-domiciled) =====
+VALE
+PBR
+ITUB
+BBD
+BSBR
+ABEV
+GGB
+SID
+CIB
+BAP
+EC
+TX
+SQM
+CX
+NU
+GGAL
+BMA
+
+# ===== Southeast Asia =====
+SE
+GRAB
+
+# ===== Israel (foreign private issuers) =====
+TEVA
+CHKP
+NICE
+WIX
+MNDY
+GLBE
+CYBR
+
+# ===== Canada (TSX-primary cross-listed foreign ordinaries) =====
+RY
+TD
+BNS
+BMO
+CM
+ENB
+CNQ
+SU
+TRP
+CP
+CNI
+MFC
+SLF
+TRI
+BN
+BAM
+NTR
+FNV
+WPM
+AEM
+GIB
+SHOP
+CVE
+IMO
+TECK
+OTEX
+WCN
+GOLD
+
+# ===== KEEP — do NOT exclude (US-primary common, tax-domiciled abroad; documentation only) =====
+# ACN MDT LIN ETN JCI CB AON APTV AER FERG CRH FLUT  — US-primary ordinary shares, US-session
+#   price formation, US operating exposure; treated as US common (kept in the universe).
+# YUMC MELI  — Delaware-incorporated common (China/LatAm operating) but US-domiciled + US-primary; kept.
