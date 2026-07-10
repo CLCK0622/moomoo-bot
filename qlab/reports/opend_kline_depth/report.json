@@ -1,0 +1,175 @@
+{
+  "probe": "opend_kline_depth",
+  "purpose": "EVO-130 blocking item: request_history_kline retrievable depth + quota under current OpenD subscription",
+  "host": "127.0.0.1:11111",
+  "ktype": "K_DAY",
+  "autype": "qfq",
+  "trd_ctx_opened": false,
+  "trd_env_touched": null,
+  "market_us": "PRE_MARKET_BEGIN",
+  "qot_logined": true,
+  "quota": {
+    "total": 300,
+    "used": 20,
+    "remaining": 280,
+    "window_days": 30,
+    "counted_codes": [
+      "US.MSFT",
+      "US.CSCO",
+      "US.INTC",
+      "US.ORCL",
+      "US.CVX",
+      "US.NVDA",
+      "US.SPY",
+      "US.KO",
+      "US.JPM",
+      "US.JNJ",
+      "US.PG",
+      "US.HD",
+      "US.GS",
+      "US.AMZN",
+      "US.AAPL",
+      "US.WMT",
+      "US.BAC",
+      "US.PFE",
+      "US.GOOGL",
+      "US.META"
+    ],
+    "note": "historical-K quota is per-account, per 30-day rolling window; re-pulling an already-counted code costs 0 additional quota."
+  },
+  "quota_plan": {
+    "already_counted": [
+      "US.AAPL",
+      "US.SPY"
+    ],
+    "would_consume": []
+  },
+  "depth": {
+    "symbols": {
+      "US.AAPL": {
+        "code": "US.AAPL",
+        "rows": 5040,
+        "requests": 6,
+        "earliest": "2006-06-26",
+        "latest": "2026-07-09",
+        "latency_ms": [
+          376.37545800000004,
+          380.53045799999995,
+          372.61475000000013,
+          375.60241700000006,
+          377.72266599999995,
+          226.16808399999934
+        ],
+        "error": null,
+        "stress_coverage": {
+          "2018_volmageddon": {
+            "covered": true,
+            "n_bars": 42,
+            "first": "2018-01-16",
+            "last": "2018-03-15"
+          },
+          "2018_Q4_selloff": {
+            "covered": true,
+            "n_bars": 63,
+            "first": "2018-10-01",
+            "last": "2018-12-31"
+          },
+          "2020_covid_crash": {
+            "covered": true,
+            "n_bars": 52,
+            "first": "2020-02-18",
+            "last": "2020-04-30"
+          },
+          "2022_rate_bear": {
+            "covered": true,
+            "n_bars": 251,
+            "first": "2022-01-03",
+            "last": "2022-12-30"
+          }
+        }
+      },
+      "US.SPY": {
+        "code": "US.SPY",
+        "rows": 5017,
+        "requests": 6,
+        "earliest": "2006-06-26",
+        "latest": "2026-07-09",
+        "latency_ms": [
+          319.9823329999996,
+          324.2843750000004,
+          377.6969999999995,
+          381.5526250000003,
+          438.94412499999993,
+          221.19270800000024
+        ],
+        "error": null,
+        "stress_coverage": {
+          "2018_volmageddon": {
+            "covered": true,
+            "n_bars": 42,
+            "first": "2018-01-16",
+            "last": "2018-03-15"
+          },
+          "2018_Q4_selloff": {
+            "covered": true,
+            "n_bars": 63,
+            "first": "2018-10-01",
+            "last": "2018-12-31"
+          },
+          "2020_covid_crash": {
+            "covered": true,
+            "n_bars": 52,
+            "first": "2020-02-18",
+            "last": "2020-04-30"
+          },
+          "2022_rate_bear": {
+            "covered": true,
+            "n_bars": 251,
+            "first": "2022-01-03",
+            "last": "2022-12-30"
+          }
+        }
+      }
+    },
+    "floor_date": "2006-06-26",
+    "years_retrievable": 20.0
+  },
+  "stress_coverage_union": {
+    "2018_volmageddon": {
+      "covered": true,
+      "n_bars": 42
+    },
+    "2018_Q4_selloff": {
+      "covered": true,
+      "n_bars": 63
+    },
+    "2020_covid_crash": {
+      "covered": true,
+      "n_bars": 52
+    },
+    "2022_rate_bear": {
+      "covered": true,
+      "n_bars": 251
+    }
+  },
+  "rate": {
+    "burst_code": "US.AAPL",
+    "requests_ok": 20,
+    "elapsed_s": 5.45,
+    "req_per_s": 3.67,
+    "latency_ms": {
+      "p50": 256.2237919999992,
+      "p95": 358.6324809499993,
+      "max": 358.6899169999995
+    },
+    "throttle_error": null,
+    "note": "historical-K request rate is SDK-paced; the binding resource constraint is the 30-day symbol quota above, not this rate."
+  },
+  "gate": {
+    "required_floor_date": "2018-01-01",
+    "measured_floor_date": "2006-06-26",
+    "covers_2018_2020_2022": true,
+    "verdict": "PASS_NO_GAP",
+    "gap_list": []
+  }
+}

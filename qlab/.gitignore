@@ -10,9 +10,13 @@ reports/*
 !reports/opend_probe/
 !reports/opend_session_live/
 !reports/SAMPLE_events_synth/
+!reports/opend_kline_depth/
 data/cache/
 *.parquet
 # EVO-24: the delivered adjusted daily bars ARE committed (real OpenD qfq data)
 # so the serial 真跑 step reads them from the branch without re-hitting the
 # 30-day historical-K quota. Ad-hoc parquet elsewhere stays ignored.
 !data/daily/*.parquet
+# EVO-130: full-depth (2006→) swing dataset — committed for reproducible
+# walk-forward without re-hitting the 30-day historical-K quota.
+!data/daily_full/*.parquet
