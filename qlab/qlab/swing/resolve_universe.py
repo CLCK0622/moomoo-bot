@@ -9,12 +9,19 @@ selector; Stage-0 is only the quota-forced pre-filter.
 Two stages (A1):
 
 * **Stage-0 — zero-quota pre-screen** (``get_stock_filter``, US market; NO historical-K
-  quota). In order: (1) security type = US-domiciled common stock (drop ADR/foreign,
-  ETF/ETN/CEF, preferred, warrant, unit, pre-merger SPAC; **REIT kept**; unconfirmable ⇒
-  dropped, conservative); (2) market cap ≥ US$10B; (3) rank by a dollar-volume proxy —
-  **priority (i) snapshot dollar-volume** ``close × <zero-quota volume field>`` if
-  ``get_stock_filter`` exposes one, **(ii) fallback ``MARKET_VAL``** otherwise — the actual
-  key used is recorded; (4) take the **top 296** (= 300 quota − 4 factor ETFs).
+  quota). In order: (1) security type = US common stock (drop ETF/ETN/CEF, preferred,
+  warrant, unit, pre-merger SPAC; **REIT kept**; unconfirmable ⇒ dropped, conservative);
+  (2) market cap ≥ US$10B; (3) rank by a dollar-volume proxy — **priority (i) snapshot
+  dollar-volume** if ``get_stock_filter`` exposes a volume field, **(ii) fallback
+  ``MARKET_VAL``** otherwise (都水's host finding — US volume fields are unfilterable) — the
+  actual key used is recorded; (4) **ADDENDUM C mechanical ADR/foreign classifier** on the
+  ranked survivors (moomoo has no ADR flag, so ADRs class as STOCK): a survivor is EXCLUDED
+  if it matches R0 (curated ``RESIDUAL_ADR_EXCLUDE.txt``) ∪ R1 (name token ADR/depositary) ∪
+  R2 (5-letter ``-Y``/``-F`` OTC convention) ∪ R3 (dotted foreign class on a curated base)
+  AND is not on the C2 KEEP carve-out (name-verified US-primary); confirmed-foreign hits are
+  dropped and **refilled from rank 297+, re-scanned, iterated until the top-296 are clean US
+  common**; the full ``{ticker,matched_rule,name,classification}`` log + refill trace is the
+  都察院-auditable ``RESIDUAL_UNIVERSE_ADR_CLASSIFICATION.json`` (都水 commits it, before results).
 * **Stage-1 — quota fetch + prereg-literal ranking** (``fetch_daily_parquet(superset ∪
   {SPY,IWM,IVE,IVW})`` then this resolver over the real daily bars): compute the
   **prereg-literal 60-trading-day average dollar volume** ``mean(close × volume)`` → rank →
@@ -38,6 +45,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -152,11 +160,10 @@ def choose_prescreen_key(available_fields, *, priority=PRESCREEN_VOLUME_FIELD_CA
     return "market_val", "MARKET_VAL"
 
 
-def _is_common_us(rec: dict, exclude_codes: set[str]) -> tuple[bool, str]:
-    """(keep?, drop_reason). Conservative: only confirmed US common STOCK is kept."""
-    code = str(rec.get("code", "")).upper()
-    if code in exclude_codes:
-        return False, "curated_exclude"
+def _is_common_us(rec: dict) -> tuple[bool, str]:
+    """(keep?, drop_reason). Conservative: only confirmed US common STOCK is kept. ADR/foreign
+    curated exclusion is NOT done here — it is the addendum-C classifier's R0 (so R0 hits appear
+    in the classification log), applied on the ranked survivors."""
     market = str(rec.get("market", "US")).upper()
     if market not in ("US", "US."):
         return False, "non_us_market"
@@ -188,23 +195,125 @@ def _prescreen_value(rec: dict, mode: str) -> float | None:
     return v if v > 0 else None
 
 
+# --------------------------------------------------------------------------- #
+# ADDENDUM C — mechanical ADR / foreign-primary classifier + refill (frozen 9f34ae5)
+# --------------------------------------------------------------------------- #
+# 都水's host run found the MARKET_VAL fallback (A1 rule 3(ii)) pulls mega-cap FOREIGN OTC ADRs
+# into the top-296 (Nestlé, Roche, LVMH, Tencent…): 87/296 (29%) were foreign, the static list
+# alone caught only the sponsored/exchange ADRs and missed the 5-letter `-Y` unsponsored tail.
+# 户部 froze addendum C: a deterministic rule R0∪R1∪R2∪R3 with a mandatory get_stock_basicinfo
+# name-verification + C2 KEEP carve-out (zero US-common mis-exclusion), applied on the ranked
+# survivors with refill-from-297+ iteration until the top-296 are all clean US common.
+
+# R1 name token (户部/都水-calibrated regex): ADR/ADS/unsponsored/sponsored-ADR/depositary
+_ADR_NAME_RE = re.compile(r"(ADR|ADS|UNSPON|SPON ADR|DEPOSITAR)", re.I)
+
+# C2 KEEP carve-out (§C2): US-primary ordinary common (re-domiciled / tax-inverted) that must
+# survive ANY rule match — none are 5-letter -Y/-F so R2 never touches them, pinned for audit.
+ADR_KEEP_CARVEOUT = frozenset({"CB", "AON", "SLB", "CRH", "LIN", "MELI", "BRK.A", "BRK.B", "ACN",
+                               "MDT", "ETN", "JCI", "AER", "FERG", "FLUT", "YUMC"})
+
+
+def _adr_match_rule(code: str, name: str | None, curated_adr: set[str]) -> str | None:
+    """Which addendum-C rule (if any) flags ``code`` as an ADR/foreign candidate — R0∪R1∪R2∪R3."""
+    c = code.upper()
+    base = c.split(".")[0]
+    if c in curated_adr:
+        return "R0"                                  # curated list (户部-reviewed, incl. 87 -Y tail)
+    if _ADR_NAME_RE.search(name or ""):
+        return "R1"                                  # name token (ADR / depositary / unsponsored)
+    if len(base) == 5 and base.isalpha() and base[-1] in ("Y", "F"):
+        return "R2"                                  # 5-letter OTC convention: -Y ADR / -F foreign
+    if "." in c and base in curated_adr:
+        return "R3"                                  # dotted foreign class matched on base issuer
+    return None
+
+
+def _adr_verdict(code: str, name: str | None, curated_adr: set[str],
+                 keep_codes: set[str]) -> tuple[bool, str | None, str]:
+    """(excluded?, matched_rule, classification). C2 carve-out is the false-positive backstop:
+    a rule hit that name-verifies as US-primary is KEPT, never dropped (zero US-common loss)."""
+    rule = _adr_match_rule(code, name, curated_adr)
+    if rule is None:
+        return False, None, "us_common"
+    if code.upper() in keep_codes:
+        return False, rule, "us_keep"                # §C2 KEEP carve-out (name-verified US-primary)
+    return True, rule, "foreign_excluded"
+
+
+def adr_classify_and_refill(survivors: list[dict], *, curated_adr: set[str], keep_codes: set[str],
+                            superset_size: int) -> tuple[list[str], dict, list, int]:
+    """Assemble ``superset_size`` CLEAN US-common candidates from ranked ``survivors`` (§C4).
+
+    Classify the top ``superset_size``; drop confirmed-foreign; refill from rank 297+ and re-apply
+    the rule; iterate until a wave adds no new exclusions (converged) or the pool is exhausted.
+    Returns ``(clean_codes_in_rank_order, classification, refill_waves, scan_depth)``. Never pads —
+    an exhausted pool yields < ``superset_size`` clean names (honest, labelled upstream).
+    """
+    curated_adr = {c.upper() for c in curated_adr}
+    keep_codes = {c.upper() for c in keep_codes}
+    classification: dict[str, dict] = {}
+
+    def _classify(rec) -> bool:
+        code = str(rec["code"]).upper()
+        name = rec.get("name") or ""
+        excluded, rule, cls = _adr_verdict(code, name, curated_adr, keep_codes)
+        classification[code] = {"ticker": code, "matched_rule": rule, "name": name,
+                                "classification": cls}
+        return excluded
+
+    superset, waves, nxt = [], [], 0
+    while nxt < len(survivors) and len(superset) < superset_size:
+        superset.append(survivors[nxt])
+        nxt += 1
+    wave = 0
+    while True:
+        newly_excluded, kept = [], []
+        for rec in superset:
+            code = str(rec["code"]).upper()
+            excluded = (classification[code]["classification"] == "foreign_excluded"
+                        if code in classification else _classify(rec))
+            (newly_excluded if excluded else kept).append(rec)
+        waves.append({"wave": wave, "scanned": len(superset),
+                      "excluded": [str(r["code"]).upper() for r in newly_excluded],
+                      "n_excluded": len(newly_excluded), "clean_kept": len(kept)})
+        superset = kept
+        if not newly_excluded:
+            break
+        while nxt < len(survivors) and len(superset) < superset_size:
+            superset.append(survivors[nxt])
+            nxt += 1
+        wave += 1
+        if wave > len(survivors) + 2:                # safety: cannot exceed pool size
+            break
+    clean_codes = [str(r["code"]).upper() for r in superset]
+    return clean_codes, classification, waves, nxt
+
+
 def stage0_select(records: list[dict], *, prescreen_mode: str, prescreen_key: str,
                   market_cap_floor: float = MARKET_CAP_FLOOR, superset_size: int = SUPERSET_SIZE,
-                  exclude_codes: set[str] | None = None) -> dict:
-    """Deterministic Stage-0: type + cap filter → rank by pre-screen key → top ``superset_size``.
+                  curated_adr: set[str] | None = None,
+                  keep_carveout: set[str] = ADR_KEEP_CARVEOUT) -> dict:
+    """Deterministic Stage-0: type + cap filter → rank by pre-screen key → **addendum-C ADR
+    classify + refill** → top ``superset_size`` CLEAN US-common candidates.
 
-    ``records`` are raw provider rows: ``{code, name, sec_type, market, market_val, cur_price,
-    volume, is_common?}``. Returns the superset, the cut threshold, per-step exclusion counts,
-    and an ``issuer_by_code`` map (from names) for Stage-1 de-dup.
+    ``records`` are raw provider rows (``{code, name, sec_type, market, market_val, cur_price,
+    volume, is_common?}``). ``curated_adr`` is the R0 list (from ``RESIDUAL_ADR_EXCLUDE.txt``).
+    Returns the clean superset, the cut threshold, per-step exclusion counts, the full ADR
+    classification log + refill trace, and an ``issuer_by_code`` map for Stage-1 de-dup.
     """
-    exclude_codes = {c.upper() for c in (exclude_codes or set())} | set(FACTOR_ETFS)
-    excluded = {"curated_exclude": [], "non_us_market": [], "flagged_non_common": [],
+    curated_adr = {c.upper() for c in (curated_adr or set())}
+    factor_set = {s.upper() for s in FACTOR_ETFS}
+    excluded = {"factor_etf": [], "non_us_market": [], "flagged_non_common": [],
                 "excluded_sec_type": [], "unconfirmed_common": [], "below_cap": [],
                 "no_prescreen_value": []}
     survivors = []
     for rec in records:
         code = str(rec.get("code", "")).upper()
-        keep, reason = _is_common_us(rec, exclude_codes)
+        if code in factor_set:                       # 4 factor ETFs are regressors, never candidates
+            excluded["factor_etf"].append(code)
+            continue
+        keep, reason = _is_common_us(rec)
         if not keep:
             excluded[reason].append(code)
             continue
@@ -223,19 +332,39 @@ def stage0_select(records: list[dict], *, prescreen_mode: str, prescreen_key: st
                           "prescreen_value": pv})
 
     survivors.sort(key=lambda r: (-r["prescreen_value"], r["code"]))
-    superset = survivors[:superset_size]
-    cut_value = superset[-1]["prescreen_value"] if len(superset) >= superset_size else None
+
+    # ADDENDUM C: mechanical ADR/foreign classify + refill on the ranked survivors
+    clean_codes, adr_class, refill_waves, scan_depth = adr_classify_and_refill(
+        survivors, curated_adr=curated_adr, keep_codes=keep_carveout, superset_size=superset_size)
+    by_code = {r["code"]: r for r in survivors}
+    superset_full = [by_code[c] for c in clean_codes]
+    cut_value = superset_full[-1]["prescreen_value"] if len(clean_codes) >= superset_size else None
+
+    adr_excluded = [r for r in adr_class.values() if r["classification"] == "foreign_excluded"]
+    by_rule: dict[str, int] = {}
+    for r in adr_excluded:
+        by_rule[r["matched_rule"]] = by_rule.get(r["matched_rule"], 0) + 1
+    carveouts = [r["ticker"] for r in adr_class.values() if r["classification"] == "us_keep"]
+
     return {
         "prescreen_mode": prescreen_mode, "prescreen_key": prescreen_key,
         "market_cap_floor": market_cap_floor, "superset_size_target": superset_size,
         "n_input": len(records), "n_survivors_prefilter": len(survivors),
-        "superset": [r["code"] for r in superset], "superset_count": len(superset),
+        "superset": clean_codes, "superset_count": len(clean_codes),
         "cut_prescreen_value_296th": cut_value,
-        "superset_full": superset,
-        "issuer_by_code": {r["code"]: issuer_key(r.get("name"), r["code"]) for r in superset},
+        "superset_full": superset_full,
+        "issuer_by_code": {c: issuer_key(by_code[c].get("name"), c) for c in clean_codes},
         "excluded_counts": {k: len(v) for k, v in excluded.items()},
         "excluded_codes": excluded,
-        "pool_sufficient_for_superset": len(survivors) >= superset_size,
+        "pool_sufficient_for_superset": len(clean_codes) >= superset_size,
+        # addendum-C ADR classifier outputs (the 都察院-auditable artifact)
+        "adr_classification": adr_class,
+        "adr_excluded_count": len(adr_excluded),
+        "adr_excluded_by_rule": by_rule,
+        "adr_keep_carveouts": carveouts,
+        "adr_refill_waves": refill_waves,
+        "adr_refill_depth": len(refill_waves),
+        "adr_scan_depth": scan_depth,
     }
 
 
@@ -384,8 +513,11 @@ class OpenDStockFilterProvider:
     obscurely.
     """
 
-    def __init__(self, host: str = "127.0.0.1", port: int = 11111, page: int = 200):
-        self.host, self.port, self.page = host, port, page
+    def __init__(self, host: str = "127.0.0.1", port: int = 11111, page: int = 200,
+                 pause: float = 3.0):
+        # pause ≥3s between get_stock_filter pages: 都水 hit the 10-calls/30s rate limit
+        # ("high frequency"/"TimeOut") when paging ~7 pages × multiple refill waves.
+        self.host, self.port, self.page, self.pause = host, port, page, pause
 
     def _sdk(self):
         try:
@@ -458,8 +590,11 @@ class OpenDStockFilterProvider:
                 if fld and hasattr(m.StockField, fld):
                     filters.append(self._simple_filter(m, getattr(m.StockField, fld), is_no_filter=True))
 
-            records, begin = [], 0
+            records, begin, page_no = [], 0, 0
             while True:
+                if page_no > 0 and self.pause > 0:
+                    time.sleep(self.pause)           # rate-limit backoff (10 calls / 30s cap)
+                page_no += 1
                 ret, data = ctx.get_stock_filter(m.Market.US, filter_list=filters,
                                                  begin=begin, num=self.page)
                 if ret != m.RET_OK:
@@ -494,14 +629,14 @@ class OpenDStockFilterProvider:
 
 
 def run_stage0(provider: OpenDStockFilterProvider, *, market_cap_floor: float = MARKET_CAP_FLOOR,
-               superset_size: int = SUPERSET_SIZE, exclude_codes: set[str] | None = None) -> dict:
+               superset_size: int = SUPERSET_SIZE, curated_adr: set[str] | None = None) -> dict:
     """Probe the pre-screen key with **runtime fallback**, screen, and apply :func:`stage0_select`.
 
     A1 rule 3: try priority (i) snapshot dollar-volume with the highest-priority volume field
     the SDK exposes; if that screen fails at *runtime* (field not usable for US — 都水's
     ``TURNOVER`` finding), fall back to (ii) ``MARKET_VAL``. The key actually used and the
     attempt trail are recorded in the log. A failure of BOTH attempts (e.g. gateway down)
-    propagates to the caller as a blocker.
+    propagates to the caller as a blocker. ``curated_adr`` seeds the addendum-C R0 list.
     """
     vol_field = provider.available_volume_field()
     attempts: list[tuple[str, str]] = []
@@ -519,7 +654,7 @@ def run_stage0(provider: OpenDStockFilterProvider, *, market_cap_floor: float = 
             continue
         log = stage0_select(records, prescreen_mode=mode, prescreen_key=key,
                             market_cap_floor=market_cap_floor, superset_size=superset_size,
-                            exclude_codes=exclude_codes)
+                            curated_adr=curated_adr)
         log["prescreen_probe"] = {"available_volume_field": vol_field,
                                   "attempts": [{"mode": mo, "key": k} for mo, k in attempts],
                                   "failed_attempts": tried, "used": {"mode": mode, "key": key}}
@@ -547,30 +682,61 @@ def _load_exclude(args) -> tuple[set[str], list[str]]:
 
 
 def _cmd_stage0(args) -> int:
-    exclude, exclude_sorted = _load_exclude(args)
-    provider = OpenDStockFilterProvider(host=args.host, port=args.port)
+    curated_adr, curated_sorted = _load_exclude(args)
+    provider = OpenDStockFilterProvider(host=args.host, port=args.port, pause=args.pause)
     try:
         log = run_stage0(provider, market_cap_floor=args.market_cap_floor,
-                         superset_size=args.superset, exclude_codes=exclude)
+                         superset_size=args.superset, curated_adr=curated_adr)
     except Exception as exc:  # noqa: BLE001 — SDK missing OR gateway/API failure ⇒ clear blocker
         print("[resolve_universe stage0] BLOCKER: Stage-0 pre-screen could not run on this host.")
         print(f"  {type(exc).__name__}: {exc}")
         print("  Stage-0 needs a reachable OpenD gateway with US market-data entitlement; run on "
               "都水's host. This step is quote-only and consumes NO historical-K quota.")
         return 2
-    log["curated_exclude_list"] = exclude_sorted
-    log["adr_caveat"] = ("moomoo has no ADR/domicile flag (stock_child_type all N/A); ADR exclusion "
-                         "relies on this curated list — extend it on the host via --exclude-file.")
+
+    used_key = (log.get("prescreen_probe") or {}).get("used", {}).get("key", log["prescreen_key"])
+    log["curated_adr_list_size"] = len(curated_sorted)
+    # §C4 disclosure (都察院-auditable): operative pre-screen key + selection effect + rule tally.
+    log["adr_disclosure"] = {
+        "operative_prescreen_key": used_key,
+        "selection_effect": (
+            f"superset pre-screened by {used_key} (market-cap under the (ii) MARKET_VAL fallback; "
+            "the final 250 is 60-day-dollar-volume-ranked in stage-1). The MARKET_VAL fallback is "
+            "what surfaces ADR contamination — high market cap, low US liquidity."),
+        "adr_excluded_total": log["adr_excluded_count"],
+        "adr_excluded_by_rule": log["adr_excluded_by_rule"],
+        "refill_depth": log["adr_refill_depth"], "scan_depth": log["adr_scan_depth"],
+        "keep_carveouts_hit": log["adr_keep_carveouts"],
+        "residual_note": ("any well-known ADR the rule misses ⇒ add to RESIDUAL_ADR_EXCLUDE.txt "
+                          "before the results commit; residual unidentified foreign names are "
+                          "bounded and cannot turn a fail into a pass (same discipline as "
+                          "survivorship, per addendum A/§A2 residual clause)."),
+    }
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("\n".join(log["superset"]) + "\n")
     _write_json(out.with_suffix(".json"), log)
-    print(f"[resolve_universe stage0] pre-screen key={log['prescreen_key']} "
-          f"({log['prescreen_mode']})  survivors={log['n_survivors_prefilter']}  "
-          f"superset={log['superset_count']}/{args.superset}  → {out}")
-    print(f"  excluded: {log['excluded_counts']}  curated_adr_excludes={len(exclude_sorted)}")
+    # §C4 step 3: the full ADR classification log — the 都察院-auditable artifact. 都水 commits it
+    # (before results); 营缮 only ships the code that produces it.
+    class_out = Path(args.classification_out)
+    _write_json(class_out, {
+        "issue": "EVO-162", "addendum": "C (9f34ae5)",
+        "operative_prescreen_key": used_key,
+        "clean_superset_count": log["superset_count"], "superset_target": args.superset,
+        "adr_excluded_count": log["adr_excluded_count"],
+        "adr_excluded_by_rule": log["adr_excluded_by_rule"],
+        "keep_carveouts_hit": log["adr_keep_carveouts"],
+        "refill_waves": log["adr_refill_waves"],
+        "classification": list(log["adr_classification"].values()),
+    })
+    print(f"[resolve_universe stage0] pre-screen key={used_key}  survivors={log['n_survivors_prefilter']}"
+          f"  clean_superset={log['superset_count']}/{args.superset}  → {out}")
+    print(f"  ADR excluded={log['adr_excluded_count']} by_rule={log['adr_excluded_by_rule']}  "
+          f"refill_waves={log['adr_refill_depth']}  carveouts_kept={log['adr_keep_carveouts']}")
+    print(f"  type-filter excluded: {log['excluded_counts']}  classification log → {class_out}")
     if not log["pool_sufficient_for_superset"]:
-        print(f"  NOTE: only {log['n_survivors_prefilter']} survivors < superset target {args.superset}.")
+        print(f"  NOTE: only {log['superset_count']} clean US-common < superset target "
+              f"{args.superset} (scanned {log['adr_scan_depth']}/{log['n_survivors_prefilter']}).")
     return 0
 
 
@@ -626,25 +792,32 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="EVO-162 C1 two-stage universe resolver (ADDENDUM A)")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    s0 = sub.add_parser("stage0", help="zero-quota get_stock_filter pre-screen → top-296 superset (needs gateway)")
+    s0 = sub.add_parser("stage0", help="zero-quota get_stock_filter pre-screen + ADR classify/refill → clean 296 (needs gateway)")
     s0.add_argument("--market-cap-floor", type=float, default=MARKET_CAP_FLOOR)
     s0.add_argument("--superset", type=int, default=SUPERSET_SIZE)
-    s0.add_argument("--exclude", default=None, help="comma-separated codes to force-exclude")
-    s0.add_argument("--exclude-file", default=None,
-                    help="curated ADR/non-common exclude list (one ticker/line; 都水 supplies on host)")
+    s0.add_argument("--exclude", default=None, help="comma-separated codes to force-exclude (added to R0)")
+    # prereg artifacts live at the qlab project dir (cwd for `-m qlab.swing`), next to the prereg
+    # docs + 户部's RESIDUAL_ADR_EXCLUDE.txt — so these paths are cwd-relative, NOT qlab/-prefixed
+    # (which would point into the package dir). Generated reports stay under qlab/reports/.
+    s0.add_argument("--exclude-file", default="RESIDUAL_ADR_EXCLUDE.txt",
+                    help="curated ADR/foreign R0 list (户部 §A2/C; default = the frozen RESIDUAL_ADR_EXCLUDE.txt)")
+    s0.add_argument("--classification-out", default="RESIDUAL_UNIVERSE_ADR_CLASSIFICATION.json",
+                    help="addendum-C ADR classification log (都水 commits it, before results)")
     s0.add_argument("--host", default="127.0.0.1")
     s0.add_argument("--port", type=int, default=11111)
-    s0.add_argument("--out", default="qlab/RESIDUAL_UNIVERSE_SUPERSET_296.txt")
+    s0.add_argument("--pause", type=float, default=3.0,
+                    help="seconds between get_stock_filter pages (rate-limit backoff, 10 calls/30s)")
+    s0.add_argument("--out", default="RESIDUAL_UNIVERSE_SUPERSET_296.txt")
     s0.set_defaults(func=_cmd_stage0)
 
     s1 = sub.add_parser("stage1", help="60d $-vol rank + de-dup + borrow sub over fetched bars → top-250")
-    s1.add_argument("--superset-file", default="qlab/RESIDUAL_UNIVERSE_SUPERSET_296.txt")
+    s1.add_argument("--superset-file", default="RESIDUAL_UNIVERSE_SUPERSET_296.txt")
     s1.add_argument("--data-dir", action="append", default=None)
     s1.add_argument("--top", type=int, default=TARGET_N)
     s1.add_argument("--advol-days", type=int, default=ADVOL_DAYS)
     s1.add_argument("--min-weeks", type=int, default=MIN_HISTORY_WEEKS)
     s1.add_argument("--borrowable-file", default=None)
-    s1.add_argument("--out", default="qlab/RESIDUAL_UNIVERSE_RESOLVED.txt")
+    s1.add_argument("--out", default="RESIDUAL_UNIVERSE_RESOLVED.txt")
     s1.add_argument("--emit-resolved", action="store_true",
                     help="(都水, host-only) actually write the frozen RESIDUAL_UNIVERSE_RESOLVED.txt")
     s1.set_defaults(func=_cmd_stage1)

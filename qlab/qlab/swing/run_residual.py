@@ -55,8 +55,9 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="EVO-162 C1 residual-reversal evaluation")
     ap.add_argument("--data-dir", action="append", default=None,
                     help="parquet dir(s) to search, in order (default: data/daily_full then data/daily)")
-    ap.add_argument("--universe-file", default="qlab/RESIDUAL_UNIVERSE_RESOLVED.txt",
-                    help="frozen resolved-universe list (committed before results)")
+    ap.add_argument("--universe-file", default="RESIDUAL_UNIVERSE_RESOLVED.txt",
+                    help="frozen resolved-universe list (committed before results; cwd-relative, "
+                         "next to the prereg docs — matches resolve_universe stage1 --out)")
     ap.add_argument("--sectors-file", default=None,
                     help="optional JSON {symbol: sector} for the 4-factor robustness cell")
     ap.add_argument("--short-leg-reviewed", choices=["yes", "no", "pending"], default="pending",
