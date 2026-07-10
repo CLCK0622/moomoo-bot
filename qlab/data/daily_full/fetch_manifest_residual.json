@@ -1,0 +1,39 @@
+{
+  "issue": "EVO-162",
+  "start": "2006-01-01",
+  "end": "2026-07-10",
+  "n_requested": 14,
+  "n_written": 4,
+  "n_failed": 10,
+  "written": {
+    "SPY": {
+      "path": "data/daily_full/SPY_1d.parquet",
+      "rows": 5018
+    },
+    "IWM": {
+      "path": "data/daily_full/IWM_1d.parquet",
+      "rows": 5037
+    },
+    "IVE": {
+      "path": "data/daily_full/IVE_1d.parquet",
+      "rows": 3647
+    },
+    "IVW": {
+      "path": "data/daily_full/IVW_1d.parquet",
+      "rows": 3647
+    }
+  },
+  "failed": {
+    "SKHY": "no bars returned (no data / rate-limit / permission)",
+    "GDVTZ": "no bars returned (no data / rate-limit / permission)",
+    "NEMCL": "no bars returned (no data / rate-limit / permission)",
+    "ATVK": "no bars returned (no data / rate-limit / permission)",
+    "BSQKZ": "no bars returned (no data / rate-limit / permission)",
+    "ENBA": "no bars returned (no data / rate-limit / permission)",
+    "AIG": "no bars returned (no data / rate-limit / permission)",
+    "BDX": "no bars returned (no data / rate-limit / permission)",
+    "CCJ": "no bars returned (no data / rate-limit / permission)",
+    "AU": "no bars returned (no data / rate-limit / permission)"
+  },
+  "quota_note": "\u2264300 symbols / 30-day historical-K window"
+}
