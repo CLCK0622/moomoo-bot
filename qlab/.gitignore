@@ -11,6 +11,9 @@ reports/*
 !reports/opend_session_live/
 !reports/SAMPLE_events_synth/
 !reports/simulate_evidence_summary/
+# EVO-65 autopilot: each in-session SIMULATE window commits its own timestamped
+# slot dir (opend_session_<ts>); aggregate_simulate.py folds them in by prefix.
+!reports/opend_session_*/
 data/cache/
 *.parquet
 # EVO-24: the delivered adjusted daily bars ARE committed (real OpenD qfq data)
