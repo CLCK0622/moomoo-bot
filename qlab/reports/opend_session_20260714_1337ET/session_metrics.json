@@ -1,0 +1,544 @@
+{
+  "probe": "opend_session_simulate",
+  "symbol": "AAPL",
+  "host": "127.0.0.1:11111",
+  "security_firm": "FUTUSG",
+  "scope_note": "SIMULATE matching-engine execution path, NOT real market impact/slippage \u2014 see README.",
+  "connect_latency_ms": 61.725,
+  "market_us": "AFTERNOON",
+  "trd_logined": true,
+  "qot_logined": true,
+  "arrival_book": {
+    "bid": 314.84,
+    "ask": 314.85,
+    "spread": 0.01
+  },
+  "preclean": {
+    "held_before": 0,
+    "closed": 0
+  },
+  "closeout": {
+    "held": 208,
+    "closed": 208
+  },
+  "reconcile": {
+    "in_sync": true,
+    "n_diffs": 0,
+    "diffs": {},
+    "engine_positions": {},
+    "broker_positions": {}
+  },
+  "positions_flat_after": true,
+  "fill_rate": {
+    "n_buy": 10,
+    "fully_filled": 10,
+    "rejected": 0,
+    "full_fill_rate": 1.0
+  },
+  "actual_slippage_bps": {
+    "vs_arrival_mid": {
+      "n": 11,
+      "p50": -0.15881082454746207,
+      "p95": 1.4297149484611653,
+      "mean": 0.1386642693651698,
+      "min": -1.4294790343080024,
+      "max": 1.7474185861797242
+    },
+    "vs_arrival_touch": {
+      "n": 11,
+      "p50": -0.476417341592606,
+      "p95": 1.0325302010169173,
+      "mean": -0.2800847262942154,
+      "min": -1.747196543727781,
+      "max": 1.1119229913913338
+    },
+    "buy_vs_mid_p50": 0.07944072935334434,
+    "sell_vs_mid_p50": -1.4294790343080024
+  },
+  "partial_fill_behavior": {
+    "observed": false,
+    "n_partial": 0,
+    "note": "SIMULATE matches marketable orders whole-lot; no splitting observed."
+  },
+  "fill_latency_s": {
+    "n": 11,
+    "p50": 10.064148902893066,
+    "p95": 18.267447113990784,
+    "mean": 10.297351598739624,
+    "min": 1.8469266891479492,
+    "max": 19.43062114715576,
+    "note": "SIMULATE matching-engine lag (ack->FILLED_ALL); seconds-scale, NOT a real-market fill speed."
+  },
+  "orders": [
+    {
+      "tag": "buy_q1",
+      "side": "BUY",
+      "qty": 1,
+      "limit": 314.9,
+      "arrival_mid": 314.84000000000003,
+      "arrival_touch": 314.85,
+      "arrival_bid_vol": 385.0,
+      "arrival_ask_vol": 20.0,
+      "order_id": "3069507",
+      "submit_ack_latency_ms": 168.89112500000005,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 1,
+      "avg_price": 314.835,
+      "status_trail": [
+        {
+          "t": 0.0,
+          "status": "SUBMITTING",
+          "dealt": 0
+        },
+        {
+          "t": 2.02,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 4.02,
+          "status": "FILLED_ALL",
+          "dealt": 1
+        }
+      ],
+      "ack_ts": 1784050632.070784,
+      "fill_latency_s": 4.024438858032227,
+      "filled_qty": 1,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": -0.15881082454746207,
+      "slip_touch_bps": -0.476417341592606
+    },
+    {
+      "tag": "buy_q1",
+      "side": "BUY",
+      "qty": 1,
+      "limit": 314.86,
+      "arrival_mid": 314.8,
+      "arrival_touch": 314.81,
+      "arrival_bid_vol": 27.0,
+      "arrival_ask_vol": 20.0,
+      "order_id": "3069508",
+      "submit_ack_latency_ms": 163.18683300000015,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 1,
+      "avg_price": 314.82,
+      "status_trail": [
+        {
+          "t": 0.0,
+          "status": "SUBMITTING",
+          "dealt": 0
+        },
+        {
+          "t": 2.02,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 4.03,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 6.05,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 8.06,
+          "status": "FILLED_ALL",
+          "dealt": 1
+        }
+      ],
+      "ack_ts": 1784050636.395799,
+      "fill_latency_s": 8.06000018119812,
+      "filled_qty": 1,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": 0.6353240152471985,
+      "slip_touch_bps": 0.31765191702903034
+    },
+    {
+      "tag": "buy_q1",
+      "side": "BUY",
+      "qty": 1,
+      "limit": 314.9,
+      "arrival_mid": 314.83000000000004,
+      "arrival_touch": 314.85,
+      "arrival_bid_vol": 65.0,
+      "arrival_ask_vol": 25.0,
+      "order_id": "3069509",
+      "submit_ack_latency_ms": 168.02029199999959,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 1,
+      "avg_price": 314.825,
+      "status_trail": [
+        {
+          "t": 17.1,
+          "status": "FILLED_ALL",
+          "dealt": 1
+        }
+      ],
+      "ack_ts": 1784050644.721577,
+      "fill_latency_s": 17.104273080825806,
+      "filled_qty": 1,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": -0.1588158688832797,
+      "slip_touch_bps": -0.7940289026531396
+    },
+    {
+      "tag": "buy_q1",
+      "side": "BUY",
+      "qty": 1,
+      "limit": 314.89,
+      "arrival_mid": 314.83,
+      "arrival_touch": 314.84,
+      "arrival_bid_vol": 65.0,
+      "arrival_ask_vol": 20.0,
+      "order_id": "3069510",
+      "submit_ack_latency_ms": 157.43866700000098,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 1,
+      "avg_price": 314.805,
+      "status_trail": [
+        {
+          "t": 0.0,
+          "status": "SUBMITTING",
+          "dealt": 0
+        },
+        {
+          "t": 2.02,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 4.03,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 6.04,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 8.05,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 10.06,
+          "status": "FILLED_ALL",
+          "dealt": 1
+        }
+      ],
+      "ack_ts": 1784050662.082339,
+      "fill_latency_s": 10.064148902893066,
+      "filled_qty": 1,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": -0.794079344407371,
+      "slip_touch_bps": -1.1116757718195962
+    },
+    {
+      "tag": "buy_q1",
+      "side": "BUY",
+      "qty": 1,
+      "limit": 314.86,
+      "arrival_mid": 314.79499999999996,
+      "arrival_touch": 314.81,
+      "arrival_bid_vol": 65.0,
+      "arrival_ask_vol": 20.0,
+      "order_id": "3069511",
+      "submit_ack_latency_ms": 168.86008299999844,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 1,
+      "avg_price": 314.83,
+      "status_trail": [
+        {
+          "t": 0.04,
+          "status": "SUBMITTING",
+          "dealt": 0
+        },
+        {
+          "t": 2.05,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 4.06,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 6.08,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 19.43,
+          "status": "FILLED_ALL",
+          "dealt": 1
+        }
+      ],
+      "ack_ts": 1784050672.411943,
+      "fill_latency_s": 19.43062114715576,
+      "filled_qty": 1,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": 1.1118346860663293,
+      "slip_touch_bps": 0.6353038340580607
+    },
+    {
+      "tag": "buy_q1",
+      "side": "BUY",
+      "qty": 1,
+      "limit": 314.83,
+      "arrival_mid": 314.765,
+      "arrival_touch": 314.78,
+      "arrival_bid_vol": 25.0,
+      "arrival_ask_vol": 81.0,
+      "order_id": "3069512",
+      "submit_ack_latency_ms": 211.02083399999572,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 1,
+      "avg_price": 314.75,
+      "status_trail": [
+        {
+          "t": 0.0,
+          "status": "SUBMITTING",
+          "dealt": 0
+        },
+        {
+          "t": 2.02,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 4.04,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 6.05,
+          "status": "FILLED_ALL",
+          "dealt": 1
+        }
+      ],
+      "ack_ts": 1784050692.1460638,
+      "fill_latency_s": 6.047815322875977,
+      "filled_qty": 1,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": -0.4765459946304817,
+      "slip_touch_bps": -0.9530465722082953
+    },
+    {
+      "tag": "buy_q1",
+      "side": "BUY",
+      "qty": 1,
+      "limit": 314.83,
+      "arrival_mid": 314.76,
+      "arrival_touch": 314.78,
+      "arrival_bid_vol": 165.0,
+      "arrival_ask_vol": 40.0,
+      "order_id": "3069513",
+      "submit_ack_latency_ms": 175.0746249999935,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 1,
+      "avg_price": 314.748,
+      "status_trail": [
+        {
+          "t": 0.0,
+          "status": "SUBMITTING",
+          "dealt": 0
+        },
+        {
+          "t": 2.02,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 4.03,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 6.04,
+          "status": "FILLED_ALL",
+          "dealt": 1
+        }
+      ],
+      "ack_ts": 1784050702.314904,
+      "fill_latency_s": 6.041021108627319,
+      "filled_qty": 1,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": -0.38124285169654515,
+      "slip_touch_bps": -1.0165830103558762
+    },
+    {
+      "tag": "buy_q1",
+      "side": "BUY",
+      "qty": 1,
+      "limit": 314.8,
+      "arrival_mid": 314.745,
+      "arrival_touch": 314.75,
+      "arrival_bid_vol": 80.0,
+      "arrival_ask_vol": 100.0,
+      "order_id": "3069514",
+      "submit_ack_latency_ms": 170.3132089999997,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 1,
+      "avg_price": 314.78,
+      "status_trail": [
+        {
+          "t": 13.2,
+          "status": "FILLED_ALL",
+          "dealt": 1
+        }
+      ],
+      "ack_ts": 1784050708.654379,
+      "fill_latency_s": 13.198540210723877,
+      "filled_qty": 1,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": 1.1120113107426066,
+      "slip_touch_bps": 0.9531374106425009
+    },
+    {
+      "tag": "buy_q100",
+      "side": "BUY",
+      "qty": 100,
+      "limit": 314.83,
+      "arrival_mid": 314.77,
+      "arrival_touch": 314.78,
+      "arrival_bid_vol": 25.0,
+      "arrival_ask_vol": 57.0,
+      "order_id": "3069515",
+      "submit_ack_latency_ms": 1167.294874999996,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 100,
+      "avg_price": 314.78,
+      "status_trail": [
+        {
+          "t": 0.01,
+          "status": "SUBMITTING",
+          "dealt": 0
+        },
+        {
+          "t": 2.02,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 4.03,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 6.05,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 8.07,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 10.09,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 12.1,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 14.12,
+          "status": "FILLED_ALL",
+          "dealt": 100
+        }
+      ],
+      "ack_ts": 1784050723.118664,
+      "fill_latency_s": 14.116816997528076,
+      "filled_qty": 100,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": 0.3176922832541508,
+      "slip_touch_bps": 0.0
+    },
+    {
+      "tag": "buy_q100",
+      "side": "BUY",
+      "qty": 100,
+      "limit": 314.82,
+      "arrival_mid": 314.75,
+      "arrival_touch": 314.77,
+      "arrival_bid_vol": 130.0,
+      "arrival_ask_vol": 25.0,
+      "order_id": "3069516",
+      "submit_ack_latency_ms": 162.57995800000913,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 100,
+      "avg_price": 314.805,
+      "status_trail": [
+        {
+          "t": 0.0,
+          "status": "SUBMITTING",
+          "dealt": 0
+        },
+        {
+          "t": 2.02,
+          "status": "SUBMITTED",
+          "dealt": 0
+        },
+        {
+          "t": 13.34,
+          "status": "FILLED_ALL",
+          "dealt": 100
+        }
+      ],
+      "ack_ts": 1784050738.521306,
+      "fill_latency_s": 13.336265087127686,
+      "filled_qty": 100,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": 1.7474185861797242,
+      "slip_touch_bps": 1.1119229913913338
+    },
+    {
+      "tag": "closeout",
+      "side": "SELL",
+      "qty": 208,
+      "limit": 314.74,
+      "arrival_mid": 314.8,
+      "arrival_touch": 314.79,
+      "arrival_bid_vol": 265.0,
+      "arrival_ask_vol": 220.0,
+      "order_id": "3069517",
+      "submit_ack_latency_ms": 167.5772079999973,
+      "final_status": "FILLED_ALL",
+      "dealt_qty": 208,
+      "avg_price": 314.845,
+      "status_trail": [
+        {
+          "t": 1.85,
+          "status": "FILLED_ALL",
+          "dealt": 208
+        }
+      ],
+      "ack_ts": 1784050753.2967942,
+      "fill_latency_s": 1.8469266891479492,
+      "filled_qty": 208,
+      "fully_filled": true,
+      "partial": false,
+      "slip_mid_bps": -1.4294790343080024,
+      "slip_touch_bps": -1.747196543727781
+    }
+  ],
+  "status": "OK_SESSION_METRICS"
+}
