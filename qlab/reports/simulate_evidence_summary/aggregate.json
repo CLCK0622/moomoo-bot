@@ -1,0 +1,107 @@
+{
+  "aggregate_of": "OpenD SIMULATE evidence slots (EVO-65)",
+  "trd_env": "SIMULATE",
+  "scope_note": "SIMULATE matching-engine execution path, NOT real market cost.",
+  "inventory": {
+    "slots_total": 2,
+    "order_path_slots": 1,
+    "in_session_slots": 1,
+    "slots": [
+      {
+        "dir": "opend_probe",
+        "kind": "order_path",
+        "market_us": "AFTER_HOURS_END",
+        "status": "OK_ORDER_PATH_MEASURED",
+        "n_orders": 30
+      },
+      {
+        "dir": "opend_session_live",
+        "kind": "session",
+        "market_us": "AFTERNOON",
+        "status": "OK_SESSION_METRICS",
+        "n_orders": 10
+      }
+    ],
+    "in_session_slots_needed_for_decision": 5,
+    "in_session_gap": 4
+  },
+  "metrics_six_classes": {
+    "1_order_latency_ms_submit_to_ack": {
+      "n": 41,
+      "p50": 565.979542000001,
+      "p95": 677.40575,
+      "mean": 584.9886250000001,
+      "min": 553.7375840000003,
+      "max": 742.9869999999994
+    },
+    "1b_cancel_latency_ms": {
+      "n": 31,
+      "p50": 496.3442919999963,
+      "p95": 640.8141250000057,
+      "mean": 516.4538064516121,
+      "min": 488.39279099999544,
+      "max": 786.6262500000048
+    },
+    "2_slippage_bps_vs_arrival_mid": {
+      "n": 11,
+      "p50": -0.1587477973759718,
+      "p95": 1.508096514915651,
+      "mean": -0.12696695034796504,
+      "min": -1.4285487531948993,
+      "max": 2.0637213658641715
+    },
+    "2b_slippage_bps_vs_arrival_touch": {
+      "n": 11,
+      "p50": -0.6032895154634361,
+      "p95": 1.1111816623267563,
+      "mean": -0.47328240309379493,
+      "min": -1.5872511983750157,
+      "max": 1.5874023747525088
+    },
+    "3_fill_rate": {
+      "n_buy": 10,
+      "fully_filled": 10,
+      "full_fill_rate": 1.0
+    },
+    "4_reject_rate": {
+      "orders": 40,
+      "rejected": 0,
+      "reject_rate": 0.0
+    },
+    "5_disconnects": {
+      "total": 0
+    },
+    "6_position_deviation": {
+      "all_reconciles_in_sync": true,
+      "worst_n_diffs": 0
+    },
+    "aux_partial_fill_observed": false,
+    "aux_fill_latency_s_simulate_engine": {
+      "n": 11,
+      "p50": 8.094367980957031,
+      "p95": 18.248265147209167,
+      "mean": 10.789288542487405,
+      "min": 4.033427953720093,
+      "max": 18.249677181243896,
+      "note": "SIMULATE matching-engine lag (ack->FILLED_ALL); seconds-scale, NOT a real-market fill speed."
+    }
+  },
+  "live_market_context": {
+    "available": true,
+    "market_us": "AFTER_HOURS_END",
+    "trd_logined": true,
+    "qot_logined": true
+  },
+  "verdict": {
+    "real_execution_cost_established": false,
+    "reason": "All samples are TrdEnv.SIMULATE. Near-zero slippage, 100% whole-lot fills, seconds-scale fill lag and 0 rejects are SIMULATE matching-engine traits, NOT real market execution cost.",
+    "landable_vs_kevin_bar": "UNDECIDABLE_FROM_SIMULATE",
+    "kevin_bar": "annual return >= 50% AND max drawdown <= 20% (on real fills)",
+    "note": "The 50%/20% bar is a return/drawdown target on a real-fills strategy PnL; SIMULATE execution-path health cannot satisfy it. Candidate stays needs-evidence / NOT PASS.",
+    "decision_readiness": "INTERMEDIATE",
+    "gaps": [
+      "need >= 5 in-session slots for a stable SIMULATE execution read; have 1 (gap 4) \u2014 autopilot supplies these.",
+      "real execution cost (real market impact / slippage) requires REAL fills (real-money or real-market matching) \u2014 out of scope, controlled."
+    ]
+  }
+}

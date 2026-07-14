@@ -1,0 +1,14 @@
+metric_class,statistic,value,unit,source_scope
+order_latency_submit_ack,p50,565.979542000001,ms,SIMULATE gateway
+order_latency_submit_ack,p95,677.40575,ms,SIMULATE gateway
+order_latency_submit_ack,max,742.9869999999994,ms,SIMULATE gateway
+order_latency_submit_ack,n,41,count,SIMULATE gateway
+slippage_vs_mid,p50,-0.1587477973759718,bps(+worse),SIMULATE engine
+slippage_vs_touch,p50,-0.6032895154634361,bps(+worse),SIMULATE engine
+fill_rate,full_fill_rate,1.0,ratio,SIMULATE engine
+reject_rate,reject_rate,0.0,ratio,SIMULATE gateway
+disconnects,total,0,count,SIMULATE session
+position_deviation,worst_n_diffs,0,count,engine vs broker
+position_deviation,all_in_sync,True,bool,engine vs broker
+inventory,in_session_slots,1,count,collected
+inventory,in_session_slots_needed,5,count,target
