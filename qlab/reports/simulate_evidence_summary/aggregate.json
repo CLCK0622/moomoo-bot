@@ -12,50 +12,72 @@
         "kind": "order_path",
         "market_us": "AFTER_HOURS_END",
         "status": "OK_ORDER_PATH_MEASURED",
-        "n_orders": 30
+        "trd_env": "SIMULATE",
+        "n_orders": 30,
+        "et_date": "2026-07-08",
+        "et_first_order": "2026-07-08 23:55 ET"
       },
       {
         "dir": "opend_session_20260714_1037ET",
         "kind": "session",
         "market_us": "AFTERNOON",
         "status": "OK_SESSION_METRICS",
-        "n_orders": 10
+        "trd_env": "SIMULATE",
+        "n_orders": 10,
+        "et_date": "2026-07-14",
+        "et_first_order": "2026-07-14 10:37 ET"
       },
       {
         "dir": "opend_session_20260714_1337ET",
         "kind": "session",
         "market_us": "AFTERNOON",
         "status": "OK_SESSION_METRICS",
-        "n_orders": 10
+        "trd_env": "SIMULATE",
+        "n_orders": 10,
+        "et_date": "2026-07-14",
+        "et_first_order": "2026-07-14 13:37 ET"
       },
       {
         "dir": "opend_session_20260715_1036ET",
         "kind": "session",
         "market_us": "AFTERNOON",
         "status": "OK_SESSION_METRICS",
-        "n_orders": 10
+        "trd_env": "SIMULATE",
+        "n_orders": 10,
+        "et_date": "2026-07-15",
+        "et_first_order": "2026-07-15 10:36 ET"
       },
       {
         "dir": "opend_session_20260715_1334ET",
         "kind": "session",
         "market_us": "AFTERNOON",
         "status": "OK_SESSION_METRICS",
-        "n_orders": 10
+        "trd_env": "SIMULATE",
+        "n_orders": 10,
+        "et_date": "2026-07-15",
+        "et_first_order": "2026-07-15 13:34 ET"
       },
       {
         "dir": "opend_session_live",
         "kind": "session",
         "market_us": "AFTERNOON",
         "status": "OK_SESSION_METRICS",
-        "n_orders": 10
+        "trd_env": "SIMULATE",
+        "n_orders": 10,
+        "et_date": "2026-07-09",
+        "et_first_order": "2026-07-09 14:01 ET"
       }
     ],
     "in_session_slots_needed_for_decision": 5,
     "in_session_gap": 0,
-    "dropped_zero_order_slots": [
-      "opend_session_smoke",
-      "opend_session_val"
-    ]
+    "distinct_session_trading_days_et": [
+      "2026-07-09",
+      "2026-07-14",
+      "2026-07-15"
+    ],
+    "n_distinct_session_trading_days": 3,
+    "dropped_zero_order_slots": [],
+    "rejected_slots": []
   },
   "metrics_six_classes": {
     "1_order_latency_ms_submit_to_ack": {
@@ -96,9 +118,20 @@
       "full_fill_rate": 0.96
     },
     "4_reject_rate": {
-      "orders": 80,
+      "denominator": "all_submitted",
+      "submitted": 85,
       "rejected": 0,
-      "reject_rate": 0.0
+      "reject_rate": 0.0,
+      "breakdown": {
+        "primary_buy_and_order_path": {
+          "submitted": 80,
+          "rejected": 0
+        },
+        "closeout_sells": {
+          "submitted": 5,
+          "rejected": 0
+        }
+      }
     },
     "5_disconnects": {
       "total": 0
@@ -108,14 +141,14 @@
       "worst_n_diffs": 0
     },
     "aux_partial_fill_observed": false,
-    "aux_fill_latency_s_simulate_engine": {
-      "n": 11,
-      "p50": 5.8842549324035645,
-      "p95": 36.78366994857788,
-      "mean": 11.647760196165605,
+    "aux_fill_latency_s_pooled": {
+      "n": 53,
+      "p50": 8.06359601020813,
+      "p95": 25.740094470977766,
+      "mean": 10.651673132518553,
       "min": 1.8348689079284668,
-      "max": 41.5528678894043,
-      "note": "SIMULATE matching-engine lag (ack->FILLED_ALL); seconds-scale, NOT a real-market fill speed."
+      "max": 48.87993025779724,
+      "note": "SIMULATE matching-engine lag (ack->FILLED_ALL) pooled per-order across all in-session slots; NOT a real-market fill speed."
     }
   },
   "live_market_context": {
@@ -126,14 +159,20 @@
   },
   "verdict": {
     "real_execution_cost_established": false,
-    "reason": "All samples are TrdEnv.SIMULATE. Near-zero slippage, 100% whole-lot fills, seconds-scale fill lag and 0 rejects are SIMULATE matching-engine traits, NOT real market execution cost.",
+    "reason": "All samples are TrdEnv.SIMULATE. Near-zero slippage, whole-lot fills, seconds-scale fill lag and 0 rejects are SIMULATE matching-engine traits, NOT real market execution cost.",
     "landable_vs_kevin_bar": "UNDECIDABLE_FROM_SIMULATE",
     "kevin_bar": "annual return >= 50% AND max drawdown <= 20% (on real fills)",
     "note": "The 50%/20% bar is a return/drawdown target on a real-fills strategy PnL; SIMULATE execution-path health cannot satisfy it. Candidate stays needs-evidence / NOT PASS.",
     "decision_readiness": "SIMULATE_EXECUTION_CHARACTERIZED",
+    "engineering_risk_gate": "CLOSED@7d94a2c",
+    "real_landability_owner": "parent EVO-8 / controlled-live",
     "gaps": [
-      "need >= 5 in-session slots for a stable SIMULATE execution read; have 5 (gap 0) \u2014 autopilot supplies these.",
+      "need >= 5 in-session slots for a stable SIMULATE execution read; have 5 (gap 0).",
       "real execution cost (real market impact / slippage) requires REAL fills (real-money or real-market matching) \u2014 out of scope, controlled."
     ]
-  }
+  },
+  "limitations": [
+    "ET trading dates are derived from each slot's first order ack_ts via America/New_York. The live slot's real trading day is 2026-07-09 (14:01 ET) \u2014 correcting an earlier '07-10' narrative. Distinct session trading days remain {2026-07-09, 2026-07-14, 2026-07-15} = 3, so EVO-149 multi-sample independence is unchanged.",
+    "Any 0-order local staging dirs (e.g. opend_session_smoke / opend_session_val) are NOT committed to the tree; re-running aggregation on the committed tree yields dropped_zero_order_slots=[]. They cannot be independently re-verified and do NOT affect the committed evidence slots' count or integrity."
+  ]
 }
