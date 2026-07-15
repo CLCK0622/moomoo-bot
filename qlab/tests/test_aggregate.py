@@ -29,7 +29,8 @@ def _write(d: Path, name: str, obj: dict, events: list):
 
 def _session(reports: Path, dirname: str, *, market_us="AFTERNOON",
              status="OK_SESSION_METRICS", trd_env="SIMULATE", n_buy=2,
-             ack_ts=ET_0709, fill_lats=(8.0, 9.0), connected=True):
+             ack_ts=ET_0709, fill_lats=(8.0, 9.0), connected=True,
+             self_report_trd_env=None):
     orders = []
     for i in range(n_buy):
         orders.append({"side": "BUY", "tag": "buy_q1", "ack_ts": ack_ts + i,
@@ -47,6 +48,8 @@ def _session(reports: Path, dirname: str, *, market_us="AFTERNOON",
          "fill_rate": {"n_buy": n_buy, "fully_filled": n_buy, "rejected": 0},
          "partial_fill_behavior": {"observed": False}, "orders": orders,
          "reconcile": {"in_sync": True, "n_diffs": 0}, "positions_flat_after": True}
+    if self_report_trd_env is not None:      # metrics top-level self-report (NOT evidence)
+        m["trd_env"] = self_report_trd_env
     ev = ([{"event": "connected", "trd_env": trd_env, "ts": ack_ts - 1}] if connected else [])
     ev += [{"event": "order_submitted", "ts": o["ack_ts"],
             "latency_ms": o["submit_ack_latency_ms"]} for o in orders]
@@ -88,6 +91,31 @@ def test_gate_rejects_closed_error_and_nonsimulate(tmp_path: Path):
     assert "not regular session" in reasons["opend_session_closed"]
     assert "OK_SESSION_METRICS" in reasons["opend_session_err"]
     assert "not SIMULATE" in reasons["opend_session_real"]
+
+
+# --- gate residual: `connected` event is the SOLE trd_env evidence ---
+def test_gate_rejects_selfreport_trd_env_without_connected(tmp_path: Path):
+    """No `connected` event but metrics self-reports trd_env=SIMULATE -> rejected
+    (the aggregator must NOT fall back to trusting the self-report)."""
+    reports = tmp_path / "reports"
+    _session(reports, "opend_session_spoof", connected=False,
+             self_report_trd_env="SIMULATE")
+    r = aggregate(reports, tmp_path / "out", live_check=False)
+    assert r["inventory"]["in_session_slots"] == 0
+    assert r["verdict"]["decision_readiness"] == "INTERMEDIATE"
+    reason = {x["dir"]: x["reason"] for x in r["inventory"]["rejected_slots"]}["opend_session_spoof"]
+    assert "no `connected` event" in reason and "self-report not trusted" in reason
+
+
+def test_gate_rejects_trd_env_conflict(tmp_path: Path):
+    """connected=SIMULATE but metrics self-reports a different env -> rejected."""
+    reports = tmp_path / "reports"
+    _session(reports, "opend_session_conflict", trd_env="SIMULATE",
+             self_report_trd_env="REAL")
+    r = aggregate(reports, tmp_path / "out", live_check=False)
+    assert r["inventory"]["in_session_slots"] == 0
+    reason = {x["dir"]: x["reason"] for x in r["inventory"]["rejected_slots"]}["opend_session_conflict"]
+    assert "conflict" in reason and "SIMULATE" in reason and "REAL" in reason
 
 
 # --- item 5: 0-order slots dropped, empty on a clean tree ---

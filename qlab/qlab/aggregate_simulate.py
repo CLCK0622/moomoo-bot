@@ -99,9 +99,17 @@ def _load_slot(d: Path) -> dict:
     events = _read_jsonl(d / "broker_events.jsonl")
     orders = m.get("orders", [])
 
-    # trd_env is proven from the slot's own `connected` broker event (not assumed)
-    conn = next((e for e in events if e.get("event") == "connected"), {})
-    trd_env = conn.get("trd_env") or m.get("trd_env")
+    # trd_env is proven ONLY from the slot's own `connected` broker event — the
+    # single source of truth. The metrics self-report (m["trd_env"]) is NEVER
+    # trusted as evidence: missing connected event -> unverifiable -> reject;
+    # a self-report that conflicts with the connected event -> reject.
+    conn = next((e for e in events if e.get("event") == "connected"), None)
+    conn_trd_env = conn.get("trd_env") if conn else None
+    self_trd_env = m.get("trd_env")                      # self-report, not evidence
+    trd_env = conn_trd_env                               # sole source of truth
+    trd_env_missing = conn_trd_env is None
+    trd_env_conflict = (self_trd_env is not None and conn_trd_env is not None
+                        and self_trd_env != conn_trd_env)
 
     # first-hand submit->ack latency samples — ONE source per slot to avoid double
     # counting (session metrics.orders[] and its broker_events overlap).
@@ -139,6 +147,8 @@ def _load_slot(d: Path) -> dict:
     return {
         "dir": d.name, "kind": kind, "market_us": m.get("market_us"),
         "status": m.get("status"), "symbol": m.get("symbol"), "trd_env": trd_env,
+        "self_trd_env": self_trd_env, "trd_env_missing": trd_env_missing,
+        "trd_env_conflict": trd_env_conflict,
         "latency_ms": lat, "cancel_latency_ms": cancel_lat,
         "fill_latency_s_samples": fill_lat,
         "slip_mid_bps": slip_mid, "slip_touch_bps": slip_touch,
@@ -158,9 +168,18 @@ def _load_slot(d: Path) -> dict:
 
 def _qualify(s: dict):
     """Gate: return (ok, reason). Only SIMULATE slots with real order activity
-    count; in-session slots must be a regular session + OK_SESSION_METRICS."""
+    count; in-session slots must be a regular session + OK_SESSION_METRICS.
+
+    trd_env is trusted ONLY from the `connected` event: a missing connected event
+    (unverifiable) or a self-report that conflicts with it is rejected outright —
+    the aggregator never falls back to the metrics self-report."""
     if (s["n_orders"] or 0) == 0:
         return False, "zero_orders"
+    if s["trd_env_missing"]:
+        return False, "trd_env unverifiable: no `connected` event (self-report not trusted)"
+    if s["trd_env_conflict"]:
+        return False, (f"trd_env conflict: connected={s['trd_env']} vs "
+                       f"self-report={s['self_trd_env']}")
     if s["trd_env"] != "SIMULATE":
         return False, f"trd_env={s['trd_env']} (not SIMULATE)"
     if s["kind"] == "session":
