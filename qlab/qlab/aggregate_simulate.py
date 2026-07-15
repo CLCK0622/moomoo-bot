@@ -122,6 +122,13 @@ def _live_market_us(host: str, port: int) -> dict:
 def aggregate(reports_dir: Path, out_dir: Path, live_check: bool = True,
               host: str = "127.0.0.1", port: int = 11111) -> dict:
     slots = [_load_slot(d) for d in _discover_slots(reports_dir)]
+    # Drop non-evidence slots: smoke / validation runs that placed 0 orders
+    # contribute no execution samples (no latency / slippage / fill data) and must
+    # NOT inflate the independent-sample count that gates the >=5 decision. Only
+    # slots that actually exercised the execution path count as evidence — this
+    # keeps the count honest against local scratch dirs (opend_session_smoke/_val).
+    dropped_zero_order = sorted(s["dir"] for s in slots if (s["n_orders"] or 0) == 0)
+    slots = [s for s in slots if (s["n_orders"] or 0) > 0]
     order_path = [s for s in slots if s["kind"] == "order_path"]
     session = [s for s in slots if s["kind"] == "session"]
 
@@ -166,6 +173,7 @@ def aggregate(reports_dir: Path, out_dir: Path, live_check: bool = True,
                    "status": s["status"], "n_orders": s["n_orders"]} for s in slots],
         "in_session_slots_needed_for_decision": IN_SESSION_SLOTS_FOR_DECISION,
         "in_session_gap": max(0, IN_SESSION_SLOTS_FOR_DECISION - in_session_slots),
+        "dropped_zero_order_slots": dropped_zero_order,
     }
 
     live = _live_market_us(host, port) if live_check else {"available": False, "reason": "skipped"}

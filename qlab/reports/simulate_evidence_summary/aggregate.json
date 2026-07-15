@@ -3,9 +3,9 @@
   "trd_env": "SIMULATE",
   "scope_note": "SIMULATE matching-engine execution path, NOT real market cost.",
   "inventory": {
-    "slots_total": 2,
+    "slots_total": 5,
     "order_path_slots": 1,
-    "in_session_slots": 1,
+    "in_session_slots": 4,
     "slots": [
       {
         "dir": "opend_probe",
@@ -13,6 +13,27 @@
         "market_us": "AFTER_HOURS_END",
         "status": "OK_ORDER_PATH_MEASURED",
         "n_orders": 30
+      },
+      {
+        "dir": "opend_session_20260714_1037ET",
+        "kind": "session",
+        "market_us": "AFTERNOON",
+        "status": "OK_SESSION_METRICS",
+        "n_orders": 10
+      },
+      {
+        "dir": "opend_session_20260714_1337ET",
+        "kind": "session",
+        "market_us": "AFTERNOON",
+        "status": "OK_SESSION_METRICS",
+        "n_orders": 10
+      },
+      {
+        "dir": "opend_session_20260715_1036ET",
+        "kind": "session",
+        "market_us": "AFTERNOON",
+        "status": "OK_SESSION_METRICS",
+        "n_orders": 10
       },
       {
         "dir": "opend_session_live",
@@ -23,48 +44,52 @@
       }
     ],
     "in_session_slots_needed_for_decision": 5,
-    "in_session_gap": 4
+    "in_session_gap": 1,
+    "dropped_zero_order_slots": [
+      "opend_session_smoke",
+      "opend_session_val"
+    ]
   },
   "metrics_six_classes": {
     "1_order_latency_ms_submit_to_ack": {
-      "n": 41,
-      "p50": 565.979542000001,
-      "p95": 677.40575,
-      "mean": 584.9886250000001,
-      "min": 553.7375840000003,
-      "max": 742.9869999999994
+      "n": 74,
+      "p50": 561.9286039999984,
+      "p95": 1238.717391549994,
+      "mean": 563.7780540135138,
+      "min": 149.30641599999996,
+      "max": 1863.633875000005
     },
     "1b_cancel_latency_ms": {
-      "n": 31,
-      "p50": 496.3442919999963,
-      "p95": 640.8141250000057,
-      "mean": 516.4538064516121,
+      "n": 32,
+      "p50": 496.35020849999734,
+      "p95": 634.762479200006,
+      "mean": 517.0718776249994,
       "min": 488.39279099999544,
       "max": 786.6262500000048
     },
     "2_slippage_bps_vs_arrival_mid": {
-      "n": 11,
-      "p50": -0.1587477973759718,
-      "p95": 1.508096514915651,
-      "mean": -0.12696695034796504,
-      "min": -1.4285487531948993,
+      "n": 43,
+      "p50": -0.1588158688832797,
+      "p95": 1.842644008358584,
+      "mean": -0.31746431929026714,
+      "min": -6.947339169098937,
       "max": 2.0637213658641715
     },
     "2b_slippage_bps_vs_arrival_touch": {
-      "n": 11,
-      "p50": -0.6032895154634361,
-      "p95": 1.1111816623267563,
-      "mean": -0.47328240309379493,
-      "min": -1.5872511983750157,
+      "n": 43,
+      "p50": -0.7940289026531396,
+      "p95": 1.1088722031436726,
+      "mean": -0.8987096710365892,
+      "min": -7.718669918799593,
       "max": 1.5874023747525088
     },
     "3_fill_rate": {
-      "n_buy": 10,
-      "fully_filled": 10,
-      "full_fill_rate": 1.0
+      "n_buy": 40,
+      "fully_filled": 39,
+      "full_fill_rate": 0.975
     },
     "4_reject_rate": {
-      "orders": 40,
+      "orders": 70,
       "rejected": 0,
       "reject_rate": 0.0
     },
@@ -78,17 +103,17 @@
     "aux_partial_fill_observed": false,
     "aux_fill_latency_s_simulate_engine": {
       "n": 11,
-      "p50": 8.094367980957031,
-      "p95": 18.248265147209167,
-      "mean": 10.789288542487405,
-      "min": 4.033427953720093,
-      "max": 18.249677181243896,
+      "p50": 5.8842549324035645,
+      "p95": 36.78366994857788,
+      "mean": 11.647760196165605,
+      "min": 1.8348689079284668,
+      "max": 41.5528678894043,
       "note": "SIMULATE matching-engine lag (ack->FILLED_ALL); seconds-scale, NOT a real-market fill speed."
     }
   },
   "live_market_context": {
     "available": true,
-    "market_us": "AFTER_HOURS_END",
+    "market_us": "AFTERNOON",
     "trd_logined": true,
     "qot_logined": true
   },
@@ -100,7 +125,7 @@
     "note": "The 50%/20% bar is a return/drawdown target on a real-fills strategy PnL; SIMULATE execution-path health cannot satisfy it. Candidate stays needs-evidence / NOT PASS.",
     "decision_readiness": "INTERMEDIATE",
     "gaps": [
-      "need >= 5 in-session slots for a stable SIMULATE execution read; have 1 (gap 4) \u2014 autopilot supplies these.",
+      "need >= 5 in-session slots for a stable SIMULATE execution read; have 4 (gap 1) \u2014 autopilot supplies these.",
       "real execution cost (real market impact / slippage) requires REAL fills (real-money or real-market matching) \u2014 out of scope, controlled."
     ]
   }
