@@ -1,0 +1,13 @@
+# 运行期采集的快照与回测数据（不入库）
+data/*.json
+data/**/*.json
+
+# 凭证（严禁入库）
+.env
+.env.*
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]

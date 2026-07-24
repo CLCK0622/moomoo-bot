@@ -1,0 +1,12 @@
+# prediction_markets 只读数据接入依赖
+# REST 只读 + 回测（必需）
+requests>=2.31.0
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Kalshi WS 只读会话（RSA-PSS 签名 + WebSocket）；仅当有 API key 需要连 WS 时才用
+cryptography>=42.0.0
+websockets>=12.0
+
+# 可选：从 .env 读取 Kalshi 凭证
+python-dotenv>=1.0.0

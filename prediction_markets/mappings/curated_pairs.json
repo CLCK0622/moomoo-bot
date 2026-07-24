@@ -1,0 +1,14 @@
+{
+  "_readme": "跨 venue 同事件人工确认映射。只有结算口径(结算源+结算窗口+四舍五入)真等价的配对才可加入并置 confirmed=true。market_a/market_b 为对应 venue 的 market_id：Kalshi=ticker，Polymarket=conditionId，Limitless=conditionId。label 供报告展示。种子为空/示例，需人工填充后方可进回测。",
+  "pairs": [
+    {
+      "label": "示例(待人工确认): BTC 某日某时点相对涨跌",
+      "venue_a": "kalshi",
+      "market_a": "FILL_ME_KALSHI_TICKER",
+      "venue_b": "polymarket",
+      "market_b": "FILL_ME_POLY_CONDITION_ID",
+      "confirmed": false,
+      "settlement_note": "必须核实两边结算源(如 Chainlink vs CME)与窗口是否一致，否则非无风险套利"
+    }
+  ]
+}
