@@ -29,3 +29,6 @@ data/qlib_store/
 !data/vix_etp/*.parquet
 !reports/carry_vixts_svxy/
 !reports/carry_vixts_svix/
+# EVO-8 candidate A (rate carry): FRED yield-curve panel is committed for
+# offline reproducible backtest (free/keyless source, small file)
+!data/fred_yields.parquet

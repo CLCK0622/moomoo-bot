@@ -153,6 +153,29 @@ other ad-hoc parquet stays ignored. `data/earnings.csv` is likewise committed.
 
 ---
 
+## Candidate A (rate-carry sleeve) data — `fred_yields.py` (EVO-8)
+
+New free source added for the rate-carry sleeve. Two data legs:
+
+- **Yield curve — DELIVERED.** `fred_yields.py` pulls FRED H.15 constant-maturity
+  Treasury yields (`DGS3MO/DGS2/DGS5/DGS10/DGS30`) from `fredgraph.csv` — **no API
+  key**, not IP-blocked here. Committed to `data/fred_yields.parquet` (wide
+  `[date, DGS*]`, 2002-01-02 → 2026-07-27, 6145 rows, 0 NaN; the 2022 rate shock
+  and 2s10s inversion are fully covered). FRED `"."` markers are dropped, never
+  forward-filled (no synthetic values). Refetch:
+  ```bash
+  python -c "from qlab.events.datafetch.fred_yields import fetch_curve, write_parquet; \
+    w,n=fetch_curve(start='2002-01-01', end='2026-12-31'); write_parquet(w,'data/fred_yields.parquet'); print(n)"
+  ```
+- **Treasury ETF bars (SHY/IEF/TLT) — BLOCKED, not committed.** Needs
+  dividend-adjusted daily bars (coupons are ~all of a bond ETF's total return, so
+  split-only is wrong). Both adjusted paths are gated on infra outside the run:
+  free equity sources still IP-block this egress (§Blockers), and the OpenD
+  gateway was down (`127.0.0.1:11111` closed). No bars were fabricated. Full
+  status + exact refetch commands in `data/rate_carry_provenance.json`; unblock =
+  bring up OpenD (system `python3` has the SDK) **or** run the free-source fetch
+  from a non-datacenter IP.
+
 ## Known caveats carried forward (not introduced here)
 
 - **Survivorship bias** — the default 19-name universe is present-day survivors;

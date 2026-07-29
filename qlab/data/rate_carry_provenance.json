@@ -1,0 +1,52 @@
+{
+  "issue": "EVO-8 candidate A (rate-carry sleeve)",
+  "candidate": "A — Treasury duration carry via yield-curve steepness + roll-down (SHY/IEF/TLT), long/flat only, no naked short",
+  "mechanism": "curve steepness (e.g. DGS10-DGS2) adjusts duration exposure across SHY/IEF/TLT to earn yield + roll-down",
+  "recorded_date": "2026-07-29",
+  "recorded_by": "都水主事 (工部)",
+  "integration_base_commit": "3250562cf49beb74893c34ae81cb657ca0b3cc31",
+  "preregistration_commit": null,
+  "preregistration_note": "signal prereg is 营缮's to freeze (CARRY_EVAL_PREREGISTRATION.md template; signal written from zero — the repo carry_* is EVO-25 VIX term-structure carry, a DIFFERENT premium family, NOT reused).",
+  "data_policy": "free sources only, no paid deps, no API key; TrdEnv.SIMULATE hard-lock; anti-look-ahead; killer window 2022 rate shock must be covered.",
+
+  "yield_curve": {
+    "status": "DELIVERED (committed)",
+    "source": "FRED H.15 constant-maturity (fredgraph.csv, no API key)",
+    "module": "qlab/qlab/events/datafetch/fred_yields.py",
+    "artifact": "data/fred_yields.parquet",
+    "series": ["DGS3MO", "DGS2", "DGS5", "DGS10", "DGS30"],
+    "units": "percent per annum, close-of-day constant maturity",
+    "n_rows": 6145,
+    "date_range": "2002-01-02 .. 2026-07-27",
+    "missing_policy": "FRED '.' markers dropped, never forward-filled (no synthetic values)",
+    "look_ahead_note": "H.15 is close-of-day for the trade date; decide at close t, execute t+1 open -> look-ahead-free. Consumer owns any lag.",
+    "coverage_2022_rate_shock": {
+      "covered": true,
+      "DGS2_range_2022": [0.77, 4.72],
+      "DGS10_range_2022": [1.63, 4.25],
+      "2s10s_samples": {"2022-04-01": -0.05, "2022-07-01": 0.04, "2022-12-01": -0.72}
+    },
+    "refetch_command": "python -c \"from qlab.events.datafetch.fred_yields import fetch_curve, write_parquet; w,n=fetch_curve(start='2002-01-01', end='2026-12-31'); write_parquet(w,'data/fred_yields.parquet'); print(n)\""
+  },
+
+  "treasury_etf_bars": {
+    "status": "BLOCKED (not committed) — external data-egress blocker, NOT a code gap",
+    "symbols_needed": ["SHY", "IEF", "TLT"],
+    "requirement": "split+dividend-adjusted daily bars (dividend adjustment MANDATORY: coupons are ~all of a bond ETF's total return; split-only is wrong)",
+    "target_layout": "data/daily_full/{SHY,IEF,TLT}_1d.parquet, columns [date,open,high,low,close,volume], same as existing bars",
+    "present": [],
+    "missing": ["SHY", "IEF", "TLT"],
+    "blocker": {
+      "free_equity_sources": "Stooq / Yahoo / Nasdaq all block this workspace's datacenter egress IP as of 2026-07 (Stooq='Access denied' after PoW solve, Yahoo=HTTP 429 on query1+query2 with cookie prime, Nasdaq=split-only anyway). Verified live this run.",
+      "opend": "OpenD gateway DOWN (127.0.0.1:11111 closed) this run; moomoo SDK v10.08.6808 is present in system /usr/bin/python3 only. OpenD historical K needs Kevin's login + is under the 30-day historical-K quota.",
+      "note": "Both dividend-adjusted paths are gated on infra outside this run. No bars were fabricated (honest gap per repo convention)."
+    },
+    "unblock_paths": [
+      "Preferred (repo precedent = daily_full): bring up the moomoo OpenD gateway (SIMULATE) on this host, then run the OpenD refetch below with system python3 (has the SDK).",
+      "Alternative: run the free-source refetch below from a non-datacenter / residential egress IP (Stooq or Yahoo, both dividend-adjusted)."
+    ],
+    "refetch_command_opend": "/usr/bin/python3 -c \"import sys; sys.path.insert(0,'qlab'); from qlab.events.datafetch.opend_daily import fetch_daily_parquet as f; f(['SHY','IEF','TLT'], start='2002-01-01', end='2026-07-29', data_dir='data/daily_full')\"",
+    "refetch_command_free": "python -m qlab.events.datafetch.fetch_all --what prices --price-source yahoo --symbols SHY IEF TLT --start 2002-01-01 --end 2026-07-29 --out data",
+    "verify_after_fetch": "each parquet covers 2002.. and includes 2022 in full; adjusted close must be continuous across ex-dividend dates (no coupon-day gaps)."
+  }
+}
