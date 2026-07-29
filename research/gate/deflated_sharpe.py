@@ -77,18 +77,39 @@ class DSRResult:
     psr_vs_zero: float       # 不做多重检验时的 PSR（对照用）
     dsr: float               # 真正判据
     passed: bool
+    scale_warning: bool = False   # 疑似单位不一致（V 尺度 vs sr_per_period），见下
 
 
 def deflated_sharpe_ratio(sr_per_period: float, n_obs: int, skew: float, kurt: float,
                           n_trials: int,
                           trial_sharpes: Optional[Sequence[float]] = None,
                           trials_variance: Optional[float] = None,
+                          trials_periods_per_year: int = 1,
                           threshold: float = 0.95) -> DSRResult:
     """
-    DSR 门。sr_per_period 为**每期**（非年化）Sharpe。
+    DSR 门。**单位契约**：sr_per_period 与试验 Sharpe（trial_sharpes / trials_variance）
+    必须同为**每期**（非年化）口径——`expected_max = √V · term` 里的 V 是每期 Sharpe 的方差。
+    若产出侧把试验 Sharpe 算成**年化**（×√ppy），拿年化 V 去比每期 sr，会把基准抬高 √ppy≈15.9 倍，
+    **系统性误杀真 alpha**（假阴性）。这是与「缺失≠放松」相反的方向，同样不能静默（工部 2026-07-29）。
+
+    - `trials_periods_per_year`：声明试验 Sharpe 的年化尺度；>1 时这里**归一到每期**
+      （每期 Var = 年化 Var / ppy；每期 Sharpe = 年化 Sharpe / √ppy）。默认 1 = 每期（契约）。
+    - `scale_warning`：即便未声明，也做一道量级体检——每期 Sharpe 估计的抽样标准差 ~ 1/√n_obs，
+      若 √V 远超此（>8×，疑似仍是年化），在结果上打旗（不阻断，交都察院/工部核 + 产出侧修）。
     n_trials 用跨轮累计真实试验数。返回 passed = DSR >= threshold。
     """
-    v = _variance_of_trials(trial_sharpes, trials_variance)
+    ppy = max(int(trials_periods_per_year), 1)
+    ts = None
+    if trial_sharpes is not None:
+        ts = [float(s) / math.sqrt(ppy) for s in trial_sharpes]
+    tvar = (trials_variance / ppy) if trials_variance is not None else None
+    v = _variance_of_trials(ts, tvar)
+
+    # 单位体检：每期 Sharpe 抽样标准差量级 ~ 1/√n_obs；√V 远超则疑似年化未归一。
+    scale_warning = False
+    if v > 0 and n_obs > 1 and math.sqrt(v) > 8.0 / math.sqrt(n_obs):
+        scale_warning = True
+
     sr0 = expected_max_sharpe(n_trials, v)
     psr0 = probabilistic_sharpe_ratio(sr_per_period, n_obs, skew, kurt, sr_benchmark=0.0)
     dsr = probabilistic_sharpe_ratio(sr_per_period, n_obs, skew, kurt, sr_benchmark=sr0)
@@ -96,6 +117,7 @@ def deflated_sharpe_ratio(sr_per_period: float, n_obs: int, skew: float, kurt: f
         sr_per_period=sr_per_period, n_obs=n_obs, n_trials=n_trials,
         expected_max_sr=sr0, psr_vs_zero=psr0, dsr=dsr,
         passed=(not np.isnan(dsr)) and dsr >= threshold,
+        scale_warning=scale_warning,
     )
 
 

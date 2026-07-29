@@ -54,6 +54,7 @@ class Candidate:
     n_trials_cumulative: Optional[int] = None    # 覆盖 ledger.cumulative_n()（可选）
     trials_variance: Optional[float] = None
     trial_sharpes: Optional[Sequence[float]] = None
+    trials_periods_per_year: int = 1             # 试验 Sharpe 的年化尺度；1=每期(契约)，年化则传 ppy
 
 
 @dataclass
@@ -203,9 +204,14 @@ def certify(cand: Candidate,
         dsr = deflated_sharpe_ratio(
             rep.sharpe_per_period, rep.n_obs, rep.skew, rep.kurtosis,
             n_trials=n_trials, trial_sharpes=cand.trial_sharpes,
-            trials_variance=tv, threshold=dsr_threshold,
+            trials_variance=tv, trials_periods_per_year=cand.trials_periods_per_year,
+            threshold=dsr_threshold,
         )
         v.gates["dsr"] = dsr.__dict__
+        if dsr.scale_warning:
+            v.reasons.append(
+                "警告：DSR 试验 Sharpe 疑似单位不一致（V 尺度 vs 每期 sr）——"
+                "若产出侧年化了试验 Sharpe，请传 trials_periods_per_year 归一，否则会误杀真 alpha。")
         if not dsr.passed:
             v.decision = "REJECTED_dsr"
             v.reasons.append(
