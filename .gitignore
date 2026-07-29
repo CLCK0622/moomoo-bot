@@ -1,2 +1,6 @@
 */.env
 */.env.*
+
+# 门禁运行态（试验台账等），不入库
+research/gate/state/
+__pycache__/
