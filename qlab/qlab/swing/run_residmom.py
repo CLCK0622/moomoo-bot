@@ -32,6 +32,19 @@ from qlab.swing.momentum_signals import load_daily                       # noqa:
 from qlab.swing.residual_signals import FACTOR_ETFS                       # noqa: E402
 from qlab.swing.residmom_signals import ResidMomParams, residmom_curve    # noqa: E402
 
+def _json_default(o):
+    """把 numpy 标量/数组转成原生类型（verdict.gates 里有 np.bool_/np.float64）。"""
+    if isinstance(o, np.bool_):
+        return bool(o)
+    if isinstance(o, np.integer):
+        return int(o)
+    if isinstance(o, np.floating):
+        return float(o)
+    if isinstance(o, np.ndarray):
+        return o.tolist()
+    return str(o)
+
+
 PERIODS = 252
 # 声明的 haircut family（稳健性；主格预先固定）——诚实 N 计入全部
 FAMILY = [(52, 0.10), (26, 0.10), (52, 0.20), (26, 0.20)]   # (formation_weeks, cut)
@@ -89,7 +102,8 @@ def main(argv=None) -> int:
                "overall_verdict": "数据不足-无法评估",
                "universe_resolved": universe_resolved, "n_present": len(universe),
                "factor_missing": missing_fac}
-        (out / "report.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2), encoding="utf-8")
+        (out / "report.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2,
+                                                     default=_json_default), encoding="utf-8")
         print("数据不足-无法评估", rep)
         return 0
 
@@ -194,14 +208,21 @@ def main(argv=None) -> int:
                                  "max_gross", "signal_convention")},
         "run_date": dt.date.today().isoformat(),
     }
-    (out / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    (out / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2,
+                                                 default=_json_default), encoding="utf-8")
 
-    cagr = met.get("cagr"); mdd = met.get("mdd")
     print(verdict.summary())
-    print(f"CAGR={cagr:.2%} MDD={mdd:.2%} sharpe_ann={met.get('sharpe_ann',0):.2f} "
-          f"shadow_floor_pass={shadow_floor} N_cum={n_cumulative}")
-    print("crisis:", {k: (round(v.get('mdd'),3) if isinstance(v.get('mdd'),(int,float)) and v.get('mdd')==v.get('mdd') else 'tail_incomplete')
-                      for k, v in met.get("crisis", {}).items()})
+    if met.get("cagr") is not None:      # metrics gate only runs if not rejected earlier
+        print(f"CAGR={met['cagr']:.2%} MDD={met['mdd']:.2%} sharpe_ann={met.get('sharpe_ann',0):.2f} "
+              f"shadow_floor_pass={shadow_floor}")
+        print("crisis:", {k: (round(v.get('mdd'), 3)
+                              if isinstance(v.get('mdd'), (int, float)) and v.get('mdd') == v.get('mdd')
+                              else 'tail_incomplete') for k, v in met.get("crisis", {}).items()})
+    else:
+        cs = (verdict.gates or {}).get("cost_stress", {})
+        print(f"rejected before metrics gate; cost_stress sharpe_x1={cs.get('sharpe_x1')} "
+              f"sharpe_x2={cs.get('sharpe_x2')}")
+    print(f"N_cum={n_cumulative}")
     print("ACTION:", action)
     print("report →", out / "report.json")
     return 0

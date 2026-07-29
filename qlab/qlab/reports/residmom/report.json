@@ -1,0 +1,75 @@
+{
+  "issue": "EVO-8",
+  "sleeve": "residual_momentum",
+  "candidate": "residual_momentum_F52_decile_3f",
+  "preregistration_commit": "dbc032b",
+  "frozen_hash": "4e9f982a6e42b0f94f38bf82d08ef8627d385f353bcd049c7d22904dcbf711c0",
+  "data_provenance": "OpenD/free daily bars data/daily_full; universe=250 names (resolved), factors=['SPY', 'IWM', 'IVE', 'IVW']",
+  "decision_cost_multiple": "x2",
+  "family": [
+    [
+      52,
+      0.1
+    ],
+    [
+      26,
+      0.1
+    ],
+    [
+      52,
+      0.2
+    ],
+    [
+      26,
+      0.2
+    ]
+  ],
+  "primary": [
+    52,
+    0.1
+  ],
+  "honest_trial_count": {
+    "n_cumulative_from_ledger": 4,
+    "this_run_N": 4,
+    "trial_sharpes_x2": [
+      -0.16705222051501128,
+      -0.1628546143775136,
+      -0.3770077388250962,
+      -0.5295639911345293
+    ],
+    "ledger_path": "research/gate/state/trial_ledger_residmom.json",
+    "note": "N 取自 TrialLedger.cumulative_n()（工部规矩#1）；跨轮累计由户部在共享台账维护，本 run 只登记自己的 family。"
+  },
+  "certify_verdict": {
+    "certified": false,
+    "decision": "REJECTED_cost",
+    "reasons": [
+      "成本 x1 净 Sharpe=-0.001<=0 → 早筛淘汰。"
+    ],
+    "gates": {
+      "prereg_unchanged": true,
+      "n_trials": 4,
+      "cost_stress": {
+        "sharpe_x1": -0.0010906121893737868,
+        "sharpe_x2": -0.010523300748662914,
+        "passed_early": false,
+        "robust": false
+      }
+    }
+  },
+  "metrics": {},
+  "shadow_floor_pass": false,
+  "action": "REJECTED_cost（硬门拒绝）→ 按门原因整改/回报",
+  "primary_diagnostics": {
+    "first_date": "2006-06-28",
+    "last_date": "2026-07-10",
+    "n_rebalances": 646,
+    "mean_names_per_leg": 22.48297213622291,
+    "min_names_per_leg": 21,
+    "thin_book_weeks": 0,
+    "mean_abs_net_beta": 0.0033549353780567247,
+    "max_gross": 2.000000000000001,
+    "signal_convention": "+mean(eps) over F=52w skip=4w, betas E=156w ending at k-skip (no future)"
+  },
+  "run_date": "2026-07-29"
+}
