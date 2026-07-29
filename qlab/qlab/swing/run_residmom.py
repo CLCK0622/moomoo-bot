@@ -165,8 +165,17 @@ def main(argv=None) -> int:
         required_notional=0.0, adv_notional=0.0,   # 大盘十分位书，研究 AUM 下容量非约束；跳过容量门
         prereg_config=cfg, frozen_hash=fhash,
         economic_rationale=rationale,
-        trial_sharpes=trial_sharpes,               # 供 DSR 的 V
+        # 工部 2026-07-29 自律规矩（在户部收口 gate.py:95-97 的 N 优先级 fail-open 之前）：
+        # n_trials_cumulative 一律留 None，让门自己去 TrialLedger 取数——调用方绝不自报一个 N，
+        # 更不能报一个 < cumulative_n() 的小 N 把伪 alpha 洗成 certified。
+        n_trials_cumulative=None,
+        trial_sharpes=trial_sharpes,               # 供 DSR 的 V（不是 N）
     )
+
+    # 消费端硬自律：确保永远是「门去台账取 N」，杜绝自报 N 的 fail-open 回归。
+    assert cand.n_trials_cumulative is None, "调用方绝不自报 N（工部规矩：门去台账取）"
+    assert ledger is not None and ledger.cumulative_n() >= len(FAMILY), \
+        "必须传 ledger，且台账累计 N 不得小于本轮登记的 family 数（诚实计数地基）"
 
     verdict = certify(cand, ledger=ledger, thresholds=GateThresholds(),
                       oos_budget=OOSBudget(max_evals=1))

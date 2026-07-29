@@ -16,7 +16,14 @@
 - 冻结宇宙 = 与 residual 同一大盘 `RESIDUAL_UNIVERSE_RESOLVED.txt`（跑中不换）。
 - **N 只从 `TrialLedger.cumulative_n()` 取**（硬规矩#1）：Alpha158 全量因子（含被丢弃的）必须
   经 `TrialLedger.register_run(n_trials_total=全量, ...)` 登记，DSR 用累计真 N；绝不接受 manifest
-  每轮 `n_expressions_attempted` 或默认 0（工部刚查出的 DSR 架空坑）。
+  每轮 `n_expressions_attempted` 或默认 0（工部查出的 miner 侧 DSR 架空坑，都水已收口）。
+- **调 `certify()` 时传 `ledger=`、`n_trials_cumulative` 留 `None`**（工部 2026-07-29 自律规矩）：
+  门里 `gate.py:95-97` 现仍是「自报 N 优先于台账」的 fail-open——自报一个 `< cumulative_n()` 的小 N
+  能把已驳回的伪 alpha 洗成 certified。故消费端硬自律：**绝不自算 N 传进门，一律让门去台账取**；
+  代码加断言 `assert cand.n_trials_cumulative is None`。在户部把 `certify()` 取 N 处改成 fail-closed
+  （自报 N < 台账 → HonestyError / 取 max）之前，**本腿即便出正向也先回工部、不自行当 DECISION_POINT 上报**。
+- **分层判定一律走 `certify()` 的开区间 `≥25% 且 MDD≤20% → DECISION_POINT`**，不用本地 `_shadow_tier`
+  的闭区间 `[25%,35%)`（会漏掉 35–50% 本该触发验收线的区间——工部查出的第二处接缝）。
 
 ## 2. 候选：多因子长偏 + 趋势
 
