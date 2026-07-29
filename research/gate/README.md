@@ -64,7 +64,7 @@ print(verdict.summary())
 
 ## 权威来源是地板（fail-closed）—— 「有权威来源却不查」这一类的统一原则
 
-调用方自报的任何**放松旋钮**都不得静默压过权威来源；缺失也不等于放松。四处已收口：
+调用方自报的任何**放松旋钮**都不得静默压过权威来源；缺失≠放松；**单位不一致≠静默**。已收口：
 
 | 旋钮 | 权威来源 | 规则 |
 |---|---|---|
@@ -72,14 +72,20 @@ print(verdict.summary())
 | `trials_variance`（V） | 台账 `pooled_trials_variance()` | `effective = max(自报, 台账)`，只能更大 |
 | `cost_per_turnover` | 冻结 `cost_model`（`COST_MODELS`） | `effective = max(地板, 自报)`，只能更贵；未登记标签 → `REJECTED_prereg` |
 | `adv_notional`（容量） | 必须如实申报 | miner（有 `ledger`）缺 ADV → `REJECTED_capacity`（缺失≠放松）；手跑打 `capacity_unverified` 待人工 |
+| 试验 Sharpe 的**尺度** | 每期口径契约 | `trials_periods_per_year` 声明后归一到每期；`√V` 远超 `1/√n_obs`（>8×）→ `scale_warning` 打旗 |
 
 **正确管线用法**：传 `ledger=`，`n_trials_cumulative` / `trials_variance` / `cost_per_turnover`
-留 `None`（让门自台账/冻结标签取数），**如实提供 `adv_notional` / `required_notional`**。
+留 `None`（让门自台账/冻结标签取数），**如实提供 `adv_notional` / `required_notional`**，
+**试验 Sharpe 用每期口径**（若产出侧年化了则传 `trials_periods_per_year=252` 归一）。
 无台账的手跑文献候选（如 GEM, N=2）才纯采信自报，合法用途不受影响。
 
-> ⚠️ **成本地板是校准输入**：`COST_MODELS["moomoo_retail_x1"]=5bps/单向` 为流动性美股大盘
-> 保守默认，结构已锁（自报不得低于地板），但**数值须据真实 moomoo 费表 + 冻结 universe
-> 流动性复核**——地板设太低则残留在 `[地板, 真值]` 区间。数值待都察院/工部批。
+> **成本地板 = `COST_MODELS["moomoo_retail_x1"]=10bps/单向`**（EVO-12 CostModel：5 佣金 + 5 滑点），
+> 对齐 qlab swing harness 判过所有候选的口径，门不得比它松。将来做流动性差的票再按 universe
+> spread/ADV 从免费数据推导上调（都察院/工部把关）。
+>
+> **单位方向（与「缺失≠放松」相反）**：前面所有洞防的是「放过伪 alpha」；DSR 试验 Sharpe 若被
+> 年化却当每期用，`expected_max` 被抬 √252≈15.9×，会**系统性误杀真 alpha**（假阴性）——本项目的
+> 目的恰是找出过 50/20 的那一条，故同样不能静默。产出侧务必用每期 Sharpe，或声明 `trials_periods_per_year`。
 
 ## 红线
 

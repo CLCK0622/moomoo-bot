@@ -18,12 +18,13 @@ import pandas as pd
 
 
 # 冻结 cost_model 标签 → 该模型下每单位换手的**权威** x1 成本（每期，比例，单向）。
-# 口径：moomoo 零售全额一单向 = ~0 佣金 + 监管费(SEC/TAF) + 半价差 + 零售规模滑点，
-# 流动性美股大盘保守取 5bps。x2 压力档由 cost_stress_gate 内部 ×2，不写进这里。
-# ⚠️ 此常数是**校准输入**，应据真实 moomoo 费表 + 冻结 universe 的实际流动性复核：
-# 门只保证「自报不得低于此地板」，地板设太低则残留在 [canonical, 真值] 区间。数值待都察院/工部批。
+# 口径对齐本项目已冻结、且用来判过所有候选的 EVO-12 CostModel：**10 bps/单向 = 5 佣金 + 5 滑点**
+# （见 qlab/qlab/swing/evaluate.py CostModel.side_frac、momentum/carry/residual_signals 的 side_frac_base=0.001）。
+# GEM/残差反转/残差动量的 verdict 全在此 10bps ×1/×2 基准下判出——门地板必须与之一致，否则门比产出判决的
+# harness 还松一档。x2 压力档由 cost_stress_gate 内部 ×2，不写这里。
+# ⚠️ 若将来候选去做流动性差的票，再按 universe 的 spread/ADV 从免费数据推导上调（都察院/工部把关）。
 COST_MODELS = {
-    "moomoo_retail_x1": 0.0005,   # 5 bps / 单向换手
+    "moomoo_retail_x1": 0.001,   # 10 bps / 单向换手（EVO-12 CostModel：5 佣金 + 5 滑点）
 }
 
 

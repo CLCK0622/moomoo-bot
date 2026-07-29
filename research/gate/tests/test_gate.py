@@ -296,17 +296,17 @@ def test_cost_model_is_floor():
     print("9) 成本地板 —— 自报成本不得低于冻结 cost_model")
     dates = _dates()
     good_oos = _sinusoid_returns(0.0012, 0.004)
-    # 毛收益均值 0.0003 < 地板 5bps*turnover(1.0)=0.0005 → 按地板算净 Sharpe<=0
+    # 毛收益均值 0.0003 < 地板 10bps*turnover(1.0)=0.001 → 按地板算净 Sharpe<=0
     gross = _sinusoid_returns(0.0003, 0.004)
     to = [1.0] * len(good_oos)
     cfg = _base_cfg(); h = freeze_config(cfg)   # cost_model = moomoo_retail_x1
     rationale = ("动量/趋势溢价：横截面与时序证据，行为(处置效应/羊群)+风险(增长期权)双解释，"
                  "跨市场跨年代稳健，非纯数据挖掘，非曲线拟合。")
 
-    # 先证漏洞面存在：裸报 1e-7 成本 cost_stress 会放行，按地板 5bps 则杀
+    # 先证漏洞面存在：裸报 1e-7 成本 cost_stress 会放行，按地板 10bps 则杀
     from research.gate import cost_stress_gate as _csg
     check("裸报 cost=1e-7 → cost_stress 放行（漏洞面）", _csg(gross, to, 1e-7).passed_early)
-    check("按地板 cost=5bps → cost_stress 杀", not _csg(gross, to, 0.0005).passed_early)
+    check("按地板 cost=10bps → cost_stress 杀", not _csg(gross, to, 0.001).passed_early)
 
     def mk(cost):
         return Candidate(name="dm", oos_net_returns=good_oos, oos_dates=dates,
@@ -315,10 +315,10 @@ def test_cost_model_is_floor():
                          prereg_config=cfg, frozen_hash=h, economic_rationale=rationale,
                          n_trials_cumulative=1, trials_variance=0.05)
 
-    # 工部复现：自报 1e-7 → 旧版 certified；新版被地板抬到 5bps → REJECTED_cost
+    # 工部复现：自报 1e-7 → 旧版 certified；新版被地板抬到 10bps → REJECTED_cost
     v_tiny = certify(mk(1e-7), oos_budget=OOSBudget(1))
     check("自报 1e-7 → REJECTED_cost（地板生效）", v_tiny.decision == "REJECTED_cost")
-    check("  生效成本被抬到地板 5bps", abs(v_tiny.gates["cost_per_turnover_effective"] - 0.0005) < 1e-12)
+    check("  生效成本被抬到地板 10bps", abs(v_tiny.gates["cost_per_turnover_effective"] - 0.001) < 1e-12)
     # 如实报 50bps → 仍 REJECTED_cost（自报更贵，取自报）
     v_honest = certify(mk(0.005), oos_budget=OOSBudget(1))
     check("自报 50bps → REJECTED_cost，生效取更贵 0.005",
@@ -433,12 +433,37 @@ def test_ledger_accumulates_and_persists():
         check("规范台账历史基线已入库（cumulative_n>=14）", seeded.cumulative_n() >= 14)
 
 
+# ---------- 12. DSR 单位契约：年化 V 不静默误杀（工部实测复现，假阴性方向） ----------
+def test_dsr_unit_scale():
+    print("12) DSR 单位契约 —— 年化 V 归一/打旗，不误杀真 alpha")
+    sr, n_obs, N = 0.04241, 4662, 27      # 工部复现参数
+    skew, kurt = 0.0, 3.0
+    V_ann, V_pp = 0.027843, 0.00011049    # 年化 V（错）/ 每期 V（对）
+
+    # 现状：年化 V 当每期用 → expected_max 被 √252 抬高、DSR≈0（真 alpha 会被冤杀）
+    wrong = deflated_sharpe_ratio(sr, n_obs, skew, kurt, n_trials=N, trials_variance=V_ann)
+    check("年化 V 未声明 → expected_max≈0.339（被抬高）", abs(wrong.expected_max_sr - 0.339) < 0.01)
+    check("  → DSR≈0（真 alpha 会被误杀）", wrong.dsr < 0.01)
+    check("  → scale_warning 打旗（单位不一致不静默）", wrong.scale_warning is True)
+
+    # 声明 ppy=252 归一 → 与直接传每期 V 一致，DSR 回到擦边真值
+    fixed = deflated_sharpe_ratio(sr, n_obs, skew, kurt, n_trials=N,
+                                  trials_variance=V_ann, trials_periods_per_year=252)
+    check("声明 ppy=252 归一 → expected_max≈0.0213", abs(fixed.expected_max_sr - 0.0213) < 0.005)
+    check("  → DSR≈0.92（擦边、仍<0.95 被拒，但不再被 15.9× 冤杀）", 0.88 < fixed.dsr < 0.95)
+    check("  → scale_warning 清除", fixed.scale_warning is False)
+
+    direct = deflated_sharpe_ratio(sr, n_obs, skew, kurt, n_trials=N, trials_variance=V_pp)
+    check("每期 V 与归一后 expected_max 一致",
+          abs(direct.expected_max_sr - fixed.expected_max_sr) < 1e-6)
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
               test_selfreport_cannot_undercut_ledger,
               test_cost_model_is_floor, test_capacity_missing_is_not_pass,
-              test_ledger_accumulates_and_persists):
+              test_ledger_accumulates_and_persists, test_dsr_unit_scale):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 
