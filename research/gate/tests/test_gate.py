@@ -230,9 +230,67 @@ def test_certify_end_to_end():
     check("无真实 N → REJECTED_honesty", certify(cand_f).decision == "REJECTED_honesty")
 
 
+# ---------- 8. fail-open 收口：自报 N/V 不得压过持久台账（工部实测复现） ----------
+def test_selfreport_cannot_undercut_ledger():
+    print("8) 台账地板 —— 自报 N/V 只能更严不能更松")
+    dates = _dates()
+    good_oos = _sinusoid_returns(0.0012, 0.004)
+    cfg = _base_cfg(); h = freeze_config(cfg)
+    rationale = ("动量/趋势溢价：横截面与时序证据，行为(处置效应/羊群)+风险(增长期权)双解释，"
+                 "跨市场跨年代稳健，非纯数据挖掘。")
+
+    # 台账诚实记着 5000 次试验
+    led = TrialLedger(path=None)
+    led.register_run("qlib-miner", "qlib", n_trials_total=5000, n_evaluated=1,
+                     trial_sharpes_var=0.176, now_iso="2026-07-29T00:00:00Z")
+
+    def mk(**kw):
+        base = dict(name="dm", oos_net_returns=good_oos, oos_dates=dates,
+                    gross_returns=_sinusoid_returns(0.0014, 0.004),
+                    turnover=[0.1] * len(good_oos), cost_per_turnover=0.0005,
+                    prereg_config=cfg, frozen_hash=h, economic_rationale=rationale)
+        base.update(kw)
+        return Candidate(**base)
+
+    # 8a 工部复现：台账 5000 + 候选自报 N=1 → 必须 HonestyError（旧版是 certified=True）
+    raised = False
+    try:
+        certify(mk(n_trials_cumulative=1, trials_variance=0.176), ledger=led,
+                oos_budget=OOSBudget(1))
+    except HonestyError:
+        raised = True
+    check("台账5000 + 自报N=1 → HonestyError（fail-open 已堵）", raised)
+
+    # 8b 正确用法：候选不自报 N，门自台账取 5000 → REJECTED_dsr（不抛，正常驳回）
+    vb = certify(mk(n_trials_cumulative=None, trials_variance=0.176), ledger=led,
+                 oos_budget=OOSBudget(1))
+    check("台账5000 + 自报None → REJECTED_dsr", vb.decision == "REJECTED_dsr")
+    check("  用的是台账 N=5000", vb.gates.get("n_trials") == 5000)
+
+    # 8c 自报 N ≥ 台账（更严）→ 不抛，取 max
+    vc = certify(mk(n_trials_cumulative=8000, trials_variance=0.176), ledger=led,
+                 oos_budget=OOSBudget(1))
+    check("自报N=8000≥台账 → 取 max=8000、不抛", vc.gates.get("n_trials") == 8000)
+
+    # 8d 手跑候选无台账、自报 N=2 → 正常采信（合法用途不受影响）
+    vd = certify(mk(name="GEM", n_trials_cumulative=2, trials_variance=0.0),
+                 oos_budget=OOSBudget(1))
+    check("无台账手跑 N=2 → 正常评估（合法用途不误伤）", vd.gates.get("n_trials") == 2)
+
+    # 8e 同类洞：台账 pooled V=0.176 作地板，候选自报极小 V=1e-9 不得压低基准
+    led2 = TrialLedger(path=None)
+    led2.register_run("m2", "qlib", n_trials_total=1000, n_evaluated=1,
+                      trial_sharpes_var=0.176, now_iso="2026-07-29T00:00:00Z")
+    ve = certify(mk(n_trials_cumulative=None, trials_variance=1e-9), ledger=led2,
+                 oos_budget=OOSBudget(1))
+    check("台账V地板生效：自报 V=1e-9 仍 REJECTED_dsr（tiny-V 放松已堵）",
+          ve.decision == "REJECTED_dsr")
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
-              test_cost_capacity, test_prereg, test_certify_end_to_end):
+              test_cost_capacity, test_prereg, test_certify_end_to_end,
+              test_selfreport_cannot_undercut_ledger):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 
