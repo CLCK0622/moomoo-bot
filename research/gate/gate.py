@@ -28,7 +28,7 @@ from .cost_capacity import capacity_gate, cost_stress_gate
 from .deflated_sharpe import deflated_sharpe_ratio
 from .prereg import (economic_rationale_gate, validate_prereg_completeness,
                      verify_unchanged)
-from .trial_ledger import TrialLedger
+from .trial_ledger import HonestyError, TrialLedger
 from .walk_forward import OOSBudget, OOSBudgetExceeded
 
 
@@ -75,6 +75,12 @@ def certify(cand: Candidate,
             oos_budget: Optional[OOSBudget] = None,
             dsr_threshold: float = 0.95,
             max_participation: float = 0.10) -> Verdict:
+    """
+    候选过全门 → 结构化 Verdict。候选**在其价值上**未过某门 → 返回 REJECTED_* 判据。
+    但**完整性/诚实被违反**（调用方自报 N 低于持久台账）→ 抛 HonestyError（fail-closed，
+    与 register_run 同惯例），逼调用方修接线而非把违规当普通驳回静默吞掉。
+    正确管线用法（营缮主事）：传 ledger=，把 n_trials_cumulative 留 None，让门自台账取数。
+    """
     v = Verdict(name=cand.name, certified=False, decision="FAIL")
 
     # 1) 预注册完整性 + 冻结核对
@@ -91,10 +97,28 @@ def certify(cand: Candidate,
             v.reasons.append("预注册被事后修改（哈希不符）→ 记新试验、重走全门，不放行。")
             return v
 
-    # 2) 诚实试验计数（决定 DSR 的 N）
-    n_trials = cand.n_trials_cumulative
-    if n_trials is None and ledger is not None:
-        n_trials = ledger.cumulative_n()
+    # 2) 诚实试验计数（决定 DSR 的 N）—— 台账是地板，自报 N 只能更严不能更松
+    #    fail-open 修复(工部实测复现): 自报 n_trials_cumulative 曾**优先**于持久台账，
+    #    调用方传一个更小的 N（如 1）就能静默压过诚实记着 5000 的台账，把 REJECTED_dsr
+    #    翻成 certified —— 正是诚实计数这道地基要防的唯一（放松）方向。
+    #    现规则：台账存在且自报 N < cumulative_n() → HonestyError（与 register_run 同惯例）；
+    #    两者并存时取 max（更保守）；只有无台账的手跑候选（如文献配置 GEM, N=2）才纯采信自报。
+    n_self = cand.n_trials_cumulative
+    n_ledger = ledger.cumulative_n() if ledger is not None else None
+    if n_self is not None and n_ledger is not None and n_self < n_ledger:
+        raise HonestyError(
+            f"自报 N={n_self} 低于持久台账累计真实数 {n_ledger} → 不予评估。"
+            "诚实试验计数是地基：台账存在时自报 N 只能取更严(≥)方向，不得静默压过台账"
+            "放松 DSR haircut。手跑候选请不要传 ledger，或把该轮 register_run 登记进台账。"
+        )
+    if n_self is not None and n_ledger is not None:
+        n_trials = max(n_self, n_ledger)
+    elif n_self is not None:
+        n_trials = n_self
+    elif n_ledger is not None:
+        n_trials = n_ledger
+    else:
+        n_trials = None
     if not n_trials or n_trials < 1:
         v.decision = "REJECTED_honesty"
         v.reasons.append("无真实试验数 N（miner 未吐全量含丢弃）→ 不予评估。")
@@ -141,9 +165,13 @@ def certify(cand: Candidate,
     v.metrics = rep.as_dict()
 
     # 7) DSR 多重检验 haircut（N = 跨轮累计真实数）
-    tv = cand.trials_variance
-    if tv is None and ledger is not None:
-        tv = ledger.pooled_trials_variance()
+    #    同类 fail-open 一并堵死：试验方差 V 亦是放松旋钮（V 越小 → 期望最大 SR0 越小
+    #    → DSR 越易过，一个极小的自报 V 就能把基准压到 ~0）。台账 pooled V 作地板，
+    #    自报 V 只能取更严(更大)方向，不得静默压低。无台账时才纯采信自报 V（手跑候选）。
+    tv_self = cand.trials_variance
+    tv_ledger = ledger.pooled_trials_variance() if ledger is not None else None
+    tv_candidates = [x for x in (tv_self, tv_ledger) if x is not None]
+    tv = max(tv_candidates) if tv_candidates else None
     try:
         dsr = deflated_sharpe_ratio(
             rep.sharpe_per_period, rep.n_obs, rep.skew, rep.kurtosis,

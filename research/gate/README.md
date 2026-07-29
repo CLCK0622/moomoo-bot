@@ -15,7 +15,7 @@
 | 顺序 | 门 | 模块 | 失败即 |
 |---|---|---|---|
 | 1 | 预注册完整性 + 冻结核对 | `prereg.py` | `REJECTED_prereg` |
-| 2 | 诚实试验计数（不吐全量 N 即不评估） | `trial_ledger.py` | `REJECTED_honesty` |
+| 2 | 诚实试验计数（不吐全量 N 即不评估） | `trial_ledger.py` | `REJECTED_honesty` / `HonestyError` |
 | 3 | 成本 x1x2 早筛 | `cost_capacity.py` | `REJECTED_cost` |
 | 4 | 容量 / ADV | `cost_capacity.py` | `REJECTED_capacity` |
 | 5 | ex-ante 经济理由（无理由→隔离） | `prereg.py` | `REJECTED_rationale` |
@@ -59,6 +59,14 @@ print(verdict.summary())
 # 仅当 verdict.certified and verdict.decision in {REPORT_5020, DECISION_POINT}
 # 才由户部盖 CERTIFY、转都察院终审、回报首辅。
 ```
+
+## 台账是地板（fail-closed）
+
+有 `ledger` 时它是 N 与试验方差 V 的**地板**：自报 `n_trials_cumulative` / `trials_variance`
+只能把门开得**更严**（更大），不能压低。自报 N 低于 `cumulative_n()` → `certify()` 抛
+`HonestyError`（与 `register_run` 同惯例，逼修接线而非静默驳回）。**正确管线用法：传
+`ledger=`，`n_trials_cumulative` / `trials_variance` 留 `None`，让门自台账取数。** 无台账的
+手跑文献候选（如 GEM, N=2）才纯采信自报，合法用途不受影响。
 
 ## 红线
 
