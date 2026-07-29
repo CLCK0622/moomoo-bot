@@ -266,6 +266,10 @@ def test_selfreport_cannot_undercut_ledger():
                  oos_budget=OOSBudget(1))
     check("台账5000 + 自报None → REJECTED_dsr", vb.decision == "REJECTED_dsr")
     check("  用的是台账 N=5000", vb.gates.get("n_trials") == 5000)
+    # verdict 自带 N 的可审计出处（都察院复核 cumulative_n 来源，不依赖 gitignore 台账文件）
+    prov = vb.gates.get("ledger_provenance")
+    check("  verdict 带 ledger_provenance（可审计 N 出处）",
+          prov is not None and prov["cumulative_n"] == 5000 and prov["n_runs"] == 1)
 
     # 8c 自报 N ≥ 台账（更严）→ 不抛，取 max
     vc = certify(mk(n_trials_cumulative=8000, trials_variance=0.176), ledger=led,

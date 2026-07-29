@@ -125,6 +125,16 @@ def certify(cand: Candidate,
         v.reasons.append("无真实试验数 N（miner 未吐全量含丢弃）→ 不予评估。")
         return v
     v.gates["n_trials"] = n_trials
+    if ledger is not None:
+        # N 的**可审计出处**写进 verdict：都察院据此复核 cumulative_n 由哪些轮次累加而来，
+        # 不必依赖那份 gitignore 的本地台账文件（工部 d1415117：台账不落库、审计无从查）。
+        v.gates["ledger_provenance"] = {
+            "path": ledger.path,
+            "cumulative_n": n_ledger,
+            "n_runs": len(ledger.runs),
+            "runs": [{"run_id": r.run_id, "source": r.source,
+                      "n_trials_total": r.n_trials_total} for r in ledger.runs],
+        }
 
     # 3) 成本 x1x2 早筛（贵门之前先杀）—— 成本以**冻结 cost_model**为地板，自报只能更贵
     #    fail-open 修复(工部实测): 门曾直接用候选自报的裸 cost_per_turnover，从不拿冻结的
