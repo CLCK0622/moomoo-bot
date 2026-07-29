@@ -33,8 +33,9 @@ def _jd(o):
 
 
 def _sr(ret):
+    # DSR 单位契约：trial Sharpe 与门的 sr_per_period 同尺度=每期（不 ×sqrt(252)，否则 expected_max 被抬 √252）。
     r = np.asarray(ret, float); r = r[np.isfinite(r)]
-    return float(r.mean() / r.std(ddof=1) * np.sqrt(252)) if len(r) > 1 and r.std(ddof=1) > 0 else 0.0
+    return float(r.mean() / r.std(ddof=1)) if len(r) > 1 and r.std(ddof=1) > 0 else 0.0
 
 
 def main(argv=None) -> int:

@@ -116,6 +116,8 @@ def main(argv=None) -> int:
     ap.add_argument("--end", default="2024-12-31")
     ap.add_argument("--aum", type=float, default=10_000_000.0)
     ap.add_argument("--prereg-commit", default="PENDING")
+    ap.add_argument("--ledger", default=SHARED_LEDGER,
+                    help="共享台账路径（默认项目规范 jsonl）；仅验证/复核时指向 scratch 副本")
     args = ap.parse_args(argv)
 
     ddir = Path(args.data_dir)
@@ -131,7 +133,7 @@ def main(argv=None) -> int:
     store_bin = Path(args.store) / "bin"
 
     # 2) factor_export（注入我的因子集）→ 登记诚实 N 到共享账本
-    ledger = project_ledger(SHARED_LEDGER)            # 项目规范共享台账（committed jsonl，已含权威历史 14）
+    ledger = project_ledger(args.ledger)              # 项目规范共享台账（committed jsonl；工部已合一 N=29）
     # 不再自行补登历史：canonical ledger 已有权威计数（pre_gate_manual_history 9 含残差反转/跨场套利等
     # 9 个证伪方向 + gem_firstround 1 + residmom_evo162_r1 4 = 14）。本轮只由 factor_export 登记 multifactor。
     seed_detail = ("canonical project_ledger 已含权威历史 N=14（9 人肉证伪 + GEM 1 + 残差动量 4）；"
@@ -163,7 +165,9 @@ def main(argv=None) -> int:
                                   cost_mult=2.0, start=args.start, end=args.end, factors_subset=[f])
             r = c["equity_df"]["ret"].to_numpy(float)
             r = r[np.isfinite(r)]
-            sr = float(r.mean() / r.std(ddof=1) * np.sqrt(252)) if len(r) > 1 and r.std(ddof=1) > 0 else 0.0
+            # DSR 单位契约（工部 2026-07-29）：trial Sharpe 必须与门用的 sr_per_period 同尺度=**每期**。
+            # 之前 ×sqrt(252) 是年化，会把 expected_max 抬高 √252≈15.9 倍 → 系统性误杀真 alpha（假阴性）。
+            sr = float(r.mean() / r.std(ddof=1)) if len(r) > 1 and r.std(ddof=1) > 0 else 0.0
         except Exception:
             sr = 0.0
         trial_sharpes.append(sr)
