@@ -26,3 +26,6 @@ data/cache/
 !data/vix_etp/*.parquet
 !reports/carry_vixts_svxy/
 !reports/carry_vixts_svix/
+
+# EVO-8(b) GEM: committed free-daily bars for reproducible run without re-hitting Yahoo
+!data/gem/*.parquet

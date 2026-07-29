@@ -74,11 +74,23 @@ def _shadow_tier(cagr: float, mdd: float) -> str:
     return "below_floor(<15%)"
 
 
-def _cell(frames, params: GemParams, *, P, alpha, n_boot, seed) -> dict:
+def _common_start(frames, symbols) -> str | None:
+    """四资产共同可得起点（预注册 §9）：各符号首日的最大值。日历从此起，12m warm-up
+    自然把首次交易推到共同可得起点 + ~1 年，排除任一资产未上市的退化期。"""
+    firsts = []
+    for s in symbols:
+        df = frames.get(s)
+        if df is not None and len(df):
+            firsts.append(pd.to_datetime(df["date"]).min())
+    return str(max(firsts).date()) if firsts else None
+
+
+def _cell(frames, params: GemParams, *, P, alpha, n_boot, seed, start=None) -> dict:
     out = {"mode": "gem", "hold": params.lookback_months,
-           "lookback_months": params.lookback_months, "cost_variants": {}}
+           "lookback_months": params.lookback_months, "cost_variants": {},
+           "data_window_start": start}
     for cm, tag in ((1.0, "x1"), (2.0, "x2")):
-        res = gem_curve(frames, params, cost_mult=cm)
+        res = gem_curve(frames, params, cost_mult=cm, start=start)
         eq, tl = res["equity_df"], res["trade_log"]
         ev = evaluate_curve(eq, tl, P=P, hurdle=CAGR_HURDLE, alpha=alpha, n_boot=n_boot, seed=seed)
         ev["diagnostics"] = res["diagnostics"]
@@ -99,20 +111,21 @@ def _mt_cell(c):
             "gates_passed": bool(x2["gates_1_3_passed"])}
 
 
-def _benchmarks(frames, params: GemParams, *, P) -> dict:
-    """SPY buy&hold / 60-40(SPY+AGG) / 等权持有资产 —— 仅上下文，永不作 verdict。"""
+def _benchmarks(frames, params: GemParams, *, P, start=None) -> dict:
+    """SPY buy&hold / 60-40(SPY+AGG) / 等权持有资产 —— 仅上下文，永不作 verdict。
+    与 GEM 同一数据窗（start）对比才公平。"""
     from .momentum_signals import buy_and_hold_curve
     out = {}
     if frames.get(params.us) is not None and len(frames[params.us]):
-        g = gate1_full_sample(buy_and_hold_curve(frames, [params.us], cost_mult=2.0)["equity_df"], P)
+        g = gate1_full_sample(buy_and_hold_curve(frames, [params.us], cost_mult=2.0, start=start)["equity_df"], P)
         out["SPY_buy_and_hold"] = {"cagr": g["cagr"], "mdd": g["mdd"]}
     present_ha = [s for s in params.held_assets if frames.get(s) is not None and len(frames.get(s))]
     if present_ha:
-        g = gate1_full_sample(buy_and_hold_curve(frames, params.held_assets, cost_mult=2.0)["equity_df"], P)
+        g = gate1_full_sample(buy_and_hold_curve(frames, params.held_assets, cost_mult=2.0, start=start)["equity_df"], P)
         out["equal_weight_held_assets"] = {"cagr": g["cagr"], "mdd": g["mdd"], "present": present_ha}
     if (frames.get(params.us) is not None and frames.get(params.bond) is not None):
         # 60/40 近似：等权 SPY+AGG（buy&hold 引擎不支持非等权，标注为 50/50 代理）
-        g = gate1_full_sample(buy_and_hold_curve(frames, [params.us, params.bond], cost_mult=2.0)["equity_df"], P)
+        g = gate1_full_sample(buy_and_hold_curve(frames, [params.us, params.bond], cost_mult=2.0, start=start)["equity_df"], P)
         out["50_50_SPY_AGG_proxy_for_60_40"] = {"cagr": g["cagr"], "mdd": g["mdd"]}
     return out
 
@@ -135,10 +148,13 @@ def build_gem_report(frames_by_symbol, *, P=TRADING_DAYS_PER_YEAR, alpha=0.05,
             "universe_present": present, "universe_missing": missing,
         }
 
+    # 预注册 §9：数据窗 = 四资产共同可得起点（受 VEU/BIL 上市约束），排除退化期
+    common_start = _common_start(frames_by_symbol, base.all_symbols)
+
     runs = []
     for lb in GEM_FAMILY_MONTHS:
         runs.append(_cell(frames_by_symbol, GemParams(lookback_months=lb),
-                          P=P, alpha=alpha, n_boot=n_boot, seed=seed))
+                          P=P, alpha=alpha, n_boot=n_boot, seed=seed, start=common_start))
 
     primary = PrimarySpec(mode="gem", hold=GEM_PRIMARY_LB, quantile=0.0, max_concurrent=1)
     mt = haircut_family([_mt_cell(c) for c in runs], primary, alpha=alpha, P=P)
@@ -191,6 +207,9 @@ def build_gem_report(frames_by_symbol, *, P=TRADING_DAYS_PER_YEAR, alpha=0.05,
         "decision_cost_multiple": "x2",
         "universe_present": present, "universe_missing": missing,
         "data_complete": bool(not missing),
+        "data_window_start_common_availability": common_start,
+        "actual_backtest_first_date": (prun["cost_variants"]["x2"]["diagnostics"]["first_date"]
+                                       if prun else None),
         "lookback_family_months": list(GEM_FAMILY_MONTHS),
         "primary_lookback_months": GEM_PRIMARY_LB,
         "overall_verdict": verdict, "verdict_reason": reason,
@@ -218,7 +237,7 @@ def build_gem_report(frames_by_symbol, *, P=TRADING_DAYS_PER_YEAR, alpha=0.05,
                     "本候选只如实吐自己的 N，不预先折算。",
         },
         "runs": runs,
-        "benchmarks": _benchmarks(frames_by_symbol, base, P=P),
+        "benchmarks": _benchmarks(frames_by_symbol, base, P=P, start=common_start),
         "notes": [
             "NO-FIT（hard gate #2 clause #4）：lookback=12m/月度再平衡/单资产 100% 均为文献惯例"
             "（Antonacci 2014 Dual Momentum）冻结于结果之前 ⇒ 全样本曲线即 OOS 曲线，gate3 滚动"
