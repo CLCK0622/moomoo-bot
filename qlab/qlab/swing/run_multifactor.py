@@ -180,7 +180,8 @@ def main(argv=None) -> int:
                           "cut": params.cut, "trend_overlay": f"SPY {params.trend_ma_days}dMA gate",
                           "risk_off_exposure": params.risk_off_exposure},
         "rebalance": "monthly",
-        "cost_model": "moomoo_retail_10bps_side_x2 (long-only, no borrow/financing)",
+        # 用注册表登记的标签；门 resolve_cost_per_turnover=max(floor 5bps, 自报 0.001)=10bps（工部裁定口径）
+        "cost_model": "moomoo_retail_x1",
         "train_test_split": "NO-FIT waiver: factors + equal-weight composite are literature "
                             "conventions frozen pre-results; full-sample net curve IS OOS; single OOS eval",
         "gate_thresholds": "official_50_20 + shadow_report_25_20 + shadow_floor_15_20",

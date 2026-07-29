@@ -64,7 +64,7 @@ def main(argv=None) -> int:
     cfg = {"candidate": "gem_dual_momentum", "universe": p.all_symbols, "leverage_cap": 1.0,
            "signal_params": {"lookback_months": 12, "family": [6, 12], "assets": p.held_assets,
                              "hurdle": p.tbill, "rule": "abs+rel dual momentum, AGG risk-off"},
-           "rebalance": "monthly", "cost_model": "moomoo_retail_10bps_side_x2",
+           "rebalance": "monthly", "cost_model": "moomoo_retail_x1",
            "train_test_split": "NO-FIT waiver (Antonacci 2014 literature params frozen pre-results); "
                                "common-availability window from " + start,
            "gate_thresholds": "official_50_20 + shadow_report_25_20 + shadow_floor_15_20"}

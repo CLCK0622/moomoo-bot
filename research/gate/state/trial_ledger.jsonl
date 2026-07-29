@@ -1,3 +1,4 @@
 {"run_id": "pre_gate_manual_history", "source": "manual", "n_trials_total": 9, "n_evaluated": 9, "trial_sharpes_var": null, "note": "门存在前已证伪的 9 个独立方向：VIX / EVO-158 中性套利 / earnings / swing P1 / C1 残差反转 stat-arb / 8 腿 TSMOM crisis / crisis-sleeve 组合 EVO-204·238 / 高收益基金复制 / X 预测市场跨场套利。下限——方向内子试验未逐一记录；待核实上调。", "ts": "2026-07-29T00:00:00Z"}
 {"run_id": "gem_firstround", "source": "manual", "n_trials_total": 1, "n_evaluated": 1, "trial_sharpes_var": null, "note": "GEM 规则型择时配置，负向盖棺（未走 DSR 路径，计 1 个假设）。", "ts": "2026-07-29T00:00:00Z"}
 {"run_id": "residmom_evo162_r1", "source": "qlib", "n_trials_total": 4, "n_evaluated": 1, "trial_sharpes_var": null, "note": "残差动量首轮，负向 REJECTED_cost，盖棺（工部核实 N=4）。", "ts": "2026-07-29T00:00:00Z"}
+{"run_id": "multifactor-longbias-438b578", "source": "qlib", "n_trials_total": 8, "n_evaluated": 8, "trial_sharpes_var": null, "note": "factor_export multifactor_longbias; discarded=[]", "ts": "2026-07-29T11:42:35.592753+00:00"}
