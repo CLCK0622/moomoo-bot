@@ -38,13 +38,15 @@ from .metrics import (DEFAULT_CRISIS_WINDOWS, GateThresholds, MetricsReport,
                       cagr, evaluate, joint_gate, max_drawdown, mar, sharpe)
 from .prereg import (economic_rationale_gate, freeze_config,
                      validate_prereg_completeness, verify_unchanged)
-from .trial_ledger import HonestyError, RunRecord, TrialLedger
+from .trial_ledger import (DEFAULT_LEDGER_PATH, HonestyError, RunRecord,
+                           TrialLedger, project_ledger)
 from .walk_forward import (OOSBudget, OOSBudgetExceeded, cpcv_splits,
                            walk_forward_splits)
 
 __all__ = [
     "certify", "Candidate", "Verdict",
     "TrialLedger", "RunRecord", "HonestyError",
+    "project_ledger", "DEFAULT_LEDGER_PATH",
     "GateThresholds", "MetricsReport", "evaluate", "joint_gate",
     "cagr", "max_drawdown", "sharpe", "mar", "DEFAULT_CRISIS_WINDOWS",
     "deflated_sharpe_ratio", "probabilistic_sharpe_ratio",

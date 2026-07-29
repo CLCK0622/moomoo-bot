@@ -377,11 +377,64 @@ def test_capacity_missing_is_not_pass():
     check("  但打上 capacity_unverified 待都察院人工核", vd.gates.get("capacity_unverified") is True)
 
 
+# ---------- 11. 台账跨轮真累计 + 持久化 + 幂等去重（工部实测：账本累计不起来） ----------
+def test_ledger_accumulates_and_persists():
+    print("11) 共享台账 —— 跨候选累计 / 持久 / 幂等")
+    import os
+    import tempfile
+    from research.gate.trial_ledger import DEFAULT_LEDGER_PATH
+    d = tempfile.mkdtemp()
+    p = os.path.join(d, "shared.jsonl")
+
+    l1 = TrialLedger(p)
+    l1.register_run("residmom", "qlib", n_trials_total=4, n_evaluated=1,
+                    now_iso="2026-07-29T00:00:00Z")
+    l1.register_run("multifactor", "qlib", n_trials_total=158, n_evaluated=3,
+                    trial_sharpes_var=0.03, now_iso="2026-07-29T00:00:00Z")
+    check("同一共享台账跨候选累计 = 4+158 = 162", l1.cumulative_n() == 162)
+
+    # 持久化：重开同文件仍在（换分支/进程/机器不归零）
+    l2 = TrialLedger(p)
+    check("重开同文件持久 = 162（不归零）", l2.cumulative_n() == 162)
+
+    # 幂等：重登记同 run_id 不重复计数
+    l2.register_run("residmom", "qlib", n_trials_total=4, n_evaluated=1,
+                    now_iso="2026-07-29T00:00:00Z")
+    check("重登记同 run_id → 不双计，仍 162", l2.cumulative_n() == 162)
+
+    # 去重：文件里混入重复行，加载按 run_id 去重
+    with open(p, "a", encoding="utf-8") as f:
+        f.write('{"run_id":"residmom","source":"qlib","n_trials_total":4,'
+                '"n_evaluated":1,"trial_sharpes_var":null,"note":"dup","ts":"x"}\n')
+    l3 = TrialLedger(p)
+    check("加载对重复行按 run_id 去重 → 仍 162", l3.cumulative_n() == 162)
+
+    # 反例（工部实测的坏味道）：按候选各建文件 → 各自只看得见本轮
+    pa = os.path.join(d, "residmom.jsonl"); pb = os.path.join(d, "multifactor.jsonl")
+    la = TrialLedger(pa); la.register_run("a", "qlib", n_trials_total=4, n_evaluated=1,
+                                          now_iso="2026-07-29T00:00:00Z")
+    lb = TrialLedger(pb); lb.register_run("b", "qlib", n_trials_total=158, n_evaluated=3,
+                                          now_iso="2026-07-29T00:00:00Z")
+    check("分文件的坏味道：各自 cumulative 只等本轮（4 / 158，不累计）",
+          la.cumulative_n() == 4 and lb.cumulative_n() == 158)
+
+    for x in (p, pa, pb):
+        if os.path.exists(x):
+            os.remove(x)
+    os.rmdir(d)
+
+    # 已入库的规范历史基线在位（cumulative_n 有真实历史下限，非本轮 0）
+    if os.path.exists(DEFAULT_LEDGER_PATH):
+        seeded = TrialLedger(DEFAULT_LEDGER_PATH)
+        check("规范台账历史基线已入库（cumulative_n>=14）", seeded.cumulative_n() >= 14)
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
               test_selfreport_cannot_undercut_ledger,
-              test_cost_model_is_floor, test_capacity_missing_is_not_pass):
+              test_cost_model_is_floor, test_capacity_missing_is_not_pass,
+              test_ledger_accumulates_and_persists):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 

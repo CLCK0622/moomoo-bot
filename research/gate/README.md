@@ -33,9 +33,11 @@
 from research.gate import certify, Candidate, TrialLedger, OOSBudget, freeze_config
 
 # 1) 每轮挖矿先登记全量 N（含被丢弃的因子），否则候选不予评估
-ledger = TrialLedger("research/gate/state/trial_ledger.json")
+from research.gate import project_ledger
+ledger = project_ledger()          # 全项目唯一共享台账（勿按候选分文件！）
 ledger.register_run("qlib-alpha158-run1", source="qlib",
                     n_trials_total=158, n_evaluated=3, trial_sharpes=all_trial_srs)
+# ⚠️ 登记后把 research/gate/state/trial_ledger.jsonl **提交入库**，跨轮累计真 N 才成立。
 
 # 2) 跑前冻结预注册配置
 cfg = {"universe": frozen_tickers, "leverage_cap": 2.0, "signal_params": {...},

@@ -35,6 +35,13 @@ class RunRecord:
     ts: str = ""
 
 
+# 全项目**唯一共享**台账的规范路径。JSONL（每行一轮）便于跨分支合并、追加安全。
+# 铁律：所有候选共用这一个文件——**勿按候选分文件**，否则 cumulative_n 永远只等于本轮，
+# 跨轮累计真 N 从不发生，DSR haircut 被静默关闭（工部 2026-07-29 实测）。此文件**须入库**，
+# 否则换分支/worktree/机器就是空的。
+DEFAULT_LEDGER_PATH = "research/gate/state/trial_ledger.jsonl"
+
+
 class TrialLedger:
     def __init__(self, path: Optional[str] = None):
         self.path = path
@@ -43,22 +50,36 @@ class TrialLedger:
             self._load()
 
     def _load(self) -> None:
+        # JSONL：逐行读，按 run_id 去重（跨分支合并可能产生重复行，保留首个）。
+        seen, runs = set(), []
         with open(self.path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        self.runs = [RunRecord(**r) for r in data.get("runs", [])]
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                rec = RunRecord(**json.loads(line))
+                if rec.run_id in seen:
+                    continue
+                seen.add(rec.run_id)
+                runs.append(rec)
+        self.runs = runs
 
     def _save(self) -> None:
         if not self.path:
             return
         os.makedirs(os.path.dirname(os.path.abspath(self.path)), exist_ok=True)
         with open(self.path, "w", encoding="utf-8") as f:
-            json.dump({"runs": [asdict(r) for r in self.runs]}, f,
-                      ensure_ascii=False, indent=2)
+            for r in self.runs:
+                f.write(json.dumps(asdict(r), ensure_ascii=False) + "\n")
 
     def register_run(self, run_id: str, source: str, n_trials_total: Optional[int],
                      n_evaluated: int, trial_sharpes: Optional[Sequence[float]] = None,
                      trial_sharpes_var: Optional[float] = None, note: str = "",
                      now_iso: Optional[str] = None) -> RunRecord:
+        # 幂等：同 run_id 已登记 → 返回既有，不重复计数（重跑/跨轮安全）。
+        for r in self.runs:
+            if r.run_id == run_id:
+                return r
         # —— 诚实计数门 ——
         if n_trials_total is None:
             raise HonestyError(
@@ -92,3 +113,11 @@ class TrialLedger:
                 weighted += r.trial_sharpes_var * r.n_trials_total
                 wsum += r.n_trials_total
         return (weighted / wsum) if wsum > 0 else None
+
+
+def project_ledger(path: str = DEFAULT_LEDGER_PATH) -> "TrialLedger":
+    """
+    打开**全项目唯一共享**台账（默认 DEFAULT_LEDGER_PATH）。所有候选都用它、勿分文件；
+    每轮 register_run 后须把该文件提交入库，跨轮累计真 N 才在实际运行里成立。
+    """
+    return TrialLedger(path)
