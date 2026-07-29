@@ -113,39 +113,71 @@ def test_factor_export_honest_n(mini_store, tmp_path):
     assert disk["n_expressions_attempted"] == man["n_expressions_attempted"]
 
 
-def test_rdagent_skeleton_caps_and_accumulates_n(mini_store, tmp_path):
+def test_rdagent_skeleton_accumulates_n_via_trial_ledger(mini_store, tmp_path):
     from tools.qlib_gen.rdagent_budget import BudgetGuard
-    from tools.qlib_gen.rdagent_skeleton import run_trial
+    from tools.qlib_gen.rdagent_skeleton import run_trial, open_ledger
 
-    # mock miner is zero-cost, so a tiny cap still lets it run; prior_n_trials
-    # simulates the cumulative human + prior-round test count.
-    guard = BudgetGuard(cap_usd=1.0, ledger_path=tmp_path / "ledger.jsonl")
+    # Seed the persisted台账 with prior human trials (the ~7 pre-existing),
+    # then let the miner add rounds. N is read back from cumulative_n().
+    ledger = open_ledger(tmp_path / "trial_ledger.json")
+    ledger.register_run(run_id="human/prior", source="manual",
+                        n_trials_total=7, n_evaluated=7)
+    assert ledger.cumulative_n() == 7
+
+    guard = BudgetGuard(cap_usd=1.0, ledger_path=tmp_path / "spend.jsonl")
     combined = run_trial(
-        mini_store, tmp_path / "trial", guard=guard, rounds=2,
-        start="2023-01-01", end="2023-12-31", repo_root=REPO, prior_n_trials=7,
+        mini_store, tmp_path / "trial", guard=guard, ledger=ledger, rounds=2,
+        start="2023-01-01", end="2023-12-31", repo_root=REPO,
     )
     assert combined["rounds_run"] == 2
-    # 4 proposals/round * 2 rounds = 8, plus prior 7 -> cumulative 15
+    # mock proposes 4/round * 2 rounds = 8, plus prior 7 -> cumulative 15
     assert combined["miner_attempted_this_run"] == 8
     assert combined["cumulative_n_trials"] == 15
-    assert combined["llm_spent_usd"] == 0.0   # mock model priced at 0
+    assert ledger.cumulative_n() == 15           # persisted, authoritative
+    assert combined["llm_spent_usd"] == 0.0      # mock model priced at 0
+    # a fresh ledger over the same file must resume the count (no reset)
+    assert open_ledger(tmp_path / "trial_ledger.json").cumulative_n() == 15
+
+
+def test_run_trial_requires_ledger_no_fail_open(mini_store, tmp_path):
+    """The exact seam 工部尚书 flagged: N must be fail-closed, never defaulted."""
+    from tools.qlib_gen.rdagent_budget import BudgetGuard
+    from tools.qlib_gen.rdagent_skeleton import run_trial
+    guard = BudgetGuard(cap_usd=1.0, ledger_path=tmp_path / "s.jsonl")
+    with pytest.raises((ValueError, TypeError)):
+        run_trial(mini_store, tmp_path / "t", guard=guard, rounds=1,  # no ledger=
+                  start="2023-01-01", end="2023-03-31", repo_root=REPO)
+
+
+def test_factor_export_registers_into_ledger_fail_closed(mini_store, tmp_path):
+    from tools.qlib_gen import factor_export as fx
+    from tools.qlib_gen.rdagent_skeleton import open_ledger
+    ledger = open_ledger(tmp_path / "led.json")
+    man = fx.export(mini_store, tmp_path / "f", start="2023-01-01", end="2023-06-30",
+                    factor_set="core", ledger=ledger, run_id="qlib/test", repo_root=REPO)
+    # the run is registered; gate N is the cumulative, not the per-run attempted
+    assert man["cumulative_n_trials"] == ledger.cumulative_n()
+    assert man["cumulative_n_trials"] == man["n_expressions_attempted"]  # first & only run
+    assert ledger.runs[0].n_trials_total == man["n_expressions_attempted"]
 
 
 def test_rdagent_skeleton_stops_when_budget_exhausted(mini_store, tmp_path):
     from tools.qlib_gen.rdagent_budget import BudgetGuard
-    from tools.qlib_gen.rdagent_skeleton import run_trial
+    from tools.qlib_gen.rdagent_skeleton import run_trial, open_ledger
 
     # Price the miner's calls above zero and set a cap that funds < 1 call.
-    from tools.qlib_gen import rdagent_budget as rb
     guard = BudgetGuard(cap_usd=0.0000001, ledger_path=tmp_path / "l.jsonl")
+    ledger = open_ledger(tmp_path / "led2.json")
 
     def paid_llm(prompt):
         return ("mrev = Ref($close,2)/$close-1\n", 5000, 2000)
 
     combined = run_trial(
-        mini_store, tmp_path / "trial2", guard=guard, llm_fn=paid_llm,
+        mini_store, tmp_path / "trial2", guard=guard, ledger=ledger, llm_fn=paid_llm,
         model="gpt-4o", rounds=3, start="2023-01-01", end="2023-06-30",
         repo_root=REPO,
     )
     assert combined["rounds_run"] == 0 or combined["stopped_reason"].startswith("budget")
     assert guard.spent_usd <= guard.cap_usd + 1e-9
+    # budget stopped before any round registered -> ledger stays empty (no phantom N)
+    assert ledger.cumulative_n() == 0

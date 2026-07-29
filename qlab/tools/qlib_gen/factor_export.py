@@ -79,8 +79,15 @@ def _init_qlib(store: Path) -> None:
 def export(store: Path, out: Path, *, start: str, end: str,
            factor_set: str = "core",
            extra: dict[str, str] | None = None,
-           repo_root: Path | None = None) -> dict:
-    """Evaluate a factor family, write tidy parquet + honest-N manifest."""
+           repo_root: Path | None = None,
+           ledger=None, run_id: str | None = None, source: str = "qlib") -> dict:
+    """Evaluate a factor family, write tidy parquet + honest-N manifest.
+
+    If ``ledger`` (a ``research.gate.trial_ledger.TrialLedger``) is given, this
+    run is registered into it fail-closed via ``register_run`` — the ONLY honest
+    way to feed the gate. The gate then reads ``ledger.cumulative_n()``; this
+    manifest's ``n_expressions_attempted`` is a *per-run* count, never the gate N.
+    """
     from qlib.data import D
 
     store = store.expanduser().resolve()
@@ -138,8 +145,12 @@ def export(store: Path, out: Path, *, start: str, end: str,
         "n_instruments": len(insts),
         "window": {"start": start, "end": end},
         "factor_set": factor_set,
-        # ---- the honest test-count ledger ----
-        "n_expressions_attempted": len(attempted),   # <- feed as n_trials (cumulative across rounds)
+        # ---- honest test-count for THIS run (NOT the gate N) ----
+        # n_expressions_attempted is a PER-RUN count (all attempted incl. discarded).
+        # It is NOT the value to pass to deflated_sharpe_ratio(n_trials=...). The
+        # gate N is the cross-run cumulative from TrialLedger.cumulative_n(); pass
+        # a `ledger=` to register this run into it fail-closed (see below).
+        "n_expressions_attempted": len(attempted),   # per-run; register into TrialLedger, don't feed raw
         "n_exported": len(exported),
         "n_discarded": len(discarded),
         "attempted": attempted,
@@ -148,10 +159,28 @@ def export(store: Path, out: Path, *, start: str, end: str,
         "n_rows": n_rows,
         # ---- boundary reminders, machine-readable ----
         "acceptance_authority": "qlab.events (EVO-149) ONLY — Qlib output is never a verdict",
-        "n_trials_contract": ("n_expressions_attempted is per-round; the gate's "
-                              "deflated_sharpe_ratio n_trials must use the CUMULATIVE "
-                              "attempted count across all rounds, incl. discarded."),
+        "n_trials_contract": ("n_expressions_attempted is a PER-RUN count. The gate's "
+                              "deflated_sharpe_ratio n_trials MUST come from "
+                              "research.gate.trial_ledger.TrialLedger.cumulative_n() "
+                              "(cross-run, cross-session, incl. discarded + prior human "
+                              "trials). Pass ledger= to register this run fail-closed."),
     }
+
+    # Fail-closed registration into the shared honest-N台账 (optional but the
+    # only sanctioned path to the gate). register_run raises HonestyError if the
+    # declared N is missing / < evaluated — surfaced, not swallowed.
+    if ledger is not None:
+        rec = ledger.register_run(
+            run_id=run_id or f"{source}/{start}_{end}/{factor_set}",
+            source=source,
+            n_trials_total=len(attempted),
+            n_evaluated=len(exported),
+            note=f"factor_export {factor_set}; discarded={sorted(discarded)}",
+        )
+        manifest["ledger_run_id"] = rec.run_id
+        manifest["cumulative_n_trials"] = ledger.cumulative_n()   # <- gate uses THIS
+        manifest["trial_ledger"] = str(getattr(ledger, "path", "") or "")
+
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2))
     return manifest
 

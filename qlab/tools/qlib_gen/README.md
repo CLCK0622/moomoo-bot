@@ -67,20 +67,32 @@ $VP -m pytest tests/test_qlib_gen.py -q
 `factors.parquet` schema: `datetime, instrument, factor, value` — the handoff
 into `qlab.swing.*` (营缮's strategy/eval harness) and the gate.
 
-## Honest test-count (N) — the spine
+## Honest test-count (N) — the spine, fail-closed
 
 `manifest.json.n_expressions_attempted` counts **every** expression tried this
-round, *including the ones discarded* for erroring or being all-NaN. When a
-miner batch-produces factors, this is the raw material for the gate:
+run, *including the ones discarded* for erroring or being all-NaN. But that is a
+**per-run** count — it is **not** the number you hand to the gate.
 
-- `deflated_sharpe_ratio(sharpe, n_obs=…, n_trials=N)` and `haircut_family` are
-  only honest if `N` = the **cumulative** attempted count across all rounds
-  (plus the ~7 prior human trials), never the survivor count.
-- A factor set delivered **without** a true N is **not eligible for evaluation**
-  (户部/首辅 red line). The manifest exists so no batch can hide its N.
+The gate `N` is authoritative from **`research.gate.trial_ledger.TrialLedger`**
+(brought into this same tree by the evo-162 ↔ PR#1 merge). It is fail-closed the
+same way the LLM budget is:
 
-`rdagent_skeleton` carries `prior_n_trials` in and reports `cumulative_n_trials`
-out, so multi-round mining keeps one honest running total.
+- `TrialLedger.register_run(n_trials_total=<all attempted incl. discarded>, …)`
+  **raises `HonestyError`** if the declared N is missing or smaller than the
+  number actually evaluated — a batch cannot register only its survivors.
+- `TrialLedger.cumulative_n()` is the cross-run, cross-session running total
+  (miner rounds **+** the ~7 prior human trials already in the台账). **That**
+  is the `n_trials` for `deflated_sharpe_ratio` / `haircut_family`.
+- Never feed the per-run `n_expressions_attempted` raw — doing so slackens the
+  haircut by orders of magnitude and lets noise factors pass. (This was a real
+  fail-open seam — `run_trial` used to take `prior_n_trials=0`; now the ledger
+  is a **required** argument and there is no default to forget.)
+- A factor set delivered **without** registering into the ledger is **not
+  eligible for evaluation** (户部/首辅 red line).
+
+Wiring: `rdagent_skeleton.run_trial(..., ledger=open_ledger(path))` registers
+each round and reports `cumulative_n_trials = ledger.cumulative_n()`.
+`factor_export.export(..., ledger=…)` does the same for standalone runs.
 
 ## RD-Agent status: small-scale shell only, full integration deferred
 
