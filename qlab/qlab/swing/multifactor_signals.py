@@ -57,11 +57,13 @@ def _zscore_winsor(x: np.ndarray, wp: float) -> np.ndarray:
     return z
 
 
-def composite_scores(factors_df: pd.DataFrame, universe: list) -> pd.DataFrame:
-    """从 tidy factors 造横截面合成分：index=datetime, columns=instrument, value=composite。"""
+def composite_scores(factors_df: pd.DataFrame, universe: list, factors_subset=None) -> pd.DataFrame:
+    """从 tidy factors 造横截面合成分：index=datetime, columns=instrument, value=composite。
+    factors_subset 给定时只用该子集（做单因子试验 Sharpe / DSR 的 V）。"""
     fdf = factors_df[factors_df["instrument"].isin(set(universe))].copy()
     fdf["datetime"] = pd.to_datetime(fdf["datetime"]).dt.normalize()
-    used = [f for f in FACTOR_DIRECTION if f in set(fdf["factor"].unique())]
+    pool = factors_subset if factors_subset else list(FACTOR_DIRECTION)
+    used = [f for f in pool if f in set(fdf["factor"].unique())]
     if not used:
         raise ValueError("factors.parquet 不含任何预注册因子")
     # per (datetime, factor): 横截面 z（含方向），再对因子取均值
@@ -81,9 +83,10 @@ def composite_scores(factors_df: pd.DataFrame, universe: list) -> pd.DataFrame:
 
 def multifactor_curve(factors_df: pd.DataFrame, stock_frames: dict, spy_frame: pd.DataFrame,
                       universe: list, params: MultiFactorParams, *, cost_mult: float = 1.0,
-                      start: str = None, end: str = None) -> dict:
-    """合成分 → 做多 top 分位 + 200d 趋势闸 → 日频 open-to-open 净值。"""
-    comp, used_factors = composite_scores(factors_df, universe)
+                      start: str = None, end: str = None, factors_subset=None) -> dict:
+    """合成分 → 做多 top 分位 + 200d 趋势闸 → 日频 open-to-open 净值。
+    factors_subset 给定时用单/子因子（做每因子试验 Sharpe，喂 DSR 的 V）。"""
+    comp, used_factors = composite_scores(factors_df, universe, factors_subset=factors_subset)
 
     # union daily calendar
     all_dates = set()

@@ -80,12 +80,16 @@ def seed_shared_ledger(ledger: TrialLedger) -> list:
     return detail
 
 
-def _adv_notional(stock_frames: dict, universe: list, n_long: int, aum: float) -> tuple:
-    """如实容量：per-name 部署额 vs 持仓名保守 ADV。返回 (required_notional, adv_notional, meta)。"""
+def _adv_notional(ddir: Path, universe: list, n_long: int, aum: float) -> tuple:
+    """如实容量：per-name 部署额 vs 持仓名保守 ADV。从原始 parquet 读 volume
+    （load_daily 会丢弃 volume 列，故此处直接读盘）。返回 (required_notional, adv_notional, meta)。"""
     advs = []
     for s in universe:
-        df = stock_frames.get(s)
-        if df is None or "volume" not in df.columns or not len(df):
+        p = ddir / f"{s}_1d.parquet"
+        if not p.exists():
+            continue
+        df = pd.read_parquet(p)
+        if "volume" not in df.columns or "close" not in df.columns or not len(df):
             continue
         tail = df.tail(252)
         dv = (pd.to_numeric(tail["close"], errors="coerce") *
@@ -146,8 +150,23 @@ def main(argv=None) -> int:
     diag = net["diagnostics"]
     n_long_typ = max(1, int(round(diag["mean_n_long_when_on"])))
 
+    # 每因子单独跑一遍拿标准化 Sharpe（DSR 的 V：机器批量挖因子必须吐全量试验 SR）
+    trial_sharpes = []
+    per_factor_sr = {}
+    for f in MULTIFACTOR_FACTORS:
+        try:
+            c = multifactor_curve(factors_df, stock_frames, spy_frame, universe, params,
+                                  cost_mult=2.0, start=args.start, end=args.end, factors_subset=[f])
+            r = c["equity_df"]["ret"].to_numpy(float)
+            r = r[np.isfinite(r)]
+            sr = float(r.mean() / r.std(ddof=1) * np.sqrt(252)) if len(r) > 1 and r.std(ddof=1) > 0 else 0.0
+        except Exception:
+            sr = 0.0
+        trial_sharpes.append(sr)
+        per_factor_sr[f] = sr
+
     # 4) 如实容量
-    req_notional, adv_notional, cap_meta = _adv_notional(stock_frames, universe, n_long_typ, args.aum)
+    req_notional, adv_notional, cap_meta = _adv_notional(ddir, universe, n_long_typ, args.aum)
 
     # 5) 预注册冻结 + Candidate + certify
     cfg = {
@@ -178,6 +197,7 @@ def main(argv=None) -> int:
         required_notional=req_notional, adv_notional=adv_notional,   # 如实(工部规矩#3)
         prereg_config=cfg, frozen_hash=fhash, economic_rationale=rationale,
         n_trials_cumulative=None,                     # 门自去共享台账取 N（工部规矩#4）
+        trial_sharpes=trial_sharpes,                  # 每因子标准化 Sharpe → DSR 的 V（全量吐 SR）
     )
     assert cand.n_trials_cumulative is None and adv_notional > 0, "ADV 必须如实、N 不自报"
     verdict = certify(cand, ledger=ledger, thresholds=GateThresholds(), oos_budget=OOSBudget(max_evals=1))
@@ -207,7 +227,9 @@ def main(argv=None) -> int:
                                       "n_trials_total": r.n_trials_total, "note": r.note}
                                      for r in ledger.runs],
             "seed_detail": seed_detail,
-            "note": "N 取自共享 TrialLedger.cumulative_n()；账本 gitignore，故全量登记明细写此供都察院复核。",
+            "per_factor_sharpe_x2": per_factor_sr,
+            "note": "N 取自共享 TrialLedger.cumulative_n()；账本 gitignore，故全量登记明细+每因子试验 SR "
+                    "写此供都察院复核（DSR 的 V 来自这批 SR）。",
         },
         "capacity_honest": {"required_notional": req_notional, "adv_notional": adv_notional, **cap_meta},
         "cost_model": "10bps/side ×2 决策口径，cost_per_turnover=0.001（与冻结一致）",
