@@ -16,8 +16,8 @@
 |---|---|---|---|
 | 1 | 预注册完整性 + 冻结核对 | `prereg.py` | `REJECTED_prereg` |
 | 2 | 诚实试验计数（不吐全量 N 即不评估） | `trial_ledger.py` | `REJECTED_honesty` / `HonestyError` |
-| 3 | 成本 x1x2 早筛 | `cost_capacity.py` | `REJECTED_cost` |
-| 4 | 容量 / ADV | `cost_capacity.py` | `REJECTED_capacity` |
+| 3 | 成本 x1x2 早筛（以冻结 `cost_model` 为地板） | `cost_capacity.py` | `REJECTED_cost` / `REJECTED_prereg` |
+| 4 | 容量 / ADV（缺失≠放松） | `cost_capacity.py` | `REJECTED_capacity` |
 | 5 | ex-ante 经济理由（无理由→隔离） | `prereg.py` | `REJECTED_rationale` |
 | 6 | 样本外净值 + 危机子窗 + OOS 单发预算 | `metrics.py` / `walk_forward.py` | `REJECTED_oos_budget` / `FAIL` |
 | 7 | DSR 多重检验 haircut（N=跨轮累计真实数） | `deflated_sharpe.py` | `REJECTED_dsr` |
@@ -60,13 +60,24 @@ print(verdict.summary())
 # 才由户部盖 CERTIFY、转都察院终审、回报首辅。
 ```
 
-## 台账是地板（fail-closed）
+## 权威来源是地板（fail-closed）—— 「有权威来源却不查」这一类的统一原则
 
-有 `ledger` 时它是 N 与试验方差 V 的**地板**：自报 `n_trials_cumulative` / `trials_variance`
-只能把门开得**更严**（更大），不能压低。自报 N 低于 `cumulative_n()` → `certify()` 抛
-`HonestyError`（与 `register_run` 同惯例，逼修接线而非静默驳回）。**正确管线用法：传
-`ledger=`，`n_trials_cumulative` / `trials_variance` 留 `None`，让门自台账取数。** 无台账的
-手跑文献候选（如 GEM, N=2）才纯采信自报，合法用途不受影响。
+调用方自报的任何**放松旋钮**都不得静默压过权威来源；缺失也不等于放松。四处已收口：
+
+| 旋钮 | 权威来源 | 规则 |
+|---|---|---|
+| `n_trials_cumulative`（N） | 持久台账 `cumulative_n()` | 自报 < 台账 → `HonestyError`；否则取 `max` |
+| `trials_variance`（V） | 台账 `pooled_trials_variance()` | `effective = max(自报, 台账)`，只能更大 |
+| `cost_per_turnover` | 冻结 `cost_model`（`COST_MODELS`） | `effective = max(地板, 自报)`，只能更贵；未登记标签 → `REJECTED_prereg` |
+| `adv_notional`（容量） | 必须如实申报 | miner（有 `ledger`）缺 ADV → `REJECTED_capacity`（缺失≠放松）；手跑打 `capacity_unverified` 待人工 |
+
+**正确管线用法**：传 `ledger=`，`n_trials_cumulative` / `trials_variance` / `cost_per_turnover`
+留 `None`（让门自台账/冻结标签取数），**如实提供 `adv_notional` / `required_notional`**。
+无台账的手跑文献候选（如 GEM, N=2）才纯采信自报，合法用途不受影响。
+
+> ⚠️ **成本地板是校准输入**：`COST_MODELS["moomoo_retail_x1"]=5bps/单向` 为流动性美股大盘
+> 保守默认，结构已锁（自报不得低于地板），但**数值须据真实 moomoo 费表 + 冻结 universe
+> 流动性复核**——地板设太低则残留在 `[地板, 真值]` 区间。数值待都察院/工部批。
 
 ## 红线
 
