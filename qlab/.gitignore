@@ -14,6 +14,9 @@ reports/*
 !reports/swing_s5_fomc/
 !reports/swing_s1_meanrev/
 data/cache/
+# EVO tooling (工部/都水): derived Qlib .bin store + CSV intermediates are
+# rebuildable from committed data/daily_full via tools/qlib_gen/build_qlib_data.py
+data/qlib_store/
 *.parquet
 # EVO-24: the delivered adjusted daily bars ARE committed (real OpenD qfq data)
 # so the serial 真跑 step reads them from the branch without re-hitting the
