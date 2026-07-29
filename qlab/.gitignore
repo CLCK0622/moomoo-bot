@@ -32,3 +32,6 @@ data/qlib_store/
 # EVO-8 candidate A (rate carry): FRED yield-curve panel is committed for
 # offline reproducible backtest (free/keyless source, small file)
 !data/fred_yields.parquet
+# EVO-8 candidate A universe bars (BIL/IEF/TLT total-return daily), gathered
+# from sibling branches into A's data dir; committed for offline reproducibility
+!data/rate_carry/*.parquet
