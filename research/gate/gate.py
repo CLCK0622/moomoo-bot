@@ -24,7 +24,8 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Sequence
 
 from . import metrics as M
-from .cost_capacity import capacity_gate, cost_stress_gate
+from .cost_capacity import (capacity_gate, cost_stress_gate,
+                            resolve_cost_per_turnover)
 from .deflated_sharpe import deflated_sharpe_ratio
 from .prereg import (economic_rationale_gate, validate_prereg_completeness,
                      verify_unchanged)
@@ -41,7 +42,7 @@ class Candidate:
     # 成本早筛用（毛收益 + 换手）
     gross_returns: Optional[Sequence[float]] = None
     turnover: Optional[Sequence[float]] = None
-    cost_per_turnover: float = 0.0005
+    cost_per_turnover: Optional[float] = None   # None → 用冻结 cost_model 地板；自报只能更贵
     # 容量
     required_notional: float = 0.0
     adv_notional: float = 0.0
@@ -125,25 +126,41 @@ def certify(cand: Candidate,
         return v
     v.gates["n_trials"] = n_trials
 
-    # 3) 成本 x1x2 早筛（贵门之前先杀）
+    # 3) 成本 x1x2 早筛（贵门之前先杀）—— 成本以**冻结 cost_model**为地板，自报只能更贵
+    #    fail-open 修复(工部实测): 门曾直接用候选自报的裸 cost_per_turnover，从不拿冻结的
+    #    cost_model 标签校验；把 50bps 报成 10bps 就能把「成本杀」翻成 certified。
+    #    现在: 从冻结 cost_model 取权威地板，effective=max(地板,自报)；未知标签→REJECTED_prereg。
     if cand.gross_returns is not None and cand.turnover is not None:
-        cs = cost_stress_gate(cand.gross_returns, cand.turnover, cand.cost_per_turnover)
+        try:
+            eff_cost = resolve_cost_per_turnover(
+                cand.prereg_config.get("cost_model"), cand.cost_per_turnover)
+        except KeyError as e:
+            v.decision = "REJECTED_prereg"
+            v.reasons.append(f"未知/未登记的冻结成本模型标签 {e} → 不予评估（不许用未登记便宜成本）。")
+            return v
+        v.gates["cost_per_turnover_effective"] = eff_cost
+        cs = cost_stress_gate(cand.gross_returns, cand.turnover, eff_cost)
         v.gates["cost_stress"] = cs.__dict__
         if not cs.passed_early:
             v.decision = "REJECTED_cost"
-            v.reasons.append(f"成本 x1 净 Sharpe={cs.sharpe_x1:.3f}<=0 → 早筛淘汰。")
+            v.reasons.append(
+                f"成本 x1(地板口径 {eff_cost:.4%}/换手) 净 Sharpe={cs.sharpe_x1:.3f}<=0 → 早筛淘汰。")
             return v
         if not cs.robust:
             v.reasons.append(f"警告：成本 x2 下 Sharpe={cs.sharpe_x2:.3f}<=0，成本鲁棒性不足。")
 
-    # 4) 容量 / ADV
-    if cand.adv_notional > 0:
+    # 4) 容量 / ADV —— 缺失≠放松：ADV 未申报不静默跳过，延迟到 step 8 对 miner 候选定夺
+    #    fail-open 修复(工部实测): `if adv>0` 意味着不报 ADV 整道容量门直接不跑，
+    #    「如实申报被杀、闭嘴就能过」。延迟判定既堵洞又不掩盖更靠前的真实失败原因。
+    if cand.adv_notional and cand.adv_notional > 0:
         cap = capacity_gate(cand.required_notional, cand.adv_notional, max_participation)
         v.gates["capacity"] = cap.__dict__
         if not cap.passed:
             v.decision = "REJECTED_capacity"
             v.reasons.append(f"容量不足：参与率 {cap.participation:.2%} > 上限 {max_participation:.0%}。")
             return v
+    else:
+        v.gates["capacity_unverified"] = True   # ADV 未申报；step 8 对 miner 候选兜底
 
     # 5) 经济理由门
     rr = economic_rationale_gate(cand.economic_rationale)
@@ -197,9 +214,18 @@ def certify(cand: Candidate,
             f"未过影子上报门（CAGR={rep.cagr:.1%}, MDD={rep.mdd:.1%}）。")
         return v
 
+    # 容量未验证兜底：miner 候选（有台账）不申报 ADV 不得 certified（缺失≠放松，同诚实计数地基）
+    if v.gates.get("capacity_unverified") and ledger is not None:
+        v.decision = "REJECTED_capacity"
+        v.reasons.append("miner 候选未如实申报 ADV/required_notional → 容量不可验证，"
+                         "不予 certified（缺失≠放松）。传入真实 ADV 后重验。")
+        return v
+
     # 全部硬门通过 + 触发上报/决策点 → 可 CERTIFY
     v.certified = True
     v.decision = rep.decision
+    if v.gates.get("capacity_unverified"):   # 无台账手跑候选：容量未验证，certified 但标记待人工复核
+        v.reasons.append("注意：手跑候选未申报 ADV，容量未经门验证，须都察院终审时人工确认。")
     if rep.decision == "REPORT_5020":
         v.reasons.append(f"直接清官方 50/20（CAGR={rep.cagr:.1%}, MDD={rep.mdd:.1%}）→ 即刻上报。")
     else:  # DECISION_POINT

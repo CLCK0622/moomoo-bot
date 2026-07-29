@@ -17,6 +17,28 @@ import numpy as np
 import pandas as pd
 
 
+# 冻结 cost_model 标签 → 该模型下每单位换手的**权威** x1 成本（每期，比例，单向）。
+# 口径：moomoo 零售全额一单向 = ~0 佣金 + 监管费(SEC/TAF) + 半价差 + 零售规模滑点，
+# 流动性美股大盘保守取 5bps。x2 压力档由 cost_stress_gate 内部 ×2，不写进这里。
+# ⚠️ 此常数是**校准输入**，应据真实 moomoo 费表 + 冻结 universe 的实际流动性复核：
+# 门只保证「自报不得低于此地板」，地板设太低则残留在 [canonical, 真值] 区间。数值待都察院/工部批。
+COST_MODELS = {
+    "moomoo_retail_x1": 0.0005,   # 5 bps / 单向换手
+}
+
+
+def resolve_cost_per_turnover(frozen_cost_model, self_reported=None) -> float:
+    """
+    以**冻结 cost_model 标签**为地板：effective = max(registry[label], 自报)。
+    自报只能更贵不能更便宜（对称于 N/V 的台账地板）；未知标签 → KeyError（预注册完整性问题，
+    fail-closed，不许用未登记的便宜成本模型蒙混）。自报 None → 直接用地板。
+    """
+    if frozen_cost_model not in COST_MODELS:
+        raise KeyError(frozen_cost_model)
+    floor = COST_MODELS[frozen_cost_model]
+    return max(floor, self_reported if self_reported is not None else 0.0)
+
+
 def apply_costs(gross_returns: Sequence[float], turnover: Sequence[float],
                 cost_per_turnover: float, multiplier: float = 1.0) -> pd.Series:
     """

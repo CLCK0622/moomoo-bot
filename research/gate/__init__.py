@@ -28,8 +28,9 @@ research.gate —— EVO-149 冻结验收门（户部门禁护栏）
     print(verdict.summary())
     # verdict.certified==True 且 decision in {REPORT_5020, DECISION_POINT} 才回报首辅。
 """
-from .cost_capacity import (CapacityResult, CostStressResult, apply_costs,
-                            capacity_gate, cost_stress_gate)
+from .cost_capacity import (COST_MODELS, CapacityResult, CostStressResult,
+                            apply_costs, capacity_gate, cost_stress_gate,
+                            resolve_cost_per_turnover)
 from .deflated_sharpe import (DSRResult, deflated_sharpe_ratio,
                               expected_max_sharpe, probabilistic_sharpe_ratio)
 from .gate import Candidate, Verdict, certify
@@ -37,18 +38,21 @@ from .metrics import (DEFAULT_CRISIS_WINDOWS, GateThresholds, MetricsReport,
                       cagr, evaluate, joint_gate, max_drawdown, mar, sharpe)
 from .prereg import (economic_rationale_gate, freeze_config,
                      validate_prereg_completeness, verify_unchanged)
-from .trial_ledger import HonestyError, RunRecord, TrialLedger
+from .trial_ledger import (DEFAULT_LEDGER_PATH, HonestyError, RunRecord,
+                           TrialLedger, project_ledger)
 from .walk_forward import (OOSBudget, OOSBudgetExceeded, cpcv_splits,
                            walk_forward_splits)
 
 __all__ = [
     "certify", "Candidate", "Verdict",
     "TrialLedger", "RunRecord", "HonestyError",
+    "project_ledger", "DEFAULT_LEDGER_PATH",
     "GateThresholds", "MetricsReport", "evaluate", "joint_gate",
     "cagr", "max_drawdown", "sharpe", "mar", "DEFAULT_CRISIS_WINDOWS",
     "deflated_sharpe_ratio", "probabilistic_sharpe_ratio",
     "expected_max_sharpe", "DSRResult",
     "cost_stress_gate", "capacity_gate", "apply_costs",
+    "resolve_cost_per_turnover", "COST_MODELS",
     "CostStressResult", "CapacityResult",
     "freeze_config", "verify_unchanged", "validate_prereg_completeness",
     "economic_rationale_gate",

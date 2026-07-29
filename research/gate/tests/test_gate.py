@@ -287,10 +287,154 @@ def test_selfreport_cannot_undercut_ledger():
           ve.decision == "REJECTED_dsr")
 
 
+# ---------- 9. fail-open 收口二：成本以冻结 cost_model 为地板（工部实测复现） ----------
+def test_cost_model_is_floor():
+    print("9) 成本地板 —— 自报成本不得低于冻结 cost_model")
+    dates = _dates()
+    good_oos = _sinusoid_returns(0.0012, 0.004)
+    # 毛收益均值 0.0003 < 地板 5bps*turnover(1.0)=0.0005 → 按地板算净 Sharpe<=0
+    gross = _sinusoid_returns(0.0003, 0.004)
+    to = [1.0] * len(good_oos)
+    cfg = _base_cfg(); h = freeze_config(cfg)   # cost_model = moomoo_retail_x1
+    rationale = ("动量/趋势溢价：横截面与时序证据，行为(处置效应/羊群)+风险(增长期权)双解释，"
+                 "跨市场跨年代稳健，非纯数据挖掘，非曲线拟合。")
+
+    # 先证漏洞面存在：裸报 1e-7 成本 cost_stress 会放行，按地板 5bps 则杀
+    from research.gate import cost_stress_gate as _csg
+    check("裸报 cost=1e-7 → cost_stress 放行（漏洞面）", _csg(gross, to, 1e-7).passed_early)
+    check("按地板 cost=5bps → cost_stress 杀", not _csg(gross, to, 0.0005).passed_early)
+
+    def mk(cost):
+        return Candidate(name="dm", oos_net_returns=good_oos, oos_dates=dates,
+                         gross_returns=gross, turnover=to, cost_per_turnover=cost,
+                         required_notional=1e5, adv_notional=1e9,  # 容量充足，隔离成本门
+                         prereg_config=cfg, frozen_hash=h, economic_rationale=rationale,
+                         n_trials_cumulative=1, trials_variance=0.05)
+
+    # 工部复现：自报 1e-7 → 旧版 certified；新版被地板抬到 5bps → REJECTED_cost
+    v_tiny = certify(mk(1e-7), oos_budget=OOSBudget(1))
+    check("自报 1e-7 → REJECTED_cost（地板生效）", v_tiny.decision == "REJECTED_cost")
+    check("  生效成本被抬到地板 5bps", abs(v_tiny.gates["cost_per_turnover_effective"] - 0.0005) < 1e-12)
+    # 如实报 50bps → 仍 REJECTED_cost（自报更贵，取自报）
+    v_honest = certify(mk(0.005), oos_budget=OOSBudget(1))
+    check("自报 50bps → REJECTED_cost，生效取更贵 0.005",
+          v_honest.decision == "REJECTED_cost" and
+          abs(v_honest.gates["cost_per_turnover_effective"] - 0.005) < 1e-12)
+
+    # 未登记的便宜成本模型标签 → REJECTED_prereg（不许蒙混）
+    cfg_bad = _base_cfg(); cfg_bad["cost_model"] = "ultra_cheap_unlisted"
+    vb = certify(Candidate(name="x", oos_net_returns=good_oos, oos_dates=dates,
+                           gross_returns=gross, turnover=to, cost_per_turnover=1e-7,
+                           prereg_config=cfg_bad, frozen_hash=freeze_config(cfg_bad),
+                           economic_rationale=rationale, n_trials_cumulative=1,
+                           trials_variance=0.05), oos_budget=OOSBudget(1))
+    check("未登记成本模型标签 → REJECTED_prereg", vb.decision == "REJECTED_prereg")
+
+
+# ---------- 10. fail-open 收口三：ADV 缺失≠放松（工部实测复现） ----------
+def test_capacity_missing_is_not_pass():
+    print("10) 容量地基 —— ADV 缺失不得静默跳过")
+    dates = _dates()
+    good_oos = _sinusoid_returns(0.0012, 0.004)
+    cfg = _base_cfg(); h = freeze_config(cfg)
+    rationale = ("动量/趋势溢价：横截面与时序证据，行为(处置效应/羊群)+风险(增长期权)双解释，"
+                 "跨市场跨年代稳健，非纯数据挖掘，非曲线拟合。")
+
+    # miner 上下文：小 N 台账让候选过 DSR，从而暴露 step8 容量兜底
+    led = TrialLedger(path=None)
+    led.register_run("m", "qlib", n_trials_total=2, n_evaluated=1,
+                     trial_sharpes_var=0.01, now_iso="2026-07-29T00:00:00Z")
+
+    def mk(**kw):
+        base = dict(name="dm", oos_net_returns=good_oos, oos_dates=dates,
+                    gross_returns=_sinusoid_returns(0.0014, 0.004),
+                    turnover=[0.1] * len(good_oos), cost_per_turnover=0.0005,
+                    prereg_config=cfg, frozen_hash=h, economic_rationale=rationale,
+                    n_trials_cumulative=None, trials_variance=None)
+        base.update(kw)
+        return Candidate(**base)
+
+    # 10a miner 候选如实报 ADV 且需求超限 → REJECTED_capacity（正常门）
+    va = certify(mk(required_notional=1e9, adv_notional=1e6), ledger=led,
+                 oos_budget=OOSBudget(1))
+    check("如实报 ADV 超限 → REJECTED_capacity", va.decision == "REJECTED_capacity")
+
+    # 10b 工部复现：miner 候选**不报 ADV**（默认 0）→ 旧版 certified；新版 REJECTED_capacity
+    vb = certify(mk(), ledger=led, oos_budget=OOSBudget(1))
+    check("miner 不报 ADV → REJECTED_capacity（缺失≠放松）",
+          vb.decision == "REJECTED_capacity" and not vb.certified)
+    check("  已标记 capacity_unverified", vb.gates.get("capacity_unverified") is True)
+
+    # 10c miner 候选如实报充足 ADV → 正常 certified
+    vc = certify(mk(required_notional=1e5, adv_notional=1e9), ledger=led,
+                 oos_budget=OOSBudget(1))
+    check("如实报充足 ADV → certified", vc.certified and vc.decision == "DECISION_POINT")
+
+    # 10d 无台账手跑候选（自报 N=2）不报 ADV → 不误伤：certified 但标记待人工复核
+    vd = certify(mk(n_trials_cumulative=2, trials_variance=0.01),
+                 oos_budget=OOSBudget(1))   # 无 ledger
+    check("手跑候选不报 ADV → 仍 certified（合法用途不阻断）", vd.certified)
+    check("  但打上 capacity_unverified 待都察院人工核", vd.gates.get("capacity_unverified") is True)
+
+
+# ---------- 11. 台账跨轮真累计 + 持久化 + 幂等去重（工部实测：账本累计不起来） ----------
+def test_ledger_accumulates_and_persists():
+    print("11) 共享台账 —— 跨候选累计 / 持久 / 幂等")
+    import os
+    import tempfile
+    from research.gate.trial_ledger import DEFAULT_LEDGER_PATH
+    d = tempfile.mkdtemp()
+    p = os.path.join(d, "shared.jsonl")
+
+    l1 = TrialLedger(p)
+    l1.register_run("residmom", "qlib", n_trials_total=4, n_evaluated=1,
+                    now_iso="2026-07-29T00:00:00Z")
+    l1.register_run("multifactor", "qlib", n_trials_total=158, n_evaluated=3,
+                    trial_sharpes_var=0.03, now_iso="2026-07-29T00:00:00Z")
+    check("同一共享台账跨候选累计 = 4+158 = 162", l1.cumulative_n() == 162)
+
+    # 持久化：重开同文件仍在（换分支/进程/机器不归零）
+    l2 = TrialLedger(p)
+    check("重开同文件持久 = 162（不归零）", l2.cumulative_n() == 162)
+
+    # 幂等：重登记同 run_id 不重复计数
+    l2.register_run("residmom", "qlib", n_trials_total=4, n_evaluated=1,
+                    now_iso="2026-07-29T00:00:00Z")
+    check("重登记同 run_id → 不双计，仍 162", l2.cumulative_n() == 162)
+
+    # 去重：文件里混入重复行，加载按 run_id 去重
+    with open(p, "a", encoding="utf-8") as f:
+        f.write('{"run_id":"residmom","source":"qlib","n_trials_total":4,'
+                '"n_evaluated":1,"trial_sharpes_var":null,"note":"dup","ts":"x"}\n')
+    l3 = TrialLedger(p)
+    check("加载对重复行按 run_id 去重 → 仍 162", l3.cumulative_n() == 162)
+
+    # 反例（工部实测的坏味道）：按候选各建文件 → 各自只看得见本轮
+    pa = os.path.join(d, "residmom.jsonl"); pb = os.path.join(d, "multifactor.jsonl")
+    la = TrialLedger(pa); la.register_run("a", "qlib", n_trials_total=4, n_evaluated=1,
+                                          now_iso="2026-07-29T00:00:00Z")
+    lb = TrialLedger(pb); lb.register_run("b", "qlib", n_trials_total=158, n_evaluated=3,
+                                          now_iso="2026-07-29T00:00:00Z")
+    check("分文件的坏味道：各自 cumulative 只等本轮（4 / 158，不累计）",
+          la.cumulative_n() == 4 and lb.cumulative_n() == 158)
+
+    for x in (p, pa, pb):
+        if os.path.exists(x):
+            os.remove(x)
+    os.rmdir(d)
+
+    # 已入库的规范历史基线在位（cumulative_n 有真实历史下限，非本轮 0）
+    if os.path.exists(DEFAULT_LEDGER_PATH):
+        seeded = TrialLedger(DEFAULT_LEDGER_PATH)
+        check("规范台账历史基线已入库（cumulative_n>=14）", seeded.cumulative_n() >= 14)
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
-              test_selfreport_cannot_undercut_ledger):
+              test_selfreport_cannot_undercut_ledger,
+              test_cost_model_is_floor, test_capacity_missing_is_not_pass,
+              test_ledger_accumulates_and_persists):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 

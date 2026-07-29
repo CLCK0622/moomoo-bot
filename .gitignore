@@ -6,5 +6,6 @@
 __pycache__/
 *.pyc
 
-# 门禁运行态（试验台账等），不入库
-research/gate/state/
+# 门禁：只忽略临时态；**权威共享试验台账须入库**以支持跨轮累计真 N（工部 07-29 实测）
+research/gate/state/*
+!research/gate/state/trial_ledger.jsonl
