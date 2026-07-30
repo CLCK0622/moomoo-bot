@@ -24,6 +24,10 @@ class HonestyError(ValueError):
     """miner 未吐全量 N / 声明的 N 小于实际评估数 → 拒绝评估。"""
 
 
+class RefreezeError(ValueError):
+    """同一候选换 prereg commit 重登（run_id 变）而未显式声明 supersedes → 拒绝，防重复计数。"""
+
+
 @dataclass
 class RunRecord:
     run_id: str
@@ -35,6 +39,10 @@ class RunRecord:
     # 退化成候选自己那一组（max(自报,台账)=max(x,x)），不构成独立地板。要让 pooled V 成为**跨轮
     # 独立**兜底，每条登记须带上 trial_sharpes；pooled 从各轮 Sharpe 的并集算，且可排除候选自己那轮。
     trial_sharpes: Optional[List[float]] = None
+    # 候选的**稳定身份**（如 'carry_rates_A'），与 run_id（内嵌 prereg commit，重冻会变）区分开。
+    # 工部 2026-07-30(EVO-8 A)：run_id 内嵌 commit → 重冻换 key → 按 run_id 的幂等被绕过 → 同一候选
+    # 计两遍（N 虚高、反噬为假阴性）。带 candidate_id 后可识别"同候选重冻"并去重/拦截。
+    candidate_id: Optional[str] = None
     note: str = ""
     ts: str = ""
 
@@ -79,11 +87,27 @@ class TrialLedger:
     def register_run(self, run_id: str, source: str, n_trials_total: Optional[int],
                      n_evaluated: int, trial_sharpes: Optional[Sequence[float]] = None,
                      trial_sharpes_var: Optional[float] = None, note: str = "",
-                     now_iso: Optional[str] = None) -> RunRecord:
+                     now_iso: Optional[str] = None, candidate_id: Optional[str] = None,
+                     supersedes: Optional[str] = None) -> RunRecord:
         # 幂等：同 run_id 已登记 → 返回既有，不重复计数（重跑/跨轮安全）。
         for r in self.runs:
             if r.run_id == run_id:
                 return r
+        # 重冻护栏（工部 2026-07-30）：同一 candidate_id 已有别的 run_id（＝重冻换了 prereg commit）→
+        # 不得静默追加（会把同一候选计两遍、N 虚高）。须显式声明 supersedes=<旧 run_id> 覆盖（计一次），
+        # 否则拒绝——逼调用方表态是"同候选重冻覆盖"还是"真的新试验"（新试验请用不同 candidate_id）。
+        if candidate_id is not None:
+            prior = [r for r in self.runs
+                     if r.candidate_id == candidate_id and r.run_id != run_id]
+            if prior:
+                if supersedes is not None and any(r.run_id == supersedes for r in prior):
+                    self.runs = [r for r in self.runs if r.run_id != supersedes]  # 覆盖，计一次
+                else:
+                    raise RefreezeError(
+                        f"候选 candidate_id='{candidate_id}' 已以 run_id={[r.run_id for r in prior]} 登记，"
+                        f"现又以新 run_id={run_id} 重登（多为重冻换 prereg commit）。须显式 "
+                        f"supersedes=<旧 run_id> 覆盖计一次，或换 candidate_id 认作真新试验——不静默追加防重复计数。"
+                    )
         # —— 诚实计数门 ——
         if n_trials_total is None:
             raise HonestyError(
@@ -101,7 +125,7 @@ class TrialLedger:
         ts = now_iso or datetime.now(timezone.utc).isoformat()
         rec = RunRecord(run_id=run_id, source=source, n_trials_total=int(n_trials_total),
                         n_evaluated=int(n_evaluated), trial_sharpes_var=var,
-                        trial_sharpes=ts_list, note=note, ts=ts)
+                        trial_sharpes=ts_list, candidate_id=candidate_id, note=note, ts=ts)
         self.runs.append(rec)
         self._save()
         return rec

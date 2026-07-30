@@ -10,11 +10,16 @@ walk_forward.py —— 严格样本外：purged + embargo 切分 / CPCV / 单发
 """
 from __future__ import annotations
 
+import json
+import os
 from dataclasses import dataclass, field
 from itertools import combinations
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
+
+# 全项目**唯一共享**单发 OOS 预算的规范路径。与台账同理**须入库**，否则跨 run/机器每次发新票。
+DEFAULT_OOS_BUDGET_PATH = "research/gate/state/oos_budget.json"
 
 
 def _purge_embargo(train: np.ndarray, test: np.ndarray, label_horizon: int,
@@ -82,18 +87,46 @@ class OOSBudgetExceeded(RuntimeError):
 
 @dataclass
 class OOSBudget:
-    """每个 key（预注册/候选）只给 max_evals 次 OOS。默认 1（单发）。"""
+    """
+    每个 key（预注册/候选）只给 max_evals 次 OOS。默认 1（单发）。
+
+    **持久化（工部 2026-07-30 第八种 fail-open）**：_used 若只活在进程内，「单发」仅在单个 run
+    内成立——每次新建 OOSBudget 都发一张新的"单发票"，跨 run 形同虚设，而它防的正是最基本的过拟合
+    「跑→看结果→改→再跑」。传 `path` 即按 key **落盘**，跨 run / 跨进程守住单发；重跑须显式换新
+    预注册（新 key = 新试验，走台账 N），而不是白拿一张新票。此文件须入库（否则换机器又归零）。
+    """
     max_evals: int = 1
+    path: Optional[str] = None
     _used: Dict[str, int] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if self.path and os.path.exists(self.path):
+            with open(self.path, "r", encoding="utf-8") as f:
+                self._used = {str(k): int(v) for k, v in json.load(f).items()}
+
+    def _save(self) -> None:
+        if not self.path:
+            return
+        os.makedirs(os.path.dirname(os.path.abspath(self.path)), exist_ok=True)
+        with open(self.path, "w", encoding="utf-8") as f:
+            json.dump(self._used, f, ensure_ascii=False, indent=2, sort_keys=True)
 
     def consume(self, key: str) -> None:
         used = self._used.get(key, 0)
         if used >= self.max_evals:
             raise OOSBudgetExceeded(
                 f"OOS 预算耗尽：key='{key}' 已评估 {used} 次（上限 {self.max_evals}）。"
-                "OOS 是一次性资源，反复偷看即失可信 —— 需新预注册（记新试验）。"
+                "OOS 是一次性资源，反复偷看即失可信 —— 需新预注册（记新试验），不是重跑白拿新票。"
             )
         self._used[key] = used + 1
+        self._save()
 
     def used(self, key: str) -> int:
         return self._used.get(key, 0)
+
+
+def project_oos_budget(max_evals: int = 1,
+                       path: str = DEFAULT_OOS_BUDGET_PATH) -> "OOSBudget":
+    """打开**全项目唯一共享**、落盘持久的单发 OOS 预算（默认 DEFAULT_OOS_BUDGET_PATH）。
+    管线一律用它——别用进程内的 OOSBudget()，否则每 run 一张新票、单发形同虚设。消费后须把文件入库。"""
+    return OOSBudget(max_evals=max_evals, path=path)

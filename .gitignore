@@ -6,6 +6,7 @@
 __pycache__/
 *.pyc
 
-# 门禁：只忽略临时态；**权威共享试验台账须入库**以支持跨轮累计真 N（工部 07-29 实测）
+# 门禁：只忽略临时态；**权威共享状态须入库**（跨轮累计真 N / 跨 run 单发 OOS，工部 07-29/07-30 实测）
 research/gate/state/*
 !research/gate/state/trial_ledger.jsonl
+!research/gate/state/oos_budget.json

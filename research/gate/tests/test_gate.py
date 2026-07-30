@@ -555,6 +555,64 @@ def test_pooled_v_independent_floor():
           led2.pooled_trials_variance(exclude_run_id="candA") is None)
 
 
+def test_oos_budget_persists():
+    """工部 2026-07-30 第八种 fail-open：单发 OOS 预算不落盘 → 每 run 一张新票、跨 run 形同虚设。"""
+    print("16) 单发 OOS 预算跨 run 持久")
+    import os
+    import tempfile
+    from research.gate.walk_forward import OOSBudget as _OB
+    d = tempfile.mkdtemp(); p = os.path.join(d, "oos.json")
+    b1 = _OB(max_evals=1, path=p)
+    b1.consume("candK")
+    raised = False
+    try:
+        b1.consume("candK")
+    except OOSBudgetExceeded:
+        raised = True
+    check("进程内第 2 次 consume → 拦", raised)
+    # 新建（模拟新 run/新进程）读同一落盘文件 → 仍已用尽（跨 run 守住单发）
+    b2 = _OB(max_evals=1, path=p)
+    check("新建预算读同文件 → used=1（跨 run 持久）", b2.used("candK") == 1)
+    raised = False
+    try:
+        b2.consume("candK")
+    except OOSBudgetExceeded:
+        raised = True
+    check("  跨 run 第 2 次 → 拦（不再白拿新票）", raised)
+    # 对照坏味道：不落盘 → 新建又发新票
+    b3 = _OB(max_evals=1); b3.consume("x")
+    check("不落盘 → 新建又发新票（坏味道对照，used=0）", _OB(max_evals=1).used("x") == 0)
+    os.remove(p); os.rmdir(d)
+
+
+def test_refreeze_guard():
+    """工部 2026-07-30(EVO-8 A)：run_id 内嵌 commit，重冻换 key 绕过幂等 → 同候选计两遍。"""
+    print("17) 重冻护栏（同候选换 prereg commit 不得重复计数）")
+    from research.gate.trial_ledger import RefreezeError as _RF
+    led = TrialLedger(path=None)
+    led.register_run("carry_A-5d25064", "qlib", n_trials_total=3, n_evaluated=1,
+                     candidate_id="carry_rates_A", trial_sharpes=[0.02, 0.03, 0.04],
+                     now_iso="2026-07-30T00:00:00Z")
+    check("首登 cumulative_n=3", led.cumulative_n() == 3)
+    raised = False
+    try:
+        led.register_run("carry_A-16be273", "qlib", n_trials_total=3, n_evaluated=1,
+                         candidate_id="carry_rates_A", trial_sharpes=[0.02, 0.03, 0.04],
+                         now_iso="2026-07-30T00:00:00Z")
+    except _RF:
+        raised = True
+    check("重冻未声明 supersedes → RefreezeError", raised)
+    check("  台账未被追加，仍 3（没有 N=6 重复计数）", led.cumulative_n() == 3)
+    led.register_run("carry_A-16be273", "qlib", n_trials_total=3, n_evaluated=1,
+                     candidate_id="carry_rates_A", trial_sharpes=[0.02, 0.03, 0.04],
+                     supersedes="carry_A-5d25064", now_iso="2026-07-30T00:00:00Z")
+    check("声明 supersedes → 覆盖计一次，仍 3", led.cumulative_n() == 3)
+    check("  台账只剩新 run_id", [r.run_id for r in led.runs] == ["carry_A-16be273"])
+    led.register_run("newcand-abc", "qlib", n_trials_total=5, n_evaluated=1,
+                     candidate_id="new_candidate", now_iso="2026-07-30T00:00:00Z")
+    check("不同 candidate_id → 真新试验、累计 3+5=8", led.cumulative_n() == 8)
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
@@ -562,7 +620,8 @@ def main():
               test_cost_model_is_floor, test_capacity_missing_is_not_pass,
               test_ledger_accumulates_and_persists, test_dsr_unit_scale,
               test_ppy_is_not_a_free_knob,
-              test_family_must_be_frozen, test_pooled_v_independent_floor):
+              test_family_must_be_frozen, test_pooled_v_independent_floor,
+              test_oos_budget_persists, test_refreeze_guard):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 

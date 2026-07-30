@@ -38,15 +38,17 @@ from .metrics import (DEFAULT_CRISIS_WINDOWS, GateThresholds, MetricsReport,
                       cagr, evaluate, joint_gate, max_drawdown, mar, sharpe)
 from .prereg import (economic_rationale_gate, freeze_config,
                      validate_prereg_completeness, verify_unchanged)
-from .trial_ledger import (DEFAULT_LEDGER_PATH, HonestyError, RunRecord,
-                           TrialLedger, project_ledger)
-from .walk_forward import (OOSBudget, OOSBudgetExceeded, cpcv_splits,
+from .trial_ledger import (DEFAULT_LEDGER_PATH, HonestyError, RefreezeError,
+                           RunRecord, TrialLedger, project_ledger)
+from .walk_forward import (DEFAULT_OOS_BUDGET_PATH, OOSBudget, OOSBudgetExceeded,
+                           cpcv_splits, project_oos_budget,
                            walk_forward_splits)
 
 __all__ = [
     "certify", "Candidate", "Verdict",
-    "TrialLedger", "RunRecord", "HonestyError",
+    "TrialLedger", "RunRecord", "HonestyError", "RefreezeError",
     "project_ledger", "DEFAULT_LEDGER_PATH",
+    "project_oos_budget", "DEFAULT_OOS_BUDGET_PATH",
     "GateThresholds", "MetricsReport", "evaluate", "joint_gate",
     "cagr", "max_drawdown", "sharpe", "mar", "DEFAULT_CRISIS_WINDOWS",
     "deflated_sharpe_ratio", "probabilistic_sharpe_ratio",
@@ -58,3 +60,5 @@ __all__ = [
     "economic_rationale_gate",
     "walk_forward_splits", "cpcv_splits", "OOSBudget", "OOSBudgetExceeded",
 ]
+
+# 便捷别名，供管线：project_oos_budget()。RefreezeError 从 trial_ledger 暴露。
