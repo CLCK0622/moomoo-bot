@@ -78,6 +78,7 @@ class DSRResult:
     dsr: float               # 真正判据
     passed: bool
     scale_warning: bool = False   # 疑似单位不一致（V 尺度 vs sr_per_period），见下
+    scale_note: str = ""          # 打旗原因（哪一侧、往严还是往松），供都察院/产出侧定位
 
 
 def deflated_sharpe_ratio(sr_per_period: float, n_obs: int, skew: float, kurt: float,
@@ -105,10 +106,24 @@ def deflated_sharpe_ratio(sr_per_period: float, n_obs: int, skew: float, kurt: f
     tvar = (trials_variance / ppy) if trials_variance is not None else None
     v = _variance_of_trials(ts, tvar)
 
-    # 单位体检：每期 Sharpe 抽样标准差量级 ~ 1/√n_obs；√V 远超则疑似年化未归一。
+    # 单位体检（**双侧**，工部 2026-07-30）：每期 Sharpe 抽样标准差量级 ~ 1/√n_obs。
+    #   上界：√V 远超 → 疑似年化未归一（V 偏大 → 门过严 → 误杀真 alpha / 假阴性）。
+    #   下界：√V 远低于抽样噪声 → 试验 Sharpe 离散度比噪声还小一个量级，不可能，
+    #         典型成因是**已是每期口径却又声明了 ppy**，V 被再除一次 → 门过松 → 假阳性。
+    #         只有下界这一侧会放松门，必须打旗，不能静默。
     scale_warning = False
-    if v > 0 and n_obs > 1 and math.sqrt(v) > 8.0 / math.sqrt(n_obs):
-        scale_warning = True
+    scale_note = ""
+    if v > 0 and n_obs > 1:
+        sd, noise = math.sqrt(v), 1.0 / math.sqrt(n_obs)
+        if sd > 8.0 * noise:
+            scale_warning = True
+            scale_note = ("√V 远超每期抽样噪声（%.3g vs %.3g）→ 疑似试验 Sharpe 仍是年化、"
+                          "未声明 ppy 归一；门会过严（假阴性）。" % (sd, noise))
+        elif sd < noise / 8.0:
+            scale_warning = True
+            scale_note = ("√V 远低于每期抽样噪声（%.3g vs %.3g）→ 疑似试验 Sharpe 已是每期口径"
+                          "却又声明 trials_periods_per_year=%d，V 被重复归一；门会过松（假阳性）。"
+                          % (sd, noise, ppy))
 
     sr0 = expected_max_sharpe(n_trials, v)
     psr0 = probabilistic_sharpe_ratio(sr_per_period, n_obs, skew, kurt, sr_benchmark=0.0)
@@ -117,7 +132,7 @@ def deflated_sharpe_ratio(sr_per_period: float, n_obs: int, skew: float, kurt: f
         sr_per_period=sr_per_period, n_obs=n_obs, n_trials=n_trials,
         expected_max_sr=sr0, psr_vs_zero=psr0, dsr=dsr,
         passed=(not np.isnan(dsr)) and dsr >= threshold,
-        scale_warning=scale_warning,
+        scale_warning=scale_warning, scale_note=scale_note,
     )
 
 

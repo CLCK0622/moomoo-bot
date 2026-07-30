@@ -23,6 +23,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Sequence
 
+import pandas as pd
+
 from . import metrics as M
 from .cost_capacity import (capacity_gate, cost_stress_gate,
                             resolve_cost_per_turnover)
@@ -196,6 +198,31 @@ def certify(cand: Candidate,
     #    同类 fail-open 一并堵死：试验方差 V 亦是放松旋钮（V 越小 → 期望最大 SR0 越小
     #    → DSR 越易过，一个极小的自报 V 就能把基准压到 ~0）。台账 pooled V 作地板，
     #    自报 V 只能取更严(更大)方向，不得静默压低。无台账时才纯采信自报 V（手跑候选）。
+    # ppy 不是自由旋钮（工部 2026-07-30）：声明 ppy>1 会把 V 除以 ppy → 门变松，
+    # 是与 N/V/成本/容量同类的 fail-open。权威来源不是调用方，而是**候选自己的收益序列频率**：
+    # 一个合法的年化因子必须等于该序列的每年期数（日频≈252、周频≈52、月频≈12）。
+    # 声明值与实测频率不符 → 拒绝（例如 ppy=10000，或对月频数据声明 252）。
+    ppy_declared = max(int(cand.trials_periods_per_year or 1), 1)
+    if ppy_declared > 1:
+        derived = None
+        if cand.oos_dates is not None and len(cand.oos_dates) > 1:
+            dts = pd.to_datetime(pd.Series(list(cand.oos_dates)))
+            span_yrs = (dts.iloc[-1] - dts.iloc[0]).days / 365.25
+            if span_yrs > 0:
+                derived = len(cand.oos_net_returns) / span_yrs
+        if derived is None:
+            v.decision = "REJECTED_prereg"
+            v.reasons.append(
+                f"声明 trials_periods_per_year={ppy_declared} 但候选未提供 oos_dates，"
+                "无法据收益序列频率核验年化尺度 → 不予评估（ppy 不接受无据自报）。")
+            return v
+        if not (0.5 * derived <= ppy_declared <= 2.0 * derived):
+            v.decision = "REJECTED_prereg"
+            v.reasons.append(
+                f"声明 trials_periods_per_year={ppy_declared} 与收益序列实测频率 "
+                f"≈{derived:.0f}/年 不符 → 拒绝。过报 ppy 会把 V 重复归一、静默放松 DSR（假阳性）。")
+            return v
+
     tv_self = cand.trials_variance
     tv_ledger = ledger.pooled_trials_variance() if ledger is not None else None
     tv_candidates = [x for x in (tv_self, tv_ledger) if x is not None]
@@ -209,9 +236,8 @@ def certify(cand: Candidate,
         )
         v.gates["dsr"] = dsr.__dict__
         if dsr.scale_warning:
-            v.reasons.append(
-                "警告：DSR 试验 Sharpe 疑似单位不一致（V 尺度 vs 每期 sr）——"
-                "若产出侧年化了试验 Sharpe，请传 trials_periods_per_year 归一，否则会误杀真 alpha。")
+            v.reasons.append("警告：DSR 试验 Sharpe 疑似单位不一致（V 尺度 vs 每期 sr）——"
+                             + (dsr.scale_note or "请核产出侧年化口径。"))
         if not dsr.passed:
             v.decision = "REJECTED_dsr"
             v.reasons.append(

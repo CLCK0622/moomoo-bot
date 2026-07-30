@@ -458,12 +458,52 @@ def test_dsr_unit_scale():
           abs(direct.expected_max_sr - fixed.expected_max_sr) < 1e-6)
 
 
+def test_ppy_is_not_a_free_knob():
+    """工部 2026-07-30：ppy 是反方向的 fail-open（多报 → V 被重复归一 → 门变松）。
+    硬门：声明值须与收益序列实测频率相符。软旗：双侧，放松那一侧必须打旗。"""
+    print("13) ppy 反方向护栏（过报 ppy 不得静默放松门）")
+    sr, n_obs, skew, kurt, N = 0.04241118830323271, 4662, -0.7858373485840723, 12.331362454271403, 29
+    V_pp = 0.027843 / 252
+
+    ok = deflated_sharpe_ratio(sr, n_obs, skew, kurt, n_trials=N, trials_variance=V_pp)
+    check("每期 V 不声明 ppy → 无旗、DSR<0.95 判拒", ok.scale_warning is False and not ok.passed)
+
+    abuse = deflated_sharpe_ratio(sr, n_obs, skew, kurt, n_trials=N,
+                                  trials_variance=V_pp, trials_periods_per_year=252)
+    check("每期 V 却声明 ppy=252 → 打旗（放松侧不得静默）", abuse.scale_warning is True)
+    check("  → 旗文点明是重复归一/过松", "过松" in abuse.scale_note)
+
+    stale = deflated_sharpe_ratio(sr, n_obs, skew, kurt, n_trials=N, trials_variance=0.027843)
+    check("年化 V 未归一 → 仍打旗（过严侧）", stale.scale_warning is True and "过严" in stale.scale_note)
+
+    dates = _dates()
+    oos = _sinusoid_returns(0.0012, 0.004)
+    gross = _sinusoid_returns(0.0014, 0.004)
+    cfg = _base_cfg(); h = freeze_config(cfg)
+    rationale = ("动量/趋势溢价：有横截面与时序证据，行为(处置效应/羊群)与风险(增长期权)双解释，"
+                 "跨市场跨年代稳健，非纯数据挖掘。")
+
+    def mk(ppy):
+        return Candidate(name="ppy", oos_net_returns=oos, oos_dates=dates, gross_returns=gross,
+                         turnover=[0.1] * len(oos), cost_per_turnover=0.001,
+                         adv_notional=1e9, required_notional=1e6, prereg_config=cfg,
+                         frozen_hash=h, economic_rationale=rationale,
+                         n_trials_cumulative=N, trials_variance=V_pp,
+                         trials_periods_per_year=ppy)
+
+    v_bad = certify(mk(10000), oos_budget=OOSBudget(1))
+    check("ppy=10000 与实测日频不符 → REJECTED_prereg", v_bad.decision == "REJECTED_prereg")
+    v_daily = certify(mk(252), oos_budget=OOSBudget(1))
+    check("ppy=252 对日频序列属合法声明 → 不被硬拒", v_daily.decision != "REJECTED_prereg")
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
               test_selfreport_cannot_undercut_ledger,
               test_cost_model_is_floor, test_capacity_missing_is_not_pass,
-              test_ledger_accumulates_and_persists, test_dsr_unit_scale):
+              test_ledger_accumulates_and_persists, test_dsr_unit_scale,
+              test_ppy_is_not_a_free_knob):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 
