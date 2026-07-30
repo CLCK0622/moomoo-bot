@@ -102,6 +102,12 @@ def main(argv=None) -> int:
     net = carry_rates_curve(slope, frames, UNIVERSE, params, cost_mult=2.0)
     corr = inventory_correlations(net["equity_df"], Path(args.inventory_dir))
 
+    # A 自己的每期净收益序列也要落盘（工部 2026-07-30）：户部的 sleeve 组合级 CERTIFY 需要
+    # A + GEM + residmom **对齐的**序列跑 w*/组合 MDD；此前只有那三条库存曲线落了盘、A 自己没有，
+    # 组合层因此算不动。纯 artifact dump，不参与判定、不消耗 OOS 预算。
+    _inv = Path(args.inventory_dir); _inv.mkdir(parents=True, exist_ok=True)
+    net["equity_df"][["date", "ret"]].to_csv(_inv / "carry_rates_A_equity.csv", index=False)
+
     report = {"issue": "EVO-8", "candidate": "carry_rates", "preregistration_commit": args.prereg_commit,
               "status": "DRAFT_NO_VERDICT" if not args.certify else "CERTIFIED_RUN",
               "diagnostics": net["diagnostics"], "sleeve_correlation": corr,
