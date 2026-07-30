@@ -1,0 +1,97 @@
+{
+  "issue": "EVO-8",
+  "candidate": "credit_regime",
+  "preregistration_commit": "30466ce",
+  "primary_thresholds": {
+    "lo": 1.8,
+    "hi": 2.6
+  },
+  "family": [
+    [
+      1.8,
+      2.6
+    ],
+    [
+      1.5,
+      2.5
+    ],
+    [
+      2.0,
+      3.0
+    ]
+  ],
+  "publication_lag": {
+    "spread_shift_days": 35,
+    "note": "利差日期后移~1月+，再 close(T)→open(T+1)；信号相对成交≥1月+1日，无同日成交",
+    "signal_first_date": "2006-06-28"
+  },
+  "revision_evidence_bps": {
+    "max_abs_rev": 0.01,
+    "median": 0.0,
+    "std": 0.0007,
+    "note": "§3a 实测：latest−PIT ≤1bp，市场价序列基本不修订，latest 用之有据"
+  },
+  "family_trial_sharpes_pp_x2": {
+    "1.8,2.6": 0.03547378602163864,
+    "1.5,2.5": 0.019160795073071696,
+    "2.0,3.0": 0.03295405091242838
+  },
+  "diagnostics": {
+    "first_date": "2006-06-28",
+    "last_date": "2026-07-27",
+    "alloc_frac": {
+      "BIL": 0.3777953690876707,
+      "IEF": 0.41895903423708686,
+      "SPY": 0.19513160498713636
+    },
+    "n_switches": 26
+  },
+  "sleeve_correlation": {
+    "carry_rates_A": 0.2006,
+    "gem": 0.285,
+    "multifactor": 0.1993,
+    "residmom": 0.0906
+  },
+  "run_date": "2026-07-30",
+  "ledger_run_id": "credit_regime-30466ce",
+  "cumulative_n_after_C": 38,
+  "certify_verdict": {
+    "certified": false,
+    "decision": "REJECTED_dsr",
+    "reasons": [
+      "DSR=0.251 < 0.95（N=38 累计试验下选择偏差过大）→ 疑似伪 alpha。"
+    ]
+  },
+  "metrics": {
+    "n_obs": 5053,
+    "cagr": 0.043549931912537865,
+    "mdd": 0.23118360173884356,
+    "sharpe_ann": 0.5631288952510511,
+    "sharpe_per_period": 0.03547378602163864,
+    "mar": 0.18837811845207786,
+    "skew": 0.4433334711399459,
+    "kurtosis": 35.47545606622351,
+    "crisis": {
+      "2008_GFC": {
+        "n_obs": 441,
+        "cagr": 0.057065168921709875,
+        "mdd": 0.03606857954510023
+      },
+      "2020_COVID": {
+        "n_obs": 62,
+        "cagr": 0.35436322095083317,
+        "mdd": 0.05784042455021665
+      },
+      "2022_RATE": {
+        "n_obs": 251,
+        "cagr": -0.18261228911812266,
+        "mdd": 0.22054336731493085
+      }
+    },
+    "official_pass": false,
+    "shadow_report_pass": false,
+    "shadow_floor_pass": false,
+    "decision": "FAIL"
+  },
+  "verdict": "standalone 负；按 sleeve 组件级看相关性"
+}
