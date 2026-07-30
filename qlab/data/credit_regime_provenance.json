@@ -1,0 +1,42 @@
+{
+  "issue": "EVO-8 candidate C (macro-credit regime timing)",
+  "candidate": "C — credit-spread regime signal (risk-on vs risk-off) over SPY / IEF·AGG / BIL, long/flat, no naked short",
+  "recorded_date": "2026-07-30",
+  "recorded_by": "都水主事 (工部)",
+  "prereg": "qlab/CREDIT_REGIME_EVAL_PREREGISTRATION.md (frozen; killer validation = point-in-time vintage vs latest, §3)",
+  "data_policy": "free source, no paid deps; TrdEnv.SIMULATE; anti-look-ahead — signal values MUST be the vintage known on the trade date, never latest/revised.",
+
+  "signal_series": {
+    "status": "BLOCKED (no data landed) — needs a FRED API key; NO data fabricated, NO latest-as-vintage substitution",
+    "candidates": {"BAMLH0A0HYM2": "ICE BofA US HY OAS (%)", "BAA10YM": "Moody's Baa - 10y (%)"},
+    "module": "qlab/qlab/events/datafetch/fred_vintage.py (built + unit-tested this run; runnable the moment a key exists)",
+    "correct_endpoint": "api.stlouisfed.org/fred/series/observations with realtime_start=realtime_end=<as_of> (true ALFRED point-in-time); series/vintagedates for the revision history",
+    "requires": "FRED_API_KEY env var (free key)",
+
+    "trap_do_not_use": {
+      "url": "fred.stlouisfed.org/graph/fredgraph.csv?id=...&vintage_date=YYYY-MM-DD",
+      "problem": "silently IGNORES vintage_date (and cosd/coed) and returns LATEST — HTTP 200 + valid CSV that looks like a vintage pull but is not. 工部尚书 proved it: vintage-URL md5 == latest-URL md5 = ae77d8d646852083a721c36987f7f75c. A C backtest on this becomes latest-vs-latest and trivially 'passes' the anti-look-ahead test it was meant to fail. fred_vintage.py deliberately does NOT use this endpoint and fail-closes rather than fall back to it.",
+      "also_dead": "alfred.stlouisfed.org/graph/fredgraph.csv -> 404; alfred.../series/downloaddata -> 200 but HTML not CSV"
+    },
+
+    "self_check_contract": "fred_vintage.assert_vintage_trustworthy(): HTTP 200 is NOT proof. Compares as-of vintage vs latest; resolves 'identical' into (a) revised->distinguishable, (b) single vintage date -> genuinely-never-revised (EVIDENCE, trustworthy), (c) identical despite many vintages -> endpoint served latest = the trap (NOT trustworthy, investigate); plus a known-revised positive control (GDPC1) that, if it also comes back identical, flags the point-in-time call itself as broken.",
+
+    "expected_finding_once_key_available": "BAMLH0A0HYM2 / BAA10YM are market-price-derived, so vintage is expected to ~equal latest. The self-check turns that into an evidence-backed conclusion (single/few vintage dates => not revised) rather than an unverified assumption — which is what §3's killer test actually needs for these series. If, instead, many vintages exist and vintage==latest, that is the trap and must be investigated before any verdict.",
+
+    "blocker": {
+      "reason": "FRED API key required and not obtainable from this runtime",
+      "reachability_2026_07_30": {
+        "api.stlouisfed.org": "REACHABLE (series/observations + series/vintagedates return HTTP 400 'api_key not set' — correct endpoint, needs key)",
+        "fred.stlouisfed.org/graph": "UNREACHABLE (HTTP 000, conn reset ~1s) — so keyless graph CSV not an option here anyway",
+        "alfred.stlouisfed.org": "UNREACHABLE (HTTP 000)",
+        "fredaccount.stlouisfed.org (key signup)": "UNREACHABLE (HTTP 000) — cannot self-register from this runtime; account creation would also need email verification"
+      },
+      "no_fabrication": "no observations were written; no latest-as-vintage stand-in. Fail-closed per fred_vintage.MissingApiKey."
+    },
+
+    "unblock": "provide a free FRED API key as env FRED_API_KEY (30s signup at fredaccount.stlouisfed.org from any normal host by Kevin/工部). Then run the repro below.",
+    "repro_once_key": "FRED_API_KEY=<key> python -c \"from qlab.events.datafetch.fred_vintage import assert_vintage_trustworthy as A; v=A('BAMLH0A0HYM2', as_of='2019-01-02', obs_start='2018-01-01', obs_end='2018-12-31'); print(v)\"   # then build the vintage-correct panel (value known-as-of each trade date) for the C backtest"
+  },
+
+  "tradables_note": "execution legs (SPY / IEF / AGG / BIL) already in repo (data/daily_full, data/gem, data/rate_carry) — not blocked; only the vintage credit-spread SIGNAL is blocked."
+}
