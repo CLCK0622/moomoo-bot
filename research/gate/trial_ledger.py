@@ -31,6 +31,10 @@ class RunRecord:
     n_trials_total: int             # 全量试验数（含被丢弃的）—— 必填
     n_evaluated: int                # 实际送进门禁评估的候选数
     trial_sharpes_var: Optional[float] = None  # 该轮试验 SR 方差（做 DSR 的 V，可选）
+    # 该轮**全量每期试验 Sharpe**。工部 2026-07-30(EVO-8 A) 实测：只存标量 var 时，pooled V
+    # 退化成候选自己那一组（max(自报,台账)=max(x,x)），不构成独立地板。要让 pooled V 成为**跨轮
+    # 独立**兜底，每条登记须带上 trial_sharpes；pooled 从各轮 Sharpe 的并集算，且可排除候选自己那轮。
+    trial_sharpes: Optional[List[float]] = None
     note: str = ""
     ts: str = ""
 
@@ -90,13 +94,14 @@ class TrialLedger:
                 f"run={run_id} 声明 N={n_trials_total} 小于实际评估数 {n_evaluated} 或 <1 → 不予评估。"
             )
         var = trial_sharpes_var
-        if var is None and trial_sharpes is not None and len(trial_sharpes) >= 2:
+        ts_list = [float(s) for s in trial_sharpes] if trial_sharpes is not None else None
+        if var is None and ts_list is not None and len(ts_list) >= 2:
             import numpy as np
-            var = float(np.var(np.asarray(trial_sharpes, dtype=float), ddof=1))
+            var = float(np.var(np.asarray(ts_list, dtype=float), ddof=1))
         ts = now_iso or datetime.now(timezone.utc).isoformat()
         rec = RunRecord(run_id=run_id, source=source, n_trials_total=int(n_trials_total),
                         n_evaluated=int(n_evaluated), trial_sharpes_var=var,
-                        note=note, ts=ts)
+                        trial_sharpes=ts_list, note=note, ts=ts)
         self.runs.append(rec)
         self._save()
         return rec
@@ -105,14 +110,38 @@ class TrialLedger:
         """跨轮累计真实试验数 —— DSR 的 N。含所有历史轮次。"""
         return sum(r.n_trials_total for r in self.runs)
 
-    def pooled_trials_variance(self) -> Optional[float]:
-        """按评估量加权的试验 SR 方差（做 DSR 的 V 的近似）。无则 None。"""
+    def pooled_trials_variance(self, exclude_run_id: Optional[str] = None) -> Optional[float]:
+        """
+        跨轮试验 Sharpe 方差（做 DSR 的 V 的地板）。优先从各轮 **trial_sharpes 的并集**算真方差；
+        缺 trial_sharpes 的轮次退化为按 n 加权其 trial_sharpes_var。无则 None。
+
+        `exclude_run_id`：排除某轮（通常是候选自己那轮），使地板**独立于被评估候选**——
+        否则 pooled 只由候选自己那组构成、`max(自报,台账)` 退化成 max(x,x)，不是真兜底
+        （工部 2026-07-30 实测）。
+        """
+        pooled_sharpes: List[float] = []
         weighted, wsum = 0.0, 0
         for r in self.runs:
-            if r.trial_sharpes_var is not None:
+            if exclude_run_id is not None and r.run_id == exclude_run_id:
+                continue
+            if r.trial_sharpes:
+                pooled_sharpes.extend(float(s) for s in r.trial_sharpes)
+            elif r.trial_sharpes_var is not None:
                 weighted += r.trial_sharpes_var * r.n_trials_total
                 wsum += r.n_trials_total
+        if len(pooled_sharpes) >= 2:
+            import numpy as np
+            return float(np.var(np.asarray(pooled_sharpes, dtype=float), ddof=1))
         return (weighted / wsum) if wsum > 0 else None
+
+    def has_independent_v(self, exclude_run_id: str) -> bool:
+        """除 exclude_run_id 外是否还有带 V 的轮次——决定 pooled 地板是否**独立**（真兜底）。"""
+        for r in self.runs:
+            if r.run_id == exclude_run_id:
+                continue
+            if r.trial_sharpes or (r.trial_sharpes_var is not None):
+                return True
+        return False
 
 
 def project_ledger(path: str = DEFAULT_LEDGER_PATH) -> "TrialLedger":

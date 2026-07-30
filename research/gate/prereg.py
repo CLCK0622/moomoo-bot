@@ -52,6 +52,9 @@ REQUIRED_PREREG_KEYS = (
     "cost_model",        # 成本模型
     "train_test_split",  # 训练-测试切分点
     "gate_thresholds",   # 门槛本身
+    "family",            # 定义 DSR 的 V 的那组试验（grid/factor set）——须冻结，跑后不得增删。
+                         # 工部 2026-07-30(EVO-8 A)：family 选得越紧 V 越小、多重检验罚越轻，
+                         # 「事后挑 family」= 第七种 fail-open。冻进 prereg 后由冻结哈希守住。
 )
 
 

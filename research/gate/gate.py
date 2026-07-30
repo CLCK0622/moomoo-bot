@@ -57,6 +57,7 @@ class Candidate:
     trials_variance: Optional[float] = None
     trial_sharpes: Optional[Sequence[float]] = None
     trials_periods_per_year: int = 1             # 试验 Sharpe 的年化尺度；1=每期(契约)，年化则传 ppy
+    run_id: Optional[str] = None                 # 候选自己那轮的台账 run_id；用于把它从 pooled V 地板里排除（独立兜底）
 
 
 @dataclass
@@ -99,6 +100,18 @@ def certify(cand: Candidate,
         if not pc.unchanged:
             v.decision = "REJECTED_prereg"
             v.reasons.append("预注册被事后修改（哈希不符）→ 记新试验、重走全门，不放行。")
+            return v
+    # 1b) family 冻结交叉核验（工部 2026-07-30 EVO-8 A）：定义 V 的那组试验须与冻结 family 一致，
+    #     不得事后增删（family 选得越紧 V 越小、多重检验罚越轻）。family 已进 REQUIRED_PREREG_KEYS，
+    #     故「跑后改 family」由冻结哈希抓；这里再对**提供了 trial_sharpes** 的候选做条数核验：
+    #     实际用于算 V 的试验数须等于冻结 family 的规模。
+    family = cand.prereg_config.get("family")
+    if cand.trial_sharpes is not None and isinstance(family, (list, tuple)) and len(family) > 0:
+        if len(cand.trial_sharpes) != len(family):
+            v.decision = "REJECTED_prereg"
+            v.reasons.append(
+                f"定义 V 的试验数 {len(cand.trial_sharpes)} ≠ 冻结 family 规模 {len(family)} → "
+                "family 被事后增删（可借挑紧 family 关掉多重检验罚）→ 不放行。")
             return v
 
     # 2) 诚实试验计数（决定 DSR 的 N）—— 台账是地板，自报 N 只能更严不能更松
@@ -224,7 +237,16 @@ def certify(cand: Candidate,
             return v
 
     tv_self = cand.trials_variance
-    tv_ledger = ledger.pooled_trials_variance() if ledger is not None else None
+    # pooled V 地板须**独立于候选自己那轮**（排除 cand.run_id），否则退化成 max(x,x)（工部 2026-07-30 实测）。
+    tv_ledger = (ledger.pooled_trials_variance(exclude_run_id=cand.run_id)
+                 if ledger is not None else None)
+    if ledger is not None and cand.run_id is not None:
+        independent = ledger.has_independent_v(cand.run_id)
+        v.gates["pooled_v_floor"] = {"independent": independent, "value": tv_ledger}
+        if not independent:
+            v.reasons.append(
+                "注意：pooled V 地板不独立（除候选自己那轮外无带 trial_sharpes 的登记）→ 放松侧无结构兜底；"
+                "后续每条 register_run 须带 trial_sharpes 才能构成真地板。")
     tv_candidates = [x for x in (tv_self, tv_ledger) if x is not None]
     tv = max(tv_candidates) if tv_candidates else None
     try:
@@ -235,6 +257,14 @@ def certify(cand: Candidate,
             threshold=dsr_threshold,
         )
         v.gates["dsr"] = dsr.__dict__
+        # 放松侧（√V ≪ 抽样噪声）→ 硬拒（户部 2026-07-30 裁定，工部 ec0aeab 残留项）：
+        # 合法试验族的每期 Sharpe 离散度至少是抽样噪声，此情形几乎必是 ppy 重复归一/单位错，门会过松、
+        # 假阳性直送 Kevin，比冤杀更糟。这一侧无会误伤的合法情形（紧 family 仍在噪声之上），故硬拒安全。
+        if dsr.scale_relaxing:
+            v.decision = "REJECTED_scale"
+            v.reasons.append("放松侧单位异常（" + (dsr.scale_note or "") +
+                             "）→ 硬拒，不静默放松门。产出侧改每期口径 / 删掉多余的 ppy 声明后重验。")
+            return v
         if dsr.scale_warning:
             v.reasons.append("警告：DSR 试验 Sharpe 疑似单位不一致（V 尺度 vs 每期 sr）——"
                              + (dsr.scale_note or "请核产出侧年化口径。"))

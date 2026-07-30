@@ -169,7 +169,8 @@ def _base_cfg():
     return {"universe": ["SPY", "EFA", "AGG"], "leverage_cap": 2.0,
             "signal_params": {"lookback": 252}, "rebalance": "monthly",
             "cost_model": "moomoo_retail_x1", "train_test_split": "2017-12-31",
-            "gate_thresholds": "official_50_20+shadow"}
+            "gate_thresholds": "official_50_20+shadow",
+            "family": ["lookback=252"]}   # 定义 V 的冻结试验族（此处单格）
 
 
 def test_certify_end_to_end():
@@ -492,9 +493,66 @@ def test_ppy_is_not_a_free_knob():
                          trials_periods_per_year=ppy)
 
     v_bad = certify(mk(10000), oos_budget=OOSBudget(1))
-    check("ppy=10000 与实测日频不符 → REJECTED_prereg", v_bad.decision == "REJECTED_prereg")
+    check("ppy=10000 与实测日频不符 → REJECTED_prereg（频率门）", v_bad.decision == "REJECTED_prereg")
+    # ppy=252 对日频序列通过**频率门**（252≈日频）；但此处 V 本就是每期，声明 ppy=252 → 重复归一
+    # → 放松侧 → 被**尺度门**硬拒（户部 2026-07-30 裁定）。两门互补：频率门抓错频率，尺度门抓重复归一。
     v_daily = certify(mk(252), oos_budget=OOSBudget(1))
-    check("ppy=252 对日频序列属合法声明 → 不被硬拒", v_daily.decision != "REJECTED_prereg")
+    check("ppy=252 过频率门但 V 已每期 → 放松侧 REJECTED_scale（硬拒，不静默放松）",
+          v_daily.decision == "REJECTED_scale")
+
+
+def test_family_must_be_frozen():
+    """工部 2026-07-30(EVO-8 A)：定义 V 的 family 须冻结，不得事后挑紧（否则关掉多重检验罚）。"""
+    print("14) family 冻结（V 不得事后挑紧）")
+    dates = _dates()
+    oos = _sinusoid_returns(0.0012, 0.004)
+    gross = _sinusoid_returns(0.0014, 0.004)
+    rationale = ("动量/趋势溢价：横截面与时序证据，行为(处置效应/羊群)+风险(增长期权)双解释，"
+                 "跨市场跨年代稳健，非纯数据挖掘。")
+    # 缺 family 键 → 完整性拒
+    cfg_nofam = {k: v for k, v in _base_cfg().items() if k != "family"}
+    v0 = certify(Candidate(name="nofam", oos_net_returns=oos, oos_dates=dates,
+                           prereg_config=cfg_nofam, economic_rationale=rationale,
+                           n_trials_cumulative=3, trials_variance=0.0002),
+                 oos_budget=OOSBudget(1))
+    check("缺 family 键 → REJECTED_prereg", v0.decision == "REJECTED_prereg")
+    # family=3 格
+    cfg = dict(_base_cfg()); cfg["family"] = ["c1", "c2", "c3"]; h = freeze_config(cfg)
+    base = dict(oos_net_returns=oos, oos_dates=dates, gross_returns=gross,
+                turnover=[0.1] * len(oos), cost_per_turnover=0.001,
+                adv_notional=1e9, required_notional=1e6, prereg_config=cfg,
+                frozen_hash=h, economic_rationale=rationale, n_trials_cumulative=3)
+    v_short = certify(Candidate(name="shrunk", trial_sharpes=[0.03, 0.05], **base),
+                      oos_budget=OOSBudget(1))
+    check("family=3 却只用 2 个试验（事后挑紧）→ REJECTED_prereg", v_short.decision == "REJECTED_prereg")
+    v_ok = certify(Candidate(name="full", trial_sharpes=[0.03, 0.05, 0.04], **base),
+                   oos_budget=OOSBudget(1))
+    check("family=3 且用满 3 个 → 不因 family 被拒", v_ok.decision != "REJECTED_prereg")
+
+
+def test_pooled_v_independent_floor():
+    """工部 2026-07-30：pooled V 要成为真兜底，须排除候选自己那轮 + 每条登记带 trial_sharpes。"""
+    print("15) pooled V 独立地板（排除自身轮 + 须带 trial_sharpes）")
+    led = TrialLedger(path=None)
+    led.register_run("candA", "qlib", n_trials_total=3, n_evaluated=1,
+                     trial_sharpes=[0.026, 0.024, 0.030], now_iso="2026-07-30T00:00:00Z")
+    led.register_run("otherB", "qlib", n_trials_total=5, n_evaluated=1,
+                     trial_sharpes=[0.10, -0.05, 0.20, 0.02, -0.12], now_iso="2026-07-30T00:00:00Z")
+    indep = led.pooled_trials_variance(exclude_run_id="candA")   # 只由 otherB 构成
+    own = led.pooled_trials_variance(exclude_run_id="otherB")    # 只由 candA 构成
+    check("排除自身轮 → pooled 来自其它轮（独立地板）",
+          indep is not None and own is not None and abs(indep - own) > 1e-6)
+    check("有独立 V", led.has_independent_v("candA") is True)
+    # 退化：历史条目没带 trial_sharpes → 无独立 V
+    led2 = TrialLedger(path=None)
+    led2.register_run("candA", "qlib", n_trials_total=3, n_evaluated=1,
+                      trial_sharpes=[0.026, 0.024, 0.030], now_iso="2026-07-30T00:00:00Z")
+    led2.register_run("hist", "manual", n_trials_total=7, n_evaluated=7,
+                      now_iso="2026-07-30T00:00:00Z")   # 无 trial_sharpes
+    check("历史条目无 trial_sharpes → 无独立 V（地板退化）",
+          led2.has_independent_v("candA") is False)
+    check("排除自身后 pooled=None（无其它带 V 轮次）",
+          led2.pooled_trials_variance(exclude_run_id="candA") is None)
 
 
 def main():
@@ -503,7 +561,8 @@ def main():
               test_selfreport_cannot_undercut_ledger,
               test_cost_model_is_floor, test_capacity_missing_is_not_pass,
               test_ledger_accumulates_and_persists, test_dsr_unit_scale,
-              test_ppy_is_not_a_free_knob):
+              test_ppy_is_not_a_free_knob,
+              test_family_must_be_frozen, test_pooled_v_independent_floor):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 
