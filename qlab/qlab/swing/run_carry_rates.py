@@ -121,10 +121,21 @@ def main(argv=None) -> int:
                "rebalance": "monthly", "cost_model": "moomoo_retail_x1",
                "train_test_split": "NO-FIT waiver: curve-regime thresholds frozen pre-results; full-sample OOS",
                "gate_thresholds": "official_50_20 + shadow_report_25_20 + shadow_floor_15_20"}
-        # 每因子/单腿试验 Sharpe 每期口径（DSR 单位契约，ac687cc）
+        # 每期 trial Sharpe（DSR 单位契约：无 *sqrt(252)，不声明 ppy）
         def _sr_pp(r):
             r = np.asarray(r, float); r = r[np.isfinite(r)]
             return float(r.mean() / r.std(ddof=1)) if len(r) > 1 and r.std(ddof=1) > 0 else 0.0
+        # 预注册声明的陡度阈值 family（§5，稳健性；主格 (0.5,0.0) 预先固定）→ 全量 trial Sharpe 给 DSR 的 V
+        FAMILY = [(0.50, 0.00), (0.75, 0.25), (1.00, 0.00)]
+        trial_sharpes = [_sr_pp(carry_rates_curve(slope, frames, UNIVERSE,
+                         CarryRatesParams(hi_thresh=hi, lo_thresh=lo), cost_mult=2.0)["equity_df"]["ret"].to_numpy())
+                         for hi, lo in FAMILY]
+        report["family_trial_sharpes_per_period"] = dict(zip([f"{hi},{lo}" for hi, lo in FAMILY], trial_sharpes))
+        # A 的诚实 N（family 3）登记进共享台账（幂等，随后连 .jsonl 提交）
+        ledger.register_run(run_id=f"carry_rates_A-{args.prereg_commit}", source="manual",
+                            n_trials_total=len(FAMILY), n_evaluated=len(FAMILY), trial_sharpes=trial_sharpes,
+                            note="利率 carry A：陡度阈值 family 3 格(主 0.5/0.0)；BIL 替 SHY（2022 有利偏差、结果为上界）")
+        report["cumulative_n_after_A"] = ledger.cumulative_n()
         cand = Candidate(name="carry_rates_curve_duration",
                          oos_net_returns=edf["ret"].to_numpy(float).tolist(),
                          oos_dates=[str(d.date()) for d in pd.DatetimeIndex(edf["date"])],
@@ -134,7 +145,7 @@ def main(argv=None) -> int:
                          prereg_config=cfg, frozen_hash=freeze_config(cfg),
                          economic_rationale="利率 carry：曲线陡度承载期限溢价+roll-down；陡则上久期收 carry，"
                                             "平/倒挂退短久期避久期风险。long/flat 不做空债，作分散/回撤控制 sleeve。",
-                         n_trials_cumulative=None, trial_sharpes=[_sr_pp(edf["ret"].to_numpy())])
+                         n_trials_cumulative=None, trial_sharpes=trial_sharpes)   # 每期口径，不声明 ppy
         assert cand.n_trials_cumulative is None and cand.adv_notional > 0
         v = certify(cand, ledger=ledger, thresholds=GateThresholds(), oos_budget=OOSBudget(max_evals=1))
         report["certify_verdict"] = {"certified": v.certified, "decision": v.decision, "reasons": v.reasons}
