@@ -699,6 +699,59 @@ def test_concurrent_writers_are_atomic():
         shutil.rmtree(d, ignore_errors=True)
 
 
+def test_capital_efficiency():
+    """吏部 07-30 EVO-8(i)：事件/稀疏腿按在险资金判 edge，不被现金拖累误杀；暴露须预注册+核验。"""
+    print("19) 事件类资金效率口径（edge 轴，非现金稀释）")
+    from research.gate.capital_efficiency import (EventExposureSpec,
+                                                  capital_efficiency_report, verify_exposure)
+    n = 2520
+    idx = pd.bdate_range("2014-01-01", periods=n)
+    act = np.arange(0, n, 10)                       # 每 10 日一次事件，~10% 在险
+    exp = np.zeros(n); exp[act] = 1.0
+    spec = EventExposureSpec(active_rule="每10个交易日一次事件窗", expected_fraction=len(act) / n)
+
+    # 暴露核验：一致 ok / 事后挑小 f 不 ok / 超杠杆不 ok
+    check("暴露与预注册一致 → ok", verify_exposure(exp, spec).ok)
+    check("事后谎报大 f（实测远小）→ 拒",
+          verify_exposure(exp, EventExposureSpec("x", expected_fraction=0.8)).ok is False)
+    exp_lev = exp.copy(); exp_lev[act[0]] = 3.0
+    check("在险杠杆超 2x → 拒", verify_exposure(exp_lev, spec).ok is False)
+
+    # 真 edge 的稀疏腿：全额 CAGR 被现金稀释，但 active edge 正、edge_confirmed True
+    ret = np.zeros(n); ret[act] = 0.003 + 0.002 * np.sin(np.arange(len(act)))
+    rep = capital_efficiency_report(ret, exp, spec, dates=idx, n_trials=1,
+                                    trials_variance=0.0004, cost_per_active_x1=0.0002)
+    check("暴露核验通过", rep.exposure.ok)
+    check("active edge 为正", rep.edge_per_active > 0)
+    check("edge_confirmed（正+扛x2成本+过DSR, N=1）", rep.edge_confirmed is True)
+    check("active edge Sharpe > 全额资金 Sharpe（现金拖累 ~√f 被去除）",
+          rep.active_sharpe_ann > rep.full_sharpe_ann)
+
+    # 无 edge（负）的稀疏腿（如 B FOMC）→ edge_confirmed False
+    ret_neg = np.zeros(n); ret_neg[act] = -0.001 + 0.002 * np.sin(np.arange(len(act)))
+    rep_neg = capital_efficiency_report(ret_neg, exp, spec, dates=idx, n_trials=1,
+                                        trials_variance=0.0004, cost_per_active_x1=0.0002)
+    check("负 edge 稀疏腿 → edge_confirmed False", rep_neg.edge_confirmed is False)
+
+    # 暴露不符（谎报大 f）→ 即便 active edge 正也 edge_confirmed False（反 fail-open）
+    rep_abuse = capital_efficiency_report(
+        ret, exp, EventExposureSpec("x", expected_fraction=0.8),
+        dates=idx, n_trials=1, trials_variance=0.0004, cost_per_active_x1=0.0002)
+    check("暴露不符 → 正 edge 也不背书（反事后挑 f）", rep_abuse.edge_confirmed is False)
+
+
+def test_dsr_machine_scale():
+    """吏部 07-30：机器挖＝N 暴涨。跨轮累计真 N 的 DSR haircut 须在机器体量下数值稳定并咬得住。"""
+    print("20) DSR 机器体量 haircut（N 暴涨仍稳、仍咬）")
+    sr, n_obs, V = 0.05, 3000, 0.0004        # 温和的每期 edge
+    d1 = deflated_sharpe_ratio(sr, n_obs, 0.0, 3.0, n_trials=1, trials_variance=V)
+    dmach = deflated_sharpe_ratio(sr, n_obs, 0.0, 3.0, n_trials=100000, trials_variance=V)
+    check("温和 edge 单假设 N=1 → 过", d1.passed)
+    check("机器体量 N=1e5 → haircut 判拒（选择偏差压过温和 edge）", not dmach.passed)
+    em = expected_max_sharpe(100000, V)
+    check("期望最大 SR 在 N=1e5 有限且随 N 增大", 0 < em < 1 and em > expected_max_sharpe(1000, V))
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
@@ -708,7 +761,8 @@ def main():
               test_ppy_is_not_a_free_knob,
               test_family_must_be_frozen, test_pooled_v_independent_floor,
               test_oos_budget_persists, test_refreeze_guard, test_sleeve_verdict,
-              test_concurrent_writers_are_atomic):
+              test_concurrent_writers_are_atomic,
+              test_capital_efficiency, test_dsr_machine_scale):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 

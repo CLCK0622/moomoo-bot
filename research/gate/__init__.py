@@ -33,6 +33,9 @@ from .cost_capacity import (COST_MODELS, CapacityResult, CostStressResult,
                             resolve_cost_per_turnover)
 from .deflated_sharpe import (DSRResult, deflated_sharpe_ratio,
                               expected_max_sharpe, probabilistic_sharpe_ratio)
+from .capital_efficiency import (CapEffReport, EventExposureSpec, ExposureCheck,
+                                 capital_efficiency_report,
+                                 realized_exposure_fraction, verify_exposure)
 from .gate import Candidate, Verdict, certify
 from .metrics import (DEFAULT_CRISIS_WINDOWS, GateThresholds, MetricsReport,
                       cagr, evaluate, joint_gate, max_drawdown, mar, sharpe)
@@ -59,6 +62,8 @@ __all__ = [
     "freeze_config", "verify_unchanged", "validate_prereg_completeness",
     "economic_rationale_gate",
     "walk_forward_splits", "cpcv_splits", "OOSBudget", "OOSBudgetExceeded",
+    "capital_efficiency_report", "EventExposureSpec", "verify_exposure",
+    "realized_exposure_fraction", "CapEffReport", "ExposureCheck",
 ]
 
 # 便捷别名，供管线：project_oos_budget()。RefreezeError 从 trial_ledger 暴露。
