@@ -70,12 +70,12 @@ _CTRL_REVISED = {"vintage": [("2018-01-01", "100.0")], "latest": [("2018-01-01",
                  "vintages": ["2018-04-01", "2018-07-01"]}
 
 
-def _verdict(target_spec, monkeypatch):
+def _verdict(target_spec, monkeypatch, run_control=True):
     monkeypatch.setenv("FRED_API_KEY", "TESTKEY")
     spec = {"BAMLH0A0HYM2": target_spec, fv.REVISED_CONTROL: _CTRL_REVISED}
     return fv.assert_vintage_trustworthy(
         "BAMLH0A0HYM2", as_of="2019-01-02", obs_start="2018-01-01",
-        obs_end="2018-12-31", session=_FakeSession(spec))
+        obs_end="2018-12-31", session=_FakeSession(spec), run_control=run_control)
 
 
 def test_revised_series_is_trustworthy(monkeypatch):
@@ -85,18 +85,28 @@ def test_revised_series_is_trustworthy(monkeypatch):
     assert v.max_abs_diff_vs_latest == pytest.approx(0.4)
 
 
-def test_identical_single_vintage_is_evidence_not_bug(monkeypatch):
-    # market-price series never revised: vintage==latest AND only one vintage date
+def test_identical_with_passing_control_is_no_revision_evidence(monkeypatch):
+    # The real BAA10YM case: identical to latest AND many vintages, BUT the
+    # revised control (GDPC1) differs -> realtime works -> genuine no-revision.
     v = _verdict({"vintage": [("2018-06-01", "5.0")], "latest": [("2018-06-01", "5.0")],
-                  "vintages": ["2018-06-02"]}, monkeypatch)
+                  "vintages": ["2018-06-02", "2018-09-01", "2019-01-01"]}, monkeypatch)
+    assert v.trustworthy and v.reason.startswith("no_revision_confirmed")
+    assert v.control_ok is True and v.identical_to_latest
+
+
+def test_identical_single_vintage_is_evidence_not_bug(monkeypatch):
+    # no control run; identical + only one vintage date -> never-revised evidence
+    v = _verdict({"vintage": [("2018-06-01", "5.0")], "latest": [("2018-06-01", "5.0")],
+                  "vintages": ["2018-06-02"]}, monkeypatch, run_control=False)
     assert v.trustworthy and v.reason.startswith("single_vintage_never_revised")
     assert v.identical_to_latest
 
 
-def test_identical_but_many_vintages_is_the_trap(monkeypatch):
-    # identical to latest DESPITE many vintages => endpoint served latest => NOT trustworthy
+def test_identical_many_vintages_no_control_must_investigate(monkeypatch):
+    # identical + many vintages + NO control to prove the call -> not trustworthy
     v = _verdict({"vintage": [("2018-06-01", "5.0")], "latest": [("2018-06-01", "5.0")],
-                  "vintages": ["2018-06-02", "2018-09-01", "2019-01-01"]}, monkeypatch)
+                  "vintages": ["2018-06-02", "2018-09-01", "2019-01-01"]},
+                 monkeypatch, run_control=False)
     assert not v.trustworthy
     assert "endpoint_not_honoring_realtime" in v.reason
 

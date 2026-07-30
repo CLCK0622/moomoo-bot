@@ -35,3 +35,7 @@ data/qlib_store/
 # EVO-8 candidate A universe bars (BIL/IEF/TLT total-return daily), gathered
 # from sibling branches into A's data dir; committed for offline reproducibility
 !data/rate_carry/*.parquet
+# EVO-8 candidate C credit-spread signal (BAA10YM latest + vintage samples via
+# FRED API point-in-time); small, committed for offline reproducible backtest
+!data/credit_baa10ym_latest.parquet
+!data/credit_baa10ym_vintages.parquet

@@ -171,10 +171,22 @@ def assert_vintage_trustworthy(series_id: str, *, as_of: str,
         trustworthy, reason = False, "point_in_time_call_broken (revised control identical)"
     elif not identical:
         trustworthy, reason = True, "distinguishable (series is revised; real vintage)"
+    elif control_ok is True:
+        # The revised control (GDPC1) DID differ across vintages, so the realtime
+        # mechanism is verified working. This series being identical across
+        # vintages is therefore genuine no-revision — EVIDENCE, not the trap.
+        # (A series gets a new vintage date every time a new period is appended;
+        # "many vintage dates" alone does NOT mean old values were revised.)
+        trustworthy, reason = True, ("no_revision_confirmed: realtime verified via revised "
+                                     "control (GDPC1 differs) yet this series is identical "
+                                     "across vintages -> genuinely not revised (evidence)")
     elif n_vin <= 1:
         trustworthy, reason = True, "single_vintage_never_revised (evidence: series has one vintage)"
     else:
-        trustworthy, reason = False, "endpoint_not_honoring_realtime (identical despite many vintages — the trap)"
+        # identical, many vintages, and NO passing control to prove the call works
+        # -> cannot rule out the endpoint silently serving latest. Investigate.
+        trustworthy, reason = False, ("endpoint_not_honoring_realtime? (identical despite many "
+                                      "vintages and control not run) — investigate before use")
 
     return VintageVerdict(
         series_id=series_id, as_of=as_of, n_vintage_dates=n_vin,

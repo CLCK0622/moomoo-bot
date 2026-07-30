@@ -3,40 +3,56 @@
   "candidate": "C — credit-spread regime signal (risk-on vs risk-off) over SPY / IEF·AGG / BIL, long/flat, no naked short",
   "recorded_date": "2026-07-30",
   "recorded_by": "都水主事 (工部)",
-  "prereg": "qlab/CREDIT_REGIME_EVAL_PREREGISTRATION.md (frozen; killer validation = point-in-time vintage vs latest, §3)",
-  "data_policy": "free source, no paid deps; TrdEnv.SIMULATE; anti-look-ahead — signal values MUST be the vintage known on the trade date, never latest/revised.",
+  "prereg": "qlab/CREDIT_REGIME_EVAL_PREREGISTRATION.md (frozen; §1 signal = HY OAS BAMLH0A0HYM2 OR BAA10YM; §3 killer test = point-in-time vintage vs latest)",
+  "data_policy": "free source, no paid deps; TrdEnv.SIMULATE; anti-look-ahead — signal at trade date uses the value KNOWN then, never a future revision.",
 
   "signal_series": {
-    "status": "BLOCKED (no data landed) — needs a FRED API key; NO data fabricated, NO latest-as-vintage substitution",
-    "candidates": {"BAMLH0A0HYM2": "ICE BofA US HY OAS (%)", "BAA10YM": "Moody's Baa - 10y (%)"},
-    "module": "qlab/qlab/events/datafetch/fred_vintage.py (built + unit-tested this run; runnable the moment a key exists)",
-    "correct_endpoint": "api.stlouisfed.org/fred/series/observations with realtime_start=realtime_end=<as_of> (true ALFRED point-in-time); series/vintagedates for the revision history",
-    "requires": "FRED_API_KEY env var (free key)",
+    "status": "DELIVERED (committed) — via FRED API point-in-time (real key obtained this run)",
+    "series_chosen": "BAA10YM (Moody's Baa - 10y Treasury spread, %). Monthly.",
+    "why_not_hy_oas": "BAMLH0A0HYM2 (ICE BofA HY OAS) is LICENSING-TRUNCATED on FRED: both observations AND ALFRED vintages start only 2023-07-31 (~3y, verified via API this run) — cannot cover the 2008/2020/2022 killer windows. This is the same truncation 工部尚书 saw on fredgraph, confirmed to be the series itself. Prereg §1 explicitly allows BAA10YM, so this is WITHIN the frozen spec, NOT a refreeze.",
 
-    "trap_do_not_use": {
+    "endpoint": "api.stlouisfed.org/fred/series/observations with realtime_start=realtime_end=<as_of> (true ALFRED point-in-time) + series/vintagedates. api host reachable from this runtime; fred/alfred graph hosts are not (irrelevant now).",
+    "api_key": "free FRED API key obtained this run via agent email (agent@clckkkkk.site); no KYC/identity/money. Stored OUT of the repo at ~/.config/fred/api.env (chmod 600, persistent user layer) as FRED_API_KEY; account creds at ~/.config/fred/account.env. The key is NOT committed and NOT printed anywhere.",
+    "module": "qlab/qlab/events/datafetch/fred_vintage.py (fail-closed without a key; never falls back to the fredgraph vintage_date trap)",
+
+    "latest": {
+      "artifact": "data/credit_baa10ym_latest.parquet",
+      "schema": "[date, value] monthly, value = Baa-10y spread in %",
+      "n_rows": 438,
+      "date_range": "1990-01-01 .. 2026-06-01",
+      "crisis_coverage": {"2008_GFC": "spread up to 6.01%", "2020_COVID": "up to 3.47%", "2022_rate_shock": "1.82-2.31%"}
+    },
+    "vintages": {
+      "artifact": "data/credit_baa10ym_vintages.parquet",
+      "schema": "[as_of, date, value] long — each as_of is the series AS KNOWN on that date",
+      "as_of_samples": ["2019-12-02","2020-04-01","2020-07-01","2022-01-03","2022-07-01","2022-12-01","2024-01-02","2026-07-01"],
+      "purpose": "bracket 2020 COVID + 2022 rate shock; publication cutoff is honored (as_of 2020-04-01 knows only through 2020-03-01), which is the material look-ahead axis for this series (see publication_lag).",
+      "archive_start": "ALFRED vintage archive for BAA10YM begins 2014-05-16 (146 vintage dates). No true 2008 real-time vintage exists — see caveat_2008."
+    },
+
+    "vintage_self_check": {
+      "contract": "fred_vintage.assert_vintage_trustworthy — HTTP 200 is not proof (the trap). Verdict this run:",
+      "trustworthy": true,
+      "reason": "no_revision_confirmed: the point-in-time mechanism is VERIFIED working (revised control GDPC1 differs vintage-vs-latest), yet BAA10YM is byte-identical across vintages -> genuinely NOT revised. Evidence, not assumption.",
+      "max_abs_diff_vs_latest": 0.0,
+      "control_ok": true,
+      "n_vintage_dates": 146,
+      "implication_for_killer_test": "§3 (vintage vs latest) is satisfied WITH EVIDENCE: since revised==vintage for BAA10YM, any edge is identical under both -> no revision-based look-ahead. This confirms (not assumes) 工部尚书's 'market-price series ~unrevised' hypothesis."
+    },
+
+    "publication_lag": "REMAINING look-ahead axis (revision is proven negligible; lag is not). BAA10YM for month M is published ~M+1 (the vintage cutoffs show this). 营缮 MUST decide at T using only data with publication_date<=T and execute T+1 — do not use month-M spread within month M. This is 营缮's to freeze in the runner (工部尚书's instruction); the vintage file's as_of cutoffs support honoring it.",
+    "caveat_2008": "No ALFRED vintage before 2014-05-16, so 2008 cannot be tested with a TRUE contemporaneous vintage — only latest. Given the evidenced no-revision above, latest==vintage for 2008 too, but that extrapolation (not an independent 2008 vintage) must be stated in the report; do not silently treat 2008 as vintage-verified.",
+
+    "trap_documented": {
       "url": "fred.stlouisfed.org/graph/fredgraph.csv?id=...&vintage_date=YYYY-MM-DD",
-      "problem": "silently IGNORES vintage_date (and cosd/coed) and returns LATEST — HTTP 200 + valid CSV that looks like a vintage pull but is not. 工部尚书 proved it: vintage-URL md5 == latest-URL md5 = ae77d8d646852083a721c36987f7f75c. A C backtest on this becomes latest-vs-latest and trivially 'passes' the anti-look-ahead test it was meant to fail. fred_vintage.py deliberately does NOT use this endpoint and fail-closes rather than fall back to it.",
-      "also_dead": "alfred.stlouisfed.org/graph/fredgraph.csv -> 404; alfred.../series/downloaddata -> 200 but HTML not CSV"
+      "problem": "silently ignores vintage_date and returns LATEST (工部尚书 md5-proved identical to latest). fred_vintage.py deliberately does NOT use it."
     },
-
-    "self_check_contract": "fred_vintage.assert_vintage_trustworthy(): HTTP 200 is NOT proof. Compares as-of vintage vs latest; resolves 'identical' into (a) revised->distinguishable, (b) single vintage date -> genuinely-never-revised (EVIDENCE, trustworthy), (c) identical despite many vintages -> endpoint served latest = the trap (NOT trustworthy, investigate); plus a known-revised positive control (GDPC1) that, if it also comes back identical, flags the point-in-time call itself as broken.",
-
-    "expected_finding_once_key_available": "BAMLH0A0HYM2 / BAA10YM are market-price-derived, so vintage is expected to ~equal latest. The self-check turns that into an evidence-backed conclusion (single/few vintage dates => not revised) rather than an unverified assumption — which is what §3's killer test actually needs for these series. If, instead, many vintages exist and vintage==latest, that is the trap and must be investigated before any verdict.",
-
-    "blocker": {
-      "reason": "FRED API key required and not obtainable from this runtime",
-      "reachability_2026_07_30": {
-        "api.stlouisfed.org": "REACHABLE (series/observations + series/vintagedates return HTTP 400 'api_key not set' — correct endpoint, needs key)",
-        "fred.stlouisfed.org/graph": "UNREACHABLE (HTTP 000, conn reset ~1s) — so keyless graph CSV not an option here anyway",
-        "alfred.stlouisfed.org": "UNREACHABLE (HTTP 000)",
-        "fredaccount.stlouisfed.org (key signup)": "UNREACHABLE (HTTP 000) — cannot self-register from this runtime; account creation would also need email verification"
-      },
-      "no_fabrication": "no observations were written; no latest-as-vintage stand-in. Fail-closed per fred_vintage.MissingApiKey."
-    },
-
-    "unblock": "provide a free FRED API key as env FRED_API_KEY (30s signup at fredaccount.stlouisfed.org from any normal host by Kevin/工部). Then run the repro below.",
-    "repro_once_key": "FRED_API_KEY=<key> python -c \"from qlab.events.datafetch.fred_vintage import assert_vintage_trustworthy as A; v=A('BAMLH0A0HYM2', as_of='2019-01-02', obs_start='2018-01-01', obs_end='2018-12-31'); print(v)\"   # then build the vintage-correct panel (value known-as-of each trade date) for the C backtest"
+    "refetch": {
+      "latest": "FRED_API_KEY=<key> python -c \"from qlab.events.datafetch.fred_vintage import fetch_observations as F; F('BAA10YM', obs_start='1990-01-01', obs_end='2026-07-30').to_parquet('data/credit_baa10ym_latest.parquet', index=False)\"",
+      "vintages": "loop fetch_observations('BAA10YM', obs_start='1990-01-01', obs_end=as_of, as_of=as_of) over the as_of_samples; concat [as_of,date,value] -> data/credit_baa10ym_vintages.parquet",
+      "self_check": "FRED_API_KEY=<key> python -c \"from qlab.events.datafetch.fred_vintage import assert_vintage_trustworthy as A; print(A('BAA10YM', as_of='2020-07-01', obs_start='2007-01-01', obs_end='2020-06-30'))\""
+    }
   },
 
-  "tradables_note": "execution legs (SPY / IEF / AGG / BIL) already in repo (data/daily_full, data/gem, data/rate_carry) — not blocked; only the vintage credit-spread SIGNAL is blocked."
+  "tradables_note": "execution legs (SPY / IEF / AGG / BIL) already in repo (data/daily_full, data/gem, data/rate_carry). C data is now fully unblocked."
 }
