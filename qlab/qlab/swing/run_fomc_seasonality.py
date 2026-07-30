@@ -21,7 +21,8 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from research.gate import (certify, Candidate, GateThresholds, freeze_config,           # noqa: E402
-                           project_ledger, DEFAULT_LEDGER_PATH, project_oos_budget)
+                           project_ledger, DEFAULT_LEDGER_PATH, project_oos_budget,
+                           DEFAULT_OOS_BUDGET_PATH)
 from qlab.swing.momentum_signals import load_daily                                       # noqa: E402
 from qlab.swing.strategies import s5_fomc_trades, load_fomc_calendar                     # noqa: E402
 from qlab.swing.book import simulate_book                                                # noqa: E402
@@ -127,7 +128,8 @@ def main(argv=None) -> int:
                          n_trials_cumulative=None, trial_sharpes=trial_sharpes)   # 每期口径，不声明 ppy
         assert cand.n_trials_cumulative is None and cand.adv_notional > 0
         v = certify(cand, ledger=ledger, thresholds=GateThresholds(),
-                    oos_budget=project_oos_budget(max_evals=1))   # 共享落盘单发
+                    oos_budget=project_oos_budget(max_evals=1,     # 共享落盘单发（canonical repo-root 路径）
+                                                  path=str(_REPO_ROOT / DEFAULT_OOS_BUDGET_PATH)))
         report["certify_verdict"] = {"certified": v.certified, "decision": v.decision, "reasons": v.reasons}
         report["metrics_full_capital"] = v.metrics
         report["verdict"] = ("已衰减/不可用(负向)" if not edge_survives_2019 else
