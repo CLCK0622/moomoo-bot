@@ -1,0 +1,88 @@
+{
+  "issue": "EVO-8",
+  "candidate": "fomc_seasonality",
+  "preregistration_commit": "6c4c06a",
+  "primary_offset": 1,
+  "family_offsets": [
+    1,
+    2,
+    3
+  ],
+  "decay_split": "2019-01-01",
+  "decay_observed_pre>post": true,
+  "killer_test_2019plus": {
+    "edge_significant_positive": false,
+    "post2019_mean": -0.002664822534584914,
+    "post2019_p_mean_le_0": 0.9500099980003999,
+    "post2019_n": 59,
+    "pre2019_mean": -0.0003638669737060573,
+    "full_mean": -0.0012123443367801356
+  },
+  "family_trial_sharpes_per_period_x2": {
+    "1": -0.016948233837710918,
+    "2": -0.002186942998756182,
+    "3": -0.0016142897102517622
+  },
+  "per_offset_edges": {
+    "1": {
+      "n_events": 160,
+      "edge_full_mean": -0.0012123443367801356,
+      "edge_post2019_mean": -0.002664822534584914,
+      "edge_post2019_sig": false
+    },
+    "2": {
+      "n_events": 160,
+      "edge_full_mean": -0.00026602727695446626,
+      "edge_post2019_mean": -0.0020339053628918077,
+      "edge_post2019_sig": false
+    },
+    "3": {
+      "n_events": 159,
+      "edge_full_mean": -0.0002557225581111497,
+      "edge_post2019_mean": 5.6864937962933475e-05,
+      "edge_post2019_sig": false
+    }
+  },
+  "run_date": "2026-07-30",
+  "ledger_run_id": "fomc_seasonality-6c4c06a",
+  "cumulative_n_after_B": 35,
+  "certify_verdict": {
+    "certified": false,
+    "decision": "REJECTED_dsr",
+    "reasons": [
+      "DSR=0.000 < 0.95（N=35 累计试验下选择偏差过大）→ 疑似伪 alpha。"
+    ]
+  },
+  "metrics_full_capital": {
+    "n_obs": 5018,
+    "cagr": -0.0103247460705288,
+    "mdd": 0.3143510457271471,
+    "sharpe_ann": -0.2690448713781175,
+    "sharpe_per_period": -0.016948233837710918,
+    "mar": -0.03284463726419588,
+    "skew": 4.327455138764448,
+    "kurtosis": 147.56427920466024,
+    "crisis": {
+      "2008_GFC": {
+        "n_obs": 441,
+        "cagr": 0.07445061430705824,
+        "mdd": 0.04425974067365812
+      },
+      "2020_COVID": {
+        "n_obs": 62,
+        "cagr": 0.09304537414590608,
+        "mdd": 0.0020000000000000018
+      },
+      "2022_RATE": {
+        "n_obs": 251,
+        "cagr": 0.007887341088075317,
+        "mdd": 0.05968503026613314
+      }
+    },
+    "official_pass": false,
+    "shadow_report_pass": false,
+    "shadow_floor_pass": false,
+    "decision": "FAIL"
+  },
+  "verdict": "已衰减/不可用(负向)"
+}
