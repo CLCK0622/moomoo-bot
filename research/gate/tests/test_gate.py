@@ -613,6 +613,27 @@ def test_refreeze_guard():
     check("不同 candidate_id → 真新试验、累计 3+5=8", led.cumulative_n() == 8)
 
 
+def test_sleeve_verdict():
+    """sleeve 组合级判据：净正 + 低/负相关 + 组合级正贡献（standalone 负≠sleeve 负）。"""
+    print("18) sleeve 组合级判据（分散/回撤控制腿）")
+    from research.gate.sleeve_eval import sharpe_improves, sleeve_verdict
+    n = 2000
+    t = np.arange(n)
+    book = pd.Series(0.0006 + 0.010 * np.sin(t / 5.0),
+                     index=pd.bdate_range("2010-01-01", periods=n))   # 有回撤的库存腿
+    cand = pd.Series(0.0004 - 0.010 * np.sin(t / 5.0), index=book.index)  # 净正 + 负相关对冲腿
+    check("加负相关腿改善组合 Sharpe（判据式）", sharpe_improves(cand, book))
+    v = sleeve_verdict(cand, {"BOOK": book})
+    check("  净正", v["criteria"]["net_positive"])
+    check("  低/负相关", v["criteria"]["low_corr"])
+    check("  组合级正贡献（降 MDD 升 MAR）", v["criteria"]["positive_contribution"])
+    check("  → sleeve_pass=True", v["sleeve_pass"] is True)
+    # 正相关同向腿：不满足低相关 → sleeve 判负（对照）
+    same = pd.Series(0.0004 + 0.010 * np.sin(t / 5.0), index=book.index)
+    v2 = sleeve_verdict(same, {"BOOK": book})
+    check("正相关同向腿 → 低相关不满足、sleeve_pass=False", v2["sleeve_pass"] is False)
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
@@ -621,7 +642,7 @@ def main():
               test_ledger_accumulates_and_persists, test_dsr_unit_scale,
               test_ppy_is_not_a_free_knob,
               test_family_must_be_frozen, test_pooled_v_independent_floor,
-              test_oos_budget_persists, test_refreeze_guard):
+              test_oos_budget_persists, test_refreeze_guard, test_sleeve_verdict):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 
