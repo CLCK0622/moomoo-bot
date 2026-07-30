@@ -1,0 +1,90 @@
+{
+  "issue": "EVO-8",
+  "candidate": "carry_rates",
+  "preregistration_commit": "16be273",
+  "status": "CERTIFIED_RUN",
+  "diagnostics": {
+    "candidate": "carry_rates",
+    "cost_mult": 2.0,
+    "n_periods": 5045,
+    "first_date": "2006-07-06",
+    "last_date": "2026-07-27",
+    "n_rebalances": 241,
+    "alloc_frac": {
+      "TLT": 0.6523290386521309,
+      "IEF": 0.20594648166501486,
+      "BIL": 0.10822596630327057
+    },
+    "cash_frac": 0.03349851337958375,
+    "n_switches": 16,
+    "thresholds": {
+      "hi": 0.5,
+      "lo": 0.0
+    },
+    "universe_present": [
+      "BIL",
+      "IEF",
+      "TLT"
+    ],
+    "universe_frozen": [
+      "BIL",
+      "IEF",
+      "TLT"
+    ],
+    "return_convention": "open-to-open; monthly close(T)→open(T+1); long/flat duration, no short"
+  },
+  "sleeve_correlation": {
+    "status": "ok",
+    "corr_with_inventory": {
+      "gem": -0.2125,
+      "multifactor": -0.1345,
+      "residmom": 0.0021
+    },
+    "note": "低/负相关（债 vs 股）= 分散价值；standalone 判负≠sleeve 判负"
+  },
+  "run_date": "2026-07-30",
+  "family_trial_sharpes_per_period": {
+    "0.5,0.0": 0.02648988627433419,
+    "0.75,0.25": 0.024378009957270703,
+    "1.0,0.0": 0.03018889773424529
+  },
+  "cumulative_n_after_A": 32,
+  "certify_verdict": {
+    "certified": false,
+    "decision": "REJECTED_dsr",
+    "reasons": [
+      "DSR=0.926 < 0.95（N=32 累计试验下选择偏差过大）→ 疑似伪 alpha。"
+    ]
+  },
+  "metrics": {
+    "n_obs": 5045,
+    "cagr": 0.043040222428755825,
+    "mdd": 0.27101903857653864,
+    "sharpe_ann": 0.4205139080416296,
+    "sharpe_per_period": 0.02648988627433419,
+    "mar": 0.15880885215597432,
+    "skew": 0.1307664670717924,
+    "kurtosis": 7.912399614559272,
+    "crisis": {
+      "2008_GFC": {
+        "n_obs": 441,
+        "cagr": 0.07467347401619606,
+        "mdd": 0.27101903857653853
+      },
+      "2020_COVID": {
+        "n_obs": 62,
+        "cagr": 0.35436322095083317,
+        "mdd": 0.05784042455021665
+      },
+      "2022_RATE": {
+        "n_obs": 251,
+        "cagr": -0.10022068984350285,
+        "mdd": 0.159423324381053
+      }
+    },
+    "official_pass": false,
+    "shadow_report_pass": false,
+    "shadow_floor_pass": false,
+    "decision": "FAIL"
+  }
+}
