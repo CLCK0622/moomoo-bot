@@ -19,6 +19,8 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from typing import List, Optional, Sequence
 
+from .filelock import atomic_write_text, state_lock
+
 
 class HonestyError(ValueError):
     """miner 未吐全量 N / 声明的 N 小于实际评估数 → 拒绝评估。"""
@@ -79,16 +81,36 @@ class TrialLedger:
     def _save(self) -> None:
         if not self.path:
             return
-        os.makedirs(os.path.dirname(os.path.abspath(self.path)), exist_ok=True)
-        with open(self.path, "w", encoding="utf-8") as f:
-            for r in self.runs:
-                f.write(json.dumps(asdict(r), ensure_ascii=False) + "\n")
+        # 原子写：临时文件 + os.replace。原来的逐行 write 在并发下会把文件写成半截/交错，
+        # 台账一旦损坏后续所有 run 读它都会崩（实测 10 并发 → 仅 3 行、1 行可解析）。
+        atomic_write_text(
+            self.path,
+            "".join(json.dumps(asdict(r), ensure_ascii=False) + "\n" for r in self.runs))
 
     def register_run(self, run_id: str, source: str, n_trials_total: Optional[int],
                      n_evaluated: int, trial_sharpes: Optional[Sequence[float]] = None,
                      trial_sharpes_var: Optional[float] = None, note: str = "",
                      now_iso: Optional[str] = None, candidate_id: Optional[str] = None,
                      supersedes: Optional[str] = None) -> RunRecord:
+        """登记一轮试验。**跨进程原子**（工部 2026-07-30，都察院终审必修 2）。
+
+        原实现无锁 read-modify-write：幂等/重冻校验基于进程内陈旧快照，且 `_save()` 全量重写
+        整个文件。10 个并发 register_run 实测：仅 3 行落盘、1 行可解析，**9 条试验凭空消失**且
+        文件被交错写坏（后续读直接 JSONDecodeError）。漏记 N/V ⇒ DSR 的 haircut 变松，与本线
+        一路堵的 fail-open 同向。现改为锁内「重读磁盘 → 校验 → 原子写」。
+        """
+        with state_lock(self.path):
+            if self.path and os.path.exists(self.path):
+                self._load()          # 关键：锁内重读，纳入其它进程刚写入的条目
+            return self._register_locked(
+                run_id, source, n_trials_total, n_evaluated, trial_sharpes,
+                trial_sharpes_var, note, now_iso, candidate_id, supersedes)
+
+    def _register_locked(self, run_id: str, source: str, n_trials_total: Optional[int],
+                         n_evaluated: int, trial_sharpes: Optional[Sequence[float]],
+                         trial_sharpes_var: Optional[float], note: str,
+                         now_iso: Optional[str], candidate_id: Optional[str],
+                         supersedes: Optional[str]) -> RunRecord:
         # 幂等：同 run_id 已登记 → 返回既有，不重复计数（重跑/跨轮安全）。
         for r in self.runs:
             if r.run_id == run_id:

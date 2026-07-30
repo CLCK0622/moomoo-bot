@@ -18,6 +18,8 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
+from .filelock import atomic_write_text, state_lock
+
 # 全项目**唯一共享**单发 OOS 预算的规范路径。与台账同理**须入库**，否则跨 run/机器每次发新票。
 DEFAULT_OOS_BUDGET_PATH = "research/gate/state/oos_budget.json"
 
@@ -104,22 +106,37 @@ class OOSBudget:
             with open(self.path, "r", encoding="utf-8") as f:
                 self._used = {str(k): int(v) for k, v in json.load(f).items()}
 
+    def _reload(self) -> None:
+        """从磁盘重读（锁内用）。文件不存在＝空预算。"""
+        if self.path and os.path.exists(self.path):
+            with open(self.path, "r", encoding="utf-8") as f:
+                self._used = {str(k): int(v) for k, v in json.load(f).items()}
+
     def _save(self) -> None:
         if not self.path:
             return
-        os.makedirs(os.path.dirname(os.path.abspath(self.path)), exist_ok=True)
-        with open(self.path, "w", encoding="utf-8") as f:
-            json.dump(self._used, f, ensure_ascii=False, indent=2, sort_keys=True)
+        atomic_write_text(
+            self.path,
+            json.dumps(self._used, ensure_ascii=False, indent=2, sort_keys=True))
 
     def consume(self, key: str) -> None:
-        used = self._used.get(key, 0)
-        if used >= self.max_evals:
-            raise OOSBudgetExceeded(
-                f"OOS 预算耗尽：key='{key}' 已评估 {used} 次（上限 {self.max_evals}）。"
-                "OOS 是一次性资源，反复偷看即失可信 —— 需新预注册（记新试验），不是重跑白拿新票。"
-            )
-        self._used[key] = used + 1
-        self._save()
+        """消耗一次 OOS 额度。**跨进程原子**（工部 2026-07-30，都察院终审必修 2）。
+
+        原实现是无锁 read-modify-write：判定基于进程内的陈旧快照，两个进程并发时双方都认为
+        「还有额度」→ 都放行。实测（10 进程同刻 consume，max_evals=1）：**10 个全部拿到票**、
+        落盘只记 1。这是往放松方向失效——OOS 反复偷看正是它要防的。
+        现改为：取排他锁 → **锁内重读磁盘** → 校验 → 原子写 → 释放，三步不可分割。
+        """
+        with state_lock(self.path):
+            self._reload()                       # 关键：锁内重读，不用陈旧快照判定
+            used = self._used.get(key, 0)
+            if used >= self.max_evals:
+                raise OOSBudgetExceeded(
+                    f"OOS 预算耗尽：key='{key}' 已评估 {used} 次（上限 {self.max_evals}）。"
+                    "OOS 是一次性资源，反复偷看即失可信 —— 需新预注册（记新试验），不是重跑白拿新票。"
+                )
+            self._used[key] = used + 1
+            self._save()
 
     def used(self, key: str) -> int:
         return self._used.get(key, 0)

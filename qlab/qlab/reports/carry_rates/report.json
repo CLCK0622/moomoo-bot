@@ -54,7 +54,9 @@
     "decision": "REJECTED_dsr",
     "reasons": [
       "DSR=0.926 < 0.95（N=32 累计试验下选择偏差过大）→ 疑似伪 alpha。"
-    ]
+    ],
+    "_superseded_by": "audit_correction_2026-07-30",
+    "_superseded_note": "本 verdict 的 DSR 数值已被 audit_correction_2026-07-30 更正为 0.836847（独立 pooled V 地板生效）。**判定结论不变：REJECTED_dsr**。"
   },
   "metrics": {
     "n_obs": 5045,
@@ -86,5 +88,28 @@
     "shadow_report_pass": false,
     "shadow_floor_pass": false,
     "decision": "FAIL"
+  },
+  "audit_correction_2026-07-30": {
+    "raised_by": "都察院终审必修 1（工部主责收口）",
+    "what": "本报告落盘时 DSR 用的是 A 自身 family V；合入独立 pooled V 地板后应以地板为准。",
+    "superseded_values": {
+      "trials_variance": 8.651521e-06,
+      "expected_max_sr": 0.00618,
+      "dsr": 0.9257,
+      "stale_reason_string": "DSR=0.926 < 0.95（N=32 累计试验下选择偏差过大）→ 疑似伪 alpha。"
+    },
+    "corrected_values": {
+      "trials_variance": 3.648886e-05,
+      "expected_max_sr": 0.012684,
+      "dsr": 0.836847,
+      "n_trials": 32
+    },
+    "basis": "pooled_trials_variance(exclude_run_id='carry_rates_A-16be273')=3.648886e-05 > A 自身 family V=8.651521e-06，故生效 V=max(...)=地板；工部独立复算一致。",
+    "verdict_unchanged": true,
+    "verdict": "REJECTED_dsr（standalone 负）—— 修正前后均 <0.95 门槛；且 metrics 两轴独立不过（CAGR 4.30% vs 50%、MDD 27.10% vs 20%、兜底带亦不进），结论不依赖此数值。",
+    "retracted_claim": "「A 只是擦边 0.926」的说法作废：独立地板挂上后为 0.837。",
+    "oos_budget_consumed": false,
+    "method": "审计更正（audit correction）：只据已落盘的 metrics 重算 DSR 数值并追加本节，未重跑 certify()、未消耗 OOS 单发预算、未改动原 certify_verdict 字段。",
+    "note_on_original_record": "原 certify_verdict.reasons 保留原文不改写（那是该次 run 的历史记录，改写等于抹掉痕迹）；但其中 'DSR=0.926' 已被本节取代，读者以 corrected_values 为准。"
   }
 }

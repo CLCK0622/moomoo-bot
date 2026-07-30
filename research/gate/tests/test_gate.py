@@ -4,6 +4,7 @@
 从 repo 根跑：  python3 -m research.gate.tests.test_gate
 无 pytest 依赖，纯 assert + 打印，非 0 退出即失败。
 """
+import json
 import math
 
 import numpy as np
@@ -423,10 +424,9 @@ def test_ledger_accumulates_and_persists():
     check("分文件的坏味道：各自 cumulative 只等本轮（4 / 158，不累计）",
           la.cumulative_n() == 4 and lb.cumulative_n() == 158)
 
-    for x in (p, pa, pb):
-        if os.path.exists(x):
-            os.remove(x)
-    os.rmdir(d)
+    # rmtree 而非 rmdir：加了跨进程互斥后，state_lock 会在同目录留下 <path>.lock，rmdir 要求空目录会失败
+    import shutil
+    shutil.rmtree(d, ignore_errors=True)
 
     # 已入库的规范历史基线在位（cumulative_n 有真实历史下限，非本轮 0）
     if os.path.exists(DEFAULT_LEDGER_PATH):
@@ -582,7 +582,7 @@ def test_oos_budget_persists():
     # 对照坏味道：不落盘 → 新建又发新票
     b3 = _OB(max_evals=1); b3.consume("x")
     check("不落盘 → 新建又发新票（坏味道对照，used=0）", _OB(max_evals=1).used("x") == 0)
-    os.remove(p); os.rmdir(d)
+    import shutil; shutil.rmtree(d, ignore_errors=True)  # lock 文件同目录, rmdir 要空目录
 
 
 def test_refreeze_guard():
@@ -634,6 +634,71 @@ def test_sleeve_verdict():
     check("正相关同向腿 → 低相关不满足、sleeve_pass=False", v2["sleeve_pass"] is False)
 
 
+def _oos_worker(args):
+    """子进程：屏障同步后争抢同一 key 的 OOS 额度。返回 'GOT'/'BLOCKED'。"""
+    path, key, t0 = args
+    import time as _t
+    from research.gate.walk_forward import OOSBudget, OOSBudgetExceeded
+    while _t.time() < t0:
+        pass
+    try:
+        OOSBudget(max_evals=1, path=path).consume(key)
+        return "GOT"
+    except OOSBudgetExceeded:
+        return "BLOCKED"
+
+
+def _ledger_worker(args):
+    """子进程：屏障同步后并发登记各自的一轮试验。"""
+    path, i, t0 = args
+    import time as _t
+    from research.gate.trial_ledger import TrialLedger
+    while _t.time() < t0:
+        pass
+    TrialLedger(path).register_run(f"run-{i}", "qlib", n_trials_total=10, n_evaluated=1,
+                                   trial_sharpes=[0.01 * i, 0.02 * i, 0.03 * i],
+                                   candidate_id=f"c{i}")
+    return i
+
+
+def test_concurrent_writers_are_atomic():
+    """都察院终审必修 2（工部 2026-07-30）：共享状态的并发原子性。
+
+    修复前实测（10 进程同刻）：OOS **10 个全部拿到票**（应 1）、台账仅 3 行落盘且 1 行可解析
+    （9 条试验消失 + 文件写坏）。两者都往放松方向失效。此测用**真实多进程**竞争守住回归。
+    """
+    print("19) 并发原子性 —— 真实多进程竞争（OOS 单发 / 台账不丢不坏）")
+    import multiprocessing as mp
+    import tempfile
+    import time as _t
+
+    import shutil
+    ctx = mp.get_context("spawn")   # macOS 默认；显式声明避免 fork 假象
+    n = 10
+    d = tempfile.mkdtemp()          # 不用 TemporaryDirectory：锁文件会和自动清理抢，teardown 报 Errno 66
+    try:
+        oos_path = f"{d}/oos.json"
+        t0 = _t.time() + 3.0
+        with ctx.Pool(n) as p:
+            res = p.map(_oos_worker, [(oos_path, "cand-X", t0)] * n)
+        check(f"OOS max_evals=1 下 {n} 进程并发 → 恰好 1 个 GOT",
+              res.count("GOT") == 1)
+        check(f"  其余 {n-1} 个全部 BLOCKED", res.count("BLOCKED") == n - 1)
+
+        led_path = f"{d}/led.jsonl"
+        t0 = _t.time() + 3.0
+        with ctx.Pool(n) as p:
+            p.map(_ledger_worker, [(led_path, i, t0) for i in range(1, n + 1)])
+        rows = [json.loads(l) for l in open(led_path, encoding="utf-8") if l.strip()]
+        check(f"台账 {n} 进程并发登记 → {n} 条全部落盘（不丢写）", len(rows) == n)
+        check("  cumulative_n = 10×10 = 100（N 不被低估→ DSR 不被放松）",
+              sum(r["n_trials_total"] for r in rows) == 100)
+        check("  文件逐行均可解析（不被交错写坏）",
+              all(isinstance(r, dict) and "run_id" in r for r in rows))
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
@@ -642,7 +707,8 @@ def main():
               test_ledger_accumulates_and_persists, test_dsr_unit_scale,
               test_ppy_is_not_a_free_knob,
               test_family_must_be_frozen, test_pooled_v_independent_floor,
-              test_oos_budget_persists, test_refreeze_guard, test_sleeve_verdict):
+              test_oos_budget_persists, test_refreeze_guard, test_sleeve_verdict,
+              test_concurrent_writers_are_atomic):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 
