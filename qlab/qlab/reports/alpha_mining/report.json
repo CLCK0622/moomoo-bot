@@ -1,24 +1,24 @@
 {
   "issue": "EVO-8",
   "candidate": "alpha_mining_i",
-  "preregistration_commit": "b9bb93b",
+  "preregistration_commit": "b1de1d8",
   "store_fingerprint_verified": true,
   "n_expressions_frozen": 12,
   "honest_trial_count": {
     "this_run_N": 12,
     "cumulative_n": 47,
-    "ledger_run_id": "alpha_mining_i-b9bb93b",
+    "ledger_run_id": null,
     "per_factor_sharpe_pp_x2": {
       "illiq_amihud": 0.06654,
-      "turnover_low": 0.0,
-      "vol_of_vol": 0.0,
-      "downside_beta": 0.0,
-      "max_lottery": 0.0,
-      "skew_neg": 0.0,
+      "turnover_low": 0.05406,
+      "vol_of_vol": 0.03725,
+      "downside_beta": 0.04407,
+      "max_lottery": 0.03576,
+      "skew_neg": 0.03697,
       "intraday_close_str": 0.04083,
       "overnight_drift": 0.04918,
-      "volume_shock_rev": 0.0,
-      "range_compress": 0.0,
+      "volume_shock_rev": 0.03381,
+      "range_compress": 0.06031,
       "price_accel": 0.03563,
       "close_to_high52": 0.03627
     }
@@ -27,33 +27,33 @@
     "certified": false,
     "decision": "REJECTED_dsr",
     "reasons": [
-      "DSR=0.545 < 0.95（N=47 累计试验下选择偏差过大）→ 疑似伪 alpha。"
+      "DSR=0.539 < 0.95（N=47 累计试验下选择偏差过大）→ 疑似伪 alpha。"
     ]
   },
   "metrics": {
     "n_obs": 4662,
-    "cagr": 0.1155011445985965,
-    "mdd": 0.3791195973344156,
-    "sharpe_ann": 0.8410285749889272,
-    "sharpe_per_period": 0.05297982035523187,
-    "mar": 0.3046562230248275,
-    "skew": -0.06247781935109224,
-    "kurtosis": 14.909558396676633,
+    "cagr": 0.07800343475066085,
+    "mdd": 0.2128258752948209,
+    "sharpe_ann": 0.8114802688076178,
+    "sharpe_per_period": 0.05111845202620955,
+    "mar": 0.36651292819825215,
+    "skew": -0.40441258570316135,
+    "kurtosis": 13.97218343469168,
     "crisis": {
       "2008_GFC": {
         "n_obs": 441,
-        "cagr": 0.002327207319765545,
-        "mdd": 0.07315390535822908
+        "cagr": -0.01574670478557183,
+        "mdd": 0.06903006152834879
       },
       "2020_COVID": {
         "n_obs": 62,
-        "cagr": -0.29019446349291333,
-        "mdd": 0.11341487710229081
+        "cagr": -0.24465579692936956,
+        "mdd": 0.09525997827854304
       },
       "2022_RATE": {
         "n_obs": 251,
-        "cagr": -0.1390509877434163,
-        "mdd": 0.14621589236670618
+        "cagr": -0.07510024692373274,
+        "mdd": 0.09123063077054772
       }
     },
     "official_pass": false,
@@ -70,15 +70,22 @@
     "n_rebalances": 219,
     "used_factors": [
       "illiq_amihud",
+      "turnover_low",
+      "vol_of_vol",
+      "downside_beta",
+      "max_lottery",
+      "skew_neg",
       "intraday_close_str",
       "overnight_drift",
+      "volume_shock_rev",
+      "range_compress",
       "price_accel",
       "close_to_high52"
     ],
-    "mean_n_long_when_on": 22.357571214392802,
+    "mean_n_long_when_on": 22.362443778110944,
     "min_n_long_when_on": 18,
     "frac_days_risk_on": 0.5722865722865723,
-    "mean_gross_when_on": 0.9997435492779926,
+    "mean_gross_when_on": 1.0,
     "trend_overlay": "SPY>200dMA → 1.0x, else 0.0x",
     "universe_present": [
       "MU",
@@ -337,29 +344,118 @@
     "any_thin": true
   },
   "success_criterion_note": "如实瞄影子带(25%/<20%)；同宇宙 8.03%/22.6% 距官方 50/20 差 3.1x 收益/2.3x 回撤",
-  "run_date": "2026-08-06",
-  "run1_defect_disclosure": {
-    "what": "Qlib 表达式解析器不支持算子前置一元负号（'-Mean(...)' → TypeError），12 条中 7 条被 factor_export 丢弃",
-    "discarded": [
-      "turnover_low",
-      "vol_of_vol",
-      "downside_beta",
-      "max_lottery",
-      "skew_neg",
-      "volume_shock_rev",
-      "range_compress"
+  "ledger_ruling_b_supersedes": {
+    "rule": "N 走 (b)：同一批 12 条因子定义只计一次试验",
+    "supersedes": "alpha_mining_i-b9bb93b",
+    "candidate_id": "alpha_mining_i",
+    "cumulative_n_before": 47,
+    "cumulative_n_after": 47,
+    "expected": 47,
+    "ok": true
+  },
+  "oos_ruling_a_second_shot": {
+    "rule": "OOS 走 (a)：如实记为同候选第 2 发（run1 已看过一次样本外，不因无效而当没看过）",
+    "run1": {
+      "status": "工具缺陷导致的无效执行（Qlib 解析器静默丢弃 7/12 因子）",
+      "oos_key": "319d80a89aabefaa573f51385b6d45e340c286185d6fcaf26caa9b34db669db6",
+      "consumed": 1,
+      "result_5factor": "REJECTED_dsr, CAGR 11.55% / MDD 37.91%"
+    },
+    "run2": {
+      "status": "本次＝第 2 发（冻结 12 因子齐全口径）",
+      "note": "新 frozen_hash 会另发一票，故在此显式披露、不让其静默通过"
+    }
+  },
+  "direction_refactor_equivalence": {
+    "why": "Qlib 表达式解析器不支持算子前置一元负号（'-Mean(...)' → TypeError）",
+    "what": "方向从表达式移到 MINING_DIRECTION 映射；因子定义/经济含义与冻结 §2 逐条一致，无一条被重定义",
+    "table": [
+      {
+        "factor": "illiq_amihud",
+        "prereg_expr_v1": "Mean(Abs($close/Ref($close,1)-1)/($volume*$close+1),21)",
+        "run2_expr": "Mean(Abs($close/Ref($close,1)-1)/($volume*$close+1),21)",
+        "run2_direction": 1,
+        "equivalent": true
+      },
+      {
+        "factor": "turnover_low",
+        "prereg_expr_v1": "-Mean($volume,21)/Mean($volume,252)",
+        "run2_expr": "Mean($volume,21)/Mean($volume,252)",
+        "run2_direction": -1,
+        "equivalent": true
+      },
+      {
+        "factor": "vol_of_vol",
+        "prereg_expr_v1": "-Std(Std($close/Ref($close,1)-1,21),63)",
+        "run2_expr": "Std(Std($close/Ref($close,1)-1,21),63)",
+        "run2_direction": -1,
+        "equivalent": true
+      },
+      {
+        "factor": "downside_beta",
+        "prereg_expr_v1": "-Std(Less($close/Ref($close,1)-1,0),126)",
+        "run2_expr": "Std(Less($close/Ref($close,1)-1,0),126)",
+        "run2_direction": -1,
+        "equivalent": true
+      },
+      {
+        "factor": "max_lottery",
+        "prereg_expr_v1": "-Max($close/Ref($close,1)-1,21)",
+        "run2_expr": "Max($close/Ref($close,1)-1,21)",
+        "run2_direction": -1,
+        "equivalent": true
+      },
+      {
+        "factor": "skew_neg",
+        "prereg_expr_v1": "-Mean(Power($close/Ref($close,1)-1,3),63)",
+        "run2_expr": "Mean(Power($close/Ref($close,1)-1,3),63)",
+        "run2_direction": -1,
+        "equivalent": true
+      },
+      {
+        "factor": "intraday_close_str",
+        "prereg_expr_v1": "Mean(($close-$open)/($high-$low+0.0001),21)",
+        "run2_expr": "Mean(($close-$open)/($high-$low+0.0001),21)",
+        "run2_direction": 1,
+        "equivalent": true
+      },
+      {
+        "factor": "overnight_drift",
+        "prereg_expr_v1": "Mean($open/Ref($close,1)-1,63)",
+        "run2_expr": "Mean($open/Ref($close,1)-1,63)",
+        "run2_direction": 1,
+        "equivalent": true
+      },
+      {
+        "factor": "volume_shock_rev",
+        "prereg_expr_v1": "-Mean(($volume/Mean($volume,21)-1)*($close/Ref($close,1)-1),21)",
+        "run2_expr": "Mean(($volume/Mean($volume,21)-1)*($close/Ref($close,1)-1),21)",
+        "run2_direction": -1,
+        "equivalent": true
+      },
+      {
+        "factor": "range_compress",
+        "prereg_expr_v1": "-Mean(($high-$low)/$close,21)/(Mean(($high-$low)/$close,252)+0.0001)",
+        "run2_expr": "Mean(($high-$low)/$close,21)/(Mean(($high-$low)/$close,252)+0.0001)",
+        "run2_direction": -1,
+        "equivalent": true
+      },
+      {
+        "factor": "price_accel",
+        "prereg_expr_v1": "($close/Ref($close,21)-1)-($close/Ref($close,63)-1)",
+        "run2_expr": "($close/Ref($close,21)-1)-($close/Ref($close,63)-1)",
+        "run2_direction": 1,
+        "equivalent": true
+      },
+      {
+        "factor": "close_to_high52",
+        "prereg_expr_v1": "$close/Max($high,252)",
+        "run2_expr": "$close/Max($high,252)",
+        "run2_direction": 1,
+        "equivalent": true
+      }
     ],
-    "effective_factors_used": [
-      "illiq_amihud",
-      "intraday_close_str",
-      "overnight_drift",
-      "price_accel",
-      "close_to_high52"
-    ],
-    "n_honest": "台账仍按 attempted=12 记账（诚实 N 正确，未少记）；cumulative_n=47",
-    "verdict_status": "本 run1 的 CAGR 11.55%/MDD 37.91%/REJECTED_dsr 系【仅 5 因子】的结果，不是 12 因子冻结口径的结果",
-    "fix_ready_but_not_run": "已把方向从表达式移到 MINING_DIRECTION（经济含义与冻结 §2 逐条一致、未改因子定义）",
-    "why_not_rerun": "修正会改 prereg_config → 新 frozen_hash → certify 会发一张【新的】OOS 单发票，等于绕开单发预算——与本线一路封堵的 fail-open 同型。故不自行重跑，交工部裁定（重跑并显式记为同候选第2发/或 supersedes 覆盖）",
-    "oos_consumed_by_run1": true
-  }
+    "superseded_frozen_hash_kept": "run1 的 frozen_hash 记为 superseded、保留不删（见 run1_defect_disclosure）"
+  },
+  "run_date": "2026-08-06"
 }
