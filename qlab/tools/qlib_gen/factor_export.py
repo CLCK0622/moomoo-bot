@@ -80,7 +80,9 @@ def export(store: Path, out: Path, *, start: str, end: str,
            factor_set: str = "core",
            extra: dict[str, str] | None = None,
            repo_root: Path | None = None,
-           ledger=None, run_id: str | None = None, source: str = "qlib") -> dict:
+           ledger=None, run_id: str | None = None, source: str = "qlib",
+           candidate_id: str | None = None, supersedes: str | None = None,
+           trial_sharpes=None) -> dict:
     """Evaluate a factor family, write tidy parquet + honest-N manifest.
 
     If ``ledger`` (a ``research.gate.trial_ledger.TrialLedger``) is given, this
@@ -170,11 +172,19 @@ def export(store: Path, out: Path, *, start: str, end: str,
     # only sanctioned path to the gate). register_run raises HonestyError if the
     # declared N is missing / < evaluated — surfaced, not swallowed.
     if ledger is not None:
+        # candidate_id / supersedes 必须透传（工部 2026-08-06）：此前这里不传 candidate_id，
+        # 于是经 export 登记的条目一律 candidate_id=None —— 重冻护栏正是按 candidate_id 找
+        # prior 的，为 None 就永远匹配不到 ⇒ 同一候选换 prereg commit 重登**不会**触发
+        # RefreezeError、静默追加、同批试验计两遍（N 虚高 ⇒ DSR 门抬高 ⇒ 误杀真 alpha）。
+        # 营缮当时的绕法是「不传 ledger 给 export、由 runner 显式登记」，对但治标；这里补上透传。
         rec = ledger.register_run(
             run_id=run_id or f"{source}/{start}_{end}/{factor_set}",
             source=source,
             n_trials_total=len(attempted),
             n_evaluated=len(exported),
+            trial_sharpes=trial_sharpes,
+            candidate_id=candidate_id,
+            supersedes=supersedes,
             note=f"factor_export {factor_set}; discarded={sorted(discarded)}",
         )
         manifest["ledger_run_id"] = rec.run_id
