@@ -93,5 +93,12 @@
     "shadow_floor_pass": false,
     "decision": "FAIL"
   },
-  "verdict": "standalone 负；按 sleeve 组件级看相关性"
+  "verdict": "standalone 负；按 sleeve 组件级看相关性",
+  "mandatory_declarations": {
+    "execution_lag": "T 决策 → T+1 执行（BAA10YM 月 M 值 M+1 才发布 ⇒ 利差日期后移 35 天，再经 close(T)→open(T+1)）；绝不当月用当月、无同日决策同日成交",
+    "2008_not_vintage_verified": "⚠️ 2008 段用的是 latest 外推（依据「已证不修订」），**不是独立的 2008 实时 vintage**——ALFRED 档案只到 2014-05，8 个 vintage 快照 as_of 2019-12→2026-07。危机窗结论不得被读成 vintage 验证过。",
+    "revision_evidence_chain": "都水自检 trustworthy=True / reason=no_revision_confirmed / identical_to_latest=True / max_abs_diff=0.0；**正控 GDPC1 vintage vs latest 最大差 1763.478** ⇒ PIT 机制确实生效，故「跨 vintage 相同」是【有证据的不修订】而非假定，也排除了端点静默返回 latest 的歧义（工部 §2 复验）。",
+    "signal_source_note": "用 BAA10YM（§1 本就二选一）；HY OAS BAMLH0A0HYM2 因 FRED licensing 截断（仅 2023-07→2026，盖不住 2008）不可用。不构成改口径、无需重冻。",
+    "positioning": "C 与 A 同属回撤控制 sleeve 族，非收益引擎；跑正也大概率撑不起 50/20。"
+  }
 }
