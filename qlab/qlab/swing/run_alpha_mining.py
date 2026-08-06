@@ -25,20 +25,37 @@ from research.gate import (certify, Candidate, GateThresholds, freeze_config,   
 from qlab.swing.momentum_signals import load_daily                                      # noqa: E402
 from qlab.swing.multifactor_signals import MultiFactorParams, multifactor_curve, FACTOR_DIRECTION  # noqa: E402
 
-# 冻结的 12 条（预注册 §2）；表达式已把方向写进式子（负号即反向），故 direction 全 +1
+# 冻结的 12 条（预注册 §2）。Qlib 表达式解析器**不支持算子前置一元负号**（`-Mean(...)` → TypeError），
+# 故把方向从表达式移到 MINING_DIRECTION（合成时乘），**经济含义与冻结口径完全一致、未改任何因子定义**。
 MINING_FACTORS = {
     "illiq_amihud":       "Mean(Abs($close/Ref($close,1)-1)/($volume*$close+1),21)",
-    "turnover_low":       "-Mean($volume,21)/Mean($volume,252)",
-    "vol_of_vol":         "-Std(Std($close/Ref($close,1)-1,21),63)",
-    "downside_beta":      "-Std(Less($close/Ref($close,1)-1,0),126)",
-    "max_lottery":        "-Max($close/Ref($close,1)-1,21)",
-    "skew_neg":           "-Mean(Power($close/Ref($close,1)-1,3),63)",
+    "turnover_low":       "Mean($volume,21)/Mean($volume,252)",
+    "vol_of_vol":         "Std(Std($close/Ref($close,1)-1,21),63)",
+    "downside_beta":      "Std(Less($close/Ref($close,1)-1,0),126)",
+    "max_lottery":        "Max($close/Ref($close,1)-1,21)",
+    "skew_neg":           "Mean(Power($close/Ref($close,1)-1,3),63)",
     "intraday_close_str": "Mean(($close-$open)/($high-$low+0.0001),21)",
     "overnight_drift":    "Mean($open/Ref($close,1)-1,63)",
-    "volume_shock_rev":   "-Mean(($volume/Mean($volume,21)-1)*($close/Ref($close,1)-1),21)",
-    "range_compress":     "-Mean(($high-$low)/$close,21)/(Mean(($high-$low)/$close,252)+0.0001)",
+    "volume_shock_rev":   "Mean(($volume/Mean($volume,21)-1)*($close/Ref($close,1)-1),21)",
+    "range_compress":     "Mean(($high-$low)/$close,21)/(Mean(($high-$low)/$close,252)+0.0001)",
     "price_accel":        "($close/Ref($close,21)-1)-($close/Ref($close,63)-1)",
     "close_to_high52":    "$close/Max($high,252)",
+}
+
+# 方向：+1 做多高值 / −1 做多低值（与预注册 §2 表中的经济理由逐条对应）
+MINING_DIRECTION = {
+    "illiq_amihud": +1,        # 非流动性溢价：高 illiq 要更高预期收益
+    "turnover_low": -1,        # 低换手跑赢
+    "vol_of_vol": -1,          # 低 vol-of-vol 溢价
+    "downside_beta": -1,       # 低下行风险
+    "max_lottery": -1,         # 彩票（高 MAX）跑输
+    "skew_neg": -1,            # 正偏跑输
+    "intraday_close_str": +1,  # 收盘强度高＝知情买盘
+    "overnight_drift": +1,     # 隔夜漂移正向
+    "volume_shock_rev": -1,    # 量价冲击后反转
+    "range_compress": -1,      # 区间压缩（低相对波动）
+    "price_accel": +1,         # 动量加速
+    "close_to_high52": +1,     # 贴近 52 周高
 }
 
 
@@ -86,9 +103,9 @@ def main(argv=None) -> int:
                                repo_root=_REPO_ROOT)
     fdf = pd.read_parquet(Path(args.factors_out) / "factors.parquet")
 
-    # 表达式已含方向 ⇒ 合成时方向统一 +1
-    for name in MINING_FACTORS:
-        FACTOR_DIRECTION[name] = +1
+    # 方向在 MINING_DIRECTION（Qlib 不支持算子前置负号，经济含义与冻结一致）
+    for name, d in MINING_DIRECTION.items():
+        FACTOR_DIRECTION[name] = d
 
     params = MultiFactorParams()
     net = multifactor_curve(fdf, frames, spy, universe, params, cost_mult=2.0, start=args.start, end=args.end)
