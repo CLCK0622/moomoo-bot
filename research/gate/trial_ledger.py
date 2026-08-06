@@ -118,6 +118,20 @@ class TrialLedger:
         # 重冻护栏（工部 2026-07-30）：同一 candidate_id 已有别的 run_id（＝重冻换了 prereg commit）→
         # 不得静默追加（会把同一候选计两遍、N 虚高）。须显式声明 supersedes=<旧 run_id> 覆盖（计一次），
         # 否则拒绝——逼调用方表态是"同候选重冻覆盖"还是"真的新试验"（新试验请用不同 candidate_id）。
+        # supersedes 不得静默失效（工部 2026-08-06 实测）：旧条目若**没带 candidate_id**（早期登记
+        # 常见），上面按 candidate_id 匹配的 prior 会是空集 → supersedes 被**悄悄忽略**、直接追加，
+        # 同一批试验计两遍（实测 12→24；生产上是 47→59），N 虚高反噬为假阴性。而调用方以为自己
+        # 已经覆盖了。故：声明了 supersedes 就必须真的命中一条既有 run_id，否则报错逼其修正。
+        if supersedes is not None:
+            target = [r for r in self.runs if r.run_id == supersedes]
+            if not target:
+                raise RefreezeError(
+                    f"supersedes='{supersedes}' 未命中任何已登记 run_id → 拒绝。"
+                    "（若静默忽略，本轮会被当成全新试验追加、同一批试验计两遍、N 虚高。）"
+                    f"现有 run_id: {[r.run_id for r in self.runs]}")
+            # 命中即覆盖计一次——不依赖 candidate_id 是否齐备（兼容早期未带 candidate_id 的条目）。
+            self.runs = [r for r in self.runs if r.run_id != supersedes]
+
         if candidate_id is not None:
             prior = [r for r in self.runs
                      if r.candidate_id == candidate_id and r.run_id != run_id]
