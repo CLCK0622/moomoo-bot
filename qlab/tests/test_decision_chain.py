@@ -2,7 +2,7 @@
 from __future__ import annotations
 import pandas as pd, pytest
 from qlab.llm_paper.decision_chain import (load_prereg, frozen_grid, build_decision,
-                                            check_portfolio, next_open_after, Decision)
+                                            check_portfolio, intended_start, resolve_actual_start, Decision)
 
 ET = "America/New_York"
 def _ev(ts, ref="r1"): return {"source_time_utc": pd.Timestamp(ts, tz=ET).tz_convert("UTC").isoformat(), "ref_id": ref}
@@ -33,7 +33,7 @@ def test_valid_decision_orders_three_timestamps():
     d = build_decision(symbol="AAPL", target_weight=0.05, confidence=0.7, thesis="t",
                        evidence_records=[_ev("2026-06-17 18:40")], decision_ts=_dts("2026-06-18 10:00"),
                        seed=11, prompt_variant="pv1_baseline")
-    assert pd.Timestamp(d.evidence_available_utc) <= pd.Timestamp(d.decision_ts) <= pd.Timestamp(d.effective_from)
+    assert pd.Timestamp(d.evidence_available_utc) <= pd.Timestamp(d.decision_ts) <= pd.Timestamp(d.intended_start)
     assert d.evidence_acceptance_utc != d.evidence_available_utc   # 原始受理时刻留档且确实早于可得
 
 def test_shorting_and_single_name_cap_enforced():
@@ -56,12 +56,37 @@ def test_gross_cap_and_cash():
     ds = [Decision(symbol=f"S{i}", target_weight=0.10, confidence=0.5, thesis="t", evidence_refs=["r"],
                    evidence_available_utc="2026-06-17T18:00:00+00:00",
                    evidence_acceptance_utc="2026-06-17T18:00:00+00:00",
-                   decision_ts="2026-06-17T19:00:00+00:00", effective_from="2026-06-18T13:30:00+00:00",
+                   decision_ts="2026-06-17T19:00:00+00:00", intended_start="2026-06-18T13:30:00+00:00",
                    seed=11, prompt_variant="pv1_baseline") for i in range(10)]
     p = check_portfolio(ds); assert p["ok"] and abs(p["gross"] - 1.0) < 1e-9 and p["leverage_ok"]
     ds.append(ds[0]); p2 = check_portfolio(ds); assert not p2["ok"]   # 11×10% > 100% 总仓上限
 
-def test_effective_from_skips_holiday():
-    # 2025-08-29(周五) 盘后决策 → 收益起算跳过 09-01 劳动节，落 09-02 开盘
-    eff = next_open_after(_dts("2025-08-29 18:00"))
-    assert eff == _dts("2025-09-02 09:30").tz_convert("UTC")
+def test_intended_start_is_mechanical_no_holiday_lookup():
+    # 纯机械只跳周末：2025-08-29(周五)盘后 → intended 落 09-01（即便那天是劳动节也不查）
+    itd = intended_start(_dts("2025-08-29 18:00"))
+    assert itd == _dts("2025-09-01 09:30").tz_convert("UTC")
+
+
+def test_actual_start_observed_from_first_real_bar():
+    # 市场自己回答：价格腿首根 bar 在 09-02 → 自动顺延并如实记录顺延天数
+    itd = intended_start(_dts("2025-08-29 18:00"))
+    r = resolve_actual_start(itd, [pd.Timestamp("2025-09-02"), pd.Timestamp("2025-09-03")])
+    assert r["actual_start"] == _dts("2025-09-02 09:30").tz_convert("UTC").isoformat()
+    assert r["rolled"] and r["rolled_days"] == 1
+
+
+def test_actual_start_pending_when_no_bars():
+    # 价格腿不可用 → pending，绝不猜（不回退到日历估算）
+    itd = intended_start(_dts("2025-08-29 18:00"))
+    r = resolve_actual_start(itd, [])
+    assert r["actual_start"] is None and "pending" in r["reason"]
+
+
+def test_log_entry_prefers_actual_over_intended():
+    d = build_decision(symbol="AAPL", target_weight=0.05, confidence=0.6, thesis="t",
+                       evidence_records=[_ev("2026-06-17 14:00")], decision_ts=_dts("2026-06-17 15:00"),
+                       seed=11, prompt_variant="pv1_baseline")
+    assert d.to_log_entry()["effective_from_is_actual"] is False      # 未回填 → 用 intended 并标 pending
+    d.actual_start = "2026-06-18T13:30:00+00:00"
+    e = d.to_log_entry()
+    assert e["effective_from"] == d.actual_start and e["effective_from_is_actual"] is True

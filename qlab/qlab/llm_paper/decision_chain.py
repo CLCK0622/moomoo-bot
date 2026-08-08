@@ -11,7 +11,11 @@
   （EDGAR `acceptanceDateTime` / RSS `pubDate`）派生的**公开可得**时刻，
   含 ≥17:30 ET 顺延、盘前顺延、**SPY 派生真交易日历跳假日**、覆盖外 fail-closed；
 - `decision_ts` = LLM 产出该决策的时刻（**决策后**才允许写盘）；
-- `effective_from` = 收益起算 = 决策后的**下一个开盘**（预注册：周一开盘前决策 → 当日开盘执行）。
+- **收益起算两段式**（工部 2026-08-08 结构性更正）：`intended_start` = 决策后下一个非周末日开盘
+  （纯机械、**不查假日**——未来某天开不开市，任何历史 bar 序列都答不了）；
+  `actual_start` = 价格腿**首根真实 bar**，执行时观测确定，未开市自然顺延并如实记顺延天数。
+  时序核验的 `effective_from` 优先取 `actual_start`（权威），未回填时暂用 `intended_start` 并标 pending。
+  **永久去掉对前瞻日历的依赖**：不估算、不需假日表、不会在覆盖边缘失效。
 
 台账：`candidate_id="llm_paper"`，**每 seed × 每变体全额登记**（本轮冻结网格 10 格），
 少登即 `REJECTED_honesty`（户部机器核验）。RSS 拒收条目逐条进 run 日志。
@@ -94,9 +98,12 @@ class Decision:
     evidence_available_utc: str          # 派生的**公开可得**时刻（时序核验用这个）
     evidence_acceptance_utc: str         # 原始受理/发布时刻（留档备查）
     decision_ts: str                     # LLM 产出决策的时刻
-    effective_from: str                  # 收益起算（下一个开盘）
+    intended_start: str                  # 机械算：决策后下一个非周末日开盘（不查假日）
     seed: int
     prompt_variant: str
+    actual_start: Optional[str] = None   # 观测：价格腿首根真实 bar（执行时回填；未定为 None）
+    actual_start_rolled_days: Optional[int] = None   # 相对 intended 的顺延天数（如实记录）
+    actual_start_reason: str = "pending：价格腿未回填"
     model: str = ""
     extra: Dict[str, Any] = field(default_factory=dict)
 
@@ -104,22 +111,51 @@ class Decision:
         """转成 `validate_decision_log` 认的三时间戳形态（evidence 用**可得**时刻）。"""
         d = asdict(self)
         d["evidence_max_ts"] = self.evidence_available_utc     # 关键：不是受理时刻
+        # 收益起算：已由价格腿观测到就用 actual_start（权威）；未回填则暂用 intended 并标 pending
+        d["effective_from"] = self.actual_start or self.intended_start
+        d["effective_from_is_actual"] = self.actual_start is not None
         return d
 
 
-def next_open_after(ts_utc, cal: Optional[Dict[str, Any]] = None) -> pd.Timestamp:
-    """决策时刻 → 收益起算（下一个开盘）。盘前决策落当日开盘；其余落次一开市日开盘。"""
-    cal = cal or load_trading_calendar()
+def intended_start(ts_utc) -> pd.Timestamp:
+    """`intended_start` —— **纯机械**：决策后的下一个非周末日开盘（09:30 ET）。
+
+    工部 2026-08-08 的结构性更正：`effective_from` 问的是**未来某天开不开市**，
+    而**任何历史价格序列都答不了这个问题**（SPY 刷到昨天也不知道明天是否开市）。
+    故此处**不查假日表、不依赖前瞻日历**，只做周末机械推进；真正的收益起算由
+    `actual_start`（价格腿首根真实 bar）在执行时确定——见 `resolve_actual_start`。
+    这样永久去掉对前瞻日历的依赖：不估算、不会在覆盖边缘失效。
+    """
     et = pd.Timestamp(ts_utc).tz_convert(ET)
     open_today = et.replace(hour=9, minute=30, second=0, microsecond=0, nanosecond=0)
-    day = et.tz_localize(None).normalize()
-    if day < cal["first"] or day > cal["last"]:
-        raise CalendarCoverageError(
-            f"{day.date()} 超出交易日历覆盖 → fail-closed，不得据此定收益起算")
-    if day in cal["days"] and et < open_today:
-        return open_today.tz_convert("UTC")
-    from qlab.events.datafetch.evidence_availability import next_trading_open
-    return next_trading_open(et, cal).tz_convert("UTC")
+    if et < open_today and et.weekday() < 5:
+        return open_today.tz_convert("UTC")          # 盘前决策 → 当日开盘
+    d = (et + pd.Timedelta(days=1)).normalize()
+    while d.weekday() >= 5:                          # 只跳周末（假日交给市场自己回答）
+        d = d + pd.Timedelta(days=1)
+    return d.replace(hour=9, minute=30).tz_convert("UTC")
+
+
+def resolve_actual_start(intended, bar_dates: Sequence[Any]) -> Dict[str, Any]:
+    """`actual_start` —— **观测而非预测**：收益起算 = 价格腿在 `intended` 当日或之后
+    出现的**第一根真实 bar**。那天若没开市（假日/临时休市），自然顺延到真有 bar 的那天，
+    并把顺延如实记进决策记录。「哪天真开市」由市场自己回答，比任何日历都权威。
+
+    `bar_dates` 为价格腿返回的交易日序列（升序即可）。无可用 bar ⇒ `pending`（不猜）。
+    """
+    itd = pd.Timestamp(intended).tz_convert(ET).normalize()
+    days = sorted({pd.Timestamp(b).tz_localize(None).normalize() if pd.Timestamp(b).tzinfo
+                   else pd.Timestamp(b).normalize() for b in bar_dates})
+    for d in days:
+        if d >= itd.tz_localize(None):
+            actual = d.tz_localize(ET).replace(hour=9, minute=30).tz_convert("UTC")
+            rolled_days = int((d - itd.tz_localize(None)).days)
+            return {"actual_start": actual.isoformat(), "rolled_days": rolled_days,
+                    "rolled": bool(rolled_days > 0),
+                    "reason": ("intended 当日无 bar（未开市）→ 顺延至首根真实 bar"
+                               if rolled_days else "intended 当日即有真实 bar")}
+    return {"actual_start": None, "rolled_days": None, "rolled": None,
+            "reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜"}
 
 
 def build_decision(*, symbol: str, target_weight: float, confidence: float, thesis: str,
@@ -149,13 +185,13 @@ def build_decision(*, symbol: str, target_weight: float, confidence: float, thes
     if ev_available > dts:
         raise ValueError(
             f"前视：证据可得 {ev_available} 晚于决策 {dts}——该证据在决策时点尚不可用，不得据以决策")
-    eff = next_open_after(dts)
+    itd = intended_start(dts)
     return Decision(
         symbol=symbol, target_weight=float(target_weight), confidence=float(confidence),
         thesis=thesis, evidence_refs=[r.get("ref_id", "") for r in evidence_records],
         evidence_available_utc=ev_available.isoformat(),
         evidence_acceptance_utc=max(acc).isoformat(),
-        decision_ts=dts.isoformat(), effective_from=eff.isoformat(),
+        decision_ts=dts.isoformat(), intended_start=itd.isoformat(),
         seed=seed, prompt_variant=prompt_variant, model=model)
 
 
