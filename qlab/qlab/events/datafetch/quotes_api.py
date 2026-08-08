@@ -93,10 +93,14 @@ class RateLimited(RuntimeError):
     """
 
     def __init__(self, message: str, *, ledger_remaining: Optional[int] = None,
-                 vendor_throttled: bool = True, utc_day: Optional[str] = None):
+                 vendor_throttled: bool = True, utc_day: Optional[str] = None,
+                 kind: str = "daily"):
         self.ledger_remaining = ledger_remaining
         self.vendor_throttled = vendor_throttled
         self.utc_day = utc_day
+        # burst vs daily 已在 _throttle_kind 分好，但此前只进了 message 文本。
+        # 调用方要按类别决定「继续跑还是整批中止」，靠 substring 猜是回退——故显式带出来。
+        self.kind = kind
         self.divergence = bool(ledger_remaining is not None and ledger_remaining > 0
                                and vendor_throttled)
         if ledger_remaining is not None:
@@ -190,7 +194,8 @@ def _check_throttle(payload: dict, symbol: str,
                     remaining, day = None, None
             raise RateLimited(
                 f"{symbol}: {field} ({kind} throttle): {_redact(msg, api_key)[:200]}",
-                ledger_remaining=remaining, vendor_throttled=True, utc_day=day)
+                ledger_remaining=remaining, vendor_throttled=True, utc_day=day,
+                kind=kind)
     if payload.get("Error Message"):
         raise RuntimeError(f"{symbol}: {_redact(payload['Error Message'], api_key)[:200]}")
 
@@ -272,7 +277,22 @@ def get_daily_closes(symbols: Iterable[str], *, api_key: Optional[str] = None,
             # in `failed` (that would read as "this symbol was unavailable" and
             # keep the loop burning the remaining quota). Propagate.
             raise
-        except Exception as e:                       # RateLimited / http / payload
+        except RateLimited as e:
+            # Same reasoning, and one more that is specific to the alarm: burying a
+            # DAILY throttle in `failed` destroys it. `failed[s]` is a 200-char slice
+            # of str(e), and the "[ledger_remaining=…] QUOTA_DIVERGENCE" tag is
+            # appended LAST — so it is the first thing truncated away (measured with
+            # AV's real daily notice: 330-char message -> tag and ledger_remaining
+            # both gone). A leaked-key signal must not degrade into vendor prose that
+            # reads as "this symbol was unavailable", and the loop must not keep
+            # calling a vendor that just refused us for the day.
+            # A BURST throttle is the transient exception: per-second pacing, not a
+            # budget or leak signal, so it stays a per-symbol failure as before.
+            if getattr(e, "kind", "daily") == "burst" and not e.divergence:
+                failed[s] = f"RateLimited: {e}"[:200]
+            else:
+                raise
+        except Exception as e:                       # http / payload shape
             failed[s] = f"{type(e).__name__}: {e}"[:200]
         if i < len(syms) - 1 and pace_seconds:
             sleep(pace_seconds)

@@ -167,3 +167,29 @@ def test_drift_records_the_round_and_drops_an_alert_file(tmp_path, monkeypatch):
     assert r["seed_semantics"]["seed_status"] == "nominal_assumption_broken"
     assert r["n_decisions"] == 1                                   # 真数据仍如实记录
     assert list(tmp_path.glob("ALERT_model_drift_*.json"))
+
+
+def test_quota_divergence_leaves_an_alert_and_no_round(tmp_path, monkeypatch):
+    """疑似 key 被盗用（QUOTA_DIVERGENCE）时：整批不出、无决策无净值，但**留下独立 ALERT**。
+
+    否则本轮中止 ⇒ 没有 round JSON ⇒ 告警只以 traceback 形态存在，等于没留痕。
+    """
+    import qlab.llm_paper.run_round as RR
+    from qlab.events.datafetch.quotes_api import RateLimited
+    _iso(tmp_path, monkeypatch)
+
+    def boom(symbols, **kw):
+        raise RateLimited("SPY: Information (daily throttle): <redacted-api-key> ...",
+                          ledger_remaining=24, vendor_throttled=True,
+                          utc_day="2026-08-09", kind="daily")
+    monkeypatch.setattr(RR, "get_daily_closes", boom)
+    with pytest.raises(RateLimited):
+        run_round(proposals=[{"symbol": "IBM", "target_weight": 0.05, "confidence": 0.5,
+                              "thesis": "t", "evidence_records": EV, "seed": 11,
+                              "prompt_variant": "pv1_baseline"}],
+                  decision_ts=DTS, probe=PROBE, out_dir=str(tmp_path), register_trials=False)
+    alerts = list(tmp_path.glob("ALERT_quota_divergence_*.json"))
+    assert alerts and not list(tmp_path.glob("round_*.json"))
+    import json as _j
+    a = _j.loads(alerts[0].read_text(encoding="utf-8"))
+    assert a["alert"] == "QUOTA_DIVERGENCE" and a["ledger_remaining"] == 24

@@ -283,3 +283,53 @@ def test_no_guard_means_no_divergence_claim(monkeypatch):
         q.fetch_daily("AAPL", session=s)
     assert ei.value.divergence is False
     assert ei.value.ledger_remaining is None
+
+
+# --------------------------------------------------------------------------- #
+# 告警不得在批量层被吞掉（营缮 08-08 补：failed[s] 是 str(e)[:200]，
+# 而 QUOTA_DIVERGENCE 标记是**最后**追加的 ⇒ 实测 330 字的真文案会把标记整段截掉）
+# --------------------------------------------------------------------------- #
+
+def test_daily_throttle_propagates_out_of_batch_instead_of_becoming_failed(monkeypatch, tmp_path):
+    """整批取价时，daily 限流**不得**降级成 `failed[s]` 的一行散文。
+
+    两个后果：① 结构化的 divergence / ledger_remaining 全丢，只剩被截断的供应商原话，
+    读起来像「这只票没数据」；② 循环会继续调用刚刚拒绝我们的供应商，把当天剩余额度烧光
+    —— 后者正是 `QuotaExceeded` 分支注释里点名要避免的事。
+    """
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE,
+                      "MSFT": _series([("2026-08-07", 2.0)]),
+                      "SPY": _series([("2026-08-07", 3.0)])})
+    with pytest.raises(q.RateLimited) as ei:
+        q.get_daily_closes(["AAPL", "MSFT", "SPY"], session=s, guard=g,
+                           pace_seconds=0, require_full_batch=True)
+    e = ei.value
+    assert e.divergence is True and e.ledger_remaining > 0      # 结构化字段完整保留
+    assert e.kind == "daily"
+    assert s.calls == ["AAPL"]                                  # 拒绝后不再继续烧额度
+
+
+def test_divergence_tag_would_not_survive_the_failed_truncation(monkeypatch, tmp_path):
+    """把「为什么不能进 failed」量出来：真文案下标记落在 200 字之外。"""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s, guard=g)
+    full = f"RateLimited: {ei.value}"
+    assert "QUOTA_DIVERGENCE" in full                            # 完整串里有
+    assert "QUOTA_DIVERGENCE" not in full[:200]                  # failed[s] 里没了
+
+
+def test_burst_throttle_stays_a_per_symbol_failure(monkeypatch, tmp_path):
+    """burst 是瞬时的，照旧留在 `failed` —— 不因这次修复而改变（也不喊狼来了）。"""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)
+    s = _FakeSession({"AAPL": _BURST_THROTTLE,
+                      "MSFT": _series([("2026-08-07", 2.0)])})
+    bars, failed = q.get_daily_closes(["AAPL", "MSFT"], session=s, guard=g,
+                                      pace_seconds=0, require_full_batch=False)
+    assert "AAPL" in failed and "burst throttle" in failed["AAPL"]
+    assert "MSFT" in bars                                       # 其余标的照旧取到

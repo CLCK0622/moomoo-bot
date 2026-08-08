@@ -35,8 +35,8 @@ if str(_REPO_ROOT) not in sys.path:
 
 from qlab.events.datafetch.api_quota import (MARKING, QuotaExceeded,  # noqa: E402
                                              guard_from_env)
-from qlab.events.datafetch.quotes_api import (get_daily_closes, mark_to_market,  # noqa: E402
-                                              trading_days)
+from qlab.events.datafetch.quotes_api import (RateLimited, get_daily_closes,  # noqa: E402
+                                              mark_to_market, trading_days)
 from qlab.llm_paper.decision_chain import (build_decision, check_portfolio,  # noqa: E402
                                             frozen_grid, load_anchor, load_prereg)
 from qlab.llm_paper.determinism import (STATUS_DRIFT, ProbeUnverifiable,  # noqa: E402
@@ -169,8 +169,27 @@ def run_round(*, proposals: Sequence[Dict[str, Any]], decision_ts,
 
     # ---- 取行情（走盯市预留额度）；缺一只即整批不花（require_full_batch） ----
     guard = guard_from_env()
-    bars, failed = get_daily_closes(symbols, guard=guard, purpose=MARKING,
-                                    require_full_batch=True)
+    out = Path(out_dir)
+    try:
+        bars, failed = get_daily_closes(symbols, guard=guard, purpose=MARKING,
+                                        require_full_batch=True)
+    except RateLimited as e:
+        # 都水的 QUOTA_DIVERGENCE 是这把 key 唯一真实风险（被别人花掉 25/天）的可观测签名。
+        # 它不能只以 traceback 形态存在——本轮会中止、没有 round JSON，告警就跟着没了。
+        # 故落一份**独立** ALERT（不写任何决策/净值，本轮仍然整批不出）。消息已在源头 _redact 过。
+        if getattr(e, "divergence", False):
+            out.mkdir(parents=True, exist_ok=True)
+            (out / f"ALERT_quota_divergence_{stamp}.json").write_text(
+                json.dumps({"alert": "QUOTA_DIVERGENCE", "round": stamp,
+                            "kind": getattr(e, "kind", None),
+                            "ledger_remaining": e.ledger_remaining,
+                            "vendor_throttled": e.vendor_throttled,
+                            "utc_day": e.utc_day, "message": str(e),
+                            "action_required": ("按都水预案：停用这把 key + 切换退路供应商；"
+                                                "先比 hash 验可轮换性（AV 教训：重新申请 ≠ 轮换）"),
+                            "note": "本轮**未产生任何决策与净值点**（整批不出，绝不半截入账）"},
+                           ensure_ascii=False, indent=2), encoding="utf-8")
+        raise
     if failed:
         raise PreflightFailed(f"行情缺失 {failed} → 不产生决策（不用陈旧价、不出假净值）")
     days = trading_days(bars)
@@ -239,7 +258,7 @@ def run_round(*, proposals: Sequence[Dict[str, Any]], decision_ts,
         "verdict": None,
         "note": "中途读数只作监控、**不出 verdict**；判定一律走 certify()+llm_paradigm（预注册 §4）",
     }
-    out = Path(out_dir); out.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
     (out / f"round_{stamp}.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     if det["drift"]:
