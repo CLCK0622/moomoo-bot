@@ -23,9 +23,18 @@
     "throttle_failure_mode": "The throttle reply is HTTP 200 with an 'Information' field and NO price data — i.e. it can masquerade as success. quotes_api raises RateLimited on it (see fail_closed)."
   },
   "fallback_vendors_reachable_2026_08_08": {
-    "tiingo": "https://www.tiingo.com/account/api/token -> HTTP 200 (signup reachable)",
-    "twelvedata": "https://twelvedata.com/pricing -> HTTP 200",
-    "note": "Both reachable from this egress if the 25/day cap ever binds; not registered yet (avoid collecting keys we don't need)."
+    "purpose": "Pre-verified contingency so a QUOTA_DIVERGENCE alarm (or the 25/day cap binding) is executed as a plan, not improvised. Deliberately NOT registered — no key hoarding; register only when actually switching.",
+    "tiingo": {
+      "reachability": "www.tiingo.com/account/api/token -> HTTP 200; api.tiingo.com -> 301 (service up)",
+      "free_tier_documented": "Max Requests Per Hour 50; Max Requests Per Day 1000; Unique Symbols per Month 500; Max Bandwidth 1 GB/month (read from their pricing page 2026-08-08)",
+      "fit": "1000/day vs our ~11 marking calls/day — ~90x headroom; the 50/hour cap is also far above a daily mark."
+    },
+    "twelvedata": {
+      "reachability": "twelvedata.com/pricing -> HTTP 200; api.twelvedata.com -> HTTP 401 (service up, key required)",
+      "free_tier_documented": "8 API credits per minute, 800 credits per day (read from their pricing page 2026-08-08)",
+      "fit": "800/day vs ~11 needed; the 8/minute limit implies pacing similar to AV's 1/sec discipline we already implement."
+    },
+    "note": "Both are materially more generous than Alpha Vantage's 25/day. Neither has been tested for key rotation — if rotation ability ever becomes a selection criterion, verify it BEFORE migrating (the AV lesson: 're-request' is not necessarily rotation; compare hashes)."
   },
   "fail_closed_contract": {
     "throttle": "RateLimited raised on the HTTP-200-with-no-data throttle reply — never silently treated as 'price unchanged'.",
@@ -93,5 +102,20 @@
     ],
     "residual_risk": "Worst case an outsider with this key consumes our 25/day public-data quota. It cannot trade, move money, or read anything private. The redaction fix removes the recurring leak path (the vendor echoing the key in throttle notices).",
     "redaction_is_key_agnostic": "quotes_api._redact reads ALPHAVANTAGE_API_KEY at call time, so whenever a rotation does happen the by-value redaction covers the new key automatically with no code change (verified against three synthetic replacement keys); the token-shape rule is a second line of defence."
+  },
+  "quota_divergence_alarm": {
+    "status": "ENFORCED (工部 08-08 ruling: accept the documented key exposure, add DETECTION instead of rotation — rotation is unavailable at this vendor)",
+    "risk_it_addresses": "This key's entire capability is 25 public-data calls/day: no account, no funds, no PII, no trading. So the only real risk from the exposure is someone else spending the quota -> we hit RateLimited -> no mark that day -> a hole in the NAV evidence series. Detecting that is worth more here than rotating.",
+    "rule": "Before raising RateLimited, read the local ledger. If the vendor reports DAILY quota exhaustion while our ledger still shows budget remaining, the exception is tagged QUOTA_DIVERGENCE and carries ledger_remaining / vendor_throttled / utc_day.",
+    "two_causes_it_catches": [
+      "the key is being spent by someone else (the exposure risk made observable)",
+      "our counter has drifted from the vendor's — e.g. their reset boundary differs from our UTC bucketing, which is undocumented. The alarm turns that unknown into a measured signal rather than a silent mismatch."
+    ],
+    "false_alarm_guard": "AV's per-second BURST notice also mentions '25 requests per day', so naive keyword matching would fire the alarm on every unpaced burst. _throttle_kind() classifies burst ('spreading out' / 'per second') vs daily exhaustion; only the daily kind can raise QUOTA_DIVERGENCE. Burst throttles are transient and are reported as '(burst throttle)' with divergence=False.",
+    "conservative_defaults": "Without a guard we make no misuse claim at all (ledger_remaining=None, divergence=False) — we do not assert what we cannot measure. Ledger read failures are swallowed so diagnostics can never mask the throttle itself.",
+    "still_redacted": "the divergence path goes through the same _redact, so the vendor's key echo cannot leak via the alarm.",
+    "tests": "test_daily_throttle_with_budget_left_flags_divergence, ..._when_budget_also_exhausted_is_not_divergence, test_burst_throttle_never_raises_a_false_divergence, test_throttle_kind_classifier, test_divergence_alarm_still_redacts_the_key, test_no_guard_means_no_divergence_claim",
+    "operational_note": "If QUOTA_DIVERGENCE fires, treat it as a possible key compromise: switch to a fallback vendor (below) and stop using this key. It is the trigger for the pre-verified contingency, not an occasion to improvise.",
+    "live_validation_2026_08_08": "Validated end-to-end against the REAL vendor, not only in unit tests. Today's vendor-side 25/day was genuinely exhausted, so pointing a FRESH ledger (which believes 25 remain) at the live API reproduces the exact leaked-key signature. Result: divergence=True, ledger_remaining=24, vendor_throttled=True, utc_day=2026-08-08, 'QUOTA_DIVERGENCE' present in the message, and the API key did NOT leak into it. The agreeing case was checked too: with the production ledger (which correctly shows 0 left today) the guard refuses before any network I/O, and a no-guard call reports the live throttle as kind='daily' with divergence=False / ledger_remaining=None — no misuse is claimed where none can be measured."
   }
 }

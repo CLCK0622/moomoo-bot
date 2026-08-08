@@ -208,3 +208,78 @@ def test_redaction_follows_the_current_key_after_rotation(monkeypatch):
         out = q._redact(msg)
         assert new_key not in out
         assert "<redacted-api-key>" in out
+
+
+# --------------------------------------------------------------------------- #
+# QUOTA_DIVERGENCE alarm (工部 08-08: detection replaces rotation, unavailable here)
+# --------------------------------------------------------------------------- #
+_DAILY_THROTTLE = {"Information": ("We have detected your API key as SOMEKEY1234567890 and our "
+                                   "standard API rate limit is 25 requests per day.")}
+_BURST_THROTTLE = {"Information": ("Thank you for using Alpha Vantage! Please consider spreading "
+                                   "out your free API requests more sparingly (1 request per "
+                                   "second). ... (25 requests per day)")}
+
+
+def test_daily_throttle_with_budget_left_flags_divergence(monkeypatch, tmp_path):
+    """Vendor says 'daily quota gone' while our ledger still has room => someone
+    else is spending this key, or our counter drifted from theirs."""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)          # fresh day, nothing used
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s, guard=g)
+    e = ei.value
+    assert e.divergence is True
+    assert e.vendor_throttled is True
+    assert e.ledger_remaining and e.ledger_remaining > 0
+    assert "QUOTA_DIVERGENCE" in str(e)
+    assert e.utc_day
+
+
+def test_daily_throttle_when_budget_also_exhausted_is_not_divergence(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=1, reserve=0)
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:      # this call consumes the last unit
+        q.fetch_daily("AAPL", session=s, guard=g)
+    e = ei.value
+    assert e.ledger_remaining == 0
+    assert e.divergence is False                  # expected exhaustion, not misuse
+    assert "QUOTA_DIVERGENCE" not in str(e)
+
+
+def test_burst_throttle_never_raises_a_false_divergence(monkeypatch, tmp_path):
+    """The per-second burst notice is transient — it must not cry wolf."""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)       # plenty of budget left
+    s = _FakeSession({"AAPL": _BURST_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s, guard=g)
+    e = ei.value
+    assert e.divergence is False
+    assert "QUOTA_DIVERGENCE" not in str(e)
+    assert "burst throttle" in str(e)
+
+
+def test_throttle_kind_classifier():
+    assert q._throttle_kind(_BURST_THROTTLE["Information"]) == "burst"
+    assert q._throttle_kind(_DAILY_THROTTLE["Information"]) == "daily"
+
+
+def test_divergence_alarm_still_redacts_the_key(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "SOMEKEY1234567890")
+    g = _quota(tmp_path, cap=25, reserve=0)
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s, guard=g)
+    assert "SOMEKEY1234567890" not in str(ei.value)
+
+
+def test_no_guard_means_no_divergence_claim(monkeypatch):
+    """Without a ledger we cannot assert anything about misuse — stay silent."""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s)
+    assert ei.value.divergence is False
+    assert ei.value.ledger_remaining is None
