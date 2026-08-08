@@ -38,6 +38,14 @@ marking. Without that, a day's quota can be silently exhausted, the mark refused
 and the NAV series — the only acceptance evidence here — left with an
 unrepairable hole. See ``api_quota``.
 
+Detection control (工部 08-08, in place of rotation — unavailable at this vendor):
+if the vendor throttles while our own ledger still shows budget left, the
+``RateLimited`` is tagged ``QUOTA_DIVERGENCE`` and carries ``ledger_remaining`` /
+``vendor_throttled`` / ``utc_day``. That is the observable signature of the only
+real risk this key carries — someone else spending its 25/day — and it also makes
+any drift between our UTC bucketing and the vendor's undocumented reset boundary
+visible instead of silent.
+
 Each bar keeps **the source's own trade date** (the API's date key). We never
 substitute our clock, and the returned bar dates are the authoritative trading
 calendar — no holiday table, no look-ahead calendar, no scraping SPY.
@@ -70,7 +78,33 @@ class MissingApiKey(RuntimeError):
 
 
 class RateLimited(RuntimeError):
-    """Vendor throttled us: HTTP 200 but no data. Never treated as 'no change'."""
+    """Vendor throttled us: HTTP 200 but no data. Never treated as 'no change'.
+
+    Carries the local budget state at the moment of the throttle so the two very
+    different causes are distinguishable:
+
+    * ``divergence=False`` — our ledger also says we're out. Expected exhaustion.
+    * ``divergence=True``  — **our ledger still shows budget left** yet the vendor
+      throttled. Either someone else is spending this key's quota, or our counter
+      has drifted from the vendor's (e.g. their reset boundary differs from our
+      UTC bucketing — undocumented, so this makes it observable). Tagged
+      ``QUOTA_DIVERGENCE``; it is the detection control for a leaked key, which
+      matters more here than rotation (rotation is unavailable at this vendor).
+    """
+
+    def __init__(self, message: str, *, ledger_remaining: Optional[int] = None,
+                 vendor_throttled: bool = True, utc_day: Optional[str] = None):
+        self.ledger_remaining = ledger_remaining
+        self.vendor_throttled = vendor_throttled
+        self.utc_day = utc_day
+        self.divergence = bool(ledger_remaining is not None and ledger_remaining > 0
+                               and vendor_throttled)
+        if ledger_remaining is not None:
+            message = (f"{message} [ledger_remaining={ledger_remaining}, "
+                       f"vendor_throttled={vendor_throttled}"
+                       f"{', utc_day=' + utc_day if utc_day else ''}"
+                       f"{'] QUOTA_DIVERGENCE' if self.divergence else ']'}")
+        super().__init__(message)
 
 
 class StalePriceError(RuntimeError):
@@ -119,13 +153,44 @@ def _redact(msg: str, api_key: Optional[str] = None) -> str:
     return re.sub(r"\b[A-Z0-9]{12,20}\b", "<redacted-api-key>", text)
 
 
+def _throttle_kind(msg: str) -> str:
+    """Classify AV's throttle notice: per-second ``burst`` vs ``daily`` exhaustion.
+
+    Both notices mention "25 requests per day", so keying on that would conflate
+    them. The burst notice is the one that asks us to space requests out; it is
+    transient (retry after pacing) and must NOT raise a divergence alarm, or the
+    alarm cries wolf on every unpaced burst. Only a DAILY-exhaustion notice while
+    our ledger still shows budget is evidence of someone else spending the key.
+    """
+    low = str(msg).lower()
+    if "spreading out" in low or "per second" in low:
+        return "burst"
+    return "daily"
+
+
 def _check_throttle(payload: dict, symbol: str,
-                    api_key: Optional[str] = None) -> None:
-    """AV signals throttling via 'Note'/'Information' with HTTP 200. Fail closed."""
+                    api_key: Optional[str] = None, guard=None,
+                    purpose: str = "marking") -> None:
+    """AV signals throttling via 'Note'/'Information' with HTTP 200. Fail closed.
+
+    Before raising, read the local budget: being throttled *for the day* while our
+    own ledger still shows headroom is the observable signature of a leaked key
+    (or of our counter drifting from the vendor's). See ``RateLimited.divergence``.
+    """
     for field in ("Note", "Information"):
         msg = payload.get(field)
         if msg and "Time Series" not in payload:
-            raise RateLimited(f"{symbol}: {field}: {_redact(msg, api_key)[:200]}")
+            kind = _throttle_kind(msg)
+            remaining, day = None, None
+            if guard is not None and kind == "daily":
+                try:
+                    remaining = guard.remaining(purpose)
+                    day = guard.status().get("utc_day")
+                except Exception:      # diagnostics must never mask the throttle
+                    remaining, day = None, None
+            raise RateLimited(
+                f"{symbol}: {field} ({kind} throttle): {_redact(msg, api_key)[:200]}",
+                ledger_remaining=remaining, vendor_throttled=True, utc_day=day)
     if payload.get("Error Message"):
         raise RuntimeError(f"{symbol}: {_redact(payload['Error Message'], api_key)[:200]}")
 
@@ -156,7 +221,8 @@ def fetch_daily(symbol: str, *, api_key: Optional[str] = None,
     if r.status_code != 200:
         raise RuntimeError(f"{symbol}: http {r.status_code}")
     payload = r.json()
-    _check_throttle(payload, symbol, api_key=resolved_key)
+    _check_throttle(payload, symbol, api_key=resolved_key,
+                    guard=guard, purpose=purpose)
     ts_key = next((k for k in payload if "Time Series" in k), None)
     if ts_key is None:
         raise RuntimeError(f"{symbol}: unexpected payload keys {list(payload)[:4]}")
