@@ -197,3 +197,14 @@ def test_throttle_message_redacts_the_api_key(monkeypatch):
     msg = str(ei.value)
     assert fake_key not in msg, "API key leaked into the exception message"
     assert "<redacted-api-key>" in msg
+
+
+def test_redaction_follows_the_current_key_after_rotation(monkeypatch):
+    """_redact reads the key at call time, so a rotated key is covered with no
+    code change. Locks the property that makes rotation safe whenever it happens."""
+    for new_key in ("ROTATEDKEY1234567", "ANOTHERKEY9876543"):
+        monkeypatch.setenv("ALPHAVANTAGE_API_KEY", new_key)
+        msg = f"We have detected your API key as {new_key} and our rate limit is 25/day."
+        out = q._redact(msg)
+        assert new_key not in out
+        assert "<redacted-api-key>" in out

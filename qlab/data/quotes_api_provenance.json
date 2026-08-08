@@ -10,7 +10,7 @@
     "endpoint": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY",
     "auth": "free key, self-registered 2026-08-08 via agent email agent@clckkkkk.site (occupation/organization/email form; no CAPTCHA, no identity/KYC/payment). Key issued immediately on the response page — no email-verification step.",
     "key_storage": "~/.config/alphavantage/api.env (chmod 600, chmod 700 dir, persistent user layer), env var ALPHAVANTAGE_API_KEY. NOT committed, NOT in comments, NOT logged; code reads env only.",
-    "key_rotation_note": "The key was rendered in this run's tool output during capture. It is a free read-only market-data key (no account balance, no trading, no PII). If rotation is ever wanted, re-request at https://www.alphavantage.co/support/#api-key and overwrite the env file."
+    "key_rotation_note": "The key was rendered in this run's tool output during capture, and the vendor also echoes it in throttle notices (fixed: see key_leak_fix_2026_08_08). Rotation was ORDERED and ATTEMPTED but is structurally unavailable at this vendor — re-requesting returns the identical key. See key_rotation_2026_08_08 for the evidence and the options that would yield a genuinely fresh credential."
   },
   "measured_limits_2026_08_08": {
     "note": "Empirically measured on our actual key — NOT vendor marketing copy (工部尚书's requirement: don't discover the quota weeks in).",
@@ -72,5 +72,26 @@
     "finding": "Alpha Vantage ECHOES the API key inside its daily-quota notice ('We have detected your API key as XXXX...'). That message flowed into the RateLimited exception, which may be logged, reported, or pasted into a status update — a real leak path.",
     "fix": "quotes_api._redact() strips the live key by value and then any AV-shaped key token from every vendor message before it reaches an exception.",
     "verified": "against the LIVE throttle reply: key absent from the exception text, '<redacted-api-key>' present. Regression test: test_throttle_message_redacts_the_api_key."
+  },
+  "quota_exhaustion_event_2026_08_08": {
+    "what": "The vendor's real 25/day quota was fully consumed on 2026-08-08 during the rate-limit measurement (unpaced burst tests + a 12-call paced test + live verification pulls), i.e. BEFORE the accounting layer existed.",
+    "how_it_surfaced": "Every subsequent call returned the HTTP-200 throttle notice. quotes_api raised RateLimited on it: no price was returned, no stale price was substituted, and mark_to_market would have refused rather than print a value.",
+    "why_recorded": "This is the live instance of the failure mode the accounting exists to prevent. It demonstrates two things at once: (a) throttling really does happen on this tier, and (b) when it happens we produce NO paper mark rather than a fabricated one. For anyone auditing the NAV series later, this is stronger evidence than a written assurance.",
+    "consequence": "No NAV point was due on 2026-08-08 (the paper track had not started), so no hole was created in the evidence series. The first real mark waits for the UTC day rollover.",
+    "ledger_reconciliation": "The production ledger (~/.local/state/qlab/av_quota.jsonl) was seeded with a single reconciliation entry of n=25 for 2026-08-08, noting that the consumption predates the accounting. Rationale: the ledger must not UNDER-count reality — with it recorded, the guard now refuses further calls today (verified: 'requested 1 call(s) but only 0 left today'), which enforces 工部尚书's boundary of waiting for the UTC rollover instead of burning calls that would fail at the vendor. The 2026-08-09 bucket starts clean at 25."
+  },
+  "key_rotation_2026_08_08": {
+    "ruling": "工部尚书: rotate — once a secret has touched an output channel, treat it as exposed (discipline consistency, not because this key is sensitive).",
+    "attempted": true,
+    "result": "BLOCKED — Alpha Vantage does not support self-service rotation. Re-requesting a key returns the IDENTICAL key; there is no revoke/reissue control in the free flow.",
+    "evidence": "Three distinct submissions from this host all returned the same key (sha256 prefix a6b60cc2): (1) agent@clckkkkk.site (the original address), (2) agent+av2@clckkkkk.site (plus sub-address), (3) quant-agent@clckkkkk.site (distinct local part). Keys appear to be issued per domain/requester rather than per address, so no address under our control yields a fresh credential.",
+    "not_done": "No fake rotation was recorded and the env file was NOT rewritten with the same value dressed up as new.",
+    "options_for_a_genuinely_fresh_credential": [
+      "Switch the quote leg to a different vendor (Tiingo / Twelve Data — both verified reachable). This yields a never-exposed credential and abandons the exposed one. Cost: new integration + re-measuring limits; it changes the vendor for a leg already certified complete, so it is 工部尚书's call, not a unilateral change.",
+      "Ask Alpha Vantage support to revoke/reissue (human-loop, slow, uncertain).",
+      "Accept the documented exposure: the key is free, read-only market data, bound to no account balance, no trading capability and no PII; its entire capability is fetching public prices at 25/day."
+    ],
+    "residual_risk": "Worst case an outsider with this key consumes our 25/day public-data quota. It cannot trade, move money, or read anything private. The redaction fix removes the recurring leak path (the vendor echoing the key in throttle notices).",
+    "redaction_is_key_agnostic": "quotes_api._redact reads ALPHAVANTAGE_API_KEY at call time, so whenever a rotation does happen the by-value redaction covers the new key automatically with no code change (verified against three synthetic replacement keys); the token-shape rule is a second line of defence."
   }
 }
