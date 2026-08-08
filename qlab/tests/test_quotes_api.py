@@ -116,3 +116,84 @@ def test_mark_to_market_refuses_stale_price():
 def test_mark_to_market_no_bars_at_all():
     with pytest.raises(q.StalePriceError, match="no bars"):
         q.mark_to_market({"AAPL": 1}, {})
+
+
+# --------------------------------------------------------------------------- #
+# Daily quota guard integration (工部 08-08: 25/day must be accounted, not a comment)
+# --------------------------------------------------------------------------- #
+def _quota(tmp_path, cap=25, reserve=15):
+    from qlab.events.datafetch import api_quota as aq
+    return aq.DailyQuotaGuard(cap_per_day=cap, reserve_for_marking=reserve,
+                              ledger_path=tmp_path / "quota.jsonl")
+
+
+def test_guard_blocks_call_before_it_is_issued(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=1, reserve=0)
+    s = _FakeSession({"AAPL": _series([("2026-08-07", 1.0)]),
+                      "MSFT": _series([("2026-08-07", 2.0)])})
+    q.fetch_daily("AAPL", session=s, guard=g)
+    assert s.calls == ["AAPL"] and g.used() == 1
+    # budget exhausted -> the second request must NEVER leave the host
+    with pytest.raises(q.QuotaExceeded):
+        q.fetch_daily("MSFT", session=s, guard=g)
+    assert s.calls == ["AAPL"], "call was issued despite exhausted budget"
+
+
+def test_batch_checked_up_front_spends_nothing_when_short(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=2, reserve=0)
+    s = _FakeSession({x: _series([("2026-08-07", 1.0)]) for x in ("A", "B", "C")})
+    with pytest.raises(q.QuotaExceeded):
+        q.get_daily_closes(["A", "B", "C"], session=s, guard=g, sleep=lambda *_: None)
+    # nothing burned on a mark that could not have completed anyway
+    assert s.calls == [] and g.used() == 0
+
+
+def test_quota_breach_propagates_not_buried_in_failed(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=1, reserve=0)
+    s = _FakeSession({x: _series([("2026-08-07", 1.0)]) for x in ("A", "B")})
+    # skip the up-front check to reach the mid-loop path
+    with pytest.raises(q.QuotaExceeded):
+        q.get_daily_closes(["A", "B"], session=s, guard=g,
+                           require_full_batch=False, sleep=lambda *_: None)
+
+
+def test_throttled_call_still_counts_against_budget(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=5, reserve=0)
+    s = _FakeSession({"AAPL": _THROTTLE})
+    with pytest.raises(q.RateLimited):
+        q.fetch_daily("AAPL", session=s, guard=g)
+    # the request left the host, so it must be accounted (conservative)
+    assert g.used() == 1
+
+
+def test_exploration_cannot_starve_the_daily_mark(monkeypatch, tmp_path):
+    from qlab.events.datafetch.api_quota import EXPLORATION
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=15)
+    s = _FakeSession({f"X{i}": _series([("2026-08-07", 1.0)]) for i in range(11)})
+    # burn the entire exploration sub-budget
+    q.get_daily_closes([f"X{i}" for i in range(10)], session=s, guard=g,
+                       purpose=EXPLORATION, sleep=lambda *_: None)
+    with pytest.raises(q.QuotaExceeded):
+        q.fetch_daily("X10", session=s, guard=g, purpose=EXPLORATION)
+    # the 15-call marking reserve is intact
+    assert g.remaining("marking") == 15
+
+
+def test_throttle_message_redacts_the_api_key(monkeypatch):
+    """AV echoes the key back in its quota notice — it must not survive into the
+    exception, which may be logged or pasted into a status update."""
+    fake_key = "FAKEKEY123456789"          # never the real key, even as fixture data
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", fake_key)
+    leaky = {"Information": (f"We have detected your API key as {fake_key} and our "
+                             "standard API rate limit is 25 requests per day.")}
+    s = _FakeSession({"AAPL": leaky})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s)
+    msg = str(ei.value)
+    assert fake_key not in msg, "API key leaked into the exception message"
+    assert "<redacted-api-key>" in msg

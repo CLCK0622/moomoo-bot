@@ -31,6 +31,13 @@ but carries no prices**. So this module is fail-closed on exactly that:
     older than the allowed staleness — a paper mark must never be printed from
     prices we could not actually refresh.
 
+The 25/day cap is **accounted, not merely documented**: pass an
+``api_quota.DailyQuotaGuard`` and every call is checked against a persisted
+per-UTC-day ledger *before* it is issued, with a slice of the cap ring-fenced for
+marking. Without that, a day's quota can be silently exhausted, the mark refused,
+and the NAV series — the only acceptance evidence here — left with an
+unrepairable hole. See ``api_quota``.
+
 Each bar keeps **the source's own trade date** (the API's date key). We never
 substitute our clock, and the returned bar dates are the authoritative trading
 calendar — no holiday table, no look-ahead calendar, no scraping SPY.
@@ -42,6 +49,7 @@ Key handling (same discipline as the FRED key): read from the environment only
 from __future__ import annotations
 
 import os
+import re
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -49,6 +57,8 @@ from typing import Iterable, Optional
 
 import pandas as pd
 import requests
+
+from .api_quota import QuotaExceeded  # re-exported: budget breach is fail-closed
 
 AV_URL = "https://www.alphavantage.co/query"
 # Empirically measured on the free key (see module docstring).
@@ -93,34 +103,66 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _check_throttle(payload: dict, symbol: str) -> None:
+def _redact(msg: str, api_key: Optional[str] = None) -> str:
+    """Strip the API key out of a vendor message before it reaches an exception.
+
+    Alpha Vantage echoes the key back in its daily-quota notice ("We have
+    detected your API key as XXXX..."). That message ends up in ``RateLimited``,
+    which may be logged, reported, or pasted into a status update — so the key
+    must never survive into it. Belt and braces: redact the live key by value,
+    then any AV-shaped key token.
+    """
+    text = str(msg)
+    key = api_key or os.environ.get("ALPHAVANTAGE_API_KEY")
+    if key:
+        text = text.replace(key, "<redacted-api-key>")
+    return re.sub(r"\b[A-Z0-9]{12,20}\b", "<redacted-api-key>", text)
+
+
+def _check_throttle(payload: dict, symbol: str,
+                    api_key: Optional[str] = None) -> None:
     """AV signals throttling via 'Note'/'Information' with HTTP 200. Fail closed."""
     for field in ("Note", "Information"):
         msg = payload.get(field)
         if msg and "Time Series" not in payload:
-            raise RateLimited(f"{symbol}: {field}: {str(msg)[:200]}")
+            raise RateLimited(f"{symbol}: {field}: {_redact(msg, api_key)[:200]}")
     if payload.get("Error Message"):
-        raise RuntimeError(f"{symbol}: {payload['Error Message'][:200]}")
+        raise RuntimeError(f"{symbol}: {_redact(payload['Error Message'], api_key)[:200]}")
 
 
 def fetch_daily(symbol: str, *, api_key: Optional[str] = None,
                 outputsize: str = "compact",
-                session: Optional[requests.Session] = None) -> list[DailyBar]:
-    """Daily bars for one symbol. Raises RateLimited / RuntimeError; never fakes."""
+                session: Optional[requests.Session] = None,
+                guard=None, purpose: str = "marking") -> list[DailyBar]:
+    """Daily bars for one symbol. Raises RateLimited / RuntimeError; never fakes.
+
+    ``guard`` (``api_quota.DailyQuotaGuard``) accounts the call against the hard
+    daily budget BEFORE it is issued: over budget -> ``QuotaExceeded`` and the
+    request never leaves. The spend is recorded only once the call is actually
+    made, so a pre-flight rejection does not burn quota.
+    """
     session = session or requests.Session()
+    resolved_key = get_api_key(api_key)
+    if guard is not None:
+        guard.check(1, purpose=purpose)      # fail-closed, before any network I/O
     r = session.get(AV_URL, params={
         "function": "TIME_SERIES_DAILY", "symbol": symbol,
-        "outputsize": outputsize, "apikey": get_api_key(api_key)}, timeout=30)
+        "outputsize": outputsize, "apikey": resolved_key}, timeout=30)
+    if guard is not None:
+        # The request left the host, so it counts — record BEFORE inspecting the
+        # reply. Conservative on purpose: a throttled/failed call still consumed
+        # an attempt, and under-counting is what would silently blow the budget.
+        guard.record(purpose=purpose, symbol=symbol, note=f"http {r.status_code}")
     if r.status_code != 200:
         raise RuntimeError(f"{symbol}: http {r.status_code}")
     payload = r.json()
-    _check_throttle(payload, symbol)
-    key = next((k for k in payload if "Time Series" in k), None)
-    if key is None:
+    _check_throttle(payload, symbol, api_key=resolved_key)
+    ts_key = next((k for k in payload if "Time Series" in k), None)
+    if ts_key is None:
         raise RuntimeError(f"{symbol}: unexpected payload keys {list(payload)[:4]}")
     now = _now_iso()
     bars = []
-    for d, row in payload[key].items():
+    for d, row in payload[ts_key].items():
         bars.append(DailyBar(
             symbol=symbol, date=d, close=float(row["4. close"]),
             open=float(row.get("1. open", "nan")), high=float(row.get("2. high", "nan")),
@@ -133,21 +175,37 @@ def fetch_daily(symbol: str, *, api_key: Optional[str] = None,
 def get_daily_closes(symbols: Iterable[str], *, api_key: Optional[str] = None,
                      session: Optional[requests.Session] = None,
                      pace_seconds: float = FREE_TIER["min_seconds_between_calls"],
-                     sleep=time.sleep) -> tuple[dict[str, list[DailyBar]], dict[str, str]]:
+                     sleep=time.sleep,
+                     guard=None, purpose: str = "marking",
+                     require_full_batch: bool = True
+                     ) -> tuple[dict[str, list[DailyBar]], dict[str, str]]:
     """Fetch several symbols, paced under the measured burst ceiling.
 
     Returns ``(bars_by_symbol, failed)``. A symbol that could not be fetched
     lands in ``failed`` with the reason — it is never back-filled or carried
     forward from a previous run.
+
+    With a ``guard``, the WHOLE batch is checked up front when
+    ``require_full_batch`` (default): if today's budget cannot cover every
+    symbol, raise ``QuotaExceeded`` before spending anything, rather than
+    burning quota on a partial mark that ``mark_to_market`` would reject anyway.
     """
     key = get_api_key(api_key)
     session = session or requests.Session()
     out: dict[str, list[DailyBar]] = {}
     failed: dict[str, str] = {}
     syms = list(symbols)
+    if guard is not None and require_full_batch and syms:
+        guard.check(len(syms), purpose=purpose)
     for i, s in enumerate(syms):
         try:
-            out[s] = fetch_daily(s, api_key=key, session=session)
+            out[s] = fetch_daily(s, api_key=key, session=session,
+                                 guard=guard, purpose=purpose)
+        except QuotaExceeded:
+            # A budget breach is not a per-symbol data problem — do not bury it
+            # in `failed` (that would read as "this symbol was unavailable" and
+            # keep the loop burning the remaining quota). Propagate.
+            raise
         except Exception as e:                       # RateLimited / http / payload
             failed[s] = f"{type(e).__name__}: {e}"[:200]
         if i < len(syms) - 1 and pace_seconds:
