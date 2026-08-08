@@ -1,0 +1,55 @@
+{
+  "artifact": "qlab/qlab/events/datafetch/quotes_api.py — free market-data API leg for PAPER mark-to-market",
+  "status": "DELIVERED (module + tests + live verification). No bulk data committed; quotes are pulled per marking run.",
+  "recorded_date": "2026-08-08",
+  "recorded_by": "都水主事 (工部)",
+  "baseline_commit": "f80be60",
+
+  "scope": "Close prices to mark a paper portfolio. Places no orders, touches no real money (SIMULATE-only red line). NOT part of the EDGAR/RSS evidence chain — evidence_sources stays anchored on source publication timestamps; this leg only values the book. Swapping the price vendor does not touch the frozen preregistration text (which says 'SIMULATE mark-to-market').",
+
+  "vendor": {
+    "name": "Alpha Vantage",
+    "endpoint": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY",
+    "auth": "free key, self-registered 2026-08-08 via agent email agent@clckkkkk.site (occupation/organization/email form; no CAPTCHA, no identity/KYC/payment). Key issued immediately on the response page — no email-verification step.",
+    "key_storage": "~/.config/alphavantage/api.env (chmod 600, chmod 700 dir, persistent user layer), env var ALPHAVANTAGE_API_KEY. NOT committed, NOT in comments, NOT logged; code reads env only.",
+    "key_rotation_note": "The key was rendered in this run's tool output during capture. It is a free read-only market-data key (no account balance, no trading, no PII). If rotation is ever wanted, re-request at https://www.alphavantage.co/support/#api-key and overwrite the env file."
+  },
+
+  "measured_limits_2026_08_08": {
+    "note": "Empirically measured on our actual key — NOT vendor marketing copy (工部尚书's requirement: don't discover the quota weeks in).",
+    "requests_per_day": 25,
+    "quota_message": "\"...to lift the free key rate limit (25 requests per day)\"",
+    "burst_ceiling": "~1 request/second. An 8-call unpaced burst alternated OK / throttled (4 of 8 throttled).",
+    "paced_result": "12 calls at 1.2s spacing -> 12/12 succeeded, 0 throttled.",
+    "per_call_coverage": "TIME_SERIES_DAILY&outputsize=compact returns ~100 trading days INCLUDING the latest close, per symbol, in ONE call.",
+    "budget_fit": "Paper book caps at 10 names (10% per symbol) + benchmark => ~11 calls/day for a full daily mark, vs the 25/day cap. Fits with ~2x headroom. If the book or marking frequency grows past ~25 calls/day, switch/添加 vendor before it binds.",
+    "throttle_failure_mode": "The throttle reply is HTTP 200 with an 'Information' field and NO price data — i.e. it can masquerade as success. quotes_api raises RateLimited on it (see fail_closed)."
+  },
+
+  "fallback_vendors_reachable_2026_08_08": {
+    "tiingo": "https://www.tiingo.com/account/api/token -> HTTP 200 (signup reachable)",
+    "twelvedata": "https://twelvedata.com/pricing -> HTTP 200",
+    "note": "Both reachable from this egress if the 25/day cap ever binds; not registered yet (avoid collecting keys we don't need)."
+  },
+
+  "fail_closed_contract": {
+    "throttle": "RateLimited raised on the HTTP-200-with-no-data throttle reply — never silently treated as 'price unchanged'.",
+    "missing_key": "MissingApiKey raised; no degraded path.",
+    "no_fabrication": "get_daily_closes returns a `failed` map for symbols that did not come back — never back-filled, never carried forward from a prior run.",
+    "stale_marks": "mark_to_market raises StalePriceError if a held symbol has no bar or its newest bar is older than max_staleness_days (default 5). A paper mark is never printed from carried-forward or estimated prices.",
+    "source_dates_kept": "every bar keeps the vendor's own trade date; retrieved_utc (our clock) is stored separately and is never used as a price date."
+  },
+
+  "calendar_resolution": "The observed bar dates ARE the trading calendar (observe-not-predict). This removes the earlier CalendarCoverageError root cause: actual_start is decided by the first real bar. No holiday table, no forward-looking calendar, and no reliance on the in-repo SPY daily series (which 工部尚书 found carries ~31 data holes that were being misread as holidays).",
+
+  "live_verification_2026_08_08": {
+    "symbols": ["SPY", "AAPL", "MSFT"],
+    "result": "3/3 fetched, 0 failed; 100 bars each, 2026-03-17 .. 2026-08-07 (latest close present)",
+    "closes": {"SPY": 773.26, "AAPL": 313.33, "MSFT": 499.99},
+    "sample_mark": "holdings {SPY:10, AAPL:20, MSFT:5} -> market_value 16499.15 as_of 2026-08-07, every position priced at its own source trade date",
+    "trading_days_observed": 100
+  },
+
+  "tests": "qlab/tests/test_quotes_api.py (10): missing-key fail-closed, throttle raises (not silent success), source-date preservation, failures reported without back-fill, call pacing, observed-calendar, mark valuation, and refusal on missing / stale / no-bars.",
+  "usage": "from qlab.events.datafetch import quotes_api as q; bars, failed = q.get_daily_closes(symbols); mk = q.mark_to_market(holdings, bars)  # requires ALPHAVANTAGE_API_KEY in env"
+}
