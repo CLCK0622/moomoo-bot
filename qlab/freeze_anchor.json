@@ -2,18 +2,17 @@
   "purpose": "预注册冻结的服务端时间锚点（git 日期可伪造，故不作证据）",
   "repo": "CLCK0622/moomoo-bot",
   "branch": "agent/evo-llm-paper",
-  "freeze_sha": "3d2701601336ff379b177b99fda631920a63e19e",
+  "freeze_sha": "3618e28f7614c184865d57a5fb439207a8254027",
   "push_event": {
-    "kind": "CreateEvent(branch first push)",
-    "created_at": "2026-08-08T01:46:30Z",
-    "ref": "agent/evo-llm-paper",
-    "head": null,
-    "event_id": "17097548507",
-    "note": "新建分支首推只发 CreateEvent；服务端时间同样不可由提交者设定"
+    "kind": "PushEvent",
+    "created_at": "2026-08-08T02:05:50Z",
+    "ref": "refs/heads/agent/evo-llm-paper",
+    "head": "3618e28f7614c184865d57a5fb439207a8254027",
+    "event_id": "17098194067"
   },
   "server_ref_state": {
     "branch": "agent/evo-llm-paper",
-    "server_ref_sha": "3d2701601336ff379b177b99fda631920a63e19e",
+    "server_ref_sha": "3618e28f7614c184865d57a5fb439207a8254027",
     "matches_freeze": true
   },
   "dag_rule": "每笔决策 commit 必须是 freeze_sha 的 DAG 后代；本分支永不 rebase / 永不 force-push",
