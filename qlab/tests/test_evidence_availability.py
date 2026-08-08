@@ -73,3 +73,28 @@ def test_summarize_counts_rolled():
     ])
     s = summarize(recs)
     assert s["n"] == 2 and s["n_rolled"] == 1 and s["frac_rolled"] == 0.5
+
+
+# ---- 假日日历（工部 2026-08-08：SPY 派生 NYSE 日历，fail-closed 不回退周末规则） ----
+
+def test_holiday_is_not_a_trading_day():
+    from qlab.events.datafetch.evidence_availability import load_trading_calendar, _is_trading_day
+    cal = load_trading_calendar()
+    assert not _is_trading_day(pd.Timestamp("2025-09-01"), cal)   # 劳动节
+    assert not _is_trading_day(pd.Timestamp("2023-04-07"), cal)   # 耶稣受难日
+    assert _is_trading_day(pd.Timestamp("2023-04-06"), cal)       # 前一日正常开市
+
+
+def test_roll_skips_holiday_not_just_weekend():
+    # 工部实例：2025-08-29(周五) 18:30 ET 受理 → 旧规则判 09-01(劳动节)；应跳到 09-02
+    got = derive_available_utc(_et("2025-08-29 18:30"))
+    assert got == _et("2025-09-02 09:30").tz_convert("UTC")
+    # 2023-04-06(周四) 17:48 ET → 旧规则判 04-07(耶稣受难日)；应跳到 04-10(周一)
+    got2 = derive_available_utc(_et("2023-04-06 17:48"))
+    assert got2 == _et("2023-04-10 09:30").tz_convert("UTC")
+
+
+def test_outside_calendar_coverage_fails_closed():
+    from qlab.events.datafetch.evidence_availability import CalendarCoverageError
+    with pytest.raises(CalendarCoverageError):
+        derive_available_utc(_et("2099-01-05 18:00"))   # 超出 SPY 覆盖 → 不得回退周末规则
