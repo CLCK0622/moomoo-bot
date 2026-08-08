@@ -98,3 +98,23 @@ def test_outside_calendar_coverage_fails_closed():
     from qlab.events.datafetch.evidence_availability import CalendarCoverageError
     with pytest.raises(CalendarCoverageError):
         derive_available_utc(_et("2099-01-05 18:00"))   # 超出 SPY 覆盖 → 不得回退周末规则
+
+
+# ---- 当前日期证据：SPY 日历陈旧会 fail-closed，须并入价格腿观测日（工部 2026-08-08 起跑前置） ----
+
+def test_current_date_evidence_fails_closed_without_observed_days():
+    from qlab.events.datafetch.evidence_availability import CalendarCoverageError
+    with pytest.raises(CalendarCoverageError):        # 2026-08-06 晚于 SPY 数据末日
+        derive_available_utc(_et("2026-08-06 14:00"))
+
+
+def test_current_date_evidence_works_with_observed_days():
+    obs = ["2026-08-05", "2026-08-06", "2026-08-07"]   # 价格腿观测到的真实交易日
+    got = derive_available_utc(_et("2026-08-06 14:00"), observed_days=obs)
+    assert got == _et("2026-08-06 14:00").tz_convert("UTC")     # 盘中受理 → 即时可得
+
+
+def test_observed_days_roll_after_cutoff():
+    obs = ["2026-08-06", "2026-08-07"]
+    got = derive_available_utc(_et("2026-08-06 18:40"), observed_days=obs)   # 18:40 ET → 次一交易日
+    assert got == _et("2026-08-07 09:30").tz_convert("UTC")

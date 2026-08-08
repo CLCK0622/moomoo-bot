@@ -32,7 +32,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 import pandas as pd
 
@@ -55,10 +55,20 @@ _SPY_CANDIDATES = ("data/daily_full/SPY_1d.parquet", "data/gem/SPY_1d.parquet",
                    "qlab/data/daily_full/SPY_1d.parquet", "qlab/data/gem/SPY_1d.parquet")
 
 
-def load_trading_calendar(path: Optional[str] = None) -> Dict[str, Any]:
-    """从仓内 SPY 日线派生 NYSE 交易日历（缓存）。返回 {days:set, first, last, source, n}。"""
+def load_trading_calendar(path: Optional[str] = None,
+                          observed_days: Optional[Sequence[str]] = None) -> Dict[str, Any]:
+    """交易日历。两段来源，各在自己的区间内权威、**并集扩展覆盖**：
+
+    * 历史段：仓内 SPY 日线（2006→数据末日）。注：工部实测其混有约 31 个数据洞被当成假日，
+      方向保守（available 判更晚），故**仅作历史校验**、不作日历权威。
+    * 当前段：`observed_days` —— 价格腿**观测到的真实 bar 日期**（`quotes_api.trading_days()`）。
+      这是 observe-not-predict 的正解：有 bar 即开市。**当前/近期一律以它为准。**
+
+    两者并集后 `last` 取更晚者，故当日/近日证据不再因 SPY 陈旧而 fail-closed；
+    仍在两段覆盖之外的日期照旧 `CalendarCoverageError`（不回退「只排周末」）。
+    """
     global _CAL_CACHE
-    if _CAL_CACHE is not None and path is None:
+    if _CAL_CACHE is not None and path is None and not observed_days:
         return _CAL_CACHE
     from pathlib import Path as _P
     cands = [path] if path else list(_SPY_CANDIDATES)
@@ -67,9 +77,14 @@ def load_trading_calendar(path: Optional[str] = None) -> Dict[str, Any]:
             df = pd.read_parquet(c)
             days = pd.to_datetime(df["date"]).dt.normalize()
             idx = pd.DatetimeIndex(sorted(days.unique()))
-            cal = {"days": set(idx), "first": idx.min(), "last": idx.max(),
-                   "source": str(c), "n": len(idx)}
-            if path is None:
+            days_set = set(idx); first, last = idx.min(), idx.max(); src = str(c)
+            if observed_days:                      # 并入价格腿观测日，扩展到当前
+                obs = pd.DatetimeIndex(sorted({pd.Timestamp(d).normalize() for d in observed_days}))
+                days_set |= set(obs)
+                first, last = min(first, obs.min()), max(last, obs.max())
+                src += " + quotes_api.trading_days(observed)"
+            cal = {"days": days_set, "first": first, "last": last, "source": src, "n": len(days_set)}
+            if path is None and not observed_days:
                 _CAL_CACHE = cal
             return cal
     raise CalendarCoverageError(
@@ -100,12 +115,16 @@ def next_trading_open(ts_et: pd.Timestamp, cal: Optional[Dict[str, Any]] = None)
     return d.replace(hour=MARKET_OPEN[0], minute=MARKET_OPEN[1])
 
 
-def derive_available_utc(acceptance_utc) -> pd.Timestamp:
-    """受理时刻(UTC, tz-aware) → 公开可得时刻(UTC, tz-aware)。"""
+def derive_available_utc(acceptance_utc, observed_days: Optional[Sequence[str]] = None) -> pd.Timestamp:
+    """受理时刻(UTC, tz-aware) → 公开可得时刻(UTC, tz-aware)。
+
+    `observed_days`：价格腿观测到的真实交易日（`quotes_api.trading_days()`）。**处理当日/近日证据必须传**——
+    否则仅凭陈旧的 SPY 历史日历会 fail-closed（正确但会挡住 live 决策）。
+    """
     ts = pd.Timestamp(acceptance_utc)
     if ts.tzinfo is None:
         raise ValueError("acceptance 时间必须带时区（naive 一律拒收，猜时区会把事件挪过 09:30/16:00 边界）")
-    cal = load_trading_calendar()
+    cal = load_trading_calendar(observed_days=observed_days)
     et = ts.tz_convert(ET)
     cutoff = et.replace(hour=DISCLOSURE_CUTOFF[0], minute=DISCLOSURE_CUTOFF[1],
                         second=0, microsecond=0, nanosecond=0)
@@ -132,7 +151,8 @@ class AvailabilityRecord:
 
 
 def annotate(records: Iterable[Dict[str, Any]], *,
-             source_field: str = "source_time_utc") -> List[Dict[str, Any]]:
+             source_field: str = "source_time_utc",
+             observed_days: Optional[Sequence[str]] = None) -> List[Dict[str, Any]]:
     """给抓取记录补 `evidence_available_utc`；原字段一概不改、不删。"""
     out: List[Dict[str, Any]] = []
     for r in records:
@@ -141,7 +161,7 @@ def annotate(records: Iterable[Dict[str, Any]], *,
         if src is None:
             raise ValueError(f"记录缺 {source_field}，不得派生可得时间（无据不猜）")
         acc = pd.Timestamp(src)
-        avail = derive_available_utc(acc)
+        avail = derive_available_utc(acc, observed_days=observed_days)
         rolled = bool(avail != acc.tz_convert("UTC"))
         rec["evidence_available_utc"] = avail.isoformat()
         rec["availability_rolled"] = rolled

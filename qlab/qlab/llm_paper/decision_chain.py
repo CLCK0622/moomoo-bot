@@ -161,7 +161,8 @@ def resolve_actual_start(intended, bar_dates: Sequence[Any]) -> Dict[str, Any]:
 def build_decision(*, symbol: str, target_weight: float, confidence: float, thesis: str,
                    evidence_records: Sequence[Dict[str, Any]], decision_ts,
                    seed: int, prompt_variant: str, model: str = "",
-                   cfg: Optional[Dict[str, Any]] = None) -> Decision:
+                   cfg: Optional[Dict[str, Any]] = None,
+                   observed_days: Optional[Sequence[str]] = None) -> Decision:
     """由证据记录 + LLM 产出构造一条合规决策；**三条时序不等式在此强制成立**。
 
     `evidence_records` 需含 `source_time_utc`（信息源自身时间）与 `ref_id`。
@@ -176,7 +177,8 @@ def build_decision(*, symbol: str, target_weight: float, confidence: float, thes
         raise ValueError("决策必须有支撑证据（无据不决策）")
 
     # 证据的**可得**时刻取该条决策所有证据里最晚的一条
-    avail = [derive_available_utc(r["source_time_utc"]) for r in evidence_records]
+    # observed_days = 价格腿观测到的真实交易日；处理当日/近日证据必须传（否则陈旧 SPY 日历会 fail-closed）
+    avail = [derive_available_utc(r["source_time_utc"], observed_days=observed_days) for r in evidence_records]
     acc = [pd.Timestamp(r["source_time_utc"]) for r in evidence_records]
     ev_available = max(avail)
     dts = pd.Timestamp(decision_ts)
