@@ -93,14 +93,36 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _check_throttle(payload: dict, symbol: str) -> None:
-    """AV signals throttling via 'Note'/'Information' with HTTP 200. Fail closed."""
+def _redact(text: str, api_key: Optional[str] = None) -> str:
+    """把 vendor 回包里回显的 API key 抹掉，再放进异常/日志。
+
+    营缮 2026-08-08 实测（用假 key 验证机制，未回显真 key）：Alpha Vantage 的限速回包
+    **原文回显 API key** —— `"We have detected your API key as <KEY> and our standard API
+    rate limit is 25 requests per day..."`。原实现把 `str(msg)[:200]` 直接塞进 `RateLimited`，
+    于是**任何 traceback / run 日志都会带出 key**，违反「key 不进日志」这条纪律。
+    这里在入异常前统一脱敏；`api_key` 缺省时也扫 env，避免调用方忘传。
+    """
+    if not text:
+        return text
+    keys = [k for k in (api_key, os.environ.get(ENV_VAR) if "ENV_VAR" in globals() else None,
+                        os.environ.get("ALPHAVANTAGE_API_KEY")) if k]
+    for k in keys:
+        if k and len(k) >= 6:
+            text = text.replace(k, "<redacted-api-key>")
+    return text
+
+
+def _check_throttle(payload: dict, symbol: str, api_key: Optional[str] = None) -> None:
+    """AV signals throttling via 'Note'/'Information' with HTTP 200. Fail closed.
+
+    异常文本一律经 `_redact` 脱敏（AV 回包会回显 key，不脱敏就会进日志）。
+    """
     for field in ("Note", "Information"):
         msg = payload.get(field)
         if msg and "Time Series" not in payload:
-            raise RateLimited(f"{symbol}: {field}: {str(msg)[:200]}")
+            raise RateLimited(f"{symbol}: {field}: {_redact(str(msg), api_key)[:200]}")
     if payload.get("Error Message"):
-        raise RuntimeError(f"{symbol}: {payload['Error Message'][:200]}")
+        raise RuntimeError(f"{symbol}: {_redact(str(payload['Error Message']), api_key)[:200]}")
 
 
 def fetch_daily(symbol: str, *, api_key: Optional[str] = None,
@@ -108,13 +130,14 @@ def fetch_daily(symbol: str, *, api_key: Optional[str] = None,
                 session: Optional[requests.Session] = None) -> list[DailyBar]:
     """Daily bars for one symbol. Raises RateLimited / RuntimeError; never fakes."""
     session = session or requests.Session()
+    resolved_key = get_api_key(api_key)          # 解析一次，供脱敏复用（勿再内联）
     r = session.get(AV_URL, params={
         "function": "TIME_SERIES_DAILY", "symbol": symbol,
-        "outputsize": outputsize, "apikey": get_api_key(api_key)}, timeout=30)
+        "outputsize": outputsize, "apikey": resolved_key}, timeout=30)
     if r.status_code != 200:
         raise RuntimeError(f"{symbol}: http {r.status_code}")
     payload = r.json()
-    _check_throttle(payload, symbol)
+    _check_throttle(payload, symbol, api_key=resolved_key)
     key = next((k for k in payload if "Time Series" in k), None)
     if key is None:
         raise RuntimeError(f"{symbol}: unexpected payload keys {list(payload)[:4]}")

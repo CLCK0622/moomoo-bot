@@ -116,3 +116,29 @@ def test_mark_to_market_refuses_stale_price():
 def test_mark_to_market_no_bars_at_all():
     with pytest.raises(q.StalePriceError, match="no bars"):
         q.mark_to_market({"AAPL": 1}, {})
+
+
+# ---- key 脱敏（营缮 2026-08-08 实测：AV 限速回包原文回显 API key） ----
+
+def test_rate_limit_message_redacts_api_key():
+    """AV 回包会回显 key；异常文本必须脱敏，否则 traceback/日志就把 key 带出去了。"""
+    from qlab.events.datafetch.quotes_api import _check_throttle, RateLimited
+    fake = "FAKEKEY123TEST"
+    payload = {"Information": f"We have detected your API key as {fake} and our standard API "
+                              "rate limit is 25 requests per day."}
+    try:
+        _check_throttle(payload, "IBM", api_key=fake)
+        raise AssertionError("应抛 RateLimited")
+    except RateLimited as e:
+        assert fake not in str(e), "API key 泄漏进异常文本"
+        assert "<redacted-api-key>" in str(e)
+
+
+def test_error_message_also_redacted():
+    from qlab.events.datafetch.quotes_api import _check_throttle
+    fake = "FAKEKEY123TEST"
+    try:
+        _check_throttle({"Error Message": f"bad call with {fake}"}, "IBM", api_key=fake)
+        raise AssertionError("应抛 RuntimeError")
+    except RuntimeError as e:
+        assert fake not in str(e)
