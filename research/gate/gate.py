@@ -29,6 +29,7 @@ from . import metrics as M
 from .cost_capacity import (capacity_gate, cost_stress_gate,
                             resolve_cost_per_turnover)
 from .deflated_sharpe import deflated_sharpe_ratio
+from .llm_paradigm import prescreen as _llm_prescreen
 from .prereg import (economic_rationale_gate, validate_prereg_completeness,
                      verify_unchanged)
 from .trial_ledger import HonestyError, TrialLedger
@@ -58,6 +59,12 @@ class Candidate:
     trial_sharpes: Optional[Sequence[float]] = None
     trials_periods_per_year: int = 1             # 试验 Sharpe 的年化尺度；1=每期(契约)，年化则传 ppy
     run_id: Optional[str] = None                 # 候选自己那轮的台账 run_id；用于把它从 pooled V 地板里排除（独立兜底）
+    # LLM 定性范式（吏部 2026-08-08 前向纸面轨）三关证据。**当冻结预注册声明
+    # paradigm='llm_agent' 时为必填**——缺失即拒（缺失≠放松），不许把三关做成"记得调才生效"的
+    # 可选步骤。字段见 llm_paradigm.prescreen 的入参：
+    #   mode / eval_window_start / model_training_cutoff / prereg_frozen_at /
+    #   decisions / seed_values / factors / n_prompt_variants
+    llm_evidence: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -112,6 +119,67 @@ def certify(cand: Candidate,
             v.reasons.append(
                 f"定义 V 的试验数 {len(cand.trial_sharpes)} ≠ 冻结 family 规模 {len(family)} → "
                 "family 被事后增删（可借挑紧 family 关掉多重检验罚）→ 不放行。")
+            return v
+
+    # 1c) LLM 定性范式三关（吏部 2026-08-08）——**由冻结预注册触发，非可选步骤**。
+    #     若把 prescreen 做成"管线记得调才生效"的旁路函数，忘调＝污染/归因/seed 三关静默跳过，
+    #     正是本线一路在堵的「机制写对但可绕过」形态。故：冻结 prereg 声明 paradigm='llm_agent'
+    #     即**强制**要求三关证据，缺失即拒（缺失≠放松）。权威来源是冻结预注册、不是调用方。
+    if cand.prereg_config.get("paradigm") == "llm_agent":
+        if not cand.llm_evidence:
+            v.decision = "REJECTED_llm_prescreen"
+            v.reasons.append(
+                "冻结预注册声明 paradigm='llm_agent' 但候选未提供三关证据（污染/seed/归因）→ 不予评估。"
+                "缺失≠放松：三关是本范式证据效力的前提，不接受跳过。")
+            return v
+        ev = dict(cand.llm_evidence)
+        try:
+            pres = _llm_prescreen(
+                mode=ev.get("mode", ""), eval_window_start=ev.get("eval_window_start"),
+                decisions=ev.get("decisions") or [], seed_values=ev.get("seed_values") or [],
+                returns=ev.get("returns", cand.oos_net_returns),
+                factors=ev.get("factors") or {},
+                model_training_cutoff=ev.get("model_training_cutoff"),
+                prereg_frozen_at=ev.get("prereg_frozen_at"),
+                n_prompt_variants=int(ev.get("n_prompt_variants", 1)),
+                seed_quantile=float(ev.get("seed_quantile", 0.25)),
+                t_threshold=float(ev.get("t_threshold", 2.0)))
+        except (ValueError, KeyError) as e:
+            v.decision = "REJECTED_llm_prescreen"
+            v.reasons.append(f"三关证据不完整/不可解析：{e}")
+            return v
+        v.gates["llm_prescreen"] = {
+            "evidence_grade": pres.evidence_grade,
+            "admissible": pres.admissible.as_dict(),
+            "seeds": pres.seeds.as_dict() if pres.seeds else None,
+            "attribution": pres.attribution.as_dict() if pres.attribution else None,
+            "trials_for_ledger": pres.trials_for_ledger,
+            "reasons": pres.reasons,
+        }
+        # 每 seed × 每 prompt 变体全额计一次试验（吏部点名"最易漏"）——结构化核验：
+        # 台账里本轮登记的 n_trials_total 不得低于 seeds×variants，否则跑 20 个 seed 只登记 1 次、
+        # DSR haircut 被静默放松。台账是权威来源，自报的 seed 数须与之相符。
+        if ledger is not None and cand.run_id and pres.trials_for_ledger > 0:
+            rec = next((r for r in ledger.runs if r.run_id == cand.run_id), None)
+            v.gates["llm_seed_trials"] = {
+                "declared": pres.trials_for_ledger,
+                "registered": rec.n_trials_total if rec else None}
+            if rec is None or rec.n_trials_total < pres.trials_for_ledger:
+                v.decision = "REJECTED_honesty"
+                v.reasons.append(
+                    f"seed×prompt 试验数 {pres.trials_for_ledger} 未足额登记进台账"
+                    f"（run_id={cand.run_id} 登记 {rec.n_trials_total if rec else '无'}）→ 不予评估。"
+                    "每个 seed / prompt 变体都是一次试验，少登即把 DSR haircut 静默放松。")
+                return v
+        if pres.evidence_grade != "ACCEPTANCE":
+            v.decision = "REJECTED_llm_prescreen"
+            v.reasons.append(
+                "证据等级 GENERATOR_ONLY（历史回放/污染或非真前向）→ 只能作假设生成器，永不作接受判据。"
+                + " | ".join(pres.reasons))
+            return v
+        if not pres.passed_prescreen:
+            v.decision = "REJECTED_llm_prescreen"
+            v.reasons.append("三关未全过：" + " | ".join(pres.reasons))
             return v
 
     # 2) 诚实试验计数（决定 DSR 的 N）—— 台账是地板，自报 N 只能更严不能更松
