@@ -1,9 +1,37 @@
-# EVO-8 新范式 — LLM-agent 定性投资（前向纸面）: FROZEN 预注册 **v2（重冻）**
+# EVO-8 新范式 — LLM-agent 定性投资（前向纸面）: FROZEN 预注册 **v3（终冻）**
 
-> **v2 重冻说明**：v1(`3d27016`) 冻结时 `paradigm` 尚非必填键；工部 `12ea400` 已将其列为必填
-> （缺失会让污染/多seed/归因三关**静默跳过**）。**v1 冻结后未产生任何纸面决策**，故按工部指示重冻一次并重取锚点。
-> 机器可读 prereg_config = `qlab/llm_paper_prereg.json`（`paradigm: "llm_agent"`，9 项必填键全齐、完整性门 PASS）；
-> 冻结 universe 清单 = `qlab/LLM_PAPER_UNIVERSE.txt`（S&P100 ∩ 仓内 = **94 只**）。
+## 冻结沿革（供都察院逐条核；旧锚点一并留档不删 —— 工部 2026-08-08 要求）
+
+| 版本 | 冻结 commit | 服务端锚点（GitHub 观测） | 状态 | 作废原因 |
+|--|--|--|--|--|
+| v1 | `3d27016` | `2026-08-08T01:46:30Z`（CreateEvent，新建分支首推） | **作废** | 冻结文档只钉住 `universe/cost_model/rebalance` 三键，**缺 `certify()` 必填 6 键**：`leverage_cap` / `signal_params` / `train_test_split` / `gate_thresholds` / `paradigm` / `family` |
+| v2 | `3618e28` | `2026-08-08T02:05:50Z`（PushEvent） | **作废** | 已补齐 9 键，但 `family` 只写规模（5×2=10）**未枚举 seed 值与变体清单**；且 `freeze_anchor.json` 未把 v1 锚点留档 |
+| **v3** | **本次** | **见 `freeze_anchor.json`** | **生效** | — |
+
+> **关键留痕**：本轨自 v1 冻结至今**零纸面决策产出**（`qlab/reports/llm_paper` 始终不存在，工部亦独立核过
+> `3d27016..77e390c` 只有锚点一个 commit）。**三次重冻均非「见结果不好改口径」——尚无任何结果、任何决策**，
+> 纯粹是补齐冻结文档完整性。旧锚点全部留档不删（见上表 + `freeze_anchor.json.superseded_freezes`）。
+>
+> **关于 rebase**：工部授权「本轨唯一一次 rebase」到集成分支。**我实际未 rebase，改用 merge**
+> （`56ede98`，双父）——效果同为把基线推进到 `f80be60`，但**完全不改写历史**，v1 冻结与其锚点在 DAG 上原样可达，
+> 比 rebase 更强。自 v3 锚点起：**永不 rebase、永不 force-push。**
+
+**机器可读 prereg_config** = `qlab/llm_paper_prereg.json`（9 项必填键全齐、完整性门实测 `MISSING=[]`）；
+**冻结 universe 清单** = `qlab/LLM_PAPER_UNIVERSE.txt`（S&P100 ∩ 仓内 = **94 只**）。
+
+## 冻结的 9 个必填键（以 config 取值形式钉死，非散文）
+
+| 键 | 冻结取值 |
+|--|--|
+| `paradigm` | **`"llm_agent"`**（缺则三关静默跳过；有工部 `12ea400` 后缺则直接 `REJECTED_prereg`） |
+| `family` | **seed `[11,22,33,44,55]` × 变体 `[pv1_baseline, pv2_riskaware]` = 10 试验**，网格逐条枚举、跑后不得增删（本轨 DSR 的 V 来源） |
+| `leverage_cap` | **`1.0`** |
+| `universe` | `LLM_PAPER_UNIVERSE.txt`（94 只，跑中不换） |
+| `signal_params` | 单标的 10% / 总仓 100% / 现金 100% / 禁做空 / `temperature=0` / seeds 与变体同上 |
+| `rebalance` | `weekly`（周一开盘前决策 → 当日开盘执行） |
+| `cost_model` | `moomoo_retail_x1`（`cost_per_turnover=0.001`，决策口径 ×2） |
+| `train_test_split` | `forward_paper only`：无历史切分，**评估窗自服务端锚点起**；`historical_replay` 仅生成器 |
+| `gate_thresholds` | `official_50_20 + shadow_report_25_20 + shadow_floor_15_20` |
 
 **冻结于任何纸面决策产生之前。** 基线 `agent/evo-162-residual-reversal @ 1748065`（门齐、ledger N=47、
 `export` 透传修复在树上）+ 户部 `research/gate/llm_paradigm.py`（`5380a2e`）。

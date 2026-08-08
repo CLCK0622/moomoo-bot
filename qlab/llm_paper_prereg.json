@@ -12,12 +12,25 @@
     "decision_maker": "LLM agent（读公开信息做定性决策）",
     "inputs": "SEC EDGAR 申报 + 免费新闻 RSS + FRED 宏观（均带信息源自身时间戳）",
     "output_schema": "结构化论点 + 置信度 + 目标仓位",
-    "single_name_cap": 0.10,
+    "single_name_cap": 0.1,
     "gross_cap": 1.0,
     "cash_cap": 1.0,
     "shorting": "forbidden (long/flat only)",
     "n_seeds": 5,
-    "n_prompt_variants": 2
+    "n_prompt_variants": 2,
+    "seeds": [
+      11,
+      22,
+      33,
+      44,
+      55
+    ],
+    "prompt_variants": [
+      "pv1_baseline",
+      "pv2_riskaware"
+    ],
+    "temperature": 0.0,
+    "reproducibility": "temperature=0 + 固定 seed 集；提示模板随冻结 commit 入库"
   },
   "rebalance": "weekly (美东周一开盘前决策 → 当日开盘执行)",
   "cost_model": "moomoo_retail_x1",
@@ -26,12 +39,36 @@
   "train_test_split": "forward_paper only：决策全部在本预注册冻结（服务端锚点时间）之后实时做出；historical_replay 仅作假设生成器、永不作验收证据；模型 cutoff 不可核即按污染处理",
   "gate_thresholds": "official_50_20 + shadow_report_25_20 + shadow_floor_15_20",
   "family": {
-    "definition": "决定 DSR 的 V 的那组试验 = n_seeds × n_prompt_variants",
+    "definition": "决定 DSR 的 V 的那组试验 = seed 值 × prompt 变体（**冻结前枚举，跑后不得增删**）",
+    "seeds": [
+      11,
+      22,
+      33,
+      44,
+      55
+    ],
+    "prompt_variants": [
+      "pv1_baseline",
+      "pv2_riskaware"
+    ],
+    "grid": [
+      "seed11×pv1_baseline",
+      "seed11×pv2_riskaware",
+      "seed22×pv1_baseline",
+      "seed22×pv2_riskaware",
+      "seed33×pv1_baseline",
+      "seed33×pv2_riskaware",
+      "seed44×pv1_baseline",
+      "seed44×pv2_riskaware",
+      "seed55×pv1_baseline",
+      "seed55×pv2_riskaware"
+    ],
     "n_seeds": 5,
     "n_prompt_variants": 2,
     "n_trials_total": 10,
     "frozen": true,
-    "note": "跑后不得增删；每 seed × 每 prompt 变体足额登记台账（少登即 REJECTED_honesty）"
+    "why_frozen_upfront": "候选 A 栽过一次「跑时挑 family、V 越紧多重检验罚越轻」（第七种 fail-open）；本轨 family 即 seed×变体网格，直接决定试验计数与 DSR 的 V，故冻在最前。",
+    "ledger_rule": "每 seed × 每变体足额 register_run；少登即 REJECTED_honesty（户部机器核验）"
   },
   "evidence_timing_rule": {
     "inequality": "evidence_available_utc <= decision_ts <= effective_from",

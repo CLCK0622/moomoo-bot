@@ -24,6 +24,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 def _gh_json(path: str):
@@ -85,13 +86,29 @@ def main(argv=None) -> int:
             break
         time.sleep(args.sleep)
 
+    # 旧锚点一并留档不删（工部 2026-08-08）：重冻时把既有锚点转入 superseded_freezes，
+    # 让都察院能从头核整条冻结沿革，而不是只看到最后一版。
+    superseded: List[Dict[str, Any]] = []
+    out_path = Path(args.out)
+    if out_path.exists():
+        try:
+            prev = json.loads(out_path.read_text(encoding="utf-8"))
+            superseded = list(prev.get("superseded_freezes", []))
+            if prev.get("freeze_sha") and prev["freeze_sha"] != args.sha:
+                superseded.append({k: prev.get(k) for k in
+                                   ("freeze_sha", "push_event", "server_ref_state", "status")})
+        except Exception:  # noqa: BLE001 — 旧文件损坏不应阻断新锚点落库
+            pass
+
     ref = server_ref_state(args.repo, args.branch, args.sha)
     anchor = {
         "purpose": "预注册冻结的服务端时间锚点（git 日期可伪造，故不作证据）",
         "repo": args.repo, "branch": args.branch, "freeze_sha": args.sha,
         "push_event": pe,
         "server_ref_state": ref,
-        "dag_rule": "每笔决策 commit 必须是 freeze_sha 的 DAG 后代；本分支永不 rebase / 永不 force-push",
+        "superseded_freezes": superseded,
+        "dag_rule": "每笔决策 commit 必须是 freeze_sha 的 DAG 后代；自本锚点起永不 rebase / 永不 force-push。"
+                    "（唯一一次基线推进用 merge 完成，未改写历史——见预注册冻结沿革）",
         "status": "anchored" if pe else "pending_events_feed",
         "note": ("PushEvent.created_at 为 GitHub 服务端观测、提交者不可设定" if pe else
                  "公开 events 流有缓存延迟，尚未出现该 sha；server_ref_state 已证明服务端确已收到该 commit。"
