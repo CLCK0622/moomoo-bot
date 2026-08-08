@@ -171,6 +171,7 @@ def _base_cfg():
             "signal_params": {"lookback": 252}, "rebalance": "monthly",
             "cost_model": "moomoo_retail_x1", "train_test_split": "2017-12-31",
             "gate_thresholds": "official_50_20+shadow",
+            "paradigm": "quant",          # 范式必填（工部 2026-08-08）：漏写不再静默跳过 LLM 三关
             "family": ["lookback=252"]}   # 定义 V 的冻结试验族（此处单格）
 
 

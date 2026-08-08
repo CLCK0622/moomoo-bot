@@ -52,6 +52,10 @@ REQUIRED_PREREG_KEYS = (
     "cost_model",        # 成本模型
     "train_test_split",  # 训练-测试切分点
     "gate_thresholds",   # 门槛本身
+    "paradigm",          # 候选范式：'quant' | 'llm_agent'。工部 2026-08-08 实测：此前非必填时，
+                         # LLM 候选**不写这个键**即可让三关(污染/seed/归因)静默跳过、直达
+                         # DECISION_POINT——「触发权归冻结预注册」实际退化成「归写不写」。
+                         # 设为必填后，漏写＝REJECTED_prereg（响亮失败），而非静默放行。
     "family",            # 定义 DSR 的 V 的那组试验（grid/factor set）——须冻结，跑后不得增删。
                          # 工部 2026-07-30(EVO-8 A)：family 选得越紧 V 越小、多重检验罚越轻，
                          # 「事后挑 family」= 第七种 fail-open。冻进 prereg 后由冻结哈希守住。
