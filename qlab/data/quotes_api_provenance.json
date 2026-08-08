@@ -4,9 +4,7 @@
   "recorded_date": "2026-08-08",
   "recorded_by": "都水主事 (工部)",
   "baseline_commit": "f80be60",
-
   "scope": "Close prices to mark a paper portfolio. Places no orders, touches no real money (SIMULATE-only red line). NOT part of the EDGAR/RSS evidence chain — evidence_sources stays anchored on source publication timestamps; this leg only values the book. Swapping the price vendor does not touch the frozen preregistration text (which says 'SIMULATE mark-to-market').",
-
   "vendor": {
     "name": "Alpha Vantage",
     "endpoint": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY",
@@ -14,7 +12,6 @@
     "key_storage": "~/.config/alphavantage/api.env (chmod 600, chmod 700 dir, persistent user layer), env var ALPHAVANTAGE_API_KEY. NOT committed, NOT in comments, NOT logged; code reads env only.",
     "key_rotation_note": "The key was rendered in this run's tool output during capture. It is a free read-only market-data key (no account balance, no trading, no PII). If rotation is ever wanted, re-request at https://www.alphavantage.co/support/#api-key and overwrite the env file."
   },
-
   "measured_limits_2026_08_08": {
     "note": "Empirically measured on our actual key — NOT vendor marketing copy (工部尚书's requirement: don't discover the quota weeks in).",
     "requests_per_day": 25,
@@ -25,13 +22,11 @@
     "budget_fit": "Paper book caps at 10 names (10% per symbol) + benchmark => ~11 calls/day for a full daily mark, vs the 25/day cap. Fits with ~2x headroom. If the book or marking frequency grows past ~25 calls/day, switch/添加 vendor before it binds.",
     "throttle_failure_mode": "The throttle reply is HTTP 200 with an 'Information' field and NO price data — i.e. it can masquerade as success. quotes_api raises RateLimited on it (see fail_closed)."
   },
-
   "fallback_vendors_reachable_2026_08_08": {
     "tiingo": "https://www.tiingo.com/account/api/token -> HTTP 200 (signup reachable)",
     "twelvedata": "https://twelvedata.com/pricing -> HTTP 200",
     "note": "Both reachable from this egress if the 25/day cap ever binds; not registered yet (avoid collecting keys we don't need)."
   },
-
   "fail_closed_contract": {
     "throttle": "RateLimited raised on the HTTP-200-with-no-data throttle reply — never silently treated as 'price unchanged'.",
     "missing_key": "MissingApiKey raised; no degraded path.",
@@ -39,17 +34,43 @@
     "stale_marks": "mark_to_market raises StalePriceError if a held symbol has no bar or its newest bar is older than max_staleness_days (default 5). A paper mark is never printed from carried-forward or estimated prices.",
     "source_dates_kept": "every bar keeps the vendor's own trade date; retrieved_utc (our clock) is stored separately and is never used as a price date."
   },
-
   "calendar_resolution": "The observed bar dates ARE the trading calendar (observe-not-predict). This removes the earlier CalendarCoverageError root cause: actual_start is decided by the first real bar. No holiday table, no forward-looking calendar, and no reliance on the in-repo SPY daily series (which 工部尚书 found carries ~31 data holes that were being misread as holidays).",
-
   "live_verification_2026_08_08": {
-    "symbols": ["SPY", "AAPL", "MSFT"],
+    "symbols": [
+      "SPY",
+      "AAPL",
+      "MSFT"
+    ],
     "result": "3/3 fetched, 0 failed; 100 bars each, 2026-03-17 .. 2026-08-07 (latest close present)",
-    "closes": {"SPY": 773.26, "AAPL": 313.33, "MSFT": 499.99},
+    "closes": {
+      "SPY": 773.26,
+      "AAPL": 313.33,
+      "MSFT": 499.99
+    },
     "sample_mark": "holdings {SPY:10, AAPL:20, MSFT:5} -> market_value 16499.15 as_of 2026-08-07, every position priced at its own source trade date",
     "trading_days_observed": 100
   },
-
-  "tests": "qlab/tests/test_quotes_api.py (10): missing-key fail-closed, throttle raises (not silent success), source-date preservation, failures reported without back-fill, call pacing, observed-calendar, mark valuation, and refusal on missing / stale / no-bars.",
-  "usage": "from qlab.events.datafetch import quotes_api as q; bars, failed = q.get_daily_closes(symbols); mk = q.mark_to_market(holdings, bars)  # requires ALPHAVANTAGE_API_KEY in env"
+  "tests": "qlab/tests/test_quotes_api.py (16): missing-key fail-closed, throttle raises (not silent success), API-key redaction in vendor messages, source-date preservation, failures reported without back-fill, call pacing, observed-calendar, mark valuation, refusal on missing/stale/no-bars, plus quota-guard integration (pre-call block, up-front batch check, breach propagates, throttled call still counted, exploration cannot starve marking). qlab/tests/test_api_quota.py (8): hard stop, cross-restart resume, reservation ring-fence, day bucketing, status, config validation, env overrides.",
+  "usage": "from qlab.events.datafetch import quotes_api as q; bars, failed = q.get_daily_closes(symbols); mk = q.mark_to_market(holdings, bars)  # requires ALPHAVANTAGE_API_KEY in env",
+  "daily_quota_accounting": {
+    "status": "ENFORCED (工部 08-08 hardening): 25/day is an accounted hard budget, not a doc constant",
+    "module": "qlab/qlab/events/datafetch/api_quota.py (DailyQuotaGuard, modeled on tools/qlib_gen/rdagent_budget.BudgetGuard)",
+    "why": "If the day's quota is silently exhausted, every later call throttles -> mark_to_market refuses -> that day has NO paper mark -> a hole in the NAV series, which is this track's only acceptance evidence and cannot be repaired afterwards (the close is gone; back-filling would be fabricating data).",
+    "mechanism": {
+      "persisted_ledger": "one JSONL line per call bucketed by UTC day, default ~/.local/state/qlab/av_quota.jsonl (env QLAB_AV_QUOTA_LEDGER). Resumes across processes/restarts so two runs on one day share a counter instead of each counting from zero.",
+      "pre_call_check": "check() raises QuotaExceeded BEFORE the request is issued — we never wait for the vendor's throttle reply to discover exhaustion.",
+      "marking_reservation": "of the 25/day cap, 15 are ring-fenced for mark-to-market (env QLAB_AV_MARK_RESERVE). Exploration may use at most cap-reserve=10, so 'today's NAV point gets recorded' always outranks any other call.",
+      "conservative_accounting": "a call is recorded as soon as the request leaves the host — a throttled/failed call still consumed an attempt. Under-counting is what would silently blow the budget.",
+      "batch_precheck": "get_daily_closes checks the WHOLE batch up front (require_full_batch=True): if today's budget can't cover every symbol it raises before spending anything, rather than burning quota on a partial mark that mark_to_market would reject anyway.",
+      "breach_propagates": "QuotaExceeded is re-raised out of the fetch loop, never buried in the per-symbol `failed` map (which would read as 'symbol unavailable' and keep burning the remainder).",
+      "status_line": "guard.status() reports used/remaining per purpose for the weekly status update — a tightening quota becomes visible instead of hitting a wall."
+    },
+    "day_bucket": "UTC date. The vendor's own reset boundary is not precisely documented; UTC is stable and auditable, and the reserve plus ~2x headroom (~11 marking calls vs 25) absorbs any boundary mismatch. QLAB_AV_DAILY_CAP lowers the cap if the vendor tightens it.",
+    "live_verified_2026_08_08": "marking call OK then budget exhausted -> QuotaExceeded raised BEFORE any network I/O; a fresh guard over the same ledger resumed the count instead of resetting to 0. Separately confirmed in the wild: today's real 25-call vendor quota was exhausted during rate-limit measurement, and the module surfaced it as RateLimited (never as silent success) — exactly the scenario this accounting prevents from reaching the NAV series."
+  },
+  "key_leak_fix_2026_08_08": {
+    "finding": "Alpha Vantage ECHOES the API key inside its daily-quota notice ('We have detected your API key as XXXX...'). That message flowed into the RateLimited exception, which may be logged, reported, or pasted into a status update — a real leak path.",
+    "fix": "quotes_api._redact() strips the live key by value and then any AV-shaped key token from every vendor message before it reaches an exception.",
+    "verified": "against the LIVE throttle reply: key absent from the exception text, '<redacted-api-key>' present. Regression test: test_throttle_message_redacts_the_api_key."
+  }
 }
