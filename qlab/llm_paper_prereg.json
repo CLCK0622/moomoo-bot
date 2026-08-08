@@ -1,0 +1,71 @@
+{
+  "_doc": "EVO-8 LLM-agent 定性投资（前向纸面）机器可读冻结预注册。与 LLM_PAPER_EVAL_PREREGISTRATION.md 同源同义；后者是叙述、本文件是送 certify() 的 prereg_config。冻结后不得修改；重冻须重取服务端锚点且必须在任何纸面决策之前。",
+  "paradigm": "llm_agent",
+  "universe": {
+    "definition": "S&P 100 成分与仓内 data/daily_full 的交集（大盘，跑中不换）",
+    "resolved_file": "qlab/LLM_PAPER_UNIVERSE.txt",
+    "no_swap_during_run": true,
+    "excludes": "小微盘 / OTC / 非美股"
+  },
+  "leverage_cap": 1.0,
+  "signal_params": {
+    "decision_maker": "LLM agent（读公开信息做定性决策）",
+    "inputs": "SEC EDGAR 申报 + 免费新闻 RSS + FRED 宏观（均带信息源自身时间戳）",
+    "output_schema": "结构化论点 + 置信度 + 目标仓位",
+    "single_name_cap": 0.10,
+    "gross_cap": 1.0,
+    "cash_cap": 1.0,
+    "shorting": "forbidden (long/flat only)",
+    "n_seeds": 5,
+    "n_prompt_variants": 2
+  },
+  "rebalance": "weekly (美东周一开盘前决策 → 当日开盘执行)",
+  "cost_model": "moomoo_retail_x1",
+  "cost_per_turnover": 0.001,
+  "decision_cost_multiple": "x2",
+  "train_test_split": "forward_paper only：决策全部在本预注册冻结（服务端锚点时间）之后实时做出；historical_replay 仅作假设生成器、永不作验收证据；模型 cutoff 不可核即按污染处理",
+  "gate_thresholds": "official_50_20 + shadow_report_25_20 + shadow_floor_15_20",
+  "family": {
+    "definition": "决定 DSR 的 V 的那组试验 = n_seeds × n_prompt_variants",
+    "n_seeds": 5,
+    "n_prompt_variants": 2,
+    "n_trials_total": 10,
+    "frozen": true,
+    "note": "跑后不得增删；每 seed × 每 prompt 变体足额登记台账（少登即 REJECTED_honesty）"
+  },
+  "evidence_timing_rule": {
+    "inequality": "evidence_available_utc <= decision_ts <= effective_from",
+    "evidence_time_source": "信息源自身时间：EDGAR acceptanceDateTime / RSS pubDate（绝不用我们的时钟）",
+    "availability_derivation": "工部 2026-08-08：受理 ≠ 公开可得。acceptanceDateTime >= 17:30 ET → 顺延次一交易日开盘；盘前(<09:30 ET)/非交易日 → 顺延至当/次交易日开盘；原始受理时刻照旧留档（source_time_utc）。时序核验一律用派生的 evidence_available_utc。",
+    "implementation": "qlab/qlab/events/datafetch/evidence_availability.py",
+    "measured_roll_rate_AAPL_1000": "71.4%（其中 >=17:30 ET 653=65.3%，与工部实测逐条一致；另 61 条=6.1% 为盘前受理，本规则一并顺延）"
+  },
+  "execution": {
+    "price_source": "OpenD SIMULATE",
+    "real_money": false,
+    "fill_convention": "决策次日开盘（close(T) 决定 → open(T+1) 执行）"
+  },
+  "acceptance_discipline": {
+    "verdict_authority": "research/gate.certify() + llm_paradigm 三关（污染 / 多 seed 保守分位 / HAC 归因）",
+    "interim_readings": "仅监控，绝不出 verdict（「3 个月漂亮数字当业绩」为明令违规形态）",
+    "seed_reporting": "报下四分位而非最好 seed",
+    "attribution": "报净额 + beta/风格归因（只报绝对收益 = 用 beta 冒充 alpha）",
+    "evidence_horizon": "按年计：(t/IR)^2，IR 0.5 需 ~16 年(t=2) / ~36 年(t=3)",
+    "positioning": "薄 alpha 探索、非收益腿"
+  },
+  "ledger": {
+    "path": "research/gate/state/trial_ledger.jsonl",
+    "candidate_id": "llm_paper",
+    "cumulative_n_at_freeze": 47,
+    "declared_trials_this_candidate": 10
+  },
+  "red_lines": [
+    "SIMULATE-only、零真金",
+    "仅免费/合规公开数据",
+    "无裸空、长/空仅做多或持现金",
+    "杠杆 <= 1x",
+    "不许照抄任何外部账号持仓（含 @theaiportfolios）",
+    "不许拿外部账号战绩作背书",
+    "本分支永不 rebase、永不 force-push"
+  ]
+}

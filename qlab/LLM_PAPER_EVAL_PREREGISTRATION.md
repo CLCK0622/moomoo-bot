@@ -1,4 +1,9 @@
-# EVO-8 新范式 — LLM-agent 定性投资（前向纸面）: FROZEN 预注册
+# EVO-8 新范式 — LLM-agent 定性投资（前向纸面）: FROZEN 预注册 **v2（重冻）**
+
+> **v2 重冻说明**：v1(`3d27016`) 冻结时 `paradigm` 尚非必填键；工部 `12ea400` 已将其列为必填
+> （缺失会让污染/多seed/归因三关**静默跳过**）。**v1 冻结后未产生任何纸面决策**，故按工部指示重冻一次并重取锚点。
+> 机器可读 prereg_config = `qlab/llm_paper_prereg.json`（`paradigm: "llm_agent"`，9 项必填键全齐、完整性门 PASS）；
+> 冻结 universe 清单 = `qlab/LLM_PAPER_UNIVERSE.txt`（S&P100 ∩ 仓内 = **94 只**）。
 
 **冻结于任何纸面决策产生之前。** 基线 `agent/evo-162-residual-reversal @ 1748065`（门齐、ledger N=47、
 `export` 透传修复在树上）+ 户部 `research/gate/llm_paradigm.py`（`5380a2e`）。
@@ -63,3 +68,16 @@ git 的 `GIT_AUTHOR_DATE`/`GIT_COMMITTER_DATE` **提交者可任意设定**，�
 SIMULATE-only、零真金、仅免费/合规公开数据、无裸空、≤1x、本地算力；
 **不许照抄任何外部账号持仓**（跟单风险 + 污染归因，只测我们自己的决策链路）；
 不许拿外部账号战绩作背书。回流只在「起跑完成 / 异常违规 / Kevin 否决」三种情况。
+
+## 6. 证据可得时间（v2 新增；工部 2026-08-08 实测）
+
+`acceptanceDateTime` 是「EDGAR 收到」而非「公众可获取」——EDGAR 对 **17:30 ET 之后受理**的文件次一交易日才披露。
+故时序核验一律用**派生**字段 `evidence_available_utc`（原始受理时刻照旧留档）：
+
+- 受理 ≥ 17:30 ET → 顺延至**次一交易日开盘**；
+- 盘前（< 09:30 ET）/ 非交易日受理 → 顺延至**当/次交易日开盘**；
+- 盘中受理 → 即时可得。
+
+实现 `qlab/qlab/events/datafetch/evidence_availability.py`（10 单测绿）。真数据复核（AAPL 1000 条 EDGAR）：
+顺延 **714/1000 = 71.4%**，其中 **≥17:30 ET 653 条 = 65.3%（与工部实测逐条一致）**，另 61 条(6.1%) 为盘前受理。
+**这条不等式因此证明的是「在可获取之后」，而非仅「在受理之后」。**
