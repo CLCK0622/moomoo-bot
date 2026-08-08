@@ -37,6 +37,11 @@ from .capital_efficiency import (CapEffReport, EventExposureSpec, ExposureCheck,
                                  capital_efficiency_report,
                                  realized_exposure_fraction, verify_exposure)
 from .gate import Candidate, Verdict, certify
+from .llm_paradigm import (AdmissibilityCheck, AttributionReport,
+                           ContaminationError, LLMParadigmVerdict, SeedReport,
+                           admissibility_check, prescreen, seed_distribution,
+                           style_attribution, trials_from_seeds,
+                           validate_decision_log)
 from .metrics import (DEFAULT_CRISIS_WINDOWS, GateThresholds, MetricsReport,
                       cagr, evaluate, joint_gate, max_drawdown, mar, sharpe)
 from .prereg import (economic_rationale_gate, freeze_config,
@@ -64,6 +69,10 @@ __all__ = [
     "walk_forward_splits", "cpcv_splits", "OOSBudget", "OOSBudgetExceeded",
     "capital_efficiency_report", "EventExposureSpec", "verify_exposure",
     "realized_exposure_fraction", "CapEffReport", "ExposureCheck",
+    "admissibility_check", "validate_decision_log", "seed_distribution",
+    "trials_from_seeds", "style_attribution", "prescreen",
+    "AdmissibilityCheck", "SeedReport", "AttributionReport",
+    "LLMParadigmVerdict", "ContaminationError",
 ]
 
 # 便捷别名，供管线：project_oos_budget()。RefreezeError 从 trial_ledger 暴露。
