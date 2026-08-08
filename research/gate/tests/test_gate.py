@@ -171,6 +171,7 @@ def _base_cfg():
             "signal_params": {"lookback": 252}, "rebalance": "monthly",
             "cost_model": "moomoo_retail_x1", "train_test_split": "2017-12-31",
             "gate_thresholds": "official_50_20+shadow",
+            "paradigm": "quant",          # 范式必填（工部 2026-08-08）：漏写不再静默跳过 LLM 三关
             "family": ["lookback=252"]}   # 定义 V 的冻结试验族（此处单格）
 
 
@@ -752,6 +753,149 @@ def test_dsr_machine_scale():
     check("期望最大 SR 在 N=1e5 有限且随 N 增大", 0 < em < 1 and em > expected_max_sharpe(1000, V))
 
 
+def test_llm_contamination():
+    """吏部 08-08 新范式：LLM 前视/污染是结构性坑——历史回放且 cutoff 覆盖评测窗 → 不得作验收证据。"""
+    print("21) LLM 范式·污染/前视门")
+    from research.gate.llm_paradigm import (admissibility_check,
+                                            validate_decision_log)
+    # 历史回放：cutoff 覆盖评测窗 → 不可验收（只能当生成器）
+    a = admissibility_check("historical_replay", "2023-01-01", model_training_cutoff="2025-06-01")
+    check("历史回放 + cutoff 覆盖评测窗 → 不可作验收证据", a.admissible is False)
+    check("  理由点明结构性污染", "污染" in a.reason)
+    # cutoff 严格早于窗 → 可验收
+    b = admissibility_check("historical_replay", "2026-01-01", model_training_cutoff="2024-06-01")
+    check("cutoff 严格早于评测窗 → 可验收", b.admissible is True)
+    # cutoff 不可核 → 按污染处理（无据自报不采信）
+    c = admissibility_check("historical_replay", "2023-01-01")
+    check("cutoff 不可核 → 按污染处理、仅生成器", c.admissible is False)
+    # 前向纸面跑：窗起点须在预注册冻结之后
+    d = admissibility_check("forward_paper", "2026-08-10", prereg_frozen_at="2026-08-08")
+    check("前向纸面跑（冻结后开跑）→ 可验收", d.admissible is True)
+    e = admissibility_check("forward_paper", "2026-07-01", prereg_frozen_at="2026-08-08")
+    check("窗起点早于冻结 → 非真前向、不可验收", e.admissible is False)
+    # 决策日志时序
+    ok_log = [{"evidence_max_ts": "2026-08-08T09:00", "decision_ts": "2026-08-08T10:00",
+               "effective_from": "2026-08-09"}]
+    check("合规决策日志 → ok", validate_decision_log(ok_log).ok is True)
+    bad1 = [{"evidence_max_ts": "2026-08-08T11:00", "decision_ts": "2026-08-08T10:00",
+             "effective_from": "2026-08-09"}]
+    check("证据晚于决策（前视）→ 抓住", validate_decision_log(bad1).ok is False)
+    bad2 = [{"evidence_max_ts": "2026-08-08T09:00", "decision_ts": "2026-08-08T10:00",
+             "effective_from": "2026-08-07"}]
+    check("收益起算早于决策（先看结果）→ 抓住", validate_decision_log(bad2).ok is False)
+
+
+def test_llm_seeds_and_attribution():
+    """随机性判保守分位（非最优 seed）；归因区分真 alpha 与 beta/风格暴露。"""
+    print("22) LLM 范式·多 seed + 风格归因")
+    from research.gate.llm_paradigm import (prescreen, seed_distribution,
+                                            style_attribution, trials_from_seeds)
+    vals = [0.02, 0.05, 0.09, 0.13, 0.31]          # 5 个 seed 的年化超额
+    sr = seed_distribution(vals, quantile=0.25)
+    check("判据取 25% 分位、不取最优 seed", sr.judged < sr.best and sr.judged <= sr.median)
+    check("最优 seed 仅作参考", abs(sr.best - 0.31) < 1e-12)
+    check("每 seed×prompt 变体均计入 N", trials_from_seeds(5, 3) == 15)
+
+    n = 1500
+    t = np.arange(n)
+    mkt = 0.0004 + 0.010 * np.sin(t / 4.0)          # 市场因子（确定性、可复现）
+    noise = 0.004 * np.sin(t / 7.0 + 1.1)           # 特质波动
+    # (a) 纯 beta：1.5 倍市场，无 alpha → 控制后 alpha 不显著
+    pure_beta = 1.5 * mkt + noise
+    ra = style_attribution(pure_beta, {"MKT": mkt})
+    check("纯 beta 策略 → 控制后 alpha 不显著（不算选股 alpha）", ra.alpha_significant is False)
+    check("  beta≈1.5 被如实报出（高 beta 无处藏）", abs(ra.betas["MKT"] - 1.5) < 0.05)
+    # (b) 真 alpha：同样 beta，但每期多 5bps
+    true_alpha = 1.5 * mkt + noise + 0.0005
+    rb = style_attribution(true_alpha, {"MKT": mkt})
+    check("真 alpha 策略 → 控制后 alpha 显著", rb.alpha_significant is True)
+    check("  alpha 年化≈12.6%", abs(rb.alpha_ann - 0.0005 * 252) < 0.02)
+
+    # prescreen：污染模式即便有 alpha 也只判生成器级
+    dec = [{"evidence_max_ts": "2026-08-08T09:00", "decision_ts": "2026-08-08T10:00",
+            "effective_from": "2026-08-09"}]
+    v = prescreen("historical_replay", "2023-01-01", dec, vals, true_alpha, {"MKT": mkt},
+                  model_training_cutoff="2025-06-01", n_prompt_variants=2)
+    check("污染模式 → evidence_grade=GENERATOR_ONLY", v.evidence_grade == "GENERATOR_ONLY")
+    check("  即便 alpha 显著也不过预筛", v.passed_prescreen is False)
+    check("  试验数 5×2=10 计入台账", v.trials_for_ledger == 10)
+    v2 = prescreen("forward_paper", "2026-08-10", dec, vals, true_alpha, {"MKT": mkt},
+                   prereg_frozen_at="2026-08-08")
+    check("前向纸面 + 真 alpha → 过预筛（再送 certify）", v2.passed_prescreen is True)
+
+
+def test_llm_prescreen_wired_into_certify():
+    """吏部 08-08：三关必须由冻结预注册强制触发，不能做成"记得调才生效"的旁路。"""
+    print("23) LLM 三关接线进 certify（非可选旁路）")
+    n = 1200
+    t = np.arange(n)
+    dates = pd.bdate_range("2021-01-01", periods=n)
+    mkt = 0.0004 + 0.010 * np.sin(t / 4.0)
+    oos = 1.2 * mkt + 0.004 * np.sin(t / 7.0 + 1.1) + 0.0006     # 有真 alpha
+    cfg = dict(_base_cfg()); cfg["paradigm"] = "llm_agent"
+    h = freeze_config(cfg)
+    rationale = ("LLM 定性范式：读公开财报/新闻做论点驱动选股，行为面信息处理速度差异，"
+                 "非纯数据挖掘；证据按前向纸面跑累积。")
+    dec = [{"evidence_max_ts": "2026-08-08T09:00", "decision_ts": "2026-08-08T10:00",
+            "effective_from": "2026-08-09"}]
+    seeds = [0.02, 0.05, 0.09, 0.13, 0.31]
+
+    def mk(evidence, run_id=None):
+        return Candidate(name="llm", oos_net_returns=oos, oos_dates=dates,
+                         gross_returns=oos, turnover=[0.05] * n, cost_per_turnover=0.001,
+                         adv_notional=1e9, required_notional=1e6, prereg_config=cfg,
+                         frozen_hash=h, economic_rationale=rationale,
+                         n_trials_cumulative=10, trials_variance=0.02,
+                         llm_evidence=evidence, run_id=run_id)
+
+    # (a) 声明了 llm_agent 却不给三关证据 → 拒（缺失≠放松，不许静默跳过）
+    va = certify(mk(None), oos_budget=OOSBudget(1))
+    check("声明 llm_agent 但无三关证据 → REJECTED_llm_prescreen",
+          va.decision == "REJECTED_llm_prescreen")
+
+    ev_ok = {"mode": "forward_paper", "eval_window_start": "2026-08-10",
+             "prereg_frozen_at": "2026-08-08", "decisions": dec, "seed_values": seeds,
+             "returns": oos, "factors": {"MKT": mkt}, "n_prompt_variants": 2}
+    # (b) 污染模式（历史回放 + cutoff 覆盖）→ 即便有 alpha 也只判生成器级 → 拒
+    ev_bad = dict(ev_ok); ev_bad.update({"mode": "historical_replay",
+                                         "eval_window_start": "2023-01-01",
+                                         "model_training_cutoff": "2025-06-01"})
+    vb = certify(mk(ev_bad), oos_budget=OOSBudget(1))
+    check("污染模式 → REJECTED_llm_prescreen（GENERATOR_ONLY 不作验收）",
+          vb.decision == "REJECTED_llm_prescreen")
+    check("  判据记录 evidence_grade", vb.gates["llm_prescreen"]["evidence_grade"] == "GENERATOR_ONLY")
+
+    # (c) seed×prompt 试验数未足额登记进台账 → 拒（吏部点名"最易漏"）
+    led = TrialLedger(path=None)
+    led.register_run("llm-run1", "llm", n_trials_total=3, n_evaluated=1,
+                     trial_sharpes_var=0.02, now_iso="2026-08-08T00:00:00Z")
+    vc = certify(mk(ev_ok, run_id="llm-run1"), ledger=led, oos_budget=OOSBudget(1))
+    check("5 seed×2 变体=10 试验，台账只登记 3 → REJECTED_honesty",
+          vc.decision == "REJECTED_honesty")
+    check("  记录 declared=10 vs registered=3",
+          vc.gates["llm_seed_trials"]["declared"] == 10
+          and vc.gates["llm_seed_trials"]["registered"] == 3)
+
+    # (d) 足额登记 + 前向纸面 + 真 alpha → 三关放行（后续照走老门）
+    led2 = TrialLedger(path=None)
+    led2.register_run("llm-run2", "llm", n_trials_total=10, n_evaluated=1,
+                      trial_sharpes_var=0.02, now_iso="2026-08-08T00:00:00Z")
+    vd = certify(mk(ev_ok, run_id="llm-run2"), ledger=led2, oos_budget=OOSBudget(1))
+    check("足额登记+前向+真alpha → 不被三关拦（进老门）",
+          vd.decision not in ("REJECTED_llm_prescreen", "REJECTED_honesty"))
+    check("  三关证据留痕 evidence_grade=ACCEPTANCE",
+          vd.gates["llm_prescreen"]["evidence_grade"] == "ACCEPTANCE")
+
+    # (e) 非 llm 范式候选不受影响（老候选零回归）
+    cfg_old = _base_cfg()
+    v_old = certify(Candidate(name="old", oos_net_returns=oos, oos_dates=dates,
+                              prereg_config=cfg_old, frozen_hash=freeze_config(cfg_old),
+                              economic_rationale=rationale, n_trials_cumulative=2,
+                              trials_variance=0.02), oos_budget=OOSBudget(1))
+    check("非 llm 范式候选 → 不触发三关（无回归）",
+          "llm_prescreen" not in v_old.gates)
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
@@ -762,7 +906,9 @@ def main():
               test_family_must_be_frozen, test_pooled_v_independent_floor,
               test_oos_budget_persists, test_refreeze_guard, test_sleeve_verdict,
               test_concurrent_writers_are_atomic,
-              test_capital_efficiency, test_dsr_machine_scale):
+              test_capital_efficiency, test_dsr_machine_scale,
+              test_llm_contamination, test_llm_seeds_and_attribution,
+              test_llm_prescreen_wired_into_certify):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 
