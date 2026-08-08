@@ -752,6 +752,77 @@ def test_dsr_machine_scale():
     check("期望最大 SR 在 N=1e5 有限且随 N 增大", 0 < em < 1 and em > expected_max_sharpe(1000, V))
 
 
+def test_llm_contamination():
+    """吏部 08-08 新范式：LLM 前视/污染是结构性坑——历史回放且 cutoff 覆盖评测窗 → 不得作验收证据。"""
+    print("21) LLM 范式·污染/前视门")
+    from research.gate.llm_paradigm import (admissibility_check,
+                                            validate_decision_log)
+    # 历史回放：cutoff 覆盖评测窗 → 不可验收（只能当生成器）
+    a = admissibility_check("historical_replay", "2023-01-01", model_training_cutoff="2025-06-01")
+    check("历史回放 + cutoff 覆盖评测窗 → 不可作验收证据", a.admissible is False)
+    check("  理由点明结构性污染", "污染" in a.reason)
+    # cutoff 严格早于窗 → 可验收
+    b = admissibility_check("historical_replay", "2026-01-01", model_training_cutoff="2024-06-01")
+    check("cutoff 严格早于评测窗 → 可验收", b.admissible is True)
+    # cutoff 不可核 → 按污染处理（无据自报不采信）
+    c = admissibility_check("historical_replay", "2023-01-01")
+    check("cutoff 不可核 → 按污染处理、仅生成器", c.admissible is False)
+    # 前向纸面跑：窗起点须在预注册冻结之后
+    d = admissibility_check("forward_paper", "2026-08-10", prereg_frozen_at="2026-08-08")
+    check("前向纸面跑（冻结后开跑）→ 可验收", d.admissible is True)
+    e = admissibility_check("forward_paper", "2026-07-01", prereg_frozen_at="2026-08-08")
+    check("窗起点早于冻结 → 非真前向、不可验收", e.admissible is False)
+    # 决策日志时序
+    ok_log = [{"evidence_max_ts": "2026-08-08T09:00", "decision_ts": "2026-08-08T10:00",
+               "effective_from": "2026-08-09"}]
+    check("合规决策日志 → ok", validate_decision_log(ok_log).ok is True)
+    bad1 = [{"evidence_max_ts": "2026-08-08T11:00", "decision_ts": "2026-08-08T10:00",
+             "effective_from": "2026-08-09"}]
+    check("证据晚于决策（前视）→ 抓住", validate_decision_log(bad1).ok is False)
+    bad2 = [{"evidence_max_ts": "2026-08-08T09:00", "decision_ts": "2026-08-08T10:00",
+             "effective_from": "2026-08-07"}]
+    check("收益起算早于决策（先看结果）→ 抓住", validate_decision_log(bad2).ok is False)
+
+
+def test_llm_seeds_and_attribution():
+    """随机性判保守分位（非最优 seed）；归因区分真 alpha 与 beta/风格暴露。"""
+    print("22) LLM 范式·多 seed + 风格归因")
+    from research.gate.llm_paradigm import (prescreen, seed_distribution,
+                                            style_attribution, trials_from_seeds)
+    vals = [0.02, 0.05, 0.09, 0.13, 0.31]          # 5 个 seed 的年化超额
+    sr = seed_distribution(vals, quantile=0.25)
+    check("判据取 25% 分位、不取最优 seed", sr.judged < sr.best and sr.judged <= sr.median)
+    check("最优 seed 仅作参考", abs(sr.best - 0.31) < 1e-12)
+    check("每 seed×prompt 变体均计入 N", trials_from_seeds(5, 3) == 15)
+
+    n = 1500
+    t = np.arange(n)
+    mkt = 0.0004 + 0.010 * np.sin(t / 4.0)          # 市场因子（确定性、可复现）
+    noise = 0.004 * np.sin(t / 7.0 + 1.1)           # 特质波动
+    # (a) 纯 beta：1.5 倍市场，无 alpha → 控制后 alpha 不显著
+    pure_beta = 1.5 * mkt + noise
+    ra = style_attribution(pure_beta, {"MKT": mkt})
+    check("纯 beta 策略 → 控制后 alpha 不显著（不算选股 alpha）", ra.alpha_significant is False)
+    check("  beta≈1.5 被如实报出（高 beta 无处藏）", abs(ra.betas["MKT"] - 1.5) < 0.05)
+    # (b) 真 alpha：同样 beta，但每期多 5bps
+    true_alpha = 1.5 * mkt + noise + 0.0005
+    rb = style_attribution(true_alpha, {"MKT": mkt})
+    check("真 alpha 策略 → 控制后 alpha 显著", rb.alpha_significant is True)
+    check("  alpha 年化≈12.6%", abs(rb.alpha_ann - 0.0005 * 252) < 0.02)
+
+    # prescreen：污染模式即便有 alpha 也只判生成器级
+    dec = [{"evidence_max_ts": "2026-08-08T09:00", "decision_ts": "2026-08-08T10:00",
+            "effective_from": "2026-08-09"}]
+    v = prescreen("historical_replay", "2023-01-01", dec, vals, true_alpha, {"MKT": mkt},
+                  model_training_cutoff="2025-06-01", n_prompt_variants=2)
+    check("污染模式 → evidence_grade=GENERATOR_ONLY", v.evidence_grade == "GENERATOR_ONLY")
+    check("  即便 alpha 显著也不过预筛", v.passed_prescreen is False)
+    check("  试验数 5×2=10 计入台账", v.trials_for_ledger == 10)
+    v2 = prescreen("forward_paper", "2026-08-10", dec, vals, true_alpha, {"MKT": mkt},
+                   prereg_frozen_at="2026-08-08")
+    check("前向纸面 + 真 alpha → 过预筛（再送 certify）", v2.passed_prescreen is True)
+
+
 def main():
     for t in (test_metrics, test_dsr, test_ledger, test_walk_forward,
               test_cost_capacity, test_prereg, test_certify_end_to_end,
@@ -762,7 +833,8 @@ def main():
               test_family_must_be_frozen, test_pooled_v_independent_floor,
               test_oos_budget_persists, test_refreeze_guard, test_sleeve_verdict,
               test_concurrent_writers_are_atomic,
-              test_capital_efficiency, test_dsr_machine_scale):
+              test_capital_efficiency, test_dsr_machine_scale,
+              test_llm_contamination, test_llm_seeds_and_attribution):
         t()
     print(f"\nALL PASSED — {PASS} checks green.")
 
