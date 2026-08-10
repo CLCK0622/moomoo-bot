@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
@@ -54,6 +55,14 @@ START_NAV = 100_000.0
 
 class PreflightFailed(RuntimeError):
     """起跑前置不满足 → 不产生任何决策（fail-closed）。"""
+
+
+@dataclass(frozen=True)
+class _AggPos:
+    """同符号多行聚合后的持仓（仅 build_book 内部用；不改决策记录本身）。"""
+    symbol: str
+    target_weight: float
+    actual_start: Any
 
 
 def preflight(*, n_symbols_needed: int, cfg: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -106,6 +115,18 @@ def build_book(decisions, bars_by_symbol: Dict[str, Any], cfg: Dict[str, Any],
         return {"status": "pending_entry_bar", "pending_symbols": pending,
                 "reason": ("建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。"
                            "仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。")}
+    # 同符号多行 → **按符号聚合权重**，不是后写覆盖前写（工部尚书 2026-08-10 实测）：
+    # 覆盖会让 book 静默缩水（3 行 0.05/0.05/0.10 → gross 只剩 0.15 而非 0.20），
+    # 净值序列从第一个点起就少算仓位、且毫无提示。聚合后单标的上限由 check_portfolio
+    # 按**聚合值**判（同轮已修），故聚合不会把超限放行。
+    agg_w: Dict[str, float] = {}
+    agg_start: Dict[str, Any] = {}
+    for d in decisions:
+        agg_w[d.symbol] = agg_w.get(d.symbol, 0.0) + d.target_weight
+        agg_start.setdefault(d.symbol, d.actual_start)
+    decisions = [_AggPos(symbol=s, target_weight=w, actual_start=agg_start[s])
+                 for s, w in sorted(agg_w.items())]
+
     shares, entries, missing = {}, {}, []
     for d in decisions:
         day = pd.Timestamp(d.actual_start).tz_convert(ET_TZ).strftime("%Y-%m-%d")

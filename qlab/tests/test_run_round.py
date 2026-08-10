@@ -193,3 +193,35 @@ def test_quota_divergence_leaves_an_alert_and_no_round(tmp_path, monkeypatch):
     import json as _j
     a = _j.loads(alerts[0].read_text(encoding="utf-8"))
     assert a["alert"] == "QUOTA_DIVERGENCE" and a["ledger_remaining"] == 24
+
+
+# ---- 同符号多行：聚合而非覆盖；且聚合后仍受冻结单标的上限约束 ----
+# 工部尚书 2026-08-10 实测：两处 bug 互相掩盖——build_book 按符号覆盖让 book 静默缩水
+# （掩盖了超限），若只把覆盖改成聚合而 check_portfolio 仍逐行判上限，就会**真的**持有
+# 超过冻结 10% 的单一标的。故两条断言必须并存，防止将来只修一半。
+def test_same_symbol_rows_aggregate_not_overwrite(monkeypatch, tmp_path):
+    from qlab.llm_paper.run_round import build_book
+    from types import SimpleNamespace as NS
+
+    class _B:
+        def __init__(self, d, o): self.date, self.open = d, o
+
+    bars = {"SPY": [_B("2026-08-11", 100.0)], "AAPL": [_B("2026-08-11", 200.0)]}
+    start = "2026-08-11T13:30:00+00:00"
+    ds = [NS(symbol="SPY", target_weight=0.05, actual_start=start),
+          NS(symbol="SPY", target_weight=0.05, actual_start=start),
+          NS(symbol="AAPL", target_weight=0.10, actual_start=start)]
+    r = build_book(ds, bars, {"cost_per_turnover": 0.001})
+    assert r["status"] == "filled"
+    assert r["gross_notional"] == 20_000.0        # 覆盖时会缩水成 15_000
+    assert r["shares"]["SPY"] == 100.0            # 0.10×100k/100，不是 0.05 那一行
+
+
+def test_single_name_cap_applies_to_aggregated_weight():
+    from qlab.llm_paper.decision_chain import check_portfolio, load_prereg
+    from types import SimpleNamespace as NS
+    cfg = load_prereg()
+    ds = [NS(symbol="SPY", target_weight=0.05) for _ in range(3)]   # 聚合 15% > 冻结 10%
+    r = check_portfolio(ds, cfg)
+    assert r["ok"] is False
+    assert "SPY" in r["violations_single_name"]

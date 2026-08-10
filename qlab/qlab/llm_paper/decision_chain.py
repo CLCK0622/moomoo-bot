@@ -202,7 +202,15 @@ def check_portfolio(decisions: Sequence[Decision], cfg: Optional[Dict[str, Any]]
     cfg = cfg or load_prereg()
     sp = cfg["signal_params"]
     gross = sum(d.target_weight for d in decisions)
-    over = [d.symbol for d in decisions if d.target_weight > sp["single_name_cap"] + 1e-12]
+    # 单标的上限必须判**聚合后**的持仓，不是逐行（工部尚书 2026-08-10 实测）：
+    # 同一 book 里 agent 可能对同一符号出多行论点，逐行判时「3 行 SPY 各 5%」每行都合规，
+    # 但真实持仓是 15% > 冻结的 10% 上限 —— 冻结约束被绕过而判 ok。
+    # 这条与 build_book 的按符号覆盖是一对：覆盖 bug 让 book 缩水到只剩一行（掩盖了超限），
+    # 一旦把覆盖改成聚合而这里仍逐行判，就会**真的**持有 15%、直接违反冻结上限。故两处必须同修。
+    agg: Dict[str, float] = {}
+    for d in decisions:
+        agg[d.symbol] = agg.get(d.symbol, 0.0) + d.target_weight
+    over = [s for s, w in sorted(agg.items()) if w > sp["single_name_cap"] + 1e-12]
     neg = [d.symbol for d in decisions if d.target_weight < 0]
     ok = (not over) and (not neg) and gross <= sp["gross_cap"] + 1e-12
     return {"ok": ok, "gross": gross, "gross_cap": sp["gross_cap"],
