@@ -13,6 +13,9 @@ reports/*
 !reports/opend_kline_depth/
 !reports/swing_s5_fomc/
 !reports/swing_s1_meanrev/
+# EVO-8 前向纸面轨：决策记录**必须**入库——冻结的时序证明靠「决策 commit 是 freeze_sha 的
+# DAG 后代」，被 ignore 掉就等于该轮证据不存在（工部 2026-08-10 第 1 轮起跑时发现并修）。
+!reports/llm_paper/
 data/cache/
 # EVO tooling (工部/都水): derived Qlib .bin store + CSV intermediates are
 # rebuildable from committed data/daily_full via tools/qlib_gen/build_qlib_data.py
