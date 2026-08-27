@@ -217,6 +217,32 @@ def test_same_symbol_rows_aggregate_not_overwrite(monkeypatch, tmp_path):
     assert r["shares"]["SPY"] == 100.0            # 0.10×100k/100，不是 0.05 那一行
 
 
+# ---- 第 2 轮的台账登记：原内联写法在这里必崩（配额已花、决策已产生、round JSON 未落盘）----
+def test_path_a_round_two_registers_instead_of_dying_on_the_refreeze_guard(tmp_path, monkeypatch):
+    """(a) 连跑两轮必须都能落盘。原 `register_run(..., candidate_id="llm_paper")` 不带 supersedes，
+    第 2 轮被重冻护栏 `RefreezeError` 打死 ⇒ 该轮证据当场归零（等同于丢一轮）。"""
+    from research.gate import project_ledger
+    _iso(tmp_path, monkeypatch)
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
+    led_path = tmp_path / "led.jsonl"
+    monkeypatch.setattr("research.gate.DEFAULT_LEDGER_PATH", str(led_path))
+    monkeypatch.setattr("qlab.llm_paper.ledger_bridge._REPO_ROOT", tmp_path)
+    prop = [{"symbol": "IBM", "target_weight": 0.05, "confidence": 0.5, "thesis": "t",
+             "evidence_records": EV, "seed": 11, "prompt_variant": "pv1_baseline"}]
+    out = tmp_path / "reports"
+    r1 = run_round(proposals=prop, decision_ts=DTS, probe=PROBE, out_dir=str(out))
+    r2 = run_round(proposals=prop, decision_ts=pd.Timestamp("2026-08-14 11:00", tz="UTC"),
+                   probe=PROBE, out_dir=str(out))
+    assert r1["ledger"]["run_id"] == "llm_paper-2026-08-07"
+    assert r2["ledger"]["run_id"] == "llm_paper-2026-08-14"
+    assert r2["ledger"]["supersedes"] == "llm_paper-2026-08-07"      # 覆盖计一次
+    assert r1["ledger"]["n_trials_total"] == r2["ledger"]["n_trials_total"] == 10
+    assert len(list(out.glob("round_*.json"))) == 2                  # 两轮都落了盘
+    led = project_ledger(str(led_path))
+    assert len(led.runs) == 1 and led.cumulative_n() == 10           # N 没有每周 +10
+    assert r1["executor"] == r2["executor"] == "single_book"
+
+
 def test_single_name_cap_applies_to_aggregated_weight():
     from qlab.llm_paper.decision_chain import check_portfolio, load_prereg
     from types import SimpleNamespace as NS

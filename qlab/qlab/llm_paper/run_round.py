@@ -42,6 +42,7 @@ from qlab.llm_paper.decision_chain import (build_decision, check_portfolio,  # n
                                             frozen_grid, load_anchor, load_prereg)
 from qlab.llm_paper.determinism import (STATUS_DRIFT, ProbeUnverifiable,  # noqa: E402
                                         probe_request, verify_or_establish)
+from qlab.llm_paper.ledger_bridge import register_round  # noqa: E402
 from qlab.llm_paper.price_bridge import settle_actual_start  # noqa: E402
 from qlab.llm_paper.reporting import quantile_caliber, seed_semantics  # noqa: E402
 
@@ -243,21 +244,24 @@ def run_round(*, proposals: Sequence[Dict[str, Any]], decision_ts,
         mtm, nav_point = None, None                        # 仓位未建立 ⇒ 绝不编净值点
 
     # ---- 台账：足额登记 10 格（少登即 REJECTED_honesty） ----
+    # 登记走 `ledger_bridge.register_round`（(a)/(b) 共用）。**第 2 轮起必须走它**：原先内联的
+    # `register_run(run_id=…-<日期>, candidate_id="llm_paper")` 在第 2 轮会被重冻护栏拒绝
+    # （同 candidate 换 run_id 未声明 supersedes → RefreezeError），而抛错点在配额已花、决策已产生、
+    # round JSON 尚未落盘之处 ⇒ 该轮证据当场归零。桥接按「一个候选恒定一条记录」登记：
+    # n_trials_total 恒为冻结 10 格（DSR 的 V 不放松），n_evaluated 取跨轮已评估格子的并集。
     ledger_rec = None
     if register_trials:
-        from research.gate import project_ledger, DEFAULT_LEDGER_PATH
-        led = project_ledger(str(_REPO_ROOT / DEFAULT_LEDGER_PATH))
-        fam = cfg["family"]
-        ledger_rec = led.register_run(
-            run_id=f"{CANDIDATE_ID}-{pd.Timestamp(decision_ts).date()}",
-            source="llm_agent", n_trials_total=fam["n_trials_total"],
-            n_evaluated=len({(d.seed, d.prompt_variant) for d in decisions}),
-            candidate_id=CANDIDATE_ID,
-            note=f"LLM 前向纸面第 1 轮：冻结网格 {fam['n_trials_total']} 格足额登记")
+        ledger_rec = register_round(
+            decision_ts=decision_ts, cfg=cfg,
+            cells_this_round={(d.seed, d.prompt_variant) for d in decisions},
+            out_dir=out_dir, executor="single_book")
 
     alerts = [STATUS_DRIFT] if det["drift"] else []
     payload = {
         "round_decision_ts": pd.Timestamp(decision_ts).isoformat(),
+        # 执行器自报家门：审计轨要能一眼看出「哪一轮起换的执行器」。第 1 轮的记录早于本字段
+        # 且不可回改，故 nav_series 把「缺此字段」一律读作 single_book。
+        "executor": "single_book",
         "preflight": pre,
         "n_decisions": len(decisions),
         "portfolio_check": port,
@@ -266,8 +270,7 @@ def run_round(*, proposals: Sequence[Dict[str, Any]], decision_ts,
         "book_x2_cost": book_x2,
         "mark_to_market": mtm,
         "nav_point": nav_point,
-        "ledger": ({"run_id": ledger_rec.run_id, "n_trials_total": ledger_rec.n_trials_total}
-                   if ledger_rec else None),
+        "ledger": ledger_rec,          # register_round 的返回块（含 n_evaluated / supersedes 溯源）
         "rejected_evidence": list(rejected_evidence or []),
         "decisions": [d.to_log_entry() for d in decisions],
         # 金标准复现：探针输出与其 sha256 原样留档，都察院可拿仓内基线独立复核
