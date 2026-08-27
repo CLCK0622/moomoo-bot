@@ -101,6 +101,58 @@ def test_one_snapshot_feeds_both_paths_and_books_match(tmp_path, monkeypatch):
     assert saved["may_take_over"] is True and "bearing_payload" not in saved
 
 
+def test_a_violating_round_still_compares_and_still_lands(tmp_path, monkeypatch):
+    """两侧同样违规 ⇒ 两侧同样不调仓、逐位仍相同，轮次照常落盘（吏部 2026-08-27 裁定）。"""
+    from qlab.llm_paper.rebalance_policy import NO_REBALANCE
+    _iso(tmp_path, monkeypatch)
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
+    over = [_pa("IBM", 0.06), _pa("IBM", 0.06)]              # 聚合 0.12 > 冻结 0.10
+    r = _run(tmp_path, monkeypatch, a_props=over,
+             b_cells=[{"seed": CELL[0], "prompt_variant": CELL[1],
+                       "proposals": [_prop("IBM", 0.06), _prop("IBM", 0.06)]}])
+    assert r["identical"] is True
+    assert r["book_comparison"]["book_status"] == NO_REBALANCE
+    assert (tmp_path / "bearing" / "round_20260807.json").exists()      # 轮次没丢
+    assert r["bearing_payload"]["book"]["violation"]["exceeded_by"]["IBM"] == pytest.approx(0.02)
+    # 但两侧都是空持仓 ⇒ book 等价性**没被检验到**，不得据此切换
+    assert r["book_equivalence_exercised"] is False and r["may_take_over"] is False
+
+
+@pytest.mark.parametrize("days, status", [
+    (["2026-08-06", "2026-08-07"], "pending_entry_bar"),      # 建仓 bar 未出现
+])
+def test_empty_book_identity_is_not_a_pass(days, status, tmp_path, monkeypatch):
+    """空 book 上的「逐位相同」是**空过**：两侧都没持仓，权重→股数那段算术一行没跑。
+
+    08-31 那轮就是这个形态（决策 11:00Z 盘前，intended_start 当天 13:30Z，价格腿最新 bar
+    停在上周五）—— 若把空过读成通过，切换就会建立在从未检验过的等价性上。
+    """
+    _iso(tmp_path, monkeypatch)
+    _stub_bars(monkeypatch, days)
+    r = _run(tmp_path, monkeypatch, a_props=[_pa("IBM", 0.10)],
+             b_cells=[{"seed": CELL[0], "prompt_variant": CELL[1],
+                       "proposals": [_prop("IBM", 0.10)]}])
+    assert r["book_comparison"]["book_status"] == status
+    assert r["identical"] is True                       # 确实逐位相同……
+    assert r["book_equivalence_exercised"] is False     # ……但什么都没比到
+    assert r["may_take_over"] is False and "空过" in r["take_over_note"]
+    assert (tmp_path / "bearing" / "ALERT_control_not_exercised_20260807.json").exists()
+    assert not list((tmp_path / "bearing").glob("ALERT_control_mismatch_*.json"))
+
+
+def test_no_rebalance_on_one_side_only_is_caught(tmp_path, monkeypatch):
+    """一侧不调仓、另一侧建仓 ⇒ status 逐位比对必须逮到，不许判「通过」。"""
+    _iso(tmp_path, monkeypatch)
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
+    r = _run(tmp_path, monkeypatch,
+             a_props=[_pa("IBM", 0.06), _pa("IBM", 0.06)],              # (a) 违规 → 不调仓
+             b_cells=[{"seed": CELL[0], "prompt_variant": CELL[1],
+                       "proposals": [_prop("IBM", 0.10)]}])             # (b) 合规 → 建仓
+    assert r["identical"] is False and r["may_take_over"] is False
+    assert any(d["field"] == "status" for d in r["book_comparison"]["diffs"])
+    assert (tmp_path / "bearing" / "ALERT_control_mismatch_20260807.json").exists()
+
+
 def test_control_artifact_is_not_named_round_so_it_stays_out_of_the_globs(tmp_path, monkeypatch):
     """对照产物不得被 nav_series / 台账并集的 `round_*.json` glob 扫到。"""
     from qlab.llm_paper.ledger_bridge import evaluated_cells_union

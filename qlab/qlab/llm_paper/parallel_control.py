@@ -165,7 +165,10 @@ def run_parallel_control(*, proposals: Sequence[Dict[str, Any]],
         b_payload = run_round_multi(cells=cells, decision_ts=decision_ts, probe=probe,
                                     benchmark=benchmark, out_dir=str(ctrl), cfg=cfg,
                                     rejected_evidence=rejected_evidence,
-                                    register_trials=False, bars=bars)
+                                    register_trials=False, bars=bars,
+                                    # 前轮持仓按**承载目录**判：对照子目录每轮新建、历史恒为空，
+                                    # 照它判会让 (b) 与 (a) 在「有前轮持仓」时行为分歧。
+                                    position_history_dir=out_dir)
         cid = cell_id(*cell)
         if cid not in b_payload["cells"]:
             raise PreflightFailed(
@@ -190,18 +193,42 @@ def run_parallel_control(*, proposals: Sequence[Dict[str, Any]],
                                    "按裁定：停下回报、不切换。"),
         })
 
-    report["may_take_over"] = bool(report.get("identical")) and "control_error" not in report
-    report["take_over_note"] = (
-        "对照通过 ⇒ 可在**下一轮**切换承载路径（裁定：不在对照当轮切，那一轮已同时背着"
-        "恢复轮次与台账修复后首次登记两件事，再叠加切换将无法归因）。切换轮次回填进 "
-        "EXECUTOR_CHANGE_NOTE.md。" if report["may_take_over"] else
-        "对照未通过 ⇒ **不得切换**，停下回报工部尚书。")
+    # **book 等价性是否真的被检验过** —— 空 book 上的「逐位相同」是**空过**，不是通过。
+    # 决策先于建仓日的轮次（`pending_entry_bar`）两侧都没有 shares / 没有净值点，比对必然
+    # identical；违规不调仓的轮次（`no_rebalance`）两侧都是空持仓，「权重 → 股数按建仓日 open」
+    # 那段算术同样一行没跑。拿这种结果去许可切换，正是本轨一路在堵的 fail-open 形态。
+    status = (report.get("book_comparison") or {}).get("book_status")
+    report["book_equivalence_exercised"] = (status == "filled")
+    report["may_take_over"] = bool(
+        report.get("identical") and "control_error" not in report
+        and report["book_equivalence_exercised"])
+    if report["may_take_over"]:
+        report["take_over_note"] = (
+            "对照通过 ⇒ 可在**下一轮**切换承载路径（裁定：不在对照当轮切，那一轮已同时背着"
+            "恢复轮次与台账修复后首次登记两件事，再叠加切换将无法归因）。切换轮次回填进 "
+            "EXECUTOR_CHANGE_NOTE.md。")
+    elif report.get("identical") and not report["book_equivalence_exercised"]:
+        report["take_over_note"] = (
+            f"本轮 book 状态为 `{status}` ⇒ **两侧都没有持仓，逐位相同是空过**，"
+            "第 ② 段（book 等价性）**未被实际检验**。不得据此切换；"
+            "等一个真正产生 filled book 的轮次再跑一次对照。")
+    else:
+        report["take_over_note"] = "对照未通过 ⇒ **不得切换**，停下回报工部尚书。"
 
     out.mkdir(parents=True, exist_ok=True)
     # 刻意不叫 round_*.json：那个名字会被 nav_series 与台账并集的 glob 扫到。
     (out / f"CONTROL_{stamp}.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-    if not report["may_take_over"]:
+    if report.get("identical") and not report["book_equivalence_exercised"]:
+        # 空过与不一致是两回事，留痕也不该同名——同名会让「这轮什么都没比到」被读成「比出了问题」。
+        (out / f"ALERT_control_not_exercised_{stamp}.json").write_text(
+            json.dumps({"alert": "CONTROL_NOT_EXERCISED", "round": stamp,
+                        "book_status": status,
+                        "action_required": ("第 ② 段未被实际检验（两侧均无持仓）⇒ 不得切换；"
+                                            "等一个真正产生 filled book 的轮次再跑对照"),
+                        "report": report}, ensure_ascii=False, indent=2, default=str),
+            encoding="utf-8")
+    elif not report["may_take_over"]:
         (out / f"ALERT_control_mismatch_{stamp}.json").write_text(
             json.dumps({"alert": "CONTROL_MISMATCH", "round": stamp,
                         "action_required": "停下回报工部尚书；不得切换承载路径；本轮 (a) 记录有效",

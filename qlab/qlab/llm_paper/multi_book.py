@@ -15,8 +15,10 @@
 **边界（一条都不松）**：
 * 冻结文本 / 决策逻辑 / 冻结参数一律不动 —— 决策仍走 `build_decision`，约束仍走 `check_portfolio`，
   建仓仍走 `build_book`，探针仍走 `determinism`，本模块**只做编排**，不复制其中任何一段逻辑；
-* 组合约束**按格逐一判**（每格是一个独立组合，不是把 10 格加总去判）；任一格不过 ⇒ 整轮 fail-closed、
-  零落盘 —— 与 (a) 同一条纪律，宁可不起跑也不产出半截证据；
+* 组合约束**按格逐一判**（每格是一个独立组合，不是把 10 格加总去判）；某格不过 ⇒ **该格本轮不调仓**、
+  如实留档、仍计入 `n_evaluated`，**本轮其余格与整轮落盘照常**（吏部 2026-08-27 裁定，08-31 当轮生效；
+  细则与边界见 `rebalance_policy.py`）。其余任何失败——缺价 / 探针 / 时序核验 / 台账 / 配额 /
+  决策链路——**一律维持整轮 fail-closed**，宁可不起跑也不产出半截证据；
 * `n_trials_total` 恒按冻结 10 格足额登记（`ledger_bridge`），`n_evaluated` 取跨轮并集；
 * **不出 verdict**：中途读数只作监控，判定一律留给 `certify()` + `llm_paradigm`（预注册 §4）。
 
@@ -45,10 +47,14 @@ from qlab.llm_paper.decision_chain import (build_decision, check_portfolio,  # n
 from qlab.llm_paper.determinism import (STATUS_DRIFT, ProbeUnverifiable,  # noqa: E402
                                         verify_or_establish)
 from qlab.llm_paper.errors import PreflightFailed  # noqa: E402
-from qlab.llm_paper.ledger_bridge import register_round  # noqa: E402
+from qlab.llm_paper.ledger_bridge import (cell_id,  # noqa: E402,F401  （原样再导出）
+                                          register_round)
 from qlab.llm_paper.price_bridge import settle_actual_start  # noqa: E402
 from qlab.llm_paper.quote_bridge import (fetch_round_quotes,  # noqa: E402
                                          require_injected_bars)
+from qlab.llm_paper.rebalance_policy import (assert_no_prior_position,  # noqa: E402
+                                             no_rebalance_book,
+                                             no_rebalance_nav_point, violation_report)
 from qlab.llm_paper.reporting import quantile_caliber, seed_semantics  # noqa: E402
 from qlab.llm_paper.run_round import (CANDIDATE_ID, OUT_DIR, START_NAV,  # noqa: E402
                                       build_book, preflight)
@@ -61,11 +67,6 @@ EQUIVALENCE_FIELDS: Tuple[str, ...] = (
     "symbol", "target_weight", "seed", "prompt_variant",
     "evidence_available_utc", "decision_ts", "intended_start",
 )
-
-
-def cell_id(seed: int, prompt_variant: str) -> str:
-    """格子标识 —— 与冻结 `family.grid` 的写法**逐字一致**（含全角 ×），好让两侧直接对得上。"""
-    return f"seed{int(seed)}×{prompt_variant}"
 
 
 def expand_variants(variant_proposals: Dict[str, Sequence[Dict[str, Any]]],
@@ -149,7 +150,8 @@ def compare_decision_sets(left: Sequence[Any], right: Sequence[Any]) -> Dict[str
 
 
 def _run_cell(cell: Dict[str, Any], *, decision_ts, bars: Dict[str, Any], days,
-              cfg: Dict[str, Any], nav: float) -> Dict[str, Any]:
+              cfg: Dict[str, Any], nav: float, out_dir: str) -> Dict[str, Any]:
+    # `out_dir` 在这里只用于查前轮持仓（见 run_round_multi 的 position_history_dir）。
     """单格分账 —— 决策 / 约束 / 建仓 / 盯市，全部复用既有实现，本函数不新写任何一段。"""
     cid = cell_id(cell["seed"], cell["prompt_variant"])
     decisions = [build_decision(
@@ -159,25 +161,34 @@ def _run_cell(cell: Dict[str, Any], *, decision_ts, bars: Dict[str, Any], days,
         cfg=cfg, observed_days=days) for p in cell["proposals"]]
 
     # 约束按格判：每格是一个**独立组合**，不是把 10 格加总（加总会把 10 个 49% 判成 490% 超限）。
+    # 不过**不再整轮 raise**（吏部 2026-08-27 裁定）：该格本轮不调仓、如实留档、仍计入
+    # n_evaluated，**本轮其余格与整轮落盘照常**。无违规时下面与加规则前逐位相同。
     port = check_portfolio(decisions, cfg)
+    violation = None
     if not port["ok"]:
-        raise PreflightFailed(
-            f"格 {cid} 组合约束不过：{port} → **整轮不落盘**"
-            "（禁做空/单标的10%/总仓100%/≤1x 不松；一格违规即决策阶段出了问题，"
-            "跳过该格会让本轮网格残缺而无人拍板）")
+        assert_no_prior_position(out_dir, cid)   # 有前轮持仓 ⇒ 退化形态不适用，停下
+        violation = violation_report(port, decisions, cfg, cell_id=cid)
 
     settle = settle_actual_start(decisions, bars)
-    book = build_book(decisions, bars, cfg, nav=nav)
-    book_x2 = build_book(decisions, bars, cfg, nav=nav, cost_mult=2.0) if book["status"] == "filled" else None
-    if book["status"] == "filled":
-        mtm = mark_to_market(book["shares"], bars)
-        nav_point = {"as_of": mtm["as_of"], "nav": mtm["market_value"] + book["cash"],
-                     "nav_x2_cost": (mtm["market_value"] + book_x2["cash"]) if book_x2 else None,
-                     "nav_start": book["nav_start"]}
+    if violation is not None:
+        book = no_rebalance_book(nav=nav, cfg=cfg, violation=violation)
+        book_x2 = None                                   # 零换手 ⇒ 无成本可加倍
+        mtm = mark_to_market({}, bars, as_of=(days[-1] if days else None))
+        nav_point = no_rebalance_nav_point(book, as_of=mtm["as_of"])
     else:
-        mtm, nav_point = None, None       # 仓位未建立 ⇒ 绝不编净值点（与 (a) 同一条规矩）
+        book = build_book(decisions, bars, cfg, nav=nav)
+        book_x2 = (build_book(decisions, bars, cfg, nav=nav, cost_mult=2.0)
+                   if book["status"] == "filled" else None)
+        if book["status"] == "filled":
+            mtm = mark_to_market(book["shares"], bars)
+            nav_point = {"as_of": mtm["as_of"], "nav": mtm["market_value"] + book["cash"],
+                         "nav_x2_cost": (mtm["market_value"] + book_x2["cash"]) if book_x2 else None,
+                         "nav_start": book["nav_start"]}
+        else:
+            mtm, nav_point = None, None   # 仓位未建立 ⇒ 绝不编净值点（与 (a) 同一条规矩）
     return {"cell_id": cid, "seed": cell["seed"], "prompt_variant": cell["prompt_variant"],
             "n_decisions": len(decisions), "portfolio_check": port,
+            "no_rebalance": violation is not None, "violation": violation,
             "actual_start_settlement": settle, "book": book, "book_x2_cost": book_x2,
             "mark_to_market": mtm, "nav_point": nav_point,
             "decisions": [d.to_log_entry() for d in decisions]}
@@ -190,7 +201,8 @@ def run_round_multi(*, cells: Sequence[Dict[str, Any]], decision_ts,
                     rejected_evidence: Optional[Sequence[Dict[str, Any]]] = None,
                     register_trials: bool = True,
                     nav_start: float = START_NAV,
-                    bars: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+                    bars: Optional[Dict[str, Any]] = None,
+                    position_history_dir: Optional[str] = None) -> Dict[str, Any]:
     """执行一次**多 book** 决策轮：一次取符号并集，内部按格分账。
 
     `cells`：`[{seed, prompt_variant, proposals: [...]}, ...]`（`expand_variants()` 可由每变体
@@ -201,6 +213,11 @@ def run_round_multi(*, cells: Sequence[Dict[str, Any]], decision_ts,
     与格子无关）。缺失即 `PreflightFailed`，不设跳过开关。
 
     `bars`：**行情注入**，仅用于并行对照轮（同一份快照喂 (a) 与 (b)）。默认 `None` ＝ 自己取数。
+
+    `position_history_dir`：查「各格有无前轮持仓」时读哪个目录，默认同 `out_dir`。并行对照轮
+    必须显式指向**承载目录**——对照写在一个每轮新建的子目录里，其历史恒为空，照它判会让 (b)
+    在有前轮持仓时仍走全现金退化形态，而 (a) 会正确拒绝。那正是对照本身要发现的分歧，
+    不该由目录选择制造出来。
     """
     cfg = cfg or load_prereg()
     cells = _validate_cells(cells, cfg)
@@ -232,7 +249,8 @@ def run_round_multi(*, cells: Sequence[Dict[str, Any]], decision_ts,
     days = trading_days(bars)
 
     # ---- 按格分账（任一格约束不过 → 抛出，整轮零落盘） ----
-    results = [_run_cell(c, decision_ts=decision_ts, bars=bars, days=days, cfg=cfg, nav=nav_start)
+    results = [_run_cell(c, decision_ts=decision_ts, bars=bars, days=days, cfg=cfg,
+                         nav=nav_start, out_dir=(position_history_dir or out_dir))
                for c in cells]
     by_cell = {r["cell_id"]: r for r in results}
 
@@ -260,6 +278,7 @@ def run_round_multi(*, cells: Sequence[Dict[str, Any]], decision_ts,
         "n_cells_evaluated": len(cells),
         "n_cells_frozen_grid": len(grid),
         "cells_missing": missing,
+        "cells_no_rebalance": sorted(r["cell_id"] for r in results if r["no_rebalance"]),
         "n_decisions": sum(r["n_decisions"] for r in results),
         "cells": by_cell,
         "ledger": ledger_rec,

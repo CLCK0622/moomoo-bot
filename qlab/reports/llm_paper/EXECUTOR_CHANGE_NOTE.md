@@ -22,11 +22,9 @@
 并行对照时 **(b) 必须传 `register_trials=False`**——对照不是承载路径，二次登记只会拿到幂等旧记录、
 把 `n_evaluated` 记歪（`ledger_bridge` 会把这种情形标成 `ledger_reused_existing_record`，不静默）。
 
-**违规处理口径（08-31 当轮不动）**：一格组合约束不过 ⇒ **整轮 fail-closed、零落盘**（现状）。
-工部尚书 2026-08-27 裁定这一轮维持现状，理由是时序而非认同代价——对照轮要的是两条路径逐位可比，
-此时引入新的违规处理语义等于同时换两个变量、比对结果不可归因。**规则须在首次违规发生之前预注册**，
-已升吏部裁定（工部尚书推荐：违规格本轮不调仓、如实留档、仍计入 `n_evaluated`；理由是不 censor 分布——
-被剔掉的系统性地是最激进的格，而 §4 下四分位正算在这个分布上）。裁定落地前本文件不改这条。
+**违规处理口径（吏部 2026-08-27 裁定，08-31 当轮生效）**：某格 book 未过 `check_portfolio` ⇒
+**该格本轮不调仓**、违规如实留档、**仍计入 `n_evaluated`**，本轮其余格与整轮落盘照常。
+详见下方 §5；实现在 `qlab/qlab/llm_paper/rebalance_policy.py`。
 
 ## 2. (b) 做了什么
 
@@ -113,6 +111,35 @@ x2 影子腿的 `cash/entry_cost/gross_notional`、以及 `nav_point` 的 `as_of
 **这是彩排、不是第 ② 段的证据本身**——真证据必须是 08-31 用真实行情跑出来的那份 `CONTROL_<stamp>.json`。
 彩排的价值只在于：08-31 那轮不是这条代码路径的首跑。
 
+### ⚠️ 08-31 那轮**大概率比不到 book**——空 book 上的「逐位相同」不算通过
+
+实测（真代码，非推断）：本轨每轮的 book 只由**本轮**决策构成，而周一盘前决策的
+`intended_start` 就是当天 09:30 ET 开盘：
+
+```
+decision_ts    2026-08-31T11:00:00Z = ET 2026-08-31 07:00（周一盘前）
+intended_start 2026-08-31T13:30:00Z
+最新可得 bar   2026-08-28（上周五；当日 bar 要收盘后才存在）
+resolve_actual_start → actual_start=None, "价格腿尚无 >= intended 的 bar → pending，不猜"
+⇒ book.status = pending_entry_bar，无 shares、无 nav_point
+```
+
+即 08-31 与第 1 轮同型。「08-31 是第一个真正产生 book 的轮次」只对**第 1 轮那 7 条决策**成立
+（它们的 `intended_start = 2026-08-10T13:30Z`，对着现在的 bar 可解析），但执行器不会把上一轮的
+决策带进本轮 book——两者之间没有 carry-forward。
+
+后果与已上的护栏：两侧都没有持仓时，`shares`/`nav_point` 全为空，逐位比对**必然 identical**，
+而「权重 → 股数按建仓日 open」那段算术**一行都没跑**。把它读成通过，切换就建立在从未检验过的
+等价性上。故 `run_parallel_control()` 现在多给一个事实位 **`book_equivalence_exercised`**：
+仅当 `book.status == "filled"` 才为真，`may_take_over` 必须同时满足它；空过时落
+`ALERT_control_not_exercised_<stamp>.json`（与 `ALERT_control_mismatch` **刻意不同名**——
+「什么都没比到」和「比出了问题」不该长成一样）。`no_rebalance`（违规不调仓）同样是空持仓，
+一并按空过处理。
+
+**这不改变 08-31 该不该跑对照**：跑，决策集比对与形态验证照旧有价值，轮次也照常落盘。
+只是第 ② 段的真证据要等一个真正产生 `filled` book 的轮次。这条属工部/吏部的编排判断，
+本文件只记事实与已上的护栏。
+
 ### 08-31 轮次怎么跑
 
 ```python
@@ -158,6 +185,55 @@ RefreezeError: 候选 candidate_id='llm_paper' 已以 run_id=['llm_paper-2026-08
 
 实现在 `qlab/qlab/llm_paper/ledger_bridge.py`，**(a)/(b) 共用同一份**（这也顺手消掉了两条路径各写一份
 登记逻辑的分叉风险）。回归单测把「原内联写法在第 2 轮必崩」这个失败形态本身钉死，防止有人改回去。
+
+## 5. 组合约束不过时取什么动作（吏部 2026-08-27 裁定，**08-31 当轮生效**）
+
+旧行为：整轮 `raise`、零落盘。取代它的是——某格 book 未过 `check_portfolio` ⇒ **该格本轮不调仓**
+（有前轮持仓则原样维持，无则全现金），违规如实落盘，**该格仍计入 `n_evaluated`**，
+本轮其余格与整轮落盘照常。实现：`qlab/qlab/llm_paper/rebalance_policy.py`，(a)/(b) 共用。
+
+**08-31 只上退化形态**（无前轮持仓 ⇒ 全现金）。退化形态成立有实测依据：本目录下只有
+`round_20260810.json` 一份记录且 `book.status = pending_entry_bar`（无 shares、无 gross）
+⇒ 每一格的「上一轮持仓」都是空的。全现金不是新语义——冻结 §2 明写现金上限 100%、允许全现金，
+`check_portfolio([])` 实测 `ok=True / gross=0 / cash=1.0`，不需要豁免分支。
+一般形态 carry-forward 归对照通过之后那批。
+
+**退化形态被误用会把「不调仓」做成「清仓」**（方向相反且静默），故 `assert_no_prior_position()`
+在动作前查一遍历史落盘：查到该格建过仓即 fail-closed，绝不用退化形态糊弄一般形态。
+历史文件解析不了也拒——查不清就不许走。并行对照轮里 (b) 按**承载目录**查（对照子目录每轮新建、
+历史恒为空，照它查会让两条路径在这一点上分歧，而那正是对照本身要发现的东西）。
+
+边界（吏部原文，一条未扩散）：①只适用于 `check_portfolio` 对该格自身 book 的判定，其余失败
+（缺价 / 探针 / 时序核验 / 台账 / 配额 / 决策链路）一律维持整轮 fail-closed；②空格子不适用，
+`multi_book.py` 那句「空格子不是『持现金』，是漏了」原样保留；③格子永不从 `n_evaluated` 掉出；
+④**禁止把违规权重投影 / 截断 / 缩放到合规**，动作取空动作；⑤留档够重建——格子 id、seed × 变体、
+模型原始逐行权重、聚合权重、触发哪条约束、超出多少，`check_portfolio` 返回原样落盘不压成布尔。
+
+**被点名要求的回归已落**：`tests/test_rebalance_policy.py::test_no_violation_output_is_bit_identical_to_the_pre_rule_path`
+——无违规输入下，(a)/(b) 输出与加规则前逐位相同，payload 里不出现任何 `no_rebalance` 痕迹。
+
+### 这条规则实际覆盖到的违规形态（比裁定书设想的窄，如实记）
+
+`build_decision` 在**决策阶段**就拒掉两类，它们走不到 `check_portfolio`（实测）：
+
+```
+单行 target_weight = 0.11  → ValueError: EMR 目标仓位 0.11 超单标的上限 0.1
+单行 target_weight = -0.05 → ValueError: 禁做空（long/flat only）
+```
+
+按边界①，决策链路失败**仍整轮 fail-closed**，故新规则实际只覆盖两种形态：
+**同符号多行聚合后超单标的上限**（逐行合规、聚合超限）与**总仓 gross 超限**。
+`violations_short` 在现有链路下不可达。这不是实现缺口——是边界①与决策阶段护栏叠加的结果，
+记在这里以免后人误以为「贴着单标的上限」的那类风险已被这条规则兜住：
+**单行报 0.11 仍然会丢整轮。**
+
+**现金记零收益字面现金**（`nav - gross - cost`）。冻结散文「现金即 BIL 口径」与实现不一致是
+既存偏离，吏部 2026-08-27 裁 (c)：口径钉死、实现放对照之后、**08-31 轮内一行不改**、
+BIL 不进符号并集、不进配额、不进 universe、**永不因缺 BIL 死轮**；验收数取 `nav_bil_cash`、
+`nav_literal_cash` 永久并存作保守下界，两条须同时上报并标明哪条是验收数。
+一处更正需一并留档：**第 1 轮只有权重、没有现金读数**（`book.status = pending_entry_bar`、
+`gross_notional`/`nav_point` 皆为 `None`），这条偏离首次真正咬人是产生 book 的那一轮，
+不是从第 1 轮起就偏了。
 
 ## 6. 取行情也收进了共用桥接
 

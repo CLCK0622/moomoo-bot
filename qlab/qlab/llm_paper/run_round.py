@@ -42,8 +42,11 @@ from qlab.llm_paper.decision_chain import (build_decision, check_portfolio,  # n
 from qlab.llm_paper.determinism import (STATUS_DRIFT, ProbeUnverifiable,  # noqa: E402
                                         probe_request, verify_or_establish)
 from qlab.llm_paper.errors import PreflightFailed  # noqa: E402  （原样从本模块导出，调用点不变）
-from qlab.llm_paper.ledger_bridge import register_round  # noqa: E402
+from qlab.llm_paper.ledger_bridge import cell_id, register_round  # noqa: E402
 from qlab.llm_paper.price_bridge import settle_actual_start  # noqa: E402
+from qlab.llm_paper.rebalance_policy import (assert_no_prior_position,  # noqa: E402
+                                             no_rebalance_book,
+                                             no_rebalance_nav_point, violation_report)
 from qlab.llm_paper.quote_bridge import (fetch_round_quotes,  # noqa: E402
                                          require_injected_bars)
 from qlab.llm_paper.reporting import quantile_caliber, seed_semantics  # noqa: E402
@@ -225,22 +228,35 @@ def run_round(*, proposals: Sequence[Dict[str, Any]], decision_ts,
             seed=p["seed"], prompt_variant=p["prompt_variant"],
             model=p.get("model", ""), cfg=cfg, observed_days=days))
     port = check_portfolio(decisions, cfg)
+    # 约束不过**不再整轮 raise**（吏部 2026-08-27 裁定，08-31 当轮生效）：该格本轮不调仓、
+    # 如实留档、仍计入 n_evaluated，整轮照常落盘。旧的 raise 发生在取完行情、产完决策、
+    # round JSON 未落盘之处 —— 又一条「跑了等于没跑」的路径。
+    # 无违规时下面这一整块与加规则前逐位相同（见 tests/test_rebalance_policy.py 的回归对照）。
+    violation = None
     if not port["ok"]:
-        raise PreflightFailed(f"组合约束不过：{port} → 不落盘（禁做空/单标的10%/总仓100%/≤1x 不松）")
+        cid = cell_id(decisions[0].seed, decisions[0].prompt_variant)
+        assert_no_prior_position(out_dir, cid)   # 有前轮持仓 ⇒ 退化形态不适用，停下
+        violation = violation_report(port, decisions, cfg, cell_id=cid)
 
     settle = settle_actual_start(decisions, bars)      # actual_start = 首根真实 bar
 
     # ---- 建仓（权重 → 股数，按建仓日 open）+ 盯市（缺价即拒） ----
-    book = build_book(decisions, bars, cfg)
-    book_x2 = (build_book(decisions, bars, cfg, cost_mult=2.0)
-               if book["status"] == "filled" else None)     # 双轨：x2 影子口径
-    if book["status"] == "filled":
-        mtm = mark_to_market(book["shares"], bars)
-        nav_point = {"as_of": mtm["as_of"], "nav": mtm["market_value"] + book["cash"],
-                     "nav_x2_cost": (mtm["market_value"] + book_x2["cash"]) if book_x2 else None,
-                     "nav_start": book["nav_start"]}
+    if violation is not None:
+        book = no_rebalance_book(nav=START_NAV, cfg=cfg, violation=violation)
+        book_x2 = None                                     # 零换手 ⇒ 无成本可加倍
+        mtm = mark_to_market({}, bars, as_of=(days[-1] if days else None))
+        nav_point = no_rebalance_nav_point(book, as_of=mtm["as_of"])
     else:
-        mtm, nav_point = None, None                        # 仓位未建立 ⇒ 绝不编净值点
+        book = build_book(decisions, bars, cfg)
+        book_x2 = (build_book(decisions, bars, cfg, cost_mult=2.0)
+                   if book["status"] == "filled" else None)     # 双轨：x2 影子口径
+        if book["status"] == "filled":
+            mtm = mark_to_market(book["shares"], bars)
+            nav_point = {"as_of": mtm["as_of"], "nav": mtm["market_value"] + book["cash"],
+                         "nav_x2_cost": (mtm["market_value"] + book_x2["cash"]) if book_x2 else None,
+                         "nav_start": book["nav_start"]}
+        else:
+            mtm, nav_point = None, None                    # 仓位未建立 ⇒ 绝不编净值点
 
     # ---- 台账：足额登记 10 格（少登即 REJECTED_honesty） ----
     # 登记走 `ledger_bridge.register_round`（(a)/(b) 共用）。**第 2 轮起必须走它**：原先内联的

@@ -206,17 +206,25 @@ def test_gross_cap_is_per_cell_not_summed_across_cells(tmp_path, monkeypatch):
     assert all(c["portfolio_check"]["gross"] == pytest.approx(0.50) for c in r["cells"].values())
 
 
-def test_one_bad_cell_fails_the_whole_round_closed(tmp_path, monkeypatch):
-    """一格聚合超单标的上限 ⇒ 整轮不落盘（与 (a) 同一条纪律：不产出半截证据）。"""
+def test_one_bad_cell_no_longer_takes_down_the_round(tmp_path, monkeypatch):
+    """一格聚合超单标的上限 ⇒ **只有那一格不调仓**，整轮照常落盘。
+
+    这条曾断言「整轮不落盘」，被吏部 2026-08-27 裁定取代（08-31 当轮生效）：一格的错换十格
+    全灭 + 一个补不回的日历轮次，代价与过错不成比例。细则见 tests/test_rebalance_policy.py。
+    """
+    from qlab.llm_paper.rebalance_policy import NO_REBALANCE
     _iso(tmp_path, monkeypatch)
     _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
     bad = [_prop("IBM", 0.05), _prop("IBM", 0.05), _prop("IBM", 0.05)]       # 聚合 15% > 冻结 10%
-    with pytest.raises(PreflightFailed, match="组合约束不过"):
-        run_round_multi(
-            cells=[{"seed": 11, "prompt_variant": "pv1_baseline", "proposals": [_prop("IBM", 0.05)]},
-                   {"seed": 11, "prompt_variant": "pv2_riskaware", "proposals": bad}],
-            decision_ts=DTS, probe=PROBE, out_dir=str(tmp_path), register_trials=False)
-    assert not list(tmp_path.glob("round_*.json"))
+    r = run_round_multi(
+        cells=[{"seed": 11, "prompt_variant": "pv1_baseline", "proposals": [_prop("IBM", 0.05)]},
+               {"seed": 11, "prompt_variant": "pv2_riskaware", "proposals": bad}],
+        decision_ts=DTS, probe=PROBE, out_dir=str(tmp_path), register_trials=False)
+    assert list(tmp_path.glob("round_20260807.json"))                        # 轮次没丢
+    assert r["cells"][cell_id(11, "pv1_baseline")]["book"]["status"] == "filled"
+    assert r["cells"][cell_id(11, "pv2_riskaware")]["book"]["status"] == NO_REBALANCE
+    assert r["cells_no_rebalance"] == [cell_id(11, "pv2_riskaware")]
+    assert r["n_cells_evaluated"] == 2                                       # 格子没掉
 
 
 def test_multi_book_requires_gold_probe(tmp_path, monkeypatch):

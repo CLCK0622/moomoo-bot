@@ -36,6 +36,15 @@ CANDIDATE_ID = "llm_paper"
 Cell = Tuple[int, str]
 
 
+def cell_id(seed: int, prompt_variant: str) -> str:
+    """格子标识 —— 与冻结 `family.grid` 的写法**逐字一致**（含全角 ×），两侧直接对得上。
+
+    定义放在这里（而不是 `multi_book`）纯为断开循环导入：`run_round` 也要用它，而
+    `multi_book` 依赖 `run_round`。`multi_book.cell_id` 原样再导出，调用点一律不变。
+    """
+    return f"seed{int(seed)}×{prompt_variant}"
+
+
 class LedgerBridgeError(RuntimeError):
     """台账状态不是本桥接能安全处理的形态 → 不猜、不覆盖，抛给人看。"""
 
@@ -136,7 +145,7 @@ def register_round(*, decision_ts, cfg: Dict[str, Any], cells_this_round: Iterab
         "n_trials_total": rec.n_trials_total,
         "n_evaluated": rec.n_evaluated,
         "n_evaluated_source": "跨轮已评估格子并集（从各轮 round JSON 机械读出）",
-        "cells_this_round": sorted(f"seed{s}×{v}" for s, v in cells),
+        "cells_this_round": sorted(cell_id(s, v) for s, v in cells),
         "supersedes": supersedes,
         "executor": executor,
         "ledger_path": path,
