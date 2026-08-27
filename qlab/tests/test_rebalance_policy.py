@@ -89,6 +89,33 @@ def test_no_violation_output_is_bit_identical_to_the_pre_rule_path(tmp_path, mon
     assert a["book"] == blk["book"] and a["nav_point"] == blk["nav_point"]
 
 
+def test_a_and_b_handle_the_same_violation_bit_identically(tmp_path, monkeypatch):
+    """(a)/(b) 同时遇到同一违规格 ⇒ 两侧处理**逐位一致**（工部尚书 2026-08-27 必配测试 ②）。
+
+    防的是一个会伪装成「执行器不等价」的坑：违规处理若在两处各写一份，只要有一丝不同，
+    并行对照就会报不等价——而那是**规则**造成的差异，不是执行器造成的。本轨的做法是把它
+    收进 `rebalance_policy` 共用桥接（理由与 ledger_bridge / quote_bridge 相同），
+    这条测试是那个决定的回归证据。
+    """
+    _iso(tmp_path, monkeypatch)
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
+    a = run_round(proposals=OVER_CAP_ROWS, decision_ts=DTS, probe=PROBE,
+                  out_dir=str(tmp_path / "a"), register_trials=False)
+    b = run_round_multi(cells=[{"seed": CELL[0], "prompt_variant": CELL[1],
+                                "proposals": OVER_CAP_CELL_ROWS}],
+                        decision_ts=DTS, probe=PROBE, out_dir=str(tmp_path / "b"),
+                        register_trials=False)
+    blk = b["cells"][cell_id(*CELL)]
+    assert a["book"]["status"] == blk["book"]["status"] == NO_REBALANCE
+    assert a["book"] == blk["book"]                 # 含 violation 留档，逐位相同
+    assert a["nav_point"] == blk["nav_point"]
+    assert a["book_x2_cost"] is None and blk["book_x2_cost"] is None
+    assert a["portfolio_check"] == blk["portfolio_check"]
+    # 并行对照因此判等价（规则不会伪装成执行器不等价）
+    from qlab.llm_paper.parallel_control import compare_books
+    assert compare_books(a, blk)["identical"] is True
+
+
 def test_pending_entry_bar_round_is_untouched_by_the_rule(tmp_path, monkeypatch):
     """无违规、且建仓 bar 未出现的轮次：仍是 pending_entry_bar、仍无净值点。"""
     _iso(tmp_path, monkeypatch)
