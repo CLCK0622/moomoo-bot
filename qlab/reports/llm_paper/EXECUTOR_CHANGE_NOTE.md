@@ -188,6 +188,30 @@ rep = run_parallel_control(
 `tests/test_multi_book.py::test_single_cell_book_identical_to_path_a` 是这条对照的打桩版本，
 两者并存：一个证明形态、一个是实盘证据。
 
+### 08-31 **预期结果**清单 —— 先说死，免得预期结果被读成故障
+
+这一轮是三周停摆后的第一轮，会被很多人盯。下面是**照现有代码与裁定推出来的预期**，不是希望：
+
+| 项 | 预期 |
+|--|--|
+| 承载侧 (a) | 决策记录落盘，**1 格**（`seed=11 × pv1_baseline`） |
+| 对照侧 (b) | 走 `expand_variants` 足额 **10 格**写进 `control_multi_book/round_<stamp>.json` |
+| 决策集比对 | **通过** |
+| book 等价性 | **空过** —— `book.status = pending_entry_bar` ⇒ `book_equivalence_exercised = False`、`may_take_over = False`、落 `ALERT_control_not_exercised_<stamp>.json` |
+| 净值点 | **本轮无** |
+| 台账 | 一条记录、`supersedes` 08-10 那条、`n_trials_total = 10` |
+| 违规不调仓规则 | 正常路径上**一行不执行**（`f8fc9f7` 那条逐位不变的回归钉着） |
+
+⚠️ **那个 ALERT 与 `may_take_over = False` 是预期结果，不是故障**——它正是被堵掉的那个 fail-open
+在如实工作（空 book 上的「逐位相同」是空过，不是通过）。
+
+**真正该停下回报的是这几种**：
+
+1. 决策集比对**不一致**；
+2. 对照侧**格子数不足 10**（捕获缺格 —— 那一轮的 pv2 决策就永久没了）；
+3. 承载侧 **fail-closed**（缺价 / 探针 / 时序核验 / 台账 / 配额）；
+4. **宿主离线导致这一轮根本没跑**——这条由 `b86a3df6` 的 skipped 回溯记账当天 14:30 UTC 盘出来。
+
 ## 5. 顺带修掉的一个会让**第 2 轮直接归零**的坑（(a)/(b) 同受影响）
 
 实现时用真台账副本模拟第 2 轮，发现原先内联在 `run_round()` 里的台账登记**第 2 轮起必崩**：
@@ -517,6 +541,33 @@ nav_series.cell_nav_series()          —— 现在正是从这些轮内 nav_poi
 不回改任何已落盘记录；派生层**只从「不可改决策 + 归档 bars」重算，绝不消费轮内 `nav_point`**；
 `nav_series.cell_nav_series()` 届时**退休或显式降级**，并留一条测试钉死「同一时刻只有一条权威净值序列」。
 
+### 8.5.2 建仓价交叉核对：**差异即事件**，不是「派生层权威、覆盖即可」
+
+派生层从归档 bars 重算时会**重新算出建仓价**，而 round JSON 里已经记着 `entries`（建仓日、开盘价、
+名义额）。两者**应当相同**——不同就说明归档或重取的那根 bar 被修订过。故写死（工部尚书 2026-08-27）：
+
+* **差异即事件** ⇒ 落 ALERT、**停下回报**；
+* **不许静默以派生层那一份为准**——「派生层权威、覆盖即可」是错的读法：派生层权威指的是
+  *结算口径*由它定，不代表它可以掩盖一处「同一根 bar 前后不一致」的事实；
+* 它同时是**归档层最直接的完整性校验**，与「归档值 vs 日后 qfq 值量口径差」是同一招的两种用法。
+
+⚠️ **但这条检查现在覆盖为零，落地时必须配第二条腿**（实测，非推断）：
+
+```
+book.status = pending_entry_bar   → 返回键只有 {status, pending_symbols, reason}，**没有 entries**
+book.status = missing_entry_open  → 返回键只有 {status, missing, reason}，**没有 entries**
+book.status = no_rebalance        → entries = {}（空，无可比项）
+book.status = filled              → 有真 entries ← **只有这一种能被交叉核对**
+第 1 轮实测 book.status = pending_entry_bar，键 ['pending_symbols','reason','status']
+```
+
+而第 1 轮是 `pending_entry_bar`、08-31 预期同型（§4 那段实测）⇒ **到目前为止的每一轮，
+这条交叉核对都无从执行**。它有牙齿要等第一个 `filled` book。
+
+⇒ **归档完整性不能只押在这条上**。必须并行配一条**从第一份归档就生效**的：
+**归档值 vs 日后对同一 `(symbol, date)` 的重取值直接逐位比**——它不依赖 `entries` 是否存在。
+两条各管一段：直接比对管「归档层自身有没有被改写」，`entries` 交叉核对管「结算路径与轮内记录是否一致」。
+
 ### 8.6 bar 归档的地位升级为批次 1 的最高优先项
 
 在权益总回报源到位之前，**归档的 as-traded bars 是持有期唯一的价格记录**；而且归档值与日后 qfq 值
@@ -532,6 +583,7 @@ nav_series.cell_nav_series()          —— 现在正是从这些轮内 nav_poi
    「接口从第一天按两腿总回报设计」这条不变
 5. 捕获完整性护栏（`capture_complete` + 独立 ALERT + 回归测试，见 §4 runbook 那段）
 6. 读数三态标签 `reading_kind` + 轮内 `nav_point` 的第四条规则（§8.5.1）
+7. **建仓价交叉核对：差异即事件**（§8.5.2）
 
 **取数配额的碰撞面（必须写下来，否则一定有人踩）**：OpenD 历史 K 配额原文
 （`residual_provenance.json` `historical_k`）是
