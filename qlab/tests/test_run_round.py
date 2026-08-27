@@ -68,14 +68,15 @@ DTS = pd.Timestamp("2026-08-07 11:00", tz="America/New_York")   # 周五盘中 �
 
 
 def _stub_bars(monkeypatch, days, *, with_open=True, price=100.0):
+    # 取行情已收进 quote_bridge（(a)/(b)/并行对照共用一份），打桩点随之只有一处。
     from qlab.events.datafetch.quotes_api import DailyBar
-    import qlab.llm_paper.run_round as RR
+    import qlab.llm_paper.quote_bridge as QB
 
     def fake(symbols, **kw):
         return ({s: [DailyBar(symbol=s, date=d, close=price,
                               open=(price * 0.99 if with_open else None)) for d in days]
                  for s in symbols}, {})
-    monkeypatch.setattr(RR, "get_daily_closes", fake)
+    monkeypatch.setattr(QB, "get_daily_closes", fake)
 
 
 def _iso(tmp_path, monkeypatch):
@@ -174,7 +175,7 @@ def test_quota_divergence_leaves_an_alert_and_no_round(tmp_path, monkeypatch):
 
     否则本轮中止 ⇒ 没有 round JSON ⇒ 告警只以 traceback 形态存在，等于没留痕。
     """
-    import qlab.llm_paper.run_round as RR
+    import qlab.llm_paper.quote_bridge as QB
     from qlab.events.datafetch.quotes_api import RateLimited
     _iso(tmp_path, monkeypatch)
 
@@ -182,7 +183,7 @@ def test_quota_divergence_leaves_an_alert_and_no_round(tmp_path, monkeypatch):
         raise RateLimited("SPY: Information (daily throttle): <redacted-api-key> ...",
                           ledger_remaining=24, vendor_throttled=True,
                           utc_day="2026-08-09", kind="daily")
-    monkeypatch.setattr(RR, "get_daily_closes", boom)
+    monkeypatch.setattr(QB, "get_daily_closes", boom)
     with pytest.raises(RateLimited):
         run_round(proposals=[{"symbol": "IBM", "target_weight": 0.05, "confidence": 0.5,
                               "thesis": "t", "evidence_records": EV, "seed": 11,
@@ -215,6 +216,49 @@ def test_same_symbol_rows_aggregate_not_overwrite(monkeypatch, tmp_path):
     assert r["status"] == "filled"
     assert r["gross_notional"] == 20_000.0        # 覆盖时会缩水成 15_000
     assert r["shares"]["SPY"] == 100.0            # 0.10×100k/100，不是 0.05 那一行
+
+
+# ---- 行情注入（并行对照共用快照）：对 (a) 必须是零行为改动 ----
+def test_injected_bars_produce_the_same_round_as_fetching(tmp_path, monkeypatch):
+    """注入快照与自己取数，(a) 的 book/净值/决策必须逐位相同，且注入侧零调用零配额。"""
+    from qlab.events.datafetch.api_quota import guard_from_env
+    from qlab.events.datafetch.quotes_api import DailyBar
+    import qlab.llm_paper.quote_bridge as QB
+    _iso(tmp_path, monkeypatch)
+    days = ["2026-08-07", "2026-08-10"]
+    snapshot = {s: [DailyBar(symbol=s, date=d, close=100.0, open=99.0) for d in days]
+                for s in ("IBM", "SPY")}
+    calls = []
+    monkeypatch.setattr(QB, "get_daily_closes",
+                        lambda symbols, **kw: (calls.append(sorted(symbols)), (snapshot, {}))[1])
+    prop = [{"symbol": "IBM", "target_weight": 0.05, "confidence": 0.5, "thesis": "t",
+             "evidence_records": EV, "seed": 11, "prompt_variant": "pv1_baseline"}]
+    fetched = run_round(proposals=prop, decision_ts=DTS, probe=PROBE,
+                        out_dir=str(tmp_path / "f"), register_trials=False)
+    used = guard_from_env().status()["used_total"]
+    injected = run_round(proposals=prop, decision_ts=DTS, probe=PROBE,
+                         out_dir=str(tmp_path / "i"), register_trials=False, bars=snapshot)
+    assert len(calls) == 1                                   # 注入那次没有再取
+    assert guard_from_env().status()["used_total"] == used   # 也没有再花配额
+    assert fetched["book"] == injected["book"]
+    assert fetched["nav_point"] == injected["nav_point"]
+    assert fetched["decisions"] == injected["decisions"]
+    assert injected["preflight"]["quota_check_skipped"] is True      # 跳过如实记录
+    assert "quota_check_skipped" not in fetched["preflight"]
+
+
+def test_injected_snapshot_must_cover_every_symbol(tmp_path, monkeypatch):
+    """快照缺基准 ⇒ 拒跑。缺一只会被记成 missing_entry_open，与「真没开盘价」不可区分。"""
+    from qlab.events.datafetch.quotes_api import DailyBar
+    _iso(tmp_path, monkeypatch)
+    partial = {"IBM": [DailyBar(symbol="IBM", date="2026-08-10", close=100.0, open=99.0)]}
+    with pytest.raises(PreflightFailed, match="注入的行情快照缺"):
+        run_round(proposals=[{"symbol": "IBM", "target_weight": 0.05, "confidence": 0.5,
+                              "thesis": "t", "evidence_records": EV, "seed": 11,
+                              "prompt_variant": "pv1_baseline"}],
+                  decision_ts=DTS, probe=PROBE, out_dir=str(tmp_path),
+                  register_trials=False, bars=partial)     # 缺 SPY
+    assert not list(tmp_path.glob("round_*.json"))
 
 
 # ---- 第 2 轮的台账登记：原内联写法在这里必崩（配额已花、决策已产生、round JSON 未落盘）----

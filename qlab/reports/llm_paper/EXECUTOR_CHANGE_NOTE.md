@@ -15,12 +15,18 @@
 | 承载路径（写入 §4 判据的那条） | **(a) `run_round.run_round()`** |
 | (b) `multi_book.run_round_multi()` | 已在树上、有单测、可跑；**未接管** |
 | 等价性第 ① 段（决策集 vs 第 1 轮） | ✅ **通过**（下方 §3） |
-| 等价性第 ② 段（book 等价性） | ⏳ 待与 (a) 并行的那一轮对照 |
-| 换执行器的轮次 | **尚未发生**；换轮次确定后回填本表 |
+| 等价性第 ② 段（book 等价性） | ⏳ **2026-08-31 那轮跑并行对照**（下方 §4，工具已就位并彩排通过） |
+| 换执行器的轮次 | **尚未发生**；**不在对照当轮切**，对照通过后的下一轮再切，届时回填本表 |
 
 **08-31 那轮的默认路径仍是 (a)，(b) 不阻塞、不推迟轮次。** 证据连续性高于本次重构。
 并行对照时 **(b) 必须传 `register_trials=False`**——对照不是承载路径，二次登记只会拿到幂等旧记录、
 把 `n_evaluated` 记歪（`ledger_bridge` 会把这种情形标成 `ledger_reused_existing_record`，不静默）。
+
+**违规处理口径（08-31 当轮不动）**：一格组合约束不过 ⇒ **整轮 fail-closed、零落盘**（现状）。
+工部尚书 2026-08-27 裁定这一轮维持现状，理由是时序而非认同代价——对照轮要的是两条路径逐位可比，
+此时引入新的违规处理语义等于同时换两个变量、比对结果不可归因。**规则须在首次违规发生之前预注册**，
+已升吏部裁定（工部尚书推荐：违规格本轮不调仓、如实留档、仍计入 `n_evaluated`；理由是不 censor 分布——
+被剔掉的系统性地是最激进的格，而 §4 下四分位正算在这个分布上）。裁定落地前本文件不改这条。
 
 ## 2. (b) 做了什么
 
@@ -69,11 +75,64 @@
 
 比对器本身也上了单测（改一个字段必须报出来），不做橡皮图章。
 
-## 4. 等价性验证第 ② 段：book 等价性（待办）
+## 4. 等价性验证第 ② 段：book 等价性 —— 并行对照工具已就位（2026-08-31 那轮跑）
 
-与 (a) 并行的那一轮，同一批 bar 各算一次 book，逐位比 `shares` / `entries` / `gross_notional` /
-`cash` / `nav_point`。机械版本已先行落测：`tests/test_multi_book.py::test_single_cell_book_identical_to_path_a`
-在打桩行情下证明单格 (b) 与 (a) 逐位相同（含真 book 与净值点）；**并行对照是它的实盘版本，比完才切**。
+`qlab/qlab/llm_paper/parallel_control.py` 的 `run_parallel_control()`：**一次取行情，同一份 bars
+同时喂 (a) 与 (b)**，逐位比 `status/shares/entries/gross_notional/cash/entry_cost/nav_start`、
+x2 影子腿的 `cash/entry_cost/gross_notional`、以及 `nav_point` 的 `as_of/nav/nav_x2_cost/nav_start`，
+外加决策集比对。
+
+**为什么必须共用同一份快照**——不是配额（本轨走 `purpose=MARKING`，可用全额 25，8+8 装得下），
+是**对照有效性**：两次取数之间任何一根 bar 变动，都会让比对因与执行器无关的原因而失败或通过。
+(a)/(b) 都是 `(decisions, bars)` 的确定性函数，同一快照喂两边是结构上唯一正确的做法。
+
+三条安全性质（工具里各有单测钉住）：
+
+1. **承载路径先跑、先落盘**；(b) 整段包在 try/except 里——对照侧无论怎么炸都**不许波及**已落盘的 (a)。
+   用一次对照失败换掉一个补不回来的日历轮次是荒唐的。
+2. **对照侧不登记台账**（`register_trials=False`）。
+3. **两侧落盘目录必须不同**：两条路径都写 `round_<stamp>.json`，同目录会让对照记录**静默覆盖**承载记录。
+   工具拒绝同目录启动；对照默认写进 `<out_dir>/control_multi_book/`（子目录不被 `round_*.json` 的
+   非递归 glob 扫到，故不污染 `nav_series` 与台账并集）。
+
+比对结果落 `CONTROL_<stamp>.json`（**刻意不叫 `round_*`**，同上）；不一致时另落
+`ALERT_control_mismatch_<stamp>.json`——只以返回值形态存在的结论等于没留痕。
+工具**不自动切换**承载路径，只给 `may_take_over` 这一个事实判断。
+
+**彩排已通过**（`python3 qlab/tools/verify_multi_book.py` 第 ③ 节，人造建仓 bar 让 book 真的建起来）：
+
+```
+③ 并行对照彩排（人造建仓 bar；形态验证，非第 ② 段证据）
+   取行情调用  1 次 —— (a)/(b) 共用同一份快照（对照侧自身 0 次）
+   比对的格    seed11×pv1_baseline，book 状态 filled
+   book 字段   status, shares, entries, gross_notional, cash, entry_cost, nav_start
+   逐位相同    book=True / 决策集=True   差异 []
+   可否接管    True（对照通过也不在当轮切，见裁定）
+```
+
+**这是彩排、不是第 ② 段的证据本身**——真证据必须是 08-31 用真实行情跑出来的那份 `CONTROL_<stamp>.json`。
+彩排的价值只在于：08-31 那轮不是这条代码路径的首跑。
+
+### 08-31 轮次怎么跑
+
+```python
+from qlab.llm_paper.parallel_control import run_parallel_control
+rep = run_parallel_control(
+    proposals=<(a) 的提案，每条带 seed/prompt_variant>,   # 承载路径，正常落盘 + 登记台账
+    cells=<(b) 的格子，必须覆盖 (a) 所在的那一格>,          # 对照，自动 register_trials=False
+    decision_ts=<决策时点>, probe=<金标准探针结果>)
+# rep["bearing_payload"] 就是这一轮的真记录；rep["may_take_over"] 决定下一轮能不能切
+```
+
+`rep["may_take_over"] is False` ⇒ **停下回报工部尚书，不得切换**；本轮 (a) 的记录仍然有效。
+
+**行情注入对 (a) 是零行为改动**：`run_round(bars=…)` 与自己取数的输出逐位相同、注入侧零调用零配额，
+已由 `tests/test_run_round.py::test_injected_bars_produce_the_same_round_as_fetching` 钉住。
+注入的快照必须覆盖本轮全部标的 ∪ 基准——缺一只即 fail-closed，因为部分快照会被记成
+`missing_entry_open`，与「当天真的没开盘价」在记录里不可区分。
+
+`tests/test_multi_book.py::test_single_cell_book_identical_to_path_a` 是这条对照的打桩版本，
+两者并存：一个证明形态、一个是实盘证据。
 
 ## 5. 顺带修掉的一个会让**第 2 轮直接归零**的坑（(a)/(b) 同受影响）
 
@@ -100,7 +159,16 @@ RefreezeError: 候选 candidate_id='llm_paper' 已以 run_id=['llm_paper-2026-08
 实现在 `qlab/qlab/llm_paper/ledger_bridge.py`，**(a)/(b) 共用同一份**（这也顺手消掉了两条路径各写一份
 登记逻辑的分叉风险）。回归单测把「原内联写法在第 2 轮必崩」这个失败形态本身钉死，防止有人改回去。
 
-## 6. 红线与边界（本次改动全程未动）
+## 6. 取行情也收进了共用桥接
+
+`qlab/qlab/llm_paper/quote_bridge.py` —— `fetch_round_quotes()` 现由 **(a) / (b) / 并行对照三处共用**。
+理由与 `ledger_bridge` 相同：这段是 fail-closed 护栏（`require_full_batch` 整批不出、
+`QUOTA_DIVERGENCE` 独立 ALERT、缺价即拒），**多一份拷贝就多一处会静默分叉的地方**。
+并行对照引入第三个调用点时，与其抄第三遍，不如三处共用一份。护栏逻辑一字未改。
+
+副产品：打桩点从三处收敛成一处，测试因此不再耦合「取数调用写在哪个模块里」。
+
+## 7. 红线与边界（本次改动全程未动）
 
 冻结文本 / 决策逻辑 / 冻结参数一律未动；`temperature` 未动、未重冻；`n_trials_total` 按冻结 10 格足额登记；
 第 1 轮已落盘记录未回改。SIMULATE-only、零真金、仅免费数据、禁做空、单标的 ≤10%、总仓 ≤100%、≤1x。

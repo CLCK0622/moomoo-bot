@@ -36,14 +36,16 @@ if str(_REPO_ROOT) not in sys.path:
 
 from qlab.events.datafetch.api_quota import (MARKING, QuotaExceeded,  # noqa: E402
                                              guard_from_env)
-from qlab.events.datafetch.quotes_api import (RateLimited, get_daily_closes,  # noqa: E402
-                                              mark_to_market, trading_days)
+from qlab.events.datafetch.quotes_api import mark_to_market, trading_days  # noqa: E402
 from qlab.llm_paper.decision_chain import (build_decision, check_portfolio,  # noqa: E402
                                             frozen_grid, load_anchor, load_prereg)
 from qlab.llm_paper.determinism import (STATUS_DRIFT, ProbeUnverifiable,  # noqa: E402
                                         probe_request, verify_or_establish)
+from qlab.llm_paper.errors import PreflightFailed  # noqa: E402  （原样从本模块导出，调用点不变）
 from qlab.llm_paper.ledger_bridge import register_round  # noqa: E402
 from qlab.llm_paper.price_bridge import settle_actual_start  # noqa: E402
+from qlab.llm_paper.quote_bridge import (fetch_round_quotes,  # noqa: E402
+                                         require_injected_bars)
 from qlab.llm_paper.reporting import quantile_caliber, seed_semantics  # noqa: E402
 
 OUT_DIR = "qlab/reports/llm_paper"
@@ -54,10 +56,6 @@ ET_TZ = "America/New_York"
 START_NAV = 100_000.0
 
 
-class PreflightFailed(RuntimeError):
-    """起跑前置不满足 → 不产生任何决策（fail-closed）。"""
-
-
 @dataclass(frozen=True)
 class _AggPos:
     """同符号多行聚合后的持仓（仅 build_book 内部用；不改决策记录本身）。"""
@@ -66,8 +64,14 @@ class _AggPos:
     actual_start: Any
 
 
-def preflight(*, n_symbols_needed: int, cfg: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """决策前自检。**任何一项不过就不跑**——宁可不起跑，也不产出半截证据。"""
+def preflight(*, n_symbols_needed: int, cfg: Optional[Dict[str, Any]] = None,
+              skip_quota_check: bool = False) -> Dict[str, Any]:
+    """决策前自检。**任何一项不过就不跑**——宁可不起跑，也不产出半截证据。
+
+    `skip_quota_check` 仅用于**行情已由上游取好并注入**的情形（并行对照轮：一次取数喂两条路径）。
+    此时本轮不会再发出任何调用，配额预检无意义，且在当天额度接近用尽时会把一个「数据已在手」的
+    轮次误判成起跑失败。跳过一律如实记进 `checks`，不静默。
+    """
     cfg = cfg or load_prereg()
     anchor = load_anchor()                       # status != anchored 会抛
     grid = frozen_grid(cfg)                      # 网格与冻结 n_trials_total 不符会抛
@@ -85,6 +89,13 @@ def preflight(*, n_symbols_needed: int, cfg: Optional[Dict[str, Any]] = None) ->
         "quota_caveat": "guard 台账仅计经 guard 的调用；vendor 侧可能已被 guard 外调用消耗",
     }
     # 配额：盯市按 MARKING 预检（可用全额，含预留）
+    if skip_quota_check:
+        checks["quota_check_skipped"] = True
+        checks["quota_check_skipped_reason"] = "行情由上游注入（并行对照共用同一快照），本轮不发出调用"
+        checks["quota_ok_for_marking"] = None
+        if cfg["paradigm"] != "llm_agent":
+            raise PreflightFailed("paradigm 必须为 llm_agent（否则污染/多seed/归因三关会被跳过）")
+        return checks
     try:
         guard.check(n_symbols_needed, purpose=MARKING)
         checks["quota_ok_for_marking"] = True
@@ -161,7 +172,8 @@ def run_round(*, proposals: Sequence[Dict[str, Any]], decision_ts,
               benchmark: str = "SPY", out_dir: str = OUT_DIR,
               cfg: Optional[Dict[str, Any]] = None,
               rejected_evidence: Optional[Sequence[Dict[str, Any]]] = None,
-              register_trials: bool = True) -> Dict[str, Any]:
+              register_trials: bool = True,
+              bars: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """执行一次决策轮。
 
     `proposals`：每项 = {symbol, target_weight, confidence, thesis, evidence_records,
@@ -170,10 +182,14 @@ def run_round(*, proposals: Sequence[Dict[str, Any]], decision_ts,
     `probe`：本轮金标准复现的结果 = {"model": <模型标识>, "output": <原样输出>}，
     由决策阶段按 `gold_probe_request()` 跑一次得到。**必传**——缺失即 `PreflightFailed`，
     不设跳过开关（可跳过的护栏等于没有护栏，本轨栽过多次的 fail-open 形态）。
+
+    `bars`：**行情注入**，仅用于并行对照轮（一次取数、同一份快照喂 (a) 与 (b)）。默认 `None`
+    ＝ 本函数自己取数，与既有行为逐位一致。注入时本轮不发出任何调用、不消耗配额，且必须覆盖
+    本轮全部标的 ∪ 基准——缺任何一只即 fail-closed，不拿部分快照凑（那等于用别处的价格建仓）。
     """
     cfg = cfg or load_prereg()
     symbols = sorted({p["symbol"] for p in proposals} | {benchmark})
-    pre = preflight(n_symbols_needed=len(symbols), cfg=cfg)
+    pre = preflight(n_symbols_needed=len(symbols), cfg=cfg, skip_quota_check=bars is not None)
 
     # ---- 金标准复现（放在花配额之前：护栏不过就别浪费当天额度） ----
     if not probe or not probe.get("output"):
@@ -190,30 +206,13 @@ def run_round(*, proposals: Sequence[Dict[str, Any]], decision_ts,
     seeds_block = seed_semantics(det["status"])
 
     # ---- 取行情（走盯市预留额度）；缺一只即整批不花（require_full_batch） ----
-    guard = guard_from_env()
+    # 护栏与 QUOTA_DIVERGENCE 留痕都在 quote_bridge（(a)/(b)/并行对照三处共用同一份）。
     out = Path(out_dir)
-    try:
-        bars, failed = get_daily_closes(symbols, guard=guard, purpose=MARKING,
-                                        require_full_batch=True)
-    except RateLimited as e:
-        # 都水的 QUOTA_DIVERGENCE 是这把 key 唯一真实风险（被别人花掉 25/天）的可观测签名。
-        # 它不能只以 traceback 形态存在——本轮会中止、没有 round JSON，告警就跟着没了。
-        # 故落一份**独立** ALERT（不写任何决策/净值，本轮仍然整批不出）。消息已在源头 _redact 过。
-        if getattr(e, "divergence", False):
-            out.mkdir(parents=True, exist_ok=True)
-            (out / f"ALERT_quota_divergence_{stamp}.json").write_text(
-                json.dumps({"alert": "QUOTA_DIVERGENCE", "round": stamp,
-                            "kind": getattr(e, "kind", None),
-                            "ledger_remaining": e.ledger_remaining,
-                            "vendor_throttled": e.vendor_throttled,
-                            "utc_day": e.utc_day, "message": str(e),
-                            "action_required": ("按都水预案：停用这把 key + 切换退路供应商；"
-                                                "先比 hash 验可轮换性（AV 教训：重新申请 ≠ 轮换）"),
-                            "note": "本轮**未产生任何决策与净值点**（整批不出，绝不半截入账）"},
-                           ensure_ascii=False, indent=2), encoding="utf-8")
-        raise
-    if failed:
-        raise PreflightFailed(f"行情缺失 {failed} → 不产生决策（不用陈旧价、不出假净值）")
+    if bars is None:
+        bars = fetch_round_quotes(symbols, stamp=stamp, out_dir=out_dir,
+                                  executor="single_book", guard=guard_from_env())
+    else:
+        bars = require_injected_bars(bars, symbols)
     days = trading_days(bars)
 
     # ---- 决策落盘（三条时序在 build_decision 内强制） ----

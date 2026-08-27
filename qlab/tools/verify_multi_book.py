@@ -2,7 +2,7 @@
 
     python3 qlab/tools/verify_multi_book.py          （仓根执行；不打网络、不花配额、不改台账）
 
-做两件事，各自把结论打出来供口径备注引用：
+做三件事，各自把结论打出来供口径备注引用：
 
 1. **决策集逐位比对**：把第 1 轮 `round_20260810.json` 的 7 条决策原样喂给 (b)，逐条比
    symbol / target_weight / seed / prompt_variant / 三时间戳。`evidence_available_utc` 是
@@ -10,8 +10,11 @@
 2. **配额形态**：把第 1 轮 pv1/pv2 两份权重展开成冻结的足额 10 格跑一轮，数取行情的调用次数——
    这是 (b) 相对「10 次 run_round」的全部意义所在（≈8 次/轮 vs 80 次/轮）。
 
-第 1 轮 `status=pending_entry_bar`、**没有 book 可比**，故 book 等价性不在此处，
-留给与 (a) 并行的那一轮做对照（工部尚书 2026-08-27 派单第 2 条）。
+3. **并行对照彩排**：第 1 轮 `status=pending_entry_bar`、**没有 book 可比**，故第 ② 段
+   book 等价性只能在真有建仓 bar 的轮次做。这里用同一批决策 + 一根人造建仓 bar 先把
+   `run_parallel_control()` 的形态跑通（一次取行情喂两条路径、逐位比 book），
+   让 08-31 那轮不是这条代码路径的首跑。**这是彩排，不是第 ② 段的证据本身**——
+   真证据必须是 08-31 用真实行情跑出来的那一份 `CONTROL_<stamp>.json`。
 """
 from __future__ import annotations
 
@@ -40,18 +43,21 @@ PV2_WEIGHTS = {"EMR": 0.07, "MET": 0.06, "GD": 0.06, "CAT": 0.05,
                "COP": 0.05, "MRK": 0.05, "GILD": 0.03}
 
 
-def _stub(monkey_target, days, price=100.0, calls=None):
+def _stub(days, price=100.0, calls=None):
+    """打桩行情。取行情已收进 quote_bridge（(a)/(b)/并行对照共用），故打桩点只有一处——
+    这也顺带证明了「三条路径只经一个取数出口」。"""
+    import qlab.llm_paper.quote_bridge as QB
+
     def fake(symbols, **kw):
         syms = sorted(symbols)
         if calls is not None:
             calls.append(syms)
         return ({s: [DailyBar(symbol=s, date=d, close=price, open=price * 0.99) for d in days]
                  for s in syms}, {})
-    monkey_target.get_daily_closes = fake
+    QB.get_daily_closes = fake
 
 
 def main() -> int:
-    import qlab.llm_paper.multi_book as MB
     rec = json.loads(ROUND1.read_text(encoding="utf-8"))
     tmp = Path(tempfile.mkdtemp())
     import os
@@ -59,7 +65,7 @@ def main() -> int:
     os.environ["QLAB_LLM_DETERMINISM_BASELINE"] = str(tmp / "b.json")
 
     days = [d.strftime("%Y-%m-%d") for d in pd.bdate_range("2026-03-20", "2026-08-07")][-100:]
-    _stub(MB, days)
+    _stub(days)
 
     dts = pd.Timestamp(rec["round_decision_ts"])
     pv1 = [{"symbol": d["symbol"], "target_weight": d["target_weight"],
@@ -85,7 +91,7 @@ def main() -> int:
 
     # ---- ② 配额形态：足额 10 格一轮 ----
     calls = []
-    _stub(MB, days, calls=calls)
+    _stub(days, calls=calls)
     pv2 = [dict(p, target_weight=PV2_WEIGHTS[p["symbol"]]) for p in pv1]
     full = run_round_multi(cells=expand_variants({"pv1_baseline": pv1, "pv2_riskaware": pv2}),
                            decision_ts=dts, probe=PROBE, out_dir=str(tmp / "full"),
@@ -101,10 +107,35 @@ def main() -> int:
           f"pv2={grosses[cell_id(11, 'pv2_riskaware')]}（按格判，不跨格加总）")
     print(f"   verdict     {full['verdict']}（中途读数只作监控）")
 
-    ok = cmp["identical"] and len(calls) == 1 and full["n_cells_evaluated"] == 10
+    # ---- ③ 并行对照彩排（人造建仓 bar，让 book 真的建起来） ----
+    from qlab.llm_paper.parallel_control import run_parallel_control
+
+    entry_days = days + ["2026-08-10"]          # 补一根建仓日 bar：pv1 的 intended_start 当天
+    calls2 = []
+    _stub(entry_days, calls=calls2)
+    # 基线已由 ① 建立（`record_baseline` 存在即拒改写，这条护栏本身是对的）。
+    # 对照轮要求基线**先于本轮存在**，这里正好满足，不另建。
+    a_props = [dict(p, seed=11, prompt_variant="pv1_baseline") for p in pv1]
+    rep = run_parallel_control(
+        proposals=a_props,
+        cells=[{"seed": 11, "prompt_variant": "pv1_baseline", "proposals": pv1},
+               {"seed": 11, "prompt_variant": "pv2_riskaware", "proposals": pv2}],
+        decision_ts=dts, probe=PROBE, out_dir=str(tmp / "ctl"), register_trials=False)
+    bc = rep["book_comparison"]
+    print("\n③ 并行对照彩排（人造建仓 bar；形态验证，非第 ② 段证据）")
+    print(f"   取行情调用  {len(calls2)} 次 —— (a)/(b) 共用同一份快照"
+          f"（对照侧自身 {rep['control_quote_calls']} 次）")
+    print(f"   比对的格    {rep['compared_cell']}，book 状态 {bc['book_status']}")
+    print(f"   book 字段   {', '.join(bc['fields_compared']['book'])}")
+    print(f"   逐位相同    book={bc['identical']} / "
+          f"决策集={rep['decision_set_comparison']['identical']}   差异 {bc['diffs']}")
+    print(f"   可否接管    {rep['may_take_over']}（对照通过也不在当轮切，见裁定）")
+
+    ok = (cmp["identical"] and len(calls) == 1 and full["n_cells_evaluated"] == 10
+          and rep["may_take_over"] and len(calls2) == 1)
     print(f"\n结论：{'PASS' if ok else 'FAIL'} —— 等价性第 ① 段"
-          f"{'通过' if cmp['identical'] else '未通过'}；"
-          "第 ② 段（book 等价性）待与 (a) 并行的那一轮对照。")
+          f"{'通过' if cmp['identical'] else '未通过'}；对照形态已彩排通过；"
+          "第 ② 段真证据待 08-31 用真实行情跑出的 CONTROL_<stamp>.json。")
     return 0 if ok else 1
 
 

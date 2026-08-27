@@ -34,9 +34,13 @@ def _iso(tmp_path, monkeypatch):
     monkeypatch.setenv("QLAB_LLM_DETERMINISM_BASELINE", str(tmp_path / "b.json"))
 
 
-def _stub_bars(monkeypatch, days, *, price=100.0, calls=None, modules=()):
-    """打桩行情：记录每次调用的符号数，用来证明「一次取并集」而不是按格各取一遍。"""
+def _stub_bars(monkeypatch, days, *, price=100.0, calls=None):
+    """打桩行情：记录每次调用的符号数，用来证明「一次取并集」而不是按格各取一遍。
+
+    打桩点只有 quote_bridge 一处——取行情已收进共用桥接，(a)/(b)/并行对照都走它。
+    """
     from qlab.events.datafetch.quotes_api import DailyBar
+    import qlab.llm_paper.quote_bridge as QB
 
     def fake(symbols, **kw):
         syms = sorted(symbols)
@@ -44,8 +48,7 @@ def _stub_bars(monkeypatch, days, *, price=100.0, calls=None, modules=()):
             calls.append(syms)
         return ({s: [DailyBar(symbol=s, date=d, close=price, open=price * 0.99) for d in days]
                  for s in syms}, {})
-    for m in modules:
-        monkeypatch.setattr(m, "get_daily_closes", fake)
+    monkeypatch.setattr(QB, "get_daily_closes", fake)
 
 
 def _prop(sym, w, seed_free=True):
@@ -57,10 +60,9 @@ def _prop(sym, w, seed_free=True):
 # 1. 配额：一次取并集
 # --------------------------------------------------------------------------- #
 def test_full_grid_costs_one_union_fetch_not_one_per_cell(tmp_path, monkeypatch):
-    import qlab.llm_paper.multi_book as MB
     _iso(tmp_path, monkeypatch)
     calls = []
-    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"], calls=calls, modules=(MB,))
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"], calls=calls)
     cells = expand_variants({"pv1_baseline": [_prop("IBM", 0.09), _prop("MRK", 0.06)],
                              "pv2_riskaware": [_prop("IBM", 0.07), _prop("MRK", 0.05)]})
     assert len(cells) == 10                                   # 冻结网格足额
@@ -92,7 +94,6 @@ def test_decision_set_matches_round1_bit_for_bit(tmp_path, monkeypatch):
     信息源时间单调不减 ⇒ max(可得) = 可得(max(受理))，故单条重建与原多条等价；而
     `evidence_available_utc` 是**重新派生**出来的，比对因此是真的过了一遍派生逻辑，不是抄答案。
     """
-    import qlab.llm_paper.multi_book as MB
     _iso(tmp_path, monkeypatch)
     rec = json.loads(ROUND1.read_text(encoding="utf-8"))
     assert rec["book"]["status"] == "pending_entry_bar"       # 前提：那一轮如期无 book
@@ -101,7 +102,7 @@ def test_decision_set_matches_round1_bit_for_bit(tmp_path, monkeypatch):
     days = [d.strftime("%Y-%m-%d")
             for d in pd.bdate_range("2026-03-20", "2026-08-07")][-100:]
     assert len(days) == 100
-    _stub_bars(monkeypatch, days, modules=(MB,))
+    _stub_bars(monkeypatch, days)
 
     dts = pd.Timestamp(rec["round_decision_ts"])
     proposals = [{"symbol": d["symbol"], "target_weight": d["target_weight"],
@@ -149,10 +150,8 @@ def test_fingerprint_reads_dataclass_and_json_alike():
 # --------------------------------------------------------------------------- #
 def test_single_cell_book_identical_to_path_a(tmp_path, monkeypatch):
     """并行对照的机械版本：同输入下 (b) 的单格 book 与 (a) 逐位相同（股数/gross/现金/净值）。"""
-    import qlab.llm_paper.multi_book as MB
-    import qlab.llm_paper.run_round as RR
     _iso(tmp_path, monkeypatch)
-    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"], modules=(MB, RR))
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
     props = [{"symbol": "IBM", "target_weight": 0.10, "confidence": 0.6, "thesis": "t",
               "evidence_records": EV, "seed": 11, "prompt_variant": "pv1_baseline"},
              {"symbol": "MRK", "target_weight": 0.06, "confidence": 0.4, "thesis": "t2",
@@ -180,9 +179,8 @@ def test_single_cell_book_identical_to_path_a(tmp_path, monkeypatch):
 # --------------------------------------------------------------------------- #
 def test_cells_keep_separate_books_and_navs(tmp_path, monkeypatch):
     """两格不同权重 ⇒ 两个不同的 book 与净值点。分账串了这条就会挂。"""
-    import qlab.llm_paper.multi_book as MB
     _iso(tmp_path, monkeypatch)
-    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"], modules=(MB,))
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
     r = run_round_multi(
         cells=[{"seed": 11, "prompt_variant": "pv1_baseline", "proposals": [_prop("IBM", 0.10)]},
                {"seed": 11, "prompt_variant": "pv2_riskaware", "proposals": [_prop("IBM", 0.04)]}],
@@ -198,9 +196,8 @@ def test_cells_keep_separate_books_and_navs(tmp_path, monkeypatch):
 
 def test_gross_cap_is_per_cell_not_summed_across_cells(tmp_path, monkeypatch):
     """10 格各 49% 是 10 个独立组合，不是 490% —— 加总去判会把合规轮判成超限。"""
-    import qlab.llm_paper.multi_book as MB
     _iso(tmp_path, monkeypatch)
-    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"], modules=(MB,))
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
     props = [_prop(s, 0.10) for s in ("IBM", "MRK", "CAT", "GD", "COP")]     # 每格 gross 0.50
     r = run_round_multi(cells=expand_variants({"pv1_baseline": props, "pv2_riskaware": props}),
                         decision_ts=DTS, probe=PROBE, out_dir=str(tmp_path),
@@ -211,9 +208,8 @@ def test_gross_cap_is_per_cell_not_summed_across_cells(tmp_path, monkeypatch):
 
 def test_one_bad_cell_fails_the_whole_round_closed(tmp_path, monkeypatch):
     """一格聚合超单标的上限 ⇒ 整轮不落盘（与 (a) 同一条纪律：不产出半截证据）。"""
-    import qlab.llm_paper.multi_book as MB
     _iso(tmp_path, monkeypatch)
-    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"], modules=(MB,))
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
     bad = [_prop("IBM", 0.05), _prop("IBM", 0.05), _prop("IBM", 0.05)]       # 聚合 15% > 冻结 10%
     with pytest.raises(PreflightFailed, match="组合约束不过"):
         run_round_multi(
@@ -256,9 +252,8 @@ def test_cell_input_is_fail_closed(cells, match, tmp_path, monkeypatch):
 
 def test_drift_records_all_cells_and_drops_an_alert(tmp_path, monkeypatch):
     """漂移不丢本轮真数据：10 格照记，但带告警落盘 + 独立 ALERT + seed 口径翻转。"""
-    import qlab.llm_paper.multi_book as MB
     _iso(tmp_path, monkeypatch)
-    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"], modules=(MB,))
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
     cells = expand_variants({"pv1_baseline": [_prop("IBM", 0.09)],
                              "pv2_riskaware": [_prop("IBM", 0.07)]})
     kw = dict(cells=cells, decision_ts=DTS, out_dir=str(tmp_path), register_trials=False)
@@ -272,7 +267,7 @@ def test_drift_records_all_cells_and_drops_an_alert(tmp_path, monkeypatch):
 
 def test_quota_divergence_leaves_an_alert_and_no_round(tmp_path, monkeypatch):
     """疑似 key 被盗用：整批不出、无决策无净值，但必须留下独立 ALERT（否则告警只活在 traceback 里）。"""
-    import qlab.llm_paper.multi_book as MB
+    import qlab.llm_paper.quote_bridge as QB
     from qlab.events.datafetch.quotes_api import RateLimited
     _iso(tmp_path, monkeypatch)
 
@@ -280,7 +275,7 @@ def test_quota_divergence_leaves_an_alert_and_no_round(tmp_path, monkeypatch):
         raise RateLimited("SPY: Information (daily throttle): <redacted-api-key> ...",
                           ledger_remaining=24, vendor_throttled=True,
                           utc_day="2026-08-09", kind="daily")
-    monkeypatch.setattr(MB, "get_daily_closes", boom)
+    monkeypatch.setattr(QB, "get_daily_closes", boom)
     with pytest.raises(RateLimited):
         run_round_multi(cells=[{"seed": 11, "prompt_variant": "pv1_baseline",
                                 "proposals": [_prop("IBM", 0.05)]}],
@@ -295,10 +290,10 @@ def test_quota_divergence_leaves_an_alert_and_no_round(tmp_path, monkeypatch):
 
 def test_missing_quote_symbol_blocks_the_round(tmp_path, monkeypatch):
     """并集里缺一只 ⇒ 整轮不产生决策（不用陈旧价、不出假净值）。"""
-    import qlab.llm_paper.multi_book as MB
+    import qlab.llm_paper.quote_bridge as QB
     from qlab.events.datafetch.quotes_api import DailyBar
     _iso(tmp_path, monkeypatch)
-    monkeypatch.setattr(MB, "get_daily_closes", lambda symbols, **kw: (
+    monkeypatch.setattr(QB, "get_daily_closes", lambda symbols, **kw: (
         {"IBM": [DailyBar(symbol="IBM", date="2026-08-10", close=100.0, open=99.0)]},
         {"SPY": "HTTPError"}))
     with pytest.raises(PreflightFailed, match="行情缺失"):
@@ -311,10 +306,9 @@ def test_missing_quote_symbol_blocks_the_round(tmp_path, monkeypatch):
 
 def test_round_payload_is_written_and_readable_by_nav_series(tmp_path, monkeypatch):
     """(b) 的落盘格式必须能被每格净值序列直接读通——切换那一轮就靠这个接得上。"""
-    import qlab.llm_paper.multi_book as MB
     from qlab.llm_paper.nav_series import cell_nav_series, coverage
     _iso(tmp_path, monkeypatch)
-    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"], modules=(MB,))
+    _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
     run_round_multi(cells=expand_variants({"pv1_baseline": [_prop("IBM", 0.09)],
                                            "pv2_riskaware": [_prop("IBM", 0.07)]}),
                     decision_ts=DTS, probe=PROBE, out_dir=str(tmp_path), register_trials=False)

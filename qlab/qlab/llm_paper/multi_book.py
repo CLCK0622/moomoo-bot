@@ -38,18 +38,20 @@ _REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from qlab.events.datafetch.api_quota import MARKING, guard_from_env  # noqa: E402
-from qlab.events.datafetch.quotes_api import (RateLimited, get_daily_closes,  # noqa: E402
-                                              mark_to_market, trading_days)
+from qlab.events.datafetch.api_quota import guard_from_env  # noqa: E402
+from qlab.events.datafetch.quotes_api import mark_to_market, trading_days  # noqa: E402
 from qlab.llm_paper.decision_chain import (build_decision, check_portfolio,  # noqa: E402
                                            frozen_grid, load_prereg)
 from qlab.llm_paper.determinism import (STATUS_DRIFT, ProbeUnverifiable,  # noqa: E402
                                         verify_or_establish)
+from qlab.llm_paper.errors import PreflightFailed  # noqa: E402
 from qlab.llm_paper.ledger_bridge import register_round  # noqa: E402
 from qlab.llm_paper.price_bridge import settle_actual_start  # noqa: E402
+from qlab.llm_paper.quote_bridge import (fetch_round_quotes,  # noqa: E402
+                                         require_injected_bars)
 from qlab.llm_paper.reporting import quantile_caliber, seed_semantics  # noqa: E402
 from qlab.llm_paper.run_round import (CANDIDATE_ID, OUT_DIR, START_NAV,  # noqa: E402
-                                      PreflightFailed, build_book, preflight)
+                                      build_book, preflight)
 
 EXECUTOR = "multi_book_v1"
 
@@ -187,7 +189,8 @@ def run_round_multi(*, cells: Sequence[Dict[str, Any]], decision_ts,
                     cfg: Optional[Dict[str, Any]] = None,
                     rejected_evidence: Optional[Sequence[Dict[str, Any]]] = None,
                     register_trials: bool = True,
-                    nav_start: float = START_NAV) -> Dict[str, Any]:
+                    nav_start: float = START_NAV,
+                    bars: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """执行一次**多 book** 决策轮：一次取符号并集，内部按格分账。
 
     `cells`：`[{seed, prompt_variant, proposals: [...]}, ...]`（`expand_variants()` 可由每变体
@@ -196,11 +199,13 @@ def run_round_multi(*, cells: Sequence[Dict[str, Any]], decision_ts,
 
     `probe`：本轮金标准复现结果，**每轮一次、按轮不按格**（探针测的是模型本身有没有被换权重，
     与格子无关）。缺失即 `PreflightFailed`，不设跳过开关。
+
+    `bars`：**行情注入**，仅用于并行对照轮（同一份快照喂 (a) 与 (b)）。默认 `None` ＝ 自己取数。
     """
     cfg = cfg or load_prereg()
     cells = _validate_cells(cells, cfg)
     symbols = symbol_union(cells, benchmark)
-    pre = preflight(n_symbols_needed=len(symbols), cfg=cfg)
+    pre = preflight(n_symbols_needed=len(symbols), cfg=cfg, skip_quota_check=bars is not None)
 
     # ---- 金标准复现（放在花配额之前：护栏不过就别浪费当天额度） ----
     if not probe or not probe.get("output"):
@@ -218,27 +223,12 @@ def run_round_multi(*, cells: Sequence[Dict[str, Any]], decision_ts,
     seeds_block = seed_semantics(det["status"])
 
     # ---- 取行情：**整轮一次**，符号并集（(b) 的全部配额意义就在这一行） ----
-    guard = guard_from_env()
-    try:
-        bars, failed = get_daily_closes(symbols, guard=guard, purpose=MARKING,
-                                        require_full_batch=True)
-    except RateLimited as e:
-        if getattr(e, "divergence", False):
-            out.mkdir(parents=True, exist_ok=True)
-            (out / f"ALERT_quota_divergence_{stamp}.json").write_text(
-                json.dumps({"alert": "QUOTA_DIVERGENCE", "round": stamp,
-                            "kind": getattr(e, "kind", None),
-                            "ledger_remaining": e.ledger_remaining,
-                            "vendor_throttled": e.vendor_throttled,
-                            "utc_day": e.utc_day, "message": str(e),
-                            "executor": EXECUTOR,
-                            "action_required": ("按都水预案：停用这把 key + 切换退路供应商；"
-                                                "先比 hash 验可轮换性（AV 教训：重新申请 ≠ 轮换）"),
-                            "note": "本轮**未产生任何决策与净值点**（整批不出，绝不半截入账）"},
-                           ensure_ascii=False, indent=2), encoding="utf-8")
-        raise
-    if failed:
-        raise PreflightFailed(f"行情缺失 {failed} → 不产生决策（不用陈旧价、不出假净值）")
+    injected = bars is not None
+    if injected:
+        bars = require_injected_bars(bars, symbols)
+    else:
+        bars = fetch_round_quotes(symbols, stamp=stamp, out_dir=out_dir,
+                                  executor=EXECUTOR, guard=guard_from_env())
     days = trading_days(bars)
 
     # ---- 按格分账（任一格约束不过 → 抛出，整轮零落盘） ----
@@ -264,8 +254,9 @@ def run_round_multi(*, cells: Sequence[Dict[str, Any]], decision_ts,
                           "跨轮每格净值序列见 nav_series.cell_nav_series()"),
         "preflight": pre,
         "symbols_fetched": symbols,
-        "quote_calls_this_round": len(symbols),
+        "quote_calls_this_round": 0 if injected else len(symbols),
         "quote_calls_if_naive_per_cell": len(symbols) * len(cells),
+        "bars_injected": injected,      # 并行对照轮共用上游快照 ⇒ 本轮自身零调用
         "n_cells_evaluated": len(cells),
         "n_cells_frozen_grid": len(grid),
         "cells_missing": missing,
