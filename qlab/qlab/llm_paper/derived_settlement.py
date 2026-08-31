@@ -100,6 +100,17 @@ def _round_execution_date(payload: Mapping[str, Any],
     return max(str(day) for day in starts)
 
 
+def _cell_execution_date(block: Mapping[str, Any],
+                         bars: Mapping[tuple[str, str], Mapping[str, Any]]) -> str | None:
+    """Observed execution date for one cell's actual new book."""
+    observed_days = sorted({date for _, date in bars})
+    intended = [_date(str(decision["intended_start"])) for decision in block["decisions"]]
+    starts = [next((day for day in observed_days if day >= value), None) for value in intended]
+    if not starts or any(day is None for day in starts):
+        return None
+    return max(str(day) for day in starts)
+
+
 def _pre_archive_provenance(*, round_: str, consumed: set[tuple[str, str]],
                             first_archive_date: str | None,
                             scanner_started: str | None) -> Dict[str, Any] | None:
@@ -160,13 +171,13 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
                  bars: Mapping[tuple[str, str], Mapping[str, Any]],
                  external_keys: set[tuple[str, str]], first_archive_date: str | None,
                  scanner_started: str | None, round_: str, out_dir: str, cost_rate: float,
-                 window_end: str | None) -> Dict[str, Any]:
+                 window_end: str | None, nav_start: float,
+                 previous: Mapping[str, Any] | None) -> Dict[str, Any]:
     if not decisions:
         raise SettlementDataUnavailable("空决策格不是持现金，拒绝结算")
     if portfolio_check and not portfolio_check.get("ok", False):
-        return {"status": "no_rebalance", "nav_start": START_NAV,
-                "nav_series": [{"as_of": None, "nav": START_NAV}],
-                "reason": "该格组合约束未过；派生层不提交新目标权重，字面现金收益为零"}
+        return {"status": "pending_no_rebalance_carry_forward",
+                "reason": "该格组合约束未过；carry-forward 尚未落地，拒绝把它写成现金平线或出读数"}
 
     weights: Dict[str, float] = {}
     intended: Dict[str, str] = {}
@@ -222,8 +233,25 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
 
     consumed = {(symbol, entry_dates[symbol]) for symbol in weights}
     consumed |= {(symbol, day) for symbol in weights for day in marks}
+    # A segment starts from the preceding segment's terminal NAV, never a fresh
+    # 100k.  At the rebalance open, old holdings are valued at that open solely
+    # to measure actual traded notional; target notionals use the carried NAV.
+    rebalance_day = max(entry_dates.values())
+    old_notionals: Dict[str, float] = {}
+    if previous:
+        for symbol, shares in previous["shares"].items():
+            old = bars.get((symbol, rebalance_day))
+            old_open = old.get("open") if old else None
+            if old_open is None or float(old_open) <= 0:
+                return {"status": "pending_archived_rebalance_bar",
+                        "missing": [f"{symbol}@{rebalance_day}"],
+                        "reason": "缺换仓时点旧持仓 open → 无法按 Σ|Δ持仓| 计费"}
+            old_notionals[symbol] = float(shares) * float(old_open)
+            consumed.add((symbol, rebalance_day))
+
     # This is the fail-closed boundary: it runs only after the exact consumed
-    # window is known, but before a single derived NAV is emitted.
+    # window (including old-position rebalance bars) is known, but before a
+    # single derived NAV is emitted.
     require_settlement_integrity(out_dir, keys=consumed)
     external = sorted(consumed & external_keys)
     if external:
@@ -241,15 +269,20 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
         open_ = entry.get("open")
         if open_ is None or float(open_) <= 0:
             raise SettlementDataUnavailable(f"{symbol}@{entry_dates[symbol]} 缺合法 open，拒绝用 close 顶替")
-        notional = START_NAV * weight
+        notional = nav_start * weight
         gross += notional
         entries[symbol] = {"entry_date": entry_dates[symbol], "entry_open": float(open_),
                            "weight": weight, "notional": notional}
         shares[symbol] = notional / float(open_)
-    # The lower-bound cash leg earns literal zero rather than BIL yield.  The
-    # entry cost itself remains the frozen cost parameter, never a local knob.
-    entry_cost = gross * cost_rate
-    cash = START_NAV - gross - entry_cost
+    # `cost_rate_per_side` is the frozen fee rate, while `cost_per_turnover`
+    # fixes its base: absolute change in current market notionals across the
+    # union.  Buy and sell legs are already both present in Σ|Δ|; do not double
+    # it again.  First entry naturally reduces to the old gross formula.
+    new_notionals = {symbol: float(entry["notional"]) for symbol, entry in entries.items()}
+    turnover_notional = sum(abs(new_notionals.get(symbol, 0.0) - old_notionals.get(symbol, 0.0))
+                            for symbol in set(new_notionals) | set(old_notionals))
+    entry_cost = turnover_notional * cost_rate
+    cash = nav_start - gross - entry_cost
     nav_series = []
     for day in marks:
         value = sum(shares[symbol] * float(bars[(symbol, day)]["close"]) for symbol in weights)
@@ -257,8 +290,9 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
         if provenance:
             point["bar_provenance"] = provenance
         nav_series.append(point)
-    return {"status": "filled", "nav_start": START_NAV, "entries": entries, "shares": shares,
-            "gross_notional": gross, "entry_cost": entry_cost, "cash": cash,
+    return {"status": "filled", "nav_start": nav_start, "entries": entries, "shares": shares,
+            "gross_notional": gross, "turnover_notional": turnover_notional,
+            "old_notionals_at_rebalance": old_notionals, "entry_cost": entry_cost, "cash": cash,
             "nav_series": nav_series, "consumed_bar_keys": sorted(consumed),
             "bar_provenance": provenance,
             "basis": "archived as-traded equity price + literal zero-yield cash (non-acceptance lower bound)",
@@ -294,20 +328,47 @@ def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
         "rounds": [],
         "note": "round-record nav_point is not consumed; missing archival coverage remains explicit.",
     }
-    for index, payload in enumerate(rounds):
+    plans = [{"payload": payload, "cells": _cells(payload)} for payload in rounds]
+    blocked_cells = {cid for plan in plans for cid, block in plan["cells"].items()
+                     if block["portfolio_check"] and not block["portfolio_check"].get("ok", False)}
+    carried: Dict[str, Dict[str, Any]] = {}
+    seen_cells: set[str] = set()
+    for index, plan in enumerate(plans):
+        payload = plan["payload"]
         stamp = _stamp(payload)
         result["source"]["round_records"].append(payload.get("_file"))
-        window_end = (_round_execution_date(rounds[index + 1], archive["bars"])
-                      if index + 1 < len(rounds) else None)
-        cells = {name: _settle_cell(decisions=block["decisions"],
-                                    portfolio_check=block["portfolio_check"], bars=archive["bars"],
-                                    external_keys=archive["external_keys"],
-                                    first_archive_date=first_archive_date, round_=stamp,
-                                    scanner_started=scanner_started, out_dir=out_dir,
-                                    cost_rate=cost_rate, window_end=window_end)
-                 for name, block in _cells(payload).items()}
+        cells: Dict[str, Dict[str, Any]] = {}
+        for name, block in plan["cells"].items():
+            if name in blocked_cells:
+                cells[name] = {"status": "pending_no_rebalance_carry_forward",
+                               "reason": ("该格至少一轮未调仓；carry-forward 尚未落地，"
+                                          "整条格序列拒绝出读数")}
+                continue
+            next_block = next((future["cells"][name] for future in plans[index + 1:]
+                               if name in future["cells"] and
+                               (not future["cells"][name]["portfolio_check"] or
+                                future["cells"][name]["portfolio_check"].get("ok", False))), None)
+            window_end = _cell_execution_date(next_block, archive["bars"]) if next_block else None
+            previous = carried.get(name)
+            if name in seen_cells and previous is None:
+                cells[name] = {"status": "pending_prior_segment",
+                               "reason": "前一段无可核验终点净值；不得从 START_NAV 重启后续段"}
+                seen_cells.add(name)
+                continue
+            cell = _settle_cell(decisions=block["decisions"],
+                                portfolio_check=block["portfolio_check"], bars=archive["bars"],
+                                external_keys=archive["external_keys"],
+                                first_archive_date=first_archive_date, round_=stamp,
+                                scanner_started=scanner_started, out_dir=out_dir,
+                                cost_rate=cost_rate, window_end=window_end,
+                                nav_start=(float(previous["terminal_nav"]) if previous else START_NAV),
+                                previous=previous)
+            cells[name] = cell
+            if cell.get("status") == "filled":
+                carried[name] = {"terminal_nav": cell["nav_series"][-1]["nav"],
+                                 "shares": cell["shares"]}
+            seen_cells.add(name)
         result["rounds"].append({"round": stamp, "executor": payload.get("executor", "single_book"),
-                                 "mark_window_end_exclusive": window_end,
                                  "cells": cells})
     return result
 
@@ -325,34 +386,45 @@ def archive_coverage_requirements(out_dir: str) -> Dict[str, Any]:
     bars = archive["bars"]
     observed_days = sorted({date for _, date in bars})
     rounds = load_rounds(out_dir)
+    plans = [{"payload": payload, "cells": _cells(payload)} for payload in rounds]
     required: set[tuple[str, str]] = set()
     active_symbols: set[str] = set()
     symbols: set[str] = set()
     details: List[Dict[str, Any]] = []
-    for index, payload in enumerate(rounds):
-        end = (_round_execution_date(rounds[index + 1], bars)
-               if index + 1 < len(rounds) else None)
-        round_symbols = {str(decision["symbol"])
-                         for block in _cells(payload).values()
-                         for decision in block["decisions"]}
-        symbols |= round_symbols
-        if end is None:
-            active_symbols |= round_symbols
-        for block in _cells(payload).values():
+    for index, plan in enumerate(plans):
+        for cid, block in plan["cells"].items():
+            if block["portfolio_check"] and not block["portfolio_check"].get("ok", False):
+                continue
+            next_block = next((future["cells"][cid] for future in plans[index + 1:]
+                               if cid in future["cells"] and
+                               (not future["cells"][cid]["portfolio_check"] or
+                                future["cells"][cid]["portfolio_check"].get("ok", False))), None)
+            end = _cell_execution_date(next_block, bars) if next_block else None
+            cell_symbols = {str(decision["symbol"]) for decision in block["decisions"]}
+            symbols |= cell_symbols
+            if end is None:
+                active_symbols |= cell_symbols
+            entries: Dict[str, str | None] = {}
+            intended: Dict[str, str] = {}
             for decision in block["decisions"]:
                 symbol = str(decision["symbol"])
-                intended = _date(str(decision["intended_start"]))
-                entry = next((date for sym, date in bars
-                              if sym == symbol and date >= intended), None)
-                start = entry or intended
+                intended[symbol] = _date(str(decision["intended_start"]))
+                entries[symbol] = next((date for sym, date in bars
+                                        if sym == symbol and date >= intended[symbol]), None)
+                if entries[symbol] is None:
+                    required.add((symbol, intended[symbol]))
+            if all(entries.values()):
+                mark_start = max(str(value) for value in entries.values())
                 dates = [day for day in observed_days
-                         if day >= start and (end is None or day < end)]
-                if not dates and entry is None:
-                    required.add((symbol, intended))
-                required |= {(symbol, day) for day in dates}
-                details.append({"round": _stamp(payload), "symbol": symbol,
-                                "start": start, "end_exclusive": end,
-                                "entry_observed": entry is not None})
+                         if day >= mark_start and (end is None or day < end)]
+                required |= {(symbol, day) for symbol in cell_symbols for day in dates}
+                # The end is excluded from NAV marking but is required to value
+                # the old book at the next rebalance and compute Σ|Δ| honestly.
+                if end:
+                    required |= {(symbol, end) for symbol in cell_symbols}
+            details.append({"round": _stamp(plan["payload"]), "cell": cid,
+                            "symbols": sorted(cell_symbols), "end_exclusive": end,
+                            "entries_observed": all(entries.values())})
     missing = sorted(required - set(bars))
     return {"required_keys": sorted(required), "missing_keys": missing,
             "active_symbols": sorted(active_symbols), "symbols": sorted(symbols),

@@ -76,6 +76,47 @@ def test_weekly_settlement_window_ends_at_next_observed_execution(tmp_path):
     assert first["mark_window"]["end_exclusive"] == "2026-08-17"
     assert [point["as_of"] for point in first["nav_series"]] == ["2026-08-10", "2026-08-11"]
     assert second["nav_series"][-1]["as_of"] == "2026-08-18"
+    assert second["nav_start"] == first["nav_series"][-1]["nav"]
+    assert second["entry_cost"] == pytest.approx(second["turnover_notional"] * 0.001)
+
+
+def test_no_rebalance_cell_cannot_emit_a_cash_flatline_until_carry_forward_exists(tmp_path):
+    _write_round(tmp_path)
+    stopped = _round()
+    stopped["portfolio_check"] = {"ok": False}
+    (tmp_path / "round_20260817.json").write_text(json.dumps(stopped), encoding="utf-8")
+    _archive(tmp_path)
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
+    cells = rebuild_lower_bound_settlement(str(tmp_path))["rounds"]
+    assert cells[0]["cells"]["seed11×pv1_baseline"]["status"] == "pending_no_rebalance_carry_forward"
+    assert cells[1]["cells"]["seed11×pv1_baseline"]["status"] == "pending_no_rebalance_carry_forward"
+
+
+def test_each_cell_uses_its_own_next_book_as_the_mark_window_bound(tmp_path):
+    first = _round()
+    first = {"executor": "multi_book", "cells": {
+        "cell_a": {"decisions": first["decisions"], "portfolio_check": {"ok": True}},
+        "cell_b": {"decisions": _round()["decisions"], "portfolio_check": {"ok": True}},
+    }}
+    second = _round()
+    for decision in second["decisions"]:
+        decision["intended_start"] = "2026-08-17T13:30:00+00:00"
+    second = {"executor": "multi_book", "cells": {
+        "cell_a": {"decisions": second["decisions"], "portfolio_check": {"ok": True}},
+    }}
+    (tmp_path / "round_20260810.json").write_text(json.dumps(first), encoding="utf-8")
+    (tmp_path / "round_20260817.json").write_text(json.dumps(second), encoding="utf-8")
+    archive_quote_snapshot(
+        {"IBM": [_bar("IBM", "2026-08-10", 100), _bar("IBM", "2026-08-11", 101),
+                 _bar("IBM", "2026-08-17", 102), _bar("IBM", "2026-08-18", 103)],
+         "CAT": [_bar("CAT", "2026-08-10", 100), _bar("CAT", "2026-08-11", 101),
+                 _bar("CAT", "2026-08-17", 102), _bar("CAT", "2026-08-18", 103)]},
+        out_dir=str(tmp_path), stamp="20260902", executor="non_round_archive_scanner")
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
+    cells = rebuild_lower_bound_settlement(str(tmp_path))["rounds"][0]["cells"]
+    assert cells["cell_a"]["mark_window"]["end_exclusive"] == "2026-08-17"
+    assert cells["cell_b"]["mark_window"]["end_exclusive"] is None
+    assert cells["cell_b"]["nav_series"][-1]["as_of"] == "2026-08-18"
 
 
 def test_settlement_refuses_to_skip_a_missing_mark_inside_its_weekly_window(tmp_path):
