@@ -108,6 +108,10 @@ def cell_nav_series(out_dir: str) -> Dict[str, List[Dict[str, Any]]]:
                     "nav": float(point["nav"]), "nav_start": cell.get("nav_start"),
                     "executor": round_.get("executor"), "book_status": cell.get("status"),
                     "reading_kind": "lower_bound",
+                    # This is intentionally copied onto every point as well as
+                    # the settlement cell: no aggregation consumer may retain a
+                    # bare NAV while silently dropping its evidence limitation.
+                    "bar_provenance": point.get("bar_provenance") or cell.get("bar_provenance"),
                 })
     for pts in series.values():
         pts.sort(key=lambda x: (x["as_of"] or "", x["round"] or ""))
@@ -136,18 +140,21 @@ def coverage(out_dir: str) -> Dict[str, Any]:
             "cells_seen": sorted({c for r in per_round for c in r["cells"]})}
 
 
-def cumulative_returns(out_dir: str, *, cost_track: str = "x1") -> Dict[str, Optional[float]]:
-    """每格的累计收益（**监控读数，不是 verdict**）：末净值 / `nav_start` − 1。
+def cumulative_returns(out_dir: str, *, cost_track: str = "x1") -> Dict[str, Optional[Dict[str, Any]]]:
+    """每格的累计收益（**监控读数，不是 verdict**）及其完整读数标签。
 
-    `cost_track`: `x1` 为入账口径，`x2` 为影子口径（决策成本双轨）。
-    不足 1 个净值点的格子返回 `None` —— 没有读数就是没有，不补零。
+    返回值不再是裸 float：``reading_kind`` 与覆盖整段 NAV 的 ``bar_provenance``
+    必须随汇总传播，避免事后回补限制在汇总层被平均掉。没有净值点仍返回 ``None``。
     """
     if cost_track != "x1":
         raise ValueError("派生 lower_bound 尚无 x2 shadow 成本轨；不得拿轮内 nav_point 顶替")
     key = "nav"
-    out: Dict[str, Optional[float]] = {}
+    out: Dict[str, Optional[Dict[str, Any]]] = {}
     for cid, pts in cell_nav_series(out_dir).items():
         last = next((p for p in reversed(pts) if p.get(key) is not None), None)
         base = last.get("nav_start") if last else None
-        out[cid] = (float(last[key]) / float(base) - 1.0) if last and base else None
+        out[cid] = ({"cumulative_return": float(last[key]) / float(base) - 1.0,
+                     "reading_kind": last["reading_kind"],
+                     "bar_provenance": last.get("bar_provenance")}
+                    if last and base else None)
     return out

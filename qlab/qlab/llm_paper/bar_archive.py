@@ -244,7 +244,10 @@ def load_settlement_bars(out_dir: str) -> Dict[str, Any]:
                              if str(record.get("round", "")))
     return {"bars": bars, "external_keys": external_keys,
             "first_capture_round": captured_rounds[0] if captured_rounds else None,
-            "archive_content_sha256s": sorted(by_hash)}
+            "archive_content_sha256s": sorted(by_hash),
+            "captures": [{"round": record.get("round"), "executor": record.get("executor"),
+                          "content_sha256": record.get("content_sha256")}
+                         for _, record in records]}
 
 
 def require_settlement_integrity(out_dir: str, *, keys: Iterable[tuple[str, str]]) -> None:

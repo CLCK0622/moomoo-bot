@@ -15,7 +15,9 @@ from typing import Any, Dict, Iterable, List, Mapping
 
 import pandas as pd
 
-from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, load_settlement_bars,
+from qlab.events.datafetch.api_quota import MARKING, guard_from_env
+from qlab.events.datafetch.quotes_api import get_daily_closes
+from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, archive_quote_snapshot, load_settlement_bars,
                                          require_settlement_integrity)
 from qlab.llm_paper.decision_chain import load_prereg
 from qlab.llm_paper.ledger_bridge import cell_id
@@ -24,6 +26,9 @@ from qlab.llm_paper.nav_series import load_rounds
 ET = "America/New_York"
 START_NAV = 100_000.0
 READING_KINDS = frozenset({"equivalence_artifact", "lower_bound", "acceptance"})
+# 吏部 2026-08-31 的一次性授权。它不是一个可随首份归档日期滑动的规则：
+# 只有这两份归档机制上线前已落盘的决策可以使用后来归档到的历史 bar。
+PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS = frozenset({"20260810", "20260831"})
 
 
 class SettlementDataUnavailable(RuntimeError):
@@ -35,6 +40,58 @@ def require_reading_kind(value: str) -> str:
     if value not in READING_KINDS:
         raise ValueError(f"未知 reading_kind={value!r}; 必须是 {sorted(READING_KINDS)} 之一")
     return value
+
+
+def authorized_pre_archive_symbols(out_dir: str, *, benchmark: str = "SPY") -> List[str]:
+    """The only symbols permitted in the one-time historical capture.
+
+    This derives the set from the two immutable authorized rounds rather than
+    accepting a caller-provided universe.  It is therefore impossible to turn
+    the narrow ruling into a convenient all-symbol refresh.
+    """
+    symbols = {benchmark}
+    for payload in load_rounds(out_dir):
+        if _stamp(payload) not in PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS:
+            continue
+        for block in _cells(payload).values():
+            symbols |= {str(decision["symbol"]) for decision in block["decisions"]}
+    return sorted(symbols)
+
+
+def capture_authorized_pre_archive_bars(out_dir: str, *, stamp: str, guard=None,
+                                        benchmark: str = "SPY") -> Dict[str, Any]:
+    """Perform the single permitted AV compact capture for the two old rounds.
+
+    This is deliberately a non-round-day operation: it must not consume the
+    Monday decision run's shared 25-call free-tier budget.  It uses the normal
+    marking quota and the same AV endpoint/schema as a regular archive fetch;
+    no source substitution or separate evidence store is allowed.
+    """
+    capture_day = pd.Timestamp(stamp)
+    if capture_day.weekday() not in {1, 2, 3, 4}:       # Tuesday through Friday only
+        raise SettlementDataUnavailable("一次性定向补取只能在非轮次日（周二至周五）执行")
+    archive = load_settlement_bars(out_dir)
+    if any(capture.get("executor") == "authorized_pre_archive_backfill"
+           for capture in archive["captures"]):
+        raise SettlementDataUnavailable("一次性定向补取已执行；不得再次调用或扩大其范围")
+    symbols = authorized_pre_archive_symbols(out_dir, benchmark=benchmark)
+    if not symbols or symbols == [benchmark]:
+        raise SettlementDataUnavailable("未找到两份获授权 round JSON 的持仓标的，拒绝猜测补取范围")
+    guard = guard or guard_from_env()
+    # get_daily_closes repeats this whole-batch check before issuing calls; keep
+    # it explicit here so a caller sees the all-or-nothing budget failure at the
+    # authorization boundary rather than halfway through a vendor loop.
+    guard.check(len(symbols), purpose=MARKING)
+    bars, failed = get_daily_closes(symbols, guard=guard, purpose=MARKING,
+                                    require_full_batch=True)
+    if failed:
+        raise SettlementDataUnavailable(f"一次性定向补取不完整 {failed}；不得写半截归档")
+    archived = archive_quote_snapshot(bars, out_dir=out_dir, stamp=capture_day.strftime("%Y%m%d"),
+                                      executor="authorized_pre_archive_backfill")
+    return {"purpose": "one_time_authorized_pre_archive_backfill",
+            "symbols": symbols, "quota_purpose": MARKING, "archive": archived,
+            "note": ("同一供应商 AV TIME_SERIES_DAILY / 同一 schema；仅补 08-10、08-31"
+                     " 两轮的持仓并集与基准，不能援引为后续轮次回补先例。")}
 
 
 def _canonical(value: Mapping[str, Any]) -> bytes:
@@ -71,19 +128,52 @@ def _date(value: str) -> str:
     return pd.Timestamp(value).tz_convert(ET).strftime("%Y-%m-%d")
 
 
-def _capture_floor(first_capture_round: str | None) -> str | None:
-    # An archive first introduced on 09-07 may contain a vendor's old 08-10
-    # history, but that is not an observation made on 08-10.  Preserve the gap
-    # instead of retroactively presenting it as contemporaneous evidence.
+def _archive_date(first_capture_round: str | None) -> str | None:
+    """The first archive-run date, used for provenance labelling—not eligibility."""
     if first_capture_round and len(first_capture_round) == 8 and first_capture_round.isdigit():
         return f"{first_capture_round[:4]}-{first_capture_round[4:6]}-{first_capture_round[6:]}"
     return None
 
 
+def _pre_archive_provenance(*, round_: str, consumed: set[tuple[str, str]],
+                            first_archive_date: str | None) -> Dict[str, Any] | None:
+    """Label the whole reading when it uses a bar predating archive launch.
+
+    The immutable archive, not a bar-date floor, is the admission criterion.
+    The date comparison solely exposes the lower evidence strength: there was
+    no contemporaneous archive copy against which a later refetch can be
+    cross-checked.  The exceptional admission is hard-coded and closes itself.
+    """
+    if not first_archive_date:
+        return None
+    keys = sorted(key for key in consumed if key[1] < first_archive_date)
+    if not keys:
+        return None
+    if round_ not in PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS:
+        raise SettlementDataUnavailable(
+            "首份归档前历史 bar 的一次性回补授权已自动关闭："
+            f"round={round_} 不在 {sorted(PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS)}。"
+            "该轮读数丢失，停止报告；不得回补或援引 2026-08-31 裁定。")
+    return {
+        "scope": "entire_nav_segment",
+        "kind": "retrospectively_archived_pre_initial_capture",
+        "first_archive_date": first_archive_date,
+        "pre_initial_archive_keys": [{"symbol": symbol, "date": date} for symbol, date in keys],
+        "authorization": "one_time_pre_archive_rounds_20260810_20260831_only",
+        "cross_check_baseline": "absent",
+        "not_verified": True,
+        "not_cross_checked": True,
+        "acceptance_eligible": False,
+        "must_not_promote_to_acceptance": True,
+        "note": ("该 bar 已在不可改归档中，但早于首份归档；没有当时副本可与日后重取逐位比。"
+                 "此标签覆盖整段 NAV，不得称已核验或已交叉核对。"),
+    }
+
+
 def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping[str, Any],
                  bars: Mapping[tuple[str, str], Mapping[str, Any]],
-                 external_keys: set[tuple[str, str]], capture_floor: str | None,
-                 out_dir: str, cost_rate: float) -> Dict[str, Any]:
+                 external_keys: set[tuple[str, str]], first_archive_date: str | None,
+                 round_: str, out_dir: str, cost_rate: float) -> Dict[str, Any]:
     if not decisions:
         raise SettlementDataUnavailable("空决策格不是持现金，拒绝结算")
     if portfolio_check and not portfolio_check.get("ok", False):
@@ -104,8 +194,9 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
     missing: List[str] = []
     entry_dates: Dict[str, str] = {}
     for symbol in sorted(weights):
-        dates = sorted(date for sym, date in bars if sym == symbol and
-                       date >= intended[symbol] and (capture_floor is None or date >= capture_floor))
+        # 准入只问「是否已进入带 hash 的 append-only archive」。不得再按
+        # bar 日期 < 首份归档日一刀切；较弱溯源由全段 provenance 如实标出。
+        dates = sorted(date for sym, date in bars if sym == symbol and date >= intended[symbol])
         dates_by_symbol[symbol] = dates
         if dates:
             entry_dates[symbol] = dates[0]
@@ -113,9 +204,7 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
             missing.append(f"{symbol}@{intended[symbol]}")
     if missing:
         return {"status": "pending_archived_entry_bar", "missing": missing,
-                "capture_floor": capture_floor,
-                "reason": ("缺可用的归档建仓 bar（首份归档之前的历史值不冒充当时观察值）"
-                           "→ 不编建仓价或净值")}
+                "reason": "缺存在于不可改归档的建仓 bar → 不编建仓价或净值"}
 
     common_dates = set(dates_by_symbol[next(iter(sorted(weights)))])
     for symbol in sorted(weights):
@@ -134,6 +223,8 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
     if external:
         return {"status": "pending_external_ruling_price", "keys": external,
                 "reason": "裁定采信 external 版本，但该版本尚未作为独立归档证据提供"}
+    provenance = _pre_archive_provenance(round_=round_, consumed=consumed,
+                                         first_archive_date=first_archive_date)
 
     entries: Dict[str, Dict[str, float | str]] = {}
     shares: Dict[str, float] = {}
@@ -155,10 +246,14 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
     nav_series = []
     for day in marks:
         value = sum(shares[symbol] * float(bars[(symbol, day)]["close"]) for symbol in weights)
-        nav_series.append({"as_of": day, "nav": value + cash})
+        point: Dict[str, Any] = {"as_of": day, "nav": value + cash}
+        if provenance:
+            point["bar_provenance"] = provenance
+        nav_series.append(point)
     return {"status": "filled", "nav_start": START_NAV, "entries": entries, "shares": shares,
             "gross_notional": gross, "entry_cost": entry_cost, "cash": cash,
             "nav_series": nav_series, "consumed_bar_keys": sorted(consumed),
+            "bar_provenance": provenance,
             "basis": "archived as-traded equity price + literal zero-yield cash (non-acceptance lower bound)"}
 
 
@@ -166,11 +261,12 @@ def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
     """Backfill every persisted decision round into one derived lower-bound artifact.
 
     It is deterministic from immutable round decisions plus archived bars.  A
-    missing pre-archive interval becomes an explicit pending result, never a
-    later vendor history silently relabelled as an old observation.
+    Missing bars remain explicit pending results.  A bar later observed and
+    immutably archived can be used only under the one-time pre-archive ruling,
+    with a non-promotable whole-segment provenance label.
     """
     archive = load_settlement_bars(out_dir)
-    floor = _capture_floor(archive["first_capture_round"])
+    first_archive_date = _archive_date(archive["first_capture_round"])
     cost_rate = float(load_prereg()["cost_per_turnover"])
     result: Dict[str, Any] = {
         "schema": "llm_paper_derived_settlement/v1",
@@ -181,7 +277,8 @@ def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
         # equivalence artifact.
         "is_acceptance_reading": False,
         "source": {"round_records": [], "archive_content_sha256s": archive["archive_content_sha256s"],
-                   "first_capture_round": archive["first_capture_round"]},
+                   "first_capture_round": archive["first_capture_round"],
+                   "pre_archive_backfill_authorized_rounds": sorted(PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS)},
         "rounds": [],
         "note": "round-record nav_point is not consumed; missing archival coverage remains explicit.",
     }
@@ -190,7 +287,8 @@ def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
         result["source"]["round_records"].append(payload.get("_file"))
         cells = {name: _settle_cell(decisions=block["decisions"],
                                     portfolio_check=block["portfolio_check"], bars=archive["bars"],
-                                    external_keys=archive["external_keys"], capture_floor=floor,
+                                    external_keys=archive["external_keys"],
+                                    first_archive_date=first_archive_date, round_=stamp,
                                     out_dir=out_dir, cost_rate=cost_rate)
                  for name, block in _cells(payload).items()}
         result["rounds"].append({"round": stamp, "executor": payload.get("executor", "single_book"),
