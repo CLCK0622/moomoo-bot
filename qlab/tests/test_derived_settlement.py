@@ -6,9 +6,12 @@ import json
 import pytest
 
 from qlab.events.datafetch.quotes_api import DailyBar
+from qlab.llm_paper.archive_scan_state import write_scanner_state
+from qlab.llm_paper.archive_scanner import archive_scan_coverage, scan_missing_archive_bars
 from qlab.llm_paper.bar_archive import ArchiveIntegrityError, archive_quote_snapshot
 from qlab.llm_paper.derived_settlement import (rebuild_lower_bound_settlement,
                                                 require_reading_kind,
+                                                SettlementDataUnavailable,
                                                 write_lower_bound_settlement)
 from qlab.llm_paper.nav_series import cell_nav_series, cumulative_returns
 
@@ -54,6 +57,94 @@ def test_backfills_every_round_from_decisions_not_round_nav_point(tmp_path):
     assert "nav_point" not in cell
 
 
+def test_weekly_settlement_window_ends_at_next_observed_execution(tmp_path):
+    _write_round(tmp_path)
+    next_round = _round()
+    for decision in next_round["decisions"]:
+        decision["intended_start"] = "2026-08-17T13:30:00+00:00"
+    (tmp_path / "round_20260817.json").write_text(json.dumps(next_round), encoding="utf-8")
+    archive_quote_snapshot(
+        {"IBM": [_bar("IBM", "2026-08-10", 100), _bar("IBM", "2026-08-11", 101),
+                 _bar("IBM", "2026-08-17", 102), _bar("IBM", "2026-08-18", 103)],
+         "CAT": [_bar("CAT", "2026-08-10", 100), _bar("CAT", "2026-08-11", 101),
+                 _bar("CAT", "2026-08-17", 102), _bar("CAT", "2026-08-18", 103)]},
+        out_dir=str(tmp_path), stamp="20260902", executor="non_round_archive_scanner")
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
+    result = rebuild_lower_bound_settlement(str(tmp_path))["rounds"]
+    first = result[0]["cells"]["seed11×pv1_baseline"]
+    second = result[1]["cells"]["seed11×pv1_baseline"]
+    assert first["mark_window"]["end_exclusive"] == "2026-08-17"
+    assert [point["as_of"] for point in first["nav_series"]] == ["2026-08-10", "2026-08-11"]
+    assert second["nav_series"][-1]["as_of"] == "2026-08-18"
+    assert second["nav_start"] == first["nav_series"][-1]["nav"]
+    assert second["entry_cost"] == pytest.approx(second["turnover_notional"] * 0.001)
+
+
+def test_no_rebalance_cell_cannot_emit_a_cash_flatline_until_carry_forward_exists(tmp_path):
+    _write_round(tmp_path)
+    stopped = _round()
+    stopped["portfolio_check"] = {"ok": False}
+    (tmp_path / "round_20260817.json").write_text(json.dumps(stopped), encoding="utf-8")
+    _archive(tmp_path)
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
+    cells = rebuild_lower_bound_settlement(str(tmp_path))["rounds"]
+    assert cells[0]["cells"]["seed11×pv1_baseline"]["status"] == "pending_no_rebalance_carry_forward"
+    assert cells[1]["cells"]["seed11×pv1_baseline"]["status"] == "pending_no_rebalance_carry_forward"
+
+
+def test_each_cell_uses_its_own_next_book_as_the_mark_window_bound(tmp_path):
+    first = _round()
+    first = {"executor": "multi_book", "cells": {
+        "cell_a": {"decisions": first["decisions"], "portfolio_check": {"ok": True}},
+        "cell_b": {"decisions": _round()["decisions"], "portfolio_check": {"ok": True}},
+    }}
+    second = _round()
+    for decision in second["decisions"]:
+        decision["intended_start"] = "2026-08-17T13:30:00+00:00"
+    second = {"executor": "multi_book", "cells": {
+        "cell_a": {"decisions": second["decisions"], "portfolio_check": {"ok": True}},
+    }}
+    (tmp_path / "round_20260810.json").write_text(json.dumps(first), encoding="utf-8")
+    (tmp_path / "round_20260817.json").write_text(json.dumps(second), encoding="utf-8")
+    archive_quote_snapshot(
+        {"IBM": [_bar("IBM", "2026-08-10", 100), _bar("IBM", "2026-08-11", 101),
+                 _bar("IBM", "2026-08-17", 102), _bar("IBM", "2026-08-18", 103)],
+         "CAT": [_bar("CAT", "2026-08-10", 100), _bar("CAT", "2026-08-11", 101),
+                 _bar("CAT", "2026-08-17", 102), _bar("CAT", "2026-08-18", 103)]},
+        out_dir=str(tmp_path), stamp="20260902", executor="non_round_archive_scanner")
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
+    cells = rebuild_lower_bound_settlement(str(tmp_path))["rounds"][0]["cells"]
+    assert cells["cell_a"]["mark_window"]["end_exclusive"] == "2026-08-17"
+    assert cells["cell_b"]["mark_window"]["end_exclusive"] is None
+    assert cells["cell_b"]["nav_series"][-1]["as_of"] == "2026-08-18"
+
+
+def test_settlement_refuses_to_skip_a_missing_mark_inside_its_weekly_window(tmp_path):
+    _write_round(tmp_path)
+    archive_quote_snapshot(
+        {"IBM": [_bar("IBM", "2026-08-10", 100), _bar("IBM", "2026-08-11", 101)],
+         "CAT": [_bar("CAT", "2026-08-10", 100)]},
+        out_dir=str(tmp_path), stamp="20260902", executor="non_round_archive_scanner")
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
+    cell = rebuild_lower_bound_settlement(str(tmp_path))["rounds"][0]["cells"]["seed11×pv1_baseline"]
+    assert cell["status"] == "pending_archived_mark_bar"
+    assert cell["missing"] == ["CAT@2026-08-11"]
+
+
+def test_archive_scanner_raises_hard_alert_before_compact_window_expires(tmp_path):
+    _write_round(tmp_path)
+    dates = [f"2026-08-{day:02d}" for day in range(10, 31)]
+    dates += [f"2026-09-{day:02d}" for day in range(1, 31)]
+    dates += [f"2026-10-{day:02d}" for day in range(1, 32)]
+    archive_quote_snapshot(
+        {"IBM": [_bar("IBM", day, 100) for day in dates],
+         "CAT": [_bar("CAT", "2026-08-10", 100)]},
+        out_dir=str(tmp_path), stamp="20261031", executor="non_round_archive_scanner")
+    coverage = archive_scan_coverage(str(tmp_path))
+    assert coverage["oldest_missing"]["remaining_trading_days"] <= 20
+    assert coverage["hard_alerts"]
+
+
 def test_only_lower_bound_enters_authoritative_nav_or_reporting_paths(tmp_path):
     round_ = _round()
     # A deliberately conflicting round-record snapshot must stay an audit
@@ -71,21 +162,63 @@ def test_only_lower_bound_enters_authoritative_nav_or_reporting_paths(tmp_path):
     assert set(series) == {"seed11×pv1_baseline"}
     assert series["seed11×pv1_baseline"][-1]["nav"] != 999_999.0
     assert series["seed11×pv1_baseline"][-1]["reading_kind"] == "lower_bound"
-    assert set(cumulative_returns(str(tmp_path))) == {"seed11×pv1_baseline"}
+    reading = cumulative_returns(str(tmp_path))["seed11×pv1_baseline"]
+    assert reading["reading_kind"] == "lower_bound" and reading["bar_provenance"] is None
     assert require_reading_kind("equivalence_artifact") == "equivalence_artifact"
     assert require_reading_kind("acceptance") == "acceptance"
 
 
-def test_pre_archive_round_is_explicit_gap_not_retroactive_observation(tmp_path):
+def test_authorized_pre_archive_round_is_rebuilt_with_whole_segment_provenance(tmp_path):
     _write_round(tmp_path)
-    # This snapshot contains an old vendor bar, but the archive did not begin
-    # until 09-07 and must not recast that price as an 08-10 observation.
+    # The one-time ruling admits this bar because it is immutably archived, but
+    # does not recast it as an 08-10 observation or claim a cross-check.
     archive_quote_snapshot(
         {"IBM": [_bar("IBM", "2026-08-10", 100)], "CAT": [_bar("CAT", "2026-08-10", 100)]},
         out_dir=str(tmp_path), stamp="20260907", executor="single_book")
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
     cell = rebuild_lower_bound_settlement(str(tmp_path))["rounds"][0]["cells"]["seed11×pv1_baseline"]
-    assert cell["status"] == "pending_archived_entry_bar"
-    assert cell["capture_floor"] == "2026-09-07"
+    assert cell["status"] == "filled"
+    assert cell["bar_provenance"]["scope"] == "entire_nav_segment"
+    assert cell["bar_provenance"]["not_cross_checked"] is True
+    assert cell["nav_series"][0]["bar_provenance"] == cell["bar_provenance"]
+
+
+def test_pre_archive_authorization_automatically_rejects_any_other_round(tmp_path):
+    payload = _round()
+    (tmp_path / "round_20260907.json").write_text(json.dumps(payload), encoding="utf-8")
+    archive_quote_snapshot(
+        {"IBM": [_bar("IBM", "2026-08-10", 100)], "CAT": [_bar("CAT", "2026-08-10", 100)]},
+        out_dir=str(tmp_path), stamp="20260907", executor="single_book")
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
+    with pytest.raises(SettlementDataUnavailable, match="自动关闭"):
+        rebuild_lower_bound_settlement(str(tmp_path))
+
+
+def test_non_round_scanner_catches_up_all_persisted_rounds_and_activates_boundary(tmp_path, monkeypatch):
+    _write_round(tmp_path)
+    (tmp_path / "round_20260831.json").write_text(json.dumps(_round()), encoding="utf-8")
+    calls = []
+
+    class Guard:
+        def check(self, n, *, purpose):
+            calls.append((n, purpose))
+
+    import qlab.llm_paper.archive_scanner as scanner
+    monkeypatch.setattr(scanner, "get_daily_closes", lambda symbols, **kwargs: (
+        {symbol: [_bar(symbol, "2026-08-10", 100), _bar(symbol, "2026-08-11", 101)]
+         for symbol in symbols}, {}))
+
+    result = scan_missing_archive_bars(str(tmp_path), stamp="2026-09-02", guard=Guard())
+    assert result["requested_symbols"] == ["CAT", "IBM", "SPY"]
+    assert calls == [(3, "marking")]
+    assert result["coverage_after"]["missing_count"] == 0
+    assert result["scanner_state"]
+
+
+def test_non_round_scanner_refuses_monday(tmp_path):
+    _write_round(tmp_path)
+    with pytest.raises(SettlementDataUnavailable, match="周二至周五"):
+        scan_missing_archive_bars(str(tmp_path), stamp="2026-09-07")
 
 
 def test_unresolved_consumed_window_refuses_to_emit_settlement_reading(tmp_path):
