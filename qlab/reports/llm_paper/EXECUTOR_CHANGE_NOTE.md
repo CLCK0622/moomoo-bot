@@ -565,6 +565,11 @@ nav_series.cell_nav_series()          —— 现在正是从这些轮内 nav_poi
 不回改任何已落盘记录；派生层**只从「不可改决策 + 归档 bars」重算，绝不消费轮内 `nav_point`**；
 `nav_series.cell_nav_series()` 届时**退休或显式降级**，并留一条测试钉死「同一时刻只有一条权威净值序列」。
 
+**落地（工部 2026-08-31）：**`cell_nav_series()` 与 `cumulative_returns()` 只消费派生的
+`reading_kind=lower_bound`；轮内快照移为显式命名的 `round_record_nav_series()`，只供审计。派生
+结算的 `basis` 与正向 `reading_kind` 并存，保留 `is_acceptance_reading` 仅作兼容派生字段，禁止再以
+这个否定词区分产物。`equivalence_artifact` 被结构性排除在净值序列与上报路径之外。
+
 ### 8.5.2 建仓价交叉核对：**差异即事件**，不是「派生层权威、覆盖即可」
 
 派生层从归档 bars 重算时会**重新算出建仓价**，而 round JSON 里已经记着 `entries`（建仓日、开盘价、
@@ -598,6 +603,13 @@ book.status = filled              → 有真 entries ← **只有这一种能被
 `require_settlement_integrity()` fail-closed：该窗口拒绝出读数并回报。只有分歧落在**当轮实际消费**的
 bar 上才允许轮内 fail-closed（当前不可能；接口仍显式保留，防止未来把跨轮结算塞回轮内）。归档文件的
 内容哈希失配、空快照、重复键或标的集不一致仍是输入 / 证据破损，照旧 fail-closed。
+
+**分歧裁定与结算闸的结构（工部尚书 2026-08-31）：**裁定绝不回改 archive；另追加带内容哈希的
+`RESOLUTION_<...>.json`，逐项记录所覆盖的 `(symbol, date)`、完整逐字段差异、采信版本、依据与吏部
+裁定引用。它只覆盖**同键且同一份字段差异**：同一供应商重取会被同一裁定消解，后来出现第三个值则重新
+成为待裁定分歧。`require_settlement_integrity(out_dir, keys=...)` 只检查本次派生读数实际消费的 bar 键与
+未裁定分歧的交集；无关标的 / 日期不得被整目录一刀切。派生层在产出任何 NAV 前必须调用此闸；裁定采信
+外部版本但外部值尚未另行归档时，仍如实标为 pending，不拿任一 AV 版本冒充它。
 
 ### 8.6 bar 归档的地位升级为批次 1 的最高优先项
 

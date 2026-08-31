@@ -6,8 +6,10 @@ import pytest
 
 from qlab.events.datafetch.quotes_api import DailyBar
 from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, archive_quote_snapshot,
+                                        load_settlement_bars,
                                         require_settlement_integrity,
-                                        unresolved_disagreements)
+                                        unresolved_disagreements,
+                                        write_disagreement_resolution)
 
 
 def _bars(close: float = 101.0):
@@ -37,8 +39,36 @@ def test_refetch_compares_overlapping_symbol_date_field_by_field(tmp_path):
         "archived": 101.0, "refetched": 102.0}
     assert len(list((tmp_path / "bar_archive").glob("*.json"))) == 2
     assert len(unresolved_disagreements(str(tmp_path))) == 1
+    # The gate is deliberately scoped to the bars a settlement will consume:
+    # an IBM correction cannot suppress an unrelated reading.
+    require_settlement_integrity(str(tmp_path), keys={("CAT", "2026-08-31")})
     with pytest.raises(ArchiveIntegrityError, match="派生结算不得出"):
-        require_settlement_integrity(str(tmp_path))
+        require_settlement_integrity(str(tmp_path), keys={("IBM", "2026-08-31")})
+
+
+def test_append_only_ruling_releases_only_the_same_observed_difference(tmp_path):
+    archive_quote_snapshot(_bars(), out_dir=str(tmp_path), stamp="20260831", executor="single_book")
+    changed = archive_quote_snapshot(_bars(close=102.0), out_dir=str(tmp_path), stamp="20260901",
+                                     executor="single_book",
+                                     retrieved_utc="2026-09-01T12:00:00+00:00")
+    write_disagreement_resolution(
+        out_dir=str(tmp_path), source_archive_content_sha256=changed["content_sha256"],
+        keys={("IBM", "2026-08-31")}, selected_version="refetched",
+        basis="数据供应商订正说明", ruling_reference="吏部裁定 #42",
+        resolved_utc="2026-09-02T12:00:00+00:00")
+    assert unresolved_disagreements(str(tmp_path)) == []
+    require_settlement_integrity(str(tmp_path), keys={("IBM", "2026-08-31")})
+    assert load_settlement_bars(str(tmp_path))["bars"][("IBM", "2026-08-31")]["close"] == 102.0
+
+    # An identical future refetch is covered by the ruling, but a new provider
+    # value is a fresh disagreement and cannot inherit the old ruling.
+    archive_quote_snapshot(_bars(close=102.0), out_dir=str(tmp_path), stamp="20260908",
+                           executor="single_book", retrieved_utc="2026-09-08T12:00:00+00:00")
+    assert unresolved_disagreements(str(tmp_path)) == []
+    archive_quote_snapshot(_bars(close=103.0), out_dir=str(tmp_path), stamp="20260915",
+                           executor="single_book", retrieved_utc="2026-09-15T12:00:00+00:00")
+    with pytest.raises(ArchiveIntegrityError, match="派生结算不得出"):
+        require_settlement_integrity(str(tmp_path), keys={("IBM", "2026-08-31")})
 
 
 def test_tampered_archive_fails_closed_before_another_append(tmp_path):

@@ -1,10 +1,12 @@
-"""EVO-8 LLM 轨 — **每格净值序列**（跨轮拼装）。
+"""EVO-8 LLM 轨 — **每格净值序列**（派生层唯一权威）。
 
 冻结 §4 要的是 `seed_distribution` 的下四分位，前提是**每格各有一条自己的净值序列**。
-本模块把这条序列从各轮**不可改的 round JSON** 机械拼出来，不维护任何可变的累计文件：
-决策与净值点一经落盘不可改，序列就该是它们的确定性函数，而不是第二份需要对账的真值。
+权威序列只从派生结算层读取：它由不可改决策与归档 bars 重算，且带正向的
+``reading_kind=lower_bound``。轮内 ``nav_point`` 是当时轮次记录的快照工件，
+不是结算读数；保留在 ``round_record_nav_series()`` 供审计，绝不进入本模块的
+``cell_nav_series()`` 或累计收益路径。
 
-两种落盘格式都认，这正是执行器切换那一轮必须能读通的地方：
+两种落盘格式仍由 ``round_record_nav_series()`` 认出，供核对执行器切换：
 * (a) 单 book（第 1 轮起）：整轮一个 `nav_point`，归属该轮 `decisions[]` 里那一格；
 * (b) 多 book：`cells{}` 每格各有 `nav_point`。
 
@@ -55,11 +57,12 @@ def _cells_of_round(payload: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
                                      "seed": seed, "prompt_variant": variant}}
 
 
-def cell_nav_series(out_dir: str) -> Dict[str, List[Dict[str, Any]]]:
-    """每格一条净值序列：{cell_id: [{round, as_of, nav, nav_x2_cost, nav_start, executor}, ...]}。
+def round_record_nav_series(out_dir: str) -> Dict[str, List[Dict[str, Any]]]:
+    """轮内 ``nav_point`` 的审计快照，**不是**权威结算序列。
 
-    **只收真净值点**：`book` 尚未建仓（`pending_entry_bar`）或缺开盘价的轮次没有 `nav_point`，
-    序列里就不该有那一天 —— 补一个「持平」点等于编数。
+    这个函数刻意改名而非删除，既保留不可改 round JSON 的取证能力，又避免后人把
+    轮内快照与派生结算读数混为同一条净值序列。不得把本函数接到 reporting /
+    certification / ``cumulative_returns``。
     """
     series: Dict[str, List[Dict[str, Any]]] = {}
     for payload in load_rounds(out_dir):
@@ -78,6 +81,39 @@ def cell_nav_series(out_dir: str) -> Dict[str, List[Dict[str, Any]]]:
     return series
 
 
+def cell_nav_series(out_dir: str) -> Dict[str, List[Dict[str, Any]]]:
+    """唯一权威的每格净值序列：派生 ``lower_bound`` 结算输出。
+
+    ``equivalence_artifact`` 仅用于执行器逐位比对，不是业绩读数；它与轮内
+    ``nav_point`` 一样永远不得经过这个消费点。这一条让同一时刻只有一条可被
+    报告或累计收益消费的净值序列。
+    """
+    # Local import prevents a module-import cycle: derived settlement uses
+    # ``load_rounds`` above, while this consumer owns the authority boundary.
+    from qlab.llm_paper.derived_settlement import rebuild_lower_bound_settlement
+
+    settlement = rebuild_lower_bound_settlement(out_dir)
+    if settlement.get("reading_kind") != "lower_bound":
+        raise ValueError("权威净值序列只接受 reading_kind=lower_bound 的派生结算")
+    series: Dict[str, List[Dict[str, Any]]] = {}
+    for round_ in settlement.get("rounds", []):
+        for cid, cell in (round_.get("cells") or {}).items():
+            if cell.get("status") != "filled":
+                continue
+            for point in cell.get("nav_series") or []:
+                if point.get("nav") is None:
+                    continue
+                series.setdefault(cid, []).append({
+                    "round": round_.get("round"), "as_of": point.get("as_of"),
+                    "nav": float(point["nav"]), "nav_start": cell.get("nav_start"),
+                    "executor": round_.get("executor"), "book_status": cell.get("status"),
+                    "reading_kind": "lower_bound",
+                })
+    for pts in series.values():
+        pts.sort(key=lambda x: (x["as_of"] or "", x["round"] or ""))
+    return series
+
+
 def coverage(out_dir: str) -> Dict[str, Any]:
     """每格的覆盖情况 —— **哪一轮起换的执行器**在这里一眼可见（审计轨要的就是这个）。"""
     rounds = load_rounds(out_dir)
@@ -90,8 +126,8 @@ def coverage(out_dir: str) -> Dict[str, Any]:
             "executor": payload.get("executor", "single_book"),
             "n_cells": len(cells),
             "cells": sorted(cells),
-            "n_nav_points": sum(1 for b in cells.values()
-                                if b["nav_point"] and b["nav_point"].get("nav") is not None),
+            "n_round_record_nav_points": sum(1 for b in cells.values()
+                                               if b["nav_point"] and b["nav_point"].get("nav") is not None),
         })
     switches = [per_round[i] for i in range(1, len(per_round))
                 if per_round[i]["executor"] != per_round[i - 1]["executor"]]
@@ -106,7 +142,9 @@ def cumulative_returns(out_dir: str, *, cost_track: str = "x1") -> Dict[str, Opt
     `cost_track`: `x1` 为入账口径，`x2` 为影子口径（决策成本双轨）。
     不足 1 个净值点的格子返回 `None` —— 没有读数就是没有，不补零。
     """
-    key = "nav" if cost_track == "x1" else "nav_x2_cost"
+    if cost_track != "x1":
+        raise ValueError("派生 lower_bound 尚无 x2 shadow 成本轨；不得拿轮内 nav_point 顶替")
+    key = "nav"
     out: Dict[str, Optional[float]] = {}
     for cid, pts in cell_nav_series(out_dir).items():
         last = next((p for p in reversed(pts) if p.get(key) is not None), None)
