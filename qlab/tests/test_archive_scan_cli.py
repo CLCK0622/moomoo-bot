@@ -20,6 +20,14 @@ def test_cli_reports_clean_scan(monkeypatch, capsys):
 def test_cli_returns_distinct_capture_alert_and_failure_codes(monkeypatch, capsys):
     monkeypatch.setattr(cli, "scan_missing_archive_bars", lambda *_args, **_kwargs: {
         "requested_symbols": ["CAT"],
+        "coverage_after": {"missing_count": 0, "oldest_missing": None, "hard_alerts": []},
+        "scan_report": {"file": "scan.json"}, "alert": None,
+    })
+    assert cli.main([]) == cli.EXIT_CAPTURED
+    assert json.loads(capsys.readouterr().out)["status"] == "captured"
+
+    monkeypatch.setattr(cli, "scan_missing_archive_bars", lambda *_args, **_kwargs: {
+        "requested_symbols": ["CAT"],
         "coverage_after": {"missing_count": 1, "oldest_missing": {"remaining_trading_days": 19},
                            "hard_alerts": [{"symbol": "CAT"}]},
         "scan_report": {"file": "scan.json"}, "alert": {"file": "alert.json"},
