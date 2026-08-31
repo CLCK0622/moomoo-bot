@@ -1,6 +1,6 @@
 {
   "basis": "as_traded_equity_and_literal_zero_cash_lower_bound",
-  "content_sha256": "1671ca84ed05f6173dd2b6e1a0f3a9cf758a63173a62859c012631c92a80894b",
+  "content_sha256": "df7d38a8ac8ae56f8b75fa2d4715b04700095727e4ab4dc1bc822b25f5551cd4",
   "is_acceptance_reading": false,
   "note": "round-record nav_point is not consumed; missing archival coverage remains explicit.",
   "reading_kind": "lower_bound",
@@ -8,7 +8,6 @@
     {
       "cells": {
         "seed11×pv1_baseline": {
-          "capture_floor": null,
           "missing": [
             "CAT@2026-08-10",
             "COP@2026-08-10",
@@ -18,7 +17,7 @@
             "MET@2026-08-10",
             "MRK@2026-08-10"
           ],
-          "reason": "缺可用的归档建仓 bar（首份归档之前的历史值不冒充当时观察值）→ 不编建仓价或净值",
+          "reason": "缺存在于不可改归档的建仓 bar → 不编建仓价或净值",
           "status": "pending_archived_entry_bar"
         }
       },
@@ -28,7 +27,6 @@
     {
       "cells": {
         "seed11×pv1_baseline": {
-          "capture_floor": null,
           "missing": [
             "CRM@2026-08-31",
             "CSCO@2026-08-31",
@@ -39,7 +37,7 @@
             "TGT@2026-08-31",
             "WMT@2026-08-31"
           ],
-          "reason": "缺可用的归档建仓 bar（首份归档之前的历史值不冒充当时观察值）→ 不编建仓价或净值",
+          "reason": "缺存在于不可改归档的建仓 bar → 不编建仓价或净值",
           "status": "pending_archived_entry_bar"
         }
       },
@@ -51,6 +49,10 @@
   "source": {
     "archive_content_sha256s": [],
     "first_capture_round": null,
+    "pre_archive_backfill_authorized_rounds": [
+      "20260810",
+      "20260831"
+    ],
     "round_records": [
       "round_20260810.json",
       "round_20260831.json"

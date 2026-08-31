@@ -7,8 +7,11 @@ import pytest
 
 from qlab.events.datafetch.quotes_api import DailyBar
 from qlab.llm_paper.bar_archive import ArchiveIntegrityError, archive_quote_snapshot
-from qlab.llm_paper.derived_settlement import (rebuild_lower_bound_settlement,
+from qlab.llm_paper.derived_settlement import (authorized_pre_archive_symbols,
+                                                capture_authorized_pre_archive_bars,
+                                                rebuild_lower_bound_settlement,
                                                 require_reading_kind,
+                                                SettlementDataUnavailable,
                                                 write_lower_bound_settlement)
 from qlab.llm_paper.nav_series import cell_nav_series, cumulative_returns
 
@@ -71,21 +74,62 @@ def test_only_lower_bound_enters_authoritative_nav_or_reporting_paths(tmp_path):
     assert set(series) == {"seed11×pv1_baseline"}
     assert series["seed11×pv1_baseline"][-1]["nav"] != 999_999.0
     assert series["seed11×pv1_baseline"][-1]["reading_kind"] == "lower_bound"
-    assert set(cumulative_returns(str(tmp_path))) == {"seed11×pv1_baseline"}
+    reading = cumulative_returns(str(tmp_path))["seed11×pv1_baseline"]
+    assert reading["reading_kind"] == "lower_bound" and reading["bar_provenance"] is None
     assert require_reading_kind("equivalence_artifact") == "equivalence_artifact"
     assert require_reading_kind("acceptance") == "acceptance"
 
 
-def test_pre_archive_round_is_explicit_gap_not_retroactive_observation(tmp_path):
+def test_authorized_pre_archive_round_is_rebuilt_with_whole_segment_provenance(tmp_path):
     _write_round(tmp_path)
-    # This snapshot contains an old vendor bar, but the archive did not begin
-    # until 09-07 and must not recast that price as an 08-10 observation.
+    # The one-time ruling admits this bar because it is immutably archived, but
+    # does not recast it as an 08-10 observation or claim a cross-check.
     archive_quote_snapshot(
         {"IBM": [_bar("IBM", "2026-08-10", 100)], "CAT": [_bar("CAT", "2026-08-10", 100)]},
         out_dir=str(tmp_path), stamp="20260907", executor="single_book")
     cell = rebuild_lower_bound_settlement(str(tmp_path))["rounds"][0]["cells"]["seed11×pv1_baseline"]
-    assert cell["status"] == "pending_archived_entry_bar"
-    assert cell["capture_floor"] == "2026-09-07"
+    assert cell["status"] == "filled"
+    assert cell["bar_provenance"]["scope"] == "entire_nav_segment"
+    assert cell["bar_provenance"]["not_cross_checked"] is True
+    assert cell["nav_series"][0]["bar_provenance"] == cell["bar_provenance"]
+
+
+def test_pre_archive_authorization_automatically_rejects_any_other_round(tmp_path):
+    payload = _round()
+    (tmp_path / "round_20260907.json").write_text(json.dumps(payload), encoding="utf-8")
+    archive_quote_snapshot(
+        {"IBM": [_bar("IBM", "2026-08-10", 100)], "CAT": [_bar("CAT", "2026-08-10", 100)]},
+        out_dir=str(tmp_path), stamp="20260907", executor="single_book")
+    with pytest.raises(SettlementDataUnavailable, match="自动关闭"):
+        rebuild_lower_bound_settlement(str(tmp_path))
+
+
+def test_one_time_pre_archive_capture_is_non_round_day_narrow_and_accounted(tmp_path, monkeypatch):
+    _write_round(tmp_path)
+    (tmp_path / "round_20260831.json").write_text(json.dumps(_round()), encoding="utf-8")
+    calls = []
+
+    class Guard:
+        def check(self, n, *, purpose):
+            calls.append((n, purpose))
+
+    import qlab.llm_paper.derived_settlement as settlement
+    monkeypatch.setattr(settlement, "get_daily_closes", lambda symbols, **kwargs: (
+        {symbol: [_bar(symbol, "2026-08-10", 100)] for symbol in symbols}, {}))
+
+    assert authorized_pre_archive_symbols(str(tmp_path)) == ["CAT", "IBM", "SPY"]
+    result = capture_authorized_pre_archive_bars(str(tmp_path), stamp="2026-09-02", guard=Guard())
+    assert result["symbols"] == ["CAT", "IBM", "SPY"]
+    assert calls == [(3, "marking")]
+    assert result["archive"]["n_bars"] == 3
+    with pytest.raises(SettlementDataUnavailable, match="已执行"):
+        capture_authorized_pre_archive_bars(str(tmp_path), stamp="2026-09-03", guard=Guard())
+
+
+def test_one_time_pre_archive_capture_refuses_monday(tmp_path):
+    _write_round(tmp_path)
+    with pytest.raises(SettlementDataUnavailable, match="周二至周五"):
+        capture_authorized_pre_archive_bars(str(tmp_path), stamp="2026-09-07")
 
 
 def test_unresolved_consumed_window_refuses_to_emit_settlement_reading(tmp_path):
