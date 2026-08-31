@@ -7,8 +7,9 @@ Typical autopilot command (from the repository root)::
 
 Exit codes are deliberately machine-readable: 0 = clean (no quote call),
 10 = compact bars captured, 20 = hard window alert (whether or not capture
-succeeded), and 30 = a refused/failed scan.  The scanner itself rejects Monday
-and weekends; this wrapper never relaxes that safety boundary.
+succeeded), 30 = a real scan failure, and 40 = an expected safety refusal on a
+non-scan day.  The scanner itself rejects Monday and weekends; this wrapper
+never relaxes that safety boundary.
 """
 from __future__ import annotations
 
@@ -25,12 +26,13 @@ for _path in (str(_QLAB_ROOT), str(_REPO_ROOT)):
     if _path not in sys.path:
         sys.path.insert(0, _path)
 
-from qlab.llm_paper.archive_scanner import scan_missing_archive_bars  # noqa: E402
+from qlab.llm_paper.archive_scanner import ScanDayRefused, scan_missing_archive_bars  # noqa: E402
 
 EXIT_CLEAN = 0
 EXIT_CAPTURED = 10
 EXIT_HARD_ALERT = 20
 EXIT_FAILED = 30
+EXIT_REFUSED_NON_SCAN_DAY = 40
 
 
 def _summary(result: Dict[str, Any], *, exit_code: int, status: str) -> Dict[str, Any]:
@@ -59,6 +61,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         result = scan_missing_archive_bars(args.out_dir, stamp=args.stamp, benchmark=args.benchmark)
+    except ScanDayRefused as exc:
+        # This refusal is an expected, zero-quota safety outcome.  It is a
+        # stable scheduler contract rather than a caller-side string match.
+        print(json.dumps({"status": "refused_non_scan_day", "exit_code": EXIT_REFUSED_NON_SCAN_DAY,
+                          "error_type": type(exc).__name__, "error": str(exc)},
+                         ensure_ascii=False, sort_keys=True))
+        return EXIT_REFUSED_NON_SCAN_DAY
     except Exception as exc:  # scanner errors must remain scheduler-visible
         print(json.dumps({"status": "failed", "exit_code": EXIT_FAILED,
                           "error_type": type(exc).__name__, "error": str(exc)},
