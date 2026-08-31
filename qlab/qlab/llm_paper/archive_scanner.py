@@ -27,6 +27,10 @@ HARD_ALERT_REMAINING_TRADING_DAYS = 20
 SCANNER_SCHEMA = "llm_paper_archive_scanner/v1"
 
 
+class ScanDayRefused(SettlementDataUnavailable):
+    """Expected no-op: the scanner was invoked outside its Tue--Fri window."""
+
+
 def _canonical(value: Dict[str, Any]) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True,
                       separators=(",", ":"), allow_nan=False).encode("utf-8")
@@ -43,7 +47,7 @@ def _scan_date(stamp: str) -> str:
 def _require_non_round_day(stamp: str) -> str:
     day = pd.Timestamp(stamp)
     if day.weekday() not in {1, 2, 3, 4}:  # Tue--Fri; calendar mechanics only
-        raise SettlementDataUnavailable("归档扫描只能在非轮次日（周二至周五）运行")
+        raise ScanDayRefused("归档扫描只能在非轮次日（周二至周五）运行")
     return day.strftime("%Y-%m-%d")
 
 

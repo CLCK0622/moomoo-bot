@@ -36,6 +36,11 @@ def test_cli_returns_distinct_capture_alert_and_failure_codes(monkeypatch, capsy
     assert json.loads(capsys.readouterr().out)["status"] == "hard_alert"
 
     monkeypatch.setattr(cli, "scan_missing_archive_bars", lambda *_args, **_kwargs: (_ for _ in ()).throw(
+        cli.ScanDayRefused("归档扫描只能在非轮次日（周二至周五）运行")))
+    assert cli.main([]) == cli.EXIT_REFUSED_NON_SCAN_DAY
+    assert json.loads(capsys.readouterr().out)["status"] == "refused_non_scan_day"
+
+    monkeypatch.setattr(cli, "scan_missing_archive_bars", lambda *_args, **_kwargs: (_ for _ in ()).throw(
         RuntimeError("vendor unavailable")))
     assert cli.main([]) == cli.EXIT_FAILED
     assert json.loads(capsys.readouterr().out)["error_type"] == "RuntimeError"
