@@ -170,6 +170,46 @@ def test_drift_records_the_round_and_drops_an_alert_file(tmp_path, monkeypatch):
     assert list(tmp_path.glob("ALERT_model_drift_*.json"))
 
 
+def test_historical_bar_revision_records_alert_but_does_not_kill_round(tmp_path, monkeypatch):
+    """供应商改历史 bar 是结算问题，不得丢掉这一轮不可回填的决策证据。
+
+    第一次只观察 08-07；第二次供应商改写那根旧 bar，同时带来真正会被本轮消费的
+    08-10 新 bar。旧值分歧必须留下不可改归档和 ALERT，而本轮仍须产生决策与 book。
+    """
+    from qlab.events.datafetch.quotes_api import DailyBar
+    import json
+    import qlab.llm_paper.quote_bridge as QB
+
+    _iso(tmp_path, monkeypatch)
+    def snapshot(rows, retrieved):
+        return {symbol: [DailyBar(symbol=symbol, date=date, close=close, open=open_,
+                                  retrieved_utc=retrieved)
+                         for date, close, open_ in rows]
+                for symbol in ("IBM", "SPY")}
+    snapshots = [
+        snapshot([("2026-08-07", 100.0, 99.0)], "2026-08-07T12:00:00+00:00"),
+        snapshot([("2026-08-07", 50.0, 49.0), ("2026-08-10", 110.0, 109.0)],
+                 "2026-08-10T12:00:00+00:00"),
+    ]
+    monkeypatch.setattr(QB, "get_daily_closes", lambda symbols, **kw: (snapshots.pop(0), {}))
+    prop = [{"symbol": "IBM", "target_weight": 0.05, "confidence": 0.5, "thesis": "t",
+             "evidence_records": EV, "seed": 11, "prompt_variant": "pv1_baseline"}]
+
+    first = run_round(proposals=prop, decision_ts=DTS, probe=PROBE,
+                      out_dir=str(tmp_path), register_trials=False)
+    second = run_round(proposals=prop, decision_ts=DTS, probe=PROBE,
+                       out_dir=str(tmp_path), register_trials=False)
+
+    assert first["book"]["status"] == "pending_entry_bar"
+    assert second["n_decisions"] == 1 and second["book"]["status"] == "filled"
+    records = list((tmp_path / "bar_archive").glob("*.json"))
+    assert len(records) == 2                                   # 新版快照本身也被保留
+    alert = json.loads(next(tmp_path.glob("ALERT_bar_archive_integrity_*.json")).read_text())
+    assert alert["unresolved_differences"]
+    assert alert["unresolved_differences"][0]["differences"][0]["symbol"] == "IBM"
+    assert "本轮照常继续" in alert["action_required"]
+
+
 def test_quota_divergence_leaves_an_alert_and_no_round(tmp_path, monkeypatch):
     """疑似 key 被盗用（QUOTA_DIVERGENCE）时：整批不出、无决策无净值，但**留下独立 ALERT**。
 

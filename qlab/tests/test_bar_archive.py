@@ -5,7 +5,9 @@ import json
 import pytest
 
 from qlab.events.datafetch.quotes_api import DailyBar
-from qlab.llm_paper.bar_archive import ArchiveIntegrityError, archive_quote_snapshot
+from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, archive_quote_snapshot,
+                                        require_settlement_integrity,
+                                        unresolved_disagreements)
 
 
 def _bars(close: float = 101.0):
@@ -28,12 +30,15 @@ def test_archives_snapshot_with_content_hash_without_extra_fetch(tmp_path):
 
 def test_refetch_compares_overlapping_symbol_date_field_by_field(tmp_path):
     archive_quote_snapshot(_bars(), out_dir=str(tmp_path), stamp="20260831", executor="single_book")
-    with pytest.raises(ArchiveIntegrityError, match="逐位不一致") as exc:
-        archive_quote_snapshot(_bars(close=102.0), out_dir=str(tmp_path), stamp="20260901",
-                               executor="single_book",
-                               retrieved_utc="2026-09-01T12:00:00+00:00")
-    assert '"close"' in str(exc.value)
-    assert len(list((tmp_path / "bar_archive").glob("*.json"))) == 1
+    result = archive_quote_snapshot(_bars(close=102.0), out_dir=str(tmp_path), stamp="20260901",
+                                    executor="single_book",
+                                    retrieved_utc="2026-09-01T12:00:00+00:00")
+    assert result["unresolved_differences"][0]["differences"][0]["fields"]["close"] == {
+        "archived": 101.0, "refetched": 102.0}
+    assert len(list((tmp_path / "bar_archive").glob("*.json"))) == 2
+    assert len(unresolved_disagreements(str(tmp_path))) == 1
+    with pytest.raises(ArchiveIntegrityError, match="派生结算不得出"):
+        require_settlement_integrity(str(tmp_path))
 
 
 def test_tampered_archive_fails_closed_before_another_append(tmp_path):

@@ -19,7 +19,8 @@ from typing import Any, Dict, Optional, Sequence
 
 from qlab.events.datafetch.api_quota import MARKING
 from qlab.events.datafetch.quotes_api import RateLimited, get_daily_closes
-from qlab.llm_paper.bar_archive import ArchiveIntegrityError, archive_quote_snapshot
+from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, ArchiveRecordCorruptError,
+                                        archive_quote_snapshot)
 from qlab.llm_paper.errors import PreflightFailed
 
 
@@ -47,11 +48,12 @@ def fetch_round_quotes(symbols: Sequence[str], *, stamp: str, out_dir: str, exec
         raise
     if failed:
         raise PreflightFailed(f"行情缺失 {failed} → 不产生决策（不用陈旧价、不出假净值）")
-    # 归档不重取、不扩标的：就是本次已成功取得的持仓标的 + 基准快照。先比旧档、再 append；
-    # 一处同日值变化或旧档被改写都是证据完整性事件，不能带着不确定价格继续产出决策。
+    # 归档不重取、不扩标的：就是本次已成功取得的持仓标的 + 基准快照。历史供应商值变化
+    # 要逐位比、落独立 ALERT、并把新快照 append 成证据；它不能杀掉补不回来的决策轮。
+    # 是否采信哪一版属于派生结算层：`require_settlement_integrity()` 在那里 fail-closed。
     try:
-        archive_quote_snapshot(bars, out_dir=out_dir, stamp=stamp, executor=executor)
-    except ArchiveIntegrityError as e:
+        archive = archive_quote_snapshot(bars, out_dir=out_dir, stamp=stamp, executor=executor)
+    except ArchiveRecordCorruptError as e:
         out.mkdir(parents=True, exist_ok=True)
         (out / f"ALERT_bar_archive_integrity_{stamp}.json").write_text(
             json.dumps({"alert": "BAR_ARCHIVE_INTEGRITY", "round": stamp,
@@ -60,6 +62,27 @@ def fetch_round_quotes(symbols: Sequence[str], *, stamp: str, out_dir: str, exec
                         "note": "本轮未产生任何决策与净值点。"},
                        ensure_ascii=False, indent=2), encoding="utf-8")
         raise PreflightFailed(f"bar 归档完整性失败 → 不产生决策：{e}") from e
+    except ArchiveIntegrityError as e:
+        # 入参闸（空快照、重复键、标的集不符）仍必须阻止本轮；供应商的历史订正不会走这里。
+        out.mkdir(parents=True, exist_ok=True)
+        (out / f"ALERT_bar_archive_integrity_{stamp}.json").write_text(
+            json.dumps({"alert": "BAR_ARCHIVE_INTEGRITY", "round": stamp,
+                        "executor": executor, "message": str(e),
+                        "action_required": "停止该轮并回报工部；归档输入无效，不能构成观察证据。",
+                        "note": "本轮未产生任何决策与净值点。"},
+                       ensure_ascii=False, indent=2), encoding="utf-8")
+        raise PreflightFailed(f"bar 归档输入无效 → 不产生决策：{e}") from e
+    if archive["unresolved_differences"]:
+        out.mkdir(parents=True, exist_ok=True)
+        (out / f"ALERT_bar_archive_integrity_{stamp}.json").write_text(
+            json.dumps({"alert": "BAR_ARCHIVE_INTEGRITY", "round": stamp,
+                        "executor": executor, "archive_record": archive["archive_file"],
+                        "content_sha256": archive["content_sha256"],
+                        "unresolved_differences": archive["unresolved_differences"],
+                        "action_required": ("分歧已作为不可改归档记录保存；本轮照常继续。"
+                                            "派生结算遇该未裁定窗口必须拒绝读数并回报工部。"),
+                        "note": "供应商历史订正不杀易腐决策轮；此 ALERT 不是轮内 fail-closed。"},
+                       ensure_ascii=False, indent=2), encoding="utf-8")
     return bars
 
 

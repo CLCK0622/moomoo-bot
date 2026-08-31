@@ -21,7 +21,11 @@ from typing import Any, Dict, Iterable, List, Mapping
 
 
 class ArchiveIntegrityError(RuntimeError):
-    """An archive record was altered or a later refetch disagreed with it."""
+    """The archive cannot support the requested integrity operation."""
+
+
+class ArchiveRecordCorruptError(ArchiveIntegrityError):
+    """A purportedly immutable archive file was changed or cannot be verified."""
 
 
 _BAR_FIELDS = ("symbol", "date", "open", "high", "low", "close", "volume", "source")
@@ -45,13 +49,13 @@ def _load_record(path: Path) -> Dict[str, Any]:
     try:
         record = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        raise ArchiveIntegrityError(f"归档记录无法读取: {path.name}: {exc}") from exc
+        raise ArchiveRecordCorruptError(f"归档记录无法读取: {path.name}: {exc}") from exc
     supplied = record.get("content_sha256")
     unsigned = dict(record)
     unsigned.pop("content_sha256", None)
     actual = _hash(unsigned)
     if not supplied or supplied != actual:
-        raise ArchiveIntegrityError(
+        raise ArchiveRecordCorruptError(
             f"归档内容哈希不匹配: {path.name} (expected={supplied}, actual={actual})")
     return record
 
@@ -74,10 +78,40 @@ def _differences(current: Mapping[tuple[str, str], Dict[str, Any]],
     return diffs
 
 
+def unresolved_disagreements(out_dir: str) -> List[Dict[str, Any]]:
+    """Return every immutable refetch disagreement awaiting a settlement ruling.
+
+    This is intentionally separate from the round runner.  A decision round is
+    perishable; settlement is reproducible from the archive and is the layer
+    that must refuse to publish a reading while this list is non-empty.
+    Corrupt archive files still raise -- an altered evidence record is not a
+    provider correction and cannot be treated as an ordinary disagreement.
+    """
+    root = Path(out_dir) / "bar_archive"
+    pending = []
+    for path, record in _existing_records(root):
+        comparison = record.get("comparison") or {}
+        if comparison.get("result") == "unresolved_difference":
+            pending.append({"archive_file": str(path),
+                            "content_sha256": record.get("content_sha256"),
+                            "differences": comparison.get("differences") or []})
+    return pending
+
+
+def require_settlement_integrity(out_dir: str) -> None:
+    """Settlement gate: do not emit a reading across an unresolved revision."""
+    pending = unresolved_disagreements(out_dir)
+    if pending:
+        raise ArchiveIntegrityError(
+            "归档存在未裁定的供应商历史值分歧；派生结算不得出该窗口读数："
+            + json.dumps(pending, ensure_ascii=False, sort_keys=True))
+
+
 def archive_quote_snapshot(bars_by_symbol: Mapping[str, Iterable[Any]], *, out_dir: str,
                            stamp: str, executor: str,
-                           retrieved_utc: str | None = None) -> Dict[str, Any]:
-    """Hash and append the exact bar snapshot; reject any later disagreement.
+                           retrieved_utc: str | None = None,
+                           consumed_bar_keys: Iterable[tuple[str, str]] = ()) -> Dict[str, Any]:
+    """Hash and append the exact bar snapshot, preserving a disagreement as evidence.
 
     ``out_dir`` is the round's report directory.  The files live below it so a
     control run shares the bearing side's archive rather than creating a second
@@ -94,14 +128,12 @@ def archive_quote_snapshot(bars_by_symbol: Mapping[str, Iterable[Any]], *, out_d
     if len(observed) != len(flat):
         raise ArchiveIntegrityError("同一快照含重复 (symbol, date)，拒绝归档")
 
+    disagreements: List[Dict[str, Any]] = []
     for old_path, old in _existing_records(root):
         old_bars = {(item["symbol"], item["date"]): item for item in old.get("bars", [])}
         mismatches = _differences(observed, old_bars)
         if mismatches:
-            raise ArchiveIntegrityError(
-                "归档值与日后重取值逐位不一致: "
-                + json.dumps({"archive": old_path.name, "differences": mismatches},
-                               ensure_ascii=False, sort_keys=True))
+            disagreements.append({"archive": old_path.name, "differences": mismatches})
 
     retrieved = retrieved_utc or next(
         (getattr(bar, "retrieved_utc", "") for values in bars_by_symbol.values() for bar in values
@@ -116,7 +148,8 @@ def archive_quote_snapshot(bars_by_symbol: Mapping[str, Iterable[Any]], *, out_d
         "bars": sorted(flat, key=lambda item: (item["symbol"], item["date"])),
         "comparison": {
             "kind": "same_symbol_same_date_field_by_field",
-            "result": "no_prior_difference",
+            "result": "unresolved_difference" if disagreements else "no_prior_difference",
+            "differences": disagreements,
             "note": "只比较同一 (symbol, date) 的 as-traded 原始字段；不作复权或插补。",
         },
     }
@@ -137,5 +170,18 @@ def archive_quote_snapshot(bars_by_symbol: Mapping[str, Iterable[Any]], *, out_d
         existing = _load_record(path)
         if existing != payload:
             raise ArchiveIntegrityError(f"归档文件名冲突且内容不同: {path.name}")
-    return {"archive_file": str(path), "content_sha256": payload["content_sha256"],
-            "n_bars": len(flat), "symbols": payload["symbols"]}
+    result = {"archive_file": str(path), "content_sha256": payload["content_sha256"],
+              "n_bars": len(flat), "symbols": payload["symbols"],
+              "unresolved_differences": disagreements}
+    # Today no historical bar is consumed by the round runner: newly available
+    # bars have no older archive to compare.  Keep the explicit hook anyway so
+    # a future in-round settlement cannot accidentally consume a disputed bar.
+    consumed = set(consumed_bar_keys)
+    consumed_differences = [d for d in disagreements
+                            if any((m["symbol"], m["date"]) in consumed
+                                   for m in d["differences"])]
+    if consumed_differences:
+        raise ArchiveIntegrityError(
+            "当轮实际消费的 bar 与既有归档不一致，拒绝继续："
+            + json.dumps(consumed_differences, ensure_ascii=False, sort_keys=True))
+    return result
