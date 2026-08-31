@@ -1,0 +1,58 @@
+{
+  "basis": "as_traded_equity_and_literal_zero_cash_lower_bound",
+  "content_sha256": "1e660dde7f093a04afa8acc5492422cf7494d7965a10cc181fe447ac3aec12a0",
+  "is_acceptance_reading": false,
+  "note": "round-record nav_point is not consumed; missing archival coverage remains explicit.",
+  "rounds": [
+    {
+      "cells": {
+        "seed11×pv1_baseline": {
+          "capture_floor": null,
+          "missing": [
+            "CAT@2026-08-10",
+            "COP@2026-08-10",
+            "EMR@2026-08-10",
+            "GD@2026-08-10",
+            "GILD@2026-08-10",
+            "MET@2026-08-10",
+            "MRK@2026-08-10"
+          ],
+          "reason": "缺可用的归档建仓 bar（首份归档之前的历史值不冒充当时观察值）→ 不编建仓价或净值",
+          "status": "pending_archived_entry_bar"
+        }
+      },
+      "executor": "single_book",
+      "round": "20260810"
+    },
+    {
+      "cells": {
+        "seed11×pv1_baseline": {
+          "capture_floor": null,
+          "missing": [
+            "CRM@2026-08-31",
+            "CSCO@2026-08-31",
+            "DE@2026-08-31",
+            "HD@2026-08-31",
+            "INTU@2026-08-31",
+            "NVDA@2026-08-31",
+            "TGT@2026-08-31",
+            "WMT@2026-08-31"
+          ],
+          "reason": "缺可用的归档建仓 bar（首份归档之前的历史值不冒充当时观察值）→ 不编建仓价或净值",
+          "status": "pending_archived_entry_bar"
+        }
+      },
+      "executor": "single_book",
+      "round": "20260831"
+    }
+  ],
+  "schema": "llm_paper_derived_settlement/v1",
+  "source": {
+    "archive_content_sha256s": [],
+    "first_capture_round": null,
+    "round_records": [
+      "round_20260810.json",
+      "round_20260831.json"
+    ]
+  }
+}
