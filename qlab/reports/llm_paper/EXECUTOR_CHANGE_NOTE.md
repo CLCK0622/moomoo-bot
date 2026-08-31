@@ -8,6 +8,27 @@
 
 ---
 
+## 0. 冻结与实现的边界（机器可复核，防止把实现细节误读为冻结条款）
+
+**冻结 `8603989` 里 llm_paper 相关工件只有三份**：
+`qlab/LLM_PAPER_EVAL_PREREGISTRATION.md`、`qlab/LLM_PAPER_UNIVERSE.txt`、
+`qlab/llm_paper_prereg.json`。除此之外均为实现，不得以「文件在仓内」或「实现遵守冻结」反推某个
+实现细节本身是冻结条款。可复核：`git ls-tree -r --name-only 8603989 -- qlab`；例如
+`git cat-file -e 8603989:qlab/qlab/llm_paper/decision_chain.py` 必须失败。
+
+| 归类 | 初次落地（可由 `git log --diff-filter=A` 复核） | 文件 | 与业绩读数的关系 / 风险定性 |
+|---|---|---|---|
+| **冻结** | `8603989`（2026-08-08） | 上述三份工件 | 唯一的预注册条款来源；参数、universe、验收门等以它们为准。 |
+| 决策轮基础实现 | `27deabd` / `0aecf5c` / `ad6eb74` / `261cbe7`（均为 2026-08-08，早于第 1 轮 08-10） | `decision_chain.py`、`price_bridge.py`、`run_round.py`、`determinism.py`、`reporting.py` | **先于任何纸面业绩读数定死**。`rolled` 的效力来自这一前置时序与实际观测 bar 的机制，不来自「它写在冻结里」；`decision_chain.py` 不在冻结树中。 |
+| 结算 / 对照实现 | `e6ed082`（`multi_book.py` / `nav_series.py` / `ledger_bridge.py`）；`00d56e8`（`parallel_control.py` / `quote_bridge.py`）；`f8fc9f7`（`rebalance_policy.py`）（均为 2026-08-27） | 六个文件如左 | **晚于第 1 轮，但落地时仓内业绩读数为零，故本次不带按业绩调参风险。** 每个相关 commit 的父提交中，唯一已落盘的 `round_20260810.json` 都是 `book.status=pending_entry_bar`、`nav_point=null`；`round_20260831.json` 当时尚不存在。六者均不生成或选择 LLM 决策提案：前 3 个为分账/序列/台账，后 3 个为对照、行情桥接、违规动作；冻结网格仍由 `decision_chain.frozen_grid()` 读取。 |
+
+截至第 2 轮，`round_20260810.json` 与 `round_20260831.json` 均仍为
+`book.status=pending_entry_bar`、`nav_point=null`，可直接用 `jq` 复核。**这不是一张替后续实现背书的
+表**：下一批实现若落地时已经存在净值读数，表中「业绩读数为零」的前提不再成立，必须显式记录其
+读数窗口、是否触及决策生成 / 冻结参数，以及防止按读数调参的控制；不得沿用本次的风险定性。
+
+---
+
 ## 1. 当前状态：**(b) 尚未接管，承载路径仍是 (a)**
 
 | | 状态 |
@@ -35,7 +56,10 @@
 * 配额形态实测（足额 10 格一轮，第 1 轮的 7 标的 + SPY）：**8 次/轮**；
   朴素「10 次 `run_round()` 各取一遍行情」需 **80 次/轮** ≫ 25/天硬预算。这正是吏部指出的正确形态。
 * **组合约束按格逐一判**：每格是一个独立组合，不跨格加总（10 个 49% 是 10 个合规组合，不是 490% 超限）；
-  任一格不过 ⇒ **整轮 fail-closed、零落盘**，与 (a) 同一条纪律（不产出半截证据）。
+  ~~任一格不过 ⇒ **整轮 fail-closed、零落盘**，与 (a) 同一条纪律（不产出半截证据）。~~
+  **【已作废：吏部 2026-08-27 裁定】** 现行口径见 §1 / §6：某格 `check_portfolio` 不过 ⇒
+  **该格本轮不调仓、违规如实落盘、仍计入 `n_evaluated`，整轮与其余格照常落盘**；缺价、探针、
+  时序、台账、配额、空格子等非该格组合约束失败仍整轮 fail-closed。
 * 决策 / 约束 / 建仓 / 盯市 / 探针全部**复用既有实现**（`build_decision` / `check_portfolio` /
   `build_book` / `mark_to_market` / `determinism`），本模块只做编排，不复制其中任何一段逻辑——
   这是「两条路径不会静默分叉」的结构性保证，比对齐两份代码更可靠。
@@ -567,6 +591,13 @@ book.status = filled              → 有真 entries ← **只有这一种能被
 ⇒ **归档完整性不能只押在这条上**。必须并行配一条**从第一份归档就生效**的：
 **归档值 vs 日后对同一 `(symbol, date)` 的重取值直接逐位比**——它不依赖 `entries` 是否存在。
 两条各管一段：直接比对管「归档层自身有没有被改写」，`entries` 交叉核对管「结算路径与轮内记录是否一致」。
+
+**后果落点（工部尚书 2026-08-31 复现后校正）**：供应商日后订正历史 bar 时，归档层必须同时保留
+旧档、新快照与逐位差异，落 `ALERT_bar_archive_integrity_<stamp>.json`，但**不得杀掉本轮**——当轮决策
+是易腐日历证据，且当前不会消费那些历史 bar。未裁定分歧由派生结算层
+`require_settlement_integrity()` fail-closed：该窗口拒绝出读数并回报。只有分歧落在**当轮实际消费**的
+bar 上才允许轮内 fail-closed（当前不可能；接口仍显式保留，防止未来把跨轮结算塞回轮内）。归档文件的
+内容哈希失配、空快照、重复键或标的集不一致仍是输入 / 证据破损，照旧 fail-closed。
 
 ### 8.6 bar 归档的地位升级为批次 1 的最高优先项
 
