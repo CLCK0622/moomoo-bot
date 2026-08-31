@@ -8,6 +8,27 @@
 
 ---
 
+## 0. 冻结与实现的边界（机器可复核，防止把实现细节误读为冻结条款）
+
+**冻结 `8603989` 里 llm_paper 相关工件只有三份**：
+`qlab/LLM_PAPER_EVAL_PREREGISTRATION.md`、`qlab/LLM_PAPER_UNIVERSE.txt`、
+`qlab/llm_paper_prereg.json`。除此之外均为实现，不得以「文件在仓内」或「实现遵守冻结」反推某个
+实现细节本身是冻结条款。可复核：`git ls-tree -r --name-only 8603989 -- qlab`；例如
+`git cat-file -e 8603989:qlab/qlab/llm_paper/decision_chain.py` 必须失败。
+
+| 归类 | 初次落地（可由 `git log --diff-filter=A` 复核） | 文件 | 与业绩读数的关系 / 风险定性 |
+|---|---|---|---|
+| **冻结** | `8603989`（2026-08-08） | 上述三份工件 | 唯一的预注册条款来源；参数、universe、验收门等以它们为准。 |
+| 决策轮基础实现 | `27deabd` / `0aecf5c` / `ad6eb74` / `261cbe7`（均为 2026-08-08，早于第 1 轮 08-10） | `decision_chain.py`、`price_bridge.py`、`run_round.py`、`determinism.py`、`reporting.py` | **先于任何纸面业绩读数定死**。`rolled` 的效力来自这一前置时序与实际观测 bar 的机制，不来自「它写在冻结里」；`decision_chain.py` 不在冻结树中。 |
+| 结算 / 对照实现 | `e6ed082`（`multi_book.py` / `nav_series.py` / `ledger_bridge.py`）；`00d56e8`（`parallel_control.py` / `quote_bridge.py`）；`f8fc9f7`（`rebalance_policy.py`）（均为 2026-08-27） | 六个文件如左 | **晚于第 1 轮，但落地时仓内业绩读数为零，故本次不带按业绩调参风险。** 每个相关 commit 的父提交中，唯一已落盘的 `round_20260810.json` 都是 `book.status=pending_entry_bar`、`nav_point=null`；`round_20260831.json` 当时尚不存在。六者均不生成或选择 LLM 决策提案：前 3 个为分账/序列/台账，后 3 个为对照、行情桥接、违规动作；冻结网格仍由 `decision_chain.frozen_grid()` 读取。 |
+
+截至第 2 轮，`round_20260810.json` 与 `round_20260831.json` 均仍为
+`book.status=pending_entry_bar`、`nav_point=null`，可直接用 `jq` 复核。**这不是一张替后续实现背书的
+表**：下一批实现若落地时已经存在净值读数，表中「业绩读数为零」的前提不再成立，必须显式记录其
+读数窗口、是否触及决策生成 / 冻结参数，以及防止按读数调参的控制；不得沿用本次的风险定性。
+
+---
+
 ## 1. 当前状态：**(b) 尚未接管，承载路径仍是 (a)**
 
 | | 状态 |
