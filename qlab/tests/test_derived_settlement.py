@@ -8,7 +8,9 @@ import pytest
 from qlab.events.datafetch.quotes_api import DailyBar
 from qlab.llm_paper.bar_archive import ArchiveIntegrityError, archive_quote_snapshot
 from qlab.llm_paper.derived_settlement import (rebuild_lower_bound_settlement,
+                                                require_reading_kind,
                                                 write_lower_bound_settlement)
+from qlab.llm_paper.nav_series import cell_nav_series, cumulative_returns
 
 
 def _bar(symbol: str, day: str, close: float, open_: float | None = None) -> DailyBar:
@@ -44,11 +46,34 @@ def test_backfills_every_round_from_decisions_not_round_nav_point(tmp_path):
     result = write_lower_bound_settlement(str(tmp_path))
     cell = result["payload"]["rounds"][0]["cells"]["seed11×pv1_baseline"]
     assert result["n_rounds"] == 1
+    assert result["payload"]["reading_kind"] == "lower_bound"
     assert cell["status"] == "filled"
     assert cell["entries"]["IBM"]["entry_open"] == 100.0
     assert cell["nav_series"][-1]["as_of"] == "2026-08-11"
     assert cell["nav_series"][-1]["nav"] > 100_000
     assert "nav_point" not in cell
+
+
+def test_only_lower_bound_enters_authoritative_nav_or_reporting_paths(tmp_path):
+    round_ = _round()
+    # A deliberately conflicting round-record snapshot must stay an audit
+    # artifact, even once the same cell has a valid derived lower-bound series.
+    round_["nav_point"] = {"as_of": "2026-08-11", "nav": 999_999.0, "nav_start": 100_000.0}
+    (tmp_path / "round_20260810.json").write_text(json.dumps(round_), encoding="utf-8")
+    _archive(tmp_path)
+    (tmp_path / "derived_settlement").mkdir()
+    (tmp_path / "derived_settlement" / "EQUIVALENCE_demo.json").write_text(json.dumps({
+        "reading_kind": "equivalence_artifact", "rounds": [{"cells": {"seed99×pv2_riskaware": {
+            "status": "filled", "nav_series": [{"as_of": "2026-08-11", "nav": 9_999_999}]}}}]}),
+        encoding="utf-8")
+
+    series = cell_nav_series(str(tmp_path))
+    assert set(series) == {"seed11×pv1_baseline"}
+    assert series["seed11×pv1_baseline"][-1]["nav"] != 999_999.0
+    assert series["seed11×pv1_baseline"][-1]["reading_kind"] == "lower_bound"
+    assert set(cumulative_returns(str(tmp_path))) == {"seed11×pv1_baseline"}
+    assert require_reading_kind("equivalence_artifact") == "equivalence_artifact"
+    assert require_reading_kind("acceptance") == "acceptance"
 
 
 def test_pre_archive_round_is_explicit_gap_not_retroactive_observation(tmp_path):

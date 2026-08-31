@@ -23,10 +23,18 @@ from qlab.llm_paper.nav_series import load_rounds
 
 ET = "America/New_York"
 START_NAV = 100_000.0
+READING_KINDS = frozenset({"equivalence_artifact", "lower_bound", "acceptance"})
 
 
 class SettlementDataUnavailable(RuntimeError):
     """A truthful lower-bound settlement cannot yet be constructed."""
+
+
+def require_reading_kind(value: str) -> str:
+    """Validate the positive, mutually exclusive classification of a result."""
+    if value not in READING_KINDS:
+        raise ValueError(f"未知 reading_kind={value!r}; 必须是 {sorted(READING_KINDS)} 之一")
+    return value
 
 
 def _canonical(value: Mapping[str, Any]) -> bytes:
@@ -166,7 +174,11 @@ def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
     cost_rate = float(load_prereg()["cost_per_turnover"])
     result: Dict[str, Any] = {
         "schema": "llm_paper_derived_settlement/v1",
+        "reading_kind": require_reading_kind("lower_bound"),
         "basis": "as_traded_equity_and_literal_zero_cash_lower_bound",
+        # Compatibility convenience only.  Consumers must classify by the
+        # positive reading_kind; False alone cannot distinguish this from an
+        # equivalence artifact.
         "is_acceptance_reading": False,
         "source": {"round_records": [], "archive_content_sha256s": archive["archive_content_sha256s"],
                    "first_capture_round": archive["first_capture_round"]},

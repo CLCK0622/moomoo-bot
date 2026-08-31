@@ -312,16 +312,16 @@ def test_missing_quote_symbol_blocks_the_round(tmp_path, monkeypatch):
     assert not list(tmp_path.glob("round_*.json"))
 
 
-def test_round_payload_is_written_and_readable_by_nav_series(tmp_path, monkeypatch):
-    """(b) 的落盘格式必须能被每格净值序列直接读通——切换那一轮就靠这个接得上。"""
-    from qlab.llm_paper.nav_series import cell_nav_series, coverage
+def test_round_payload_is_readable_as_a_downgraded_round_record_artifact(tmp_path, monkeypatch):
+    """(b) 轮内 nav_point 只可作审计快照，不能绕过派生层成为权威净值。"""
+    from qlab.llm_paper.nav_series import coverage, round_record_nav_series
     _iso(tmp_path, monkeypatch)
     _stub_bars(monkeypatch, ["2026-08-07", "2026-08-10"])
     run_round_multi(cells=expand_variants({"pv1_baseline": [_prop("IBM", 0.09)],
                                            "pv2_riskaware": [_prop("IBM", 0.07)]}),
                     decision_ts=DTS, probe=PROBE, out_dir=str(tmp_path), register_trials=False)
     assert (tmp_path / "round_20260807.json").exists()
-    s = cell_nav_series(str(tmp_path))
+    s = round_record_nav_series(str(tmp_path))
     assert len(s) == 10 and all(len(v) == 1 for v in s.values())
     assert coverage(str(tmp_path))["per_round"][0]["executor"] == "multi_book_v1"
 

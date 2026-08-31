@@ -1,4 +1,4 @@
-"""每格净值序列：从不可改的 round JSON 机械拼出，(a)/(b) 两种落盘格式都认。"""
+"""权威派生净值与降级轮内快照的边界。"""
 from __future__ import annotations
 
 import json
@@ -7,14 +7,15 @@ from pathlib import Path
 import pytest
 
 from qlab.llm_paper.nav_series import (cell_nav_series, coverage, cumulative_returns,
-                                       load_rounds)
+                                       load_rounds, round_record_nav_series)
 
 REPORTS = Path(__file__).resolve().parents[1] / "reports" / "llm_paper"
 
 
 def _single(nav=None, seed=11, variant="pv1_baseline", status="filled"):
     p = {"executor": "single_book", "book": {"status": status},
-         "decisions": [{"seed": seed, "prompt_variant": variant}]}
+         "decisions": [{"seed": seed, "prompt_variant": variant, "symbol": "IBM",
+                        "target_weight": 0.1, "intended_start": "2026-08-10T13:30:00+00:00"}]}
     if nav is not None:
         p["nav_point"] = {"as_of": "2026-08-14", "nav": nav, "nav_x2_cost": nav - 10.0,
                           "nav_start": 100_000.0}
@@ -24,6 +25,9 @@ def _single(nav=None, seed=11, variant="pv1_baseline", status="filled"):
 def _multi(navs, as_of="2026-08-31"):
     return {"executor": "multi_book_v1", "cells": {
         f"seed{s}×{v}": {"seed": s, "prompt_variant": v, "book": {"status": "filled"},
+                         "decisions": [{"seed": s, "prompt_variant": v, "symbol": "IBM",
+                                        "target_weight": 0.1,
+                                        "intended_start": "2026-08-10T13:30:00+00:00"}],
                          "nav_point": {"as_of": as_of, "nav": nav, "nav_x2_cost": nav - 10.0,
                                        "nav_start": 100_000.0}}
         for (s, v), nav in navs.items()}}
@@ -33,14 +37,14 @@ def _write(d, name, payload):
     (d / name).write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
 
 
-def test_series_spans_the_executor_switch(tmp_path):
-    """(a) 那几轮只喂 1 格，(b) 接管后 10 格全有 —— 同一条序列必须接得上。"""
+def test_round_record_series_spans_the_executor_switch_for_audit_only(tmp_path):
+    """轮内快照仍可审计执行器切换，但名字与权威结算序列不再相同。"""
     _write(tmp_path, "round_20260810.json", _single(nav=None, status="pending_entry_bar"))
     _write(tmp_path, "round_20260817.json", _single(nav=101_000.0))
     _write(tmp_path, "round_20260831.json", _multi(
         {(s, v): 102_000.0 + s for s in (11, 22) for v in ("pv1_baseline", "pv2_riskaware")}))
 
-    s = cell_nav_series(str(tmp_path))
+    s = round_record_nav_series(str(tmp_path))
     assert [p["round"] for p in s["seed11×pv1_baseline"]] == ["20260817", "20260831"]
     assert [p["executor"] for p in s["seed11×pv1_baseline"]] == ["single_book", "multi_book_v1"]
     assert len(s["seed22×pv2_riskaware"]) == 1                 # (b) 起才有读数
@@ -48,7 +52,8 @@ def test_series_spans_the_executor_switch(tmp_path):
 
     cov = coverage(str(tmp_path))
     assert cov["executor_switch_rounds"] == [{"round": "20260831", "to": "multi_book_v1"}]
-    assert cov["per_round"][0]["n_nav_points"] == 0 and cov["per_round"][2]["n_cells"] == 4
+    assert cov["per_round"][0]["n_round_record_nav_points"] == 0
+    assert cov["per_round"][2]["n_cells"] == 4
 
 
 def test_pending_round_contributes_no_point(tmp_path):
@@ -58,14 +63,13 @@ def test_pending_round_contributes_no_point(tmp_path):
     assert cumulative_returns(str(tmp_path)) == {}
 
 
-def test_cumulative_returns_are_per_cell_and_two_track(tmp_path):
+def test_round_record_nav_cannot_become_authoritative_or_x2_fallback(tmp_path):
     _write(tmp_path, "round_20260831.json", _multi({(11, "pv1_baseline"): 110_000.0,
                                                     (11, "pv2_riskaware"): 95_000.0}))
-    x1 = cumulative_returns(str(tmp_path))
-    assert x1["seed11×pv1_baseline"] == pytest.approx(0.10)
-    assert x1["seed11×pv2_riskaware"] == pytest.approx(-0.05)
-    x2 = cumulative_returns(str(tmp_path), cost_track="x2")
-    assert x2["seed11×pv1_baseline"] == pytest.approx((110_000.0 - 10.0) / 100_000.0 - 1)
+    assert cell_nav_series(str(tmp_path)) == {}
+    assert cumulative_returns(str(tmp_path)) == {}
+    with pytest.raises(ValueError, match="不得拿轮内"):
+        cumulative_returns(str(tmp_path), cost_track="x2")
 
 
 def test_ambiguous_single_book_round_is_refused(tmp_path):
@@ -74,7 +78,7 @@ def test_ambiguous_single_book_round_is_refused(tmp_path):
     p["decisions"].append({"seed": 22, "prompt_variant": "pv2_riskaware"})
     _write(tmp_path, "round_20260817.json", p)
     with pytest.raises(ValueError, match="归属不明"):
-        cell_nav_series(str(tmp_path))
+        round_record_nav_series(str(tmp_path))
 
 
 def test_broken_round_file_is_not_silently_skipped(tmp_path):
@@ -91,5 +95,5 @@ def test_reads_the_real_round_one_record():
     cov = coverage(str(REPORTS))
     r1 = next(r for r in cov["per_round"] if r["round"] == "20260810")
     assert r1["executor"] == "single_book"           # 第 1 轮记录早于 executor 字段 → 归 single_book
-    assert r1["cells"] == ["seed11×pv1_baseline"] and r1["n_nav_points"] == 0
+    assert r1["cells"] == ["seed11×pv1_baseline"] and r1["n_round_record_nav_points"] == 0
     assert cell_nav_series(str(REPORTS)).get("seed11×pv1_baseline") is None

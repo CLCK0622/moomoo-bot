@@ -268,8 +268,8 @@ def run_round_multi(*, cells: Sequence[Dict[str, Any]], decision_ts,
     payload = {
         "round_decision_ts": pd.Timestamp(decision_ts).isoformat(),
         "executor": EXECUTOR,
-        "executor_note": ("多 book：一次取符号并集、内部按格分账，每格自带 book 与净值点；"
-                          "跨轮每格净值序列见 nav_series.cell_nav_series()"),
+        "executor_note": ("多 book：一次取符号并集、内部按格分账；轮内 nav_point 仅为 round-record "
+                          "artifact，权威跨轮净值序列由 derived_settlement 重算。"),
         "preflight": pre,
         "symbols_fetched": symbols,
         "quote_calls_this_round": 0 if injected else len(symbols),

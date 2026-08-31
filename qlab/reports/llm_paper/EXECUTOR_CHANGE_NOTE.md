@@ -565,6 +565,11 @@ nav_series.cell_nav_series()          —— 现在正是从这些轮内 nav_poi
 不回改任何已落盘记录；派生层**只从「不可改决策 + 归档 bars」重算，绝不消费轮内 `nav_point`**；
 `nav_series.cell_nav_series()` 届时**退休或显式降级**，并留一条测试钉死「同一时刻只有一条权威净值序列」。
 
+**落地（工部 2026-08-31）：**`cell_nav_series()` 与 `cumulative_returns()` 只消费派生的
+`reading_kind=lower_bound`；轮内快照移为显式命名的 `round_record_nav_series()`，只供审计。派生
+结算的 `basis` 与正向 `reading_kind` 并存，保留 `is_acceptance_reading` 仅作兼容派生字段，禁止再以
+这个否定词区分产物。`equivalence_artifact` 被结构性排除在净值序列与上报路径之外。
+
 ### 8.5.2 建仓价交叉核对：**差异即事件**，不是「派生层权威、覆盖即可」
 
 派生层从归档 bars 重算时会**重新算出建仓价**，而 round JSON 里已经记着 `entries`（建仓日、开盘价、
