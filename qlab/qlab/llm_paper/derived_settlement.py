@@ -15,10 +15,9 @@ from typing import Any, Dict, Iterable, List, Mapping
 
 import pandas as pd
 
-from qlab.events.datafetch.api_quota import MARKING, guard_from_env
-from qlab.events.datafetch.quotes_api import get_daily_closes
-from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, archive_quote_snapshot, load_settlement_bars,
+from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, load_settlement_bars,
                                          require_settlement_integrity)
+from qlab.llm_paper.archive_scan_state import scanner_activation_date
 from qlab.llm_paper.decision_chain import load_prereg
 from qlab.llm_paper.ledger_bridge import cell_id
 from qlab.llm_paper.nav_series import load_rounds
@@ -26,9 +25,6 @@ from qlab.llm_paper.nav_series import load_rounds
 ET = "America/New_York"
 START_NAV = 100_000.0
 READING_KINDS = frozenset({"equivalence_artifact", "lower_bound", "acceptance"})
-# 吏部 2026-08-31 的一次性授权。它不是一个可随首份归档日期滑动的规则：
-# 只有这两份归档机制上线前已落盘的决策可以使用后来归档到的历史 bar。
-PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS = frozenset({"20260810", "20260831"})
 
 
 class SettlementDataUnavailable(RuntimeError):
@@ -42,56 +38,6 @@ def require_reading_kind(value: str) -> str:
     return value
 
 
-def authorized_pre_archive_symbols(out_dir: str, *, benchmark: str = "SPY") -> List[str]:
-    """The only symbols permitted in the one-time historical capture.
-
-    This derives the set from the two immutable authorized rounds rather than
-    accepting a caller-provided universe.  It is therefore impossible to turn
-    the narrow ruling into a convenient all-symbol refresh.
-    """
-    symbols = {benchmark}
-    for payload in load_rounds(out_dir):
-        if _stamp(payload) not in PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS:
-            continue
-        for block in _cells(payload).values():
-            symbols |= {str(decision["symbol"]) for decision in block["decisions"]}
-    return sorted(symbols)
-
-
-def capture_authorized_pre_archive_bars(out_dir: str, *, stamp: str, guard=None,
-                                        benchmark: str = "SPY") -> Dict[str, Any]:
-    """Perform the single permitted AV compact capture for the two old rounds.
-
-    This is deliberately a non-round-day operation: it must not consume the
-    Monday decision run's shared 25-call free-tier budget.  It uses the normal
-    marking quota and the same AV endpoint/schema as a regular archive fetch;
-    no source substitution or separate evidence store is allowed.
-    """
-    capture_day = pd.Timestamp(stamp)
-    if capture_day.weekday() not in {1, 2, 3, 4}:       # Tuesday through Friday only
-        raise SettlementDataUnavailable("一次性定向补取只能在非轮次日（周二至周五）执行")
-    archive = load_settlement_bars(out_dir)
-    if any(capture.get("executor") == "authorized_pre_archive_backfill"
-           for capture in archive["captures"]):
-        raise SettlementDataUnavailable("一次性定向补取已执行；不得再次调用或扩大其范围")
-    symbols = authorized_pre_archive_symbols(out_dir, benchmark=benchmark)
-    if not symbols or symbols == [benchmark]:
-        raise SettlementDataUnavailable("未找到两份获授权 round JSON 的持仓标的，拒绝猜测补取范围")
-    guard = guard or guard_from_env()
-    # get_daily_closes repeats this whole-batch check before issuing calls; keep
-    # it explicit here so a caller sees the all-or-nothing budget failure at the
-    # authorization boundary rather than halfway through a vendor loop.
-    guard.check(len(symbols), purpose=MARKING)
-    bars, failed = get_daily_closes(symbols, guard=guard, purpose=MARKING,
-                                    require_full_batch=True)
-    if failed:
-        raise SettlementDataUnavailable(f"一次性定向补取不完整 {failed}；不得写半截归档")
-    archived = archive_quote_snapshot(bars, out_dir=out_dir, stamp=capture_day.strftime("%Y%m%d"),
-                                      executor="authorized_pre_archive_backfill")
-    return {"purpose": "one_time_authorized_pre_archive_backfill",
-            "symbols": symbols, "quota_purpose": MARKING, "archive": archived,
-            "note": ("同一供应商 AV TIME_SERIES_DAILY / 同一 schema；仅补 08-10、08-31"
-                     " 两轮的持仓并集与基准，不能援引为后续轮次回补先例。")}
 
 
 def _canonical(value: Mapping[str, Any]) -> bytes:
@@ -135,31 +81,55 @@ def _archive_date(first_capture_round: str | None) -> str | None:
     return None
 
 
+def _round_execution_date(payload: Mapping[str, Any],
+                          bars: Mapping[tuple[str, str], Mapping[str, Any]]) -> str | None:
+    """Observed execution date for a persisted round, never a calendar guess.
+
+    The live runner uses the union of fetched bar dates to resolve every
+    decision's ``actual_start``.  Settlement reproduces that rule from the
+    immutable archive: the next round closes this one only once an observed bar
+    establishes its execution date.  Until then the newest round remains open.
+    """
+    observed_days = sorted({date for _, date in bars})
+    intended = [_date(str(decision["intended_start"]))
+                for block in _cells(payload).values()
+                for decision in block["decisions"]]
+    starts = [next((day for day in observed_days if day >= value), None) for value in intended]
+    if not starts or any(day is None for day in starts):
+        return None
+    return max(str(day) for day in starts)
+
+
 def _pre_archive_provenance(*, round_: str, consumed: set[tuple[str, str]],
-                            first_archive_date: str | None) -> Dict[str, Any] | None:
+                            first_archive_date: str | None,
+                            scanner_started: str | None) -> Dict[str, Any] | None:
     """Label the whole reading when it uses a bar predating archive launch.
 
     The immutable archive, not a bar-date floor, is the admission criterion.
     The date comparison solely exposes the lower evidence strength: there was
     no contemporaneous archive copy against which a later refetch can be
-    cross-checked.  The exceptional admission is hard-coded and closes itself.
+    cross-checked.  The exceptional admission is bounded by the first
+    successful scanner run, so it includes every already-persisted round and
+    closes automatically for later rounds.
     """
     if not first_archive_date:
         return None
     keys = sorted(key for key in consumed if key[1] < first_archive_date)
     if not keys:
         return None
-    if round_ not in PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS:
+    activation = scanner_started.replace("-", "") if scanner_started else None
+    if not activation or round_ >= activation:
         raise SettlementDataUnavailable(
-            "首份归档前历史 bar 的一次性回补授权已自动关闭："
-            f"round={round_} 不在 {sorted(PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS)}。"
+            "首份归档前历史 bar 的一次性回补授权已自动关闭或尚未开启：扫描机制尚未成功运行，"
+            "或该轮已在机制到位后落盘。"
             "该轮读数丢失，停止报告；不得回补或援引 2026-08-31 裁定。")
     return {
         "scope": "entire_nav_segment",
         "kind": "retrospectively_archived_pre_initial_capture",
         "first_archive_date": first_archive_date,
         "pre_initial_archive_keys": [{"symbol": symbol, "date": date} for symbol, date in keys],
-        "authorization": "one_time_pre_archive_rounds_20260810_20260831_only",
+        "authorization": "one_time_pre_archive_before_scanner_activation_only",
+        "scanner_activation_date": scanner_started,
         "cross_check_baseline": "absent",
         "not_verified": True,
         "not_cross_checked": True,
@@ -170,10 +140,27 @@ def _pre_archive_provenance(*, round_: str, consumed: set[tuple[str, str]],
     }
 
 
+def _refuse_expired_post_scanner_gap(*, round_: str, missing: Iterable[tuple[str, str]],
+                                     bars: Mapping[tuple[str, str], Mapping[str, Any]],
+                                     scanner_started: str | None) -> None:
+    """Close the backfill exception once the compact observation window passed."""
+    activation = scanner_started.replace("-", "") if scanner_started else None
+    if not activation or round_ < activation:
+        return
+    observed_days = sorted({date for _, date in bars})
+    expired = [(symbol, date) for symbol, date in missing
+               if sum(1 for day in observed_days if day > date) >= 100]
+    if expired:
+        raise SettlementDataUnavailable(
+            "扫描机制到位后存在已滑出 compact 窗口的未归档 bar；该轮读数丢失，"
+            "停止报告，不得回补、不得援引本裁定：" + repr(expired))
+
+
 def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping[str, Any],
                  bars: Mapping[tuple[str, str], Mapping[str, Any]],
                  external_keys: set[tuple[str, str]], first_archive_date: str | None,
-                 round_: str, out_dir: str, cost_rate: float) -> Dict[str, Any]:
+                 scanner_started: str | None, round_: str, out_dir: str, cost_rate: float,
+                 window_end: str | None) -> Dict[str, Any]:
     if not decisions:
         raise SettlementDataUnavailable("空决策格不是持现金，拒绝结算")
     if portfolio_check and not portfolio_check.get("ok", False):
@@ -203,13 +190,32 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
         else:
             missing.append(f"{symbol}@{intended[symbol]}")
     if missing:
+        _refuse_expired_post_scanner_gap(
+            round_=round_, missing=[tuple(item.split("@", 1)) for item in missing],
+            bars=bars, scanner_started=scanner_started)
         return {"status": "pending_archived_entry_bar", "missing": missing,
                 "reason": "缺存在于不可改归档的建仓 bar → 不编建仓价或净值"}
 
     common_dates = set(dates_by_symbol[next(iter(sorted(weights)))])
     for symbol in sorted(weights):
         common_dates &= set(date for date in dates_by_symbol[symbol] if date >= entry_dates[symbol])
-    marks = sorted(common_dates)
+    # Weekly rebalance means a target book exists only until the next round's
+    # observed execution.  Without this strict upper bound each weekly target
+    # is silently held to today, overlapping every later book and double
+    # counting the same market move in a concatenated NAV series.
+    marks = sorted(day for day in common_dates if window_end is None or day < window_end)
+    mark_start = max(entry_dates.values())
+    observed_days = sorted({date for _, date in bars})
+    expected_marks = [day for day in observed_days
+                      if day >= mark_start and (window_end is None or day < window_end)]
+    missing_marks = [(symbol, day) for symbol in weights for day in expected_marks
+                     if (symbol, day) not in bars]
+    if missing_marks:
+        _refuse_expired_post_scanner_gap(round_=round_, missing=missing_marks,
+                                         bars=bars, scanner_started=scanner_started)
+        return {"status": "pending_archived_mark_bar",
+                "missing": [f"{symbol}@{day}" for symbol, day in sorted(missing_marks)],
+                "reason": "盯市窗内缺不可改归档 bar → 不跳过该交易日、不拼残缺净值序列"}
     if not marks:
         return {"status": "pending_common_mark", "entries_pending": entry_dates,
                 "reason": "各持仓尚无同一归档交易日可盯市，拒绝拼不同日期的价格"}
@@ -224,7 +230,8 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
         return {"status": "pending_external_ruling_price", "keys": external,
                 "reason": "裁定采信 external 版本，但该版本尚未作为独立归档证据提供"}
     provenance = _pre_archive_provenance(round_=round_, consumed=consumed,
-                                         first_archive_date=first_archive_date)
+                                         first_archive_date=first_archive_date,
+                                         scanner_started=scanner_started)
 
     entries: Dict[str, Dict[str, float | str]] = {}
     shares: Dict[str, float] = {}
@@ -254,7 +261,8 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
             "gross_notional": gross, "entry_cost": entry_cost, "cash": cash,
             "nav_series": nav_series, "consumed_bar_keys": sorted(consumed),
             "bar_provenance": provenance,
-            "basis": "archived as-traded equity price + literal zero-yield cash (non-acceptance lower bound)"}
+            "basis": "archived as-traded equity price + literal zero-yield cash (non-acceptance lower bound)",
+            "mark_window": {"start": min(entry_dates.values()), "end_exclusive": window_end}}
 
 
 def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
@@ -267,7 +275,9 @@ def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
     """
     archive = load_settlement_bars(out_dir)
     first_archive_date = _archive_date(archive["first_capture_round"])
+    scanner_started = scanner_activation_date(out_dir)
     cost_rate = float(load_prereg()["cost_per_turnover"])
+    rounds = load_rounds(out_dir)
     result: Dict[str, Any] = {
         "schema": "llm_paper_derived_settlement/v1",
         "reading_kind": require_reading_kind("lower_bound"),
@@ -278,22 +288,75 @@ def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
         "is_acceptance_reading": False,
         "source": {"round_records": [], "archive_content_sha256s": archive["archive_content_sha256s"],
                    "first_capture_round": archive["first_capture_round"],
-                   "pre_archive_backfill_authorized_rounds": sorted(PRE_ARCHIVE_BACKFILL_AUTHORIZED_ROUNDS)},
+                   "scanner_activation_date": scanner_started,
+                   "pre_archive_backfill_authorization": (
+                       "rounds persisted before the first successful non-round-day scanner only")},
         "rounds": [],
         "note": "round-record nav_point is not consumed; missing archival coverage remains explicit.",
     }
-    for payload in load_rounds(out_dir):
+    for index, payload in enumerate(rounds):
         stamp = _stamp(payload)
         result["source"]["round_records"].append(payload.get("_file"))
+        window_end = (_round_execution_date(rounds[index + 1], archive["bars"])
+                      if index + 1 < len(rounds) else None)
         cells = {name: _settle_cell(decisions=block["decisions"],
                                     portfolio_check=block["portfolio_check"], bars=archive["bars"],
                                     external_keys=archive["external_keys"],
                                     first_archive_date=first_archive_date, round_=stamp,
-                                    out_dir=out_dir, cost_rate=cost_rate)
+                                    scanner_started=scanner_started, out_dir=out_dir,
+                                    cost_rate=cost_rate, window_end=window_end)
                  for name, block in _cells(payload).items()}
         result["rounds"].append({"round": stamp, "executor": payload.get("executor", "single_book"),
+                                 "mark_window_end_exclusive": window_end,
                                  "cells": cells})
     return result
+
+
+def archive_coverage_requirements(out_dir: str) -> Dict[str, Any]:
+    """Observed, finite `(symbol, date)` obligations for the archive scanner.
+
+    A date becomes required only after an archived bar proves it was a trading
+    day; this deliberately does not synthesize holidays from a calendar.  Each
+    round ends at the following round's observed execution, so completed weekly
+    windows stop growing forever.  The newest unresolved window is returned as
+    ``active_symbols`` for the scanner's next non-round-day observation.
+    """
+    archive = load_settlement_bars(out_dir)
+    bars = archive["bars"]
+    observed_days = sorted({date for _, date in bars})
+    rounds = load_rounds(out_dir)
+    required: set[tuple[str, str]] = set()
+    active_symbols: set[str] = set()
+    symbols: set[str] = set()
+    details: List[Dict[str, Any]] = []
+    for index, payload in enumerate(rounds):
+        end = (_round_execution_date(rounds[index + 1], bars)
+               if index + 1 < len(rounds) else None)
+        round_symbols = {str(decision["symbol"])
+                         for block in _cells(payload).values()
+                         for decision in block["decisions"]}
+        symbols |= round_symbols
+        if end is None:
+            active_symbols |= round_symbols
+        for block in _cells(payload).values():
+            for decision in block["decisions"]:
+                symbol = str(decision["symbol"])
+                intended = _date(str(decision["intended_start"]))
+                entry = next((date for sym, date in bars
+                              if sym == symbol and date >= intended), None)
+                start = entry or intended
+                dates = [day for day in observed_days
+                         if day >= start and (end is None or day < end)]
+                if not dates and entry is None:
+                    required.add((symbol, intended))
+                required |= {(symbol, day) for day in dates}
+                details.append({"round": _stamp(payload), "symbol": symbol,
+                                "start": start, "end_exclusive": end,
+                                "entry_observed": entry is not None})
+    missing = sorted(required - set(bars))
+    return {"required_keys": sorted(required), "missing_keys": missing,
+            "active_symbols": sorted(active_symbols), "symbols": sorted(symbols),
+            "observed_trading_days": observed_days, "windows": details}
 
 
 def write_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
