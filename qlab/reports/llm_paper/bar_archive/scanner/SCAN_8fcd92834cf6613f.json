@@ -1,0 +1,139 @@
+{
+  "archive": {
+    "archive_file": "qlab/reports/llm_paper/bar_archive/archive_20260903_2026-09-03T02-01-51-355718-00-00_648e2a570c1e.json",
+    "content_sha256": "648e2a570c1ecf04dcb6284914dfe2d75990e39a90a458ac7bd100a3ad375629",
+    "n_bars": 900,
+    "symbols": [
+      "CRM",
+      "CSCO",
+      "DE",
+      "HD",
+      "INTU",
+      "NVDA",
+      "SPY",
+      "TGT",
+      "WMT"
+    ],
+    "unresolved_differences": [
+      {
+        "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+        "differences": [
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 15040655.0,
+                "refetched": 15897531.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 13846929.0,
+                "refetched": 14173011.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 2274118.0,
+                "refetched": 2311017.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 3284495.0,
+                "refetched": 3292566.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 2626150.0,
+                "refetched": 2673411.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 106855211.0,
+                "refetched": 109756184.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 37889249.0,
+                "refetched": 41126315.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 3802576.0,
+                "refetched": 3982974.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 21964131.0,
+                "refetched": 22074574.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      }
+    ]
+  },
+  "content_sha256": "8fcd92834cf6613f9b4d6e703db29887c2f011b1c08023d85893aeb961141243",
+  "coverage": {
+    "missing_count": 0,
+    "missing_keys": [],
+    "oldest_missing": null
+  },
+  "executor": "non_round_archive_scanner",
+  "hard_alerts": [],
+  "note": "幂等追赶：每次按全部已落盘轮次重建缺口；只取仍缺键对应标的和当前开窗持仓。append-only，不改写既有归档值；供应商差异沿用 RESOLUTION。",
+  "quota_purpose": "marking",
+  "requested_symbols": [
+    "CRM",
+    "CSCO",
+    "DE",
+    "HD",
+    "INTU",
+    "NVDA",
+    "SPY",
+    "TGT",
+    "WMT"
+  ],
+  "scan_date": "2026-09-03",
+  "schema": "llm_paper_archive_scanner/v1",
+  "source": "AV TIME_SERIES_DAILY compact"
+}
