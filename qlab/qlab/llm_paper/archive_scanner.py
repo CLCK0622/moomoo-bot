@@ -44,7 +44,8 @@ def _scan_date(stamp: str) -> str:
     return pd.Timestamp(stamp).strftime("%Y-%m-%d")
 
 
-def _require_non_round_day(stamp: str) -> str:
+def require_scan_day(stamp: str) -> str:
+    """Return the UTC scan date or raise the stable non-scan-day refusal."""
     day = pd.Timestamp(stamp)
     if day.weekday() not in {1, 2, 3, 4}:  # Tue--Fri; calendar mechanics only
         raise ScanDayRefused("归档扫描只能在非轮次日（周二至周五）运行")
@@ -71,7 +72,49 @@ def _write_append_only(directory: Path, prefix: str, payload: Dict[str, Any]) ->
     return {"file": str(path), "content_sha256": payload["content_sha256"]}
 
 
-def archive_scan_coverage(out_dir: str) -> Dict[str, Any]:
+def _ageing_clock(*, missing: Iterable[tuple[str, str]], observed_days: Iterable[str],
+                  as_of: str | None) -> Dict[str, Any]:
+    """Expose where observed-trading-day ageing stops being informative.
+
+    ``remaining_trading_days`` deliberately stays on the frozen
+    observe-not-predict basis.  It must not start guessing holidays from a
+    weekday calendar merely to make the number move.  The flip side is that an
+    empty or no-longer-growing archive cannot age by itself.  Make that limit a
+    first-class diagnostic instead of returning an unexplained constant 100.
+
+    Calendar lag is diagnostic only.  It never feeds the <=20 trading-day hard
+    alert and therefore does not change the alert threshold or timing model.
+    """
+    missing = list(missing)
+    observed_days = sorted(observed_days)
+    as_of_date = _scan_date(as_of) if as_of is not None else None
+    observed_through = observed_days[-1] if observed_days else None
+    lag = None
+    if as_of_date is not None and observed_through is not None:
+        lag = max(0, int((pd.Timestamp(as_of_date) - pd.Timestamp(observed_through)).days))
+
+    if not missing:
+        status = "complete_no_missing_keys"
+    elif not observed_through:
+        status = "unanchored_empty_archive"
+    elif as_of_date is not None and observed_through < as_of_date:
+        status = "lag_visible_observed_days_only"
+    else:
+        status = "observed_days_only"
+    return {
+        "basis": "archived_source_trade_dates_only",
+        "status": status,
+        "as_of": as_of_date,
+        "observed_through": observed_through,
+        "calendar_lag_days_diagnostic_only": lag,
+        "unobserved_time_excluded": bool(
+            missing and (not observed_through or
+                         (as_of_date is not None and observed_through < as_of_date))),
+        "hard_alert_semantics": "unchanged_observed_trading_days_le_20",
+    }
+
+
+def archive_scan_coverage(out_dir: str, *, as_of: str | None = None) -> Dict[str, Any]:
     """Coverage accounting only: no HTTP calls, no calendar prediction."""
     coverage = archive_coverage_requirements(out_dir)
     ageing = [{"symbol": symbol, "date": date,
@@ -81,7 +124,10 @@ def archive_scan_coverage(out_dir: str) -> Dict[str, Any]:
     return {**coverage, "missing_count": len(coverage["missing_keys"]),
             "oldest_missing": ageing[0] if ageing else None,
             "hard_alerts": [item for item in ageing
-                            if item["remaining_trading_days"] <= HARD_ALERT_REMAINING_TRADING_DAYS]}
+                            if item["remaining_trading_days"] <= HARD_ALERT_REMAINING_TRADING_DAYS],
+            "ageing_clock": _ageing_clock(
+                missing=coverage["missing_keys"],
+                observed_days=coverage["observed_trading_days"], as_of=as_of)}
 
 
 def scan_missing_archive_bars(out_dir: str, *, stamp: str, guard=None,
@@ -94,8 +140,8 @@ def scan_missing_archive_bars(out_dir: str, *, stamp: str, guard=None,
     It fetches one compact response only for symbols with an outstanding key,
     plus the currently open round's holdings to observe the next real bar.
     """
-    scan_date = _require_non_round_day(stamp)
-    before = archive_scan_coverage(out_dir)
+    scan_date = require_scan_day(stamp)
+    before = archive_scan_coverage(out_dir, as_of=scan_date)
     needed = {symbol for symbol, _ in before["missing_keys"]}
     # The current week's window is intentionally open.  Its next actual bar is
     # not knowable until observed, so poll only its current holdings—not every
@@ -119,7 +165,7 @@ def scan_missing_archive_bars(out_dir: str, *, stamp: str, guard=None,
         archive_result = archive_quote_snapshot(bars, out_dir=out_dir,
                                                 stamp=pd.Timestamp(stamp).strftime("%Y%m%d"),
                                                 executor="non_round_archive_scanner")
-    after = archive_scan_coverage(out_dir)
+    after = archive_scan_coverage(out_dir, as_of=scan_date)
     report: Dict[str, Any] = {
         "schema": SCANNER_SCHEMA,
         "scan_date": scan_date,
@@ -130,6 +176,7 @@ def scan_missing_archive_bars(out_dir: str, *, stamp: str, guard=None,
         "archive": archive_result,
         "coverage": {"missing_count": after["missing_count"],
                      "oldest_missing": after["oldest_missing"],
+                     "ageing_clock": after["ageing_clock"],
                      "missing_keys": [{"symbol": symbol, "date": date}
                                       for symbol, date in after["missing_keys"]]},
         "hard_alerts": after["hard_alerts"],
