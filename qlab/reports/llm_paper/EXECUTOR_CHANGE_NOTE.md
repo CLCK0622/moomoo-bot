@@ -634,6 +634,28 @@ RESOLUTION，绝不原地改写。扫描产物必须列出仍缺 `(symbol,date)`
 carry-forward 落地前，任一含 `no_rebalance` 段的格一律 pending、拒绝出读数。下一段的 `nav_start` 必须等于
 前一段终点 NAV，绝不重置为 100,000；否则每段只是独立周收益，不能构成每格净值序列。
 
+**2026-09-07 段界财富衔接修订（替代上段末句，保留原文仅供追溯）：**上段“下一段的 `nav_start`
+必须等于前一段终点 NAV”是 2026-08-31 的旧裁定，现已撤销，不再是有效计算口径。当前有效口径采用同一
+换仓 open 时点守恒财富：
+
+```
+nav_start_N = cash_(N-1) + Σ(previous_shares × rebalance_open_N)
+boundary_gap_N = nav_start_N - terminal_nav_(N-1)
+new_notional_N = nav_start_N × target_weight_N
+turnover_N = Σ|new_notional_N - old_notional_at_rebalance_open_N|
+cost_N = cost_rate_per_side × turnover_N
+```
+
+`previous_shares` 必须覆盖全部旧持仓，包括本轮退出的标的；任一旧持仓缺换仓日 open，整段 pending，禁止按零
+估值或回退前收盘。前段现金原值承接，旧仓和新目标名义额均以换仓 open 时点财富计算，成本只按 `turnover_N`
+扣一次。每段 provenance 必须同时落前段末现金／持仓收盘市值／末 NAV、旧仓换仓 open 估值、
+`boundary_gap_N`、新目标名义额、换手和成本。
+
+累计收益的基准仍是完整格第一段建仓前的原始 NAV。为使段收益连乘与 `terminal_nav_last / original_nav_start`
+一致，第一段收益用原始起点作分母；后续每段收益用**前段末 NAV**作分母，而不是用本段换仓 open 的
+`nav_start_N`。这样前收盘到后开盘的 gap 恰好进入一次；再用 `nav_end_N / nav_start_N` 连乘会丢 gap，
+另加 gap 调整又会重复计入，二者均禁止。
+
 **换手成本：**每个换仓点的成本 = `cost_rate_per_side × Σ|新名义额 − 旧名义额|`（新旧持仓并集，卖旧买新
 两侧已在 Σ 中，**不得再乘 2**）。旧名义额 = 旧 shares × 换仓时点 open；新名义额 = 连乘后的段起点 NAV ×
 目标权重。首次建仓自然退化为原来的 `gross × rate`，同权重经价格漂移后的微小再平衡也由 Δ 自然计入。扫描器

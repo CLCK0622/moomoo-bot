@@ -100,18 +100,17 @@ def test_reads_the_real_round_one_record():
     derived = cell_nav_series(str(REPORTS))["seed11×pv1_baseline"]
     first_segment = [point for point in derived if point["round"] == "20260810"]
     expected = [
-        ("2026-08-10", 100329.81075525786), ("2026-08-11", 100857.24557132414),
+        ("2026-08-10", 100329.81075525786), ("2026-08-11", 100857.24557132412),
         ("2026-08-12", 101156.64594464214), ("2026-08-13", 101262.26702625533),
         ("2026-08-14", 101439.93568183083), ("2026-08-17", 101492.75549050017),
-        ("2026-08-18", 101220.89426595987), ("2026-08-19", 101857.94499388215),
+        ("2026-08-18", 101220.89426595985), ("2026-08-19", 101857.94499388215),
         ("2026-08-20", 101385.16684711102), ("2026-08-21", 101940.61723480515),
         ("2026-08-24", 101809.96088327904), ("2026-08-25", 101767.07161679748),
         ("2026-08-26", 101939.74883549285), ("2026-08-27", 101607.73470220654),
-        ("2026-08-28", 101206.44232755358),
+        ("2026-08-28", 101206.4423275536),
     ]
     assert [point["as_of"] for point in first_segment] == [item[0] for item in expected]
-    assert [point["nav"] for point in first_segment] == pytest.approx(
-        [item[1] for item in expected])
+    assert [point["nav"] for point in first_segment] == [item[1] for item in expected]
     assert len(first_segment) == 15
     assert first_segment[0]["as_of"] == "2026-08-10"
     assert first_segment[-1]["as_of"] == "2026-08-28"
