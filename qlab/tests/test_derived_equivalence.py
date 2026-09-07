@@ -86,6 +86,13 @@ def test_filled_overlap_can_pass_while_nonoverlap_cells_stay_explicit(tmp_path):
     result = rebuild_derived_equivalence(
         str(tmp_path), stamp=STAMP, evidence_commit="abc",
         freeze_is_ancestor=True, records_unchanged=True)
+    assert result["schema"] == "llm_paper_derived_executor_equivalence/v2"
+    assert result["settlement_calculation_contract"]["implementation_version"] == \
+        "llm_paper_derived_settlement/evo-489-v3"
+    assert result["source"]["bearing_round_file"] == f"round_{STAMP}.json"
+    assert result["source"]["control_round_file"] == \
+        f"control_multi_book/round_{STAMP}.json"
+    assert result["source"]["control_report_file"] == f"CONTROL_{STAMP}.json"
     assert result["reading_kind"] == "equivalence_artifact"
     assert result["decision_capture_promotion"]["eligible"] is True
     assert result["summary"]["overlap_book_nav_equivalence_passed"] is True

@@ -122,7 +122,7 @@ def rebuild_derived_equivalence(out_dir: str, *, stamp: str,
                                 freeze_is_ancestor: bool | None = None,
                                 records_unchanged: bool | None = None) -> Dict[str, Any]:
     """Audit one persisted parallel-control round without running a new round."""
-    out = Path(out_dir)
+    out = Path(out_dir).resolve()
     bearing_path = out / f"round_{stamp}.json"
     control_path = out / "control_multi_book" / f"round_{stamp}.json"
     report_path = out / f"CONTROL_{stamp}.json"
@@ -281,9 +281,9 @@ def rebuild_derived_equivalence(out_dir: str, *, stamp: str,
         "is_acceptance_reading": False,
         "round": stamp,
         "source": {
-            "bearing_round_file": str(bearing_path),
-            "control_round_file": str(control_path),
-            "control_report_file": str(report_path),
+            "bearing_round_file": bearing_path.relative_to(out).as_posix(),
+            "control_round_file": control_path.relative_to(out).as_posix(),
+            "control_report_file": report_path.relative_to(out).as_posix(),
             "evidence_commit": evidence_commit,
             "archive_content_sha256s": bearing_settlement["source"]["archive_content_sha256s"],
         },
