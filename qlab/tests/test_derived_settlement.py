@@ -429,6 +429,8 @@ def test_symbol_entry_and_exit_are_both_charged_and_old_exit_open_is_required(tm
     write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
     second = rebuild_lower_bound_settlement(str(tmp_path))["rounds"][1]["cells"][
         "seed11×pv1_baseline"]
+    assert second["nav_start"] == 99_980.0
+    assert second["rebalance_provenance"]["old_holdings_open_value"] == 20_000.0
     assert second["turnover_notional"] == pytest.approx(20_000.0)
     assert set(second["shares"]) == {"IBM", "MRK"}
     assert second["old_notionals_at_rebalance"]["CAT"] == pytest.approx(10_000.0)
