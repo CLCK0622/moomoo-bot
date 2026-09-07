@@ -156,28 +156,30 @@ The v3 settlement separates calculation and invocation identities:
 - **Calculation artifacts**: settlement SHA-256
   `688b385cfced1c56a037d415b894b39738ea9fdea8a5e78c3b8bde44785c437f`;
   equivalence SHA-256
-  `c65f590292516a9a7469c65baaebf5c297bf9b5a2e4811896aa75297d4d5215e`.
+  `05509a088e838676212941bf36cdce34283771ee219178e366ab6d86e49030a8`.
   The equivalence schema is v2 and explicitly embeds the v3 settlement version,
-  stable accumulation semantics, and supported-runtime contract.
+  stable accumulation semantics, and supported-runtime contract. Its source
+  record names are logical paths relative to the report root.
 - **Invocation identity**: v2 sidecars separately hash Git HEAD, normalized CLI
-  arguments, and exact interpreter provenance. On implementation HEAD
-  `dec47602ffa1c6e4d263dc89c9b0e50063e7623e`, the same unpinned command produced
-  Python 3.9.6 sidecar
-  `INVOCATION_688b385cfced1c56_6b210c8572479625.json` (full SHA-256
-  `6b210c8572479625ef05b79caf415f4be60f8f17bc750c2b83d627cdec7ac777`)
-  and Python 3.12.13 sidecar
-  `INVOCATION_688b385cfced1c56_cce35b514ce89a12.json` (full SHA-256
-  `cce35b514ce89a129698d531533d7595b643a89178f6c7e61924eb40c15bd7b8`).
-  Both point to the exact same settlement and equivalence hashes; their sidecar
-  difference is expected execution provenance, not calculation drift.
-- The fully pinned command below is separately preserved for Python 3.9.6 from
-  repo root as `INVOCATION_688b385cfced1c56_2b0b54d4b555fcd9.json` (full
-  SHA-256 `2b0b54d4b555fcd995e923b4bd638d27088712ed32799cecbd6921c869356dd0`)
+  arguments, and exact interpreter provenance. On path-fix HEAD
+  `bfa0cb18dbb3676351485b110fb05b718514c999`, the fully pinned command below is
+  preserved for Python 3.9.6 from repo root as
+  `INVOCATION_688b385cfced1c56_9a2ad29d555d6fa9.json` (full SHA-256
+  `9a2ad29d555d6fa903c259e41f2bb9a9ec9121a362cbe94a69ea093a8524572b`)
   and for Python 3.12.13 from `qlab/` as
-  `INVOCATION_688b385cfced1c56_d199f8750ef1606b.json` (full SHA-256
-  `d199f8750ef1606b89944c03be7350ec759ce6838d400554f65abdb9314b59e1`).
-  Their normalized out-dir arguments intentionally differ; the calculation
-  hashes do not.
+  `INVOCATION_688b385cfced1c56_2d25eb7f08b5593f.json` (full SHA-256
+  `2d25eb7f08b5593f3b6a366e2b469705f672fe32eaeabdb578537d36c424614b`).
+  Both runs observed settlement `688b385c…` and equivalence `05509a08…`; their
+  normalized out-dir arguments and interpreter provenance intentionally differ.
+- The earlier `c65f5902…` equivalence exposed absolute checkout paths in
+  `source.*_file` and is retained only as a superseded diagnostic artifact. Its
+  four valid invocation traces remain immutable historical records of the
+  pre-final runs, not current equivalence evidence:
+  `6b210c8572479625ef05b79caf415f4be60f8f17bc750c2b83d627cdec7ac777`,
+  `cce35b514ce89a129698d531533d7595b643a89178f6c7e61924eb40c15bd7b8`,
+  `2b0b54d4b555fcd995e923b4bd638d27088712ed32799cecbd6921c869356dd0`,
+  and `d199f8750ef1606b89944c03be7350ec759ce6838d400554f65abdb9314b59e1`.
+  No old or intermediate artifact was overwritten.
 
 Changing only HEAD therefore creates a different invocation trace but does not
 change the calculation artifact. Changing the implementation source or a
