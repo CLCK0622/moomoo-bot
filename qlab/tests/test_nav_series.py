@@ -89,11 +89,15 @@ def test_broken_round_file_is_not_silently_skipped(tmp_path):
 
 
 def test_reads_the_real_round_one_record():
-    """对着仓内真记录跑一遍：第 1 轮如期无净值点，序列因此为空（而不是报错或编点）。"""
+    """真记录的轮内快照仍为空；归档到位后派生下界序列独立出现。"""
     rounds = load_rounds(str(REPORTS))
     assert any(r["_file"] == "round_20260810.json" for r in rounds)
     cov = coverage(str(REPORTS))
     r1 = next(r for r in cov["per_round"] if r["round"] == "20260810")
     assert r1["executor"] == "single_book"           # 第 1 轮记录早于 executor 字段 → 归 single_book
     assert r1["cells"] == ["seed11×pv1_baseline"] and r1["n_round_record_nav_points"] == 0
-    assert cell_nav_series(str(REPORTS)).get("seed11×pv1_baseline") is None
+    assert round_record_nav_series(str(REPORTS)).get("seed11×pv1_baseline") is None
+    derived = cell_nav_series(str(REPORTS))["seed11×pv1_baseline"]
+    assert derived[-1]["as_of"] == "2026-08-28"
+    assert derived[-1]["reading_kind"] == "lower_bound"
+    assert derived[-1]["bar_provenance"]["not_cross_checked"] is True

@@ -11,12 +11,13 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Mapping
+from typing import Any, Dict, Iterable, List, Mapping, Sequence
 
 import pandas as pd
 
 from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, load_settlement_bars,
-                                         require_settlement_integrity)
+                                         require_settlement_integrity,
+                                         unresolved_disagreements)
 from qlab.llm_paper.archive_scan_state import scanner_activation_date
 from qlab.llm_paper.decision_chain import load_prereg
 from qlab.llm_paper.ledger_bridge import cell_id
@@ -151,6 +152,25 @@ def _pre_archive_provenance(*, round_: str, consumed: set[tuple[str, str]],
     }
 
 
+def _relevant_integrity_issues(out_dir: str,
+                               consumed: Iterable[tuple[str, str]]) -> List[Dict[str, Any]]:
+    """Return unresolved archive differences for this exact settlement window.
+
+    This mirrors :func:`require_settlement_integrity` without weakening it.  The
+    settlement writer needs the structured evidence in a per-cell ``pending``
+    result; the gate remains key-scoped and therefore still treats a volume-only
+    revision on a consumed bar as unresolved until a RESOLUTION record exists.
+    """
+    window = set(consumed)
+    pending: List[Dict[str, Any]] = []
+    for disagreement in unresolved_disagreements(out_dir):
+        relevant = [item for item in disagreement["differences"]
+                    if (item["symbol"], item["date"]) in window]
+        if relevant:
+            pending.append({**disagreement, "differences": relevant})
+    return pending
+
+
 def _refuse_expired_post_scanner_gap(*, round_: str, missing: Iterable[tuple[str, str]],
                                      bars: Mapping[tuple[str, str], Mapping[str, Any]],
                                      scanner_started: str | None) -> None:
@@ -252,6 +272,25 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
     # This is the fail-closed boundary: it runs only after the exact consumed
     # window (including old-position rebalance bars) is known, but before a
     # single derived NAV is emitted.
+    integrity_issues = _relevant_integrity_issues(out_dir, consumed)
+    if integrity_issues:
+        return {
+            "status": "pending_archive_integrity",
+            "reason": ("结算窗口命中未裁定的供应商历史值分歧；按 RESOLUTION 规则拒绝出 "
+                       "book/NAV，未把 pending 空过记作读数"),
+            "consumed_bar_keys": sorted(consumed),
+            "integrity_check": {
+                "status": "blocked_unresolved_difference",
+                "n_archive_records": len(integrity_issues),
+                "n_difference_occurrences": sum(
+                    len(item["differences"]) for item in integrity_issues),
+                "unresolved_differences": integrity_issues,
+            },
+        }
+    # Preserve the existing fail-closed gate as the final authority.  The
+    # structured lookup above is only for rendering a truthful pending result;
+    # any other integrity failure (corrupt hash/schema, invalid ruling) still
+    # raises and aborts the rebuild.
     require_settlement_integrity(out_dir, keys=consumed)
     external = sorted(consumed & external_keys)
     if external:
@@ -295,40 +334,54 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
             "old_notionals_at_rebalance": old_notionals, "entry_cost": entry_cost, "cash": cash,
             "nav_series": nav_series, "consumed_bar_keys": sorted(consumed),
             "bar_provenance": provenance,
+            "integrity_check": {"status": "passed", "n_consumed_bar_keys": len(consumed)},
             "basis": "archived as-traded equity price + literal zero-yield cash (non-acceptance lower bound)",
             "mark_window": {"start": min(entry_dates.values()), "end_exclusive": window_end}}
 
 
-def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
-    """Backfill every persisted decision round into one derived lower-bound artifact.
+def rebuild_settlement_from_rounds(out_dir: str, rounds: Sequence[Mapping[str, Any]], *,
+                                   reading_kind: str,
+                                   source_kind: str) -> Dict[str, Any]:
+    """Settle an explicit immutable round sequence with per-cell diagnostics.
 
-    It is deterministic from immutable round decisions plus archived bars.  A
-    Missing bars remain explicit pending results.  A bar later observed and
-    immutably archived can be used only under the one-time pre-archive ruling,
-    with a non-promotable whole-segment provenance label.
+    ``lower_bound`` and ``equivalence_artifact`` intentionally share this exact
+    arithmetic.  The latter is never a performance reading; callers use it only
+    to compare two executor records.  A disputed consumed bar becomes a
+    structured per-cell pending result so earlier, independently valid rounds
+    remain inspectable.  Corrupt evidence still raises.
     """
+    kind = require_reading_kind(reading_kind)
+    if kind == "acceptance":
+        raise ValueError("acceptance 需要两腿总回报数据源；本派生链不得伪造")
+
     archive = load_settlement_bars(out_dir)
     first_archive_date = _archive_date(archive["first_capture_round"])
     scanner_started = scanner_activation_date(out_dir)
-    cost_rate = float(load_prereg()["cost_per_turnover"])
-    rounds = load_rounds(out_dir)
+    cfg = load_prereg()
+    cost_rate = float(cfg["cost_per_turnover"])
+    expected_cells = sorted(str(item) for item in cfg["family"]["grid"])
     result: Dict[str, Any] = {
         "schema": "llm_paper_derived_settlement/v1",
-        "reading_kind": require_reading_kind("lower_bound"),
-        "basis": "as_traded_equity_and_literal_zero_cash_lower_bound",
+        "reading_kind": kind,
+        "basis": ("as_traded_equity_and_literal_zero_cash_lower_bound"
+                  if kind == "lower_bound" else
+                  "same_archived_as_traded_bars_for_executor_equivalence_only"),
         # Compatibility convenience only.  Consumers must classify by the
         # positive reading_kind; False alone cannot distinguish this from an
         # equivalence artifact.
         "is_acceptance_reading": False,
+        "is_performance_reading": kind == "lower_bound",
         "source": {"round_records": [], "archive_content_sha256s": archive["archive_content_sha256s"],
+                   "round_record_kind": source_kind,
                    "first_capture_round": archive["first_capture_round"],
                    "scanner_activation_date": scanner_started,
                    "pre_archive_backfill_authorization": (
                        "rounds persisted before the first successful non-round-day scanner only")},
         "rounds": [],
-        "note": "round-record nav_point is not consumed; missing archival coverage remains explicit.",
+        "note": ("round-record nav_point is not consumed; missing archival coverage and unresolved "
+                 "integrity differences remain explicit per cell."),
     }
-    plans = [{"payload": payload, "cells": _cells(payload)} for payload in rounds]
+    plans = [{"payload": dict(payload), "cells": _cells(payload)} for payload in rounds]
     blocked_cells = {cid for plan in plans for cid, block in plan["cells"].items()
                      if block["portfolio_check"] and not block["portfolio_check"].get("ok", False)}
     carried: Dict[str, Dict[str, Any]] = {}
@@ -363,14 +416,56 @@ def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
                                 cost_rate=cost_rate, window_end=window_end,
                                 nav_start=(float(previous["terminal_nav"]) if previous else START_NAV),
                                 previous=previous)
+            cell["reading_kind"] = kind
+            cell["is_performance_reading"] = bool(
+                kind == "lower_bound" and cell.get("status") == "filled")
+            if kind == "equivalence_artifact" and cell.get("basis"):
+                cell["basis"] = "archived as-traded bars for executor equivalence only"
             cells[name] = cell
             if cell.get("status") == "filled":
                 carried[name] = {"terminal_nav": cell["nav_series"][-1]["nav"],
                                  "shares": cell["shares"]}
             seen_cells.add(name)
-        result["rounds"].append({"round": stamp, "executor": payload.get("executor", "single_book"),
-                                 "cells": cells})
+        missing_cells = sorted(set(expected_cells) - set(cells))
+        statuses = [cell.get("status") for cell in cells.values()]
+        result["rounds"].append({
+            "round": stamp,
+            "executor": payload.get("executor", "single_book"),
+            "n_trials_total": int(cfg["family"]["n_trials_total"]),
+            "n_cells_with_decision_record": len(cells),
+            "cells_missing_decision_record": missing_cells,
+            "n_cells_filled": sum(status == "filled" for status in statuses),
+            "n_cells_pending": sum(status != "filled" for status in statuses),
+            "cells": cells,
+        })
+    statuses = [cell.get("status") for round_ in result["rounds"]
+                for cell in round_["cells"].values()]
+    missing_count = sum(len(round_["cells_missing_decision_record"])
+                        for round_ in result["rounds"])
+    filled_count = sum(status == "filled" for status in statuses)
+    pending_count = sum(status != "filled" for status in statuses) + missing_count
+    result["summary"] = {
+        "status": ("complete" if pending_count == 0 else
+                   "partial" if filled_count else "blocked"),
+        "n_rounds": len(result["rounds"]),
+        "n_cells_filled": filled_count,
+        "n_cells_pending": pending_count,
+        "n_cells_missing_decision_record": missing_count,
+    }
     return result
+
+
+def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
+    """Backfill every persisted bearing round into one derived lower-bound artifact.
+
+    It is deterministic from immutable round decisions plus archived bars.
+    Missing bars and unresolved consumed differences remain explicit pending
+    results.  A bar later observed and immutably archived can be used only under
+    the one-time pre-archive ruling, with a non-promotable whole-segment label.
+    """
+    return rebuild_settlement_from_rounds(
+        out_dir, load_rounds(out_dir), reading_kind="lower_bound",
+        source_kind="bearing_round_records")
 
 
 def archive_coverage_requirements(out_dir: str) -> Dict[str, Any]:
@@ -431,9 +526,12 @@ def archive_coverage_requirements(out_dir: str) -> Dict[str, Any]:
             "observed_trading_days": observed_days, "windows": details}
 
 
-def write_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
+def write_lower_bound_settlement(out_dir: str, *,
+                                 source_commit: str | None = None) -> Dict[str, Any]:
     """Materialize the reconstruction append-only; identical retries reuse it."""
     payload = rebuild_lower_bound_settlement(out_dir)
+    if source_commit:
+        payload["source"]["branch_head_commit"] = source_commit
     payload["content_sha256"] = _hash(payload)
     directory = Path(out_dir) / "derived_settlement"
     directory.mkdir(parents=True, exist_ok=True)
@@ -444,7 +542,10 @@ def write_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
             handle.write("\n")
     except FileExistsError:
         existing = json.loads(path.read_text(encoding="utf-8"))
-        if existing != payload:
+        # JSON round-trips tuples (consumed bar keys) as lists.  Compare the
+        # canonical serialized value, not Python container identity, otherwise
+        # an identical append-only retry is falsely reported as a collision.
+        if _canonical(existing) != _canonical(payload):
             raise ArchiveIntegrityError("派生结算文件名冲突且内容不同")
     return {"settlement_file": str(path), "content_sha256": payload["content_sha256"],
             "n_rounds": len(payload["rounds"]), "payload": payload}

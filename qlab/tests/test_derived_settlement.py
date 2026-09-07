@@ -8,7 +8,7 @@ import pytest
 from qlab.events.datafetch.quotes_api import DailyBar
 from qlab.llm_paper.archive_scan_state import write_scanner_state
 from qlab.llm_paper.archive_scanner import archive_scan_coverage, scan_missing_archive_bars
-from qlab.llm_paper.bar_archive import ArchiveIntegrityError, archive_quote_snapshot
+from qlab.llm_paper.bar_archive import archive_quote_snapshot
 from qlab.llm_paper.derived_settlement import (rebuild_lower_bound_settlement,
                                                 require_reading_kind,
                                                 SettlementDataUnavailable,
@@ -51,10 +51,16 @@ def test_backfills_every_round_from_decisions_not_round_nav_point(tmp_path):
     assert result["n_rounds"] == 1
     assert result["payload"]["reading_kind"] == "lower_bound"
     assert cell["status"] == "filled"
+    assert cell["reading_kind"] == "lower_bound" and cell["is_performance_reading"] is True
     assert cell["entries"]["IBM"]["entry_open"] == 100.0
     assert cell["nav_series"][-1]["as_of"] == "2026-08-11"
     assert cell["nav_series"][-1]["nav"] > 100_000
     assert "nav_point" not in cell
+    # JSON turns tuple bar keys into lists; an identical retry must still reuse
+    # the content-addressed file rather than report a false collision.
+    retry = write_lower_bound_settlement(str(tmp_path))
+    assert retry["settlement_file"] == result["settlement_file"]
+    assert len(list((tmp_path / "derived_settlement").glob("SETTLEMENT_*.json"))) == 1
 
 
 def test_weekly_settlement_window_ends_at_next_observed_execution(tmp_path):
@@ -230,5 +236,10 @@ def test_unresolved_consumed_window_refuses_to_emit_settlement_reading(tmp_path)
          "CAT": [_bar("CAT", "2026-08-10", 100), _bar("CAT", "2026-08-11", 105)]},
         out_dir=str(tmp_path), stamp="20260817", executor="single_book",
         retrieved_utc="2026-08-17T12:00:00+00:00")
-    with pytest.raises(ArchiveIntegrityError, match="派生结算不得出"):
-        rebuild_lower_bound_settlement(str(tmp_path))
+    cell = rebuild_lower_bound_settlement(
+        str(tmp_path))["rounds"][0]["cells"]["seed11×pv1_baseline"]
+    assert cell["status"] == "pending_archive_integrity"
+    assert cell["reading_kind"] == "lower_bound" and cell["is_performance_reading"] is False
+    assert "nav_series" not in cell and "entries" not in cell
+    assert cell["integrity_check"]["status"] == "blocked_unresolved_difference"
+    assert cell["integrity_check"]["n_difference_occurrences"] == 1
