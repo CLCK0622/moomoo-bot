@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from urllib.parse import quote_plus
 
 import pytest
 
@@ -108,3 +109,48 @@ def test_exit_40_refusal_precedes_credential_loading(monkeypatch, tmp_path, caps
     assert "must-not-load" not in output
     assert json.loads(output)["status"] == "refused_non_scan_day"
     assert "ALPHAVANTAGE_API_KEY" not in cli.os.environ
+
+
+def test_exit_30_redacts_scanner_and_coverage_errors_before_truncation(
+        monkeypatch, tmp_path, capsys):
+    fake_key = "fixture-lower+part/end=42"
+    encoded_key = quote_plus(fake_key)
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", fake_key)
+    monkeypatch.setattr(
+        cli, "scan_missing_archive_bars",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            RuntimeError("x" * 130 + " url=https://example.invalid/query?apikey=" + encoded_key)),
+    )
+    monkeypatch.setattr(
+        cli, "archive_scan_coverage",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            RuntimeError("coverage url=https://example.invalid/query?apikey=" + encoded_key)),
+    )
+
+    assert cli.main(["--out-dir", str(tmp_path), "--stamp", "2026-09-02"]) == \
+        cli.EXIT_FAILED
+    captured = capsys.readouterr()
+    report = json.loads(captured.out)
+    serialised = json.dumps(report, ensure_ascii=False)
+    assert report["status"] == "failed" and report["exit_code"] == cli.EXIT_FAILED
+    assert len(report["error"]) <= cli._FAILURE_SUMMARY_LIMIT
+    assert fake_key not in serialised
+    assert encoded_key not in serialised
+    assert fake_key[:8] not in serialised
+    assert encoded_key[:8] not in serialised
+    assert "<redacted-api-key>" in serialised
+    assert captured.err == ""
+
+
+def test_cli_output_scrubs_an_already_truncated_key_parameter(monkeypatch, capsys):
+    monkeypatch.setattr(
+        cli, "scan_missing_archive_bars",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            RuntimeError("upstream failed: apikey=recognisable-prefix")),
+    )
+    monkeypatch.setattr(cli, "archive_scan_coverage", lambda *_args, **_kwargs: {})
+
+    assert cli.main(["--stamp", "2026-09-02"]) == cli.EXIT_FAILED
+    output = capsys.readouterr().out
+    assert "recognisable-prefix" not in output
+    assert "<redacted-api-key>" in output

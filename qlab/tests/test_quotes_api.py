@@ -6,6 +6,8 @@ mark must never be printed from missing / carried-forward / stale prices.
 """
 from __future__ import annotations
 
+from urllib.parse import quote_plus
+
 import pytest
 
 from qlab.events.datafetch import quotes_api as q
@@ -31,6 +33,17 @@ class _FakeSession:
         sym = (params or {}).get("symbol")
         self.calls.append(sym)
         return _Resp(self.by_symbol[sym])
+
+
+class _TransportFailureSession:
+    """Raises offline with the same encoded-URL shape as requests errors."""
+
+    def __init__(self, prefix_length=0):
+        self.prefix_length = prefix_length
+
+    def get(self, url, params=None, timeout=30):
+        prepared = q.requests.Request("GET", url, params=params).prepare()
+        raise q.requests.ConnectionError("x" * self.prefix_length + " url=" + prepared.url)
 
 
 def _series(rows):
@@ -208,6 +221,38 @@ def test_redaction_follows_the_current_key_after_rotation(monkeypatch):
         out = q._redact(msg)
         assert new_key not in out
         assert "<redacted-api-key>" in out
+
+
+def test_redaction_covers_lowercase_symbols_and_url_encoding(monkeypatch):
+    fake_key = "fixture-lower+part/end=42"
+    encoded_key = quote_plus(fake_key)
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", fake_key)
+
+    for message in (f"raw={fake_key}",
+                    f"https://example.invalid/query?apikey={encoded_key}"):
+        redacted = q._redact(message)
+        assert fake_key not in redacted
+        assert encoded_key not in redacted
+        assert "<redacted-api-key>" in redacted
+
+
+def test_transport_failure_redacts_before_failed_summary_truncation(monkeypatch):
+    fake_key = "fixture-lower+part/end=42"
+    encoded_key = quote_plus(fake_key)
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", fake_key)
+
+    bars, failed = q.get_daily_closes(
+        ["AAPL"], session=_TransportFailureSession(prefix_length=130),
+        pace_seconds=0,
+    )
+
+    summary = failed["AAPL"]
+    assert bars == {}
+    assert len(summary) <= 200
+    assert fake_key not in summary
+    assert encoded_key not in summary
+    assert fake_key[:8] not in summary
+    assert encoded_key[:8] not in summary
 
 
 # --------------------------------------------------------------------------- #

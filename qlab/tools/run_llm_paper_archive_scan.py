@@ -34,6 +34,7 @@ for _path in (str(_QLAB_ROOT), str(_REPO_ROOT)):
 from qlab.llm_paper.archive_scanner import (ScanDayRefused, archive_scan_coverage,
                                              require_scan_day,
                                              scan_missing_archive_bars)  # noqa: E402
+from qlab.events.datafetch.quotes_api import _redact  # noqa: E402
 
 EXIT_CLEAN = 0
 EXIT_CAPTURED = 10
@@ -45,6 +46,30 @@ _API_ENV_FILE = Path.home() / ".config" / "alphavantage" / "api.env"
 
 class ApiEnvConfigError(RuntimeError):
     """The scanner's process-local credential file is present but unsafe."""
+
+
+_FAILURE_SUMMARY_LIMIT = 200
+
+
+def _redact_output(value: Any) -> Any:
+    """Recursively remove API-key material before anything reaches stdout."""
+    if isinstance(value, dict):
+        return {_redact(str(key)): _redact_output(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_redact_output(item) for item in value]
+    if isinstance(value, str):
+        return _redact(value)
+    return value
+
+
+def _emit(payload: Dict[str, Any]) -> None:
+    """Single, defence-in-depth stdout boundary for every scheduler result."""
+    print(json.dumps(_redact_output(payload), ensure_ascii=False, sort_keys=True))
+
+
+def _failure_summary(exc: BaseException) -> str:
+    """Return a bounded summary, redacting before truncation."""
+    return _redact(str(exc))[:_FAILURE_SUMMARY_LIMIT]
 
 
 def _load_process_api_key() -> bool:
@@ -113,7 +138,8 @@ def _failure_coverage(out_dir: str, stamp: str) -> Dict[str, Any]:
     try:
         coverage = archive_scan_coverage(out_dir, as_of=stamp)
     except Exception as exc:  # corrupt/missing evidence is itself useful diagnostics
-        return {"diagnostic_error_type": type(exc).__name__, "diagnostic_error": str(exc)}
+        return {"diagnostic_error_type": type(exc).__name__,
+                "diagnostic_error": _failure_summary(exc)}
     return {
         "missing_count": coverage.get("missing_count"),
         "oldest_missing": coverage.get("oldest_missing"),
@@ -139,15 +165,13 @@ def main(argv: list[str] | None = None) -> int:
     except ScanDayRefused as exc:
         # This refusal is an expected, zero-quota safety outcome.  It is a
         # stable scheduler contract rather than a caller-side string match.
-        print(json.dumps({"status": "refused_non_scan_day", "exit_code": EXIT_REFUSED_NON_SCAN_DAY,
-                          "error_type": type(exc).__name__, "error": str(exc)},
-                         ensure_ascii=False, sort_keys=True))
+        _emit({"status": "refused_non_scan_day", "exit_code": EXIT_REFUSED_NON_SCAN_DAY,
+               "error_type": type(exc).__name__, "error": _failure_summary(exc)})
         return EXIT_REFUSED_NON_SCAN_DAY
     except Exception as exc:  # scanner errors must remain scheduler-visible
-        print(json.dumps({"status": "failed", "exit_code": EXIT_FAILED,
-                          "error_type": type(exc).__name__, "error": str(exc),
-                          "coverage": _failure_coverage(args.out_dir, args.stamp)},
-                         ensure_ascii=False, sort_keys=True))
+        _emit({"status": "failed", "exit_code": EXIT_FAILED,
+               "error_type": type(exc).__name__, "error": _failure_summary(exc),
+               "coverage": _failure_coverage(args.out_dir, args.stamp)})
         return EXIT_FAILED
 
     if result.get("alert"):
@@ -156,8 +180,7 @@ def main(argv: list[str] | None = None) -> int:
         exit_code, status = EXIT_CAPTURED, "captured"
     else:
         exit_code, status = EXIT_CLEAN, "clean"
-    print(json.dumps(_summary(result, exit_code=exit_code, status=status),
-                     ensure_ascii=False, sort_keys=True))
+    _emit(_summary(result, exit_code=exit_code, status=status))
     return exit_code
 
 

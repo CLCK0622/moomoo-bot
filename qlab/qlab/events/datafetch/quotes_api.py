@@ -62,6 +62,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Iterable, Optional
+from urllib.parse import quote, quote_plus
 
 import pandas as pd
 import requests
@@ -141,20 +142,65 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+_REDACTED_API_KEY = "<redacted-api-key>"
+_API_KEY_QUERY_RE = re.compile(
+    r"(?i)(\b(?:apikey|api[_-]key)\s*=\s*)([^&\s,;\"'<>]+)"
+)
+_API_KEY_ENCODED_QUERY_RE = re.compile(
+    r"(?i)(\b(?:apikey|api%5fkey)%3d)([^&\s,;\"'<>]+)"
+)
+_API_KEY_MAPPING_RE = re.compile(
+    r"(?i)([\"']?(?:apikey|api[_-]key)[\"']?\s*:\s*[\"'])([^\"']*)"
+)
+
+
 def _redact(msg: str, api_key: Optional[str] = None) -> str:
     """Strip the API key out of a vendor message before it reaches an exception.
 
     Alpha Vantage echoes the key back in its daily-quota notice ("We have
     detected your API key as XXXX..."). That message ends up in ``RateLimited``,
     which may be logged, reported, or pasted into a status update — so the key
-    must never survive into it. Belt and braces: redact the live key by value,
-    then any AV-shaped key token.
+    must never survive into it. Belt and braces: redact the live key by value
+    in raw and URL-encoded forms, scrub key-shaped query/mapping fields (also
+    catches an already-truncated value), then redact legacy AV-shaped tokens.
+
+    Callers must pass the complete message here *before* applying length limits;
+    truncating first can leave a recognisable prefix of a credential that no
+    later exact-value replacement can recover.
     """
     text = str(msg)
     key = api_key or os.environ.get("ALPHAVANTAGE_API_KEY")
     if key:
-        text = text.replace(key, "<redacted-api-key>")
-    return re.sub(r"\b[A-Z0-9]{12,20}\b", "<redacted-api-key>", text)
+        # Requests percent-encodes reserved characters in query values.  Cover
+        # raw, form-encoded, percent-encoded, and one extra encoding layer for
+        # wrapped/quoted request errors.  Longest-first prevents partial forms
+        # from obscuring a more complete match.
+        forms = {key}
+        frontier = {key}
+        for _ in range(2):
+            frontier = {encoded for value in frontier
+                        for encoded in (quote(value, safe=""),
+                                        quote_plus(value, safe=""))}
+            forms.update(frontier)
+        for form in sorted(forms, key=len, reverse=True):
+            if form:
+                # Raw keys remain case-sensitive (a short fixture such as "K"
+                # must not erase every ordinary letter k).  Percent hex digits
+                # are case-insensitive in URLs, so only encoded forms need the
+                # broader match.
+                if "%" in form:
+                    text = re.sub(re.escape(form), _REDACTED_API_KEY, text,
+                                  flags=re.IGNORECASE)
+                else:
+                    text = text.replace(form, _REDACTED_API_KEY)
+
+    # These context-aware fallbacks protect the CLI even when an upstream
+    # library has already truncated the value, so the complete live key is no
+    # longer present for exact replacement.
+    text = _API_KEY_QUERY_RE.sub(r"\1" + _REDACTED_API_KEY, text)
+    text = _API_KEY_ENCODED_QUERY_RE.sub(r"\1" + _REDACTED_API_KEY, text)
+    text = _API_KEY_MAPPING_RE.sub(r"\1" + _REDACTED_API_KEY, text)
+    return re.sub(r"\b[A-Z0-9]{12,20}\b", _REDACTED_API_KEY, text)
 
 
 def _throttle_kind(msg: str) -> str:
@@ -289,11 +335,14 @@ def get_daily_closes(symbols: Iterable[str], *, api_key: Optional[str] = None,
             # A BURST throttle is the transient exception: per-second pacing, not a
             # budget or leak signal, so it stays a per-symbol failure as before.
             if getattr(e, "kind", "daily") == "burst" and not e.divergence:
-                failed[s] = f"RateLimited: {e}"[:200]
+                failed[s] = _redact(f"RateLimited: {e}", key)[:200]
             else:
                 raise
         except Exception as e:                       # http / payload shape
-            failed[s] = f"{type(e).__name__}: {e}"[:200]
+            # Transport exceptions may echo the prepared request URL, including
+            # its encoded query key.  Redact the complete message first: slicing
+            # first can preserve a credential prefix at the 200-character edge.
+            failed[s] = _redact(f"{type(e).__name__}: {e}", key)[:200]
         if i < len(syms) - 1 and pace_seconds:
             sleep(pace_seconds)
     return out, failed
