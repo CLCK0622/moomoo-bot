@@ -90,9 +90,13 @@ content SHA-256
 
 ## Parallel-control promotion and takeover
 
-Legacy artifact `derived_settlement/EQUIVALENCE_20260831_a605278a3e09eac0.json`
-is unchanged. The repaired contract is materialized separately as
-`derived_settlement/EQUIVALENCE_20260831_441359354a5eaa85.json`
+The v1 artifacts
+`derived_settlement/EQUIVALENCE_20260831_a605278a3e09eac0.json` and
+`derived_settlement/EQUIVALENCE_20260831_441359354a5eaa85.json` are unchanged
+historical evidence; `441359…` belongs to the earlier `1b2e925…` repair and is
+not the current contract. The current repaired contract is materialized as
+`derived_settlement/EQUIVALENCE_20260831_05509a088e838676.json` with schema
+`llm_paper_derived_executor_equivalence/v2`
 (`reading_kind=equivalence_artifact`; never enters performance reporting).
 
 - Decision capture: eligible under the existing rules. Same decision timestamp,
@@ -100,8 +104,10 @@ is unchanged. The repaired contract is materialized separately as
   the immutable report records one shared quote fetch and a zero-call injected
   control side, the overlap decision set is field-identical (8 vs 8), all 10
   frozen cells are present, records are unchanged, the bearing round survived,
-  and `n_trials_total=10` (`n_evaluated` remains 1; this audit does not mutate
-  the ledger).
+  and `decision_capture_promotion.n_trials_total=10` with
+  `decision_capture_promotion.n_evaluated_unchanged=1`; the upstream ledger's
+  separate `n_evaluated=1` remains unchanged because this audit does not mutate
+  the ledger.
 - Seed interpretation is unchanged: 10 nominal cells contain two effective
   prompt-variant decision sets at `temperature=0`; this is not seed robustness.
 - Derived book/NAV: the common history is settled first on both sides, so the
@@ -118,7 +124,7 @@ is unchanged. The repaired contract is materialized separately as
 
 | Existing authorization text | Comparison object | Covered grid | Evidence | Remaining gap |
 |---|---|---|---|---|
-| `EXECUTOR_CHANGE_NOTE.md` §8.1: “决策集逐位相同” | Immutable decision fields on bearing/control records | The one overlap cell; the control record separately captures all 10 nominal cells | `decision_capture_promotion.rules`; currently eligible | Capturing 10 cells is not executor behavior equivalence; `n_trials_total=10`, `n_evaluated=1` stay unchanged |
+| `EXECUTOR_CHANGE_NOTE.md` §8.1: “决策集逐位相同” | Immutable decision fields on bearing/control records | The one overlap cell; the control record separately captures all 10 nominal cells | `decision_capture_promotion.rules`; currently eligible | Capturing 10 cells is not executor behavior equivalence; the artifact records `n_trials_total=10` and `n_evaluated_unchanged=1`, while the separate upstream ledger remains `n_evaluated=1` |
 | §8.1: derived settlement produces each side's book/NAV and compares them field by field | Two immutable target-round records rebuilt by the **same** derived implementation after common history | Only `seed11×pv1_baseline`; the other nine remain `passed=null`, `not_comparable_no_bearing_cell` | `takeover_contract.derived_reconstruction_equivalence`; currently blocked by pending archive integrity | Establishes reconstruction consistency only. It does not independently exercise single-book versus multi-book runtime behavior |
 | `parallel_control.py`: `may_take_over` is a fact and the tool “不自动切换” | Persisted decision-time books from the two actual executors | The overlap cell, but both real books were `pending_entry_bar` | Original `CONTROL_20260831.json` and alert | No independent filled executor-behavior comparison exists |
 | Actual `parallel_control.py:206-209` text: “对照通过 ⇒ 可在**下一轮**切换承载路径（裁定：不在对照当轮切，那一轮已同时背着恢复轮次与台账修复后首次登记两件事，再叠加切换将无法归因）。切换轮次回填进 `EXECUTOR_CHANGE_NOTE.md`。” | The separate decision-time `may_take_over` producer | None in the archived round: its required `book_status == filled` condition was false | Source inspection plus original pending control evidence | This producer received no new disclosure field in the settlement repair; its text itself does not require 吏部 acceptance |
@@ -238,7 +244,9 @@ Run it with lock-file dependencies installed on CPython 3.9 through 3.12. From
 `qlab/`, use `python3 tools/run_llm_paper_derived_settlement.py --out-dir
 reports/llm_paper ...` with the same remaining arguments and pins. An absolute
 out-dir is also accepted. All three spellings reproduce settlement `688b385c…`
-and equivalence `c65f5902…`; only invocation provenance may differ.
+and the current v2 equivalence `05509a08…`; only invocation provenance may
+differ. The earlier `c65f5902…` result remains the superseded, path-dependent
+diagnostic identified above and is not a current reproduction target.
 
 The command is offline and append-only: it does not fetch quotes, run a round,
 touch the trial ledger, rewrite a historical artifact, add a `RESOLUTION`, or
