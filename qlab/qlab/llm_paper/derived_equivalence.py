@@ -297,14 +297,48 @@ def rebuild_derived_equivalence(out_dir: str, *, stamp: str,
         "per_grid": per_grid,
         "derived_settlements": {"bearing": bearing_settlement,
                                 "control": control_settlement},
+        "takeover_contract": {
+            "decision_capture": {
+                "comparison_object": "immutable decision fields from bearing and control records",
+                "covered_cells": overlap,
+                "control_grid_cells_recorded": sorted(control_cells),
+                "status": "eligible" if promotion_eligible else "blocked",
+            },
+            "derived_reconstruction_equivalence": {
+                "comparison_object": (
+                    "bearing/control immutable round records reconstructed by the same "
+                    "derived-settlement implementation"),
+                "covered_cells": overlap,
+                "cells_without_bearing_peer": sorted(expected_cells - set(overlap)),
+                "status": "passed" if overlap_book_nav_passed else "blocked",
+                "establishes": "reconstruction consistency for overlapping recorded decisions",
+                "does_not_establish": (
+                    "independent runtime behavior equivalence of single_book and multi_book executors"),
+            },
+            "executor_behavior_equivalence": {
+                "status": "not_established",
+                "reason": ("both sides use the same derived reconstruction implementation; persisted "
+                           "decision-time books were pending and are not independent filled executions"),
+            },
+            "switch_authorization": {
+                "status": "not_granted",
+                "automatic_repository_consumer": False,
+                "required_authority": "separate written acceptance by 吏部",
+                "volume_resolution_authorizes_switch": False,
+            },
+        },
         "summary": {
             "decision_capture_promotion_eligible": promotion_eligible,
             "overlap_book_nav_equivalence_passed": overlap_book_nav_passed,
             "may_take_over": bool(promotion_eligible and overlap_book_nav_passed),
+            "may_take_over_semantics": (
+                "derived qualification fact only; never executor-switch authorization"),
+            "switch_authorized": False,
             "blockers": blockers,
         },
-        "note": ("pending 两侧相同不构成通过；may_take_over=False 时不得切换承载执行器。"
-                 "本产物不可进入净值或业绩上报路径。"),
+        "note": ("pending 两侧相同不构成通过；may_take_over 只表示既有计算资格判据，"
+                 "无论真假都不构成执行器切换授权。volume RESOLUTION 只解除数据完整性闸，"
+                 "接管仍须吏部另行书面核收。本产物不可进入净值或业绩上报路径。"),
     }
     return payload
 

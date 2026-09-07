@@ -19,13 +19,17 @@ from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, load_settlement_b
                                          require_settlement_integrity,
                                          unresolved_disagreements)
 from qlab.llm_paper.archive_scan_state import scanner_activation_date
-from qlab.llm_paper.decision_chain import load_prereg
+from qlab.llm_paper.decision_chain import PREREG_PATH, load_prereg
 from qlab.llm_paper.ledger_bridge import cell_id
 from qlab.llm_paper.nav_series import load_rounds
 
 ET = "America/New_York"
 START_NAV = 100_000.0
 READING_KINDS = frozenset({"equivalence_artifact", "lower_bound", "acceptance"})
+SETTLEMENT_IMPLEMENTATION_VERSION = "llm_paper_derived_settlement/evo-489-v2"
+SETTLEMENT_ARTIFACT_SCHEMA = "llm_paper_derived_settlement/v2"
+SETTLEMENT_INVOCATION_SCHEMA = "llm_paper_derived_settlement_invocation/v1"
+LEGACY_SETTLEMENT_ARTIFACT_SCHEMA = "llm_paper_derived_settlement/v1"
 
 
 class SettlementDataUnavailable(RuntimeError):
@@ -48,6 +52,43 @@ def _canonical(value: Mapping[str, Any]) -> bytes:
 
 def _hash(value: Mapping[str, Any]) -> str:
     return hashlib.sha256(_canonical(value)).hexdigest()
+
+
+def _file_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def settlement_calculation_identity(out_dir: str) -> Dict[str, Any]:
+    """Describe only stable inputs and the versioned settlement algorithm.
+
+    The current Git HEAD is invocation provenance, not a calculation input: an
+    unrelated later commit must not manufacture a second calculation artifact.
+    Paths below are logical, relative evidence names so a byte-identical copy of
+    the evidence directory has the same identity in another checkout.
+    """
+    root = Path(out_dir)
+
+    def entries(paths: Iterable[Path]) -> List[Dict[str, str]]:
+        return [{"path": path.relative_to(root).as_posix(), "sha256": _file_sha256(path)}
+                for path in sorted(paths)]
+
+    prereg = Path(PREREG_PATH)
+    manifest: Dict[str, Any] = {
+        "round_records": entries(root.glob("round_*.json")),
+        "bar_archives": entries((root / "bar_archive").glob("archive_*.json")),
+        "resolution_records": entries(
+            (root / "bar_archive" / "resolutions").glob("RESOLUTION_*.json")),
+        "scanner_states": entries(
+            (root / "bar_archive" / "scanner").glob("SCANNER_*.json")),
+        "preregistration": ({"path": Path(PREREG_PATH).as_posix(),
+                              "sha256": _file_sha256(prereg)} if prereg.exists() else None),
+    }
+    return {
+        "implementation_version": SETTLEMENT_IMPLEMENTATION_VERSION,
+        "implementation_source_sha256": _file_sha256(Path(__file__)),
+        "input_manifest_sha256": _hash(manifest),
+        "input_manifest": manifest,
+    }
 
 
 def _stamp(payload: Mapping[str, Any]) -> str:
@@ -386,16 +427,40 @@ def rebuild_settlement_from_rounds(out_dir: str, rounds: Sequence[Mapping[str, A
                      if block["portfolio_check"] and not block["portfolio_check"].get("ok", False)}
     carried: Dict[str, Dict[str, Any]] = {}
     seen_cells: set[str] = set()
+    continuity_blocked_by: Dict[str, List[str]] = {}
+    sequence_origins: Dict[str, Dict[str, Any]] = {}
     for index, plan in enumerate(plans):
         payload = plan["payload"]
         stamp = _stamp(payload)
         result["source"]["round_records"].append(payload.get("_file"))
         cells: Dict[str, Dict[str, Any]] = {}
+        # Once an observed cell has no immutable decision in an intervening
+        # round, its later position/history is unknowable.  Keep earlier valid
+        # segments inspectable, but never jump across that missing segment.
+        for missing_seen in seen_cells - set(plan["cells"]):
+            continuity_blocked_by.setdefault(missing_seen, []).append(stamp)
+            carried.pop(missing_seen, None)
         for name, block in plan["cells"].items():
             if name in blocked_cells:
                 cells[name] = {"status": "pending_no_rebalance_carry_forward",
                                "reason": ("该格至少一轮未调仓；carry-forward 尚未落地，"
-                                          "整条格序列拒绝出读数")}
+                                          "整条格序列拒绝出读数"),
+                               "reading_kind": kind,
+                               "is_performance_reading": False}
+                continuity_blocked_by.setdefault(name, []).append(stamp)
+                carried.pop(name, None)
+                seen_cells.add(name)
+                continue
+            if continuity_blocked_by.get(name):
+                cells[name] = {
+                    "status": "pending_prior_segment",
+                    "reason": ("前序段未结算或缺不可改决策记录；不得跨段沿用更早 NAV/旧仓，"
+                               "也不得从 START_NAV 重启"),
+                    "blocked_by_rounds": list(continuity_blocked_by[name]),
+                    "reading_kind": kind,
+                    "is_performance_reading": False,
+                }
+                seen_cells.add(name)
                 continue
             next_block = next((future["cells"][name] for future in plans[index + 1:]
                                if name in future["cells"] and
@@ -403,11 +468,6 @@ def rebuild_settlement_from_rounds(out_dir: str, rounds: Sequence[Mapping[str, A
                                 future["cells"][name]["portfolio_check"].get("ok", False))), None)
             window_end = _cell_execution_date(next_block, archive["bars"]) if next_block else None
             previous = carried.get(name)
-            if name in seen_cells and previous is None:
-                cells[name] = {"status": "pending_prior_segment",
-                               "reason": "前一段无可核验终点净值；不得从 START_NAV 重启后续段"}
-                seen_cells.add(name)
-                continue
             cell = _settle_cell(decisions=block["decisions"],
                                 portfolio_check=block["portfolio_check"], bars=archive["bars"],
                                 external_keys=archive["external_keys"],
@@ -417,14 +477,31 @@ def rebuild_settlement_from_rounds(out_dir: str, rounds: Sequence[Mapping[str, A
                                 nav_start=(float(previous["terminal_nav"]) if previous else START_NAV),
                                 previous=previous)
             cell["reading_kind"] = kind
-            cell["is_performance_reading"] = bool(
-                kind == "lower_bound" and cell.get("status") == "filled")
             if kind == "equivalence_artifact" and cell.get("basis"):
                 cell["basis"] = "archived as-traded bars for executor equivalence only"
-            cells[name] = cell
             if cell.get("status") == "filled":
+                if name not in sequence_origins:
+                    prior_missing = [_stamp(earlier["payload"]) for earlier in plans[:index]
+                                     if name not in earlier["cells"]]
+                    sequence_origins[name] = {
+                        "original_round": stamp,
+                        "original_nav_start": float(cell["nav_start"]),
+                        "prior_rounds_without_decision_record": prior_missing,
+                    }
+                origin = sequence_origins[name]
+                sequence_status = ("incomplete_prehistory"
+                                   if origin["prior_rounds_without_decision_record"]
+                                   else "complete")
+                cell["sequence"] = {"status": sequence_status, **origin}
+                cell["is_performance_reading"] = bool(
+                    kind == "lower_bound" and sequence_status == "complete")
                 carried[name] = {"terminal_nav": cell["nav_series"][-1]["nav"],
-                                 "shares": cell["shares"]}
+                                 "shares": cell["shares"], "sequence_origin": origin}
+            else:
+                cell["is_performance_reading"] = False
+                continuity_blocked_by.setdefault(name, []).append(stamp)
+                carried.pop(name, None)
+            cells[name] = cell
             seen_cells.add(name)
         missing_cells = sorted(set(expected_cells) - set(cells))
         statuses = [cell.get("status") for cell in cells.values()]
@@ -526,12 +603,84 @@ def archive_coverage_requirements(out_dir: str) -> Dict[str, Any]:
             "observed_trading_days": observed_days, "windows": details}
 
 
-def write_lower_bound_settlement(out_dir: str, *,
-                                 source_commit: str | None = None) -> Dict[str, Any]:
-    """Materialize the reconstruction append-only; identical retries reuse it."""
+def verify_settlement_artifact(path: str | Path) -> Dict[str, Any]:
+    """Verify legacy v1 and current v2 artifacts without rewriting either."""
+    target = Path(path)
+    try:
+        payload = json.loads(target.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ArchiveIntegrityError(f"派生结算工件无法读取: {target.name}: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise ArchiveIntegrityError(f"派生结算工件不是 JSON object: {target.name}")
+    supplied = payload.get("content_sha256")
+    unsigned = dict(payload)
+    unsigned.pop("content_sha256", None)
+    actual = _hash(unsigned)
+    if not supplied or supplied != actual:
+        raise ArchiveIntegrityError(
+            f"派生结算工件内容哈希不匹配: {target.name} (expected={supplied}, actual={actual})")
+    if payload.get("schema") not in {
+            LEGACY_SETTLEMENT_ARTIFACT_SCHEMA, SETTLEMENT_ARTIFACT_SCHEMA}:
+        raise ArchiveIntegrityError(f"派生结算工件 schema 非法: {target.name}")
+    if target.name.startswith("SETTLEMENT_") and supplied[:16] not in target.name:
+        raise ArchiveIntegrityError(f"派生结算工件文件名与内容哈希不匹配: {target.name}")
+    if payload.get("schema") == SETTLEMENT_ARTIFACT_SCHEMA:
+        identity = payload.get("calculation_identity")
+        if not isinstance(identity, Mapping) or not isinstance(
+                identity.get("input_manifest"), Mapping):
+            raise ArchiveIntegrityError(f"v2 派生结算工件缺 calculation_identity: {target.name}")
+        if not isinstance(identity.get("implementation_version"), str) or not \
+                identity["implementation_version"].strip():
+            raise ArchiveIntegrityError(f"v2 派生结算工件缺稳定实现版本: {target.name}")
+        if not isinstance(identity.get("implementation_source_sha256"), str) or \
+                len(identity["implementation_source_sha256"]) != 64:
+            raise ArchiveIntegrityError(f"v2 派生结算工件缺实现源码哈希: {target.name}")
+        manifest_hash = _hash(identity["input_manifest"])
+        if identity.get("input_manifest_sha256") != manifest_hash:
+            raise ArchiveIntegrityError(f"v2 派生结算工件输入清单哈希不匹配: {target.name}")
+    return payload
+
+
+def verify_settlement_invocation(path: str | Path, *,
+                                 settlement_file: str | Path | None = None) -> Dict[str, Any]:
+    """Verify an invocation sidecar and, when supplied, its calculation link."""
+    target = Path(path)
+    try:
+        payload = json.loads(target.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ArchiveIntegrityError(f"派生结算 invocation 无法读取: {target.name}: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise ArchiveIntegrityError(f"派生结算 invocation 不是 JSON object: {target.name}")
+    supplied = payload.get("content_sha256")
+    unsigned = dict(payload)
+    unsigned.pop("content_sha256", None)
+    if payload.get("schema") != SETTLEMENT_INVOCATION_SCHEMA or supplied != _hash(unsigned):
+        raise ArchiveIntegrityError(f"派生结算 invocation 内容或 schema 非法: {target.name}")
+    if target.name.startswith("INVOCATION_") and supplied[:16] not in target.name:
+        raise ArchiveIntegrityError(f"派生结算 invocation 文件名与内容哈希不匹配: {target.name}")
+    if settlement_file is not None:
+        settlement = verify_settlement_artifact(settlement_file)
+        reference = payload.get("calculation_artifact") or {}
+        if reference.get("file") != Path(settlement_file).name or \
+                reference.get("content_sha256") != settlement.get("content_sha256"):
+            raise ArchiveIntegrityError("invocation 指向的计算工件名称或内容哈希不匹配")
+    return payload
+
+
+def write_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
+    """Materialize a stable calculation artifact; identical inputs reuse it.
+
+    The v2 content hash protects the entire file (except the hash field itself)
+    and covers a manifest of every calculation input.  Per-run Git HEAD belongs
+    in :func:`write_settlement_invocation`, never in this calculation identity.
+    Legacy v1 files remain valid, verifiable, and untouched.
+    """
+    identity = settlement_calculation_identity(out_dir)
     payload = rebuild_lower_bound_settlement(out_dir)
-    if source_commit:
-        payload["source"]["branch_head_commit"] = source_commit
+    if settlement_calculation_identity(out_dir) != identity:
+        raise ArchiveIntegrityError("派生结算输入在计算期间发生变化，拒绝写入混合工件")
+    payload["schema"] = SETTLEMENT_ARTIFACT_SCHEMA
+    payload["calculation_identity"] = identity
     payload["content_sha256"] = _hash(payload)
     directory = Path(out_dir) / "derived_settlement"
     directory.mkdir(parents=True, exist_ok=True)
@@ -548,4 +697,52 @@ def write_lower_bound_settlement(out_dir: str, *,
         if _canonical(existing) != _canonical(payload):
             raise ArchiveIntegrityError("派生结算文件名冲突且内容不同")
     return {"settlement_file": str(path), "content_sha256": payload["content_sha256"],
+            "input_manifest_sha256": identity["input_manifest_sha256"],
+            "implementation_version": identity["implementation_version"],
+            "implementation_source_sha256": identity["implementation_source_sha256"],
             "n_rounds": len(payload["rounds"]), "payload": payload}
+
+
+def write_settlement_invocation(out_dir: str, *, settlement: Mapping[str, Any],
+                                branch_head_commit: str | None,
+                                command: Mapping[str, Any]) -> Dict[str, Any]:
+    """Append a separately hashed trace for one deterministic CLI invocation."""
+    settlement_path = Path(str(settlement["settlement_file"]))
+    verified = verify_settlement_artifact(settlement_path)
+    if verified.get("content_sha256") != settlement.get("content_sha256"):
+        raise ArchiveIntegrityError("invocation 所引用的计算工件哈希与写入结果不一致")
+    payload: Dict[str, Any] = {
+        "schema": SETTLEMENT_INVOCATION_SCHEMA,
+        "calculation_artifact": {
+            "file": settlement_path.name,
+            "content_sha256": settlement["content_sha256"],
+            "input_manifest_sha256": settlement.get("input_manifest_sha256"),
+            "implementation_version": settlement.get("implementation_version"),
+            "implementation_source_sha256": settlement.get("implementation_source_sha256"),
+        },
+        "invocation": {
+            "branch_head_commit": branch_head_commit,
+            "command": dict(command),
+        },
+        "verification_scope": {
+            "calculation_artifact": "its own content_sha256 covers the complete v2 artifact",
+            "this_invocation": "this sidecar content_sha256 covers every field in this file",
+        },
+        "note": ("Git HEAD identifies this invocation only. A changed HEAD may create another "
+                 "invocation sidecar without changing the stable calculation artifact."),
+    }
+    payload["content_sha256"] = _hash(payload)
+    directory = Path(out_dir) / "derived_settlement"
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / (
+        f"INVOCATION_{str(settlement['content_sha256'])[:16]}_{payload['content_sha256'][:16]}.json")
+    try:
+        with path.open("x", encoding="utf-8") as handle:
+            json.dump(payload, handle, ensure_ascii=False, sort_keys=True, indent=2)
+            handle.write("\n")
+    except FileExistsError:
+        existing = verify_settlement_invocation(path, settlement_file=settlement_path)
+        if _canonical(existing) != _canonical(payload):
+            raise ArchiveIntegrityError("派生结算 invocation 文件名冲突且内容不同")
+    return {"invocation_file": str(path), "content_sha256": payload["content_sha256"],
+            "payload": payload}

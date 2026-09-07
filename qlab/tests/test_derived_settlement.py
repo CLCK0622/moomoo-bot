@@ -2,17 +2,22 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
 from qlab.events.datafetch.quotes_api import DailyBar
 from qlab.llm_paper.archive_scan_state import write_scanner_state
 from qlab.llm_paper.archive_scanner import archive_scan_coverage, scan_missing_archive_bars
-from qlab.llm_paper.bar_archive import archive_quote_snapshot
+from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, archive_quote_snapshot,
+                                        write_disagreement_resolution)
 from qlab.llm_paper.derived_settlement import (rebuild_lower_bound_settlement,
                                                 require_reading_kind,
                                                 SettlementDataUnavailable,
-                                                write_lower_bound_settlement)
+                                                verify_settlement_artifact,
+                                                verify_settlement_invocation,
+                                                write_lower_bound_settlement,
+                                                write_settlement_invocation)
 from qlab.llm_paper.nav_series import cell_nav_series, cumulative_returns
 
 
@@ -34,6 +39,37 @@ def _round() -> dict:
 
 def _write_round(tmp_path):
     (tmp_path / "round_20260810.json").write_text(json.dumps(_round()), encoding="utf-8")
+
+
+def _round_on(day: str, *, seed: int = 11, variant: str = "pv1_baseline") -> dict:
+    payload = _round()
+    for decision in payload["decisions"]:
+        decision.update({"seed": seed, "prompt_variant": variant,
+                         "intended_start": f"{day}T13:30:00+00:00"})
+    return payload
+
+
+def _write_three_round_history(tmp_path) -> None:
+    for stamp in ("20260810", "20260817", "20260824"):
+        day = f"{stamp[:4]}-{stamp[4:6]}-{stamp[6:]}"
+        (tmp_path / f"round_{stamp}.json").write_text(
+            json.dumps(_round_on(day)), encoding="utf-8")
+
+
+def _archive_three_round_history(tmp_path) -> None:
+    closes = {
+        "2026-08-10": 100.0,
+        "2026-08-11": 101.0,
+        "2026-08-17": 102.0,
+        "2026-08-18": 103.0,
+        "2026-08-24": 104.0,
+        "2026-08-25": 105.0,
+    }
+    archive_quote_snapshot(
+        {symbol: [_bar(symbol, day, close) for day, close in closes.items()]
+         for symbol in ("IBM", "CAT")},
+        out_dir=str(tmp_path), stamp="20260902", executor="non_round_archive_scanner")
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
 
 
 def _archive(tmp_path, *, ibm_close: float = 110.0):
@@ -63,6 +99,47 @@ def test_backfills_every_round_from_decisions_not_round_nav_point(tmp_path):
     assert len(list((tmp_path / "derived_settlement").glob("SETTLEMENT_*.json"))) == 1
 
 
+def test_calculation_artifact_is_head_stable_and_invocations_are_separately_hashed(tmp_path):
+    _write_round(tmp_path)
+    _archive(tmp_path)
+    first = write_lower_bound_settlement(str(tmp_path))
+    retry = write_lower_bound_settlement(str(tmp_path))
+    assert retry["settlement_file"] == first["settlement_file"]
+    assert first["payload"]["schema"] == "llm_paper_derived_settlement/v2"
+    assert "branch_head_commit" not in first["payload"]["source"]
+    assert len(first["payload"]["calculation_identity"][
+        "implementation_source_sha256"]) == 64
+    assert verify_settlement_artifact(first["settlement_file"])["content_sha256"] == \
+        first["content_sha256"]
+
+    command = {"out_dir": str(tmp_path), "equivalence_round": None}
+    invoked_a = write_settlement_invocation(
+        str(tmp_path), settlement=first, branch_head_commit="head-a", command=command)
+    invoked_b = write_settlement_invocation(
+        str(tmp_path), settlement=first, branch_head_commit="head-b", command=command)
+    assert invoked_a["invocation_file"] != invoked_b["invocation_file"]
+    assert verify_settlement_invocation(invoked_a["invocation_file"],
+                                        settlement_file=first["settlement_file"])
+    assert verify_settlement_invocation(invoked_b["invocation_file"],
+                                        settlement_file=first["settlement_file"])
+
+    tampered = json.loads(Path(invoked_a["invocation_file"]).read_text(encoding="utf-8"))
+    tampered["unhashed_after_the_fact"] = True
+    Path(invoked_a["invocation_file"]).write_text(json.dumps(tampered), encoding="utf-8")
+    with pytest.raises(ArchiveIntegrityError, match="invocation 内容或 schema 非法"):
+        verify_settlement_invocation(invoked_a["invocation_file"],
+                                     settlement_file=first["settlement_file"])
+
+
+def test_legacy_v1_settlement_artifact_remains_verifiable_and_immutable():
+    reports = Path(__file__).resolve().parents[1] / "reports" / "llm_paper"
+    legacy = reports / "derived_settlement" / "SETTLEMENT_ed655bb09567c9a9.json"
+    verified = verify_settlement_artifact(legacy)
+    assert verified["schema"] == "llm_paper_derived_settlement/v1"
+    assert verified["source"]["branch_head_commit"] == \
+        "e359bcd60a299294b5236afa9e17412b3da03f12"
+
+
 def test_weekly_settlement_window_ends_at_next_observed_execution(tmp_path):
     _write_round(tmp_path)
     next_round = _round()
@@ -84,6 +161,120 @@ def test_weekly_settlement_window_ends_at_next_observed_execution(tmp_path):
     assert second["nav_series"][-1]["as_of"] == "2026-08-18"
     assert second["nav_start"] == first["nav_series"][-1]["nav"]
     assert second["entry_cost"] == pytest.approx(second["turnover_notional"] * 0.001)
+
+
+def test_pending_middle_segment_blocks_every_later_segment_until_resolved(tmp_path):
+    _write_three_round_history(tmp_path)
+    _archive_three_round_history(tmp_path)
+    disputed = archive_quote_snapshot(
+        {"IBM": [DailyBar("IBM", "2026-08-18", close=103.0, open=103.0,
+                          high=104.0, low=102.0, volume=11,
+                          retrieved_utc="2026-09-03T12:00:00+00:00")]},
+        out_dir=str(tmp_path), stamp="20260903", executor="non_round_archive_scanner",
+        retrieved_utc="2026-09-03T12:00:00+00:00")
+
+    rounds = rebuild_lower_bound_settlement(str(tmp_path))["rounds"]
+    cid = "seed11×pv1_baseline"
+    assert [round_["cells"][cid]["status"] for round_ in rounds] == [
+        "filled", "pending_archive_integrity", "pending_prior_segment"]
+    assert rounds[2]["cells"][cid]["is_performance_reading"] is False
+    assert "nav_series" not in rounds[2]["cells"][cid]
+    reading = cumulative_returns(str(tmp_path))[cid]
+    assert reading["status"] == "pending_sequence"
+    assert reading["cumulative_return"] is None
+
+    write_disagreement_resolution(
+        out_dir=str(tmp_path),
+        source_archive_content_sha256=disputed["content_sha256"],
+        keys=[("IBM", "2026-08-18")], selected_version="archived",
+        basis="synthetic regression: retain the first immutable observation",
+        ruling_reference="test-only://middle-segment-resolution",
+        resolved_utc="2026-09-03T13:00:00+00:00")
+    restored = rebuild_lower_bound_settlement(str(tmp_path))["rounds"]
+    cells = [round_["cells"][cid] for round_ in restored]
+    assert [cell["status"] for cell in cells] == ["filled", "filled", "filled"]
+    assert cells[1]["nav_start"] == cells[0]["nav_series"][-1]["nav"]
+    assert cells[2]["nav_start"] == cells[1]["nav_series"][-1]["nav"]
+
+
+def test_cumulative_return_uses_original_sequence_start_and_preserves_cost_provenance(tmp_path):
+    for stamp in ("20260810", "20260817"):
+        day = f"{stamp[:4]}-{stamp[4:6]}-{stamp[6:]}"
+        (tmp_path / f"round_{stamp}.json").write_text(
+            json.dumps(_round_on(day)), encoding="utf-8")
+    archive_quote_snapshot(
+        {"IBM": [_bar("IBM", "2026-08-10", 100), _bar("IBM", "2026-08-11", 110),
+                 _bar("IBM", "2026-08-17", 110, 100), _bar("IBM", "2026-08-18", 120)],
+         "CAT": [_bar("CAT", "2026-08-10", 100), _bar("CAT", "2026-08-11", 105),
+                 _bar("CAT", "2026-08-17", 110, 100), _bar("CAT", "2026-08-18", 120)]},
+        out_dir=str(tmp_path), stamp="20260902", executor="non_round_archive_scanner")
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
+
+    rounds = rebuild_lower_bound_settlement(str(tmp_path))["rounds"]
+    cid = "seed11×pv1_baseline"
+    first, second = (round_["cells"][cid] for round_ in rounds)
+    # Independent hand calculation: first segment cash=79,980 and terminal
+    # NAV=101,480; rebalance turnover=296, cost=.296, cash=81,183.704,
+    # 101.48 shares of each symbol, then both close at 120.
+    expected_final = 105_538.904
+    assert first["nav_series"][-1]["nav"] == pytest.approx(101_480.0)
+    assert second["turnover_notional"] == pytest.approx(296.0)
+    assert second["entry_cost"] == pytest.approx(0.296)
+    assert second["nav_series"][-1]["nav"] == pytest.approx(expected_final)
+    reading = cumulative_returns(str(tmp_path))[cid]
+    assert reading["status"] == "complete"
+    assert reading["nav_start"] == 100_000.0
+    assert reading["nav_end"] == expected_final
+    assert reading["cumulative_return"] == pytest.approx(expected_final / 100_000.0 - 1.0)
+    assert reading["cumulative_return"] != pytest.approx(
+        expected_final / second["nav_start"] - 1.0)
+    assert reading["cost"]["entry_cost_total"] == pytest.approx(20.296)
+    assert [item["round"] for item in reading["bar_provenance"]["segments"]] == [
+        "20260810", "20260817"]
+    assert reading["bar_provenance"]["must_not_promote_to_acceptance"] is True
+
+
+def test_incomplete_cell_history_never_becomes_a_cumulative_performance_reading(tmp_path):
+    (tmp_path / "round_20260810.json").write_text(
+        json.dumps(_round_on("2026-08-10")), encoding="utf-8")
+    (tmp_path / "round_20260817.json").write_text(
+        json.dumps(_round_on("2026-08-17", seed=22, variant="pv2_riskaware")),
+        encoding="utf-8")
+    archive_quote_snapshot(
+        {symbol: [_bar(symbol, day, close) for day, close in (
+            ("2026-08-10", 100), ("2026-08-11", 101),
+            ("2026-08-17", 102), ("2026-08-18", 103))]
+         for symbol in ("IBM", "CAT")},
+        out_dir=str(tmp_path), stamp="20260902", executor="non_round_archive_scanner")
+    write_scanner_state(str(tmp_path), scan_date="2026-09-02", report_sha256="test")
+
+    cid = "seed22×pv2_riskaware"
+    cell = rebuild_lower_bound_settlement(str(tmp_path))["rounds"][1]["cells"][cid]
+    assert cell["status"] == "filled"
+    assert cell["sequence"]["status"] == "incomplete_prehistory"
+    assert cell["is_performance_reading"] is False
+    assert cid not in cell_nav_series(str(tmp_path))
+
+
+def test_missing_middle_decision_record_breaks_existing_cell_history(tmp_path):
+    (tmp_path / "round_20260810.json").write_text(
+        json.dumps(_round_on("2026-08-10")), encoding="utf-8")
+    (tmp_path / "round_20260817.json").write_text(
+        json.dumps(_round_on("2026-08-17", seed=22, variant="pv2_riskaware")),
+        encoding="utf-8")
+    (tmp_path / "round_20260824.json").write_text(
+        json.dumps(_round_on("2026-08-24")), encoding="utf-8")
+    _archive_three_round_history(tmp_path)
+
+    cid = "seed11×pv1_baseline"
+    rounds = rebuild_lower_bound_settlement(str(tmp_path))["rounds"]
+    later = rounds[2]["cells"][cid]
+    assert later["status"] == "pending_prior_segment"
+    assert later["blocked_by_rounds"] == ["20260817"]
+    assert later["is_performance_reading"] is False
+    reading = cumulative_returns(str(tmp_path))[cid]
+    assert reading["status"] == "pending_sequence"
+    assert reading["cumulative_return"] is None
 
 
 def test_no_rebalance_cell_cannot_emit_a_cash_flatline_until_carry_forward_exists(tmp_path):

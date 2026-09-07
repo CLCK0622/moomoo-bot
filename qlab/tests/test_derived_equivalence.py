@@ -90,6 +90,8 @@ def test_filled_overlap_can_pass_while_nonoverlap_cells_stay_explicit(tmp_path):
     assert result["decision_capture_promotion"]["eligible"] is True
     assert result["summary"]["overlap_book_nav_equivalence_passed"] is True
     assert result["summary"]["may_take_over"] is True
+    assert result["summary"]["switch_authorized"] is False
+    assert "qualification fact only" in result["summary"]["may_take_over_semantics"]
     assert result["per_grid"]["seed11×pv1_baseline"]["comparison"]["passed"] is True
     target = result["derived_settlements"]["control"]["rounds"][-1]
     assert target["cells"]["seed11×pv1_baseline"]["reading_kind"] == "equivalence_artifact"
@@ -98,6 +100,17 @@ def test_filled_overlap_can_pass_while_nonoverlap_cells_stay_explicit(tmp_path):
         "not_comparable_no_bearing_cell"
     assert result["seed_semantics"]["effective_distinct_decision_sets"] == 2
     assert result["seed_semantics"]["must_not_claim_seed_robustness"] is True
+    contract = result["takeover_contract"]
+    assert contract["derived_reconstruction_equivalence"]["covered_cells"] == [
+        "seed11×pv1_baseline"]
+    assert len(contract["derived_reconstruction_equivalence"]["cells_without_bearing_peer"]) == 9
+    assert contract["executor_behavior_equivalence"]["status"] == "not_established"
+    assert contract["switch_authorization"] == {
+        "status": "not_granted",
+        "automatic_repository_consumer": False,
+        "required_authority": "separate written acceptance by 吏部",
+        "volume_resolution_authorizes_switch": False,
+    }
 
 
 def test_equivalence_carries_common_history_into_target_book(tmp_path):

@@ -98,6 +98,32 @@ def test_reads_the_real_round_one_record():
     assert r1["cells"] == ["seed11×pv1_baseline"] and r1["n_round_record_nav_points"] == 0
     assert round_record_nav_series(str(REPORTS)).get("seed11×pv1_baseline") is None
     derived = cell_nav_series(str(REPORTS))["seed11×pv1_baseline"]
-    assert derived[-1]["as_of"] == "2026-08-28"
-    assert derived[-1]["reading_kind"] == "lower_bound"
-    assert derived[-1]["bar_provenance"]["not_cross_checked"] is True
+    first_segment = [point for point in derived if point["round"] == "20260810"]
+    expected = [
+        ("2026-08-10", 100329.81075525786), ("2026-08-11", 100857.24557132414),
+        ("2026-08-12", 101156.64594464214), ("2026-08-13", 101262.26702625533),
+        ("2026-08-14", 101439.93568183083), ("2026-08-17", 101492.75549050017),
+        ("2026-08-18", 101220.89426595987), ("2026-08-19", 101857.94499388215),
+        ("2026-08-20", 101385.16684711102), ("2026-08-21", 101940.61723480515),
+        ("2026-08-24", 101809.96088327904), ("2026-08-25", 101767.07161679748),
+        ("2026-08-26", 101939.74883549285), ("2026-08-27", 101607.73470220654),
+        ("2026-08-28", 101206.44232755358),
+    ]
+    assert [point["as_of"] for point in first_segment] == [item[0] for item in expected]
+    assert [point["nav"] for point in first_segment] == pytest.approx(
+        [item[1] for item in expected])
+    assert len(first_segment) == 15
+    assert first_segment[0]["as_of"] == "2026-08-10"
+    assert first_segment[-1]["as_of"] == "2026-08-28"
+    assert all(point["reading_kind"] == "lower_bound" for point in first_segment)
+    assert all(point["book_status"] == "filled" for point in first_segment)
+    assert all(point["bar_provenance"]["scope"] == "entire_nav_segment"
+               and point["bar_provenance"]["not_cross_checked"] is True
+               and point["bar_provenance"]["acceptance_eligible"] is False
+               and point["bar_provenance"]["must_not_promote_to_acceptance"] is True
+               for point in first_segment)
+    reading = cumulative_returns(str(REPORTS))["seed11×pv1_baseline"]
+    assert reading["status"] == "pending_sequence"
+    assert reading["cumulative_return"] is None
+    assert reading["blockers"] == [{
+        "round": "20260831", "status": "pending_archive_integrity"}]

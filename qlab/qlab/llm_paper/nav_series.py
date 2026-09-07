@@ -81,6 +81,35 @@ def round_record_nav_series(out_dir: str) -> Dict[str, List[Dict[str, Any]]]:
     return series
 
 
+def _cell_nav_series_from_settlement(
+        settlement: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
+    """Extract only complete-history performance points from one rebuild."""
+    if settlement.get("reading_kind") != "lower_bound":
+        raise ValueError("权威净值序列只接受 reading_kind=lower_bound 的派生结算")
+    series: Dict[str, List[Dict[str, Any]]] = {}
+    for round_ in settlement.get("rounds", []):
+        for cid, cell in (round_.get("cells") or {}).items():
+            if cell.get("status") != "filled" or \
+                    cell.get("is_performance_reading") is not True:
+                continue
+            for point in cell.get("nav_series") or []:
+                if point.get("nav") is None:
+                    continue
+                series.setdefault(cid, []).append({
+                    "round": round_.get("round"), "as_of": point.get("as_of"),
+                    "nav": float(point["nav"]), "nav_start": cell.get("nav_start"),
+                    "executor": round_.get("executor"), "book_status": cell.get("status"),
+                    "reading_kind": "lower_bound", "sequence": cell.get("sequence"),
+                    # This is intentionally copied onto every point as well as
+                    # the settlement cell: no aggregation consumer may retain a
+                    # bare NAV while silently dropping its evidence limitation.
+                    "bar_provenance": point.get("bar_provenance") or cell.get("bar_provenance"),
+                })
+    for pts in series.values():
+        pts.sort(key=lambda x: (x["as_of"] or "", x["round"] or ""))
+    return series
+
+
 def cell_nav_series(out_dir: str) -> Dict[str, List[Dict[str, Any]]]:
     """唯一权威的每格净值序列：派生 ``lower_bound`` 结算输出。
 
@@ -93,29 +122,7 @@ def cell_nav_series(out_dir: str) -> Dict[str, List[Dict[str, Any]]]:
     from qlab.llm_paper.derived_settlement import rebuild_lower_bound_settlement
 
     settlement = rebuild_lower_bound_settlement(out_dir)
-    if settlement.get("reading_kind") != "lower_bound":
-        raise ValueError("权威净值序列只接受 reading_kind=lower_bound 的派生结算")
-    series: Dict[str, List[Dict[str, Any]]] = {}
-    for round_ in settlement.get("rounds", []):
-        for cid, cell in (round_.get("cells") or {}).items():
-            if cell.get("status") != "filled":
-                continue
-            for point in cell.get("nav_series") or []:
-                if point.get("nav") is None:
-                    continue
-                series.setdefault(cid, []).append({
-                    "round": round_.get("round"), "as_of": point.get("as_of"),
-                    "nav": float(point["nav"]), "nav_start": cell.get("nav_start"),
-                    "executor": round_.get("executor"), "book_status": cell.get("status"),
-                    "reading_kind": "lower_bound",
-                    # This is intentionally copied onto every point as well as
-                    # the settlement cell: no aggregation consumer may retain a
-                    # bare NAV while silently dropping its evidence limitation.
-                    "bar_provenance": point.get("bar_provenance") or cell.get("bar_provenance"),
-                })
-    for pts in series.values():
-        pts.sort(key=lambda x: (x["as_of"] or "", x["round"] or ""))
-    return series
+    return _cell_nav_series_from_settlement(settlement)
 
 
 def coverage(out_dir: str) -> Dict[str, Any]:
@@ -148,13 +155,90 @@ def cumulative_returns(out_dir: str, *, cost_track: str = "x1") -> Dict[str, Opt
     """
     if cost_track != "x1":
         raise ValueError("派生 lower_bound 尚无 x2 shadow 成本轨；不得拿轮内 nav_point 顶替")
-    key = "nav"
+    from qlab.llm_paper.derived_settlement import rebuild_lower_bound_settlement
+
+    settlement = rebuild_lower_bound_settlement(out_dir)
     out: Dict[str, Optional[Dict[str, Any]]] = {}
-    for cid, pts in cell_nav_series(out_dir).items():
-        last = next((p for p in reversed(pts) if p.get(key) is not None), None)
-        base = last.get("nav_start") if last else None
-        out[cid] = ({"cumulative_return": float(last[key]) / float(base) - 1.0,
-                     "reading_kind": last["reading_kind"],
-                     "bar_provenance": last.get("bar_provenance")}
-                    if last and base else None)
+    rounds = settlement.get("rounds") or []
+    candidates = sorted({cid for round_ in rounds for cid, cell in
+                         (round_.get("cells") or {}).items()
+                         if cell.get("status") == "filled"})
+    for cid in candidates:
+        timeline = []
+        for round_ in rounds:
+            cell = (round_.get("cells") or {}).get(cid)
+            if cell is not None:
+                timeline.append({"round": round_.get("round"), "status": cell.get("status"),
+                                 "cell": cell})
+            elif cid in (round_.get("cells_missing_decision_record") or []):
+                timeline.append({"round": round_.get("round"),
+                                 "status": "missing_decision_record", "cell": None})
+        filled = [item for item in timeline if item["status"] == "filled"]
+        if not filled:
+            continue
+        first_filled = filled[0]["cell"]
+        sequence = first_filled.get("sequence") or {}
+        segments = [{
+            "round": item["round"],
+            "nav_start": float(item["cell"]["nav_start"]),
+            "nav_end": float(item["cell"]["nav_series"][-1]["nav"]),
+            "as_of": item["cell"]["nav_series"][-1]["as_of"],
+            "entry_cost": float(item["cell"].get("entry_cost") or 0.0),
+            "bar_provenance": item["cell"].get("bar_provenance"),
+        } for item in filled]
+        provenance = None
+        if any(segment["bar_provenance"] is not None for segment in segments):
+            provenance = {
+                "scope": "complete_cell_sequence",
+                "segments": [{"round": segment["round"],
+                              "bar_provenance": segment["bar_provenance"]}
+                             for segment in segments],
+                "acceptance_eligible": all(
+                    segment["bar_provenance"] is None or
+                    segment["bar_provenance"].get("acceptance_eligible") is not False
+                    for segment in segments),
+                "must_not_promote_to_acceptance": any(
+                    segment["bar_provenance"] is not None and
+                    segment["bar_provenance"].get("must_not_promote_to_acceptance") is True
+                    for segment in segments),
+            }
+        common = {
+            "reading_kind": "lower_bound",
+            "rounds": [segment["round"] for segment in segments],
+            "cost": {"track": "x1", "entry_cost_total": sum(
+                segment["entry_cost"] for segment in segments)},
+            "bar_provenance": provenance,
+        }
+        if sequence.get("status") != "complete":
+            out[cid] = {
+                **common,
+                "status": "pending_incomplete_history",
+                "cumulative_return": None,
+                "blockers": [{"kind": "incomplete_prehistory",
+                              "rounds": sequence.get(
+                                  "prior_rounds_without_decision_record", [])}],
+            }
+            continue
+        first_index = next(index for index, item in enumerate(timeline)
+                           if item["status"] == "filled")
+        blockers = [{"round": item["round"], "status": item["status"]}
+                    for item in timeline[first_index:] if item["status"] != "filled"]
+        if blockers:
+            out[cid] = {**common, "status": "pending_sequence", "cumulative_return": None,
+                        "blockers": blockers}
+            continue
+        base = float(segments[0]["nav_start"])
+        terminal = float(segments[-1]["nav_end"])
+        if not base:
+            out[cid] = None
+            continue
+        out[cid] = {
+            **common,
+            "status": "complete",
+            "cumulative_return": terminal / base - 1.0,
+            "nav_start": base,
+            "nav_end": terminal,
+            "as_of": segments[-1]["as_of"],
+            "n_nav_points": sum(len(item["cell"].get("nav_series") or []) for item in filled),
+        }
     return out
