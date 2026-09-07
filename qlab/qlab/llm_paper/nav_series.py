@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -184,8 +185,15 @@ def cumulative_returns(out_dir: str, *, cost_track: str = "x1") -> Dict[str, Opt
             "nav_end": float(item["cell"]["nav_series"][-1]["nav"]),
             "as_of": item["cell"]["nav_series"][-1]["as_of"],
             "entry_cost": float(item["cell"].get("entry_cost") or 0.0),
+            "boundary_gap": float((item["cell"].get("rebalance_provenance") or {}).get(
+                "boundary_gap") or 0.0),
             "bar_provenance": item["cell"].get("bar_provenance"),
         } for item in filled]
+        for index, segment in enumerate(segments):
+            return_base = (segment["nav_start"] if index == 0
+                           else segments[index - 1]["nav_end"])
+            segment["return_base"] = return_base
+            segment["segment_return"] = segment["nav_end"] / return_base - 1.0
         provenance = None
         if any(segment["bar_provenance"] is not None for segment in segments):
             provenance = {
@@ -205,7 +213,8 @@ def cumulative_returns(out_dir: str, *, cost_track: str = "x1") -> Dict[str, Opt
         common = {
             "reading_kind": "lower_bound",
             "rounds": [segment["round"] for segment in segments],
-            "cost": {"track": "x1", "entry_cost_total": sum(
+            "segments": segments,
+            "cost": {"track": "x1", "entry_cost_total": math.fsum(
                 segment["entry_cost"] for segment in segments)},
             "bar_provenance": provenance,
         }
@@ -236,6 +245,8 @@ def cumulative_returns(out_dir: str, *, cost_track: str = "x1") -> Dict[str, Opt
             **common,
             "status": "complete",
             "cumulative_return": terminal / base - 1.0,
+            "segment_return_chain": math.prod(
+                1.0 + segment["segment_return"] for segment in segments) - 1.0,
             "nav_start": base,
             "nav_end": terminal,
             "as_of": segments[-1]["as_of"],

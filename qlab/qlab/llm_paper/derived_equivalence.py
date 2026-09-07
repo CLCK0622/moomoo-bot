@@ -16,7 +16,10 @@ from pathlib import Path
 from typing import Any, Dict, Mapping, Tuple
 
 from qlab.llm_paper.decision_chain import load_anchor, load_prereg
-from qlab.llm_paper.derived_settlement import (_cells,
+from qlab.llm_paper.derived_settlement import (SETTLEMENT_IMPLEMENTATION_VERSION,
+                                                STABLE_ACCUMULATION_SEMANTICS,
+                                                SUPPORTED_RUNTIME,
+                                                _cells,
                                                 rebuild_settlement_from_rounds,
                                                 require_reading_kind)
 from qlab.llm_paper.multi_book import (EQUIVALENCE_FIELDS, cell_id,
@@ -26,7 +29,8 @@ from qlab.llm_paper.nav_series import load_rounds
 DERIVED_BOOK_FIELDS: Tuple[str, ...] = (
     "status", "nav_start", "entries", "shares", "gross_notional",
     "turnover_notional", "old_notionals_at_rebalance", "entry_cost", "cash",
-    "consumed_bar_keys", "bar_provenance", "basis", "mark_window",
+    "rebalance_provenance", "consumed_bar_keys", "bar_provenance", "basis",
+    "mark_window",
 )
 DERIVED_NAV_FIELDS: Tuple[str, ...] = ("nav_series",)
 
@@ -266,7 +270,12 @@ def rebuild_derived_equivalence(out_dir: str, *, stamp: str,
             blockers.append(f"{cid}: {comparison.get('blocker') or comparison.get('status')}")
 
     payload: Dict[str, Any] = {
-        "schema": "llm_paper_derived_executor_equivalence/v1",
+        "schema": "llm_paper_derived_executor_equivalence/v2",
+        "settlement_calculation_contract": {
+            "implementation_version": SETTLEMENT_IMPLEMENTATION_VERSION,
+            "numeric_accumulation_semantics": STABLE_ACCUMULATION_SEMANTICS,
+            "supported_runtime": SUPPORTED_RUNTIME,
+        },
         "reading_kind": require_reading_kind("equivalence_artifact"),
         "is_performance_reading": False,
         "is_acceptance_reading": False,
@@ -346,11 +355,15 @@ def rebuild_derived_equivalence(out_dir: str, *, stamp: str,
 def write_derived_equivalence(out_dir: str, *, stamp: str,
                               evidence_commit: str | None = None,
                               freeze_is_ancestor: bool | None = None,
-                              records_unchanged: bool | None = None) -> Dict[str, Any]:
+                              records_unchanged: bool | None = None,
+                              prepared_payload: Mapping[str, Any] | None = None
+                              ) -> Dict[str, Any]:
     """Write one content-addressed append-only equivalence artifact."""
-    payload = rebuild_derived_equivalence(
-        out_dir, stamp=stamp, evidence_commit=evidence_commit,
-        freeze_is_ancestor=freeze_is_ancestor, records_unchanged=records_unchanged)
+    payload = (dict(prepared_payload) if prepared_payload is not None else
+               rebuild_derived_equivalence(
+                   out_dir, stamp=stamp, evidence_commit=evidence_commit,
+                   freeze_is_ancestor=freeze_is_ancestor,
+                   records_unchanged=records_unchanged))
     payload["content_sha256"] = _hash(payload)
     directory = Path(out_dir) / "derived_settlement"
     directory.mkdir(parents=True, exist_ok=True)

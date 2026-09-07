@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
+import sys
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Sequence
 
@@ -19,21 +21,34 @@ from qlab.llm_paper.bar_archive import (ArchiveIntegrityError, load_settlement_b
                                          require_settlement_integrity,
                                          unresolved_disagreements)
 from qlab.llm_paper.archive_scan_state import scanner_activation_date
-from qlab.llm_paper.decision_chain import PREREG_PATH, load_prereg
+from qlab.llm_paper.decision_chain import PREREG_PATH, _resolve, load_prereg
 from qlab.llm_paper.ledger_bridge import cell_id
 from qlab.llm_paper.nav_series import load_rounds
 
 ET = "America/New_York"
 START_NAV = 100_000.0
 READING_KINDS = frozenset({"equivalence_artifact", "lower_bound", "acceptance"})
-SETTLEMENT_IMPLEMENTATION_VERSION = "llm_paper_derived_settlement/evo-489-v2"
-SETTLEMENT_ARTIFACT_SCHEMA = "llm_paper_derived_settlement/v2"
-SETTLEMENT_INVOCATION_SCHEMA = "llm_paper_derived_settlement_invocation/v1"
+SETTLEMENT_IMPLEMENTATION_VERSION = "llm_paper_derived_settlement/evo-489-v3"
+SETTLEMENT_ARTIFACT_SCHEMA = "llm_paper_derived_settlement/v3"
+SETTLEMENT_INVOCATION_SCHEMA = "llm_paper_derived_settlement_invocation/v2"
 LEGACY_SETTLEMENT_ARTIFACT_SCHEMA = "llm_paper_derived_settlement/v1"
+LEGACY_V2_SETTLEMENT_ARTIFACT_SCHEMA = "llm_paper_derived_settlement/v2"
+LEGACY_SETTLEMENT_INVOCATION_SCHEMA = "llm_paper_derived_settlement_invocation/v1"
+STABLE_ACCUMULATION_SEMANTICS = "math.fsum(sorted-logical-key)/v1"
+SUPPORTED_RUNTIME = "CPython>=3.9,<3.13"
+IMPLEMENTATION_SOURCE_PATH = "qlab/qlab/llm_paper/derived_settlement.py"
 
 
 class SettlementDataUnavailable(RuntimeError):
     """A truthful lower-bound settlement cannot yet be constructed."""
+
+
+class SettlementIdentityMismatch(ValueError):
+    """A pinned calculation identity differs before an artifact is written."""
+
+
+class UnsupportedSettlementRuntime(RuntimeError):
+    """The interpreter is outside the explicitly tested deterministic range."""
 
 
 def require_reading_kind(value: str) -> str:
@@ -41,6 +56,18 @@ def require_reading_kind(value: str) -> str:
     if value not in READING_KINDS:
         raise ValueError(f"未知 reading_kind={value!r}; 必须是 {sorted(READING_KINDS)} 之一")
     return value
+
+
+def require_supported_settlement_runtime(*, implementation: str | None = None,
+                                         version: Sequence[int] | None = None) -> None:
+    """Reject untested interpreters before any append-only artifact is created."""
+    implementation = implementation or sys.implementation.name
+    version = tuple(version or sys.version_info[:3])
+    if implementation != "cpython" or not ((3, 9) <= tuple(version[:2]) < (3, 13)):
+        rendered = ".".join(str(item) for item in version[:3])
+        raise UnsupportedSettlementRuntime(
+            f"unsupported settlement runtime {implementation} {rendered}; "
+            f"supported range is {SUPPORTED_RUNTIME}")
 
 
 
@@ -58,7 +85,19 @@ def _file_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def settlement_calculation_identity(out_dir: str) -> Dict[str, Any]:
+def _stable_sum(values: Iterable[float]) -> float:
+    """One cross-version accumulation rule for every monetary float total."""
+    return math.fsum(values)
+
+
+def _resolved_preregistration() -> Path:
+    """Use the same fail-closed resolver as the actual calculation."""
+    return _resolve(PREREG_PATH).resolve()
+
+
+def settlement_calculation_identity(out_dir: str, *,
+                                    preregistration_path: str | Path | None = None
+                                    ) -> Dict[str, Any]:
     """Describe only stable inputs and the versioned settlement algorithm.
 
     The current Git HEAD is invocation provenance, not a calculation input: an
@@ -66,13 +105,16 @@ def settlement_calculation_identity(out_dir: str) -> Dict[str, Any]:
     Paths below are logical, relative evidence names so a byte-identical copy of
     the evidence directory has the same identity in another checkout.
     """
-    root = Path(out_dir)
+    root = Path(out_dir).resolve()
 
     def entries(paths: Iterable[Path]) -> List[Dict[str, str]]:
         return [{"path": path.relative_to(root).as_posix(), "sha256": _file_sha256(path)}
                 for path in sorted(paths)]
 
-    prereg = Path(PREREG_PATH)
+    prereg = (Path(preregistration_path).resolve() if preregistration_path is not None
+              else _resolved_preregistration())
+    if not prereg.is_file():
+        raise FileNotFoundError(f"找不到结算预注册输入: {prereg}")
     manifest: Dict[str, Any] = {
         "round_records": entries(root.glob("round_*.json")),
         "bar_archives": entries((root / "bar_archive").glob("archive_*.json")),
@@ -80,12 +122,14 @@ def settlement_calculation_identity(out_dir: str) -> Dict[str, Any]:
             (root / "bar_archive" / "resolutions").glob("RESOLUTION_*.json")),
         "scanner_states": entries(
             (root / "bar_archive" / "scanner").glob("SCANNER_*.json")),
-        "preregistration": ({"path": Path(PREREG_PATH).as_posix(),
-                              "sha256": _file_sha256(prereg)} if prereg.exists() else None),
+        "preregistration": {"path": PREREG_PATH, "sha256": _file_sha256(prereg)},
     }
     return {
         "implementation_version": SETTLEMENT_IMPLEMENTATION_VERSION,
+        "implementation_source_path": IMPLEMENTATION_SOURCE_PATH,
         "implementation_source_sha256": _file_sha256(Path(__file__)),
+        "numeric_accumulation_semantics": STABLE_ACCUMULATION_SEMANTICS,
+        "supported_runtime": SUPPORTED_RUNTIME,
         "input_manifest_sha256": _hash(manifest),
         "input_manifest": manifest,
     }
@@ -208,7 +252,13 @@ def _relevant_integrity_issues(out_dir: str,
         relevant = [item for item in disagreement["differences"]
                     if (item["symbol"], item["date"]) in window]
         if relevant:
-            pending.append({**disagreement, "differences": relevant})
+            archive_path = Path(str(disagreement["archive_file"])).resolve()
+            try:
+                logical_path = archive_path.relative_to(Path(out_dir).resolve()).as_posix()
+            except ValueError:
+                logical_path = f"bar_archive/{archive_path.name}"
+            pending.append({**disagreement, "archive_file": logical_path,
+                            "differences": relevant})
     return pending
 
 
@@ -240,12 +290,13 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
         return {"status": "pending_no_rebalance_carry_forward",
                 "reason": "该格组合约束未过；carry-forward 尚未落地，拒绝把它写成现金平线或出读数"}
 
-    weights: Dict[str, float] = {}
+    weight_parts: Dict[str, List[float]] = {}
     intended: Dict[str, str] = {}
     for decision in decisions:
         symbol = str(decision["symbol"])
-        weights[symbol] = weights.get(symbol, 0.0) + float(decision["target_weight"])
+        weight_parts.setdefault(symbol, []).append(float(decision["target_weight"]))
         intended.setdefault(symbol, _date(str(decision["intended_start"])))
+    weights = {symbol: _stable_sum(parts) for symbol, parts in sorted(weight_parts.items())}
     if any(weight < 0 for weight in weights.values()):
         raise SettlementDataUnavailable("派生层遇到空头权重，拒绝把它算成下界")
 
@@ -292,23 +343,48 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
         return {"status": "pending_common_mark", "entries_pending": entry_dates,
                 "reason": "各持仓尚无同一归档交易日可盯市，拒绝拼不同日期的价格"}
 
-    consumed = {(symbol, entry_dates[symbol]) for symbol in weights}
+    rebalance_day = marks[0]
+    consumed = {(symbol, rebalance_day) for symbol in weights}
     consumed |= {(symbol, day) for symbol in weights for day in marks}
-    # A segment starts from the preceding segment's terminal NAV, never a fresh
-    # 100k.  At the rebalance open, old holdings are valued at that open solely
-    # to measure actual traded notional; target notionals use the carried NAV.
-    rebalance_day = max(entry_dates.values())
     old_notionals: Dict[str, float] = {}
+    old_positions_at_rebalance: Dict[str, Dict[str, float]] = {}
     if previous:
-        for symbol, shares in previous["shares"].items():
+        missing_rebalance = []
+        for symbol, share_count in sorted(previous["shares"].items()):
             old = bars.get((symbol, rebalance_day))
             old_open = old.get("open") if old else None
             if old_open is None or float(old_open) <= 0:
-                return {"status": "pending_archived_rebalance_bar",
-                        "missing": [f"{symbol}@{rebalance_day}"],
-                        "reason": "缺换仓时点旧持仓 open → 无法按 Σ|Δ持仓| 计费"}
-            old_notionals[symbol] = float(shares) * float(old_open)
+                missing_rebalance.append(f"{symbol}@{rebalance_day}")
+                continue
+            notional = float(share_count) * float(old_open)
+            old_notionals[symbol] = notional
+            old_positions_at_rebalance[symbol] = {
+                "shares": float(share_count), "open": float(old_open), "notional": notional}
             consumed.add((symbol, rebalance_day))
+        if missing_rebalance:
+            return {"status": "pending_archived_rebalance_bar",
+                    "missing": missing_rebalance,
+                    "reason": "缺换仓时点旧持仓 open → 不回退前收盘，无法结算财富或换手"}
+
+        # 方案 A: carry cash unchanged and mark every old position at this
+        # rebalance open.  The same open-time wealth funds all new target
+        # notionals.  The close-to-open gap therefore enters the sequence once,
+        # through nav_start, instead of being discarded or injected separately.
+        old_holdings_open_value = _stable_sum(
+            old_notionals[symbol] for symbol in sorted(old_notionals))
+        nav_start = _stable_sum((float(previous["cash"]), old_holdings_open_value))
+        previous_terminal_nav = float(previous["terminal_nav"])
+        boundary_gap = nav_start - previous_terminal_nav
+        previous_terminal = {
+            "as_of": previous["terminal_as_of"],
+            "cash": float(previous["cash"]),
+            "holdings_close_value": previous_terminal_nav - float(previous["cash"]),
+            "nav": previous_terminal_nav,
+        }
+    else:
+        old_holdings_open_value = 0.0
+        boundary_gap = 0.0
+        previous_terminal = None
 
     # This is the fail-closed boundary: it runs only after the exact consumed
     # window (including old-position rebalance bars) is known, but before a
@@ -343,29 +419,50 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
 
     entries: Dict[str, Dict[str, float | str]] = {}
     shares: Dict[str, float] = {}
-    gross = 0.0
+    target_notionals: List[float] = []
     for symbol, weight in sorted(weights.items()):
-        entry = bars[(symbol, entry_dates[symbol])]
+        entry = bars[(symbol, rebalance_day)]
         open_ = entry.get("open")
         if open_ is None or float(open_) <= 0:
-            raise SettlementDataUnavailable(f"{symbol}@{entry_dates[symbol]} 缺合法 open，拒绝用 close 顶替")
+            raise SettlementDataUnavailable(f"{symbol}@{rebalance_day} 缺合法 open，拒绝用 close 顶替")
         notional = nav_start * weight
-        gross += notional
-        entries[symbol] = {"entry_date": entry_dates[symbol], "entry_open": float(open_),
+        target_notionals.append(notional)
+        entries[symbol] = {"entry_date": rebalance_day, "entry_open": float(open_),
                            "weight": weight, "notional": notional}
         shares[symbol] = notional / float(open_)
+    gross = _stable_sum(target_notionals)
     # `cost_rate_per_side` is the frozen fee rate, while `cost_per_turnover`
     # fixes its base: absolute change in current market notionals across the
     # union.  Buy and sell legs are already both present in Σ|Δ|; do not double
     # it again.  First entry naturally reduces to the old gross formula.
     new_notionals = {symbol: float(entry["notional"]) for symbol, entry in entries.items()}
-    turnover_notional = sum(abs(new_notionals.get(symbol, 0.0) - old_notionals.get(symbol, 0.0))
-                            for symbol in set(new_notionals) | set(old_notionals))
+    turnover_notional = _stable_sum(
+        abs(new_notionals.get(symbol, 0.0) - old_notionals.get(symbol, 0.0))
+        for symbol in sorted(set(new_notionals) | set(old_notionals)))
     entry_cost = turnover_notional * cost_rate
     cash = nav_start - gross - entry_cost
+    rebalance_provenance = {
+        "method": "same_rebalance_open_wealth_and_notionals/v1",
+        "rebalance_day": rebalance_day,
+        "previous_segment_terminal": previous_terminal,
+        "old_positions_at_rebalance_open": old_positions_at_rebalance,
+        "old_holdings_open_value": old_holdings_open_value,
+        "boundary_gap": boundary_gap,
+        "nav_start_before_cost": nav_start,
+        "new_target_notionals": new_notionals,
+        "turnover_notional": turnover_notional,
+        "cost_rate_per_side": cost_rate,
+        "entry_cost": entry_cost,
+        "cash_after_rebalance": cash,
+        "gap_accounting": (
+            "nav_start includes the close-to-open boundary gap exactly once; "
+            "cumulative and chained segment returns keep the original sequence base"),
+    }
     nav_series = []
     for day in marks:
-        value = sum(shares[symbol] * float(bars[(symbol, day)]["close"]) for symbol in weights)
+        value = _stable_sum(
+            shares[symbol] * float(bars[(symbol, day)]["close"])
+            for symbol in sorted(weights))
         point: Dict[str, Any] = {"as_of": day, "nav": value + cash}
         if provenance:
             point["bar_provenance"] = provenance
@@ -373,16 +470,19 @@ def _settle_cell(*, decisions: List[Mapping[str, Any]], portfolio_check: Mapping
     return {"status": "filled", "nav_start": nav_start, "entries": entries, "shares": shares,
             "gross_notional": gross, "turnover_notional": turnover_notional,
             "old_notionals_at_rebalance": old_notionals, "entry_cost": entry_cost, "cash": cash,
+            "rebalance_provenance": rebalance_provenance,
             "nav_series": nav_series, "consumed_bar_keys": sorted(consumed),
             "bar_provenance": provenance,
             "integrity_check": {"status": "passed", "n_consumed_bar_keys": len(consumed)},
             "basis": "archived as-traded equity price + literal zero-yield cash (non-acceptance lower bound)",
-            "mark_window": {"start": min(entry_dates.values()), "end_exclusive": window_end}}
+            "mark_window": {"start": rebalance_day, "end_exclusive": window_end}}
 
 
 def rebuild_settlement_from_rounds(out_dir: str, rounds: Sequence[Mapping[str, Any]], *,
                                    reading_kind: str,
-                                   source_kind: str) -> Dict[str, Any]:
+                                   source_kind: str,
+                                   preregistration_path: str | Path | None = None
+                                   ) -> Dict[str, Any]:
     """Settle an explicit immutable round sequence with per-cell diagnostics.
 
     ``lower_bound`` and ``equivalence_artifact`` intentionally share this exact
@@ -398,7 +498,9 @@ def rebuild_settlement_from_rounds(out_dir: str, rounds: Sequence[Mapping[str, A
     archive = load_settlement_bars(out_dir)
     first_archive_date = _archive_date(archive["first_capture_round"])
     scanner_started = scanner_activation_date(out_dir)
-    cfg = load_prereg()
+    prereg = (Path(preregistration_path).resolve() if preregistration_path is not None
+              else _resolved_preregistration())
+    cfg = load_prereg(str(prereg))
     cost_rate = float(cfg["cost_per_turnover"])
     expected_cells = sorted(str(item) for item in cfg["family"]["grid"])
     result: Dict[str, Any] = {
@@ -495,8 +597,13 @@ def rebuild_settlement_from_rounds(out_dir: str, rounds: Sequence[Mapping[str, A
                 cell["sequence"] = {"status": sequence_status, **origin}
                 cell["is_performance_reading"] = bool(
                     kind == "lower_bound" and sequence_status == "complete")
-                carried[name] = {"terminal_nav": cell["nav_series"][-1]["nav"],
-                                 "shares": cell["shares"], "sequence_origin": origin}
+                carried[name] = {
+                    "terminal_nav": cell["nav_series"][-1]["nav"],
+                    "terminal_as_of": cell["nav_series"][-1]["as_of"],
+                    "cash": cell["cash"],
+                    "shares": cell["shares"],
+                    "sequence_origin": origin,
+                }
             else:
                 cell["is_performance_reading"] = False
                 continuity_blocked_by.setdefault(name, []).append(stamp)
@@ -532,7 +639,9 @@ def rebuild_settlement_from_rounds(out_dir: str, rounds: Sequence[Mapping[str, A
     return result
 
 
-def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
+def rebuild_lower_bound_settlement(out_dir: str, *,
+                                   preregistration_path: str | Path | None = None
+                                   ) -> Dict[str, Any]:
     """Backfill every persisted bearing round into one derived lower-bound artifact.
 
     It is deterministic from immutable round decisions plus archived bars.
@@ -542,7 +651,8 @@ def rebuild_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
     """
     return rebuild_settlement_from_rounds(
         out_dir, load_rounds(out_dir), reading_kind="lower_bound",
-        source_kind="bearing_round_records")
+        source_kind="bearing_round_records",
+        preregistration_path=preregistration_path)
 
 
 def archive_coverage_requirements(out_dir: str) -> Dict[str, Any]:
@@ -620,11 +730,14 @@ def verify_settlement_artifact(path: str | Path) -> Dict[str, Any]:
         raise ArchiveIntegrityError(
             f"派生结算工件内容哈希不匹配: {target.name} (expected={supplied}, actual={actual})")
     if payload.get("schema") not in {
-            LEGACY_SETTLEMENT_ARTIFACT_SCHEMA, SETTLEMENT_ARTIFACT_SCHEMA}:
+            LEGACY_SETTLEMENT_ARTIFACT_SCHEMA,
+            LEGACY_V2_SETTLEMENT_ARTIFACT_SCHEMA,
+            SETTLEMENT_ARTIFACT_SCHEMA}:
         raise ArchiveIntegrityError(f"派生结算工件 schema 非法: {target.name}")
     if target.name.startswith("SETTLEMENT_") and supplied[:16] not in target.name:
         raise ArchiveIntegrityError(f"派生结算工件文件名与内容哈希不匹配: {target.name}")
-    if payload.get("schema") == SETTLEMENT_ARTIFACT_SCHEMA:
+    if payload.get("schema") in {
+            LEGACY_V2_SETTLEMENT_ARTIFACT_SCHEMA, SETTLEMENT_ARTIFACT_SCHEMA}:
         identity = payload.get("calculation_identity")
         if not isinstance(identity, Mapping) or not isinstance(
                 identity.get("input_manifest"), Mapping):
@@ -638,6 +751,11 @@ def verify_settlement_artifact(path: str | Path) -> Dict[str, Any]:
         manifest_hash = _hash(identity["input_manifest"])
         if identity.get("input_manifest_sha256") != manifest_hash:
             raise ArchiveIntegrityError(f"v2 派生结算工件输入清单哈希不匹配: {target.name}")
+        if payload.get("schema") == SETTLEMENT_ARTIFACT_SCHEMA:
+            if identity.get("numeric_accumulation_semantics") != STABLE_ACCUMULATION_SEMANTICS:
+                raise ArchiveIntegrityError(f"v3 派生结算工件累加语义非法: {target.name}")
+            if identity.get("supported_runtime") != SUPPORTED_RUNTIME:
+                raise ArchiveIntegrityError(f"v3 派生结算工件运行时契约非法: {target.name}")
     return payload
 
 
@@ -654,7 +772,9 @@ def verify_settlement_invocation(path: str | Path, *,
     supplied = payload.get("content_sha256")
     unsigned = dict(payload)
     unsigned.pop("content_sha256", None)
-    if payload.get("schema") != SETTLEMENT_INVOCATION_SCHEMA or supplied != _hash(unsigned):
+    if payload.get("schema") not in {
+            LEGACY_SETTLEMENT_INVOCATION_SCHEMA, SETTLEMENT_INVOCATION_SCHEMA} or \
+            supplied != _hash(unsigned):
         raise ArchiveIntegrityError(f"派生结算 invocation 内容或 schema 非法: {target.name}")
     if target.name.startswith("INVOCATION_") and supplied[:16] not in target.name:
         raise ArchiveIntegrityError(f"派生结算 invocation 文件名与内容哈希不匹配: {target.name}")
@@ -667,21 +787,45 @@ def verify_settlement_invocation(path: str | Path, *,
     return payload
 
 
-def write_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
+def write_lower_bound_settlement(
+        out_dir: str, *,
+        expected_input_manifest_sha256: str | None = None,
+        expected_implementation_version: str | None = None,
+        expected_implementation_source_sha256: str | None = None,
+        expected_settlement_content_sha256: str | None = None) -> Dict[str, Any]:
     """Materialize a stable calculation artifact; identical inputs reuse it.
 
-    The v2 content hash protects the entire file (except the hash field itself)
+    The v3 content hash protects the entire file (except the hash field itself)
     and covers a manifest of every calculation input.  Per-run Git HEAD belongs
     in :func:`write_settlement_invocation`, never in this calculation identity.
-    Legacy v1 files remain valid, verifiable, and untouched.
+    Legacy v1/v2 files remain valid, verifiable, and untouched.
     """
-    identity = settlement_calculation_identity(out_dir)
-    payload = rebuild_lower_bound_settlement(out_dir)
-    if settlement_calculation_identity(out_dir) != identity:
+    require_supported_settlement_runtime()
+    preregistration_path = _resolved_preregistration()
+    identity = settlement_calculation_identity(
+        out_dir, preregistration_path=preregistration_path)
+    payload = rebuild_lower_bound_settlement(
+        out_dir, preregistration_path=preregistration_path)
+    if settlement_calculation_identity(
+            out_dir, preregistration_path=preregistration_path) != identity:
         raise ArchiveIntegrityError("派生结算输入在计算期间发生变化，拒绝写入混合工件")
     payload["schema"] = SETTLEMENT_ARTIFACT_SCHEMA
     payload["calculation_identity"] = identity
     payload["content_sha256"] = _hash(payload)
+    expected = {
+        "input manifest": (expected_input_manifest_sha256,
+                           identity["input_manifest_sha256"]),
+        "implementation version": (expected_implementation_version,
+                                   identity["implementation_version"]),
+        "implementation source": (expected_implementation_source_sha256,
+                                  identity["implementation_source_sha256"]),
+        "settlement content": (expected_settlement_content_sha256,
+                               payload["content_sha256"]),
+    }
+    for label, (wanted, actual) in expected.items():
+        if wanted is not None and wanted != actual:
+            raise SettlementIdentityMismatch(
+                f"{label} mismatch: expected {wanted}, actual {actual}")
     directory = Path(out_dir) / "derived_settlement"
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / f"SETTLEMENT_{payload['content_sha256'][:16]}.json"
@@ -700,6 +844,8 @@ def write_lower_bound_settlement(out_dir: str) -> Dict[str, Any]:
             "input_manifest_sha256": identity["input_manifest_sha256"],
             "implementation_version": identity["implementation_version"],
             "implementation_source_sha256": identity["implementation_source_sha256"],
+            "numeric_accumulation_semantics": identity["numeric_accumulation_semantics"],
+            "supported_runtime": identity["supported_runtime"],
             "n_rounds": len(payload["rounds"]), "payload": payload}
 
 
@@ -707,6 +853,7 @@ def write_settlement_invocation(out_dir: str, *, settlement: Mapping[str, Any],
                                 branch_head_commit: str | None,
                                 command: Mapping[str, Any]) -> Dict[str, Any]:
     """Append a separately hashed trace for one deterministic CLI invocation."""
+    require_supported_settlement_runtime()
     settlement_path = Path(str(settlement["settlement_file"]))
     verified = verify_settlement_artifact(settlement_path)
     if verified.get("content_sha256") != settlement.get("content_sha256"):
@@ -722,6 +869,10 @@ def write_settlement_invocation(out_dir: str, *, settlement: Mapping[str, Any],
         },
         "invocation": {
             "branch_head_commit": branch_head_commit,
+            "python_runtime": {
+                "implementation": sys.implementation.name,
+                "version": ".".join(str(item) for item in sys.version_info[:3]),
+            },
             "command": dict(command),
         },
         "verification_scope": {

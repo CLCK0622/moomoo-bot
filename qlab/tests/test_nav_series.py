@@ -123,7 +123,20 @@ def test_reads_the_real_round_one_record():
                and point["bar_provenance"]["must_not_promote_to_acceptance"] is True
                for point in first_segment)
     reading = cumulative_returns(str(REPORTS))["seed11×pv1_baseline"]
-    assert reading["status"] == "pending_sequence"
-    assert reading["cumulative_return"] is None
-    assert reading["blockers"] == [{
-        "round": "20260831", "status": "pending_archive_integrity"}]
+    later_segments = [point for point in derived if point["round"] != "20260810"]
+    if reading["status"] == "complete":
+        # A later valid segment may lawfully appear.  The fixed first-segment
+        # evidence remains intact, while the cumulative reading must advance
+        # beyond that segment and retain the original pre-entry base.
+        assert later_segments
+        assert reading["nav_start"] == 100_000.0
+        assert reading["nav_end"] == later_segments[-1]["nav"]
+    else:
+        # Any pending/incomplete continuation must suppress the old 08-10-only
+        # performance number without pinning today's producer status or exact
+        # blocker list, both of which legitimately evolve as evidence arrives.
+        assert reading["cumulative_return"] is None
+        assert "nav_end" not in reading and "as_of" not in reading
+        assert reading.get("blockers")
+        assert all(blocker.get("status") != "filled"
+                   for blocker in reading["blockers"] if "status" in blocker)
