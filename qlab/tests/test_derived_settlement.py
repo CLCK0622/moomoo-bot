@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+import qlab.llm_paper.derived_settlement as settlement_module
 from qlab.events.datafetch.quotes_api import DailyBar
 from qlab.llm_paper.archive_scan_state import write_scanner_state
 from qlab.llm_paper.archive_scanner import archive_scan_coverage, scan_missing_archive_bars
@@ -155,6 +156,40 @@ def test_pinned_identity_mismatch_refuses_before_creating_output(tmp_path):
         write_lower_bound_settlement(
             str(tmp_path), expected_input_manifest_sha256="0" * 64)
     assert not (tmp_path / "derived_settlement").exists()
+
+
+def test_input_or_implementation_version_change_creates_a_new_identity(
+        tmp_path, monkeypatch):
+    _write_round(tmp_path)
+    _archive(tmp_path)
+    first = write_lower_bound_settlement(str(tmp_path))
+
+    round_path = tmp_path / "round_20260810.json"
+    changed = json.loads(round_path.read_text(encoding="utf-8"))
+    changed["manifest_visible_test_field"] = True
+    round_path.write_text(json.dumps(changed), encoding="utf-8")
+    second = write_lower_bound_settlement(str(tmp_path))
+    assert second["input_manifest_sha256"] != first["input_manifest_sha256"]
+    assert second["content_sha256"] != first["content_sha256"]
+
+    monkeypatch.setattr(
+        settlement_module, "SETTLEMENT_IMPLEMENTATION_VERSION",
+        "llm_paper_derived_settlement/test-version-change")
+    third = write_lower_bound_settlement(str(tmp_path))
+    assert third["implementation_version"] != second["implementation_version"]
+    assert third["content_sha256"] != second["content_sha256"]
+
+
+def test_v3_artifact_tampering_is_rejected(tmp_path):
+    _write_round(tmp_path)
+    _archive(tmp_path)
+    written = write_lower_bound_settlement(str(tmp_path))
+    target = Path(written["settlement_file"])
+    tampered = json.loads(target.read_text(encoding="utf-8"))
+    tampered["calculation_identity"]["numeric_accumulation_semantics"] = "builtins.sum"
+    target.write_text(json.dumps(tampered), encoding="utf-8")
+    with pytest.raises(ArchiveIntegrityError, match="内容哈希不匹配"):
+        verify_settlement_artifact(target)
 
 
 def test_supported_runtime_contract_includes_reviewed_versions_and_rejects_others():
