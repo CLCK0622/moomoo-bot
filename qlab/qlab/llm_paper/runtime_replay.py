@@ -4,7 +4,9 @@ The decision-time 20260831 books are immutable ``pending_entry_bar`` records.
 This module does not rewrite them.  It reconstructs their original proposals,
 loads only the ruled immutable bar archive, and invokes the production
 ``run_round`` / ``run_round_multi`` paths through ``run_parallel_control`` in a
-temporary directory.  The resulting evidence artifact binds the exact shared
+temporary directory.  Existing RESOLUTION records govern their 16 keys; the
+two unresolved SPY bars are injected from explicitly named immutable archive
+versions without creating a ruling.  The resulting evidence artifact binds the exact shared
 bar snapshot, runtime sources, immutable inputs, filled books, field-by-field
 comparison, and the auxiliary derived-settlement reconciliation.
 
@@ -202,6 +204,80 @@ def _bar_dict(record: Mapping[str, Any]) -> Dict[str, Any]:
     return {field: record.get(field) for field in _BAR_FIELDS}
 
 
+def _unresolved_provenance(root: Path, keys: Sequence[Tuple[str, str]],
+                           selected_by_key: Mapping[Tuple[str, str], Mapping[str, Any]]
+                           ) -> List[Dict[str, Any]]:
+    records = [(path, _read_json(path)) for path in sorted(
+        (root / "bar_archive").glob("archive_*.json"))]
+    result = []
+    for key in keys:
+        versions = []
+        for path, record in records:
+            bar = next((item for item in record.get("bars") or []
+                        if (item.get("symbol"), item.get("date")) == key), None)
+            if bar is not None:
+                versions.append({
+                    "archive_file": _relative(path, root),
+                    "archive_content_sha256": record["content_sha256"],
+                    "volume": bar.get("volume"),
+                    "bar": _bar_dict(bar),
+                })
+        chosen = selected_by_key[key]
+        matching = [version for version in versions if version["bar"] == chosen]
+        if not matching:
+            raise RuntimeReplayError(f"未裁定键 {key} 的 runtime 选版没有归档来源")
+        source = matching[-1]
+        result.append({
+            "symbol": key[0],
+            "date": key[1],
+            "injected_volume": chosen.get("volume"),
+            "injected_bar": dict(chosen),
+            "source_archive_file": source["archive_file"],
+            "source_archive_content_sha256": source["archive_content_sha256"],
+            "selection": "newest_immutable_observation_for_runtime_replay_only",
+            "resolution_status": "unresolved_no_resolution_written",
+            "observed_versions": versions,
+        })
+    return result
+
+
+def _volume_only_precondition(root: Path, resolutions: Sequence[Path],
+                              bearing: Mapping[str, Any]) -> Dict[str, Any]:
+    resolved_items = [item for path in resolutions
+                      for item in (_read_json(path).get("resolved_differences") or [])]
+    resolution_fields = sorted({field for item in resolved_items
+                                for field in (item.get("fields") or {})})
+    unresolved_items = [item for group in unresolved_disagreements(str(root))
+                        for item in group.get("differences") or []]
+    unresolved_fields = sorted({field for item in unresolved_items
+                                for field in (item.get("fields") or {})})
+    if len({(item.get("symbol"), item.get("date")) for item in resolved_items}) != 16 or \
+            resolution_fields != ["volume"] or unresolved_fields != ["volume"]:
+        raise RuntimeReplayError(
+            "RESOLUTION/未裁定差异不再是既有 16 键且全部仅 volume，停止 runtime replay")
+    holdings = sorted({item["symbol"] for item in bearing.get("decisions") or []})
+    pending = sorted(set((bearing.get("book") or {}).get("pending_symbols") or []))
+    if holdings != pending or "SPY" in holdings:
+        raise RuntimeReplayError("原承载 pending_symbols 与 8 只持仓标的不一致，或 SPY 意外成为持仓")
+    return {
+        "status": "passed",
+        "resolved_key_count": 16,
+        "resolution_difference_fields": resolution_fields,
+        "unresolved_difference_fields": unresolved_fields,
+        "bearing_pending_symbols": pending,
+        "spy_is_benchmark_not_holding": True,
+        "runtime_price_fields": {"entry": "open", "mark_to_market": "close"},
+        "volume_enters_book_or_nav": False,
+        "code_locations": [
+            "qlab/qlab/llm_paper/run_round.py:149",
+            "qlab/qlab/llm_paper/run_round.py:154",
+            "qlab/qlab/events/datafetch/quotes_api.py:391",
+        ],
+        "note": ("两份 RESOLUTION 与剩余 SPY 分歧字段全部且仅 volume；build_book 只从 bar.open "
+                 "构造 entry/shares，mark_to_market 只读 close，volume 不进入 book/NAV。"),
+    }
+
+
 def _bar_snapshot(root: Path, symbols: Sequence[str]) -> Tuple[Dict[str, List[DailyBar]], Dict[str, Any]]:
     archive = load_settlement_bars(str(root))
     unresolved_list = _unresolved_keys(root)
@@ -211,7 +287,10 @@ def _bar_snapshot(root: Path, symbols: Sequence[str]) -> Tuple[Dict[str, List[Da
             f"expected={list(EXPECTED_UNRESOLVED_KEYS)}, actual={unresolved_list}")
     unresolved = set(unresolved_list)
     selected = [_bar_dict(bar) for key, bar in sorted(archive["bars"].items())
-                if key[0] in symbols and key not in unresolved]
+                if key[0] in symbols]
+    selected_by_key = {(bar["symbol"], bar["date"]): bar for bar in selected}
+    unresolved_provenance = _unresolved_provenance(
+        root, unresolved_list, selected_by_key)
     by_symbol: Dict[str, List[DailyBar]] = {symbol: [] for symbol in symbols}
     for bar in selected:
         by_symbol[bar["symbol"]].append(DailyBar(**bar))
@@ -220,7 +299,10 @@ def _bar_snapshot(root: Path, symbols: Sequence[str]) -> Tuple[Dict[str, List[Da
         raise RuntimeReplayError(f"归档快照缺 replay 标的: {missing}")
 
     consumed_keys = {(bar["symbol"], bar["date"]) for bar in selected}
-    require_settlement_integrity(str(root), keys=consumed_keys)
+    # The real injected runtime path has no archive-integrity call.  Prove the
+    # resolved portion still passes the existing key-scoped gate, while keeping
+    # the two required SPY bars in the actual injected/hash-bound snapshot.
+    require_settlement_integrity(str(root), keys=consumed_keys - unresolved)
 
     blocked = []
     for key in sorted(unresolved):
@@ -234,15 +316,19 @@ def _bar_snapshot(root: Path, symbols: Sequence[str]) -> Tuple[Dict[str, List[Da
 
     payload: Dict[str, Any] = {
         "schema": "llm_paper_runtime_bar_snapshot/v1",
-        "source_kind": "ruled_immutable_bar_archive_only",
-        "selector": ("required executor symbols; newest ruled immutable observation per key; "
-                     "unresolved keys excluded and separately proved blocked"),
+        "source_kind": "immutable_bar_archive_only_with_explicit_unresolved_spy_versions",
+        "selector": ("required 9-symbol executor union; ruled keys follow RESOLUTION; unresolved "
+                     "SPY keys use newest immutable observation without creating a ruling"),
         "symbols": sorted(symbols),
         "bars": selected,
         "n_bars": len(selected),
         "archive_content_sha256s": archive["archive_content_sha256s"],
         "captures": archive["captures"],
-        "unresolved_keys_excluded_and_still_blocked": blocked,
+        "resolved_snapshot_keys_integrity_gate": "passed",
+        "unresolved_keys_present": unresolved_provenance,
+        "unresolved_keys_still_blocked_for_integrity_consumers": blocked,
+        "integrity_scope_note": ("本快照哈希只证明两侧 runtime 参数逐字相同；SPY 两键仍未裁定，"
+                                 "其被注入不构成输入完整性通过或 RESOLUTION。"),
     }
     payload["content_sha256"] = _hash(payload)
     return by_symbol, payload
@@ -479,6 +565,7 @@ def replay_runtime_equivalence(out_dir: str, *, stamp: str = "20260831",
     control_original = _read_json(root / "control_multi_book" / f"round_{stamp}.json")
     old_control = _read_json(root / f"CONTROL_{stamp}.json")
     settlement = verify_settlement_artifact(settlement_path)
+    volume_precondition = _volume_only_precondition(root, resolutions, bearing_original)
 
     if bearing_original.get("executor") != "single_book" or \
             control_original.get("executor") != "multi_book_v1":
@@ -633,8 +720,12 @@ def replay_runtime_equivalence(out_dir: str, *, stamp: str = "20260831",
             "control": "qlab.llm_paper.multi_book.run_round_multi",
             "network_calls": 0,
             "register_trials": False,
+            "resolution_writes": 0,
+            "runtime_out_dirs": "temporary_isolated_directories",
+            "determinism_baseline_path": "temporary_copy",
             "source_inputs_read_only": True,
         },
+        "volume_only_runtime_precondition": volume_precondition,
         "shared_bar_snapshot": snapshot,
         "same_shared_bar_snapshot": {
             "status": "passed",
@@ -644,6 +735,8 @@ def replay_runtime_equivalence(out_dir: str, *, stamp: str = "20260831",
             "after_both_executors_content_sha256": snapshot_after_hash,
             "same_object_injected_by_orchestrator": True,
             "input_unchanged_after_execution": snapshot_before == snapshot_after_hash,
+            "proof_scope": "bearing/control runtime received the exact same 9-symbol snapshot",
+            "does_not_establish": "integrity or resolution of SPY@2026-09-01/2026-09-02",
         },
         "runtime_outputs": {
             "bearing": _stable_bearing(bearing_replay),

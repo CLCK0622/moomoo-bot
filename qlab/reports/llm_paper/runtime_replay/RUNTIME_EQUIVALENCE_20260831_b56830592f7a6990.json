@@ -10,7 +10,7 @@
     "required_authority": "吏部书面核收",
     "switch_authorized": false
   },
-  "content_sha256": "18443945f95bfffeb54529418e236cc288c0110b36e0a23ce8cfd3bc6e5f2034",
+  "content_sha256": "b56830592f7a6990834d4e2c3c4b34436b36c2a136162e63a7affca34dfa2c7f",
   "derived_settlement_reconciliation": {
     "artifact": {
       "content_sha256": "dfe843379ccb07eb9fa2d64c06b00b7248edbc2a63eb1fac6bc2a84f8c3522c7",
@@ -1553,10 +1553,10 @@
     },
     "role": "auxiliary_reconciliation_not_runtime_equivalence_evidence"
   },
-  "implementation_source_sha256": "27564df22c0032c27961c63a95933ea4894defb9406730336971d620584ab6ef",
+  "implementation_source_sha256": "a073318ea681922d5bac42c9e615af52dcd33251bcbb6ab755829125d54bbd7e",
   "implementation_version": "llm_paper_runtime_replay/evo-502-v1",
   "input_manifest": {
-    "content_sha256": "1ff3fd5da0f7f683af4a543d079f6cbca0d88375885265b411eaab01a60669d5",
+    "content_sha256": "f64639103a45f28149c4bb1e7d988dfa1c4fc2d0cdcf2873733b380bf783dd03",
     "external_inputs": {
       "determinism_baseline": {
         "file": "llm_paper_determinism_baseline.json",
@@ -1635,9 +1635,9 @@
       "qlab/qlab/llm_paper/quote_bridge.py": "e88a9713c2c44303225897f75f63b8a2da68e119a0b0cc2cfcfaf420e704cff8",
       "qlab/qlab/llm_paper/rebalance_policy.py": "89d5b467529c5d239c785e353ca0fb7993bba9ce7a4b968f2e9460c222041f1c",
       "qlab/qlab/llm_paper/run_round.py": "bdd3fe795d7dbc72b6b4ac48ce6b1ddbf596f018066887def7fbfd9dd94246b2",
-      "qlab/qlab/llm_paper/runtime_replay.py": "27564df22c0032c27961c63a95933ea4894defb9406730336971d620584ab6ef"
+      "qlab/qlab/llm_paper/runtime_replay.py": "a073318ea681922d5bac42c9e615af52dcd33251bcbb6ab755829125d54bbd7e"
     },
-    "shared_bar_snapshot_content_sha256": "f3af626eb667908826f3260743a96a8d160c43676f08774074b69a1cb05a3525"
+    "shared_bar_snapshot_content_sha256": "35ddaac678cfcb2f0066b6f75c4f1c5b28de7825ab224164796e8b4cc685ed0c"
   },
   "is_acceptance_reading": false,
   "is_performance_reading": false,
@@ -2378,9 +2378,12 @@
   "runtime_entrypoints": {
     "bearing": "qlab.llm_paper.run_round.run_round",
     "control": "qlab.llm_paper.multi_book.run_round_multi",
+    "determinism_baseline_path": "temporary_copy",
     "network_calls": 0,
     "orchestrator": "qlab.llm_paper.parallel_control.run_parallel_control",
     "register_trials": false,
+    "resolution_writes": 0,
+    "runtime_out_dirs": "temporary_isolated_directories",
     "source_inputs_read_only": true
   },
   "runtime_outputs": {
@@ -7196,12 +7199,14 @@
       "verdict": null
     }
   },
-  "runtime_source_bundle_sha256": "01f2bd057b98ad1d66b47d4a3a4d37f98d0d49e3dd28843ccbaaf4ff33b73237",
+  "runtime_source_bundle_sha256": "76a93d4ed79e7507f537619a93938a3374826710ddb279ce0cd68ab2484caeaf",
   "same_shared_bar_snapshot": {
-    "after_both_executors_content_sha256": "f3af626eb667908826f3260743a96a8d160c43676f08774074b69a1cb05a3525",
-    "bearing_argument_content_sha256": "f3af626eb667908826f3260743a96a8d160c43676f08774074b69a1cb05a3525",
-    "control_argument_content_sha256": "f3af626eb667908826f3260743a96a8d160c43676f08774074b69a1cb05a3525",
+    "after_both_executors_content_sha256": "35ddaac678cfcb2f0066b6f75c4f1c5b28de7825ab224164796e8b4cc685ed0c",
+    "bearing_argument_content_sha256": "35ddaac678cfcb2f0066b6f75c4f1c5b28de7825ab224164796e8b4cc685ed0c",
+    "control_argument_content_sha256": "35ddaac678cfcb2f0066b6f75c4f1c5b28de7825ab224164796e8b4cc685ed0c",
+    "does_not_establish": "integrity or resolution of SPY@2026-09-01/2026-09-02",
     "input_unchanged_after_execution": true,
+    "proof_scope": "bearing/control runtime received the exact same 9-symbol snapshot",
     "same_object_injected_by_orchestrator": true,
     "snapshot_content_hash_recorded": true,
     "status": "passed"
@@ -14325,6 +14330,26 @@
         "volume": 38810779.0
       },
       {
+        "close": 761.78,
+        "date": "2026-09-01",
+        "high": 764.67,
+        "low": 759.48,
+        "open": 762.01,
+        "source": "alphavantage:TIME_SERIES_DAILY",
+        "symbol": "SPY",
+        "volume": 41126315.0
+      },
+      {
+        "close": 765.16,
+        "date": "2026-09-02",
+        "high": 766.43,
+        "low": 761.73,
+        "open": 762.45,
+        "source": "alphavantage:TIME_SERIES_DAILY",
+        "symbol": "SPY",
+        "volume": 29566216.0
+      },
+      {
         "close": 773.17,
         "date": "2026-09-03",
         "high": 774.03,
@@ -16392,11 +16417,13 @@
         "round": "20260904"
       }
     ],
-    "content_sha256": "f3af626eb667908826f3260743a96a8d160c43676f08774074b69a1cb05a3525",
-    "n_bars": 916,
+    "content_sha256": "35ddaac678cfcb2f0066b6f75c4f1c5b28de7825ab224164796e8b4cc685ed0c",
+    "integrity_scope_note": "本快照哈希只证明两侧 runtime 参数逐字相同；SPY 两键仍未裁定，其被注入不构成输入完整性通过或 RESOLUTION。",
+    "n_bars": 918,
+    "resolved_snapshot_keys_integrity_gate": "passed",
     "schema": "llm_paper_runtime_bar_snapshot/v1",
-    "selector": "required executor symbols; newest ruled immutable observation per key; unresolved keys excluded and separately proved blocked",
-    "source_kind": "ruled_immutable_bar_archive_only",
+    "selector": "required 9-symbol executor union; ruled keys follow RESOLUTION; unresolved SPY keys use newest immutable observation without creating a ruling",
+    "source_kind": "immutable_bar_archive_only_with_explicit_unresolved_spy_versions",
     "symbols": [
       "CRM",
       "CSCO",
@@ -16408,7 +16435,126 @@
       "TGT",
       "WMT"
     ],
-    "unresolved_keys_excluded_and_still_blocked": [
+    "unresolved_keys_present": [
+      {
+        "date": "2026-09-01",
+        "injected_bar": {
+          "close": 761.78,
+          "date": "2026-09-01",
+          "high": 764.67,
+          "low": 759.48,
+          "open": 762.01,
+          "source": "alphavantage:TIME_SERIES_DAILY",
+          "symbol": "SPY",
+          "volume": 41126315.0
+        },
+        "injected_volume": 41126315.0,
+        "observed_versions": [
+          {
+            "archive_content_sha256": "65805f8325f2a6e550568a33e0a7bce0acb873f24358d73b392c53ca75604b94",
+            "archive_file": "bar_archive/archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+            "bar": {
+              "close": 761.78,
+              "date": "2026-09-01",
+              "high": 764.67,
+              "low": 759.48,
+              "open": 762.01,
+              "source": "alphavantage:TIME_SERIES_DAILY",
+              "symbol": "SPY",
+              "volume": 37889249.0
+            },
+            "volume": 37889249.0
+          },
+          {
+            "archive_content_sha256": "648e2a570c1ecf04dcb6284914dfe2d75990e39a90a458ac7bd100a3ad375629",
+            "archive_file": "bar_archive/archive_20260903_2026-09-03T02-01-51-355718-00-00_648e2a570c1e.json",
+            "bar": {
+              "close": 761.78,
+              "date": "2026-09-01",
+              "high": 764.67,
+              "low": 759.48,
+              "open": 762.01,
+              "source": "alphavantage:TIME_SERIES_DAILY",
+              "symbol": "SPY",
+              "volume": 41126315.0
+            },
+            "volume": 41126315.0
+          },
+          {
+            "archive_content_sha256": "7a6a3aaf54fbbba4c4af5ec45ea64a664ede0be252bd85b2d7ec4eedb6ca8764",
+            "archive_file": "bar_archive/archive_20260904_2026-09-04T02-01-41-950331-00-00_7a6a3aaf54fb.json",
+            "bar": {
+              "close": 761.78,
+              "date": "2026-09-01",
+              "high": 764.67,
+              "low": 759.48,
+              "open": 762.01,
+              "source": "alphavantage:TIME_SERIES_DAILY",
+              "symbol": "SPY",
+              "volume": 41126315.0
+            },
+            "volume": 41126315.0
+          }
+        ],
+        "resolution_status": "unresolved_no_resolution_written",
+        "selection": "newest_immutable_observation_for_runtime_replay_only",
+        "source_archive_content_sha256": "7a6a3aaf54fbbba4c4af5ec45ea64a664ede0be252bd85b2d7ec4eedb6ca8764",
+        "source_archive_file": "bar_archive/archive_20260904_2026-09-04T02-01-41-950331-00-00_7a6a3aaf54fb.json",
+        "symbol": "SPY"
+      },
+      {
+        "date": "2026-09-02",
+        "injected_bar": {
+          "close": 765.16,
+          "date": "2026-09-02",
+          "high": 766.43,
+          "low": 761.73,
+          "open": 762.45,
+          "source": "alphavantage:TIME_SERIES_DAILY",
+          "symbol": "SPY",
+          "volume": 29566216.0
+        },
+        "injected_volume": 29566216.0,
+        "observed_versions": [
+          {
+            "archive_content_sha256": "648e2a570c1ecf04dcb6284914dfe2d75990e39a90a458ac7bd100a3ad375629",
+            "archive_file": "bar_archive/archive_20260903_2026-09-03T02-01-51-355718-00-00_648e2a570c1e.json",
+            "bar": {
+              "close": 765.16,
+              "date": "2026-09-02",
+              "high": 766.43,
+              "low": 761.73,
+              "open": 762.45,
+              "source": "alphavantage:TIME_SERIES_DAILY",
+              "symbol": "SPY",
+              "volume": 27826259.0
+            },
+            "volume": 27826259.0
+          },
+          {
+            "archive_content_sha256": "7a6a3aaf54fbbba4c4af5ec45ea64a664ede0be252bd85b2d7ec4eedb6ca8764",
+            "archive_file": "bar_archive/archive_20260904_2026-09-04T02-01-41-950331-00-00_7a6a3aaf54fb.json",
+            "bar": {
+              "close": 765.16,
+              "date": "2026-09-02",
+              "high": 766.43,
+              "low": 761.73,
+              "open": 762.45,
+              "source": "alphavantage:TIME_SERIES_DAILY",
+              "symbol": "SPY",
+              "volume": 29566216.0
+            },
+            "volume": 29566216.0
+          }
+        ],
+        "resolution_status": "unresolved_no_resolution_written",
+        "selection": "newest_immutable_observation_for_runtime_replay_only",
+        "source_archive_content_sha256": "7a6a3aaf54fbbba4c4af5ec45ea64a664ede0be252bd85b2d7ec4eedb6ca8764",
+        "source_archive_file": "bar_archive/archive_20260904_2026-09-04T02-01-41-950331-00-00_7a6a3aaf54fb.json",
+        "symbol": "SPY"
+      }
+    ],
+    "unresolved_keys_still_blocked_for_integrity_consumers": [
       {
         "date": "2026-09-01",
         "error_type": "ArchiveIntegrityError",
@@ -16456,5 +16602,37 @@
     },
     "status": "passed"
   },
-  "verdict": null
+  "verdict": null,
+  "volume_only_runtime_precondition": {
+    "bearing_pending_symbols": [
+      "CRM",
+      "CSCO",
+      "DE",
+      "HD",
+      "INTU",
+      "NVDA",
+      "TGT",
+      "WMT"
+    ],
+    "code_locations": [
+      "qlab/qlab/llm_paper/run_round.py:149",
+      "qlab/qlab/llm_paper/run_round.py:154",
+      "qlab/qlab/events/datafetch/quotes_api.py:391"
+    ],
+    "note": "两份 RESOLUTION 与剩余 SPY 分歧字段全部且仅 volume；build_book 只从 bar.open 构造 entry/shares，mark_to_market 只读 close，volume 不进入 book/NAV。",
+    "resolution_difference_fields": [
+      "volume"
+    ],
+    "resolved_key_count": 16,
+    "runtime_price_fields": {
+      "entry": "open",
+      "mark_to_market": "close"
+    },
+    "spy_is_benchmark_not_holding": true,
+    "status": "passed",
+    "unresolved_difference_fields": [
+      "volume"
+    ],
+    "volume_enters_book_or_nav": false
+  }
 }

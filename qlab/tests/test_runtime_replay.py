@@ -54,10 +54,39 @@ def test_real_0831_replay_is_filled_hash_bound_and_idempotent(tmp_path):
     assert {binding["bearing_argument_content_sha256"],
             binding["control_argument_content_sha256"],
             binding["after_both_executors_content_sha256"]} == {snapshot_hash}
+    unresolved = artifact["shared_bar_snapshot"]["unresolved_keys_present"]
+    assert {(item["symbol"], item["date"]) for item in unresolved} == {
+        ("SPY", "2026-09-01"), ("SPY", "2026-09-02")}
+    assert {(item["date"], item["injected_volume"],
+             item["source_archive_content_sha256"]) for item in unresolved} == {
+        ("2026-09-01", 41126315.0,
+         "7a6a3aaf54fbbba4c4af5ec45ea64a664ede0be252bd85b2d7ec4eedb6ca8764"),
+        ("2026-09-02", 29566216.0,
+         "7a6a3aaf54fbbba4c4af5ec45ea64a664ede0be252bd85b2d7ec4eedb6ca8764"),
+    }
     assert {(item["symbol"], item["date"])
             for item in artifact["shared_bar_snapshot"][
-                "unresolved_keys_excluded_and_still_blocked"]} == {
+                "unresolved_keys_still_blocked_for_integrity_consumers"]} == {
                     ("SPY", "2026-09-01"), ("SPY", "2026-09-02")}
+    snapshot_keys = {(item["symbol"], item["date"])
+                     for item in artifact["shared_bar_snapshot"]["bars"]}
+    assert {("SPY", "2026-09-01"), ("SPY", "2026-09-02")} <= snapshot_keys
+    assert artifact["same_shared_bar_snapshot"]["does_not_establish"].startswith("integrity")
+    assert artifact["volume_only_runtime_precondition"] == {
+        "status": "passed",
+        "resolved_key_count": 16,
+        "resolution_difference_fields": ["volume"],
+        "unresolved_difference_fields": ["volume"],
+        "bearing_pending_symbols": ["CRM", "CSCO", "DE", "HD", "INTU", "NVDA", "TGT", "WMT"],
+        "spy_is_benchmark_not_holding": True,
+        "runtime_price_fields": {"entry": "open", "mark_to_market": "close"},
+        "volume_enters_book_or_nav": False,
+        "code_locations": ["qlab/qlab/llm_paper/run_round.py:149",
+                           "qlab/qlab/llm_paper/run_round.py:154",
+                           "qlab/qlab/events/datafetch/quotes_api.py:391"],
+        "note": ("两份 RESOLUTION 与剩余 SPY 分歧字段全部且仅 volume；build_book 只从 bar.open "
+                 "构造 entry/shares，mark_to_market 只读 close，volume 不进入 book/NAV。"),
+    }
     assert artifact["source_input_immutability"]["status"] == "passed"
     assert artifact["derived_settlement_reconciliation"]["bearing"]["status"] == \
         "differences_found"
