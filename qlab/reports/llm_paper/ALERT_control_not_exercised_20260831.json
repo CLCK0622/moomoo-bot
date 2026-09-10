@@ -1,0 +1,76 @@
+{
+  "alert": "CONTROL_NOT_EXERCISED",
+  "round": "20260831",
+  "book_status": "pending_entry_bar",
+  "action_required": "第 ② 段未被实际检验（两侧均无持仓）⇒ 不得切换；等一个真正产生 filled book 的轮次再跑对照",
+  "report": {
+    "control_of_round": "20260831",
+    "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+    "bearing_path": "single_book (a)",
+    "control_path": "multi_book_v1 (b)",
+    "shared_quote_snapshot": {
+      "symbols": [
+        "CRM",
+        "CSCO",
+        "DE",
+        "HD",
+        "INTU",
+        "NVDA",
+        "SPY",
+        "TGT",
+        "WMT"
+      ],
+      "n_calls": 9,
+      "why": "对照有效性，不是配额：两次取数之间任何一根 bar 变动都会让比对结果因与执行器无关的原因而失败或通过。"
+    },
+    "bearing_round_file": "qlab/reports/llm_paper/round_20260831.json",
+    "control_round_file": "qlab/reports/llm_paper/control_multi_book/round_20260831.json",
+    "control_registered_trials": false,
+    "verdict": null,
+    "note": "对照只判执行器等价性，**不出 verdict**、不自动切换承载路径。",
+    "compared_cell": "seed11×pv1_baseline",
+    "control_cells_evaluated": 10,
+    "control_quote_calls": 0,
+    "book_comparison": {
+      "identical": true,
+      "book_status": "pending_entry_bar",
+      "fields_compared": {
+        "book": [
+          "status",
+          "shares",
+          "entries",
+          "gross_notional",
+          "cash",
+          "entry_cost",
+          "nav_start"
+        ],
+        "nav_point": [
+          "as_of",
+          "nav",
+          "nav_x2_cost",
+          "nav_start"
+        ]
+      },
+      "diffs": []
+    },
+    "decision_set_comparison": {
+      "identical": true,
+      "n_left": 8,
+      "n_right": 8,
+      "fields_compared": [
+        "symbol",
+        "target_weight",
+        "seed",
+        "prompt_variant",
+        "evidence_available_utc",
+        "decision_ts",
+        "intended_start"
+      ],
+      "diffs": []
+    },
+    "identical": true,
+    "book_equivalence_exercised": false,
+    "may_take_over": false,
+    "take_over_note": "本轮 book 状态为 `pending_entry_bar` ⇒ **两侧都没有持仓，逐位相同是空过**，第 ② 段（book 等价性）**未被实际检验**。不得据此切换；等一个真正产生 filled book 的轮次再跑一次对照。"
+  }
+}

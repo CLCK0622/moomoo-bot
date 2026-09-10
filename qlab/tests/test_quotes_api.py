@@ -1,0 +1,380 @@
+"""Tests for quotes_api — the paper mark-to-market price leg.
+
+Offline (canned Alpha Vantage payloads). Pins the failure modes that matter:
+the vendor's HTTP-200-but-throttled response must NOT look like success, and a
+mark must never be printed from missing / carried-forward / stale prices.
+"""
+from __future__ import annotations
+
+from urllib.parse import quote_plus
+
+import pytest
+
+from qlab.events.datafetch import quotes_api as q
+
+
+class _Resp:
+    def __init__(self, payload, status=200):
+        self._p = payload
+        self.status_code = status
+
+    def json(self):
+        return self._p
+
+
+class _FakeSession:
+    """Serves a canned payload per symbol (from request params)."""
+
+    def __init__(self, by_symbol):
+        self.by_symbol = by_symbol
+        self.calls = []
+
+    def get(self, url, params=None, timeout=30):
+        sym = (params or {}).get("symbol")
+        self.calls.append(sym)
+        return _Resp(self.by_symbol[sym])
+
+
+class _TransportFailureSession:
+    """Raises offline with the same encoded-URL shape as requests errors."""
+
+    def __init__(self, prefix_length=0):
+        self.prefix_length = prefix_length
+
+    def get(self, url, params=None, timeout=30):
+        prepared = q.requests.Request("GET", url, params=params).prepare()
+        raise q.requests.ConnectionError("x" * self.prefix_length + " url=" + prepared.url)
+
+
+def _series(rows):
+    return {"Meta Data": {"2. Symbol": "X"},
+            "Time Series (Daily)": {d: {"1. open": str(c), "2. high": str(c),
+                                        "3. low": str(c), "4. close": str(c),
+                                        "5. volume": "1000"} for d, c in rows}}
+
+
+_THROTTLE = {"Information": ("Thank you for using Alpha Vantage! Please consider spreading out "
+                             "your free API requests more sparingly (1 request per second)... "
+                             "25 requests per day")}
+
+
+def test_missing_key_fail_closed(monkeypatch):
+    monkeypatch.delenv("ALPHAVANTAGE_API_KEY", raising=False)
+    with pytest.raises(q.MissingApiKey):
+        q.fetch_daily("AAPL")
+
+
+def test_throttle_raises_not_silent_success(monkeypatch):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    s = _FakeSession({"AAPL": _THROTTLE})
+    with pytest.raises(q.RateLimited, match="Information"):
+        q.fetch_daily("AAPL", session=s)
+
+
+def test_fetch_daily_keeps_source_dates(monkeypatch):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    s = _FakeSession({"AAPL": _series([("2026-08-07", 313.33), ("2026-08-06", 310.0)])})
+    bars = q.fetch_daily("AAPL", session=s)
+    assert [b.date for b in bars] == ["2026-08-06", "2026-08-07"]   # sorted ascending
+    assert bars[-1].close == 313.33
+    # our clock is recorded separately and is never the price date
+    assert bars[-1].retrieved_utc and bars[-1].retrieved_utc != bars[-1].date
+
+
+def test_get_daily_closes_reports_failures_without_backfill(monkeypatch):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    s = _FakeSession({"AAPL": _series([("2026-08-07", 313.33)]), "MSFT": _THROTTLE})
+    bars, failed = q.get_daily_closes(["AAPL", "MSFT"], session=s, sleep=lambda *_: None)
+    assert set(bars) == {"AAPL"}
+    assert "MSFT" in failed and "RateLimited" in failed["MSFT"]
+
+
+def test_get_daily_closes_paces_calls(monkeypatch):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    s = _FakeSession({x: _series([("2026-08-07", 1.0)]) for x in ("A", "B", "C")})
+    slept = []
+    q.get_daily_closes(["A", "B", "C"], session=s, pace_seconds=1.2, sleep=slept.append)
+    assert slept == [1.2, 1.2]        # paced between calls, not after the last
+
+
+def test_trading_days_are_observed_not_predicted():
+    bars = {"AAPL": [q.DailyBar("AAPL", "2026-08-06", 1.0), q.DailyBar("AAPL", "2026-08-07", 1.0)],
+            "MSFT": [q.DailyBar("MSFT", "2026-08-07", 1.0)]}
+    assert q.trading_days(bars) == ["2026-08-06", "2026-08-07"]
+
+
+def test_mark_to_market_values_from_real_closes():
+    bars = {"AAPL": [q.DailyBar("AAPL", "2026-08-07", 100.0)],
+            "MSFT": [q.DailyBar("MSFT", "2026-08-07", 50.0)]}
+    mk = q.mark_to_market({"AAPL": 2, "MSFT": 4}, bars)
+    assert mk["as_of"] == "2026-08-07"
+    assert mk["market_value"] == pytest.approx(2 * 100.0 + 4 * 50.0)
+    assert mk["positions"]["AAPL"]["price_date"] == "2026-08-07"
+
+
+def test_mark_to_market_refuses_missing_symbol():
+    bars = {"AAPL": [q.DailyBar("AAPL", "2026-08-07", 100.0)]}
+    with pytest.raises(q.StalePriceError, match="missing"):
+        q.mark_to_market({"AAPL": 1, "NOPE": 1}, bars)
+
+
+def test_mark_to_market_refuses_stale_price():
+    # MSFT's newest bar is 30 days behind the as-of date -> refuse, don't carry forward
+    bars = {"AAPL": [q.DailyBar("AAPL", "2026-08-07", 100.0)],
+            "MSFT": [q.DailyBar("MSFT", "2026-07-01", 50.0)]}
+    with pytest.raises(q.StalePriceError, match="stale"):
+        q.mark_to_market({"AAPL": 1, "MSFT": 1}, bars, max_staleness_days=5)
+
+
+def test_mark_to_market_no_bars_at_all():
+    with pytest.raises(q.StalePriceError, match="no bars"):
+        q.mark_to_market({"AAPL": 1}, {})
+
+
+# --------------------------------------------------------------------------- #
+# Daily quota guard integration (工部 08-08: 25/day must be accounted, not a comment)
+# --------------------------------------------------------------------------- #
+def _quota(tmp_path, cap=25, reserve=15):
+    from qlab.events.datafetch import api_quota as aq
+    return aq.DailyQuotaGuard(cap_per_day=cap, reserve_for_marking=reserve,
+                              ledger_path=tmp_path / "quota.jsonl")
+
+
+def test_guard_blocks_call_before_it_is_issued(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=1, reserve=0)
+    s = _FakeSession({"AAPL": _series([("2026-08-07", 1.0)]),
+                      "MSFT": _series([("2026-08-07", 2.0)])})
+    q.fetch_daily("AAPL", session=s, guard=g)
+    assert s.calls == ["AAPL"] and g.used() == 1
+    # budget exhausted -> the second request must NEVER leave the host
+    with pytest.raises(q.QuotaExceeded):
+        q.fetch_daily("MSFT", session=s, guard=g)
+    assert s.calls == ["AAPL"], "call was issued despite exhausted budget"
+
+
+def test_batch_checked_up_front_spends_nothing_when_short(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=2, reserve=0)
+    s = _FakeSession({x: _series([("2026-08-07", 1.0)]) for x in ("A", "B", "C")})
+    with pytest.raises(q.QuotaExceeded):
+        q.get_daily_closes(["A", "B", "C"], session=s, guard=g, sleep=lambda *_: None)
+    # nothing burned on a mark that could not have completed anyway
+    assert s.calls == [] and g.used() == 0
+
+
+def test_quota_breach_propagates_not_buried_in_failed(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=1, reserve=0)
+    s = _FakeSession({x: _series([("2026-08-07", 1.0)]) for x in ("A", "B")})
+    # skip the up-front check to reach the mid-loop path
+    with pytest.raises(q.QuotaExceeded):
+        q.get_daily_closes(["A", "B"], session=s, guard=g,
+                           require_full_batch=False, sleep=lambda *_: None)
+
+
+def test_throttled_call_still_counts_against_budget(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=5, reserve=0)
+    s = _FakeSession({"AAPL": _THROTTLE})
+    with pytest.raises(q.RateLimited):
+        q.fetch_daily("AAPL", session=s, guard=g)
+    # the request left the host, so it must be accounted (conservative)
+    assert g.used() == 1
+
+
+def test_exploration_cannot_starve_the_daily_mark(monkeypatch, tmp_path):
+    from qlab.events.datafetch.api_quota import EXPLORATION
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=15)
+    s = _FakeSession({f"X{i}": _series([("2026-08-07", 1.0)]) for i in range(11)})
+    # burn the entire exploration sub-budget
+    q.get_daily_closes([f"X{i}" for i in range(10)], session=s, guard=g,
+                       purpose=EXPLORATION, sleep=lambda *_: None)
+    with pytest.raises(q.QuotaExceeded):
+        q.fetch_daily("X10", session=s, guard=g, purpose=EXPLORATION)
+    # the 15-call marking reserve is intact
+    assert g.remaining("marking") == 15
+
+
+def test_throttle_message_redacts_the_api_key(monkeypatch):
+    """AV echoes the key back in its quota notice — it must not survive into the
+    exception, which may be logged or pasted into a status update."""
+    fake_key = "FAKEKEY123456789"          # never the real key, even as fixture data
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", fake_key)
+    leaky = {"Information": (f"We have detected your API key as {fake_key} and our "
+                             "standard API rate limit is 25 requests per day.")}
+    s = _FakeSession({"AAPL": leaky})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s)
+    msg = str(ei.value)
+    assert fake_key not in msg, "API key leaked into the exception message"
+    assert "<redacted-api-key>" in msg
+
+
+def test_redaction_follows_the_current_key_after_rotation(monkeypatch):
+    """_redact reads the key at call time, so a rotated key is covered with no
+    code change. Locks the property that makes rotation safe whenever it happens."""
+    for new_key in ("ROTATEDKEY1234567", "ANOTHERKEY9876543"):
+        monkeypatch.setenv("ALPHAVANTAGE_API_KEY", new_key)
+        msg = f"We have detected your API key as {new_key} and our rate limit is 25/day."
+        out = q._redact(msg)
+        assert new_key not in out
+        assert "<redacted-api-key>" in out
+
+
+def test_redaction_covers_lowercase_symbols_and_url_encoding(monkeypatch):
+    fake_key = "fixture-lower+part/end=42"
+    encoded_key = quote_plus(fake_key)
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", fake_key)
+
+    for message in (f"raw={fake_key}",
+                    f"https://example.invalid/query?apikey={encoded_key}"):
+        redacted = q._redact(message)
+        assert fake_key not in redacted
+        assert encoded_key not in redacted
+        assert "<redacted-api-key>" in redacted
+
+
+def test_transport_failure_redacts_before_failed_summary_truncation(monkeypatch):
+    fake_key = "fixture-lower+part/end=42"
+    encoded_key = quote_plus(fake_key)
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", fake_key)
+
+    bars, failed = q.get_daily_closes(
+        ["AAPL"], session=_TransportFailureSession(prefix_length=130),
+        pace_seconds=0,
+    )
+
+    summary = failed["AAPL"]
+    assert bars == {}
+    assert len(summary) <= 200
+    assert fake_key not in summary
+    assert encoded_key not in summary
+    assert fake_key[:8] not in summary
+    assert encoded_key[:8] not in summary
+
+
+# --------------------------------------------------------------------------- #
+# QUOTA_DIVERGENCE alarm (工部 08-08: detection replaces rotation, unavailable here)
+# --------------------------------------------------------------------------- #
+_DAILY_THROTTLE = {"Information": ("We have detected your API key as SOMEKEY1234567890 and our "
+                                   "standard API rate limit is 25 requests per day.")}
+_BURST_THROTTLE = {"Information": ("Thank you for using Alpha Vantage! Please consider spreading "
+                                   "out your free API requests more sparingly (1 request per "
+                                   "second). ... (25 requests per day)")}
+
+
+def test_daily_throttle_with_budget_left_flags_divergence(monkeypatch, tmp_path):
+    """Vendor says 'daily quota gone' while our ledger still has room => someone
+    else is spending this key, or our counter drifted from theirs."""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)          # fresh day, nothing used
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s, guard=g)
+    e = ei.value
+    assert e.divergence is True
+    assert e.vendor_throttled is True
+    assert e.ledger_remaining and e.ledger_remaining > 0
+    assert "QUOTA_DIVERGENCE" in str(e)
+    assert e.utc_day
+
+
+def test_daily_throttle_when_budget_also_exhausted_is_not_divergence(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=1, reserve=0)
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:      # this call consumes the last unit
+        q.fetch_daily("AAPL", session=s, guard=g)
+    e = ei.value
+    assert e.ledger_remaining == 0
+    assert e.divergence is False                  # expected exhaustion, not misuse
+    assert "QUOTA_DIVERGENCE" not in str(e)
+
+
+def test_burst_throttle_never_raises_a_false_divergence(monkeypatch, tmp_path):
+    """The per-second burst notice is transient — it must not cry wolf."""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)       # plenty of budget left
+    s = _FakeSession({"AAPL": _BURST_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s, guard=g)
+    e = ei.value
+    assert e.divergence is False
+    assert "QUOTA_DIVERGENCE" not in str(e)
+    assert "burst throttle" in str(e)
+
+
+def test_throttle_kind_classifier():
+    assert q._throttle_kind(_BURST_THROTTLE["Information"]) == "burst"
+    assert q._throttle_kind(_DAILY_THROTTLE["Information"]) == "daily"
+
+
+def test_divergence_alarm_still_redacts_the_key(monkeypatch, tmp_path):
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "SOMEKEY1234567890")
+    g = _quota(tmp_path, cap=25, reserve=0)
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s, guard=g)
+    assert "SOMEKEY1234567890" not in str(ei.value)
+
+
+def test_no_guard_means_no_divergence_claim(monkeypatch):
+    """Without a ledger we cannot assert anything about misuse — stay silent."""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s)
+    assert ei.value.divergence is False
+    assert ei.value.ledger_remaining is None
+
+
+# --------------------------------------------------------------------------- #
+# 告警不得在批量层被吞掉（营缮 08-08 补：failed[s] 是 str(e)[:200]，
+# 而 QUOTA_DIVERGENCE 标记是**最后**追加的 ⇒ 实测 330 字的真文案会把标记整段截掉）
+# --------------------------------------------------------------------------- #
+
+def test_daily_throttle_propagates_out_of_batch_instead_of_becoming_failed(monkeypatch, tmp_path):
+    """整批取价时，daily 限流**不得**降级成 `failed[s]` 的一行散文。
+
+    两个后果：① 结构化的 divergence / ledger_remaining 全丢，只剩被截断的供应商原话，
+    读起来像「这只票没数据」；② 循环会继续调用刚刚拒绝我们的供应商，把当天剩余额度烧光
+    —— 后者正是 `QuotaExceeded` 分支注释里点名要避免的事。
+    """
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE,
+                      "MSFT": _series([("2026-08-07", 2.0)]),
+                      "SPY": _series([("2026-08-07", 3.0)])})
+    with pytest.raises(q.RateLimited) as ei:
+        q.get_daily_closes(["AAPL", "MSFT", "SPY"], session=s, guard=g,
+                           pace_seconds=0, require_full_batch=True)
+    e = ei.value
+    assert e.divergence is True and e.ledger_remaining > 0      # 结构化字段完整保留
+    assert e.kind == "daily"
+    assert s.calls == ["AAPL"]                                  # 拒绝后不再继续烧额度
+
+
+def test_divergence_tag_would_not_survive_the_failed_truncation(monkeypatch, tmp_path):
+    """把「为什么不能进 failed」量出来：真文案下标记落在 200 字之外。"""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)
+    s = _FakeSession({"AAPL": _DAILY_THROTTLE})
+    with pytest.raises(q.RateLimited) as ei:
+        q.fetch_daily("AAPL", session=s, guard=g)
+    full = f"RateLimited: {ei.value}"
+    assert "QUOTA_DIVERGENCE" in full                            # 完整串里有
+    assert "QUOTA_DIVERGENCE" not in full[:200]                  # failed[s] 里没了
+
+
+def test_burst_throttle_stays_a_per_symbol_failure(monkeypatch, tmp_path):
+    """burst 是瞬时的，照旧留在 `failed` —— 不因这次修复而改变（也不喊狼来了）。"""
+    monkeypatch.setenv("ALPHAVANTAGE_API_KEY", "K")
+    g = _quota(tmp_path, cap=25, reserve=0)
+    s = _FakeSession({"AAPL": _BURST_THROTTLE,
+                      "MSFT": _series([("2026-08-07", 2.0)])})
+    bars, failed = q.get_daily_closes(["AAPL", "MSFT"], session=s, guard=g,
+                                      pace_seconds=0, require_full_batch=False)
+    assert "AAPL" in failed and "burst throttle" in failed["AAPL"]
+    assert "MSFT" in bars                                       # 其余标的照旧取到

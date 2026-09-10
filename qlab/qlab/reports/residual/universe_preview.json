@@ -1,0 +1,163 @@
+{
+  "top_n_target": 250,
+  "advol_days": 60,
+  "min_history_weeks": 156,
+  "candidate_pool_size": 20,
+  "eligible_after_history_filter": 20,
+  "pool_sufficient_for_target": false,
+  "selected": [
+    "NVDA",
+    "QQQ",
+    "MSFT",
+    "AAPL",
+    "INTC",
+    "AMZN",
+    "GOOGL",
+    "META",
+    "ORCL",
+    "JPM",
+    "CSCO",
+    "WMT",
+    "GS",
+    "BAC",
+    "JNJ",
+    "CVX",
+    "HD",
+    "KO",
+    "PG",
+    "PFE"
+  ],
+  "selected_count": 20,
+  "ranking": [
+    {
+      "symbol": "NVDA",
+      "avg_dollar_volume": 33293903037.0655,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "QQQ",
+      "avg_dollar_volume": 31084710590.478966,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "MSFT",
+      "avg_dollar_volume": 16317361782.480679,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "AAPL",
+      "avg_dollar_volume": 16037031898.721123,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "INTC",
+      "avg_dollar_volume": 14770446286.458668,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "AMZN",
+      "avg_dollar_volume": 12727938795.634165,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "GOOGL",
+      "avg_dollar_volume": 11664627918.789158,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "META",
+      "avg_dollar_volume": 10668797674.239576,
+      "n_bars": 3554,
+      "weeks": 710.8
+    },
+    {
+      "symbol": "ORCL",
+      "avg_dollar_volume": 5307757058.353434,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "JPM",
+      "avg_dollar_volume": 2926175839.136892,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "CSCO",
+      "avg_dollar_volume": 2732971282.01763,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "WMT",
+      "avg_dollar_volume": 2690160308.508388,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "GS",
+      "avg_dollar_volume": 2111625863.9501078,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "BAC",
+      "avg_dollar_volume": 1950964068.9939187,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "JNJ",
+      "avg_dollar_volume": 1926183757.9362464,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "CVX",
+      "avg_dollar_volume": 1794492628.787791,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "HD",
+      "avg_dollar_volume": 1574471108.457408,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "KO",
+      "avg_dollar_volume": 1351221183.95962,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "PG",
+      "avg_dollar_volume": 1322264904.009329,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    },
+    {
+      "symbol": "PFE",
+      "avg_dollar_volume": 1028370796.2550906,
+      "n_bars": 5040,
+      "weeks": 1008.0
+    }
+  ],
+  "too_short_history": [],
+  "unreadable": [],
+  "borrow_filter_applied": false,
+  "substitutions": [],
+  "factor_etfs_excluded": [
+    "SPY",
+    "IWM",
+    "IVE",
+    "IVW"
+  ]
+}

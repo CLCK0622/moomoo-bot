@@ -1,0 +1,2448 @@
+{
+  "round_decision_ts": "2026-08-31T11:04:36.601931+00:00",
+  "executor": "multi_book_v1",
+  "executor_note": "多 book：一次取符号并集、内部按格分账，每格自带 book 与净值点；跨轮每格净值序列见 nav_series.cell_nav_series()",
+  "preflight": {
+    "anchor_ok": true,
+    "prereg_frozen_at": "2026-08-08T02:10:26Z",
+    "paradigm": "llm_agent",
+    "grid_cells": 10,
+    "quota": {
+      "utc_day": "2026-08-31",
+      "cap_per_day": 25,
+      "used_total": 11,
+      "remaining_total": 14,
+      "used_marking": 9,
+      "used_exploration": 2,
+      "reserve_for_marking": 15,
+      "exploration_cap": 10,
+      "remaining_exploration": 8,
+      "ledger": "/Users/clck/.local/state/qlab/av_quota.jsonl"
+    },
+    "quota_caveat": "guard 台账仅计经 guard 的调用；vendor 侧可能已被 guard 外调用消耗",
+    "quota_check_skipped": true,
+    "quota_check_skipped_reason": "行情由上游注入（并行对照共用同一快照），本轮不发出调用",
+    "quota_ok_for_marking": null
+  },
+  "symbols_fetched": [
+    "CRM",
+    "CSCO",
+    "DE",
+    "HD",
+    "INTU",
+    "NVDA",
+    "SPY",
+    "TGT",
+    "WMT"
+  ],
+  "quote_calls_this_round": 0,
+  "quote_calls_if_naive_per_cell": 90,
+  "bars_injected": true,
+  "n_cells_evaluated": 10,
+  "n_cells_frozen_grid": 10,
+  "cells_missing": [],
+  "cells_no_rebalance": [],
+  "n_decisions": 80,
+  "cells": {
+    "seed11×pv1_baseline": {
+      "cell_id": "seed11×pv1_baseline",
+      "seed": 11,
+      "prompt_variant": "pv1_baseline",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.55,
+        "gross_cap": 1.0,
+        "cash": 0.44999999999999996,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "DE",
+          "INTU",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.1,
+          "confidence": 0.86,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.09,
+          "confidence": 0.81,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.08,
+          "confidence": 0.78,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.07,
+          "confidence": 0.74,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.07,
+          "confidence": 0.73,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.05,
+          "confidence": 0.62,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.05,
+          "confidence": 0.6,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    },
+    "seed11×pv2_riskaware": {
+      "cell_id": "seed11×pv2_riskaware",
+      "seed": 11,
+      "prompt_variant": "pv2_riskaware",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.42000000000000004,
+        "gross_cap": 1.0,
+        "cash": 0.58,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "INTU",
+          "DE",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.08,
+          "confidence": 0.8,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.07,
+          "confidence": 0.78,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.07,
+          "confidence": 0.75,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.05,
+          "confidence": 0.68,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.05,
+          "confidence": 0.66,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.03,
+          "confidence": 0.52,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.03,
+          "confidence": 0.5,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 11,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    },
+    "seed22×pv1_baseline": {
+      "cell_id": "seed22×pv1_baseline",
+      "seed": 22,
+      "prompt_variant": "pv1_baseline",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.55,
+        "gross_cap": 1.0,
+        "cash": 0.44999999999999996,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "DE",
+          "INTU",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.1,
+          "confidence": 0.86,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.09,
+          "confidence": 0.81,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.08,
+          "confidence": 0.78,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.07,
+          "confidence": 0.74,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.07,
+          "confidence": 0.73,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.05,
+          "confidence": 0.62,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.05,
+          "confidence": 0.6,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    },
+    "seed22×pv2_riskaware": {
+      "cell_id": "seed22×pv2_riskaware",
+      "seed": 22,
+      "prompt_variant": "pv2_riskaware",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.42000000000000004,
+        "gross_cap": 1.0,
+        "cash": 0.58,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "INTU",
+          "DE",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.08,
+          "confidence": 0.8,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.07,
+          "confidence": 0.78,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.07,
+          "confidence": 0.75,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.05,
+          "confidence": 0.68,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.05,
+          "confidence": 0.66,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.03,
+          "confidence": 0.52,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.03,
+          "confidence": 0.5,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 22,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    },
+    "seed33×pv1_baseline": {
+      "cell_id": "seed33×pv1_baseline",
+      "seed": 33,
+      "prompt_variant": "pv1_baseline",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.55,
+        "gross_cap": 1.0,
+        "cash": 0.44999999999999996,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "DE",
+          "INTU",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.1,
+          "confidence": 0.86,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.09,
+          "confidence": 0.81,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.08,
+          "confidence": 0.78,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.07,
+          "confidence": 0.74,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.07,
+          "confidence": 0.73,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.05,
+          "confidence": 0.62,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.05,
+          "confidence": 0.6,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    },
+    "seed33×pv2_riskaware": {
+      "cell_id": "seed33×pv2_riskaware",
+      "seed": 33,
+      "prompt_variant": "pv2_riskaware",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.42000000000000004,
+        "gross_cap": 1.0,
+        "cash": 0.58,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "INTU",
+          "DE",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.08,
+          "confidence": 0.8,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.07,
+          "confidence": 0.78,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.07,
+          "confidence": 0.75,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.05,
+          "confidence": 0.68,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.05,
+          "confidence": 0.66,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.03,
+          "confidence": 0.52,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.03,
+          "confidence": 0.5,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 33,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    },
+    "seed44×pv1_baseline": {
+      "cell_id": "seed44×pv1_baseline",
+      "seed": 44,
+      "prompt_variant": "pv1_baseline",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.55,
+        "gross_cap": 1.0,
+        "cash": 0.44999999999999996,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "DE",
+          "INTU",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.1,
+          "confidence": 0.86,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.09,
+          "confidence": 0.81,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.08,
+          "confidence": 0.78,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.07,
+          "confidence": 0.74,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.07,
+          "confidence": 0.73,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.05,
+          "confidence": 0.62,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.05,
+          "confidence": 0.6,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    },
+    "seed44×pv2_riskaware": {
+      "cell_id": "seed44×pv2_riskaware",
+      "seed": 44,
+      "prompt_variant": "pv2_riskaware",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.42000000000000004,
+        "gross_cap": 1.0,
+        "cash": 0.58,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "INTU",
+          "DE",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.08,
+          "confidence": 0.8,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.07,
+          "confidence": 0.78,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.07,
+          "confidence": 0.75,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.05,
+          "confidence": 0.68,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.05,
+          "confidence": 0.66,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.03,
+          "confidence": 0.52,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.03,
+          "confidence": 0.5,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 44,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    },
+    "seed55×pv1_baseline": {
+      "cell_id": "seed55×pv1_baseline",
+      "seed": 55,
+      "prompt_variant": "pv1_baseline",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.55,
+        "gross_cap": 1.0,
+        "cash": 0.44999999999999996,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "DE",
+          "INTU",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.1,
+          "confidence": 0.86,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.09,
+          "confidence": 0.81,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.08,
+          "confidence": 0.78,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.07,
+          "confidence": 0.74,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.07,
+          "confidence": 0.73,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.05,
+          "confidence": 0.62,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.05,
+          "confidence": 0.6,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv1_baseline",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    },
+    "seed55×pv2_riskaware": {
+      "cell_id": "seed55×pv2_riskaware",
+      "seed": 55,
+      "prompt_variant": "pv2_riskaware",
+      "n_decisions": 8,
+      "portfolio_check": {
+        "ok": true,
+        "gross": 0.42000000000000004,
+        "gross_cap": 1.0,
+        "cash": 0.58,
+        "violations_single_name": [],
+        "violations_short": [],
+        "leverage_ok": true
+      },
+      "no_rebalance": false,
+      "violation": null,
+      "actual_start_settlement": {
+        "settled": 0,
+        "pending": 8,
+        "n_trading_days_observed": 100,
+        "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+        "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+      },
+      "book": {
+        "status": "pending_entry_bar",
+        "pending_symbols": [
+          "NVDA",
+          "CSCO",
+          "CRM",
+          "WMT",
+          "TGT",
+          "INTU",
+          "DE",
+          "HD"
+        ],
+        "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+      },
+      "book_x2_cost": null,
+      "mark_to_market": null,
+      "nav_point": null,
+      "decisions": [
+        {
+          "symbol": "NVDA",
+          "target_weight": 0.08,
+          "confidence": 0.8,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $96,221M，同比 +106%、环比 +18%；数据中心 $89.0B/+117%；GAAP 与 non-GAAP 毛利率同为 75.0%（同比 +2.6pts）；营业利润 $63,734M/+124%；摊薄 EPS $2.46。Q3 指引 $108.0B±2%（环比 +12%），且**明确声明未计入任何来自中国的数据中心计算业务收入**——指引在剔除一整块潜在收入的前提下仍给出加速。季内回购+分红回馈 $26.0B，剩余授权 $99.0B。取上限：本批证据中唯一一个「增速、盈利能力、指引构造保守性」三者同时成立的标的。",
+          "evidence_refs": [
+            "0001045810-26-000073"
+          ],
+          "evidence_available_utc": "2026-08-26T20:21:19+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:21:19+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:21:19+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CSCO",
+          "target_weight": 0.07,
+          "confidence": 0.78,
+          "thesis": "Q4 FY26 (EX-99.1 原文核过)：营收 $17.3B/+18%，non-GAAP 营业利润率 35.9%，non-GAAP EPS $1.22/+23%。关键在订单而非收入：Q4 产品订单同比 +35%，**剔除超大规模客户后仍 +25%**——增长是广谱的，不是少数几家撑的；网络产品订单 +40%，为连续第八个季度双位数增长。AI 基础设施 Q4 订单 $4B、FY26 累计 $9.3B；AI 收入 FY26 约 $4B、FY27 指引 $7.5B。FY27 指引营收 $72.2–73.4B、non-GAAP EPS $5.05–5.11。「剔除超大规模客户仍 +25%」是这批证据里质量最高的广度指标。",
+          "evidence_refs": [
+            "0000858877-26-000106"
+          ],
+          "evidence_available_utc": "2026-08-12T20:07:06+00:00",
+          "evidence_acceptance_utc": "2026-08-12T20:07:06+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-12T20:07:06+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "CRM",
+          "target_weight": 0.07,
+          "confidence": 0.75,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：cRPO $33.5B，同比 +14% 且不变汇率口径同为 +14%——**加速**，对订阅制软件而言 cRPO 是比当期收入更靠前的领先指标。**上调 FY27 收入指引 $200M（不变汇率 $300M）**。non-GAAP 营业利润率 34.1%，non-GAAP 摊薄 EPS $5.90/+103%，经营现金流 +71%、自由现金流 +81%。Agentforce + Data 360 ARR 近 $3.9B/+210%，其中 Agentforce ARR >$1.5B/+240%。扣项：营收 $11.3B/+11% 中含 Informatica 并表 $456M，故有机增速低于表观。",
+          "evidence_refs": [
+            "0001108524-26-000187"
+          ],
+          "evidence_available_utc": "2026-08-26T20:03:53+00:00",
+          "evidence_acceptance_utc": "2026-08-26T20:03:53+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-26T20:03:53+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "WMT",
+          "target_weight": 0.05,
+          "confidence": 0.68,
+          "thesis": "Q2 FY27 (EX-99.1 原文核过)：营收 $187.9B/+5.9%（不变汇率 +5.1%）；营业利润 +28.8%、调整后不变汇率 +17.4%；全球电商 +23%，广告业务 +38%，会员费收入 +17%；毛利率 +96bps。**上调 FY27 全年展望**（营收 +4.0~5.0%、调整后营业利润 +7.0~8.5% cc，调整后 EPS $2.80–2.87）。扣项：本季利润含关税退款；但公司自述剔除该净影响后**内生营业利润增速仍处指引区间上沿**，故上调不是靠一次性项目撑起来的。",
+          "evidence_refs": [
+            "0000104169-26-000145"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:59:01+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "TGT",
+          "target_weight": 0.05,
+          "confidence": 0.66,
+          "thesis": "Q2 2026 (EX-99.1 原文核过)：可比销售 +3.8%，**由可比客流 +3.6% 驱动**——客流驱动的复苏质量高于提价驱动。门店可比 +2.7%、数字可比 +8.7%（当日达 >+25%）；六大核心品类**全部**同比增长；非商品收入（Roundel 广告 / Circle 360 会员 / Target+ 平台）+20%。EPS $4.11 含 $1.65 关税退款贡献，**剔除退款后仍同比 +20%**。两年期营收 CAGR 2.1%，较上季加速 30bps。",
+          "evidence_refs": [
+            "0000027419-26-000034"
+          ],
+          "evidence_available_utc": "2026-08-19T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-19T11:51:13+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-19T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "INTU",
+          "target_weight": 0.04,
+          "confidence": 0.55,
+          "thesis": "FY26 Q4 及全年 (EX-99.1 原文核过)：全年营收 $21.4B/+14%，Q4 +14%；Big Bets 合计 +34%、占全年营收 30%；全球商业解决方案 +16%，QuickBooks Online Accounting +23%，Online Ecosystem 剔除 Mailchimp +23%；Credit Karma +20%。GAAP 营业利润 +20%，EPS +20%；全年回购 $5.5B（同比 +96%），股息 +15%。**主要扣项**：TurboTax 美国报税单量**下降**——全年总单量 3,900 万 vs 3,990 万（-2%），其中桌面端 -7%、线上 -2%；TurboTax 收入 +7% 系价格与结构（TurboTax Live +37%）驱动，**非单量驱动**。消费板块的增长质量弱于平台板块，故仓位压在平台型标的之下。",
+          "evidence_refs": [
+            "0000896878-26-000029"
+          ],
+          "evidence_available_utc": "2026-08-25T20:02:29+00:00",
+          "evidence_acceptance_utc": "2026-08-25T20:02:29+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-25T20:02:29+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "DE",
+          "target_weight": 0.03,
+          "confidence": 0.52,
+          "thesis": "Q3 FY26 (EX-99.1 原文核过)：净利润 $1.379B（$5.10/股），去年同期 $1.289B（$4.75/股）；全球净销售与收入 +5% 至 $12.608B。**全年净利润指引上调至 $4.75–5.00B**。管理层称「2026 年将是本轮农机周期的底部」，依据为早期订货计划趋势、二手设备库存改善、先进技术采用率上升。扣项：前九个月净利润 $3.808B 仍低于去年同期 $3.962B——周期见底是前瞻判断、尚未被累计数验证，且巴西与欧洲仍偏软。故按周期拐点的**试探仓**给，不给核心仓。",
+          "evidence_refs": [
+            "0001104659-26-098904"
+          ],
+          "evidence_available_utc": "2026-08-20T13:30:00+00:00",
+          "evidence_acceptance_utc": "2026-08-20T10:00:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-20T13:30:00+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        },
+        {
+          "symbol": "HD",
+          "target_weight": 0.03,
+          "confidence": 0.5,
+          "thesis": "Q2 FY26 (EX-99.1 原文核过)：销售额 $47.9B，同比 +5.7%（+$2.6B）；可比销售 +1.7%、美国可比 +1.3%；调整后摊薄 EPS $4.92 vs $4.68（+5.1%）。管理层称结果超预期，小型项目需求广谱。**扣项有二**：全年指引仅**重申**而非上调（可比 +0~2.0%、EPS 同比持平至 +4.0%），增量信息有限；另有 2026-08-21 受理的 8-K 第 5.02 项（高管/董事变动）。本批零售证据中增量最弱的一档，给最小仓。",
+          "evidence_refs": [
+            "0000354950-26-000145",
+            "0000354950-26-000148"
+          ],
+          "evidence_available_utc": "2026-08-21T20:13:40+00:00",
+          "evidence_acceptance_utc": "2026-08-21T20:13:40+00:00",
+          "decision_ts": "2026-08-31T11:04:36.601931+00:00",
+          "intended_start": "2026-08-31T13:30:00+00:00",
+          "seed": 55,
+          "prompt_variant": "pv2_riskaware",
+          "actual_start": null,
+          "actual_start_rolled_days": null,
+          "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+          "model": "claude-opus-5",
+          "extra": {},
+          "evidence_max_ts": "2026-08-21T20:13:40+00:00",
+          "effective_from": "2026-08-31T13:30:00+00:00",
+          "effective_from_is_actual": false
+        }
+      ]
+    }
+  },
+  "ledger": null,
+  "rejected_evidence": [
+    {
+      "reason": "RSS 条目发布于最后一根观测 bar（2026-08-28）之后 ⇒ 盘前无法核验其公开可得时刻，按 observe-not-predict 一律不得入证（且即便顺延也会落在今日 09:30 ET 开盘 = 13:30 UTC > decision_ts，时序上同样不合格）",
+      "n_rss_items_rejected": 103,
+      "n_rss_items_total": 179,
+      "examples": [
+        {
+          "symbol": "NVDA",
+          "title": "Are The \"Magnificent Seven\" Stocks Still Worth Buying?",
+          "source_time_utc": "2026-08-31T10:35:00+00:00"
+        },
+        {
+          "symbol": "NVDA",
+          "title": "Warren Buffett Has Recommended This 1 Investment for Decades. History Says It Could Turn $100 per Month Into $",
+          "source_time_utc": "2026-08-31T10:20:00+00:00"
+        },
+        {
+          "symbol": "NVDA",
+          "title": "1 Top Cryptocurrency to Buy Before It Hits $1 Million per Token by 2033, According to This Wall Street Analyst",
+          "source_time_utc": "2026-08-31T09:50:00+00:00"
+        },
+        {
+          "symbol": "NVDA",
+          "title": "Both Hedge Funds and Mutual Funds Are Buying These Fantastic Fintech Stocks, and That's a Great Signal for Inv",
+          "source_time_utc": "2026-08-31T09:20:00+00:00"
+        }
+      ]
+    },
+    {
+      "reason": "EDGAR 侧本轮无时序拒绝：自 2026-08-10 起本 universe 共 56 份 8-K/10-Q/10-K，派生可得时刻全部 <= decision_ts（无周末/盘后新申报）。如实记录以备核对。",
+      "n_edgar_total": 56,
+      "n_edgar_rejected_timing": 0
+    }
+  ],
+  "determinism": {
+    "probe_id": "gold_probe_v1",
+    "probe_fingerprint": "sha256:7d48529b2486c7a0b53193d1f8a706deb6ab3f2214e83bb64a4adb210ee7f39a",
+    "model": "claude-opus-5",
+    "output_sha256": "sha256:17e0b7a645a9fea9eecac654a48d0250aacc7de9752a467cb9e0f9de78346d88",
+    "output_matches": true,
+    "reasons": [],
+    "baseline_recorded_at": "2026-08-10T11:10:35.455770+00:00",
+    "baseline_model": "claude-opus-5",
+    "status": "determinism_ok",
+    "note": "输出逐字一致 ⇒ 模型未被换掉，且「temperature=0 下 seed 无离散」的前提仍成立",
+    "drift": false,
+    "verified": true
+  },
+  "gold_probe_output": "{\"confidence\":0.60,\"risk\":\"margin\",\"stance\":\"flat\",\"top_driver\":\"margin\"}",
+  "seed_semantics": {
+    "temperature": 0.0,
+    "seed_status": "nominal",
+    "statement": "`temperature=0`，**seed 为名义值、不产生离散**；离散度由 2 个 prompt 变体承担；`seed_distribution` 的 25% 分位在此配置下等于**较差的那个变体**。",
+    "dispersion_carried_by": "2 prompt variants (pv1_baseline / pv2_riskaware)",
+    "n_seeds_nominal": 5,
+    "effective_distinct_outputs": 2,
+    "dsr_n_used": 10,
+    "dsr_note": "DSR 仍按冻结网格 N=10 计（> 有效 2）⇒ 多重检验 haircut 偏严，与下四分位取较差变体同朝保守一侧。",
+    "must_not_claim": [
+      "seed 稳健性通过 / seed-robust",
+      "跨 seed 结果稳定（temperature=0 下相同不叫稳定，叫同一次计算）",
+      "下四分位体现了 seed 敏感性（它体现的是较差的 prompt 变体）"
+    ],
+    "ruling": "工部 2026-08-08 第二节：不改 temperature、不重冻；仅改报告口径措辞。",
+    "determinism_status": "determinism_ok",
+    "drift_consequence": "金标准复现逐字一致 ⇒ 「seed 名义化」的前提经本轮实测仍成立。",
+    "caliber_doc": "qlab/LLM_PAPER_REPORTING_CALIBER.md"
+  },
+  "seed_quantile_caliber": {
+    "quantile": 0.25,
+    "grid": "5 seeds × 2 variants = 10 cells",
+    "measured_judged": 0.1,
+    "measured_min": 0.1,
+    "lower_quartile_equals_worse_variant": true,
+    "min_worse_count_for_equality": 4,
+    "worse_count_is": 5,
+    "boundary_scan": {
+      "worse_count_1": {
+        "judged": 0.4,
+        "equals_worse": false
+      },
+      "worse_count_2": {
+        "judged": 0.4,
+        "equals_worse": false
+      },
+      "worse_count_3": {
+        "judged": 0.17500000000000002,
+        "equals_worse": false
+      },
+      "worse_count_4": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_5": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_6": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_7": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_8": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_9": {
+        "judged": 0.1,
+        "equals_worse": true
+      }
+    },
+    "reading": "在本轨冻结的 5/5 等分网格下，下四分位**结构性地等于较差的 prompt 变体**（较差者占 5 ≥ 阈值 4)——保守方向、非空壳；该等式在较差者占比低于阈值时不再成立，故变体数一经改动本口径即失效。"
+  },
+  "alerts": [],
+  "verdict": null,
+  "note": "中途读数只作监控、**不出 verdict**；判定一律走 certify()+llm_paradigm（预注册 §4）"
+}

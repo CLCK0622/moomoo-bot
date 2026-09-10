@@ -1,0 +1,22 @@
+{
+  "issue": "EVO-23",
+  "candidate": "candidate-1+2 ETF right-side momentum (TSMOM + sector RS)",
+  "preregistration_commit": "6eeccab4cbb59ce606a289e3021d3a55dbf7b493",
+  "data_policy": "pure OpenD qfq daily ETF bars; quote-only; TrdEnv.SIMULATE hard-lock; no external source (EVO-25 CBOE/yfinance precedent NOT auto-extended)",
+  "recorded_date": "2026-07-10",
+  "opend_gateway_reachable_in_workspace": false,
+  "sleeve_a_tsmom": {
+    "universe_frozen": ["SPY", "QQQ", "IWM", "TLT", "IEF", "GLD", "DBC", "UUP"],
+    "cash_proxy": "SHY",
+    "present": ["SPY", "QQQ", "IWM"],
+    "missing": ["TLT", "IEF", "GLD", "DBC", "UUP", "SHY"]
+  },
+  "sleeve_b_sector_rs": {
+    "universe_frozen": ["XLY", "XLI", "XLK", "XLF", "XLV", "XLP", "XLU", "XLE", "XLB", "XLRE", "XLC"],
+    "cash_proxy": "SHY",
+    "present": [],
+    "missing": ["XLY", "XLI", "XLK", "XLF", "XLV", "XLP", "XLU", "XLE", "XLB", "XLRE", "XLC", "SHY"]
+  },
+  "present_bar_source": "data/daily_full/{SPY,QQQ,IWM}_1d.parquet (2006-06-26 -> 2026-07-09, OpenD K_DAY qfq)",
+  "fetch_command": "python -c \"from qlab.events.datafetch.opend_daily import fetch_daily_parquet as f; f(['TLT','IEF','GLD','DBC','UUP','SHY','XLY','XLI','XLK','XLF','XLV','XLP','XLU','XLE','XLB','XLRE','XLC'], start='2006-01-01', end='2026-07-10', data_dir='data/daily_full')\""
+}

@@ -1,0 +1,161 @@
+{
+  "start": "2019-01-01",
+  "end": "2024-12-31",
+  "symbols": [
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "AMZN",
+    "GOOGL",
+    "META",
+    "CSCO",
+    "INTC",
+    "ORCL",
+    "JPM",
+    "BAC",
+    "GS",
+    "WMT",
+    "HD",
+    "KO",
+    "PG",
+    "JNJ",
+    "PFE",
+    "CVX"
+  ],
+  "prices": {
+    "source": "opend",
+    "data_dir": "data/daily",
+    "written": {
+      "AAPL": {
+        "path": "data/daily/AAPL_1d.parquet",
+        "rows": 1510
+      },
+      "MSFT": {
+        "path": "data/daily/MSFT_1d.parquet",
+        "rows": 1510
+      },
+      "NVDA": {
+        "path": "data/daily/NVDA_1d.parquet",
+        "rows": 1510
+      },
+      "AMZN": {
+        "path": "data/daily/AMZN_1d.parquet",
+        "rows": 1510
+      },
+      "GOOGL": {
+        "path": "data/daily/GOOGL_1d.parquet",
+        "rows": 1510
+      },
+      "META": {
+        "path": "data/daily/META_1d.parquet",
+        "rows": 1510
+      },
+      "CSCO": {
+        "path": "data/daily/CSCO_1d.parquet",
+        "rows": 1510
+      },
+      "INTC": {
+        "path": "data/daily/INTC_1d.parquet",
+        "rows": 1510
+      },
+      "ORCL": {
+        "path": "data/daily/ORCL_1d.parquet",
+        "rows": 1510
+      },
+      "JPM": {
+        "path": "data/daily/JPM_1d.parquet",
+        "rows": 1510
+      },
+      "BAC": {
+        "path": "data/daily/BAC_1d.parquet",
+        "rows": 1510
+      },
+      "GS": {
+        "path": "data/daily/GS_1d.parquet",
+        "rows": 1510
+      },
+      "WMT": {
+        "path": "data/daily/WMT_1d.parquet",
+        "rows": 1510
+      },
+      "HD": {
+        "path": "data/daily/HD_1d.parquet",
+        "rows": 1510
+      },
+      "KO": {
+        "path": "data/daily/KO_1d.parquet",
+        "rows": 1510
+      },
+      "PG": {
+        "path": "data/daily/PG_1d.parquet",
+        "rows": 1510
+      },
+      "JNJ": {
+        "path": "data/daily/JNJ_1d.parquet",
+        "rows": 1510
+      },
+      "PFE": {
+        "path": "data/daily/PFE_1d.parquet",
+        "rows": 1510
+      },
+      "CVX": {
+        "path": "data/daily/CVX_1d.parquet",
+        "rows": 1510
+      }
+    },
+    "blocked": {}
+  },
+  "earnings": {
+    "path": "data/earnings.csv",
+    "source": "sec_8k_2.02",
+    "n_events": 473,
+    "symbols_resolved": [
+      "AAPL",
+      "AMZN",
+      "BAC",
+      "CSCO",
+      "CVX",
+      "GOOGL",
+      "GS",
+      "HD",
+      "INTC",
+      "JNJ",
+      "JPM",
+      "KO",
+      "META",
+      "MSFT",
+      "NVDA",
+      "ORCL",
+      "PFE",
+      "PG",
+      "WMT"
+    ],
+    "symbols_missing": [],
+    "events_per_symbol": {
+      "AAPL": 25,
+      "AMZN": 24,
+      "BAC": 25,
+      "CSCO": 24,
+      "CVX": 26,
+      "GOOGL": 25,
+      "GS": 26,
+      "HD": 24,
+      "INTC": 25,
+      "JNJ": 27,
+      "JPM": 24,
+      "KO": 24,
+      "META": 24,
+      "MSFT": 24,
+      "NVDA": 26,
+      "ORCL": 25,
+      "PFE": 27,
+      "PG": 24,
+      "WMT": 24
+    },
+    "session_breakdown": {
+      "amc": 198,
+      "bmo": 249,
+      "intraday": 26
+    }
+  }
+}
