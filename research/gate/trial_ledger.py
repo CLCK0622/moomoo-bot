@@ -47,6 +47,10 @@ class RunRecord:
     candidate_id: Optional[str] = None
     note: str = ""
     ts: str = ""
+    # Optional execution-version label.  Old JSONL rows omit it and continue
+    # to deserialize as ``None``; callers must never rewrite them merely to
+    # populate this field.
+    experiment_version: Optional[str] = None
 
 
 # 全项目**唯一共享**台账的规范路径。JSONL（每行一轮）便于跨分支合并、追加安全。
@@ -91,7 +95,8 @@ class TrialLedger:
                      n_evaluated: int, trial_sharpes: Optional[Sequence[float]] = None,
                      trial_sharpes_var: Optional[float] = None, note: str = "",
                      now_iso: Optional[str] = None, candidate_id: Optional[str] = None,
-                     supersedes: Optional[str] = None) -> RunRecord:
+                     supersedes: Optional[str] = None,
+                     experiment_version: Optional[str] = None) -> RunRecord:
         """登记一轮试验。**跨进程原子**（工部 2026-07-30，都察院终审必修 2）。
 
         原实现无锁 read-modify-write：幂等/重冻校验基于进程内陈旧快照，且 `_save()` 全量重写
@@ -104,13 +109,15 @@ class TrialLedger:
                 self._load()          # 关键：锁内重读，纳入其它进程刚写入的条目
             return self._register_locked(
                 run_id, source, n_trials_total, n_evaluated, trial_sharpes,
-                trial_sharpes_var, note, now_iso, candidate_id, supersedes)
+                trial_sharpes_var, note, now_iso, candidate_id, supersedes,
+                experiment_version)
 
     def _register_locked(self, run_id: str, source: str, n_trials_total: Optional[int],
                          n_evaluated: int, trial_sharpes: Optional[Sequence[float]],
                          trial_sharpes_var: Optional[float], note: str,
                          now_iso: Optional[str], candidate_id: Optional[str],
-                         supersedes: Optional[str]) -> RunRecord:
+                         supersedes: Optional[str],
+                         experiment_version: Optional[str]) -> RunRecord:
         # 幂等：同 run_id 已登记 → 返回既有，不重复计数（重跑/跨轮安全）。
         for r in self.runs:
             if r.run_id == run_id:
@@ -161,7 +168,8 @@ class TrialLedger:
         ts = now_iso or datetime.now(timezone.utc).isoformat()
         rec = RunRecord(run_id=run_id, source=source, n_trials_total=int(n_trials_total),
                         n_evaluated=int(n_evaluated), trial_sharpes_var=var,
-                        trial_sharpes=ts_list, candidate_id=candidate_id, note=note, ts=ts)
+                        trial_sharpes=ts_list, candidate_id=candidate_id, note=note, ts=ts,
+                        experiment_version=experiment_version)
         self.runs.append(rec)
         self._save()
         return rec

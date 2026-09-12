@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://multica.local/schemas/llm_paper_mwf_v2_round.schema.json",
+  "title": "LLM paper M/W/F v2 immutable planned-round artifact",
+  "type": "object",
+  "required": [
+    "schema", "experiment_version", "scheduled_at", "planned_round_key",
+    "delivery_content_sha256", "status", "cells", "content_sha256"
+  ],
+  "properties": {
+    "schema": {"const": "llm_paper_planned_round/v2"},
+    "experiment_version": {"const": "llm_paper_forward_mwf_v2"},
+    "scheduled_at": {"type": "string", "format": "date-time"},
+    "planned_round_key": {
+      "type": "array", "prefixItems": [
+        {"const": "llm_paper_forward_mwf_v2"}, {"type": "string", "format": "date-time"}
+      ], "minItems": 2, "maxItems": 2
+    },
+    "delivery_content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "status": {"enum": ["persisted", "technical_gap", "IDEMPOTENCY_CONFLICT"]},
+    "gap_reason": {"type": ["string", "null"]},
+    "cells": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "cell_id", "decision_key", "decision_content_sha256", "decision_status",
+          "evidence_available_utc", "decision_ts", "effective_from", "target_weights"
+        ],
+        "properties": {
+          "cell_id": {"type": "string"},
+          "decision_key": {"type": "array", "minItems": 2, "maxItems": 2},
+          "decision_content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "decision_status": {"enum": ["legal", "portfolio_violation"]},
+          "evidence_available_utc": {"type": "string", "format": "date-time"},
+          "decision_ts": {"type": "string", "format": "date-time"},
+          "effective_from": {"type": "string", "format": "date-time"},
+          "target_weights": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}}
+        }
+      }
+    },
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": true
+}

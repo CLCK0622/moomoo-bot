@@ -49,8 +49,18 @@ class LedgerBridgeError(RuntimeError):
     """台账状态不是本桥接能安全处理的形态 → 不猜、不覆盖，抛给人看。"""
 
 
-def round_id(decision_ts) -> str:
+def round_id(decision_ts, *, experiment_version: Optional[str] = None,
+             scheduled_at=None) -> str:
     """本轮 run_id —— 与第 1 轮 `llm_paper-2026-08-10` 同构，不改命名。"""
+    if experiment_version is not None:
+        if scheduled_at is None:
+            raise LedgerBridgeError("v2 台账登记必须提供 scheduled_at（不得用 decision_ts 冒充轮次键）")
+        stamp = pd.Timestamp(scheduled_at)
+        if stamp.tzinfo is None:
+            raise LedgerBridgeError("scheduled_at 必须带时区")
+        utc = stamp.tz_convert("UTC").strftime("%Y%m%dT%H%M%SZ")
+        short = experiment_version.removeprefix("llm_paper_forward_")
+        return f"{CANDIDATE_ID}-{short}-{utc}"
     return f"{CANDIDATE_ID}-{pd.Timestamp(decision_ts).date()}"
 
 
@@ -102,7 +112,9 @@ def unreadable_rounds(out_dir: str) -> list:
 
 def register_round(*, decision_ts, cfg: Dict[str, Any], cells_this_round: Iterable[Cell],
                    out_dir: str, executor: str,
-                   ledger_path: Optional[str] = None) -> Dict[str, Any]:
+                   ledger_path: Optional[str] = None,
+                   experiment_version: Optional[str] = None,
+                   scheduled_at=None) -> Dict[str, Any]:
     """登记本轮试验。**`n_trials_total` 恒为冻结网格值，一格都不少登。**
 
     返回一个可直接进 round JSON 的字典；任何「登记没按预期生效」的情形都以字段形式如实带出，
@@ -114,7 +126,8 @@ def register_round(*, decision_ts, cfg: Dict[str, Any], cells_this_round: Iterab
     path = ledger_path or str(_REPO_ROOT / DEFAULT_LEDGER_PATH)
     led = project_ledger(path)
     fam = cfg["family"]
-    rid = round_id(decision_ts)
+    rid = round_id(decision_ts, experiment_version=experiment_version,
+                   scheduled_at=scheduled_at)
     cells = set(cells_this_round)
     union = evaluated_cells_union(out_dir, cells)
     n_eval = len(union)
@@ -135,6 +148,7 @@ def register_round(*, decision_ts, cfg: Dict[str, Any], cells_this_round: Iterab
         rec = led.register_run(
             run_id=rid, source="llm_agent", n_trials_total=n_total, n_evaluated=n_eval,
             candidate_id=CANDIDATE_ID, supersedes=supersedes,
+            experiment_version=experiment_version,
             note=(f"EVO-8 前向纸面轨 {rid}：冻结网格 {n_total} 格足额登记（DSR 的 V 不放松）；"
                   f"n_evaluated={n_eval} 为跨轮已评估格子并集；执行器={executor}"))
     except RefreezeError as e:            # 护栏是对的，形态不在预期内 → 不绕过
@@ -149,6 +163,9 @@ def register_round(*, decision_ts, cfg: Dict[str, Any], cells_this_round: Iterab
         "supersedes": supersedes,
         "executor": executor,
         "ledger_path": path,
+        "experiment_version": experiment_version,
+        "scheduled_at": (pd.Timestamp(scheduled_at).isoformat()
+                         if scheduled_at is not None else None),
     }
     bad = unreadable_rounds(out_dir)
     if bad:

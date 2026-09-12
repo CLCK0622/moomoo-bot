@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://multica.local/schemas/llm_paper_mwf_v2_settlement.schema.json",
+  "title": "LLM paper M/W/F v2 settlement artifact",
+  "type": "object",
+  "required": [
+    "schema", "experiment_version", "execution_key", "settlement_key",
+    "returns_through", "data_available_through", "benchmark_returns_through",
+    "rejected_keys", "turnover_notional", "cost_rate", "entry_cost",
+    "reading_kind", "is_performance_reading", "is_acceptance_reading",
+    "round_inputs", "archive_inputs", "resolution_inputs", "content_sha256"
+  ],
+  "properties": {
+    "schema": {"const": "llm_paper_settlement/v2"},
+    "experiment_version": {"type": "string"},
+    "execution_key": {"type": "array", "minItems": 3, "maxItems": 3},
+    "settlement_key": {"type": "array", "minItems": 7, "maxItems": 7},
+    "returns_through": {"type": ["string", "null"]},
+    "data_available_through": {"type": ["string", "null"]},
+    "benchmark_returns_through": {"type": ["string", "null"]},
+    "rejected_keys": {"type": "array", "items": {"type": "object"}},
+    "turnover_notional": {"type": "number", "minimum": 0},
+    "cost_rate": {"const": 0.001},
+    "entry_cost": {"type": "number", "minimum": 0},
+    "reading_kind": {"enum": ["equivalence_artifact", "lower_bound", "acceptance"]},
+    "is_performance_reading": {"type": "boolean"},
+    "is_acceptance_reading": {"type": "boolean"},
+    "round_inputs": {"$ref": "#/$defs/hashedInputs"},
+    "archive_inputs": {"$ref": "#/$defs/hashedInputs"},
+    "resolution_inputs": {"$ref": "#/$defs/hashedInputs"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "hashedInputs": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["file", "content_sha256"],
+        "properties": {
+          "file": {"type": "string"},
+          "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

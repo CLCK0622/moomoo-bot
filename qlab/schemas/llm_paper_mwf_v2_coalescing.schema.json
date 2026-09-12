@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://multica.local/schemas/llm_paper_mwf_v2_coalescing.schema.json",
+  "title": "LLM paper M/W/F v2 per-cell coalescing artifact",
+  "type": "object",
+  "required": ["schema", "executions", "decision_statuses", "pending_actual_start"],
+  "properties": {
+    "schema": {"const": "llm_paper_coalescing/v2"},
+    "executions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "experiment_version", "scheduled_at", "actual_start_bar", "cell_id",
+          "execution_key", "action", "decision", "round_hashes"
+        ],
+        "properties": {
+          "experiment_version": {"const": "llm_paper_forward_mwf_v2"},
+          "execution_key": {"type": "array", "minItems": 3, "maxItems": 3},
+          "action": {"enum": ["rebalance", "carry_forward"]},
+          "round_hashes": {
+            "type": "array", "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          }
+        }
+      }
+    },
+    "decision_statuses": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["status"],
+        "properties": {
+          "status": {
+            "enum": ["canonical", "coalesced_before_entry", "technical_gap", "IDEMPOTENCY_CONFLICT"]
+          },
+          "coalesced_into": {"type": "array"},
+          "entry_cost": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "pending_actual_start": {"type": "array"}
+  },
+  "additionalProperties": true
+}

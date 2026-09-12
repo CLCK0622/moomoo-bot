@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://multica.local/schemas/llm_paper_mwf_v2_execution.schema.json",
+  "title": "LLM paper M/W/F v2 canonical execution artifact",
+  "type": "object",
+  "required": [
+    "schema", "experiment_version", "execution_key", "cell_id", "actual_start_bar",
+    "status", "turnover_notional", "cost_rate", "entry_cost", "content_sha256"
+  ],
+  "properties": {
+    "schema": {"const": "llm_paper_execution/v2"},
+    "experiment_version": {"const": "llm_paper_forward_mwf_v2"},
+    "execution_key": {"type": "array", "minItems": 3, "maxItems": 3},
+    "cell_id": {"type": "string"},
+    "actual_start_bar": {"type": "string", "format": "date-time"},
+    "status": {
+      "enum": ["filled", "carried_forward_portfolio_violation", "pending_archived_rebalance_bar"]
+    },
+    "turnover_notional": {"type": "number", "minimum": 0},
+    "cost_rate": {"const": 0.001},
+    "entry_cost": {"type": "number", "minimum": 0},
+    "cost_model_version": {"type": "string"},
+    "shares": {"type": "object", "additionalProperties": {"type": "number"}},
+    "cash": {"type": "number"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": true
+}
