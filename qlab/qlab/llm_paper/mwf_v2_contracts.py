@@ -76,6 +76,50 @@ def parse_utc(value: Any) -> datetime:
     return parsed.astimezone(timezone.utc)
 
 
+def _utc_text(value: Any) -> str:
+    return parse_utc(value).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def _evidence_binding(value: Mapping[str, Any]) -> dict[str, str]:
+    """Return the complete content-addressed identity exposed to a decision."""
+    return {
+        "file": str(value["file"]),
+        "input_kind": str(value["input_kind"]),
+        "content_sha256": str(value["content_sha256"]),
+        "source_time_utc": _utc_text(value["source_time_utc"]),
+        "evidence_available_utc": _utc_text(value["evidence_available_utc"]),
+    }
+
+
+def validate_evidence_bindings(refs: Iterable[Mapping[str, Any]],
+                               verified_inputs: Iterable[Mapping[str, Any]], *,
+                               context: str) -> None:
+    """Bind every decision ref to all metadata of its verified hashed input."""
+    by_hash: dict[str, dict[str, str]] = {}
+    for item in verified_inputs:
+        binding = _evidence_binding(item)
+        digest = binding["content_sha256"]
+        previous = by_hash.get(digest)
+        if previous is not None and previous != binding:
+            raise FrozenContractError(
+                f"{context}: ambiguous verified input metadata for hash {digest}")
+        by_hash[digest] = binding
+
+    for ref in refs:
+        actual = _evidence_binding(ref)
+        digest = actual["content_sha256"]
+        expected = by_hash.get(digest)
+        if expected is None:
+            raise FrozenContractError(
+                f"{context}: evidence ref is not bound to a verified input: {digest}")
+        differing = sorted(
+            field for field in expected if actual[field] != expected[field])
+        if differing:
+            raise FrozenContractError(
+                f"{context}: evidence ref metadata does not match verified input "
+                f"for hash {digest}: {differing}")
+
+
 def _validate_json_schema(payload: Mapping[str, Any]) -> None:
     schema_id = str(payload.get("schema") or "")
     filename = _SCHEMA_FILES.get(schema_id)
@@ -106,8 +150,7 @@ def _validate_round_semantics(payload: Mapping[str, Any]) -> None:
     cells = payload.get("cells") or {}
     if status == "persisted" and not cells:
         raise FrozenContractError("persisted round must contain at least one cell")
-    verified_hashes = {item["content_sha256"]
-                       for item in payload.get("archive_snapshot_inputs") or []}
+    verified_inputs = payload.get("archive_snapshot_inputs") or []
     local_slot = parse_utc(payload["scheduled_at"]).astimezone(
         ZoneInfo("America/New_York"))
     market_open = local_slot.replace(hour=9, minute=30, second=0, microsecond=0)
@@ -134,12 +177,8 @@ def _validate_round_semantics(payload: Mapping[str, Any]) -> None:
                 "<= decision_ts < market open")
         if not decision.get("evidence_refs"):
             raise FrozenContractError(f"cell {cell_id}: evidence_refs must be non-empty")
-        missing_refs = sorted(
-            ref["content_sha256"] for ref in decision["evidence_refs"]
-            if ref["content_sha256"] not in verified_hashes)
-        if missing_refs:
-            raise FrozenContractError(
-                f"cell {cell_id}: evidence refs lack verified snapshot bindings: {missing_refs}")
+        validate_evidence_bindings(
+            decision["evidence_refs"], verified_inputs, context=f"cell {cell_id}")
 
 
 def _validate_execution_semantics(payload: Mapping[str, Any]) -> None:

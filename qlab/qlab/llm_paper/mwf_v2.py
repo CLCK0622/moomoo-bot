@@ -36,6 +36,7 @@ from qlab.llm_paper.mwf_v2_contracts import (
     make_typed_input,
     parse_utc,
     typed_records,
+    validate_evidence_bindings,
     validate_runtime_artifact,
     verify_typed_input,
 )
@@ -630,7 +631,6 @@ def ingest_planned_round(*, scheduled_at: Any, delivery_payload: Mapping[str, An
         raw_cells = dict(build_cells(snapshot))
         normalized: dict[str, dict[str, Any]] = {}
         failures: dict[str, str] = {}
-        available_hashes = {item["content_sha256"] for item in snapshot_inputs}
         for cell in GRID:
             if cell not in raw_cells:
                 failures[cell] = "no_legal_persisted_decision"
@@ -638,12 +638,8 @@ def ingest_planned_round(*, scheduled_at: Any, delivery_payload: Mapping[str, An
             try:
                 block = normalize_cell_decision(
                     cell, raw_cells[cell], scheduled_at=scheduled_at)
-                missing_evidence = sorted(
-                    ref["content_sha256"] for ref in block["evidence_refs"]
-                    if ref["content_sha256"] not in available_hashes)
-                if missing_evidence:
-                    raise FrozenContractError(
-                        f"evidence refs are not bound to verified snapshot inputs: {missing_evidence}")
+                validate_evidence_bindings(
+                    block["evidence_refs"], snapshot_inputs, context=f"cell {cell}")
                 normalized[cell] = block
             except (KeyError, TypeError, ValueError) as exc:
                 failures[cell] = str(exc)
@@ -664,7 +660,10 @@ def ingest_planned_round(*, scheduled_at: Any, delivery_payload: Mapping[str, An
                    "quote_batch": quote_plan,
                    "archive_snapshot_inputs": [
                        {"file": item["file"], "input_kind": item["input_kind"],
-                        "content_sha256": item["content_sha256"]}
+                        "content_sha256": item["content_sha256"],
+                        "source_time_utc": utc_text(item["source_time_utc"]),
+                        "evidence_available_utc": utc_text(
+                            item["evidence_available_utc"])}
                        for item in snapshot_inputs],
                    "executor": "single_book", "mode": "SIMULATE",
                    "verdict": None, "round_nav_point_consumable": False}

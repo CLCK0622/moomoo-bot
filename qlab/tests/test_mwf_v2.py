@@ -86,9 +86,7 @@ def _round(scheduled: str, *, cell: str = CELL,
         "delivery_content_sha256": content_sha256({"scheduled_at": scheduled}),
         "status": "persisted",
         "cells": {cell: decision},
-        "archive_snapshot_inputs": [{"file": "archive.json",
-                                     "input_kind": "archive_snapshot",
-                                     "content_sha256": H64}],
+        "archive_snapshot_inputs": [dict(decision["evidence_refs"][0])],
     }
     payload["content_sha256"] = content_sha256(payload)
     return payload

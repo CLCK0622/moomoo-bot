@@ -175,7 +175,7 @@ def run_scheduled_delivery(delivery_path: str | Path, *, state_dir: str | Path
                 next_actual_start=delivery.get("next_actual_start"),
                 archived_bars=None, reading_kind=delivery["reading_kind"],
                 round_inputs=[{
-                    "file": str(round_path),
+                    "file": round_path.relative_to(root).as_posix(),
                     "content_sha256": round_artifact["content_sha256"],
                 }],
                 archive_inputs=[execution_snapshot],

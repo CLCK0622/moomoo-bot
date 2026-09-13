@@ -164,7 +164,9 @@ def test_causal_order_is_strictly_before_market_open_and_schema_is_runtime_enfor
         "delivery_content_sha256": "a" * 64, "status": "persisted", "cells": {},
         "archive_snapshot_inputs": [{"file": "archive.json",
                                      "input_kind": "archive_snapshot",
-                                     "content_sha256": "a" * 64}],
+                                     "content_sha256": "a" * 64,
+                                     "source_time_utc": "2026-09-11T20:00:00Z",
+                                     "evidence_available_utc": "2026-09-14T10:00:00Z"}],
     }
     with pytest.raises(FrozenContractError, match="non-empty"):
         write_hashed_artifact(tmp_path / "round.json", invalid_round)
@@ -278,7 +280,46 @@ def test_decision_evidence_hash_must_bind_to_verified_snapshot(tmp_path):
         decision_required=["IBM"], required_trade_date="2026-09-11",
         reusable_snapshot=snapshot)
     assert result["status"] == "technical_gap"
-    assert "not bound to verified snapshot" in result["artifact"]["gap_reason"]
+    assert "not bound to a verified input" in result["artifact"]["gap_reason"]
+
+
+def test_decision_cannot_launder_verified_evidence_availability(tmp_path):
+    snapshot = _decision_input()
+    snapshot["evidence_available_utc"] = "2026-09-14T12:00:00Z"
+    _rehash(snapshot)
+    raw = _raw(snapshot)
+    raw["evidence_available_utc"] = "2026-09-14T10:00:00Z"
+    raw["evidence_refs"][0]["evidence_available_utc"] = "2026-09-14T10:00:00Z"
+    result = ingest_planned_round(
+        scheduled_at=SCHEDULED, delivery_payload={"delivery": "laundered-evidence"},
+        state_dir=tmp_path, fetch_snapshot=lambda symbols: pytest.fail(str(symbols)),
+        build_cells=lambda _: {CELL_A: raw}, archive_required=["IBM"],
+        decision_required=["IBM"], required_trade_date="2026-09-11",
+        reusable_snapshot=snapshot)
+    assert result["status"] == "technical_gap"
+    assert "evidence_available_utc" in result["artifact"]["gap_reason"]
+    assert "metadata does not match verified input" in result["artifact"]["gap_reason"]
+
+
+@pytest.mark.parametrize(("field", "forged"), [
+    ("file", "forged-snapshot.json"),
+    ("input_kind", "resolution"),
+    ("source_time_utc", "2026-09-11T19:00:00Z"),
+])
+def test_decision_ref_all_metadata_fields_bind_to_verified_hash(
+        tmp_path, field, forged):
+    snapshot = _decision_input()
+    raw = _raw(snapshot)
+    raw["evidence_refs"][0][field] = forged
+    result = ingest_planned_round(
+        scheduled_at=SCHEDULED, delivery_payload={"delivery": f"forged-{field}"},
+        state_dir=tmp_path, fetch_snapshot=lambda symbols: pytest.fail(str(symbols)),
+        build_cells=lambda _: {CELL_A: raw}, archive_required=["IBM"],
+        decision_required=["IBM"], required_trade_date="2026-09-11",
+        reusable_snapshot=snapshot)
+    assert result["status"] == "technical_gap"
+    assert field in result["artifact"]["gap_reason"]
+    assert "metadata does not match verified input" in result["artifact"]["gap_reason"]
 
 
 def test_source_names_and_arbitrary_bars_cannot_create_acceptance(tmp_path):
@@ -427,6 +468,7 @@ def test_statistics_reject_discontinuous_v2_round_sequence():
 
 
 def _run_cli(tmp_path, delivery):
+    tmp_path.mkdir(parents=True, exist_ok=True)
     delivery_path = tmp_path / "delivery.json"
     delivery_path.write_text(json.dumps(delivery, ensure_ascii=False, indent=2) + "\n",
                              encoding="utf-8")
@@ -455,6 +497,35 @@ def test_fixed_cli_runs_offline_end_to_end_and_is_idempotent(tmp_path):
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
     assert second.returncode == 0, second.stderr + second.stdout
     assert json.loads(second.stdout)["content_sha256"] == result["content_sha256"]
+
+
+def test_fixed_cli_stage_artifacts_are_state_dir_independent(tmp_path):
+    delivery = json.loads(OFFLINE_FIXTURE.read_text(encoding="utf-8"))
+    first, first_state = _run_cli(tmp_path / "first", delivery)
+    second, second_state = _run_cli(tmp_path / "second", delivery)
+    assert first.returncode == second.returncode == 0, (
+        first.stderr + first.stdout + second.stderr + second.stdout)
+
+    stage_dirs = ("rounds", "coalescing", "executions", "settlements", "pipeline")
+
+    def stage_artifacts(state):
+        return {
+            path.relative_to(state).as_posix(): path.read_bytes()
+            for directory in stage_dirs
+            for path in sorted((state / directory).glob("*.json"))
+        }
+
+    first_artifacts = stage_artifacts(first_state)
+    second_artifacts = stage_artifacts(second_state)
+    assert first_artifacts == second_artifacts
+    assert json.loads(first.stdout)["content_sha256"] == json.loads(second.stdout)[
+        "content_sha256"]
+    for relative_path, artifact_bytes in first_artifacts.items():
+        artifact = json.loads(artifact_bytes)
+        supplied_hash = artifact.pop("content_sha256")
+        assert content_sha256(artifact) == supplied_hash
+        assert json.loads((second_state / relative_path).read_bytes()).get(
+            "content_sha256") == supplied_hash
 
 
 def test_fixed_cli_resumes_same_round_after_execution_input_becomes_available(tmp_path):
