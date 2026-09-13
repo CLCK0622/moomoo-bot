@@ -26,6 +26,7 @@ from qlab.llm_paper.mwf_v2 import (
     ingest_planned_round,
     intended_open,
     load_v2_preregistration,
+    make_typed_input,
     normalize_cell_decision,
     plan_snapshot_reuse,
     planned_round_key,
@@ -50,15 +51,25 @@ def _parse(value: str) -> datetime:
 
 
 def _raw(scheduled: str, weights: dict[str, float] | None = None, *,
-         decision_offset_minutes: int = 5) -> dict:
+         decision_offset_minutes: int = 5, evidence_input: dict | None = None) -> dict:
     slot = _parse(scheduled)
     decision = slot + timedelta(minutes=decision_offset_minutes)
+    source = (slot - timedelta(hours=2)).isoformat()
+    available = (slot - timedelta(hours=1)).isoformat()
+    ref = {
+        "file": (evidence_input or {}).get("file", "archive.json"),
+        "input_kind": (evidence_input or {}).get("input_kind", "archive_snapshot"),
+        "content_sha256": (evidence_input or {}).get("content_sha256", H64),
+        "source_time_utc": (evidence_input or {}).get("source_time_utc", source),
+        "evidence_available_utc": (evidence_input or {}).get(
+            "evidence_available_utc", available),
+    }
     return {
-        "evidence_available_utc": (slot - timedelta(hours=1)).isoformat(),
+        "evidence_available_utc": available,
         "decision_ts": decision.isoformat(),
         "effective_from": intended_open(scheduled),
-        "source_time_utc": (slot - timedelta(hours=2)).isoformat(),
-        "evidence_refs": ["evidence-1"],
+        "source_time_utc": source,
+        "evidence_refs": [ref],
         "target_weights": weights if weights is not None else {"IBM": 0.10},
     }
 
@@ -75,6 +86,9 @@ def _round(scheduled: str, *, cell: str = CELL,
         "delivery_content_sha256": content_sha256({"scheduled_at": scheduled}),
         "status": "persisted",
         "cells": {cell: decision},
+        "archive_snapshot_inputs": [{"file": "archive.json",
+                                     "input_kind": "archive_snapshot",
+                                     "content_sha256": H64}],
     }
     payload["content_sha256"] = content_sha256(payload)
     return payload
@@ -94,6 +108,44 @@ def _plan(*, actual: str = "2026-09-14T13:30:00Z",
 
 def _inputs(prefix: str) -> list[dict[str, str]]:
     return [{"file": f"{prefix}.json", "content_sha256": H64}]
+
+
+def _typed_bars(bars: dict, *, kind: str = "archive_snapshot", file: str = "archive.json",
+                source_time: str | None = None, available: str | None = None) -> dict:
+    records = []
+    for (symbol, day), value in sorted(bars.items()):
+        block = dict(value) if isinstance(value, dict) else {"close": value}
+        record = {"symbol": symbol, "trade_date": day,
+                  "open": block.get("open", block.get("close")),
+                  "close": block.get("close", block.get("open"))}
+        if kind == "opend_k_day_qfq":
+            record.update({"ktype": "K_DAY", "rehab_type": "qfq"})
+        records.append(record)
+    latest = max(record["trade_date"] for record in records)
+    source_time = source_time or f"{latest}T20:00:00Z"
+    available = available or f"{latest}T21:00:00Z"
+    return make_typed_input(
+        input_kind=kind, file=file, source_time_utc=source_time,
+        evidence_available_utc=available, records=records)
+
+
+def _bil(days: list[str]) -> dict:
+    latest = max(days)
+    return make_typed_input(
+        input_kind="bil_total_return", file="bil_total_return.json",
+        source_time_utc=f"{latest}T20:00:00Z",
+        evidence_available_utc=f"{latest}T21:00:00Z",
+        records=[{"symbol": "BIL", "trade_date": day,
+                  "total_return_factor": 1.0} for day in days])
+
+
+def _resolution(symbol: str, day: str, status: str = "unresolved") -> dict:
+    return make_typed_input(
+        input_kind="resolution", file="RESOLUTION.json",
+        source_time_utc="2026-09-14T09:00:00Z",
+        evidence_available_utc="2026-09-14T10:00:00Z",
+        records=[{"symbol": symbol, "trade_date": day, "status": status,
+                  "authoritative_source": "reviewed dispute ledger"}])
 
 
 def test_normal_mwf_slots_and_first_three_utc_resolve_to_one_segment_each():
@@ -147,7 +199,9 @@ def test_later_failed_round_does_not_suppress_earlier_legal_round():
               "experiment_version": EXPERIMENT_VERSION,
               "scheduled_at": "2026-12-28T12:00:00Z",
               "planned_round_key": list(planned_round_key("2026-12-28T12:00:00Z")),
-              "status": "technical_gap", "cells": {}, "content_sha256": "b" * 64}
+              "delivery_content_sha256": H64, "status": "technical_gap",
+              "gap_reason": "fixture", "cells": {}}
+    failed["content_sha256"] = content_sha256(failed)
     result = coalesce_rounds(
         [friday, failed], observed_market_opens=["2026-12-28T14:30:00Z"])
     assert result["executions"][0]["scheduled_at"] == friday["scheduled_at"]
@@ -160,12 +214,15 @@ def test_identical_platform_redelivery_is_noop_before_fetch_fee_or_ledger(tmp_pa
 
     def fetch(symbols):
         calls.append(list(symbols))
-        return {"bars": {symbol: [] for symbol in symbols}, "symbols": list(symbols),
-                "archive_snapshot": {"content_sha256": H64}}
+        return _typed_bars(
+            {(symbol, "2026-09-11"): {"open": 100, "close": 101}
+             for symbol in symbols})
 
     kwargs = dict(
         scheduled_at=scheduled, delivery_payload={"delivery": "same"}, state_dir=tmp_path,
-        fetch_snapshot=fetch, build_cells=lambda snapshot: {CELL: _raw(scheduled)},
+        fetch_snapshot=fetch,
+        build_cells=lambda snapshot: {
+            CELL: _raw(scheduled, evidence_input=snapshot["typed_inputs"][0])},
         archive_required=["IBM"], decision_required=["IBM"],
         required_trade_date="2026-09-11")
     first = ingest_planned_round(**kwargs)
@@ -182,10 +239,13 @@ def test_same_planned_key_different_hash_refuses_whole_round_without_refetch(tmp
 
     def fetch(symbols):
         calls.append(list(symbols))
-        return {"bars": {symbol: [] for symbol in symbols}, "symbols": list(symbols)}
+        return _typed_bars(
+            {(symbol, "2026-09-11"): {"open": 100, "close": 101}
+             for symbol in symbols})
 
     base = dict(scheduled_at=scheduled, state_dir=tmp_path, fetch_snapshot=fetch,
-                build_cells=lambda snapshot: {CELL: _raw(scheduled)},
+                build_cells=lambda snapshot: {
+                    CELL: _raw(scheduled, evidence_input=snapshot["typed_inputs"][0])},
                 archive_required=["IBM"], decision_required=["IBM"],
                 required_trade_date="2026-09-11")
     assert ingest_planned_round(delivery_payload={"revision": 1}, **base)["status"] == "persisted"
@@ -222,10 +282,12 @@ def test_unresolved_spy_blocks_only_benchmark_alpha_and_acceptance_consumers():
         _plan(), previous_book=None, opening_prices={"IBM": 100})
     bars = {("IBM", "2026-09-14"): {"close": 101},
             ("SPY", "2026-09-14"): {"close": 500}}
+    archive = _typed_bars(bars)
+    resolution = _resolution("SPY", "2026-09-14")
     lower = settle_execution(
         execution=execution, next_actual_start=None, archived_bars=bars,
         reading_kind="lower_bound", round_inputs=_inputs("round"),
-        archive_inputs=_inputs("archive"), resolution_inputs=[],
+        archive_inputs=[archive], resolution_inputs=[resolution],
         unresolved_keys={("SPY", "2026-09-14")})
     assert lower["returns_through"] == "2026-09-14"
     assert lower["is_performance_reading"] is True
@@ -233,13 +295,14 @@ def test_unresolved_spy_blocks_only_benchmark_alpha_and_acceptance_consumers():
     assert lower["benchmark_returns_through"] is None
     assert {item["consumer"] for item in lower["rejected_keys"]} == {"benchmark_alpha"}
 
+    opend = _typed_bars(bars, kind="opend_k_day_qfq", file="opend.json")
     acceptance = settle_execution(
         execution=execution, next_actual_start=None, archived_bars=bars,
         reading_kind="acceptance", round_inputs=_inputs("round"),
-        archive_inputs=_inputs("archive"), resolution_inputs=[],
+        archive_inputs=[archive], resolution_inputs=[resolution],
         unresolved_keys={("SPY", "2026-09-14")},
-        equity_source=ACCEPTANCE_EQUITY_SOURCE, cash_source=ACCEPTANCE_CASH_SOURCE,
-        cash_total_return_factors={"2026-09-14": 1.0})
+        acceptance_equity_inputs=[opend],
+        acceptance_cash_inputs=[_bil(["2026-09-14"])])
     assert acceptance["is_acceptance_reading"] is False
     assert any(item["consumer"] == "acceptance" for item in acceptance["rejected_keys"])
 
@@ -279,10 +342,16 @@ def test_turnover_is_absolute_union_once_and_execution_redelivery_costs_once(tmp
     previous = {"experiment_version": EXPERIMENT_VERSION,
                 "shares": {"IBM": 100.0}, "cash": 90_000.0}
     opens = {"IBM": 100.0, "CAT": 200.0}
+    opening_input = _typed_bars({
+        ("IBM", "2026-09-14"): {"open": 100.0, "close": 100.0},
+        ("CAT", "2026-09-14"): {"open": 200.0, "close": 200.0},
+    })
     first = execute_canonical_once(plan, previous_book=previous,
-                                   opening_prices=opens, state_dir=tmp_path)
+                                   opening_prices=opens, opening_inputs=[opening_input],
+                                   state_dir=tmp_path)
     second = execute_canonical_once(plan, previous_book=previous,
-                                    opening_prices=opens, state_dir=tmp_path)
+                                    opening_prices=opens, opening_inputs=[opening_input],
+                                    state_dir=tmp_path)
     # boundary wealth = 100k; old IBM=10k, new IBM=10k and CAT=10k => turnover=10k, not 20k
     assert first["turnover_notional"] == pytest.approx(10_000.0)
     assert first["entry_cost"] == pytest.approx(10.0)
@@ -313,7 +382,7 @@ def test_half_open_settlement_excludes_next_canonical_open_date_and_is_idempoten
             ("SPY", "2026-09-16"): {"close": 502}}
     kwargs = dict(execution=execution, next_actual_start="2026-09-16T13:30:00Z",
                   archived_bars=bars, reading_kind="lower_bound",
-                  round_inputs=_inputs("round"), archive_inputs=_inputs("archive"),
+                  round_inputs=_inputs("round"), archive_inputs=[_typed_bars(bars)],
                   resolution_inputs=[])
     first = settle_execution_once(state_dir=tmp_path, **kwargs)
     second = settle_execution_once(state_dir=tmp_path, **kwargs)
@@ -328,13 +397,16 @@ def test_weekly_and_mwf_statistics_are_never_combined():
                            {"as_of": "2026-09-02", "nav": 101}]}
     weekly = {**base, "experiment_version": "llm_paper_forward_weekly_v1"}
     mwf = {**base, "experiment_version": EXPERIMENT_VERSION,
+           "cell_id": CELL, "scheduled_at": "2026-09-14T11:00:00Z",
            "nav_series": [{"as_of": "2026-09-14", "nav": 100},
                           {"as_of": "2026-09-15", "nav": 99}]}
     stats = version_isolated_statistics([weekly, mwf], gaps=[
-        {"experiment_version": EXPERIMENT_VERSION, "status": "technical_gap"}])
+        {"experiment_version": EXPERIMENT_VERSION, "cell_id": CELL,
+         "scheduled_at": "2026-09-16T11:00:00Z", "status": "technical_gap"}])
     assert stats["combined_metrics"] is None
     assert set(stats["versions"]) == {"llm_paper_forward_weekly_v1", EXPERIMENT_VERSION}
-    assert stats["versions"][EXPERIMENT_VERSION]["total_return"] == pytest.approx(-0.01)
+    assert stats["versions"][EXPERIMENT_VERSION]["total_return"] is None
+    assert stats["versions"][EXPERIMENT_VERSION]["cells"][CELL]["total_return"] == pytest.approx(-0.01)
     assert stats["versions"][EXPERIMENT_VERSION]["n_gaps"] == 1
 
 
@@ -349,16 +421,17 @@ def test_full_batch_quota_preflight_refuses_over_25_without_dropping_or_splittin
 
 
 def test_wed_fri_snapshot_reuse_requires_capture_trade_date_and_archive_hash():
-    snapshot = {"capture_utc": "2026-09-16T02:01:00Z", "latest_trade_date": "2026-09-15",
-                "archive_content_sha256": H64, "symbols": ["IBM", "SPY"],
-                "bars": {"IBM": [], "SPY": []}}
+    snapshot = _typed_bars({
+        ("IBM", "2026-09-15"): {"open": 100, "close": 101},
+        ("SPY", "2026-09-15"): {"open": 500, "close": 501},
+    }, source_time="2026-09-15T20:00:00Z", available="2026-09-16T02:01:00Z")
     plan = plan_snapshot_reuse(archive_required=["IBM", "CAT"],
                                decision_required=["IBM", "SPY"], snapshot=snapshot,
                                required_trade_date="2026-09-15")
     assert plan["reused_symbols"] == ["IBM", "SPY"]
     assert plan["fetch_symbols"] == ["CAT"]
-    assert plan["snapshot_provenance"]["archive_content_sha256"] == H64
-    with pytest.raises(FrozenContractError, match="exact latest trade date"):
+    assert plan["snapshot_provenance"]["archive_content_sha256"] == snapshot["content_sha256"]
+    with pytest.raises(FrozenContractError, match="coverage missing"):
         plan_snapshot_reuse(archive_required=["IBM"], decision_required=["IBM"],
                             snapshot=snapshot, required_trade_date="2026-09-14")
 
@@ -383,13 +456,12 @@ def test_acceptance_rejects_av_equity_or_zero_yield_cash_substitution():
     execution = execute_canonical(_plan(), previous_book=None, opening_prices={"IBM": 100})
     bars = {("IBM", "2026-09-14"): {"close": 101},
             ("SPY", "2026-09-14"): {"close": 500}}
-    result = settle_execution(
-        execution=execution, next_actual_start=None, archived_bars=bars,
-        reading_kind="acceptance", round_inputs=_inputs("round"),
-        archive_inputs=_inputs("archive"), resolution_inputs=[],
-        equity_source="Alpha Vantage as-traded", cash_source="literal zero-yield cash")
-    assert result["status"] == "pending" and result["is_acceptance_reading"] is False
-    assert result["round_nav_point_consumed"] is False
+    with pytest.raises(FrozenContractError, match="exactly match"):
+        settle_execution(
+            execution=execution, next_actual_start=None, archived_bars=bars,
+            reading_kind="acceptance", round_inputs=_inputs("round"),
+            archive_inputs=[_typed_bars(bars)], resolution_inputs=[],
+            equity_source="Alpha Vantage as-traded", cash_source="literal zero-yield cash")
 
 
 def test_four_idempotency_keys_match_frozen_tuple_shapes():
@@ -456,10 +528,10 @@ def test_settlement_provenance_lists_files_and_hashes_and_separates_cutoffs():
     result = settle_execution(
         execution=execution, next_actual_start=None, archived_bars=bars,
         reading_kind="lower_bound", round_inputs=_inputs("round"),
-        archive_inputs=_inputs("archive"), resolution_inputs=_inputs("resolution"))
+        archive_inputs=[_typed_bars(bars)], resolution_inputs=[])
     assert result["returns_through"] == "2026-09-14"
     assert result["data_available_through"] == "2026-09-15"
     assert result["round_inputs"] == _inputs("round")
-    assert result["archive_inputs"] == _inputs("archive")
-    assert result["resolution_inputs"] == _inputs("resolution")
+    assert result["archive_inputs"][0]["input_kind"] == "archive_snapshot"
+    assert result["resolution_inputs"] == []
     assert len(result["content_sha256"]) == 64

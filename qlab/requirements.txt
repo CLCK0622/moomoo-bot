@@ -4,6 +4,7 @@ numpy>=1.25,<2.0
 pyarrow>=14.0.0
 pytest>=7.4.0
 requests>=2.31            # qlab.events.datafetch: SEC EDGAR + free price fetchers
+jsonschema>=4.23,<5       # runtime validation for frozen M/W/F v2 contracts
 
 # --- opend/live extra (install to run --mode opend_paper|live, the opend_probe,
 # --- OR `qlab.events.datafetch.fetch_all --price-source opend` for daily bars —

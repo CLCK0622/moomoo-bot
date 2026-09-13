@@ -13,7 +13,7 @@ import json
 import math
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping, Sequence
 from zoneinfo import ZoneInfo
@@ -23,6 +23,22 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from research.gate.filelock import atomic_write_text, state_lock
+from qlab.llm_paper.mwf_v2_contracts import (
+    COALESCING_SCHEMA,
+    EXECUTION_SCHEMA,
+    INPUT_SCHEMA,
+    ROUND_SCHEMA,
+    SETTLEMENT_SCHEMA,
+    FrozenContractError,
+    canonical_bytes,
+    content_sha256,
+    is_sha256,
+    make_typed_input,
+    parse_utc,
+    typed_records,
+    validate_runtime_artifact,
+    verify_typed_input,
+)
 
 
 EXPERIMENT_VERSION = "llm_paper_forward_mwf_v2"
@@ -37,19 +53,12 @@ GRID = (
     "seed44×pv1_baseline", "seed44×pv2_riskaware",
     "seed55×pv1_baseline", "seed55×pv2_riskaware",
 )
-ROUND_SCHEMA = "llm_paper_planned_round/v2"
-EXECUTION_SCHEMA = "llm_paper_execution/v2"
-SETTLEMENT_SCHEMA = "llm_paper_settlement/v2"
 COST_RATE = 0.001
 COST_MODEL_VERSION = "moomoo_retail_x1_10bps_per_turnover_v1"
 READING_KINDS = {"equivalence_artifact", "lower_bound", "acceptance"}
 ACCEPTANCE_EQUITY_SOURCE = "OpenD K_DAY qfq return_series"
 ACCEPTANCE_CASH_SOURCE = "BIL total_return_series"
 V2_PREREG_PATH = _REPO_ROOT / "qlab" / "llm_paper_prereg_mwf_v2.json"
-
-
-class FrozenContractError(ValueError):
-    """Input would violate the frozen v2 protocol."""
 
 
 class IdempotencyConflict(FrozenContractError):
@@ -67,18 +76,11 @@ class ArtifactConflict(FrozenContractError):
 
 
 def _canonical(value: Any) -> bytes:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True,
-                      separators=(",", ":"), allow_nan=False,
-                      default=str).encode("utf-8")
-
-
-def content_sha256(value: Any) -> str:
-    return hashlib.sha256(_canonical(value)).hexdigest()
+    return canonical_bytes(value)
 
 
 def _is_sha256(value: Any) -> bool:
-    text = str(value)
-    return len(text) == 64 and all(char in "0123456789abcdef" for char in text)
+    return is_sha256(value)
 
 
 def file_sha256(path: str | Path) -> str:
@@ -118,14 +120,7 @@ def load_v2_preregistration(path: str | Path = V2_PREREG_PATH) -> dict[str, Any]
 
 
 def _dt(value: Any) -> datetime:
-    if isinstance(value, datetime):
-        parsed = value
-    else:
-        text = str(value)
-        parsed = datetime.fromisoformat(text[:-1] + "+00:00" if text.endswith("Z") else text)
-    if parsed.tzinfo is None:
-        raise FrozenContractError(f"timestamp must include timezone: {value!r}")
-    return parsed.astimezone(UTC)
+    return parse_utc(value)
 
 
 def utc_text(value: Any) -> str:
@@ -219,8 +214,80 @@ class IdempotencyStore:
 
     def lookup(self, kind: str, key: Any) -> dict[str, Any] | None:
         identity = self._identity(kind, key)
-        return next((record for record in self._records()
+        return next((record for record in reversed(self._records())
                      if record["identity_sha256"] == identity), None)
+
+    @staticmethod
+    def _record(*, schema: str, kind: str, key: Any, identity: str,
+                digest: str, **extra: Any) -> dict[str, Any]:
+        record = {"schema": schema, "kind": str(kind), "key": _key_json(key),
+                  "identity_sha256": identity, "content_sha256": digest, **extra}
+        record["record_sha256"] = content_sha256(record)
+        return record
+
+    def begin_artifact(self, kind: str, key: Any, payload: Any, *,
+                       artifact_path: str | Path) -> ClaimResult:
+        """Create/recover an auditable incomplete claim for an immutable artifact."""
+        digest = payload if isinstance(payload, str) and _is_sha256(payload) \
+            else content_sha256(payload)
+        identity = self._identity(kind, key)
+        with state_lock(str(self.path)):
+            records = self._records()
+            old = next((record for record in reversed(records)
+                        if record["identity_sha256"] == identity), None)
+            if old is not None and old["content_sha256"] != digest:
+                raise IdempotencyConflict(
+                    f"{IdempotencyConflict.code}: kind={kind} key={_key_json(key)!r} "
+                    f"existing={old['content_sha256']} incoming={digest}")
+            if old is not None and old.get("state") == "complete":
+                return ClaimResult("no_op", kind, key, digest)
+            if old is not None:
+                return ClaimResult("recovery", kind, key, digest)
+            record = self._record(
+                schema="llm_paper_idempotency_claim/v2", kind=kind, key=key,
+                identity=identity, digest=digest, state="incomplete",
+                artifact_path=str(artifact_path))
+            atomic_write_text(
+                str(self.path),
+                "".join(json.dumps(item, ensure_ascii=False, sort_keys=True) + "\n"
+                        for item in [*records, record]))
+            return ClaimResult("claimed", kind, key, digest)
+
+    def complete_artifact(self, kind: str, key: Any, payload: Any, *,
+                          artifact_path: str | Path,
+                          artifact_content_sha256: str,
+                          completion_input_sha256: str | None = None) -> None:
+        """Append the completion transition only after the artifact is durable."""
+        digest = payload if isinstance(payload, str) and _is_sha256(payload) \
+            else content_sha256(payload)
+        if not _is_sha256(artifact_content_sha256):
+            raise FrozenContractError("completed artifact requires a valid content hash")
+        identity = self._identity(kind, key)
+        with state_lock(str(self.path)):
+            records = self._records()
+            old = next((record for record in reversed(records)
+                        if record["identity_sha256"] == identity), None)
+            if old is None or old["content_sha256"] != digest:
+                raise FrozenContractError("cannot complete an absent or conflicting claim")
+            if old.get("state") == "complete":
+                if old.get("artifact_content_sha256") != artifact_content_sha256:
+                    raise ArtifactConflict("completed claim points at different artifact bytes")
+                if (completion_input_sha256 is not None and
+                        old.get("completion_input_sha256") != completion_input_sha256):
+                    raise IdempotencyConflict(
+                        f"{IdempotencyConflict.code}: completion input changed")
+                return
+            extra = ({"completion_input_sha256": completion_input_sha256}
+                     if completion_input_sha256 is not None else {})
+            record = self._record(
+                schema="llm_paper_idempotency_claim/v2", kind=kind, key=key,
+                identity=identity, digest=digest, state="complete",
+                artifact_path=str(artifact_path),
+                artifact_content_sha256=artifact_content_sha256, **extra)
+            atomic_write_text(
+                str(self.path),
+                "".join(json.dumps(item, ensure_ascii=False, sort_keys=True) + "\n"
+                        for item in [*records, record]))
 
     def claim(self, kind: str, key: Any, payload: Any) -> ClaimResult:
         return self.claim_many([(kind, key, payload)])[0]
@@ -253,10 +320,9 @@ class IdempotencyStore:
                 if old is not None:
                     results.append(ClaimResult("no_op", kind, key, digest))
                     continue
-                record = {"schema": "llm_paper_idempotency_claim/v1", "kind": kind,
-                          "key": _key_json(key), "identity_sha256": identity,
-                          "content_sha256": digest}
-                record["record_sha256"] = content_sha256(record)
+                record = self._record(
+                    schema="llm_paper_idempotency_claim/v1", kind=kind, key=key,
+                    identity=identity, digest=digest)
                 new_records.append(record)
                 by_identity[identity] = record
                 results.append(ClaimResult("claimed", kind, key, digest))
@@ -273,9 +339,11 @@ def write_hashed_artifact(path: str | Path, payload: Mapping[str, Any]) -> dict[
     materialized = dict(payload)
     materialized.pop("content_sha256", None)
     materialized["content_sha256"] = content_sha256(materialized)
+    validate_runtime_artifact(materialized)
     with state_lock(str(target)):
         if target.exists():
             existing = json.loads(target.read_text(encoding="utf-8"))
+            validate_runtime_artifact(existing)
             if _canonical(existing) != _canonical(materialized):
                 raise ArtifactConflict(f"immutable artifact collision: {target.name}")
             return existing
@@ -287,12 +355,10 @@ def write_hashed_artifact(path: str | Path, payload: Mapping[str, Any]) -> dict[
 
 def verify_hashed_artifact(path: str | Path) -> dict[str, Any]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    supplied = payload.get("content_sha256")
-    unsigned = dict(payload)
-    unsigned.pop("content_sha256", None)
-    if supplied != content_sha256(unsigned):
-        raise ArtifactConflict(f"artifact content hash mismatch: {Path(path).name}")
-    return payload
+    try:
+        return validate_runtime_artifact(payload)
+    except FrozenContractError as exc:
+        raise ArtifactConflict(f"invalid artifact {Path(path).name}: {exc}") from exc
 
 
 def read_round_compat(path: str | Path) -> dict[str, Any]:
@@ -303,7 +369,20 @@ def read_round_compat(path: str | Path) -> dict[str, Any]:
         copy["experiment_version"] = LEGACY_VERSION
         copy["scheduled_at"] = None
         copy["compatibility"] = "legacy_fields_supplied_in_memory_only"
+    else:
+        validate_runtime_artifact(copy)
     return copy
+
+
+def _complete_claim(registry: IdempotencyStore, claim: ClaimResult, *,
+                    kind: str, key: Any, payload_hash: str, target: Path,
+                    artifact: Mapping[str, Any]) -> dict[str, Any]:
+    registry.complete_artifact(
+        kind, key, payload_hash, artifact_path=target,
+        artifact_content_sha256=str(artifact["content_sha256"]))
+    if claim.status == "recovery":
+        return {**artifact, "idempotency_status": "recovered"}
+    return dict(artifact)
 
 
 def validate_schedule_slot(scheduled_at: Any) -> dict[str, str]:
@@ -353,17 +432,45 @@ def normalize_cell_decision(cell_id: str, raw: Mapping[str, Any], *,
                             scheduled_at: Any) -> dict[str, Any]:
     if cell_id not in GRID:
         raise FrozenContractError(f"cell {cell_id!r} is outside the frozen 10-cell family")
+    source = _dt(raw["source_time_utc"])
     evidence = _dt(raw["evidence_available_utc"])
     decision = _dt(raw["decision_ts"])
-    effective = _dt(raw.get("effective_from") or intended_open(scheduled_at))
+    market_open = _dt(intended_open(scheduled_at))
+    effective = _dt(raw.get("effective_from") or market_open)
     slot = _dt(scheduled_at)
-    if decision > _dt(intended_open(scheduled_at)):
+    if decision >= market_open:
         raise FrozenContractError("decision arrived after market open; record a technical gap")
-    if not evidence <= decision <= effective:
+    if effective != market_open:
+        raise FrozenContractError("effective_from must equal the intended market open")
+    if not source <= evidence <= decision < market_open:
         raise FrozenContractError(
-            "timing violation: evidence_available_utc <= decision_ts <= effective_from")
+            "timing violation: source_time_utc <= evidence_available_utc "
+            "<= decision_ts < market open")
     if decision < slot:
         raise FrozenContractError("decision_ts precedes its natural scheduled delivery")
+    refs = list(raw["evidence_refs"])
+    if not refs:
+        raise FrozenContractError("evidence_refs must be non-empty")
+    normalized_refs: list[dict[str, str]] = []
+    for ref in refs:
+        if not isinstance(ref, Mapping):
+            raise FrozenContractError("every evidence ref must be a typed mapping")
+        normalized_ref = {
+            "file": str(ref.get("file") or ""),
+            "input_kind": str(ref.get("input_kind") or ""),
+            "content_sha256": str(ref.get("content_sha256") or ""),
+            "source_time_utc": utc_text(ref["source_time_utc"]),
+            "evidence_available_utc": utc_text(ref["evidence_available_utc"]),
+        }
+        if (not normalized_ref["file"] or not normalized_ref["input_kind"] or
+                not _is_sha256(normalized_ref["content_sha256"])):
+            raise FrozenContractError(
+                "evidence ref requires file, input_kind and canonical content hash")
+        ref_source = _dt(normalized_ref["source_time_utc"])
+        ref_available = _dt(normalized_ref["evidence_available_utc"])
+        if not ref_source <= ref_available <= decision:
+            raise FrozenContractError("evidence ref violates source/availability/decision order")
+        normalized_refs.append(normalized_ref)
     weights = {str(symbol): float(weight)
                for symbol, weight in (raw.get("target_weights") or {}).items()}
     portfolio = _portfolio_status(weights)
@@ -377,8 +484,9 @@ def normalize_cell_decision(cell_id: str, raw: Mapping[str, Any], *,
         "effective_from": utc_text(effective),
         "target_weights": weights,
         "portfolio_check": portfolio,
-        "evidence_refs": list(raw.get("evidence_refs") or []),
-        "source_time_utc": raw.get("source_time_utc"),
+        "evidence_refs": sorted(normalized_refs,
+                                key=lambda item: (item["file"], item["content_sha256"])),
+        "source_time_utc": utc_text(source),
     }
     body["decision_content_sha256"] = content_sha256(body)
     return body
@@ -412,17 +520,27 @@ def plan_snapshot_reuse(*, archive_required: Iterable[str], decision_required: I
     reused: set[str] = set()
     provenance = None
     if snapshot:
-        sha = str(snapshot.get("archive_content_sha256") or "")
-        capture = str(snapshot.get("capture_utc") or "")
-        trade_date = str(snapshot.get("latest_trade_date") or "")
-        symbols = {str(item) for item in snapshot.get("symbols") or []}
-        if not _is_sha256(sha) or not capture or trade_date != required_trade_date:
+        verified = verify_typed_input(
+            snapshot, expected_kinds={"archive_snapshot"},
+            required_trade_dates={required_trade_date})
+        if verified["coverage"]["trade_dates"][-1] != required_trade_date:
             raise FrozenContractError(
-                "snapshot reuse requires capture time, archive hash and exact latest trade date")
-        _dt(capture)
+                "snapshot latest trade date must exactly equal required_trade_date")
+        records = [record for record in verified["records"]
+                   if record["trade_date"] == required_trade_date]
+        symbols = {str(record["symbol"]) for record in records}
         reused = required & symbols
-        provenance = {"capture_utc": utc_text(capture), "latest_trade_date": trade_date,
-                      "archive_content_sha256": sha, "symbols": sorted(reused)}
+        provenance = {
+            "schema": INPUT_SCHEMA,
+            "input_kind": verified["input_kind"],
+            "source_identity": verified["source_identity"],
+            "file": verified["file"],
+            "source_time_utc": verified["source_time_utc"],
+            "evidence_available_utc": verified["evidence_available_utc"],
+            "latest_trade_date": required_trade_date,
+            "archive_content_sha256": verified["content_sha256"],
+            "symbols": sorted(reused),
+        }
     return {**quota, "reused_symbols": sorted(reused),
             "fetch_symbols": sorted(required - reused), "snapshot_provenance": provenance}
 
@@ -458,53 +576,81 @@ def ingest_planned_round(*, scheduled_at: Any, delivery_payload: Mapping[str, An
     rounds_dir = root / "rounds"
     registry = IdempotencyStore(root / "idempotency.jsonl")
     delivery_hash = content_sha256(delivery_payload)
+    target = rounds_dir / _round_filename(scheduled_at)
     try:
-        claim = registry.claim("planned_round_key", planned_round_key(scheduled_at), delivery_hash)
+        claim = registry.begin_artifact(
+            "planned_round_key", planned_round_key(scheduled_at), delivery_hash,
+            artifact_path=target)
     except IdempotencyConflict as exc:
         return {"status": IdempotencyConflict.code, "whole_round_refused": True,
                 "scheduled_at": utc_text(scheduled_at), "reason": str(exc)}
     if claim.is_noop:
-        target = rounds_dir / _round_filename(scheduled_at)
+        if not target.exists():
+            raise FrozenContractError("completed planned-round claim has no artifact")
         return {"status": "no_op", "no_fetch": True, "no_fee": True,
                 "no_cost": True, "no_ledger_write": True,
-                "artifact": (verify_hashed_artifact(target) if target.exists() else None)}
+                "artifact": verify_hashed_artifact(target)}
+    if claim.status == "recovery" and target.exists():
+        artifact = verify_hashed_artifact(target)
+        registry.complete_artifact(
+            "planned_round_key", planned_round_key(scheduled_at), delivery_hash,
+            artifact_path=target,
+            artifact_content_sha256=artifact["content_sha256"])
+        return {"status": "no_op", "idempotency_status": "recovered",
+                "no_fetch": True, "no_fee": True, "no_cost": True,
+                "no_ledger_write": False, "artifact": artifact}
 
     try:
         quote_plan = plan_snapshot_reuse(
             archive_required=archive_required, decision_required=decision_required,
             snapshot=reusable_snapshot, required_trade_date=required_trade_date,
             other_calls=other_calls)
-        snapshot = dict(fetch_snapshot(quote_plan["fetch_symbols"]))
-        fetched_symbols = {str(item) for item in snapshot.get("symbols") or
-                           (snapshot.get("bars") or {}).keys()}
-        missing_fetch = sorted(set(quote_plan["fetch_symbols"]) - fetched_symbols)
-        if missing_fetch:
-            raise FrozenContractError(
-                f"require_full_batch missing symbols: {missing_fetch}; whole round refused")
+        snapshot_inputs: list[dict[str, Any]] = []
         if reusable_snapshot:
-            reused_bars = dict(reusable_snapshot.get("bars") or {})
-            missing_reused = sorted(set(quote_plan["reused_symbols"]) -
-                                    {str(item) for item in reused_bars})
-            if missing_reused:
+            snapshot_inputs.append(verify_typed_input(
+                reusable_snapshot, expected_kinds={"archive_snapshot"},
+                required_symbols=quote_plan["reused_symbols"],
+                required_trade_dates={required_trade_date}))
+        if quote_plan["fetch_symbols"]:
+            fetched = verify_typed_input(
+                dict(fetch_snapshot(quote_plan["fetch_symbols"])),
+                expected_kinds={"archive_snapshot"},
+                required_symbols=quote_plan["fetch_symbols"],
+                required_trade_dates={required_trade_date})
+            if fetched["coverage"]["trade_dates"][-1] != required_trade_date:
                 raise FrozenContractError(
-                    f"snapshot provenance claims symbols without reusable bars: {missing_reused}")
-            fetched_bars = dict(snapshot.get("bars") or {})
-            snapshot["bars"] = {**reused_bars, **fetched_bars}
-            snapshot["reused_snapshot_provenance"] = quote_plan["snapshot_provenance"]
+                    "fetched snapshot latest trade date must exactly equal required_trade_date")
+            snapshot_inputs.append(fetched)
+        _, records = typed_records(snapshot_inputs, expected_kinds={"archive_snapshot"})
+        bars: dict[str, list[dict[str, Any]]] = {}
+        for record in records:
+            bars.setdefault(str(record["symbol"]), []).append(record)
+        snapshot = {"schema": "llm_paper_snapshot_view/v2", "typed_inputs": snapshot_inputs,
+                    "records": records, "bars": bars}
         raw_cells = dict(build_cells(snapshot))
         normalized: dict[str, dict[str, Any]] = {}
         failures: dict[str, str] = {}
+        available_hashes = {item["content_sha256"] for item in snapshot_inputs}
         for cell in GRID:
             if cell not in raw_cells:
                 failures[cell] = "no_legal_persisted_decision"
                 continue
             try:
-                normalized[cell] = normalize_cell_decision(
+                block = normalize_cell_decision(
                     cell, raw_cells[cell], scheduled_at=scheduled_at)
+                missing_evidence = sorted(
+                    ref["content_sha256"] for ref in block["evidence_refs"]
+                    if ref["content_sha256"] not in available_hashes)
+                if missing_evidence:
+                    raise FrozenContractError(
+                        f"evidence refs are not bound to verified snapshot inputs: {missing_evidence}")
+                normalized[cell] = block
             except (KeyError, TypeError, ValueError) as exc:
                 failures[cell] = str(exc)
         if not normalized:
-            raise FrozenContractError("no cell produced a legal persisted decision")
+            raise FrozenContractError(
+                "no cell produced a legal persisted decision: " +
+                json.dumps(failures, ensure_ascii=False, sort_keys=True))
         registry.claim_many([
             ("decision_key", decision_key(scheduled_at, cell), block["decision_content_sha256"])
             for cell, block in sorted(normalized.items())
@@ -516,7 +662,10 @@ def ingest_planned_round(*, scheduled_at: Any, delivery_payload: Mapping[str, An
                    "gap_reason": None, "cells": normalized, "cell_failures": failures,
                    "n_trials_total": 10, "n_evaluated_this_round": len(normalized),
                    "quote_batch": quote_plan,
-                   "archive_snapshot": snapshot.get("archive_snapshot"),
+                   "archive_snapshot_inputs": [
+                       {"file": item["file"], "input_kind": item["input_kind"],
+                        "content_sha256": item["content_sha256"]}
+                       for item in snapshot_inputs],
                    "executor": "single_book", "mode": "SIMULATE",
                    "verdict": None, "round_nav_point_consumable": False}
     except IdempotencyConflict as exc:
@@ -525,7 +674,11 @@ def ingest_planned_round(*, scheduled_at: Any, delivery_payload: Mapping[str, An
     except Exception as exc:
         payload = _gap_payload(scheduled_at=scheduled_at, delivery_hash=delivery_hash,
                                reason=str(exc))
-    artifact = write_hashed_artifact(rounds_dir / _round_filename(scheduled_at), payload)
+    artifact = write_hashed_artifact(target, payload)
+    artifact = _complete_claim(
+        registry, claim, kind="planned_round_key",
+        key=planned_round_key(scheduled_at), payload_hash=delivery_hash,
+        target=target, artifact=artifact)
     return {"status": artifact["status"], "artifact": artifact}
 
 
@@ -536,6 +689,7 @@ def coalesce_rounds(rounds: Sequence[Mapping[str, Any]], *,
     statuses: list[dict[str, Any]] = []
     pending: list[dict[str, Any]] = []
     for raw in rounds:
+        validate_runtime_artifact(raw)
         if raw.get("status") != "persisted":
             statuses.append({"planned_round_key": raw.get("planned_round_key"),
                              "status": raw.get("status", "technical_gap")})
@@ -574,8 +728,9 @@ def coalesce_rounds(rounds: Sequence[Mapping[str, Any]], *,
         statuses.append({"decision_key": canonical["decision"]["decision_key"],
                          "status": "canonical", "actual_start": actual,
                          "execution_key": _key_json(ekey), "action": action})
-    return {"schema": "llm_paper_coalescing/v2", "executions": executions,
-            "decision_statuses": statuses, "pending_actual_start": pending}
+    result = {"schema": COALESCING_SCHEMA, "executions": executions,
+              "decision_statuses": statuses, "pending_actual_start": pending}
+    return validate_runtime_artifact(result, verify_hash=False)
 
 
 def _open_price(opens: Mapping[Any, Any], symbol: str, actual: str) -> float | None:
@@ -597,6 +752,10 @@ def execute_canonical(plan: Mapping[str, Any], *, previous_book: Mapping[str, An
     old_shares = {str(k): float(v) for k, v in (previous_book or {}).get("shares", {}).items()}
     old_cash = float((previous_book or {}).get("cash", start_nav))
     target = {str(k): float(v) for k, v in plan["decision"]["target_weights"].items()}
+    if old_cash < 0 or any(value < 0 for value in old_shares.values()):
+        raise FrozenContractError("previous book shares and cash must be non-negative")
+    if any(value < 0 for value in target.values()):
+        raise FrozenContractError("target weights must be non-negative")
     required = set(old_shares)
     if plan["action"] == "rebalance":
         required |= set(target)
@@ -613,6 +772,8 @@ def execute_canonical(plan: Mapping[str, Any], *, previous_book: Mapping[str, An
     old_notionals = {symbol: shares * float(_open_price(opening_prices, symbol, actual))
                      for symbol, shares in sorted(old_shares.items())}
     wealth = math.fsum([old_cash, *old_notionals.values()])
+    if not math.isfinite(wealth) or wealth <= 0:
+        raise FrozenContractError("execution wealth must be finite and positive")
     previous_version = (previous_book or {}).get("experiment_version")
     first_v2_entry = previous_version not in {None, EXPERIMENT_VERSION}
     if plan["action"] == "carry_forward":
@@ -630,14 +791,35 @@ def execute_canonical(plan: Mapping[str, Any], *, previous_book: Mapping[str, An
                                               "entry_cost_included": True}
                                              if first_v2_entry else None)}
 
-    new_notionals = {symbol: wealth * weight for symbol, weight in sorted(target.items())}
-    turnover = math.fsum(abs(new_notionals.get(symbol, 0.0) -
-                              old_notionals.get(symbol, 0.0))
-                         for symbol in sorted(set(new_notionals) | set(old_notionals)))
+    base_notionals = {symbol: wealth * weight for symbol, weight in sorted(target.items())}
+
+    def affordable(scale: float) -> tuple[dict[str, float], float, float]:
+        notionals = {symbol: value * scale for symbol, value in base_notionals.items()}
+        changed = math.fsum(abs(notionals.get(symbol, 0.0) -
+                                old_notionals.get(symbol, 0.0))
+                           for symbol in sorted(set(notionals) | set(old_notionals)))
+        spend = math.fsum(notionals.values()) + changed * COST_RATE
+        return notionals, changed, spend
+
+    new_notionals, turnover, spend = affordable(1.0)
+    if spend > wealth:
+        low, high = 0.0, 1.0
+        for _ in range(80):
+            mid = (low + high) / 2.0
+            _, _, candidate_spend = affordable(mid)
+            if candidate_spend <= wealth:
+                low = mid
+            else:
+                high = mid
+        new_notionals, turnover, spend = affordable(low)
     cost = turnover * COST_RATE
     shares = {symbol: notional / float(_open_price(opening_prices, symbol, actual))
               for symbol, notional in sorted(new_notionals.items())}
     cash = wealth - math.fsum(new_notionals.values()) - cost
+    if cash < 0 and abs(cash) <= 1e-8:
+        cash = 0.0
+    if cash < 0:
+        raise FrozenContractError("rebalance plus costs would create negative cash")
     normalized_cost = (cost * start_nav / wealth) if first_v2_entry and wealth else cost
     return {"schema": EXECUTION_SCHEMA, "experiment_version": plan["experiment_version"],
             "execution_key": plan["execution_key"], "cell_id": plan["cell_id"],
@@ -659,26 +841,71 @@ def execute_canonical(plan: Mapping[str, Any], *, previous_book: Mapping[str, An
 
 def execute_canonical_once(plan: Mapping[str, Any], *,
                            previous_book: Mapping[str, Any] | None,
-                           opening_prices: Mapping[Any, Any], state_dir: str | Path
+                           opening_prices: Mapping[Any, Any], state_dir: str | Path,
+                           opening_inputs: Sequence[Mapping[str, Any]] = ()
                            ) -> dict[str, Any]:
     root = Path(state_dir)
     registry = IdempotencyStore(root / "idempotency.jsonl")
-    input_payload = {"plan": plan, "previous_book": previous_book,
-                     "opening_prices": opening_prices}
-    try:
-        claim = registry.claim("execution_key", tuple(plan["execution_key"]), input_payload)
-    except IdempotencyConflict:
-        raise
+    stable_payload = {"plan": plan, "previous_book": previous_book}
+    input_hash = content_sha256(stable_payload)
+    if not opening_inputs:
+        raise FrozenContractError("persisted execution requires typed opening inputs")
+    verified_opening_inputs = [
+        verify_typed_input(item, expected_kinds={"archive_snapshot"})
+        for item in opening_inputs]
+    if verified_opening_inputs:
+        _, opening_records = typed_records(
+            verified_opening_inputs, expected_kinds={"archive_snapshot"})
+        actual_day = str(plan["actual_start_bar"])[:10]
+        typed_opens = {str(record["symbol"]): float(record["open"])
+                       for record in opening_records
+                       if str(record["trade_date"]) == actual_day}
+        for symbol in {str(key[0] if isinstance(key, tuple) else key)
+                       for key in opening_prices}:
+            supplied = _open_price(opening_prices, symbol, str(plan["actual_start_bar"]))
+            if supplied is not None and typed_opens.get(symbol) != supplied:
+                raise FrozenContractError(
+                    f"opening price for {symbol}@{actual_day} is not bound to typed input")
+    opening_refs = [{"file": item["file"], "input_kind": item["input_kind"],
+                     "source_identity": item["source_identity"],
+                     "coverage": item["coverage"],
+                     "content_sha256": item["content_sha256"]}
+                    for item in verified_opening_inputs]
+    completion_input_hash = content_sha256({
+        **stable_payload,
+        "opening_prices": sorted([[str(key), value] for key, value in opening_prices.items()]),
+        "opening_inputs": opening_refs,
+    })
     target = root / "executions" / (
         "execution_" + content_sha256(_key_json(plan["execution_key"]))[:20] + ".json")
+    try:
+        claim = registry.begin_artifact(
+            "execution_key", tuple(plan["execution_key"]), input_hash,
+            artifact_path=target)
+    except IdempotencyConflict:
+        raise
     if claim.is_noop:
         if not target.exists():
             raise FrozenContractError("execution claim exists without its immutable artifact")
+        completed = registry.lookup("execution_key", tuple(plan["execution_key"])) or {}
+        if completed.get("completion_input_sha256") != completion_input_hash:
+            raise IdempotencyConflict(
+                f"{IdempotencyConflict.code}: completed execution input changed")
         existing = verify_hashed_artifact(target)
         return {**existing, "idempotency_status": "no_op"}
     result = execute_canonical(plan, previous_book=previous_book,
                                opening_prices=opening_prices)
-    return write_hashed_artifact(target, result)
+    result["opening_inputs"] = opening_refs
+    if result["status"] == "pending_archived_rebalance_bar":
+        return {**result, "idempotency_status": "incomplete"}
+    artifact = write_hashed_artifact(target, result)
+    registry.complete_artifact(
+        "execution_key", tuple(plan["execution_key"]), input_hash,
+        artifact_path=target, artifact_content_sha256=artifact["content_sha256"],
+        completion_input_sha256=completion_input_hash)
+    if claim.status == "recovery":
+        return {**artifact, "idempotency_status": "recovered"}
+    return artifact
 
 
 def _input_list(values: Sequence[Mapping[str, Any]]) -> list[dict[str, str]]:
@@ -690,6 +917,44 @@ def _input_list(values: Sequence[Mapping[str, Any]]) -> list[dict[str, str]]:
             raise FrozenContractError("every evidence input needs file and 64-char content_sha256")
         normalized.append({"file": file, "content_sha256": digest})
     return sorted(normalized, key=lambda item: (item["file"], item["content_sha256"]))
+
+
+def _typed_input_refs(values: Sequence[Mapping[str, Any]], *,
+                      expected_kinds: Iterable[str]) -> tuple[list[dict[str, Any]],
+                                                              list[dict[str, Any]]]:
+    inputs, records = typed_records(values, expected_kinds=expected_kinds)
+    refs = [{"file": item["file"], "input_kind": item["input_kind"],
+             "source_identity": item["source_identity"],
+             "source_time_utc": item["source_time_utc"],
+             "evidence_available_utc": item["evidence_available_utc"],
+             "coverage": item["coverage"], "content_sha256": item["content_sha256"]}
+            for item in inputs]
+    refs.sort(key=lambda item: (item["file"], item["content_sha256"]))
+    return refs, records
+
+
+def _records_as_bars(records: Sequence[Mapping[str, Any]]) -> dict[tuple[str, str], dict[str, Any]]:
+    return {(str(record["symbol"]), str(record["trade_date"])): dict(record)
+            for record in records}
+
+
+def _assert_bars_match_typed(supplied: Mapping[Any, Any] | None,
+                             verified: Mapping[tuple[str, str], Mapping[str, Any]]) -> None:
+    if supplied is None:
+        return
+    supplied_keys = {key for key in supplied if isinstance(key, tuple) and len(key) == 2}
+    if supplied_keys != set(verified):
+        raise FrozenContractError(
+            "archived_bars keys must exactly match content-verified typed inputs")
+    for key in sorted(verified):
+        raw = supplied[key]
+        raw_close = raw.get("close") if isinstance(raw, Mapping) else raw
+        try:
+            matches = float(raw_close) == float(verified[key]["close"])
+        except (KeyError, TypeError, ValueError):
+            matches = False
+        if not matches:
+            raise FrozenContractError(f"archived_bars differs from typed input at {key}")
 
 
 def _bar_value(bars: Mapping[Any, Any], symbol: str, day: str, field: str) -> float | None:
@@ -706,27 +971,49 @@ def _bar_value(bars: Mapping[Any, Any], symbol: str, day: str, field: str) -> fl
 
 
 def settle_execution(*, execution: Mapping[str, Any], next_actual_start: str | None,
-                     archived_bars: Mapping[Any, Any], reading_kind: str,
+                     archived_bars: Mapping[Any, Any] | None, reading_kind: str,
                      round_inputs: Sequence[Mapping[str, Any]],
                      archive_inputs: Sequence[Mapping[str, Any]],
                      resolution_inputs: Sequence[Mapping[str, Any]],
                      unresolved_keys: Iterable[tuple[str, str]] = (),
                      benchmark: str = "SPY", equity_source: str = "Alpha Vantage as-traded",
                      cash_source: str = "literal zero-yield cash",
-                     cash_total_return_factors: Mapping[str, float] | None = None
+                     cash_total_return_factors: Mapping[str, float] | None = None,
+                     acceptance_equity_inputs: Sequence[Mapping[str, Any]] = (),
+                     acceptance_cash_inputs: Sequence[Mapping[str, Any]] = ()
                      ) -> dict[str, Any]:
     """Build one half-open, provenance-complete settlement record."""
     if reading_kind not in READING_KINDS:
         raise FrozenContractError(f"unknown reading_kind={reading_kind!r}")
     start = str(execution["actual_start_bar"])[:10]
     end = str(next_actual_start)[:10] if next_actual_start else None
-    days = sorted({str(key[1]) for key in archived_bars if isinstance(key, tuple) and len(key) == 2
-                   and str(key[1]) >= start and (end is None or str(key[1]) < end)})
-    mark_date = days[-1] if days else start
     rounds = _input_list(round_inputs)
-    archives = _input_list(archive_inputs)
-    resolutions = _input_list(resolution_inputs)
+    archives, archive_records = _typed_input_refs(
+        archive_inputs, expected_kinds={"archive_snapshot"})
+    resolutions, resolution_records = _typed_input_refs(
+        resolution_inputs, expected_kinds={"resolution"}) if resolution_inputs else ([], [])
+    acceptance_equity, acceptance_records = _typed_input_refs(
+        acceptance_equity_inputs, expected_kinds={"opend_k_day_qfq"}
+    ) if acceptance_equity_inputs else ([], [])
+    acceptance_cash, cash_records = _typed_input_refs(
+        acceptance_cash_inputs, expected_kinds={"bil_total_return"}
+    ) if acceptance_cash_inputs else ([], [])
+    selected_records = acceptance_records if reading_kind == "acceptance" else archive_records
+    verified_bars = _records_as_bars(selected_records)
+    _assert_bars_match_typed(archived_bars, verified_bars)
+    days = sorted({day for _, day in verified_bars
+                   if day >= start and (end is None or day < end)})
+    mark_date = days[-1] if days else start
     unresolved = {(str(symbol), str(day)) for symbol, day in unresolved_keys}
+    resolution_status = {(str(item["symbol"]), str(item["trade_date"])): item["status"]
+                         for item in resolution_records}
+    if unresolved and not resolution_records:
+        raise FrozenContractError("unresolved keys require typed RESOLUTION inputs")
+    missing_resolutions = sorted(unresolved - set(resolution_status))
+    if missing_resolutions:
+        raise FrozenContractError(
+            f"typed RESOLUTION inputs do not cover unresolved keys: {missing_resolutions}")
+    unresolved |= {key for key, status in resolution_status.items() if status == "unresolved"}
     shares = {str(k): float(v) for k, v in (execution.get("shares") or {}).items()}
     rejected: list[dict[str, str]] = []
     nav_series: list[dict[str, float | str]] = []
@@ -740,7 +1027,7 @@ def settle_execution(*, execution: Mapping[str, Any], next_actual_start: str | N
                 rejected.append({"key": f"{key[0]}@{key[1]}",
                                  "consumer": "holdings_nav", "reason": "unresolved_archive_input"})
                 holdings_blocked = True
-        values = {symbol: _bar_value(archived_bars, symbol, day, "close")
+        values = {symbol: _bar_value(verified_bars, symbol, day, "close")
                   for symbol in shares}
         for symbol, value in values.items():
             if value is None:
@@ -750,7 +1037,9 @@ def settle_execution(*, execution: Mapping[str, Any], next_actual_start: str | N
         if not holdings_blocked:
             cash_factor = 1.0
             if reading_kind == "acceptance":
-                cash_factor = float((cash_total_return_factors or {}).get(day, math.nan))
+                cash_by_day = {str(item["trade_date"]): float(item["total_return_factor"])
+                               for item in cash_records if item["symbol"] == "BIL"}
+                cash_factor = float(cash_by_day.get(day, math.nan))
                 if not math.isfinite(cash_factor) or cash_factor <= 0:
                     rejected.append({"key": f"BIL@{day}", "consumer": "acceptance_cash_leg",
                                      "reason": "missing_total_return_factor"})
@@ -768,14 +1057,13 @@ def settle_execution(*, execution: Mapping[str, Any], next_actual_start: str | N
             rejected.append({"key": f"{benchmark}@{day}", "consumer": "benchmark_alpha",
                              "reason": "unresolved_archive_input"})
             continue
-        if _bar_value(archived_bars, benchmark, day, "close") is None:
+        if _bar_value(verified_bars, benchmark, day, "close") is None:
             rejected.append({"key": f"{benchmark}@{day}", "consumer": "benchmark_alpha",
                              "reason": "missing_archived_close"})
             continue
         benchmark_days.append(day)
 
-    acceptance_sources_ok = (equity_source == ACCEPTANCE_EQUITY_SOURCE and
-                             cash_source == ACCEPTANCE_CASH_SOURCE)
+    acceptance_sources_ok = bool(acceptance_equity and acceptance_cash)
     acceptance_benchmark_ok = not any(item["consumer"] == "benchmark_alpha"
                                       for item in rejected)
     if reading_kind == "acceptance" and not acceptance_sources_ok:
@@ -793,7 +1081,8 @@ def settle_execution(*, execution: Mapping[str, Any], next_actual_start: str | N
         execution=execution["execution_key"], mark_date=mark_date,
         reading_kind=reading_kind,
         round_hashes=[item["content_sha256"] for item in rounds],
-        archive_hashes=[item["content_sha256"] for item in archives],
+        archive_hashes=[item["content_sha256"] for item in
+                        [*archives, *acceptance_equity, *acceptance_cash]],
         resolution_hashes=[item["content_sha256"] for item in resolutions])
     complete = ((reading_kind == "acceptance" and acceptance) or
                 (reading_kind != "acceptance" and not holdings_blocked))
@@ -805,14 +1094,14 @@ def settle_execution(*, execution: Mapping[str, Any], next_actual_start: str | N
         status = "complete"
     payload = {
         "schema": SETTLEMENT_SCHEMA, "experiment_version": execution["experiment_version"],
+        "cell_id": execution["cell_id"], "scheduled_at": execution.get("scheduled_at"),
         "execution_key": _key_json(tuple(execution["execution_key"])),
         "settlement_key": _key_json(skey),
         "window": {"start_open_inclusive": execution["actual_start_bar"],
                    "next_start_open_exclusive": next_actual_start},
         "status": status,
         "returns_through": (nav_series[-1]["as_of"] if nav_series else None),
-        "data_available_through": (max((str(k[1]) for k in archived_bars
-                                        if isinstance(k, tuple) and len(k) == 2), default=None)),
+        "data_available_through": (max((str(k[1]) for k in verified_bars), default=None)),
         "benchmark_returns_through": (benchmark_days[-1] if benchmark_days else None),
         "rejected_keys": rejected,
         "turnover_notional": float(execution.get("turnover_notional", 0.0)),
@@ -822,11 +1111,14 @@ def settle_execution(*, execution: Mapping[str, Any], next_actual_start: str | N
         "is_acceptance_reading": bool(acceptance), "nav_series": nav_series,
         "benchmark_dates": benchmark_days,
         "round_inputs": rounds, "archive_inputs": archives, "resolution_inputs": resolutions,
-        "equity_source": equity_source, "cash_source": cash_source,
+        "acceptance_equity_inputs": acceptance_equity,
+        "acceptance_cash_inputs": acceptance_cash,
+        "equity_source": (ACCEPTANCE_EQUITY_SOURCE if acceptance_equity else equity_source),
+        "cash_source": (ACCEPTANCE_CASH_SOURCE if acceptance_cash else cash_source),
         "round_nav_point_consumed": False,
     }
     payload["content_sha256"] = content_sha256(payload)
-    return payload
+    return validate_runtime_artifact(payload)
 
 
 def settle_execution_once(*, state_dir: str | Path, **kwargs: Any) -> dict[str, Any]:
@@ -834,19 +1126,29 @@ def settle_execution_once(*, state_dir: str | Path, **kwargs: Any) -> dict[str, 
     root = Path(state_dir)
     registry = IdempotencyStore(root / "idempotency.jsonl")
     key = tuple(result["settlement_key"])
-    claim = registry.claim("settlement_key", key, result["content_sha256"])
     target = root / "settlements" / (
         "settlement_" + content_sha256(result["settlement_key"])[:20] + ".json")
+    claim = registry.begin_artifact(
+        "settlement_key", key, result["content_sha256"], artifact_path=target)
     if claim.is_noop:
         if not target.exists():
             raise FrozenContractError("settlement claim exists without its immutable artifact")
         return {**verify_hashed_artifact(target), "idempotency_status": "no_op"}
-    return write_hashed_artifact(target, result)
+    if claim.status == "recovery" and target.exists():
+        existing = verify_hashed_artifact(target)
+        registry.complete_artifact(
+            "settlement_key", key, result["content_sha256"], artifact_path=target,
+            artifact_content_sha256=existing["content_sha256"])
+        return {**existing, "idempotency_status": "recovered"}
+    artifact = write_hashed_artifact(target, result)
+    return _complete_claim(
+        registry, claim, kind="settlement_key", key=key,
+        payload_hash=result["content_sha256"], target=target, artifact=artifact)
 
 
 def version_isolated_statistics(settlements: Sequence[Mapping[str, Any]],
                                 gaps: Sequence[Mapping[str, Any]] = ()) -> dict[str, Any]:
-    """Return separate metrics per experiment version; never a combined annualization."""
+    """Return independent, continuity-checked metrics per version and cell."""
     versions = sorted({str(item.get("experiment_version") or LEGACY_VERSION)
                        for item in settlements} |
                       {str(item.get("experiment_version") or LEGACY_VERSION) for item in gaps})
@@ -854,27 +1156,99 @@ def version_isolated_statistics(settlements: Sequence[Mapping[str, Any]],
     for version in versions:
         all_own = [item for item in settlements
                    if str(item.get("experiment_version") or LEGACY_VERSION) == version]
-        own = [item for item in all_own if item.get("is_performance_reading")]
-        points = [point for item in own for point in item.get("nav_series") or []]
-        navs = [float(point["nav"]) for point in points]
-        total_return = (navs[-1] / navs[0] - 1.0) if len(navs) >= 2 and navs[0] else None
-        peak = -math.inf
-        max_drawdown = 0.0
-        for value in navs:
-            peak = max(peak, value)
-            if peak > 0:
-                max_drawdown = min(max_drawdown, value / peak - 1.0)
-        planned = len(own) + sum(
-            str(item.get("experiment_version") or LEGACY_VERSION) == version for item in gaps)
-        result[version] = {"sample_count": len(own),
-                           "configured_frequency": ("M/W/F" if version == EXPERIMENT_VERSION
-                                                    else "weekly"),
-                           "n_settlements": len(all_own),
-                           "n_performance_settlements": len(own), "n_nav_points": len(navs),
-                           "total_return": total_return,
-                           "max_drawdown": (max_drawdown if navs else None),
-                           "n_gaps": planned - len(own),
-                           "gap_rate": ((planned - len(own)) / planned if planned else None)}
+        own_gaps = [item for item in gaps
+                    if str(item.get("experiment_version") or LEGACY_VERSION) == version]
+        by_cell: dict[str, list[tuple[str | None, str, Mapping[str, Any]]]] = {}
+        for item in all_own:
+            cell = str(item.get("cell_id") or "legacy_single_book")
+            by_cell.setdefault(cell, []).append(
+                (item.get("scheduled_at"), "settlement", item))
+        for item in own_gaps:
+            if item.get("cell_id"):
+                cells = [str(item["cell_id"])]
+            elif version == EXPERIMENT_VERSION:
+                cells = list(GRID)
+            else:
+                cells = ["legacy_single_book"]
+            for cell in cells:
+                by_cell.setdefault(cell, []).append((item.get("scheduled_at"), "gap", item))
+
+        cells_result: dict[str, Any] = {}
+        for cell, events in sorted(by_cell.items()):
+            if version == EXPERIMENT_VERSION:
+                if any(not scheduled for scheduled, _, _ in events):
+                    raise FrozenContractError(
+                        f"v2 statistics event missing scheduled_at for cell {cell}")
+                ordered = sorted(events, key=lambda item: _dt(item[0]))
+                seen_slots: set[str] = set()
+                for scheduled, _, _ in ordered:
+                    normalized = utc_text(scheduled)
+                    validate_schedule_slot(normalized)
+                    if normalized in seen_slots:
+                        raise FrozenContractError(
+                            f"duplicate v2 statistics slot {normalized} for cell {cell}")
+                    seen_slots.add(normalized)
+                for (left, _, _), (right, _, _) in zip(ordered, ordered[1:]):
+                    local = _dt(left).astimezone(ET) + timedelta(days=1)
+                    while local.weekday() not in {0, 2, 4}:
+                        local += timedelta(days=1)
+                    expected = utc_text(local.replace(hour=7, minute=0, second=0,
+                                                      microsecond=0))
+                    if utc_text(right) != expected:
+                        raise FrozenContractError(
+                            f"discontinuous v2 sequence for cell {cell}: "
+                            f"expected {expected}, got {utc_text(right)}")
+            else:
+                ordered = sorted(events, key=lambda item: str(item[0] or ""))
+
+            performance = [item for _, kind, item in ordered
+                           if kind == "settlement" and item.get("is_performance_reading")]
+            nav_points: list[Mapping[str, Any]] = []
+            previous_day: str | None = None
+            for item in performance:
+                for point in item.get("nav_series") or []:
+                    day = str(point["as_of"])
+                    if previous_day is not None and day <= previous_day:
+                        raise FrozenContractError(
+                            f"non-contiguous NAV dates for {version}/{cell}: {day}")
+                    previous_day = day
+                    nav_points.append(point)
+            navs = [float(point["nav"]) for point in nav_points]
+            total_return = (navs[-1] / navs[0] - 1.0
+                            if len(navs) >= 2 and navs[0] else None)
+            peak = -math.inf
+            max_drawdown = 0.0
+            for value in navs:
+                peak = max(peak, value)
+                if peak > 0:
+                    max_drawdown = min(max_drawdown, value / peak - 1.0)
+            planned = len(ordered)
+            missing = planned - len(performance)
+            cells_result[cell] = {
+                "sample_count": len(performance), "planned_rounds": planned,
+                "n_settlements": sum(kind == "settlement" for _, kind, _ in ordered),
+                "n_performance_settlements": len(performance),
+                "n_nav_points": len(navs), "total_return": total_return,
+                "max_drawdown": (max_drawdown if navs else None),
+                "n_gaps": missing,
+                "gap_rate": (missing / planned if planned else None),
+            }
+        planned_total = sum(item["planned_rounds"] for item in cells_result.values())
+        performance_total = sum(item["n_performance_settlements"]
+                                for item in cells_result.values())
+        result[version] = {
+            "configured_frequency": ("M/W/F" if version == EXPERIMENT_VERSION else "weekly"),
+            "aggregation": "experiment_version+cell_id",
+            "cells": cells_result,
+            "sample_count": performance_total,
+            "n_settlements": len(all_own),
+            "n_performance_settlements": performance_total,
+            "n_nav_points": sum(item["n_nav_points"] for item in cells_result.values()),
+            "total_return": None, "max_drawdown": None,
+            "n_gaps": planned_total - performance_total,
+            "gap_rate": ((planned_total - performance_total) / planned_total
+                         if planned_total else None),
+        }
     return {"schema": "llm_paper_version_statistics/v2", "combined_metrics": None,
             "versions": result, "operational_continuity_is_not_performance": True}
 

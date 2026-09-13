@@ -4,7 +4,7 @@
   "title": "LLM paper M/W/F v2 settlement artifact",
   "type": "object",
   "required": [
-    "schema", "experiment_version", "execution_key", "settlement_key",
+    "schema", "experiment_version", "cell_id", "scheduled_at", "execution_key", "settlement_key",
     "returns_through", "data_available_through", "benchmark_returns_through",
     "rejected_keys", "turnover_notional", "cost_rate", "entry_cost",
     "reading_kind", "is_performance_reading", "is_acceptance_reading",
@@ -13,6 +13,8 @@
   "properties": {
     "schema": {"const": "llm_paper_settlement/v2"},
     "experiment_version": {"type": "string"},
+    "cell_id": {"type": "string", "minLength": 1},
+    "scheduled_at": {"type": "string", "format": "date-time"},
     "execution_key": {"type": "array", "minItems": 3, "maxItems": 3},
     "settlement_key": {"type": "array", "minItems": 7, "maxItems": 7},
     "returns_through": {"type": ["string", "null"]},
@@ -42,5 +44,16 @@
       }
     }
   },
+  "allOf": [
+    {
+      "not": {
+        "properties": {
+          "reading_kind": {"const": "lower_bound"},
+          "is_acceptance_reading": {"const": true}
+        },
+        "required": ["reading_kind", "is_acceptance_reading"]
+      }
+    }
+  ],
   "additionalProperties": true
 }
