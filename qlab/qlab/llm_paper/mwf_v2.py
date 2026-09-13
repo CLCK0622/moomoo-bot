@@ -375,14 +375,12 @@ def read_round_compat(path: str | Path) -> dict[str, Any]:
     return copy
 
 
-def _complete_claim(registry: IdempotencyStore, claim: ClaimResult, *,
-                    kind: str, key: Any, payload_hash: str, target: Path,
+def _complete_claim(registry: IdempotencyStore, *, kind: str, key: Any,
+                    payload_hash: str, target: Path,
                     artifact: Mapping[str, Any]) -> dict[str, Any]:
     registry.complete_artifact(
         kind, key, payload_hash, artifact_path=target,
         artifact_content_sha256=str(artifact["content_sha256"]))
-    if claim.status == "recovery":
-        return {**artifact, "idempotency_status": "recovered"}
     return dict(artifact)
 
 
@@ -472,6 +470,12 @@ def normalize_cell_decision(cell_id: str, raw: Mapping[str, Any], *,
         if not ref_source <= ref_available <= decision:
             raise FrozenContractError("evidence ref violates source/availability/decision order")
         normalized_refs.append(normalized_ref)
+    derived_source = max(_dt(ref["source_time_utc"]) for ref in normalized_refs)
+    derived_evidence = max(
+        _dt(ref["evidence_available_utc"]) for ref in normalized_refs)
+    if source != derived_source or evidence != derived_evidence:
+        raise FrozenContractError(
+            "decision source/availability timestamps must be derived from evidence_refs")
     weights = {str(symbol): float(weight)
                for symbol, weight in (raw.get("target_weights") or {}).items()}
     portfolio = _portfolio_status(weights)
@@ -675,10 +679,13 @@ def ingest_planned_round(*, scheduled_at: Any, delivery_payload: Mapping[str, An
                                reason=str(exc))
     artifact = write_hashed_artifact(target, payload)
     artifact = _complete_claim(
-        registry, claim, kind="planned_round_key",
+        registry, kind="planned_round_key",
         key=planned_round_key(scheduled_at), payload_hash=delivery_hash,
         target=target, artifact=artifact)
-    return {"status": artifact["status"], "artifact": artifact}
+    result = {"status": artifact["status"], "artifact": artifact}
+    if claim.status == "recovery":
+        result["idempotency_status"] = "recovered"
+    return result
 
 
 def coalesce_rounds(rounds: Sequence[Mapping[str, Any]], *,
@@ -919,15 +926,21 @@ def _input_list(values: Sequence[Mapping[str, Any]]) -> list[dict[str, str]]:
 
 
 def _typed_input_refs(values: Sequence[Mapping[str, Any]], *,
-                      expected_kinds: Iterable[str]) -> tuple[list[dict[str, Any]],
-                                                              list[dict[str, Any]]]:
-    inputs, records = typed_records(values, expected_kinds=expected_kinds)
+                      expected_kinds: Iterable[str],
+                      source_base_dir: str | Path | None = None
+                      ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    inputs, records = typed_records(
+        values, expected_kinds=expected_kinds, source_base_dir=source_base_dir)
     refs = [{"file": item["file"], "input_kind": item["input_kind"],
              "source_identity": item["source_identity"],
              "source_time_utc": item["source_time_utc"],
              "evidence_available_utc": item["evidence_available_utc"],
              "coverage": item["coverage"], "content_sha256": item["content_sha256"]}
             for item in inputs]
+    for ref, item in zip(refs, inputs):
+        if item["input_kind"] in {"opend_k_day_qfq", "bil_total_return"}:
+            ref["raw_file_sha256"] = item["raw_file_sha256"]
+            ref["source_query"] = item["source_query"]
     refs.sort(key=lambda item: (item["file"], item["content_sha256"]))
     return refs, records
 
@@ -979,7 +992,8 @@ def settle_execution(*, execution: Mapping[str, Any], next_actual_start: str | N
                      cash_source: str = "literal zero-yield cash",
                      cash_total_return_factors: Mapping[str, float] | None = None,
                      acceptance_equity_inputs: Sequence[Mapping[str, Any]] = (),
-                     acceptance_cash_inputs: Sequence[Mapping[str, Any]] = ()
+                     acceptance_cash_inputs: Sequence[Mapping[str, Any]] = (),
+                     acceptance_input_base_dir: str | Path | None = None
                      ) -> dict[str, Any]:
     """Build one half-open, provenance-complete settlement record."""
     if reading_kind not in READING_KINDS:
@@ -992,10 +1006,12 @@ def settle_execution(*, execution: Mapping[str, Any], next_actual_start: str | N
     resolutions, resolution_records = _typed_input_refs(
         resolution_inputs, expected_kinds={"resolution"}) if resolution_inputs else ([], [])
     acceptance_equity, acceptance_records = _typed_input_refs(
-        acceptance_equity_inputs, expected_kinds={"opend_k_day_qfq"}
+        acceptance_equity_inputs, expected_kinds={"opend_k_day_qfq"},
+        source_base_dir=acceptance_input_base_dir
     ) if acceptance_equity_inputs else ([], [])
     acceptance_cash, cash_records = _typed_input_refs(
-        acceptance_cash_inputs, expected_kinds={"bil_total_return"}
+        acceptance_cash_inputs, expected_kinds={"bil_total_return"},
+        source_base_dir=acceptance_input_base_dir
     ) if acceptance_cash_inputs else ([], [])
     selected_records = acceptance_records if reading_kind == "acceptance" else archive_records
     verified_bars = _records_as_bars(selected_records)
@@ -1141,7 +1157,7 @@ def settle_execution_once(*, state_dir: str | Path, **kwargs: Any) -> dict[str, 
         return {**existing, "idempotency_status": "recovered"}
     artifact = write_hashed_artifact(target, result)
     return _complete_claim(
-        registry, claim, kind="settlement_key", key=key,
+        registry, kind="settlement_key", key=key,
         payload_hash=result["content_sha256"], target=target, artifact=artifact)
 
 

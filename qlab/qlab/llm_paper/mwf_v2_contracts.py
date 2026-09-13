@@ -40,6 +40,18 @@ SOURCE_IDENTITIES = {
     "opend_k_day_qfq": "moomoo.OpenD.K_DAY.qfq",
     "bil_total_return": "BIL.total_return",
 }
+FROZEN_SOURCE_QUERIES = {
+    "opend_k_day_qfq": {
+        "provider": "moomoo.OpenD",
+        "ktype": "K_DAY",
+        "rehab_type": "qfq",
+    },
+    "bil_total_return": {
+        "provider": "BIL.total_return",
+        "symbol": "BIL",
+        "return_type": "total_return",
+    },
+}
 
 
 class FrozenContractError(ValueError):
@@ -177,6 +189,15 @@ def _validate_round_semantics(payload: Mapping[str, Any]) -> None:
                 "<= decision_ts < market open")
         if not decision.get("evidence_refs"):
             raise FrozenContractError(f"cell {cell_id}: evidence_refs must be non-empty")
+        derived_source = max(
+            parse_utc(ref["source_time_utc"])
+            for ref in decision["evidence_refs"])
+        derived_evidence = max(
+            parse_utc(ref["evidence_available_utc"])
+            for ref in decision["evidence_refs"])
+        if source != derived_source or evidence != derived_evidence:
+            raise FrozenContractError(
+                f"cell {cell_id}: decision timestamps must be derived from evidence_refs")
         validate_evidence_bindings(
             decision["evidence_refs"], verified_inputs, context=f"cell {cell_id}")
 
@@ -193,6 +214,25 @@ def _validate_settlement_semantics(payload: Mapping[str, Any]) -> None:
             payload.get("is_acceptance_reading") is True):
         raise FrozenContractError(
             "lower_bound settlement cannot be an acceptance reading")
+    if payload.get("reading_kind") == "acceptance":
+        groups = (
+            ("acceptance_equity_inputs", "opend_k_day_qfq"),
+            ("acceptance_cash_inputs", "bil_total_return"),
+        )
+        for field, expected_kind in groups:
+            inputs = payload.get(field) or []
+            if not inputs:
+                raise FrozenContractError(f"acceptance requires non-empty {field}")
+            for item in inputs:
+                if item.get("input_kind") != expected_kind:
+                    raise FrozenContractError(
+                        f"{field} must contain only {expected_kind}")
+                if item.get("source_identity") != SOURCE_IDENTITIES[expected_kind]:
+                    raise FrozenContractError(f"{field} source_identity mismatch")
+                if item.get("source_query") != FROZEN_SOURCE_QUERIES[expected_kind]:
+                    raise FrozenContractError(f"{field} source_query mismatch")
+                if not is_sha256(item.get("raw_file_sha256")):
+                    raise FrozenContractError(f"{field} raw_file_sha256 is missing")
 
 
 def _record_key(record: Mapping[str, Any]) -> tuple[str, str]:
@@ -207,6 +247,12 @@ def _validate_typed_input_semantics(payload: Mapping[str, Any]) -> None:
             f"{kind} source_identity must be {expected_source!r}")
     if parse_utc(payload["source_time_utc"]) > parse_utc(payload["evidence_available_utc"]):
         raise FrozenContractError("typed input source_time_utc is after evidence availability")
+    if kind in FROZEN_SOURCE_QUERIES:
+        if not is_sha256(payload.get("raw_file_sha256")):
+            raise FrozenContractError(f"{kind} requires a frozen raw_file_sha256")
+        if payload.get("source_query") != FROZEN_SOURCE_QUERIES[kind]:
+            raise FrozenContractError(
+                f"{kind} source_query must exactly identify the frozen provider query")
     records = list(payload.get("records") or [])
     if not records:
         raise FrozenContractError(f"{kind} records must be non-empty")
@@ -264,7 +310,9 @@ def validate_runtime_artifact(payload: Mapping[str, Any], *, verify_hash: bool =
 
 def make_typed_input(*, input_kind: str, file: str,
                      source_time_utc: str, evidence_available_utc: str,
-                     records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+                     records: Sequence[Mapping[str, Any]],
+                     raw_file_sha256: str | None = None,
+                     source_query: Mapping[str, Any] | None = None) -> dict[str, Any]:
     """Build a content-addressed, source-bound input accepted by the pipeline."""
     if input_kind not in SOURCE_IDENTITIES:
         raise FrozenContractError(f"unknown typed input kind: {input_kind!r}")
@@ -283,19 +331,87 @@ def make_typed_input(*, input_kind: str, file: str,
         },
         "records": copied,
     }
+    if raw_file_sha256 is not None:
+        payload["raw_file_sha256"] = str(raw_file_sha256)
+    if source_query is not None:
+        payload["source_query"] = dict(source_query)
     payload["content_sha256"] = content_sha256(payload)
     return validate_runtime_artifact(payload)
+
+
+def _verify_frozen_source(payload: Mapping[str, Any], *,
+                          source_base_dir: str | Path | None) -> dict[str, Any]:
+    if source_base_dir is None:
+        raise FrozenContractError(
+            f"{payload['input_kind']} requires source_base_dir for raw-file verification")
+    logical = Path(str(payload["file"]))
+    if logical.is_absolute() or ".." in logical.parts:
+        raise FrozenContractError("frozen source file must be a safe relative path")
+    base = Path(source_base_dir).resolve()
+    source_path = (base / logical).resolve()
+    try:
+        source_path.relative_to(base)
+    except ValueError as exc:
+        raise FrozenContractError("frozen source file escapes source_base_dir") from exc
+    try:
+        raw_bytes = source_path.read_bytes()
+    except OSError as exc:
+        raise FrozenContractError(
+            f"frozen source file not found or unreadable: {logical.as_posix()}") from exc
+    actual_sha256 = hashlib.sha256(raw_bytes).hexdigest()
+    if actual_sha256 != payload["raw_file_sha256"]:
+        raise FrozenContractError(
+            f"frozen source raw_file_sha256 mismatch: {logical.as_posix()}")
+    try:
+        raw = json.loads(raw_bytes)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise FrozenContractError(
+            f"frozen source is not valid UTF-8 JSON: {logical.as_posix()}") from exc
+    required = {
+        "source_identity", "source_time_utc", "evidence_available_utc",
+        "source_query", "records",
+    }
+    if not isinstance(raw, Mapping) or set(raw) != required:
+        raise FrozenContractError(
+            f"frozen source has an invalid envelope: {logical.as_posix()}")
+    comparisons = {
+        "source_identity": raw["source_identity"] == payload["source_identity"],
+        "source_time_utc": _utc_text(raw["source_time_utc"]) == _utc_text(
+            payload["source_time_utc"]),
+        "evidence_available_utc": _utc_text(
+            raw["evidence_available_utc"]) == _utc_text(
+                payload["evidence_available_utc"]),
+        "source_query": canonical_bytes(raw["source_query"]) == canonical_bytes(
+            payload["source_query"]),
+        "records": canonical_bytes(raw["records"]) == canonical_bytes(
+            payload["records"]),
+    }
+    mismatched = sorted(
+        field for field, matches in comparisons.items() if not matches)
+    if mismatched:
+        raise FrozenContractError(
+            f"frozen source bytes do not match typed input fields: {mismatched}")
+    materialized = dict(payload)
+    materialized["source_identity"] = raw["source_identity"]
+    materialized["source_time_utc"] = raw["source_time_utc"]
+    materialized["evidence_available_utc"] = raw["evidence_available_utc"]
+    materialized["source_query"] = dict(raw["source_query"])
+    materialized["records"] = [dict(record) for record in raw["records"]]
+    return materialized
 
 
 def verify_typed_input(value: Mapping[str, Any], *,
                        expected_kinds: Iterable[str] | None = None,
                        required_symbols: Iterable[str] = (),
-                       required_trade_dates: Iterable[str] = ()) -> dict[str, Any]:
+                       required_trade_dates: Iterable[str] = (),
+                       source_base_dir: str | Path | None = None) -> dict[str, Any]:
     payload = validate_runtime_artifact(value)
     kinds = set(expected_kinds or SOURCE_IDENTITIES)
     if payload["input_kind"] not in kinds:
         raise FrozenContractError(
             f"input kind {payload['input_kind']!r} not in expected {sorted(kinds)}")
+    if payload["input_kind"] in FROZEN_SOURCE_QUERIES:
+        payload = _verify_frozen_source(payload, source_base_dir=source_base_dir)
     coverage = payload["coverage"]
     missing_symbols = sorted(set(map(str, required_symbols)) - set(coverage["symbols"]))
     missing_dates = sorted(set(map(str, required_trade_dates)) - set(coverage["trade_dates"]))
@@ -311,9 +427,12 @@ def verify_typed_input(value: Mapping[str, Any], *,
     return payload
 
 
-def typed_records(values: Sequence[Mapping[str, Any]], *, expected_kinds: Iterable[str]
+def typed_records(values: Sequence[Mapping[str, Any]], *, expected_kinds: Iterable[str],
+                  source_base_dir: str | Path | None = None
                   ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    inputs = [verify_typed_input(value, expected_kinds=expected_kinds) for value in values]
+    inputs = [verify_typed_input(
+        value, expected_kinds=expected_kinds, source_base_dir=source_base_dir)
+        for value in values]
     records: list[dict[str, Any]] = []
     seen: dict[tuple[str, str], dict[str, Any]] = {}
     for payload in inputs:

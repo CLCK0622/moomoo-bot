@@ -50,7 +50,47 @@
         "additionalProperties": true
       }
     },
+    "raw_file_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_query": {"type": "object"},
     "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
   },
+  "allOf": [
+    {
+      "if": {"properties": {"input_kind": {"const": "opend_k_day_qfq"}}},
+      "then": {
+        "required": ["raw_file_sha256", "source_query"],
+        "properties": {
+          "source_query": {
+            "type": "object",
+            "required": ["provider", "ktype", "rehab_type"],
+            "properties": {
+              "provider": {"const": "moomoo.OpenD"},
+              "ktype": {"const": "K_DAY"},
+              "rehab_type": {"const": "qfq"}
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"input_kind": {"const": "bil_total_return"}}},
+      "then": {
+        "required": ["raw_file_sha256", "source_query"],
+        "properties": {
+          "source_query": {
+            "type": "object",
+            "required": ["provider", "symbol", "return_type"],
+            "properties": {
+              "provider": {"const": "BIL.total_return"},
+              "symbol": {"const": "BIL"},
+              "return_type": {"const": "total_return"}
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false
 }

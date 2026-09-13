@@ -1,6 +1,7 @@
 """Deterministic natural-delivery runner for ``llm_paper_forward_mwf_v2``."""
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -63,11 +64,13 @@ def _write_result(path: Path, payload: Mapping[str, Any]) -> dict[str, Any]:
     return materialized
 
 
-def _stage_failure(root: Path, delivery_hash: str, error: PipelineStageError) -> dict[str, Any]:
+def _stage_failure(root: Path, delivery_hash: str, error: PipelineStageError, *,
+                   identity_kind: str = "canonical_content_sha256") -> dict[str, Any]:
     payload = {
         "schema": "llm_paper_pipeline_failure/v2",
         "experiment_version": EXPERIMENT_VERSION,
         "delivery_content_sha256": delivery_hash,
+        "delivery_identity_kind": identity_kind,
         "status": "failed_closed",
         "failed_stage": error.stage,
         "exit_code": error.exit_code,
@@ -83,17 +86,36 @@ def run_scheduled_delivery(delivery_path: str | Path, *, state_dir: str | Path
                            ) -> dict[str, Any]:
     """Run one frozen local delivery through every stage without network callbacks."""
     root = Path(state_dir)
+    delivery_file = Path(delivery_path)
+    raw_delivery_sha256 = hashlib.sha256(
+        str(delivery_file).encode("utf-8")).hexdigest()
     try:
+        raw_delivery_bytes = delivery_file.read_bytes()
+        raw_delivery_sha256 = hashlib.sha256(raw_delivery_bytes).hexdigest()
         delivery = validate_runtime_artifact(
-            json.loads(Path(delivery_path).read_text(encoding="utf-8")))
+            json.loads(raw_delivery_bytes))
         if delivery["schema"] != SCHEDULE_DELIVERY_SCHEMA:
             raise FrozenContractError("not an M/W/F v2 schedule delivery")
         snapshot = verify_typed_input(
             delivery["snapshot"], expected_kinds={"archive_snapshot"})
         execution_snapshot = verify_typed_input(
             delivery["execution_snapshot"], expected_kinds={"archive_snapshot"})
+        source_base_dir = delivery_file.resolve().parent
+        acceptance_equity_inputs = [
+            verify_typed_input(
+                item, expected_kinds={"opend_k_day_qfq"},
+                source_base_dir=source_base_dir)
+            for item in delivery.get("acceptance_equity_inputs") or []]
+        acceptance_cash_inputs = [
+            verify_typed_input(
+                item, expected_kinds={"bil_total_return"},
+                source_base_dir=source_base_dir)
+            for item in delivery.get("acceptance_cash_inputs") or []]
     except Exception as exc:
-        raise PipelineStageError("input", EXIT_INPUT, str(exc)) from exc
+        error = PipelineStageError("input", EXIT_INPUT, str(exc))
+        _stage_failure(
+            root, raw_delivery_sha256, error, identity_kind="raw_bytes_sha256")
+        raise error from exc
 
     delivery_hash = str(delivery["content_sha256"])
     planning_hash = content_sha256({
@@ -180,8 +202,9 @@ def run_scheduled_delivery(delivery_path: str | Path, *, state_dir: str | Path
                 }],
                 archive_inputs=[execution_snapshot],
                 resolution_inputs=delivery.get("resolution_inputs") or [],
-                acceptance_equity_inputs=delivery.get("acceptance_equity_inputs") or [],
-                acceptance_cash_inputs=delivery.get("acceptance_cash_inputs") or [])
+                acceptance_equity_inputs=acceptance_equity_inputs,
+                acceptance_cash_inputs=acceptance_cash_inputs,
+                acceptance_input_base_dir=source_base_dir)
             if settlement["status"] not in {"complete", "partial"}:
                 raise FrozenContractError(f"settlement is not final: {settlement['status']}")
             settlements.append(settlement)

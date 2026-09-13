@@ -30,6 +30,8 @@
     "round_inputs": {"$ref": "#/$defs/hashedInputs"},
     "archive_inputs": {"$ref": "#/$defs/hashedInputs"},
     "resolution_inputs": {"$ref": "#/$defs/hashedInputs"},
+    "acceptance_equity_inputs": {"$ref": "#/$defs/frozenSourceInputs"},
+    "acceptance_cash_inputs": {"$ref": "#/$defs/frozenSourceInputs"},
     "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
   },
   "$defs": {
@@ -42,6 +44,29 @@
           "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
         }
       }
+    },
+    "frozenSourceInputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "file", "input_kind", "source_identity", "source_time_utc",
+          "evidence_available_utc", "coverage", "raw_file_sha256",
+          "source_query", "content_sha256"
+        ],
+        "properties": {
+          "file": {"type": "string", "minLength": 1},
+          "input_kind": {"enum": ["opend_k_day_qfq", "bil_total_return"]},
+          "source_identity": {"type": "string", "minLength": 1},
+          "source_time_utc": {"type": "string", "format": "date-time"},
+          "evidence_available_utc": {"type": "string", "format": "date-time"},
+          "coverage": {"type": "object"},
+          "raw_file_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "source_query": {"type": "object"},
+          "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
     }
   },
   "allOf": [
@@ -52,6 +77,16 @@
           "is_acceptance_reading": {"const": true}
         },
         "required": ["reading_kind", "is_acceptance_reading"]
+      }
+    },
+    {
+      "if": {"properties": {"reading_kind": {"const": "acceptance"}}},
+      "then": {
+        "required": ["acceptance_equity_inputs", "acceptance_cash_inputs"],
+        "properties": {
+          "acceptance_equity_inputs": {"minItems": 1},
+          "acceptance_cash_inputs": {"minItems": 1}
+        }
       }
     }
   ],

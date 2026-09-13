@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import subprocess
 import sys
@@ -36,6 +37,7 @@ from qlab.llm_paper.mwf_v2 import (
 from qlab.llm_paper.scheduled_runner import (
     EXIT_COALESCING,
     EXIT_EXECUTION,
+    EXIT_INPUT,
     EXIT_ROUND,
     EXIT_SETTLEMENT,
 )
@@ -55,6 +57,33 @@ def _market(records, *, kind="archive_snapshot", file="archive.json",
     return make_typed_input(
         input_kind=kind, file=file, source_time_utc=source,
         evidence_available_utc=available, records=records)
+
+
+def _frozen_acceptance_input(base_dir, *, kind, file, records,
+                             source="2026-09-14T20:00:00Z",
+                             available="2026-09-14T21:00:00Z"):
+    query = ({"provider": "moomoo.OpenD", "ktype": "K_DAY", "rehab_type": "qfq"}
+             if kind == "opend_k_day_qfq" else
+             {"provider": "BIL.total_return", "symbol": "BIL",
+              "return_type": "total_return"})
+    raw = {
+        "source_identity": ("moomoo.OpenD.K_DAY.qfq"
+                            if kind == "opend_k_day_qfq" else "BIL.total_return"),
+        "source_time_utc": source,
+        "evidence_available_utc": available,
+        "source_query": query,
+        "records": records,
+    }
+    target = base_dir / file
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        json.dumps(raw, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+        encoding="utf-8")
+    return make_typed_input(
+        input_kind=kind, file=file, source_time_utc=source,
+        evidence_available_utc=available, records=records,
+        raw_file_sha256=hashlib.sha256(target.read_bytes()).hexdigest(),
+        source_query=query)
 
 
 def _decision_input():
@@ -311,6 +340,8 @@ def test_decision_ref_all_metadata_fields_bind_to_verified_hash(
     snapshot = _decision_input()
     raw = _raw(snapshot)
     raw["evidence_refs"][0][field] = forged
+    if field == "source_time_utc":
+        raw["source_time_utc"] = forged
     result = ingest_planned_round(
         scheduled_at=SCHEDULED, delivery_payload={"delivery": f"forged-{field}"},
         state_dir=tmp_path, fetch_snapshot=lambda symbols: pytest.fail(str(symbols)),
@@ -343,17 +374,17 @@ def test_acceptance_requires_and_consumes_verified_opend_qfq_and_bil_inputs(tmp_
     execution = execute_canonical_once(
         _plan(), previous_book=None, opening_prices={"IBM": 100},
         opening_inputs=[_execution_input()], state_dir=tmp_path)
-    opend = _market([
+    opend_records = [
         {"symbol": "IBM", "trade_date": "2026-09-14", "open": 100, "close": 101,
          "ktype": "K_DAY", "rehab_type": "qfq"},
         {"symbol": "SPY", "trade_date": "2026-09-14", "open": 500, "close": 501,
          "ktype": "K_DAY", "rehab_type": "qfq"},
-    ], kind="opend_k_day_qfq", file="opend.json",
-       source="2026-09-14T20:00:00Z", available="2026-09-14T21:00:00Z")
-    bil = make_typed_input(
-        input_kind="bil_total_return", file="bil.json",
-        source_time_utc="2026-09-14T20:00:00Z",
-        evidence_available_utc="2026-09-14T21:00:00Z",
+    ]
+    opend = _frozen_acceptance_input(
+        tmp_path, kind="opend_k_day_qfq", file="opend.json",
+        records=opend_records)
+    bil = _frozen_acceptance_input(
+        tmp_path, kind="bil_total_return", file="bil.json",
         records=[{"symbol": "BIL", "trade_date": "2026-09-14",
                   "total_return_factor": 1.0001}])
     result = settle_execution(
@@ -361,12 +392,45 @@ def test_acceptance_requires_and_consumes_verified_opend_qfq_and_bil_inputs(tmp_
         reading_kind="acceptance", round_inputs=[{"file": "round.json",
                                                    "content_sha256": "a" * 64}],
         archive_inputs=[_execution_input()], resolution_inputs=[],
-        acceptance_equity_inputs=[opend], acceptance_cash_inputs=[bil])
+        acceptance_equity_inputs=[opend], acceptance_cash_inputs=[bil],
+        acceptance_input_base_dir=tmp_path)
     assert result["status"] == "complete"
     assert result["is_acceptance_reading"] is True
     assert result["acceptance_equity_inputs"][0]["source_identity"] == \
         "moomoo.OpenD.K_DAY.qfq"
     assert result["acceptance_cash_inputs"][0]["source_identity"] == "BIL.total_return"
+
+
+def test_frozen_acceptance_source_rejects_inline_raw_and_query_tampering(tmp_path):
+    records = [
+        {"symbol": "IBM", "trade_date": "2026-09-14", "open": 100, "close": 101,
+         "ktype": "K_DAY", "rehab_type": "qfq"},
+    ]
+    opend = _frozen_acceptance_input(
+        tmp_path, kind="opend_k_day_qfq", file="opend.json", records=records)
+
+    forged_inline = copy.deepcopy(opend)
+    forged_inline["records"][0]["close"] = 999999
+    _rehash(forged_inline)
+    with pytest.raises(FrozenContractError, match="do not match typed input fields"):
+        verify_typed_input(
+            forged_inline, expected_kinds={"opend_k_day_qfq"},
+            source_base_dir=tmp_path)
+
+    forged_query = copy.deepcopy(opend)
+    forged_query["source_query"]["ktype"] = "K_1M"
+    _rehash(forged_query)
+    with pytest.raises(FrozenContractError, match="source_query"):
+        verify_typed_input(
+            forged_query, expected_kinds={"opend_k_day_qfq"},
+            source_base_dir=tmp_path)
+
+    (tmp_path / "opend.json").write_text(
+        (tmp_path / "opend.json").read_text(encoding="utf-8") + " ",
+        encoding="utf-8")
+    with pytest.raises(FrozenContractError, match="raw_file_sha256 mismatch"):
+        verify_typed_input(
+            opend, expected_kinds={"opend_k_day_qfq"}, source_base_dir=tmp_path)
 
 
 def test_orphan_claim_replay_recovers_artifact_and_preserves_conflict_rejection(tmp_path):
@@ -390,7 +454,8 @@ def test_orphan_claim_replay_recovers_artifact_and_preserves_conflict_rejection(
         required_trade_date="2026-09-11", reusable_snapshot=snapshot)
     recovered = ingest_planned_round(delivery_payload=payload, **kwargs)
     assert recovered["status"] == "persisted"
-    assert recovered["artifact"]["idempotency_status"] == "recovered"
+    assert recovered["idempotency_status"] == "recovered"
+    assert "idempotency_status" not in recovered["artifact"]
     assert store.lookup("planned_round_key", key)["state"] == "complete"
     replay = ingest_planned_round(delivery_payload=payload, **kwargs)
     assert replay["status"] == "no_op" and replay["artifact"] is not None
@@ -499,6 +564,93 @@ def test_fixed_cli_runs_offline_end_to_end_and_is_idempotent(tmp_path):
     assert json.loads(second.stdout)["content_sha256"] == result["content_sha256"]
 
 
+def test_fixed_cli_rejects_laundered_post_open_evidence(tmp_path):
+    delivery = copy.deepcopy(_delivery())
+    snapshot = delivery["snapshot"]
+    snapshot["evidence_available_utc"] = "2026-09-14T13:45:00Z"
+    _rehash(snapshot)
+    decision = delivery["cells"][CELL_A]
+    decision["evidence_available_utc"] = "2026-09-14T10:00:00Z"
+    decision["evidence_refs"][0]["evidence_available_utc"] = "2026-09-14T10:00:00Z"
+    decision["evidence_refs"][0]["content_sha256"] = snapshot["content_sha256"]
+    _rehash(delivery)
+
+    completed, state = _run_cli(tmp_path, delivery)
+    assert completed.returncode == EXIT_ROUND, completed.stderr + completed.stdout
+    assert not list((state / "pipeline").glob("result_*.json"))
+    round_artifact = json.loads(next((state / "rounds").glob("*.json")).read_text())
+    assert round_artifact["status"] == "technical_gap"
+    assert "evidence_available_utc" in round_artifact["gap_reason"]
+
+
+def test_fixed_cli_acceptance_reads_hash_pinned_raw_opend_and_bil_files(tmp_path):
+    delivery = copy.deepcopy(_delivery())
+    opend_records = [
+        {"symbol": "IBM", "trade_date": "2026-09-14", "open": 100, "close": 101,
+         "ktype": "K_DAY", "rehab_type": "qfq"},
+        {"symbol": "SPY", "trade_date": "2026-09-14", "open": 500, "close": 501,
+         "ktype": "K_DAY", "rehab_type": "qfq"},
+    ]
+    delivery["reading_kind"] = "acceptance"
+    delivery["acceptance_equity_inputs"] = [_frozen_acceptance_input(
+        tmp_path, kind="opend_k_day_qfq", file="sources/opend.json",
+        records=opend_records)]
+    delivery["acceptance_cash_inputs"] = [_frozen_acceptance_input(
+        tmp_path, kind="bil_total_return", file="sources/bil.json",
+        records=[{"symbol": "BIL", "trade_date": "2026-09-14",
+                  "total_return_factor": 1.0001}])]
+    _rehash(delivery)
+
+    completed, state = _run_cli(tmp_path, delivery)
+    assert completed.returncode == 0, completed.stderr + completed.stdout
+    settlement = json.loads(next((state / "settlements").glob("*.json")).read_text())
+    assert settlement["status"] == "complete"
+    assert settlement["is_acceptance_reading"] is True
+    assert settlement["acceptance_equity_inputs"][0]["raw_file_sha256"] == \
+        delivery["acceptance_equity_inputs"][0]["raw_file_sha256"]
+    assert settlement["acceptance_cash_inputs"][0]["source_query"][
+        "return_type"] == "total_return"
+
+
+def test_fixed_cli_rejects_nonexistent_self_attested_opend_and_bil_files(tmp_path):
+    delivery = copy.deepcopy(_delivery())
+    opend = make_typed_input(
+        input_kind="opend_k_day_qfq", file="missing/opend.json",
+        source_time_utc="2026-09-14T20:00:00Z",
+        evidence_available_utc="2026-09-14T21:00:00Z",
+        records=[
+            {"symbol": "IBM", "trade_date": "2026-09-14", "open": 100,
+             "close": 999999, "ktype": "K_DAY", "rehab_type": "qfq"},
+            {"symbol": "SPY", "trade_date": "2026-09-14", "open": 500,
+             "close": 999999, "ktype": "K_DAY", "rehab_type": "qfq"},
+        ], raw_file_sha256="a" * 64,
+        source_query={"provider": "moomoo.OpenD", "ktype": "K_DAY",
+                      "rehab_type": "qfq"})
+    bil = make_typed_input(
+        input_kind="bil_total_return", file="missing/bil.json",
+        source_time_utc="2026-09-14T20:00:00Z",
+        evidence_available_utc="2026-09-14T21:00:00Z",
+        records=[{"symbol": "BIL", "trade_date": "2026-09-14",
+                  "total_return_factor": 9.0}], raw_file_sha256="b" * 64,
+        source_query={"provider": "BIL.total_return", "symbol": "BIL",
+                      "return_type": "total_return"})
+    delivery["reading_kind"] = "acceptance"
+    delivery["acceptance_equity_inputs"] = [opend]
+    delivery["acceptance_cash_inputs"] = [bil]
+    _rehash(delivery)
+
+    completed, state = _run_cli(tmp_path, delivery)
+    assert completed.returncode == EXIT_INPUT, completed.stderr + completed.stdout
+    result = json.loads(completed.stdout)
+    assert result["status"] == "failed_closed" and result["stage"] == "input"
+    assert not list((state / "settlements").glob("*.json"))
+    assert not list((state / "pipeline").glob("result_*.json"))
+    failure = json.loads(next((state / "failures").glob("*_input.json")).read_text())
+    assert failure["delivery_identity_kind"] == "raw_bytes_sha256"
+    assert failure["delivery_content_sha256"] == hashlib.sha256(
+        (tmp_path / "delivery.json").read_bytes()).hexdigest()
+
+
 def test_fixed_cli_stage_artifacts_are_state_dir_independent(tmp_path):
     delivery = json.loads(OFFLINE_FIXTURE.read_text(encoding="utf-8"))
     first, first_state = _run_cli(tmp_path / "first", delivery)
@@ -528,6 +680,45 @@ def test_fixed_cli_stage_artifacts_are_state_dir_independent(tmp_path):
             "content_sha256") == supplied_hash
 
 
+def test_fixed_cli_completes_pre_artifact_orphan_on_first_replay(tmp_path):
+    delivery = copy.deepcopy(_delivery())
+    planning_hash = content_sha256({
+        "delivery_id": delivery["delivery_id"],
+        "scheduled_at": delivery["scheduled_at"],
+        "required_trade_date": delivery["required_trade_date"],
+        "archive_required": delivery["archive_required"],
+        "decision_required": delivery["decision_required"],
+        "snapshot_content_sha256": delivery["snapshot"]["content_sha256"],
+        "cells": delivery["cells"],
+    })
+    claim_payload = {
+        "delivery_id": delivery["delivery_id"],
+        "planning_content_sha256": planning_hash,
+    }
+    state = tmp_path / "state"
+    target = state / "rounds" / "planned_20260914T110000Z.json"
+    IdempotencyStore(state / "idempotency.jsonl").begin_artifact(
+        "planned_round_key", planned_round_key(SCHEDULED),
+        content_sha256(claim_payload), artifact_path=target)
+
+    first, returned_state = _run_cli(tmp_path, delivery)
+    assert returned_state == state
+    assert first.returncode == 0, first.stderr + first.stdout
+    first_result = json.loads(first.stdout)
+    assert first_result["status"] == "complete"
+    round_artifact = verify_hashed_artifact(target)
+    assert "idempotency_status" not in round_artifact
+    assert len(list((state / "pipeline").glob("result_*.json"))) == 1
+
+    second = subprocess.run(
+        [sys.executable, str(CLI), "--delivery", str(tmp_path / "delivery.json"),
+         "--state-dir", str(state)], cwd=ROOT, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    assert second.returncode == 0, second.stderr + second.stdout
+    assert json.loads(second.stdout)["content_sha256"] == first_result["content_sha256"]
+    assert len(list((state / "pipeline").glob("result_*.json"))) == 1
+
+
 def test_fixed_cli_resumes_same_round_after_execution_input_becomes_available(tmp_path):
     delivery = _delivery()
     delivery["execution_snapshot"] = _execution_input(include_actual=False)
@@ -550,6 +741,7 @@ def test_fixed_cli_resumes_same_round_after_execution_input_becomes_available(tm
 
 
 @pytest.mark.parametrize("stage,exit_code", [
+    ("input", EXIT_INPUT),
     ("round", EXIT_ROUND),
     ("coalescing", EXIT_COALESCING),
     ("execution", EXIT_EXECUTION),
@@ -557,7 +749,9 @@ def test_fixed_cli_resumes_same_round_after_execution_input_becomes_available(tm
 ])
 def test_fixed_cli_stage_failures_are_closed_and_never_publish_success(tmp_path, stage, exit_code):
     delivery = copy.deepcopy(_delivery())
-    if stage == "round":
+    if stage == "input":
+        delivery["content_sha256"] = "0" * 64
+    elif stage == "round":
         delivery["cells"][CELL_A].pop("source_time_utc")
     elif stage == "coalescing":
         delivery["observed_market_opens"] = ["2026-09-11T13:30:00Z"]
@@ -565,7 +759,8 @@ def test_fixed_cli_stage_failures_are_closed_and_never_publish_success(tmp_path,
         delivery["execution_snapshot"] = _execution_input(include_actual=False)
     elif stage == "settlement":
         delivery["reading_kind"] = "acceptance"
-    _rehash(delivery)
+    if stage != "input":
+        _rehash(delivery)
     completed, state = _run_cli(tmp_path, delivery)
     assert completed.returncode == exit_code, completed.stderr + completed.stdout
     result = json.loads(completed.stdout)
@@ -574,3 +769,7 @@ def test_fixed_cli_stage_failures_are_closed_and_never_publish_success(tmp_path,
     failure = json.loads(next((state / "failures").glob(f"*_{stage}.json")).read_text())
     assert failure["published_cutoff_advanced"] is False
     assert failure["success_manifest_written"] is False
+    if stage == "input":
+        assert failure["delivery_identity_kind"] == "raw_bytes_sha256"
+        assert failure["delivery_content_sha256"] == hashlib.sha256(
+            (tmp_path / "delivery.json").read_bytes()).hexdigest()

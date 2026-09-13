@@ -1,8 +1,10 @@
 """Frozen acceptance matrix for ``llm_paper_forward_mwf_v2``."""
 from __future__ import annotations
 
+import hashlib
 import json
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import pytest
 
@@ -54,15 +56,16 @@ def _raw(scheduled: str, weights: dict[str, float] | None = None, *,
          decision_offset_minutes: int = 5, evidence_input: dict | None = None) -> dict:
     slot = _parse(scheduled)
     decision = slot + timedelta(minutes=decision_offset_minutes)
-    source = (slot - timedelta(hours=2)).isoformat()
-    available = (slot - timedelta(hours=1)).isoformat()
+    source = (evidence_input or {}).get(
+        "source_time_utc", (slot - timedelta(hours=2)).isoformat())
+    available = (evidence_input or {}).get(
+        "evidence_available_utc", (slot - timedelta(hours=1)).isoformat())
     ref = {
         "file": (evidence_input or {}).get("file", "archive.json"),
         "input_kind": (evidence_input or {}).get("input_kind", "archive_snapshot"),
         "content_sha256": (evidence_input or {}).get("content_sha256", H64),
-        "source_time_utc": (evidence_input or {}).get("source_time_utc", source),
-        "evidence_available_utc": (evidence_input or {}).get(
-            "evidence_available_utc", available),
+        "source_time_utc": source,
+        "evidence_available_utc": available,
     }
     return {
         "evidence_available_utc": available,
@@ -127,14 +130,31 @@ def _typed_bars(bars: dict, *, kind: str = "archive_snapshot", file: str = "arch
         evidence_available_utc=available, records=records)
 
 
-def _bil(days: list[str]) -> dict:
-    latest = max(days)
+def _frozen_acceptance_input(base_dir: Path, *, kind: str, file: str,
+                             source_time: str, available: str,
+                             records: list[dict]) -> dict:
+    query = ({"provider": "moomoo.OpenD", "ktype": "K_DAY", "rehab_type": "qfq"}
+             if kind == "opend_k_day_qfq" else
+             {"provider": "BIL.total_return", "symbol": "BIL",
+              "return_type": "total_return"})
+    raw = {
+        "source_identity": ("moomoo.OpenD.K_DAY.qfq"
+                            if kind == "opend_k_day_qfq" else "BIL.total_return"),
+        "source_time_utc": source_time,
+        "evidence_available_utc": available,
+        "source_query": query,
+        "records": records,
+    }
+    target = base_dir / file
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        json.dumps(raw, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+        encoding="utf-8")
     return make_typed_input(
-        input_kind="bil_total_return", file="bil_total_return.json",
-        source_time_utc=f"{latest}T20:00:00Z",
-        evidence_available_utc=f"{latest}T21:00:00Z",
-        records=[{"symbol": "BIL", "trade_date": day,
-                  "total_return_factor": 1.0} for day in days])
+        input_kind=kind, file=file, source_time_utc=source_time,
+        evidence_available_utc=available, records=records,
+        raw_file_sha256=hashlib.sha256(target.read_bytes()).hexdigest(),
+        source_query=query)
 
 
 def _resolution(symbol: str, day: str, status: str = "unresolved") -> dict:
@@ -275,7 +295,7 @@ def test_missing_any_old_holding_open_is_pending_and_never_uses_close():
     assert result["entry_cost"] == 0
 
 
-def test_unresolved_spy_blocks_only_benchmark_alpha_and_acceptance_consumers():
+def test_unresolved_spy_blocks_only_benchmark_alpha_and_acceptance_consumers(tmp_path):
     execution = execute_canonical(
         _plan(), previous_book=None, opening_prices={"IBM": 100})
     bars = {("IBM", "2026-09-14"): {"close": 101},
@@ -293,14 +313,27 @@ def test_unresolved_spy_blocks_only_benchmark_alpha_and_acceptance_consumers():
     assert lower["benchmark_returns_through"] is None
     assert {item["consumer"] for item in lower["rejected_keys"]} == {"benchmark_alpha"}
 
-    opend = _typed_bars(bars, kind="opend_k_day_qfq", file="opend.json")
+    opend_records = [
+        {"symbol": symbol, "trade_date": day, "open": value["close"],
+         "close": value["close"], "ktype": "K_DAY", "rehab_type": "qfq"}
+        for (symbol, day), value in sorted(bars.items())]
+    opend = _frozen_acceptance_input(
+        tmp_path, kind="opend_k_day_qfq", file="opend.json",
+        source_time="2026-09-14T20:00:00Z",
+        available="2026-09-14T21:00:00Z", records=opend_records)
+    bil = _frozen_acceptance_input(
+        tmp_path, kind="bil_total_return", file="bil_total_return.json",
+        source_time="2026-09-14T20:00:00Z",
+        available="2026-09-14T21:00:00Z",
+        records=[{"symbol": "BIL", "trade_date": "2026-09-14",
+                  "total_return_factor": 1.0}])
     acceptance = settle_execution(
         execution=execution, next_actual_start=None, archived_bars=bars,
         reading_kind="acceptance", round_inputs=_inputs("round"),
         archive_inputs=[archive], resolution_inputs=[resolution],
         unresolved_keys={("SPY", "2026-09-14")},
         acceptance_equity_inputs=[opend],
-        acceptance_cash_inputs=[_bil(["2026-09-14"])])
+        acceptance_cash_inputs=[bil], acceptance_input_base_dir=tmp_path)
     assert acceptance["is_acceptance_reading"] is False
     assert any(item["consumer"] == "acceptance" for item in acceptance["rejected_keys"])
 
