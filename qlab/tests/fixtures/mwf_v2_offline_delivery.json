@@ -1,0 +1,107 @@
+{
+  "acceptance_cash_inputs": [],
+  "acceptance_equity_inputs": [],
+  "archive_required": [
+    "IBM"
+  ],
+  "cells": {
+    "seed11×pv1_baseline": {
+      "decision_ts": "2026-09-14T11:05:00Z",
+      "effective_from": "2026-09-14T13:30:00Z",
+      "evidence_available_utc": "2026-09-14T10:00:00Z",
+      "evidence_refs": [
+        {
+          "content_sha256": "e1cc942fd81ff6d5a9640b23de50f3570cc78ce4dedcf534d7b90fc5eaceba30",
+          "evidence_available_utc": "2026-09-14T10:00:00Z",
+          "file": "decision_snapshot.json",
+          "input_kind": "archive_snapshot",
+          "source_time_utc": "2026-09-11T20:00:00Z"
+        }
+      ],
+      "source_time_utc": "2026-09-11T20:00:00Z",
+      "target_weights": {
+        "IBM": 0.1
+      }
+    }
+  },
+  "content_sha256": "4408b5002dbd5a114202a81e712eebee8a8d398bc732f0359bb6525bc22a8fb4",
+  "decision_required": [
+    "IBM"
+  ],
+  "delivery_id": "offline-evo609-positive",
+  "execution_snapshot": {
+    "content_sha256": "647529413b1eeec7b08ba7e89203020ff8b4b48d5a40cde4890edbecd5ae56d3",
+    "coverage": {
+      "symbols": [
+        "IBM",
+        "SPY"
+      ],
+      "trade_dates": [
+        "2026-09-14"
+      ]
+    },
+    "evidence_available_utc": "2026-09-14T21:00:00Z",
+    "file": "execution_snapshot.json",
+    "input_kind": "archive_snapshot",
+    "records": [
+      {
+        "close": 101,
+        "open": 100,
+        "symbol": "IBM",
+        "trade_date": "2026-09-14"
+      },
+      {
+        "close": 501,
+        "open": 500,
+        "symbol": "SPY",
+        "trade_date": "2026-09-14"
+      }
+    ],
+    "schema": "llm_paper_typed_input/v2",
+    "source_identity": "alpha_vantage.TIME_SERIES_DAILY.as_traded",
+    "source_time_utc": "2026-09-14T20:00:00Z"
+  },
+  "experiment_version": "llm_paper_forward_mwf_v2",
+  "next_actual_start": null,
+  "observed_market_opens": [
+    "2026-09-14T13:30:00Z"
+  ],
+  "previous_books": {},
+  "reading_kind": "lower_bound",
+  "required_trade_date": "2026-09-11",
+  "resolution_inputs": [],
+  "scheduled_at": "2026-09-14T11:00:00Z",
+  "schema": "llm_paper_schedule_delivery/v2",
+  "snapshot": {
+    "content_sha256": "e1cc942fd81ff6d5a9640b23de50f3570cc78ce4dedcf534d7b90fc5eaceba30",
+    "coverage": {
+      "symbols": [
+        "IBM",
+        "SPY"
+      ],
+      "trade_dates": [
+        "2026-09-11"
+      ]
+    },
+    "evidence_available_utc": "2026-09-14T10:00:00Z",
+    "file": "decision_snapshot.json",
+    "input_kind": "archive_snapshot",
+    "records": [
+      {
+        "close": 100,
+        "open": 99,
+        "symbol": "IBM",
+        "trade_date": "2026-09-11"
+      },
+      {
+        "close": 500,
+        "open": 499,
+        "symbol": "SPY",
+        "trade_date": "2026-09-11"
+      }
+    ],
+    "schema": "llm_paper_typed_input/v2",
+    "source_identity": "alpha_vantage.TIME_SERIES_DAILY.as_traded",
+    "source_time_utc": "2026-09-11T20:00:00Z"
+  }
+}

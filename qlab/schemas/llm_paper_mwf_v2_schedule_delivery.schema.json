@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://multica.local/schemas/llm_paper_mwf_v2_schedule_delivery.schema.json",
+  "title": "Natural schedule delivery for the LLM paper M/W/F v2 runner",
+  "type": "object",
+  "required": [
+    "schema", "experiment_version", "delivery_id", "scheduled_at",
+    "required_trade_date", "archive_required", "decision_required", "snapshot",
+    "execution_snapshot",
+    "cells", "observed_market_opens", "reading_kind", "content_sha256"
+  ],
+  "properties": {
+    "schema": {"const": "llm_paper_schedule_delivery/v2"},
+    "experiment_version": {"const": "llm_paper_forward_mwf_v2"},
+    "delivery_id": {"type": "string", "minLength": 1},
+    "scheduled_at": {"type": "string", "format": "date-time"},
+    "required_trade_date": {"type": "string", "format": "date"},
+    "archive_required": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "decision_required": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "snapshot": {"type": "object"},
+    "execution_snapshot": {"type": "object"},
+    "cells": {"type": "object", "minProperties": 1},
+    "observed_market_opens": {
+      "type": "array", "minItems": 1,
+      "items": {"type": "string", "format": "date-time"}
+    },
+    "previous_books": {"type": "object"},
+    "next_actual_start": {"type": ["string", "null"], "format": "date-time"},
+    "reading_kind": {"enum": ["equivalence_artifact", "lower_bound", "acceptance"]},
+    "resolution_inputs": {"type": "array", "items": {"type": "object"}},
+    "acceptance_equity_inputs": {"type": "array", "items": {"type": "object"}},
+    "acceptance_cash_inputs": {"type": "array", "items": {"type": "object"}},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}
