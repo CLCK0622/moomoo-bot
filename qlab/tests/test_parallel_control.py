@@ -101,6 +101,32 @@ def test_one_snapshot_feeds_both_paths_and_books_match(tmp_path, monkeypatch):
     assert saved["may_take_over"] is True and "bearing_payload" not in saved
 
 
+def test_offline_injected_snapshot_uses_no_fetch_and_feeds_both_paths(tmp_path, monkeypatch):
+    """离线 replay 的注入入口不取行情，且仍由原并行编排把同一快照交给两侧。"""
+    from qlab.events.datafetch.quotes_api import DailyBar
+    import qlab.llm_paper.quote_bridge as QB
+
+    _iso(tmp_path, monkeypatch)
+    snapshot = {symbol: [
+        DailyBar(symbol=symbol, date="2026-08-07", close=100.0, open=99.0),
+        DailyBar(symbol=symbol, date="2026-08-10", close=101.0, open=100.0),
+    ] for symbol in ("IBM", "SPY")}
+    monkeypatch.setattr(QB, "get_daily_closes",
+                        lambda *_args, **_kwargs: pytest.fail("offline replay fetched quotes"))
+
+    r = _run(tmp_path, monkeypatch, a_props=[_pa("IBM", 0.10)],
+             b_cells=[{"seed": CELL[0], "prompt_variant": CELL[1],
+                       "proposals": [_prop("IBM", 0.10)]}], bars=snapshot)
+
+    assert r["identical"] is True and r["book_equivalence_exercised"] is True
+    assert r["shared_quote_snapshot"] == {
+        "symbols": ["IBM", "SPY"], "n_calls": 0, "injected": True,
+        "why": ("对照有效性，不是配额：两次取数之间任何一根 bar 变动都会让比对结果"
+                "因与执行器无关的原因而失败或通过。"),
+    }
+    assert r["preflight"]["quota_check_skipped"] is True
+
+
 def test_a_violating_round_still_compares_and_still_lands(tmp_path, monkeypatch):
     """两侧同样违规 ⇒ 两侧同样不调仓、逐位仍相同，轮次照常落盘（吏部 2026-08-27 裁定）。"""
     from qlab.llm_paper.rebalance_policy import NO_REBALANCE

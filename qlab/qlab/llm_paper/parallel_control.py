@@ -39,7 +39,7 @@ from qlab.llm_paper.determinism import load_baseline
 from qlab.llm_paper.errors import PreflightFailed
 from qlab.llm_paper.multi_book import (EXECUTOR, cell_id, compare_decision_sets,
                                        run_round_multi, symbol_union)
-from qlab.llm_paper.quote_bridge import fetch_round_quotes
+from qlab.llm_paper.quote_bridge import fetch_round_quotes, require_injected_bars
 from qlab.llm_paper.run_round import OUT_DIR, preflight, run_round
 
 CONTROL_SUBDIR = "control_multi_book"
@@ -99,11 +99,16 @@ def run_parallel_control(*, proposals: Sequence[Dict[str, Any]],
                          control_dir: Optional[str] = None,
                          cfg: Optional[Dict[str, Any]] = None,
                          rejected_evidence: Optional[Sequence[Dict[str, Any]]] = None,
-                         register_trials: bool = True) -> Dict[str, Any]:
+                         register_trials: bool = True,
+                         bars: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """跑一轮 (a) 承载 + (b) 对照，共用同一份行情快照，逐位比 book。
 
     `proposals` 给 (a)（承载路径，正常落盘 + 登记台账）；`cells` 给 (b)（对照，不登记）。
     返回对照报告；**(a) 的 payload 一并带出**，调用方拿到的仍是这一轮的真记录。
+
+    `bars` 只供离线重放注入一个已经由调用方完成来源与完整性校验的快照。注入后本函数不取行情、
+    不花配额；覆盖校验仍由 `require_injected_bars` fail-closed，随后同一个对象原样交给两侧。
+    在线 runner 不传此参数，既有路径逐位不变。
     """
     cfg = cfg or load_prereg()
     out = Path(out_dir)
@@ -130,11 +135,16 @@ def run_parallel_control(*, proposals: Sequence[Dict[str, Any]],
     symbols = sorted(set(symbol_union(cells, benchmark)) | {p["symbol"] for p in proposals})
     stamp = pd.Timestamp(decision_ts).strftime("%Y%m%d")
 
-    # ---- 唯一一次取行情：先 preflight 真配额，再取，两条路径共用这份快照 ----
-    from qlab.events.datafetch.api_quota import guard_from_env
-    pre = preflight(n_symbols_needed=len(symbols), cfg=cfg)
-    bars = fetch_round_quotes(symbols, stamp=stamp, out_dir=out_dir,
-                             executor="parallel_control", guard=guard_from_env())
+    # ---- 唯一一份行情：在线只取一次；离线重放只接收一份已校验注入快照 ----
+    injected = bars is not None
+    if injected:
+        pre = preflight(n_symbols_needed=len(symbols), cfg=cfg, skip_quota_check=True)
+        bars = require_injected_bars(bars, symbols)
+    else:
+        from qlab.events.datafetch.api_quota import guard_from_env
+        pre = preflight(n_symbols_needed=len(symbols), cfg=cfg)
+        bars = fetch_round_quotes(symbols, stamp=stamp, out_dir=out_dir,
+                                  executor="parallel_control", guard=guard_from_env())
 
     # ---- (a) 承载路径：先跑、先落盘。它是这一轮的真记录 ----
     a_payload = run_round(proposals=proposals, decision_ts=decision_ts, probe=probe,
@@ -148,7 +158,8 @@ def run_parallel_control(*, proposals: Sequence[Dict[str, Any]],
         "bearing_path": "single_book (a)",
         "control_path": f"{EXECUTOR} (b)",
         "shared_quote_snapshot": {
-            "symbols": symbols, "n_calls": len(symbols),
+            "symbols": symbols, "n_calls": 0 if injected else len(symbols),
+            "injected": injected,
             "why": ("对照有效性，不是配额：两次取数之间任何一根 bar 变动都会让比对结果"
                     "因与执行器无关的原因而失败或通过。"),
         },
