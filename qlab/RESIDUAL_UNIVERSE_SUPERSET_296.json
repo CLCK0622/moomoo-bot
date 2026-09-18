@@ -1,0 +1,5941 @@
+{
+  "prescreen_mode": "market_val",
+  "prescreen_key": "MARKET_VAL",
+  "market_cap_floor": 10000000000.0,
+  "superset_size_target": 296,
+  "n_input": 1555,
+  "n_survivors_prefilter": 1519,
+  "superset": [
+    "NVDA",
+    "AAPL",
+    "GOOGL",
+    "GOOG",
+    "MSFT",
+    "AMZN",
+    "SPCX",
+    "AVGO",
+    "META",
+    "TSLA",
+    "SKHYV",
+    "LLY",
+    "MU",
+    "SKHY",
+    "BRK.B",
+    "BRK.A",
+    "WMT",
+    "AMD",
+    "JPM",
+    "V",
+    "JNJ",
+    "XOM",
+    "INTC",
+    "AMAT",
+    "CSCO",
+    "MA",
+    "LRCX",
+    "CAT",
+    "ABBV",
+    "BAC",
+    "ORCL",
+    "COST",
+    "UNH",
+    "GE",
+    "KO",
+    "MS",
+    "CVX",
+    "PG",
+    "HD",
+    "GS",
+    "NFLX",
+    "MRK",
+    "PLTR",
+    "KLAC",
+    "GEV",
+    "SNDK",
+    "DELL",
+    "TXN",
+    "PM",
+    "IBM",
+    "WFC",
+    "PANW",
+    "RTX",
+    "GDVTZ",
+    "LIN",
+    "C",
+    "AXP",
+    "ANET",
+    "MRVL",
+    "STX",
+    "TMUS",
+    "WDC",
+    "QCOM",
+    "AMGN",
+    "MCD",
+    "TMO",
+    "APH",
+    "ADI",
+    "CRWD",
+    "PEP",
+    "NEE",
+    "SCHW",
+    "VZ",
+    "BA",
+    "UNP",
+    "APP",
+    "TJX",
+    "DIS",
+    "GLW",
+    "ABT",
+    "WELL",
+    "GILD",
+    "BLK",
+    "IBKR",
+    "DE",
+    "ETN",
+    "UBER",
+    "T",
+    "SCCO",
+    "ISRG",
+    "DHR",
+    "PFE",
+    "BKNG",
+    "CB",
+    "CRM",
+    "PGR",
+    "CVS",
+    "COP",
+    "SPGI",
+    "SYK",
+    "COF",
+    "VRTX",
+    "VRT",
+    "PH",
+    "SBUX",
+    "LMT",
+    "MO",
+    "NEMCL",
+    "LOW",
+    "BMY",
+    "FTNT",
+    "NOW",
+    "HWM",
+    "SO",
+    "MDT",
+    "ATVK",
+    "TT",
+    "CDNS",
+    "BNY",
+    "NEM",
+    "PNC",
+    "GD",
+    "HOOD",
+    "MAR",
+    "PWR",
+    "DUK",
+    "USB",
+    "ADP",
+    "UPS",
+    "BX",
+    "NET",
+    "MNST",
+    "MELI",
+    "MCK",
+    "CMI",
+    "WM",
+    "DDOG",
+    "CSX",
+    "WMB",
+    "CEG",
+    "SNOW",
+    "ELV",
+    "HCA",
+    "FCX",
+    "ADBE",
+    "ABNB",
+    "JCI",
+    "KKR",
+    "CME",
+    "MRSH",
+    "SNPS",
+    "MCO",
+    "CMCSA",
+    "DASH",
+    "VLO",
+    "SHW",
+    "ACN",
+    "MMM",
+    "MPC",
+    "EPD",
+    "EMR",
+    "ITW",
+    "AMX",
+    "ECL",
+    "CI",
+    "RCL",
+    "HLT",
+    "NOC",
+    "ICE",
+    "AON",
+    "MDLZ",
+    "PSX",
+    "INTU",
+    "FDX",
+    "CL",
+    "AEP",
+    "NXPI",
+    "NSC",
+    "CVNA",
+    "TDG",
+    "HON",
+    "TRV",
+    "CTAS",
+    "KMI",
+    "SLB",
+    "ORLY",
+    "ROST",
+    "EOG",
+    "NWG",
+    "GM",
+    "CRH",
+    "MSI",
+    "ALAB",
+    "HONA",
+    "APO",
+    "REGN",
+    "BE",
+    "URI",
+    "ET",
+    "RSG",
+    "APD",
+    "WBD",
+    "MPWR",
+    "BSX",
+    "NKE",
+    "PCAR",
+    "CIEN",
+    "GWW",
+    "AJG",
+    "TFC",
+    "ALL",
+    "HPE",
+    "COHR",
+    "CCZ",
+    "AFL",
+    "LITE",
+    "FIX",
+    "D",
+    "B",
+    "SRE",
+    "TGT",
+    "COR",
+    "MET",
+    "TRGP",
+    "TEL",
+    "CARR",
+    "MPLX",
+    "DAL",
+    "BKR",
+    "CTVA",
+    "OKE",
+    "TER",
+    "NBIS",
+    "F",
+    "KEYS",
+    "CAH",
+    "ARGX",
+    "LHX",
+    "LNG",
+    "MDLN",
+    "AME",
+    "ETR",
+    "VST",
+    "FAST",
+    "EW",
+    "ROK",
+    "OXY",
+    "EBAY",
+    "FITB",
+    "NUE",
+    "EA",
+    "FANG",
+    "MT",
+    "STT",
+    "AZO",
+    "XEL",
+    "NDAQ",
+    "FLEX",
+    "HEI",
+    "DVN",
+    "CBRS",
+    "CRWV",
+    "MCHP",
+    "EXC",
+    "CRDO",
+    "ODFL",
+    "GRMN",
+    "HUM",
+    "RKLB",
+    "CCEP",
+    "FER",
+    "XYZ",
+    "AXON",
+    "TTWO",
+    "AMP",
+    "CMG",
+    "IX",
+    "YUM",
+    "BSQKZ",
+    "IDXX",
+    "WAB",
+    "VIK",
+    "MSCI",
+    "FERG",
+    "ADSK",
+    "FMX",
+    "DHI",
+    "KDP",
+    "HLN",
+    "LYV",
+    "COIN",
+    "ENBA",
+    "AIG",
+    "BDX",
+    "CCJ",
+    "AU"
+  ],
+  "superset_count": 296,
+  "cut_prescreen_value_296th": 41668483234.74,
+  "superset_full": [
+    {
+      "code": "NVDA",
+      "name": "NVIDIA",
+      "market_val": 5078854000000.0,
+      "prescreen_value": 5078854000000.0
+    },
+    {
+      "code": "AAPL",
+      "name": "Apple",
+      "market_val": 4644509151100.0,
+      "prescreen_value": 4644509151100.0
+    },
+    {
+      "code": "GOOGL",
+      "name": "Alphabet-A",
+      "market_val": 4319959800000.0,
+      "prescreen_value": 4319959800000.0
+    },
+    {
+      "code": "GOOG",
+      "name": "Alphabet-C",
+      "market_val": 4292335320000.0,
+      "prescreen_value": 4292335320000.0
+    },
+    {
+      "code": "MSFT",
+      "name": "Microsoft",
+      "market_val": 2861210194939.68,
+      "prescreen_value": 2861210194939.68
+    },
+    {
+      "code": "AMZN",
+      "name": "Amazon",
+      "market_val": 2640063583330.301,
+      "prescreen_value": 2640063583330.301
+    },
+    {
+      "code": "SPCX",
+      "name": "SpaceX",
+      "market_val": 1950324810870.68,
+      "prescreen_value": 1950324810870.68
+    },
+    {
+      "code": "AVGO",
+      "name": "Broadcom",
+      "market_val": 1902009199457.43,
+      "prescreen_value": 1902009199457.43
+    },
+    {
+      "code": "META",
+      "name": "Meta Platforms",
+      "market_val": 1690850108852.66,
+      "prescreen_value": 1690850108852.66
+    },
+    {
+      "code": "TSLA",
+      "name": "Tesla",
+      "market_val": 1536804650774.49,
+      "prescreen_value": 1536804650774.49
+    },
+    {
+      "code": "SKHYV",
+      "name": "SK hynix-WI",
+      "market_val": 1241075730125.0,
+      "prescreen_value": 1241075730125.0
+    },
+    {
+      "code": "LLY",
+      "name": "Eli Lilly and Co",
+      "market_val": 1122555755952.0,
+      "prescreen_value": 1122555755952.0
+    },
+    {
+      "code": "MU",
+      "name": "Micron Technology",
+      "market_val": 1120848388298.164,
+      "prescreen_value": 1120848388298.164
+    },
+    {
+      "code": "SKHY",
+      "name": "SK hynix",
+      "market_val": 1086009595000.0,
+      "prescreen_value": 1086009595000.0
+    },
+    {
+      "code": "BRK.B",
+      "name": "Berkshire Hathaway-B",
+      "market_val": 1064321262182.42,
+      "prescreen_value": 1064321262182.42
+    },
+    {
+      "code": "BRK.A",
+      "name": "Berkshire Hathaway-A",
+      "market_val": 1063673603131.41,
+      "prescreen_value": 1063673603131.41
+    },
+    {
+      "code": "WMT",
+      "name": "Walmart",
+      "market_val": 905947731005.2,
+      "prescreen_value": 905947731005.2
+    },
+    {
+      "code": "AMD",
+      "name": "Advanced Micro Devices",
+      "market_val": 902488535667.33,
+      "prescreen_value": 902488535667.33
+    },
+    {
+      "code": "JPM",
+      "name": "JPMorgan",
+      "market_val": 901401038572.29,
+      "prescreen_value": 901401038572.29
+    },
+    {
+      "code": "V",
+      "name": "Visa",
+      "market_val": 660629393625.255,
+      "prescreen_value": 660629393625.255
+    },
+    {
+      "code": "JNJ",
+      "name": "Johnson & Johnson",
+      "market_val": 619112132771.49,
+      "prescreen_value": 619112132771.49
+    },
+    {
+      "code": "XOM",
+      "name": "Exxon Mobil",
+      "market_val": 573619652243.896,
+      "prescreen_value": 573619652243.896
+    },
+    {
+      "code": "INTC",
+      "name": "Intel",
+      "market_val": 553161560000.0,
+      "prescreen_value": 553161560000.0
+    },
+    {
+      "code": "AMAT",
+      "name": "Applied Materials",
+      "market_val": 477999305034.35,
+      "prescreen_value": 477999305034.35
+    },
+    {
+      "code": "CSCO",
+      "name": "Cisco",
+      "market_val": 476162751161.318,
+      "prescreen_value": 476162751161.318
+    },
+    {
+      "code": "MA",
+      "name": "MasterCard",
+      "market_val": 463996389776.15,
+      "prescreen_value": 463996389776.15
+    },
+    {
+      "code": "LRCX",
+      "name": "Lam Research",
+      "market_val": 439225546620.0,
+      "prescreen_value": 439225546620.0
+    },
+    {
+      "code": "CAT",
+      "name": "Caterpillar",
+      "market_val": 439146820271.52,
+      "prescreen_value": 439146820271.52
+    },
+    {
+      "code": "ABBV",
+      "name": "AbbVie",
+      "market_val": 438420804567.045,
+      "prescreen_value": 438420804567.045
+    },
+    {
+      "code": "BAC",
+      "name": "Bank of America",
+      "market_val": 423914842537.485,
+      "prescreen_value": 423914842537.485
+    },
+    {
+      "code": "ORCL",
+      "name": "Oracle",
+      "market_val": 405915973320.0,
+      "prescreen_value": 405915973320.0
+    },
+    {
+      "code": "COST",
+      "name": "Costco",
+      "market_val": 405867366632.76,
+      "prescreen_value": 405867366632.76
+    },
+    {
+      "code": "UNH",
+      "name": "UnitedHealth",
+      "market_val": 386141002663.111,
+      "prescreen_value": 386141002663.111
+    },
+    {
+      "code": "GE",
+      "name": "GE Aerospace",
+      "market_val": 375789205302.3,
+      "prescreen_value": 375789205302.3
+    },
+    {
+      "code": "KO",
+      "name": "Coca-Cola",
+      "market_val": 359644505320.62,
+      "prescreen_value": 359644505320.62
+    },
+    {
+      "code": "MS",
+      "name": "Morgan Stanley",
+      "market_val": 350867007541.65,
+      "prescreen_value": 350867007541.65
+    },
+    {
+      "code": "CVX",
+      "name": "Chevron",
+      "market_val": 349256536272.18,
+      "prescreen_value": 349256536272.18
+    },
+    {
+      "code": "PG",
+      "name": "Procter & Gamble",
+      "market_val": 343491635244.78,
+      "prescreen_value": 343491635244.78
+    },
+    {
+      "code": "HD",
+      "name": "Home Depot",
+      "market_val": 342898455772.98,
+      "prescreen_value": 342898455772.98
+    },
+    {
+      "code": "GS",
+      "name": "Goldman Sachs",
+      "market_val": 311793343254.9,
+      "prescreen_value": 311793343254.9
+    },
+    {
+      "code": "NFLX",
+      "name": "Netflix",
+      "market_val": 309851609682.88,
+      "prescreen_value": 309851609682.88
+    },
+    {
+      "code": "MRK",
+      "name": "Merck & Co",
+      "market_val": 306011245018.5,
+      "prescreen_value": 306011245018.5
+    },
+    {
+      "code": "PLTR",
+      "name": "Palantir",
+      "market_val": 304218889881.3,
+      "prescreen_value": 304218889881.3
+    },
+    {
+      "code": "KLAC",
+      "name": "KLA Corp",
+      "market_val": 301129092785.25,
+      "prescreen_value": 301129092785.25
+    },
+    {
+      "code": "GEV",
+      "name": "GE Vernova",
+      "market_val": 294261830524.75,
+      "prescreen_value": 294261830524.75
+    },
+    {
+      "code": "SNDK",
+      "name": "SanDisk",
+      "market_val": 284964678626.66,
+      "prescreen_value": 284964678626.66
+    },
+    {
+      "code": "DELL",
+      "name": "Dell Technologies",
+      "market_val": 284325040462.499,
+      "prescreen_value": 284325040462.499
+    },
+    {
+      "code": "TXN",
+      "name": "Texas Instruments",
+      "market_val": 282929646866.08,
+      "prescreen_value": 282929646866.08
+    },
+    {
+      "code": "PM",
+      "name": "Philip Morris International",
+      "market_val": 282925187314.38,
+      "prescreen_value": 282925187314.38
+    },
+    {
+      "code": "IBM",
+      "name": "IBM Corp",
+      "market_val": 271335481483.2,
+      "prescreen_value": 271335481483.2
+    },
+    {
+      "code": "WFC",
+      "name": "Wells Fargo & Co",
+      "market_val": 266894426719.21,
+      "prescreen_value": 266894426719.21
+    },
+    {
+      "code": "PANW",
+      "name": "Palo Alto Networks",
+      "market_val": 265103200000.0,
+      "prescreen_value": 265103200000.0
+    },
+    {
+      "code": "RTX",
+      "name": "RTX Corp",
+      "market_val": 263828750379.48,
+      "prescreen_value": 263828750379.48
+    },
+    {
+      "code": "GDVTZ",
+      "name": "GOULD INVESTORS L P",
+      "market_val": 252194220000.0,
+      "prescreen_value": 252194220000.0
+    },
+    {
+      "code": "LIN",
+      "name": "Linde",
+      "market_val": 245474057298.3,
+      "prescreen_value": 245474057298.3
+    },
+    {
+      "code": "C",
+      "name": "Citigroup",
+      "market_val": 240094067955.35,
+      "prescreen_value": 240094067955.35
+    },
+    {
+      "code": "AXP",
+      "name": "American Express",
+      "market_val": 239452230274.205,
+      "prescreen_value": 239452230274.205
+    },
+    {
+      "code": "ANET",
+      "name": "Arista Networks",
+      "market_val": 234891651698.22,
+      "prescreen_value": 234891651698.22
+    },
+    {
+      "code": "MRVL",
+      "name": "Marvell Technology",
+      "market_val": 207126396000.0,
+      "prescreen_value": 207126396000.0
+    },
+    {
+      "code": "STX",
+      "name": "Seagate Technology",
+      "market_val": 205048444024.32,
+      "prescreen_value": 205048444024.32
+    },
+    {
+      "code": "TMUS",
+      "name": "T-Mobile US",
+      "market_val": 201658026965.78,
+      "prescreen_value": 201658026965.78
+    },
+    {
+      "code": "WDC",
+      "name": "Western Digital",
+      "market_val": 200480052969.513,
+      "prescreen_value": 200480052969.513
+    },
+    {
+      "code": "QCOM",
+      "name": "Qualcomm",
+      "market_val": 199079520000.0,
+      "prescreen_value": 199079520000.0
+    },
+    {
+      "code": "AMGN",
+      "name": "Amgen",
+      "market_val": 196345870081.2,
+      "prescreen_value": 196345870081.2
+    },
+    {
+      "code": "MCD",
+      "name": "McDonald's",
+      "market_val": 196291453665.93,
+      "prescreen_value": 196291453665.93
+    },
+    {
+      "code": "TMO",
+      "name": "Thermo Fisher Scientific",
+      "market_val": 195907687704.05,
+      "prescreen_value": 195907687704.05
+    },
+    {
+      "code": "APH",
+      "name": "Amphenol",
+      "market_val": 195478102138.275,
+      "prescreen_value": 195478102138.275
+    },
+    {
+      "code": "ADI",
+      "name": "Analog Devices",
+      "market_val": 192730599987.2,
+      "prescreen_value": 192730599987.2
+    },
+    {
+      "code": "CRWD",
+      "name": "CrowdStrike",
+      "market_val": 190597772030.4,
+      "prescreen_value": 190597772030.4
+    },
+    {
+      "code": "PEP",
+      "name": "PepsiCo",
+      "market_val": 187276770673.18,
+      "prescreen_value": 187276770673.18
+    },
+    {
+      "code": "NEE",
+      "name": "NextEra Energy",
+      "market_val": 182688601334.01,
+      "prescreen_value": 182688601334.01
+    },
+    {
+      "code": "SCHW",
+      "name": "Charles Schwab",
+      "market_val": 178730956054.39,
+      "prescreen_value": 178730956054.39
+    },
+    {
+      "code": "VZ",
+      "name": "Verizon",
+      "market_val": 176605264098.45,
+      "prescreen_value": 176605264098.45
+    },
+    {
+      "code": "BA",
+      "name": "Boeing",
+      "market_val": 175704706556.59,
+      "prescreen_value": 175704706556.59
+    },
+    {
+      "code": "UNP",
+      "name": "Union Pacific",
+      "market_val": 170977531079.74,
+      "prescreen_value": 170977531079.74
+    },
+    {
+      "code": "APP",
+      "name": "Applovin",
+      "market_val": 170701192200.0,
+      "prescreen_value": 170701192200.0
+    },
+    {
+      "code": "TJX",
+      "name": "TJX Companies",
+      "market_val": 166887811127.665,
+      "prescreen_value": 166887811127.665
+    },
+    {
+      "code": "DIS",
+      "name": "Disney",
+      "market_val": 166496715333.12,
+      "prescreen_value": 166496715333.12
+    },
+    {
+      "code": "GLW",
+      "name": "Corning",
+      "market_val": 164226909766.5,
+      "prescreen_value": 164226909766.5
+    },
+    {
+      "code": "ABT",
+      "name": "Abbott Laboratories",
+      "market_val": 164165889764.5,
+      "prescreen_value": 164165889764.5
+    },
+    {
+      "code": "WELL",
+      "name": "Welltower",
+      "market_val": 163002705649.5,
+      "prescreen_value": 163002705649.5
+    },
+    {
+      "code": "GILD",
+      "name": "Gilead Sciences",
+      "market_val": 161428915017.48,
+      "prescreen_value": 161428915017.48
+    },
+    {
+      "code": "BLK",
+      "name": "Blackrock",
+      "market_val": 160668220237.4,
+      "prescreen_value": 160668220237.4
+    },
+    {
+      "code": "IBKR",
+      "name": "Interactive Brokers",
+      "market_val": 160140336013.8,
+      "prescreen_value": 160140336013.8
+    },
+    {
+      "code": "DE",
+      "name": "Deere",
+      "market_val": 159416945082.25,
+      "prescreen_value": 159416945082.25
+    },
+    {
+      "code": "ETN",
+      "name": "Eaton",
+      "market_val": 158445815000.0,
+      "prescreen_value": 158445815000.0
+    },
+    {
+      "code": "UBER",
+      "name": "Uber Technologies",
+      "market_val": 151886220354.995,
+      "prescreen_value": 151886220354.995
+    },
+    {
+      "code": "T",
+      "name": "AT&T",
+      "market_val": 147409008384.525,
+      "prescreen_value": 147409008384.525
+    },
+    {
+      "code": "SCCO",
+      "name": "Southern Copper",
+      "market_val": 146825130485.88,
+      "prescreen_value": 146825130485.88
+    },
+    {
+      "code": "ISRG",
+      "name": "Intuitive Surgical",
+      "market_val": 143953028759.32,
+      "prescreen_value": 143953028759.32
+    },
+    {
+      "code": "DHR",
+      "name": "Danaher",
+      "market_val": 140683567528.79,
+      "prescreen_value": 140683567528.79
+    },
+    {
+      "code": "PFE",
+      "name": "Pfizer",
+      "market_val": 138297012760.785,
+      "prescreen_value": 138297012760.785
+    },
+    {
+      "code": "BKNG",
+      "name": "Booking Holdings",
+      "market_val": 137936110392.36,
+      "prescreen_value": 137936110392.36
+    },
+    {
+      "code": "CB",
+      "name": "Chubb Ltd",
+      "market_val": 134106510250.56,
+      "prescreen_value": 134106510250.56
+    },
+    {
+      "code": "CRM",
+      "name": "Salesforce",
+      "market_val": 133890120000.0,
+      "prescreen_value": 133890120000.0
+    },
+    {
+      "code": "PGR",
+      "name": "Progressive",
+      "market_val": 133841958000.0,
+      "prescreen_value": 133841958000.0
+    },
+    {
+      "code": "CVS",
+      "name": "CVS Health",
+      "market_val": 132753856656.815,
+      "prescreen_value": 132753856656.815
+    },
+    {
+      "code": "COP",
+      "name": "ConocoPhillips",
+      "market_val": 132093527708.975,
+      "prescreen_value": 132093527708.975
+    },
+    {
+      "code": "SPGI",
+      "name": "S&P Global",
+      "market_val": 127651480000.0,
+      "prescreen_value": 127651480000.0
+    },
+    {
+      "code": "SYK",
+      "name": "Stryker Corp",
+      "market_val": 126821490481.03,
+      "prescreen_value": 126821490481.03
+    },
+    {
+      "code": "COF",
+      "name": "Capital One Financial",
+      "market_val": 124300410876.18,
+      "prescreen_value": 124300410876.18
+    },
+    {
+      "code": "VRTX",
+      "name": "Vertex Pharmaceuticals",
+      "market_val": 123481411478.84,
+      "prescreen_value": 123481411478.84
+    },
+    {
+      "code": "VRT",
+      "name": "Vertiv Holdings",
+      "market_val": 123193300011.6,
+      "prescreen_value": 123193300011.6
+    },
+    {
+      "code": "PH",
+      "name": "Parker Hannifin",
+      "market_val": 121452714204.25,
+      "prescreen_value": 121452714204.25
+    },
+    {
+      "code": "SBUX",
+      "name": "Starbucks",
+      "market_val": 121435035000.0,
+      "prescreen_value": 121435035000.0
+    },
+    {
+      "code": "LMT",
+      "name": "Lockheed Martin",
+      "market_val": 120545571170.64,
+      "prescreen_value": 120545571170.64
+    },
+    {
+      "code": "MO",
+      "name": "Altria",
+      "market_val": 120031781971.8,
+      "prescreen_value": 120031781971.8
+    },
+    {
+      "code": "NEMCL",
+      "name": "NEWMONT CORPORATION CDI 1:1",
+      "market_val": 119565909568.0,
+      "prescreen_value": 119565909568.0
+    },
+    {
+      "code": "LOW",
+      "name": "Lowe's Companies",
+      "market_val": 119318458324.8,
+      "prescreen_value": 119318458324.8
+    },
+    {
+      "code": "BMY",
+      "name": "Bristol-Myers Squibb",
+      "market_val": 117419096702.5,
+      "prescreen_value": 117419096702.5
+    },
+    {
+      "code": "FTNT",
+      "name": "Fortinet",
+      "market_val": 115219949210.615,
+      "prescreen_value": 115219949210.615
+    },
+    {
+      "code": "NOW",
+      "name": "ServiceNow",
+      "market_val": 111020306200.0,
+      "prescreen_value": 111020306200.0
+    },
+    {
+      "code": "HWM",
+      "name": "Howmet Aerospace",
+      "market_val": 108597173035.86,
+      "prescreen_value": 108597173035.86
+    },
+    {
+      "code": "SO",
+      "name": "Southern",
+      "market_val": 107803804001.74,
+      "prescreen_value": 107803804001.74
+    },
+    {
+      "code": "MDT",
+      "name": "Medtronic",
+      "market_val": 107692270780.32,
+      "prescreen_value": 107692270780.32
+    },
+    {
+      "code": "ATVK",
+      "name": "Ameritek Ventures",
+      "market_val": 106754961212.25,
+      "prescreen_value": 106754961212.25
+    },
+    {
+      "code": "TT",
+      "name": "Trane Technologies",
+      "market_val": 106334316101.31,
+      "prescreen_value": 106334316101.31
+    },
+    {
+      "code": "CDNS",
+      "name": "Cadence Design Systems",
+      "market_val": 106318793520.0,
+      "prescreen_value": 106318793520.0
+    },
+    {
+      "code": "BNY",
+      "name": "Bank of New York Mellon",
+      "market_val": 104329614840.0,
+      "prescreen_value": 104329614840.0
+    },
+    {
+      "code": "NEM",
+      "name": "Newmont",
+      "market_val": 101972640017.28,
+      "prescreen_value": 101972640017.28
+    },
+    {
+      "code": "PNC",
+      "name": "PNC Financial Services",
+      "market_val": 101636008359.2,
+      "prescreen_value": 101636008359.2
+    },
+    {
+      "code": "GD",
+      "name": "General Dynamics",
+      "market_val": 101501914237.645,
+      "prescreen_value": 101501914237.645
+    },
+    {
+      "code": "HOOD",
+      "name": "Robinhood",
+      "market_val": 101342839114.78,
+      "prescreen_value": 101342839114.78
+    },
+    {
+      "code": "MAR",
+      "name": "Marriott International",
+      "market_val": 99435160281.801,
+      "prescreen_value": 99435160281.801
+    },
+    {
+      "code": "PWR",
+      "name": "Quanta Services",
+      "market_val": 98862612358.165,
+      "prescreen_value": 98862612358.165
+    },
+    {
+      "code": "DUK",
+      "name": "Duke Energy",
+      "market_val": 97878305044.35,
+      "prescreen_value": 97878305044.35
+    },
+    {
+      "code": "USB",
+      "name": "U.S. Bancorp",
+      "market_val": 97599681417.84,
+      "prescreen_value": 97599681417.84
+    },
+    {
+      "code": "ADP",
+      "name": "Automatic Data Processing",
+      "market_val": 96633764002.09,
+      "prescreen_value": 96633764002.09
+    },
+    {
+      "code": "UPS",
+      "name": "United Parcel Service",
+      "market_val": 95986959056.075,
+      "prescreen_value": 95986959056.075
+    },
+    {
+      "code": "BX",
+      "name": "Blackstone",
+      "market_val": 95662195916.918,
+      "prescreen_value": 95662195916.918
+    },
+    {
+      "code": "NET",
+      "name": "Cloudflare",
+      "market_val": 95390007825.0,
+      "prescreen_value": 95390007825.0
+    },
+    {
+      "code": "MNST",
+      "name": "Monster Beverage",
+      "market_val": 95111288697.5,
+      "prescreen_value": 95111288697.5
+    },
+    {
+      "code": "MELI",
+      "name": "MercadoLibre",
+      "market_val": 94205250106.49,
+      "prescreen_value": 94205250106.49
+    },
+    {
+      "code": "MCK",
+      "name": "McKesson",
+      "market_val": 94145141698.125,
+      "prescreen_value": 94145141698.125
+    },
+    {
+      "code": "CMI",
+      "name": "Cummins",
+      "market_val": 93994012768.39,
+      "prescreen_value": 93994012768.39
+    },
+    {
+      "code": "WM",
+      "name": "Waste Management",
+      "market_val": 93522976883.28,
+      "prescreen_value": 93522976883.28
+    },
+    {
+      "code": "DDOG",
+      "name": "Datadog",
+      "market_val": 92101139301.86,
+      "prescreen_value": 92101139301.86
+    },
+    {
+      "code": "CSX",
+      "name": "CSX Corp",
+      "market_val": 91971923655.0,
+      "prescreen_value": 91971923655.0
+    },
+    {
+      "code": "WMB",
+      "name": "Williams",
+      "market_val": 91547535126.575,
+      "prescreen_value": 91547535126.575
+    },
+    {
+      "code": "CEG",
+      "name": "Constellation Energy",
+      "market_val": 90900703155.21,
+      "prescreen_value": 90900703155.21
+    },
+    {
+      "code": "SNOW",
+      "name": "Snowflake",
+      "market_val": 90615104000.0,
+      "prescreen_value": 90615104000.0
+    },
+    {
+      "code": "ELV",
+      "name": "Elevance Health",
+      "market_val": 90525223914.9,
+      "prescreen_value": 90525223914.9
+    },
+    {
+      "code": "HCA",
+      "name": "HCA Healthcare",
+      "market_val": 90421902480.0,
+      "prescreen_value": 90421902480.0
+    },
+    {
+      "code": "FCX",
+      "name": "Freeport-McMoRan",
+      "market_val": 89078397034.725,
+      "prescreen_value": 89078397034.725
+    },
+    {
+      "code": "ADBE",
+      "name": "Adobe",
+      "market_val": 88896900000.0,
+      "prescreen_value": 88896900000.0
+    },
+    {
+      "code": "ABNB",
+      "name": "Airbnb",
+      "market_val": 88328370165.475,
+      "prescreen_value": 88328370165.475
+    },
+    {
+      "code": "JCI",
+      "name": "Johnson Controls",
+      "market_val": 87874950300.09,
+      "prescreen_value": 87874950300.09
+    },
+    {
+      "code": "KKR",
+      "name": "KKR & Co",
+      "market_val": 87574037300.435,
+      "prescreen_value": 87574037300.435
+    },
+    {
+      "code": "CME",
+      "name": "CME Group",
+      "market_val": 86944501719.18,
+      "prescreen_value": 86944501719.18
+    },
+    {
+      "code": "MRSH",
+      "name": "Marsh",
+      "market_val": 85928049253.35,
+      "prescreen_value": 85928049253.35
+    },
+    {
+      "code": "SNPS",
+      "name": "Synopsys",
+      "market_val": 85346164739.0,
+      "prescreen_value": 85346164739.0
+    },
+    {
+      "code": "MCO",
+      "name": "Moody's",
+      "market_val": 85186205283.84,
+      "prescreen_value": 85186205283.84
+    },
+    {
+      "code": "CMCSA",
+      "name": "Comcast",
+      "market_val": 84393899659.125,
+      "prescreen_value": 84393899659.125
+    },
+    {
+      "code": "DASH",
+      "name": "DoorDash",
+      "market_val": 84045784286.58,
+      "prescreen_value": 84045784286.58
+    },
+    {
+      "code": "VLO",
+      "name": "Valero Energy",
+      "market_val": 83072884420.14,
+      "prescreen_value": 83072884420.14
+    },
+    {
+      "code": "SHW",
+      "name": "Sherwin-Williams",
+      "market_val": 82884366793.26,
+      "prescreen_value": 82884366793.26
+    },
+    {
+      "code": "ACN",
+      "name": "Accenture",
+      "market_val": 82805836265.5,
+      "prescreen_value": 82805836265.5
+    },
+    {
+      "code": "MMM",
+      "name": "3M",
+      "market_val": 82339823494.07,
+      "prescreen_value": 82339823494.07
+    },
+    {
+      "code": "MPC",
+      "name": "Marathon Petroleum",
+      "market_val": 82266284059.825,
+      "prescreen_value": 82266284059.825
+    },
+    {
+      "code": "EPD",
+      "name": "Enterprise Products",
+      "market_val": 80727357245.823,
+      "prescreen_value": 80727357245.823
+    },
+    {
+      "code": "EMR",
+      "name": "Emerson Electric",
+      "market_val": 78220765500.0,
+      "prescreen_value": 78220765500.0
+    },
+    {
+      "code": "ITW",
+      "name": "Illinois Tool Works",
+      "market_val": 77857374000.0,
+      "prescreen_value": 77857374000.0
+    },
+    {
+      "code": "AMX",
+      "name": "America Movil SAB de CV",
+      "market_val": 77826744000.0,
+      "prescreen_value": 77826744000.0
+    },
+    {
+      "code": "ECL",
+      "name": "Ecolab",
+      "market_val": 77491001800.68,
+      "prescreen_value": 77491001800.68
+    },
+    {
+      "code": "CI",
+      "name": "Cigna Group",
+      "market_val": 77222299375.68,
+      "prescreen_value": 77222299375.68
+    },
+    {
+      "code": "RCL",
+      "name": "Royal Caribbean",
+      "market_val": 76843225096.56,
+      "prescreen_value": 76843225096.56
+    },
+    {
+      "code": "HLT",
+      "name": "Hilton Worldwide",
+      "market_val": 76717501364.0,
+      "prescreen_value": 76717501364.0
+    },
+    {
+      "code": "NOC",
+      "name": "Northrop Grumman",
+      "market_val": 76570246911.6,
+      "prescreen_value": 76570246911.6
+    },
+    {
+      "code": "ICE",
+      "name": "Intercontinental Exchange",
+      "market_val": 76321566325.2,
+      "prescreen_value": 76321566325.2
+    },
+    {
+      "code": "AON",
+      "name": "Aon PLC",
+      "market_val": 76091059620.23,
+      "prescreen_value": 76091059620.23
+    },
+    {
+      "code": "MDLZ",
+      "name": "Mondelez International",
+      "market_val": 75363077761.86,
+      "prescreen_value": 75363077761.86
+    },
+    {
+      "code": "PSX",
+      "name": "Phillips 66",
+      "market_val": 75227437802.6,
+      "prescreen_value": 75227437802.6
+    },
+    {
+      "code": "INTU",
+      "name": "Intuit",
+      "market_val": 75124201680.0,
+      "prescreen_value": 75124201680.0
+    },
+    {
+      "code": "FDX",
+      "name": "FedEx",
+      "market_val": 74933258688.02,
+      "prescreen_value": 74933258688.02
+    },
+    {
+      "code": "CL",
+      "name": "Colgate-Palmolive",
+      "market_val": 74025513068.1,
+      "prescreen_value": 74025513068.1
+    },
+    {
+      "code": "AEP",
+      "name": "American Electric Power",
+      "market_val": 73560279801.24,
+      "prescreen_value": 73560279801.24
+    },
+    {
+      "code": "NXPI",
+      "name": "NXP Semiconductors",
+      "market_val": 73517053494.01,
+      "prescreen_value": 73517053494.01
+    },
+    {
+      "code": "NSC",
+      "name": "Norfolk Southern",
+      "market_val": 73493894947.23,
+      "prescreen_value": 73493894947.23
+    },
+    {
+      "code": "CVNA",
+      "name": "Carvana",
+      "market_val": 72610525988.0,
+      "prescreen_value": 72610525988.0
+    },
+    {
+      "code": "TDG",
+      "name": "TransDigm",
+      "market_val": 72496076262.13,
+      "prescreen_value": 72496076262.13
+    },
+    {
+      "code": "HON",
+      "name": "Honeywell",
+      "market_val": 72220614124.05,
+      "prescreen_value": 72220614124.05
+    },
+    {
+      "code": "TRV",
+      "name": "The Travelers Companies",
+      "market_val": 71893044256.37,
+      "prescreen_value": 71893044256.37
+    },
+    {
+      "code": "CTAS",
+      "name": "Cintas",
+      "market_val": 71480452421.84,
+      "prescreen_value": 71480452421.84
+    },
+    {
+      "code": "KMI",
+      "name": "Kinder Morgan",
+      "market_val": 71450279186.055,
+      "prescreen_value": 71450279186.055
+    },
+    {
+      "code": "SLB",
+      "name": "SLB Ltd",
+      "market_val": 71396478601.055,
+      "prescreen_value": 71396478601.055
+    },
+    {
+      "code": "ORLY",
+      "name": "O'Reilly Automotive",
+      "market_val": 71248778917.025,
+      "prescreen_value": 71248778917.025
+    },
+    {
+      "code": "ROST",
+      "name": "Ross Stores",
+      "market_val": 71242269168.84,
+      "prescreen_value": 71242269168.84
+    },
+    {
+      "code": "EOG",
+      "name": "EOG Resources",
+      "market_val": 71217760746.3,
+      "prescreen_value": 71217760746.3
+    },
+    {
+      "code": "NWG",
+      "name": "NatWest",
+      "market_val": 70979773146.585,
+      "prescreen_value": 70979773146.585
+    },
+    {
+      "code": "GM",
+      "name": "General Motors",
+      "market_val": 70636451376.3,
+      "prescreen_value": 70636451376.3
+    },
+    {
+      "code": "CRH",
+      "name": "CRH PLC",
+      "market_val": 70328072734.0,
+      "prescreen_value": 70328072734.0
+    },
+    {
+      "code": "MSI",
+      "name": "Motorola Solutions",
+      "market_val": 70255970125.68,
+      "prescreen_value": 70255970125.68
+    },
+    {
+      "code": "ALAB",
+      "name": "Astera Labs",
+      "market_val": 70179552464.77,
+      "prescreen_value": 70179552464.77
+    },
+    {
+      "code": "HONA",
+      "name": "Honeywell Aerospace",
+      "market_val": 69833019062.375,
+      "prescreen_value": 69833019062.375
+    },
+    {
+      "code": "APO",
+      "name": "Apollo Global Management",
+      "market_val": 69568368293.71,
+      "prescreen_value": 69568368293.71
+    },
+    {
+      "code": "REGN",
+      "name": "Regeneron Pharmaceuticals",
+      "market_val": 69452713529.04,
+      "prescreen_value": 69452713529.04
+    },
+    {
+      "code": "BE",
+      "name": "Bloom Energy",
+      "market_val": 69182437574.96,
+      "prescreen_value": 69182437574.96
+    },
+    {
+      "code": "URI",
+      "name": "United Rentals",
+      "market_val": 68950993263.695,
+      "prescreen_value": 68950993263.695
+    },
+    {
+      "code": "ET",
+      "name": "Energy Transfer",
+      "market_val": 67911278331.595,
+      "prescreen_value": 67911278331.595
+    },
+    {
+      "code": "RSG",
+      "name": "Republic Services",
+      "market_val": 67295365749.51,
+      "prescreen_value": 67295365749.51
+    },
+    {
+      "code": "APD",
+      "name": "Air Products & Chemicals",
+      "market_val": 66828700675.46,
+      "prescreen_value": 66828700675.46
+    },
+    {
+      "code": "WBD",
+      "name": "Warner Bros Discovery",
+      "market_val": 66689836273.2,
+      "prescreen_value": 66689836273.2
+    },
+    {
+      "code": "MPWR",
+      "name": "Monolithic Power Systems",
+      "market_val": 66379543000.0,
+      "prescreen_value": 66379543000.0
+    },
+    {
+      "code": "BSX",
+      "name": "Boston Scientific",
+      "market_val": 66179964344.975,
+      "prescreen_value": 66179964344.975
+    },
+    {
+      "code": "NKE",
+      "name": "Nike",
+      "market_val": 65936495144.325,
+      "prescreen_value": 65936495144.325
+    },
+    {
+      "code": "PCAR",
+      "name": "PACCAR Inc",
+      "market_val": 65806777445.537,
+      "prescreen_value": 65806777445.537
+    },
+    {
+      "code": "CIEN",
+      "name": "Ciena",
+      "market_val": 65427176077.62,
+      "prescreen_value": 65427176077.62
+    },
+    {
+      "code": "GWW",
+      "name": "W.W. Grainger",
+      "market_val": 65151035367.265,
+      "prescreen_value": 65151035367.265
+    },
+    {
+      "code": "AJG",
+      "name": "Arthur J. Gallagher",
+      "market_val": 65043226500.0,
+      "prescreen_value": 65043226500.0
+    },
+    {
+      "code": "TFC",
+      "name": "Truist Financial",
+      "market_val": 64754575318.125,
+      "prescreen_value": 64754575318.125
+    },
+    {
+      "code": "ALL",
+      "name": "Allstate",
+      "market_val": 64574040290.5,
+      "prescreen_value": 64574040290.5
+    },
+    {
+      "code": "HPE",
+      "name": "Hewlett Packard Enterprise",
+      "market_val": 64316565014.97,
+      "prescreen_value": 64316565014.97
+    },
+    {
+      "code": "COHR",
+      "name": "Coherent",
+      "market_val": 64005360258.36,
+      "prescreen_value": 64005360258.36
+    },
+    {
+      "code": "CCZ",
+      "name": "COMCAST HOLDINGS CORPORATION 2% CNV PREF SEC15/10/2029 USD71",
+      "market_val": 62990795000.0,
+      "prescreen_value": 62990795000.0
+    },
+    {
+      "code": "AFL",
+      "name": "Aflac Inc",
+      "market_val": 62055439495.68,
+      "prescreen_value": 62055439495.68
+    },
+    {
+      "code": "LITE",
+      "name": "Lumentum",
+      "market_val": 61943582000.0,
+      "prescreen_value": 61943582000.0
+    },
+    {
+      "code": "FIX",
+      "name": "Comfort Systems USA",
+      "market_val": 61780958168.48,
+      "prescreen_value": 61780958168.48
+    },
+    {
+      "code": "D",
+      "name": "Dominion Resources",
+      "market_val": 61653825128.4,
+      "prescreen_value": 61653825128.4
+    },
+    {
+      "code": "B",
+      "name": "Barrick Mining",
+      "market_val": 61594624922.175,
+      "prescreen_value": 61594624922.175
+    },
+    {
+      "code": "SRE",
+      "name": "Sempra Energy",
+      "market_val": 61448495694.0,
+      "prescreen_value": 61448495694.0
+    },
+    {
+      "code": "TGT",
+      "name": "Target",
+      "market_val": 61056911186.16,
+      "prescreen_value": 61056911186.16
+    },
+    {
+      "code": "COR",
+      "name": "Cencora",
+      "market_val": 59125160523.4,
+      "prescreen_value": 59125160523.4
+    },
+    {
+      "code": "MET",
+      "name": "MetLife",
+      "market_val": 59117169631.539,
+      "prescreen_value": 59117169631.539
+    },
+    {
+      "code": "TRGP",
+      "name": "Targa Resources",
+      "market_val": 58767354202.37,
+      "prescreen_value": 58767354202.37
+    },
+    {
+      "code": "TEL",
+      "name": "TE Connectivity",
+      "market_val": 58504674993.57,
+      "prescreen_value": 58504674993.57
+    },
+    {
+      "code": "CARR",
+      "name": "Carrier Global",
+      "market_val": 58331663107.29,
+      "prescreen_value": 58331663107.29
+    },
+    {
+      "code": "MPLX",
+      "name": "MPLX LP",
+      "market_val": 57900706006.14,
+      "prescreen_value": 57900706006.14
+    },
+    {
+      "code": "DAL",
+      "name": "Delta Air Lines",
+      "market_val": 57585553901.0,
+      "prescreen_value": 57585553901.0
+    },
+    {
+      "code": "BKR",
+      "name": "Baker Hughes",
+      "market_val": 57346531030.085,
+      "prescreen_value": 57346531030.085
+    },
+    {
+      "code": "CTVA",
+      "name": "Corteva",
+      "market_val": 57304497600.0,
+      "prescreen_value": 57304497600.0
+    },
+    {
+      "code": "OKE",
+      "name": "ONEOK Inc",
+      "market_val": 56721920668.845,
+      "prescreen_value": 56721920668.845
+    },
+    {
+      "code": "TER",
+      "name": "Teradyne",
+      "market_val": 56276907239.0,
+      "prescreen_value": 56276907239.0
+    },
+    {
+      "code": "NBIS",
+      "name": "NEBIUS",
+      "market_val": 56225755061.3,
+      "prescreen_value": 56225755061.3
+    },
+    {
+      "code": "F",
+      "name": "Ford Motor",
+      "market_val": 55885314135.75,
+      "prescreen_value": 55885314135.75
+    },
+    {
+      "code": "KEYS",
+      "name": "Keysight Technologies",
+      "market_val": 55201767294.52,
+      "prescreen_value": 55201767294.52
+    },
+    {
+      "code": "CAH",
+      "name": "Cardinal Health",
+      "market_val": 55118005915.7,
+      "prescreen_value": 55118005915.7
+    },
+    {
+      "code": "ARGX",
+      "name": "argenx SE",
+      "market_val": 54657515997.381,
+      "prescreen_value": 54657515997.381
+    },
+    {
+      "code": "LHX",
+      "name": "L3Harris Technologies",
+      "market_val": 54201584518.695,
+      "prescreen_value": 54201584518.695
+    },
+    {
+      "code": "LNG",
+      "name": "Cheniere Energy",
+      "market_val": 53919791155.08,
+      "prescreen_value": 53919791155.08
+    },
+    {
+      "code": "MDLN",
+      "name": "Medline",
+      "market_val": 53808667197.44,
+      "prescreen_value": 53808667197.44
+    },
+    {
+      "code": "AME",
+      "name": "AMETEK",
+      "market_val": 53784776449.32,
+      "prescreen_value": 53784776449.32
+    },
+    {
+      "code": "ETR",
+      "name": "Entergy",
+      "market_val": 53751754368.0,
+      "prescreen_value": 53751754368.0
+    },
+    {
+      "code": "VST",
+      "name": "Vistra Energy",
+      "market_val": 53696308029.0,
+      "prescreen_value": 53696308029.0
+    },
+    {
+      "code": "FAST",
+      "name": "Fastenal",
+      "market_val": 53555835595.65,
+      "prescreen_value": 53555835595.65
+    },
+    {
+      "code": "EW",
+      "name": "Edwards Lifesciences",
+      "market_val": 52996632000.0,
+      "prescreen_value": 52996632000.0
+    },
+    {
+      "code": "ROK",
+      "name": "Rockwell Automation",
+      "market_val": 52685991266.44,
+      "prescreen_value": 52685991266.44
+    },
+    {
+      "code": "OXY",
+      "name": "Occidental Petroleum",
+      "market_val": 52173563240.955,
+      "prescreen_value": 52173563240.955
+    },
+    {
+      "code": "EBAY",
+      "name": "eBay",
+      "market_val": 52036800000.0,
+      "prescreen_value": 52036800000.0
+    },
+    {
+      "code": "FITB",
+      "name": "Fifth Third Bancorp",
+      "market_val": 51899930796.22,
+      "prescreen_value": 51899930796.22
+    },
+    {
+      "code": "NUE",
+      "name": "Nucor",
+      "market_val": 51792846849.0,
+      "prescreen_value": 51792846849.0
+    },
+    {
+      "code": "EA",
+      "name": "Electronic Arts Inc",
+      "market_val": 51761375084.7,
+      "prescreen_value": 51761375084.7
+    },
+    {
+      "code": "FANG",
+      "name": "Diamondback Energy",
+      "market_val": 51334050436.56,
+      "prescreen_value": 51334050436.56
+    },
+    {
+      "code": "MT",
+      "name": "ArcelorMittal SA",
+      "market_val": 50328780458.325,
+      "prescreen_value": 50328780458.325
+    },
+    {
+      "code": "STT",
+      "name": "State Street",
+      "market_val": 50105903654.32,
+      "prescreen_value": 50105903654.32
+    },
+    {
+      "code": "AZO",
+      "name": "AutoZone",
+      "market_val": 49966197780.75,
+      "prescreen_value": 49966197780.75
+    },
+    {
+      "code": "XEL",
+      "name": "Xcel Energy",
+      "market_val": 49913472669.8,
+      "prescreen_value": 49913472669.8
+    },
+    {
+      "code": "NDAQ",
+      "name": "Nasdaq",
+      "market_val": 49725174664.15,
+      "prescreen_value": 49725174664.15
+    },
+    {
+      "code": "FLEX",
+      "name": "Flex Ltd",
+      "market_val": 49700743000.1,
+      "prescreen_value": 49700743000.1
+    },
+    {
+      "code": "HEI",
+      "name": "Heico",
+      "market_val": 49077666530.57,
+      "prescreen_value": 49077666530.57
+    },
+    {
+      "code": "DVN",
+      "name": "Devon Energy",
+      "market_val": 48529435727.025,
+      "prescreen_value": 48529435727.025
+    },
+    {
+      "code": "CBRS",
+      "name": "Cerebras Systems",
+      "market_val": 48502887920.37,
+      "prescreen_value": 48502887920.37
+    },
+    {
+      "code": "CRWV",
+      "name": "CoreWeave",
+      "market_val": 48448950049.96,
+      "prescreen_value": 48448950049.96
+    },
+    {
+      "code": "MCHP",
+      "name": "Microchip Technology",
+      "market_val": 48156697293.45,
+      "prescreen_value": 48156697293.45
+    },
+    {
+      "code": "EXC",
+      "name": "Exelon",
+      "market_val": 47870792923.47,
+      "prescreen_value": 47870792923.47
+    },
+    {
+      "code": "CRDO",
+      "name": "Credo Technology",
+      "market_val": 47863282079.66,
+      "prescreen_value": 47863282079.66
+    },
+    {
+      "code": "ODFL",
+      "name": "Old Dominion Freight Line",
+      "market_val": 47246234531.94,
+      "prescreen_value": 47246234531.94
+    },
+    {
+      "code": "GRMN",
+      "name": "Garmin",
+      "market_val": 47176485111.72,
+      "prescreen_value": 47176485111.72
+    },
+    {
+      "code": "HUM",
+      "name": "Humana",
+      "market_val": 47105529217.5,
+      "prescreen_value": 47105529217.5
+    },
+    {
+      "code": "RKLB",
+      "name": "Rocket Lab",
+      "market_val": 47016195186.975,
+      "prescreen_value": 47016195186.975
+    },
+    {
+      "code": "CCEP",
+      "name": "Coca-Cola Europacific",
+      "market_val": 46941008849.735,
+      "prescreen_value": 46941008849.735
+    },
+    {
+      "code": "FER",
+      "name": "Ferrovial SE",
+      "market_val": 46194322325.85,
+      "prescreen_value": 46194322325.85
+    },
+    {
+      "code": "XYZ",
+      "name": "Block",
+      "market_val": 45977732250.0,
+      "prescreen_value": 45977732250.0
+    },
+    {
+      "code": "AXON",
+      "name": "Axon Enterprise",
+      "market_val": 45603849145.83,
+      "prescreen_value": 45603849145.83
+    },
+    {
+      "code": "TTWO",
+      "name": "Take-Two Interactive Software",
+      "market_val": 45596947432.855,
+      "prescreen_value": 45596947432.855
+    },
+    {
+      "code": "AMP",
+      "name": "Ameriprise Financial",
+      "market_val": 45549054521.12,
+      "prescreen_value": 45549054521.12
+    },
+    {
+      "code": "CMG",
+      "name": "Chipotle Mexican Grill",
+      "market_val": 45530643330.0,
+      "prescreen_value": 45530643330.0
+    },
+    {
+      "code": "IX",
+      "name": "ORIX",
+      "market_val": 45301496947.2,
+      "prescreen_value": 45301496947.2
+    },
+    {
+      "code": "YUM",
+      "name": "Yum! Brands",
+      "market_val": 45245976520.32,
+      "prescreen_value": 45245976520.32
+    },
+    {
+      "code": "BSQKZ",
+      "name": "BLOCK INC",
+      "market_val": 44638575000.0,
+      "prescreen_value": 44638575000.0
+    },
+    {
+      "code": "IDXX",
+      "name": "IDEXX Laboratories Inc",
+      "market_val": 44513675207.1,
+      "prescreen_value": 44513675207.1
+    },
+    {
+      "code": "WAB",
+      "name": "Westinghouse Air Brake Technologies",
+      "market_val": 44419832409.34,
+      "prescreen_value": 44419832409.34
+    },
+    {
+      "code": "VIK",
+      "name": "Viking Holdings",
+      "market_val": 44314556341.3,
+      "prescreen_value": 44314556341.3
+    },
+    {
+      "code": "MSCI",
+      "name": "MSCI Inc",
+      "market_val": 44012332000.0,
+      "prescreen_value": 44012332000.0
+    },
+    {
+      "code": "FERG",
+      "name": "Ferguson",
+      "market_val": 43890069402.06,
+      "prescreen_value": 43890069402.06
+    },
+    {
+      "code": "ADSK",
+      "name": "Autodesk",
+      "market_val": 43877450000.0,
+      "prescreen_value": 43877450000.0
+    },
+    {
+      "code": "FMX",
+      "name": "FEMSA",
+      "market_val": 43579973258.64,
+      "prescreen_value": 43579973258.64
+    },
+    {
+      "code": "DHI",
+      "name": "D.R. Horton",
+      "market_val": 43257234167.02,
+      "prescreen_value": 43257234167.02
+    },
+    {
+      "code": "KDP",
+      "name": "Keurig Dr Pepper",
+      "market_val": 43054904459.795,
+      "prescreen_value": 43054904459.795
+    },
+    {
+      "code": "HLN",
+      "name": "Haleon",
+      "market_val": 43003093797.72,
+      "prescreen_value": 43003093797.72
+    },
+    {
+      "code": "LYV",
+      "name": "Live Nation Entertainment",
+      "market_val": 42458536201.575,
+      "prescreen_value": 42458536201.575
+    },
+    {
+      "code": "COIN",
+      "name": "Coinbase",
+      "market_val": 42064145899.56,
+      "prescreen_value": 42064145899.56
+    },
+    {
+      "code": "ENBA",
+      "name": "Enbridge Inc 6.375% Fxd Fltg Sub Nts Sr 18 B 15/04/78",
+      "market_val": 41986198374.4,
+      "prescreen_value": 41986198374.4
+    },
+    {
+      "code": "AIG",
+      "name": "American International Group",
+      "market_val": 41960520329.94,
+      "prescreen_value": 41960520329.94
+    },
+    {
+      "code": "BDX",
+      "name": "Becton Dickinson & Co",
+      "market_val": 41931742180.86,
+      "prescreen_value": 41931742180.86
+    },
+    {
+      "code": "CCJ",
+      "name": "Cameco",
+      "market_val": 41867785271.27,
+      "prescreen_value": 41867785271.27
+    },
+    {
+      "code": "AU",
+      "name": "AUSTERLITZ ACQUISITION CORPORATION I",
+      "market_val": 41668483234.74,
+      "prescreen_value": 41668483234.74
+    }
+  ],
+  "issuer_by_code": {
+    "NVDA": "nvidia",
+    "AAPL": "apple",
+    "GOOGL": "alphabet a",
+    "GOOG": "alphabet c",
+    "MSFT": "microsoft",
+    "AMZN": "amazon",
+    "SPCX": "spacex",
+    "AVGO": "broadcom",
+    "META": "meta platforms",
+    "TSLA": "tesla",
+    "SKHYV": "sk hynix wi",
+    "LLY": "eli lilly and",
+    "MU": "micron technology",
+    "SKHY": "sk hynix",
+    "BRK.B": "berkshire hathaway b",
+    "BRK.A": "berkshire hathaway a",
+    "WMT": "walmart",
+    "AMD": "advanced micro devices",
+    "JPM": "jpmorgan",
+    "V": "visa",
+    "JNJ": "johnson johnson",
+    "XOM": "exxon mobil",
+    "INTC": "intel",
+    "AMAT": "applied materials",
+    "CSCO": "cisco",
+    "MA": "mastercard",
+    "LRCX": "lam research",
+    "CAT": "caterpillar",
+    "ABBV": "abbvie",
+    "BAC": "bank of america",
+    "ORCL": "oracle",
+    "COST": "costco",
+    "UNH": "unitedhealth",
+    "GE": "ge aerospace",
+    "KO": "coca cola",
+    "MS": "morgan stanley",
+    "CVX": "chevron",
+    "PG": "procter gamble",
+    "HD": "home depot",
+    "GS": "goldman sachs",
+    "NFLX": "netflix",
+    "MRK": "merck",
+    "PLTR": "palantir",
+    "KLAC": "kla",
+    "GEV": "ge vernova",
+    "SNDK": "sandisk",
+    "DELL": "dell technologies",
+    "TXN": "texas instruments",
+    "PM": "philip morris international",
+    "IBM": "ibm",
+    "WFC": "wells fargo",
+    "PANW": "palo alto networks",
+    "RTX": "rtx",
+    "GDVTZ": "gould investors l p",
+    "LIN": "linde",
+    "C": "citigroup",
+    "AXP": "american express",
+    "ANET": "arista networks",
+    "MRVL": "marvell technology",
+    "STX": "seagate technology",
+    "TMUS": "t mobile us",
+    "WDC": "western digital",
+    "QCOM": "qualcomm",
+    "AMGN": "amgen",
+    "MCD": "mcdonald s",
+    "TMO": "thermo fisher scientific",
+    "APH": "amphenol",
+    "ADI": "analog devices",
+    "CRWD": "crowdstrike",
+    "PEP": "pepsico",
+    "NEE": "nextera energy",
+    "SCHW": "charles schwab",
+    "VZ": "verizon",
+    "BA": "boeing",
+    "UNP": "union pacific",
+    "APP": "applovin",
+    "TJX": "tjx companies",
+    "DIS": "disney",
+    "GLW": "corning",
+    "ABT": "abbott laboratories",
+    "WELL": "welltower",
+    "GILD": "gilead sciences",
+    "BLK": "blackrock",
+    "IBKR": "interactive brokers",
+    "DE": "deere",
+    "ETN": "eaton",
+    "UBER": "uber technologies",
+    "T": "at t",
+    "SCCO": "southern copper",
+    "ISRG": "intuitive surgical",
+    "DHR": "danaher",
+    "PFE": "pfizer",
+    "BKNG": "booking",
+    "CB": "chubb",
+    "CRM": "salesforce",
+    "PGR": "progressive",
+    "CVS": "cvs health",
+    "COP": "conocophillips",
+    "SPGI": "s p global",
+    "SYK": "stryker",
+    "COF": "capital one financial",
+    "VRTX": "vertex pharmaceuticals",
+    "VRT": "vertiv",
+    "PH": "parker hannifin",
+    "SBUX": "starbucks",
+    "LMT": "lockheed martin",
+    "MO": "altria",
+    "NEMCL": "newmont cdi 1:1",
+    "LOW": "lowe s companies",
+    "BMY": "bristol myers squibb",
+    "FTNT": "fortinet",
+    "NOW": "servicenow",
+    "HWM": "howmet aerospace",
+    "SO": "southern",
+    "MDT": "medtronic",
+    "ATVK": "ameritek ventures",
+    "TT": "trane technologies",
+    "CDNS": "cadence design systems",
+    "BNY": "bank of new york mellon",
+    "NEM": "newmont",
+    "PNC": "pnc financial services",
+    "GD": "general dynamics",
+    "HOOD": "robinhood",
+    "MAR": "marriott international",
+    "PWR": "quanta services",
+    "DUK": "duke energy",
+    "USB": "u s bancorp",
+    "ADP": "automatic data processing",
+    "UPS": "united parcel service",
+    "BX": "blackstone",
+    "NET": "cloudflare",
+    "MNST": "monster beverage",
+    "MELI": "mercadolibre",
+    "MCK": "mckesson",
+    "CMI": "cummins",
+    "WM": "waste management",
+    "DDOG": "datadog",
+    "CSX": "csx",
+    "WMB": "williams",
+    "CEG": "constellation energy",
+    "SNOW": "snowflake",
+    "ELV": "elevance health",
+    "HCA": "hca healthcare",
+    "FCX": "freeport mcmoran",
+    "ADBE": "adobe",
+    "ABNB": "airbnb",
+    "JCI": "johnson controls",
+    "KKR": "kkr",
+    "CME": "cme",
+    "MRSH": "marsh",
+    "SNPS": "synopsys",
+    "MCO": "moody s",
+    "CMCSA": "comcast",
+    "DASH": "doordash",
+    "VLO": "valero energy",
+    "SHW": "sherwin williams",
+    "ACN": "accenture",
+    "MMM": "3m",
+    "MPC": "marathon petroleum",
+    "EPD": "enterprise products",
+    "EMR": "emerson electric",
+    "ITW": "illinois tool works",
+    "AMX": "america movil sab de cv",
+    "ECL": "ecolab",
+    "CI": "cigna",
+    "RCL": "royal caribbean",
+    "HLT": "hilton worldwide",
+    "NOC": "northrop grumman",
+    "ICE": "intercontinental exchange",
+    "AON": "aon",
+    "MDLZ": "mondelez international",
+    "PSX": "phillips 66",
+    "INTU": "intuit",
+    "FDX": "fedex",
+    "CL": "colgate palmolive",
+    "AEP": "american electric power",
+    "NXPI": "nxp semiconductors",
+    "NSC": "norfolk southern",
+    "CVNA": "carvana",
+    "TDG": "transdigm",
+    "HON": "honeywell",
+    "TRV": "the travelers companies",
+    "CTAS": "cintas",
+    "KMI": "kinder morgan",
+    "SLB": "slb",
+    "ORLY": "o reilly automotive",
+    "ROST": "ross stores",
+    "EOG": "eog resources",
+    "NWG": "natwest",
+    "GM": "general motors",
+    "CRH": "crh",
+    "MSI": "motorola solutions",
+    "ALAB": "astera labs",
+    "HONA": "honeywell aerospace",
+    "APO": "apollo global management",
+    "REGN": "regeneron pharmaceuticals",
+    "BE": "bloom energy",
+    "URI": "united rentals",
+    "ET": "energy transfer",
+    "RSG": "republic services",
+    "APD": "air products chemicals",
+    "WBD": "warner bros discovery",
+    "MPWR": "monolithic power systems",
+    "BSX": "boston scientific",
+    "NKE": "nike",
+    "PCAR": "paccar",
+    "CIEN": "ciena",
+    "GWW": "w w grainger",
+    "AJG": "arthur j gallagher",
+    "TFC": "truist financial",
+    "ALL": "allstate",
+    "HPE": "hewlett packard enterprise",
+    "COHR": "coherent",
+    "CCZ": "comcast 2% cnv pref sec15 10 2029 usd71",
+    "AFL": "aflac",
+    "LITE": "lumentum",
+    "FIX": "comfort systems usa",
+    "D": "dominion resources",
+    "B": "barrick mining",
+    "SRE": "sempra energy",
+    "TGT": "target",
+    "COR": "cencora",
+    "MET": "metlife",
+    "TRGP": "targa resources",
+    "TEL": "te connectivity",
+    "CARR": "carrier global",
+    "MPLX": "mplx",
+    "DAL": "delta air lines",
+    "BKR": "baker hughes",
+    "CTVA": "corteva",
+    "OKE": "oneok",
+    "TER": "teradyne",
+    "NBIS": "nebius",
+    "F": "ford motor",
+    "KEYS": "keysight technologies",
+    "CAH": "cardinal health",
+    "ARGX": "argenx se",
+    "LHX": "l3harris technologies",
+    "LNG": "cheniere energy",
+    "MDLN": "medline",
+    "AME": "ametek",
+    "ETR": "entergy",
+    "VST": "vistra energy",
+    "FAST": "fastenal",
+    "EW": "edwards lifesciences",
+    "ROK": "rockwell automation",
+    "OXY": "occidental petroleum",
+    "EBAY": "ebay",
+    "FITB": "fifth third bancorp",
+    "NUE": "nucor",
+    "EA": "electronic arts",
+    "FANG": "diamondback energy",
+    "MT": "arcelormittal",
+    "STT": "state street",
+    "AZO": "autozone",
+    "XEL": "xcel energy",
+    "NDAQ": "nasdaq",
+    "FLEX": "flex",
+    "HEI": "heico",
+    "DVN": "devon energy",
+    "CBRS": "cerebras systems",
+    "CRWV": "coreweave",
+    "MCHP": "microchip technology",
+    "EXC": "exelon",
+    "CRDO": "credo technology",
+    "ODFL": "old dominion freight line",
+    "GRMN": "garmin",
+    "HUM": "humana",
+    "RKLB": "rocket lab",
+    "CCEP": "coca cola europacific",
+    "FER": "ferrovial se",
+    "XYZ": "block",
+    "AXON": "axon enterprise",
+    "TTWO": "take two interactive software",
+    "AMP": "ameriprise financial",
+    "CMG": "chipotle mexican grill",
+    "IX": "orix",
+    "YUM": "yum! brands",
+    "BSQKZ": "block",
+    "IDXX": "idexx laboratories",
+    "WAB": "westinghouse air brake technologies",
+    "VIK": "viking",
+    "MSCI": "msci",
+    "FERG": "ferguson",
+    "ADSK": "autodesk",
+    "FMX": "femsa",
+    "DHI": "d r horton",
+    "KDP": "keurig dr pepper",
+    "HLN": "haleon",
+    "LYV": "live nation entertainment",
+    "COIN": "coinbase",
+    "ENBA": "enbridge 6 375% fxd fltg sub nts sr 18 b 15 04 78",
+    "AIG": "american international",
+    "BDX": "becton dickinson",
+    "CCJ": "cameco",
+    "AU": "austerlitz acquisition i"
+  },
+  "excluded_counts": {
+    "factor_etf": 0,
+    "non_us_market": 0,
+    "flagged_non_common": 36,
+    "excluded_sec_type": 0,
+    "unconfirmed_common": 0,
+    "below_cap": 0,
+    "no_prescreen_value": 0
+  },
+  "excluded_codes": {
+    "factor_etf": [],
+    "non_us_market": [],
+    "flagged_non_common": [
+      "PLD",
+      "EQIX",
+      "AMT",
+      "SPG",
+      "DLR",
+      "O",
+      "PSA",
+      "VTR",
+      "IRM",
+      "CCI",
+      "EXR",
+      "VICI",
+      "AVB",
+      "EQR",
+      "SBAC",
+      "ESS",
+      "INVH",
+      "WY",
+      "NLY",
+      "KIM",
+      "WPC",
+      "HST",
+      "LAMR",
+      "MAA",
+      "SUI",
+      "REG",
+      "OHI",
+      "UDR",
+      "AGNC",
+      "ELS",
+      "GLPI",
+      "AMH",
+      "CPT",
+      "EGP",
+      "BXP",
+      "FRT"
+    ],
+    "excluded_sec_type": [],
+    "unconfirmed_common": [],
+    "below_cap": [],
+    "no_prescreen_value": []
+  },
+  "pool_sufficient_for_superset": true,
+  "adr_classification": {
+    "NVDA": {
+      "ticker": "NVDA",
+      "matched_rule": null,
+      "name": "NVIDIA",
+      "classification": "us_common"
+    },
+    "AAPL": {
+      "ticker": "AAPL",
+      "matched_rule": null,
+      "name": "Apple",
+      "classification": "us_common"
+    },
+    "GOOGL": {
+      "ticker": "GOOGL",
+      "matched_rule": null,
+      "name": "Alphabet-A",
+      "classification": "us_common"
+    },
+    "GOOG": {
+      "ticker": "GOOG",
+      "matched_rule": null,
+      "name": "Alphabet-C",
+      "classification": "us_common"
+    },
+    "MSFT": {
+      "ticker": "MSFT",
+      "matched_rule": null,
+      "name": "Microsoft",
+      "classification": "us_common"
+    },
+    "AMZN": {
+      "ticker": "AMZN",
+      "matched_rule": null,
+      "name": "Amazon",
+      "classification": "us_common"
+    },
+    "TSM": {
+      "ticker": "TSM",
+      "matched_rule": "R0",
+      "name": "Taiwan Semiconductor",
+      "classification": "foreign_excluded"
+    },
+    "SPCX": {
+      "ticker": "SPCX",
+      "matched_rule": null,
+      "name": "SpaceX",
+      "classification": "us_common"
+    },
+    "AVGO": {
+      "ticker": "AVGO",
+      "matched_rule": null,
+      "name": "Broadcom",
+      "classification": "us_common"
+    },
+    "META": {
+      "ticker": "META",
+      "matched_rule": null,
+      "name": "Meta Platforms",
+      "classification": "us_common"
+    },
+    "TSLA": {
+      "ticker": "TSLA",
+      "matched_rule": null,
+      "name": "Tesla",
+      "classification": "us_common"
+    },
+    "SKHYV": {
+      "ticker": "SKHYV",
+      "matched_rule": null,
+      "name": "SK hynix-WI",
+      "classification": "us_common"
+    },
+    "LLY": {
+      "ticker": "LLY",
+      "matched_rule": null,
+      "name": "Eli Lilly and Co",
+      "classification": "us_common"
+    },
+    "MU": {
+      "ticker": "MU",
+      "matched_rule": null,
+      "name": "Micron Technology",
+      "classification": "us_common"
+    },
+    "SKHY": {
+      "ticker": "SKHY",
+      "matched_rule": null,
+      "name": "SK hynix",
+      "classification": "us_common"
+    },
+    "BRK.B": {
+      "ticker": "BRK.B",
+      "matched_rule": null,
+      "name": "Berkshire Hathaway-B",
+      "classification": "us_common"
+    },
+    "BRK.A": {
+      "ticker": "BRK.A",
+      "matched_rule": null,
+      "name": "Berkshire Hathaway-A",
+      "classification": "us_common"
+    },
+    "WMT": {
+      "ticker": "WMT",
+      "matched_rule": null,
+      "name": "Walmart",
+      "classification": "us_common"
+    },
+    "AMD": {
+      "ticker": "AMD",
+      "matched_rule": null,
+      "name": "Advanced Micro Devices",
+      "classification": "us_common"
+    },
+    "JPM": {
+      "ticker": "JPM",
+      "matched_rule": null,
+      "name": "JPMorgan",
+      "classification": "us_common"
+    },
+    "ASML": {
+      "ticker": "ASML",
+      "matched_rule": "R0",
+      "name": "ASML Holding",
+      "classification": "foreign_excluded"
+    },
+    "V": {
+      "ticker": "V",
+      "matched_rule": null,
+      "name": "Visa",
+      "classification": "us_common"
+    },
+    "JNJ": {
+      "ticker": "JNJ",
+      "matched_rule": null,
+      "name": "Johnson & Johnson",
+      "classification": "us_common"
+    },
+    "XOM": {
+      "ticker": "XOM",
+      "matched_rule": null,
+      "name": "Exxon Mobil",
+      "classification": "us_common"
+    },
+    "INTC": {
+      "ticker": "INTC",
+      "matched_rule": null,
+      "name": "Intel",
+      "classification": "us_common"
+    },
+    "TCEHY": {
+      "ticker": "TCEHY",
+      "matched_rule": "R0",
+      "name": "Tencent",
+      "classification": "foreign_excluded"
+    },
+    "ITFCY": {
+      "ticker": "ITFCY",
+      "matched_rule": "R0",
+      "name": "INTACT FINANCIAL CORPORATION UNSPON ADS EACH REP 0.06 COM",
+      "classification": "foreign_excluded"
+    },
+    "AMAT": {
+      "ticker": "AMAT",
+      "matched_rule": null,
+      "name": "Applied Materials",
+      "classification": "us_common"
+    },
+    "CSCO": {
+      "ticker": "CSCO",
+      "matched_rule": null,
+      "name": "Cisco",
+      "classification": "us_common"
+    },
+    "MA": {
+      "ticker": "MA",
+      "matched_rule": null,
+      "name": "MasterCard",
+      "classification": "us_common"
+    },
+    "LRCX": {
+      "ticker": "LRCX",
+      "matched_rule": null,
+      "name": "Lam Research",
+      "classification": "us_common"
+    },
+    "CAT": {
+      "ticker": "CAT",
+      "matched_rule": null,
+      "name": "Caterpillar",
+      "classification": "us_common"
+    },
+    "ABBV": {
+      "ticker": "ABBV",
+      "matched_rule": null,
+      "name": "AbbVie",
+      "classification": "us_common"
+    },
+    "BAC": {
+      "ticker": "BAC",
+      "matched_rule": null,
+      "name": "Bank of America",
+      "classification": "us_common"
+    },
+    "ORCL": {
+      "ticker": "ORCL",
+      "matched_rule": null,
+      "name": "Oracle",
+      "classification": "us_common"
+    },
+    "COST": {
+      "ticker": "COST",
+      "matched_rule": null,
+      "name": "Costco",
+      "classification": "us_common"
+    },
+    "UNH": {
+      "ticker": "UNH",
+      "matched_rule": null,
+      "name": "UnitedHealth",
+      "classification": "us_common"
+    },
+    "GE": {
+      "ticker": "GE",
+      "matched_rule": null,
+      "name": "GE Aerospace",
+      "classification": "us_common"
+    },
+    "KO": {
+      "ticker": "KO",
+      "matched_rule": null,
+      "name": "Coca-Cola",
+      "classification": "us_common"
+    },
+    "MS": {
+      "ticker": "MS",
+      "matched_rule": null,
+      "name": "Morgan Stanley",
+      "classification": "us_common"
+    },
+    "CVX": {
+      "ticker": "CVX",
+      "matched_rule": null,
+      "name": "Chevron",
+      "classification": "us_common"
+    },
+    "ARM": {
+      "ticker": "ARM",
+      "matched_rule": "R0",
+      "name": "Arm Holdings",
+      "classification": "foreign_excluded"
+    },
+    "CYATY": {
+      "ticker": "CYATY",
+      "matched_rule": "R0",
+      "name": "CONTEMPORARY AMPEREX TECHNOLOGY CO UNSPON ADS EACH REP 0.4 ORD",
+      "classification": "foreign_excluded"
+    },
+    "PG": {
+      "ticker": "PG",
+      "matched_rule": null,
+      "name": "Procter & Gamble",
+      "classification": "us_common"
+    },
+    "HD": {
+      "ticker": "HD",
+      "matched_rule": null,
+      "name": "Home Depot",
+      "classification": "us_common"
+    },
+    "HSBC": {
+      "ticker": "HSBC",
+      "matched_rule": "R0",
+      "name": "HSBC Holdings",
+      "classification": "foreign_excluded"
+    },
+    "RHHBY": {
+      "ticker": "RHHBY",
+      "matched_rule": "R0",
+      "name": "ROCHE HOLDING AG",
+      "classification": "foreign_excluded"
+    },
+    "GS": {
+      "ticker": "GS",
+      "matched_rule": null,
+      "name": "Goldman Sachs",
+      "classification": "us_common"
+    },
+    "NFLX": {
+      "ticker": "NFLX",
+      "matched_rule": null,
+      "name": "Netflix",
+      "classification": "us_common"
+    },
+    "MRK": {
+      "ticker": "MRK",
+      "matched_rule": null,
+      "name": "Merck & Co",
+      "classification": "us_common"
+    },
+    "PLTR": {
+      "ticker": "PLTR",
+      "matched_rule": null,
+      "name": "Palantir",
+      "classification": "us_common"
+    },
+    "IDCBY": {
+      "ticker": "IDCBY",
+      "matched_rule": "R0",
+      "name": "Industrial And Commercial Bank Of China (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "CGXYY": {
+      "ticker": "CGXYY",
+      "matched_rule": "R0",
+      "name": "CHINA GALAXY SECUR",
+      "classification": "foreign_excluded"
+    },
+    "KLAC": {
+      "ticker": "KLAC",
+      "matched_rule": null,
+      "name": "KLA Corp",
+      "classification": "us_common"
+    },
+    "NVS": {
+      "ticker": "NVS",
+      "matched_rule": "R0",
+      "name": "Novartis AG",
+      "classification": "foreign_excluded"
+    },
+    "GEV": {
+      "ticker": "GEV",
+      "matched_rule": null,
+      "name": "GE Vernova",
+      "classification": "us_common"
+    },
+    "RY": {
+      "ticker": "RY",
+      "matched_rule": "R0",
+      "name": "Royal Bank of Canada",
+      "classification": "foreign_excluded"
+    },
+    "SNDK": {
+      "ticker": "SNDK",
+      "matched_rule": null,
+      "name": "SanDisk",
+      "classification": "us_common"
+    },
+    "DELL": {
+      "ticker": "DELL",
+      "matched_rule": null,
+      "name": "Dell Technologies",
+      "classification": "us_common"
+    },
+    "TXN": {
+      "ticker": "TXN",
+      "matched_rule": null,
+      "name": "Texas Instruments",
+      "classification": "us_common"
+    },
+    "PM": {
+      "ticker": "PM",
+      "matched_rule": null,
+      "name": "Philip Morris International",
+      "classification": "us_common"
+    },
+    "LVMUY": {
+      "ticker": "LVMUY",
+      "matched_rule": "R0",
+      "name": "LVMH Moet Hennessy Louis Vuitton",
+      "classification": "foreign_excluded"
+    },
+    "IBM": {
+      "ticker": "IBM",
+      "matched_rule": null,
+      "name": "IBM Corp",
+      "classification": "us_common"
+    },
+    "CICHY": {
+      "ticker": "CICHY",
+      "matched_rule": "R0",
+      "name": "CHINA CONST BK",
+      "classification": "foreign_excluded"
+    },
+    "BABA": {
+      "ticker": "BABA",
+      "matched_rule": "R0",
+      "name": "Alibaba",
+      "classification": "foreign_excluded"
+    },
+    "AZN": {
+      "ticker": "AZN",
+      "matched_rule": "R0",
+      "name": "AstraZeneca",
+      "classification": "foreign_excluded"
+    },
+    "WFC": {
+      "ticker": "WFC",
+      "matched_rule": null,
+      "name": "Wells Fargo & Co",
+      "classification": "us_common"
+    },
+    "KXIAY": {
+      "ticker": "KXIAY",
+      "matched_rule": "R0",
+      "name": "KIOXIA HOLDINGS CORPORATION UNSPON ADR EACH REP 0.1 COM",
+      "classification": "foreign_excluded"
+    },
+    "NSRGY": {
+      "ticker": "NSRGY",
+      "matched_rule": "R0",
+      "name": "NESTLE S.A SPONS",
+      "classification": "foreign_excluded"
+    },
+    "PANW": {
+      "ticker": "PANW",
+      "matched_rule": null,
+      "name": "Palo Alto Networks",
+      "classification": "us_common"
+    },
+    "RTX": {
+      "ticker": "RTX",
+      "matched_rule": null,
+      "name": "RTX Corp",
+      "classification": "us_common"
+    },
+    "GDVTZ": {
+      "ticker": "GDVTZ",
+      "matched_rule": null,
+      "name": "GOULD INVESTORS L P",
+      "classification": "us_common"
+    },
+    "LIN": {
+      "ticker": "LIN",
+      "matched_rule": null,
+      "name": "Linde",
+      "classification": "us_common"
+    },
+    "ACGBY": {
+      "ticker": "ACGBY",
+      "matched_rule": "R0",
+      "name": "AGRICULTURAL BK CH",
+      "classification": "foreign_excluded"
+    },
+    "MUFG": {
+      "ticker": "MUFG",
+      "matched_rule": "R0",
+      "name": "Mitsubishi UFJ Financial Group",
+      "classification": "foreign_excluded"
+    },
+    "C": {
+      "ticker": "C",
+      "matched_rule": null,
+      "name": "Citigroup",
+      "classification": "us_common"
+    },
+    "AXP": {
+      "ticker": "AXP",
+      "matched_rule": null,
+      "name": "American Express",
+      "classification": "us_common"
+    },
+    "SIEGY": {
+      "ticker": "SIEGY",
+      "matched_rule": "R0",
+      "name": "SIEMENS AG",
+      "classification": "foreign_excluded"
+    },
+    "ANET": {
+      "ticker": "ANET",
+      "matched_rule": null,
+      "name": "Arista Networks",
+      "classification": "us_common"
+    },
+    "LRLCY": {
+      "ticker": "LRLCY",
+      "matched_rule": "R0",
+      "name": "L'Oreal SA Unsponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    "SHEL": {
+      "ticker": "SHEL",
+      "matched_rule": "R0",
+      "name": "Shell",
+      "classification": "foreign_excluded"
+    },
+    "SFTBY": {
+      "ticker": "SFTBY",
+      "matched_rule": "R0",
+      "name": "SoftBank Group (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "NVO": {
+      "ticker": "NVO",
+      "matched_rule": "R0",
+      "name": "Novo-Nordisk A/S",
+      "classification": "foreign_excluded"
+    },
+    "TM": {
+      "ticker": "TM",
+      "matched_rule": "R0",
+      "name": "Toyota Motor",
+      "classification": "foreign_excluded"
+    },
+    "BACHY": {
+      "ticker": "BACHY",
+      "matched_rule": "R0",
+      "name": "BANK OF CHINA LTD",
+      "classification": "foreign_excluded"
+    },
+    "BHP": {
+      "ticker": "BHP",
+      "matched_rule": "R0",
+      "name": "BHP Group Ltd",
+      "classification": "foreign_excluded"
+    },
+    "TOELY": {
+      "ticker": "TOELY",
+      "matched_rule": "R0",
+      "name": "Tokyo Electron (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "MRVL": {
+      "ticker": "MRVL",
+      "matched_rule": null,
+      "name": "Marvell Technology",
+      "classification": "us_common"
+    },
+    "STX": {
+      "ticker": "STX",
+      "matched_rule": null,
+      "name": "Seagate Technology",
+      "classification": "us_common"
+    },
+    "TMUS": {
+      "ticker": "TMUS",
+      "matched_rule": null,
+      "name": "T-Mobile US",
+      "classification": "us_common"
+    },
+    "WDC": {
+      "ticker": "WDC",
+      "matched_rule": null,
+      "name": "Western Digital",
+      "classification": "us_common"
+    },
+    "SAN": {
+      "ticker": "SAN",
+      "matched_rule": "R0",
+      "name": "Banco Santander",
+      "classification": "foreign_excluded"
+    },
+    "QCOM": {
+      "ticker": "QCOM",
+      "matched_rule": null,
+      "name": "Qualcomm",
+      "classification": "us_common"
+    },
+    "TD": {
+      "ticker": "TD",
+      "matched_rule": "R0",
+      "name": "The Toronto-Dominion Bank",
+      "classification": "foreign_excluded"
+    },
+    "CMWAY": {
+      "ticker": "CMWAY",
+      "matched_rule": "R0",
+      "name": "COMMONWEALTH BANK OF AUSTRALIA SPON ADR EACH REPR 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    "HESAY": {
+      "ticker": "HESAY",
+      "matched_rule": "R0",
+      "name": "Hermes International SA",
+      "classification": "foreign_excluded"
+    },
+    "AMGN": {
+      "ticker": "AMGN",
+      "matched_rule": null,
+      "name": "Amgen",
+      "classification": "us_common"
+    },
+    "MCD": {
+      "ticker": "MCD",
+      "matched_rule": null,
+      "name": "McDonald's",
+      "classification": "us_common"
+    },
+    "TMO": {
+      "ticker": "TMO",
+      "matched_rule": null,
+      "name": "Thermo Fisher Scientific",
+      "classification": "us_common"
+    },
+    "IDEXY": {
+      "ticker": "IDEXY",
+      "matched_rule": "R0",
+      "name": "INDITEX (IND.DE DISENO TEXTIL SA) UNSP ADR EACH REP 0.50 ORD",
+      "classification": "foreign_excluded"
+    },
+    "APH": {
+      "ticker": "APH",
+      "matched_rule": null,
+      "name": "Amphenol",
+      "classification": "us_common"
+    },
+    "ADI": {
+      "ticker": "ADI",
+      "matched_rule": null,
+      "name": "Analog Devices",
+      "classification": "us_common"
+    },
+    "CRWD": {
+      "ticker": "CRWD",
+      "matched_rule": null,
+      "name": "CrowdStrike",
+      "classification": "us_common"
+    },
+    "ABBNY": {
+      "ticker": "ABBNY",
+      "matched_rule": "R0",
+      "name": "ABB LTD SPON ADR EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "PEP": {
+      "ticker": "PEP",
+      "matched_rule": null,
+      "name": "PepsiCo",
+      "classification": "us_common"
+    },
+    "SAP": {
+      "ticker": "SAP",
+      "matched_rule": "R0",
+      "name": "SAP SE",
+      "classification": "foreign_excluded"
+    },
+    "NEE": {
+      "ticker": "NEE",
+      "matched_rule": null,
+      "name": "NextEra Energy",
+      "classification": "us_common"
+    },
+    "ALIZY": {
+      "ticker": "ALIZY",
+      "matched_rule": "R0",
+      "name": "ALLIANZ SE UNSPON ADS EACH REP 1/10 ORD SHARES",
+      "classification": "foreign_excluded"
+    },
+    "SCHW": {
+      "ticker": "SCHW",
+      "matched_rule": null,
+      "name": "Charles Schwab",
+      "classification": "us_common"
+    },
+    "EADSY": {
+      "ticker": "EADSY",
+      "matched_rule": "R0",
+      "name": "AIRBUS SE",
+      "classification": "foreign_excluded"
+    },
+    "VZ": {
+      "ticker": "VZ",
+      "matched_rule": null,
+      "name": "Verizon",
+      "classification": "us_common"
+    },
+    "BA": {
+      "ticker": "BA",
+      "matched_rule": null,
+      "name": "Boeing",
+      "classification": "us_common"
+    },
+    "TTE": {
+      "ticker": "TTE",
+      "matched_rule": "R0",
+      "name": "TotalEnergies",
+      "classification": "foreign_excluded"
+    },
+    "WBKCY": {
+      "ticker": "WBKCY",
+      "matched_rule": "R0",
+      "name": "WESTPAC BANKING CORPORATION UNSPON ADS EACH REP 2 ORD",
+      "classification": "foreign_excluded"
+    },
+    "SBGSY": {
+      "ticker": "SBGSY",
+      "matched_rule": "R0",
+      "name": "SCHNEIDER ELECTRIC SE UNSPON ADR EA REPR 0.20 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "UNP": {
+      "ticker": "UNP",
+      "matched_rule": null,
+      "name": "Union Pacific",
+      "classification": "us_common"
+    },
+    "UBS": {
+      "ticker": "UBS",
+      "matched_rule": "R0",
+      "name": "UBS Group",
+      "classification": "foreign_excluded"
+    },
+    "APP": {
+      "ticker": "APP",
+      "matched_rule": null,
+      "name": "Applovin",
+      "classification": "us_common"
+    },
+    "TJX": {
+      "ticker": "TJX",
+      "matched_rule": null,
+      "name": "TJX Companies",
+      "classification": "us_common"
+    },
+    "DIS": {
+      "ticker": "DIS",
+      "matched_rule": null,
+      "name": "Disney",
+      "classification": "us_common"
+    },
+    "GLW": {
+      "ticker": "GLW",
+      "matched_rule": null,
+      "name": "Corning",
+      "classification": "us_common"
+    },
+    "ABT": {
+      "ticker": "ABT",
+      "matched_rule": null,
+      "name": "Abbott Laboratories",
+      "classification": "us_common"
+    },
+    "SMFG": {
+      "ticker": "SMFG",
+      "matched_rule": "R0",
+      "name": "Sumitomo Mitsui Financial",
+      "classification": "foreign_excluded"
+    },
+    "WELL": {
+      "ticker": "WELL",
+      "matched_rule": null,
+      "name": "Welltower",
+      "classification": "us_common"
+    },
+    "IBDRY": {
+      "ticker": "IBDRY",
+      "matched_rule": "R0",
+      "name": "IBERDROLA SA SPON ADR EACH REP 4 ORD",
+      "classification": "foreign_excluded"
+    },
+    "GILD": {
+      "ticker": "GILD",
+      "matched_rule": null,
+      "name": "Gilead Sciences",
+      "classification": "us_common"
+    },
+    "RYCEY": {
+      "ticker": "RYCEY",
+      "matched_rule": "R0",
+      "name": "ROLLS ROYCE ADR",
+      "classification": "foreign_excluded"
+    },
+    "BLK": {
+      "ticker": "BLK",
+      "matched_rule": null,
+      "name": "Blackrock",
+      "classification": "us_common"
+    },
+    "SHOP": {
+      "ticker": "SHOP",
+      "matched_rule": "R0",
+      "name": "Shopify",
+      "classification": "foreign_excluded"
+    },
+    "IBKR": {
+      "ticker": "IBKR",
+      "matched_rule": null,
+      "name": "Interactive Brokers",
+      "classification": "us_common"
+    },
+    "SAFRY": {
+      "ticker": "SAFRY",
+      "matched_rule": "R0",
+      "name": "SAFRAN SA UNSPON ADR EA REP 0.25 ORD",
+      "classification": "foreign_excluded"
+    },
+    "DE": {
+      "ticker": "DE",
+      "matched_rule": null,
+      "name": "Deere",
+      "classification": "us_common"
+    },
+    "ETN": {
+      "ticker": "ETN",
+      "matched_rule": null,
+      "name": "Eaton",
+      "classification": "us_common"
+    },
+    "FRCOY": {
+      "ticker": "FRCOY",
+      "matched_rule": "R0",
+      "name": "Fast Retailing (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "BUD": {
+      "ticker": "BUD",
+      "matched_rule": "R0",
+      "name": "Anheuser-Busch Inbev",
+      "classification": "foreign_excluded"
+    },
+    "DBSDY": {
+      "ticker": "DBSDY",
+      "matched_rule": "R0",
+      "name": "DBS GROUP HLDGS LTD SPONS ADR EACH REP 4 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "UBER": {
+      "ticker": "UBER",
+      "matched_rule": null,
+      "name": "Uber Technologies",
+      "classification": "us_common"
+    },
+    "RIO": {
+      "ticker": "RIO",
+      "matched_rule": "R0",
+      "name": "Rio Tinto",
+      "classification": "foreign_excluded"
+    },
+    "T": {
+      "ticker": "T",
+      "matched_rule": null,
+      "name": "AT&T",
+      "classification": "us_common"
+    },
+    "CIHKY": {
+      "ticker": "CIHKY",
+      "matched_rule": "R0",
+      "name": "CHINA MERCHANTS BK",
+      "classification": "foreign_excluded"
+    },
+    "SCCO": {
+      "ticker": "SCCO",
+      "matched_rule": null,
+      "name": "Southern Copper",
+      "classification": "us_common"
+    },
+    "BBVA": {
+      "ticker": "BBVA",
+      "matched_rule": "R0",
+      "name": "Banco Bilbao Vizcaya Argentaria",
+      "classification": "foreign_excluded"
+    },
+    "DTEGY": {
+      "ticker": "DTEGY",
+      "matched_rule": "R0",
+      "name": "DEUTSCHE TELEKOM",
+      "classification": "foreign_excluded"
+    },
+    "ISRG": {
+      "ticker": "ISRG",
+      "matched_rule": null,
+      "name": "Intuitive Surgical",
+      "classification": "us_common"
+    },
+    "UNCRY": {
+      "ticker": "UNCRY",
+      "matched_rule": "R0",
+      "name": "UNICREDIT SPA UNSPON ADR EACH REP 0.5 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "DHR": {
+      "ticker": "DHR",
+      "matched_rule": null,
+      "name": "Danaher",
+      "classification": "us_common"
+    },
+    "PFE": {
+      "ticker": "PFE",
+      "matched_rule": null,
+      "name": "Pfizer",
+      "classification": "us_common"
+    },
+    "BKNG": {
+      "ticker": "BKNG",
+      "matched_rule": null,
+      "name": "Booking Holdings",
+      "classification": "us_common"
+    },
+    "HDB": {
+      "ticker": "HDB",
+      "matched_rule": "R0",
+      "name": "HDFC Bank",
+      "classification": "foreign_excluded"
+    },
+    "ATEYY": {
+      "ticker": "ATEYY",
+      "matched_rule": "R0",
+      "name": "Advantest (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "CB": {
+      "ticker": "CB",
+      "matched_rule": null,
+      "name": "Chubb Ltd",
+      "classification": "us_common"
+    },
+    "CRM": {
+      "ticker": "CRM",
+      "matched_rule": null,
+      "name": "Salesforce",
+      "classification": "us_common"
+    },
+    "PGR": {
+      "ticker": "PGR",
+      "matched_rule": null,
+      "name": "Progressive",
+      "classification": "us_common"
+    },
+    "CFRUY": {
+      "ticker": "CFRUY",
+      "matched_rule": "R0",
+      "name": "COMPAGNE FIN ADR",
+      "classification": "foreign_excluded"
+    },
+    "UL": {
+      "ticker": "UL",
+      "matched_rule": "R0",
+      "name": "Unilever",
+      "classification": "foreign_excluded"
+    },
+    "CVS": {
+      "ticker": "CVS",
+      "matched_rule": null,
+      "name": "CVS Health",
+      "classification": "us_common"
+    },
+    "HTHIY": {
+      "ticker": "HTHIY",
+      "matched_rule": "R0",
+      "name": "Hitachi (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "COP": {
+      "ticker": "COP",
+      "matched_rule": null,
+      "name": "ConocoPhillips",
+      "classification": "us_common"
+    },
+    "BTI": {
+      "ticker": "BTI",
+      "matched_rule": "R0",
+      "name": "British American Tobacco",
+      "classification": "foreign_excluded"
+    },
+    "MFG": {
+      "ticker": "MFG",
+      "matched_rule": "R0",
+      "name": "Mizuho Financial",
+      "classification": "foreign_excluded"
+    },
+    "SPGI": {
+      "ticker": "SPGI",
+      "matched_rule": null,
+      "name": "S&P Global",
+      "classification": "us_common"
+    },
+    "SYK": {
+      "ticker": "SYK",
+      "matched_rule": null,
+      "name": "Stryker Corp",
+      "classification": "us_common"
+    },
+    "BNPQY": {
+      "ticker": "BNPQY",
+      "matched_rule": "R0",
+      "name": "BNP PARIBAS SPON",
+      "classification": "foreign_excluded"
+    },
+    "BMO": {
+      "ticker": "BMO",
+      "matched_rule": "R0",
+      "name": "Bank of Montreal",
+      "classification": "foreign_excluded"
+    },
+    "ISNPY": {
+      "ticker": "ISNPY",
+      "matched_rule": "R0",
+      "name": "INTESA SANP ADR",
+      "classification": "foreign_excluded"
+    },
+    "COF": {
+      "ticker": "COF",
+      "matched_rule": null,
+      "name": "Capital One Financial",
+      "classification": "us_common"
+    },
+    "VRTX": {
+      "ticker": "VRTX",
+      "matched_rule": null,
+      "name": "Vertex Pharmaceuticals",
+      "classification": "us_common"
+    },
+    "VRT": {
+      "ticker": "VRT",
+      "matched_rule": null,
+      "name": "Vertiv Holdings",
+      "classification": "us_common"
+    },
+    "SONY": {
+      "ticker": "SONY",
+      "matched_rule": "R0",
+      "name": "Sony",
+      "classification": "foreign_excluded"
+    },
+    "PNGAY": {
+      "ticker": "PNGAY",
+      "matched_rule": "R0",
+      "name": "PING AN INSURANCE",
+      "classification": "foreign_excluded"
+    },
+    "PDD": {
+      "ticker": "PDD",
+      "matched_rule": "R0",
+      "name": "PDD Holdings",
+      "classification": "foreign_excluded"
+    },
+    "PH": {
+      "ticker": "PH",
+      "matched_rule": null,
+      "name": "Parker Hannifin",
+      "classification": "us_common"
+    },
+    "SBUX": {
+      "ticker": "SBUX",
+      "matched_rule": null,
+      "name": "Starbucks",
+      "classification": "us_common"
+    },
+    "LMT": {
+      "ticker": "LMT",
+      "matched_rule": null,
+      "name": "Lockheed Martin",
+      "classification": "us_common"
+    },
+    "MO": {
+      "ticker": "MO",
+      "matched_rule": null,
+      "name": "Altria",
+      "classification": "us_common"
+    },
+    "NEMCL": {
+      "ticker": "NEMCL",
+      "matched_rule": null,
+      "name": "NEWMONT CORPORATION CDI 1:1",
+      "classification": "us_common"
+    },
+    "LOW": {
+      "ticker": "LOW",
+      "matched_rule": null,
+      "name": "Lowe's Companies",
+      "classification": "us_common"
+    },
+    "ENB": {
+      "ticker": "ENB",
+      "matched_rule": "R0",
+      "name": "Enbridge",
+      "classification": "foreign_excluded"
+    },
+    "BMY": {
+      "ticker": "BMY",
+      "matched_rule": null,
+      "name": "Bristol-Myers Squibb",
+      "classification": "us_common"
+    },
+    "FTNT": {
+      "ticker": "FTNT",
+      "matched_rule": null,
+      "name": "Fortinet",
+      "classification": "us_common"
+    },
+    "AIQUY": {
+      "ticker": "AIQUY",
+      "matched_rule": "R0",
+      "name": "Air Liquide SA Unsponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    "ENLAY": {
+      "ticker": "ENLAY",
+      "matched_rule": "R0",
+      "name": "ENEL SPA UN SPON ADR EA REPR 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "ZURVY": {
+      "ticker": "ZURVY",
+      "matched_rule": "R0",
+      "name": "Zurich Insurance Group Ltd Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    "CSUAY": {
+      "ticker": "CSUAY",
+      "matched_rule": "R0",
+      "name": "CHINA SHENHUA ENER",
+      "classification": "foreign_excluded"
+    },
+    "MRAAY": {
+      "ticker": "MRAAY",
+      "matched_rule": "R0",
+      "name": "Murata Manufacturing (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "PBR": {
+      "ticker": "PBR",
+      "matched_rule": "R0",
+      "name": "Petroleo Brasileiro SA Petrobras",
+      "classification": "foreign_excluded"
+    },
+    "NOW": {
+      "ticker": "NOW",
+      "matched_rule": null,
+      "name": "ServiceNow",
+      "classification": "us_common"
+    },
+    "HWM": {
+      "ticker": "HWM",
+      "matched_rule": null,
+      "name": "Howmet Aerospace",
+      "classification": "us_common"
+    },
+    "IFNNY": {
+      "ticker": "IFNNY",
+      "matched_rule": "R0",
+      "name": "INFINEON TECHNOLOG",
+      "classification": "foreign_excluded"
+    },
+    "SO": {
+      "ticker": "SO",
+      "matched_rule": null,
+      "name": "Southern",
+      "classification": "us_common"
+    },
+    "MDT": {
+      "ticker": "MDT",
+      "matched_rule": null,
+      "name": "Medtronic",
+      "classification": "us_common"
+    },
+    "CM": {
+      "ticker": "CM",
+      "matched_rule": "R0",
+      "name": "Canadian Imperial Bank of Commerce",
+      "classification": "foreign_excluded"
+    },
+    "BNS": {
+      "ticker": "BNS",
+      "matched_rule": "R0",
+      "name": "Bank of Nova Scotia",
+      "classification": "foreign_excluded"
+    },
+    "ATVK": {
+      "ticker": "ATVK",
+      "matched_rule": null,
+      "name": "Ameritek Ventures",
+      "classification": "us_common"
+    },
+    "HNHPF": {
+      "ticker": "HNHPF",
+      "matched_rule": "R2",
+      "name": "HON HAI PRECISION INDUSTRY SPON GDS EACH REP 2 SHS TWD10 REG'S'",
+      "classification": "foreign_excluded"
+    },
+    "RCRUY": {
+      "ticker": "RCRUY",
+      "matched_rule": "R0",
+      "name": "Recruit Holdings (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "TT": {
+      "ticker": "TT",
+      "matched_rule": null,
+      "name": "Trane Technologies",
+      "classification": "us_common"
+    },
+    "CDNS": {
+      "ticker": "CDNS",
+      "matched_rule": null,
+      "name": "Cadence Design Systems",
+      "classification": "us_common"
+    },
+    "GSK": {
+      "ticker": "GSK",
+      "matched_rule": "R0",
+      "name": "GlaxoSmithKline",
+      "classification": "foreign_excluded"
+    },
+    "IBN": {
+      "ticker": "IBN",
+      "matched_rule": "R0",
+      "name": "ICICI Bank",
+      "classification": "foreign_excluded"
+    },
+    "SNY": {
+      "ticker": "SNY",
+      "matched_rule": "R0",
+      "name": "Sanofi",
+      "classification": "foreign_excluded"
+    },
+    "BNY": {
+      "ticker": "BNY",
+      "matched_rule": null,
+      "name": "Bank of New York Mellon",
+      "classification": "us_common"
+    },
+    "AXAHY": {
+      "ticker": "AXAHY",
+      "matched_rule": "R0",
+      "name": "AXA SA Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    "NEM": {
+      "ticker": "NEM",
+      "matched_rule": null,
+      "name": "Newmont",
+      "classification": "us_common"
+    },
+    "PNC": {
+      "ticker": "PNC",
+      "matched_rule": null,
+      "name": "PNC Financial Services",
+      "classification": "us_common"
+    },
+    "ZIJMY": {
+      "ticker": "ZIJMY",
+      "matched_rule": "R0",
+      "name": "ZiJin Mining ADR",
+      "classification": "foreign_excluded"
+    },
+    "GD": {
+      "ticker": "GD",
+      "matched_rule": null,
+      "name": "General Dynamics",
+      "classification": "us_common"
+    },
+    "HOOD": {
+      "ticker": "HOOD",
+      "matched_rule": null,
+      "name": "Robinhood",
+      "classification": "us_common"
+    },
+    "MTSUY": {
+      "ticker": "MTSUY",
+      "matched_rule": "R0",
+      "name": "Mitsubishi (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "BP": {
+      "ticker": "BP",
+      "matched_rule": "R0",
+      "name": "BP PLC",
+      "classification": "foreign_excluded"
+    },
+    "PBR.A": {
+      "ticker": "PBR.A",
+      "matched_rule": "R0",
+      "name": "Petroleo Brasileiro SA Petrobras",
+      "classification": "foreign_excluded"
+    },
+    "MAR": {
+      "ticker": "MAR",
+      "matched_rule": null,
+      "name": "Marriott International",
+      "classification": "us_common"
+    },
+    "CAIXY": {
+      "ticker": "CAIXY",
+      "matched_rule": "R0",
+      "name": "CAIXABANK SA UNSP ADR EA REPR 1/3 ORD EUR0.00",
+      "classification": "foreign_excluded"
+    },
+    "PWR": {
+      "ticker": "PWR",
+      "matched_rule": null,
+      "name": "Quanta Services",
+      "classification": "us_common"
+    },
+    "SPOT": {
+      "ticker": "SPOT",
+      "matched_rule": "R0",
+      "name": "Spotify Technology",
+      "classification": "foreign_excluded"
+    },
+    "BYDDY": {
+      "ticker": "BYDDY",
+      "matched_rule": "R0",
+      "name": "BYD Company ADR",
+      "classification": "foreign_excluded"
+    },
+    "DUK": {
+      "ticker": "DUK",
+      "matched_rule": null,
+      "name": "Duke Energy",
+      "classification": "us_common"
+    },
+    "BN": {
+      "ticker": "BN",
+      "matched_rule": "R0",
+      "name": "Brookfield",
+      "classification": "foreign_excluded"
+    },
+    "CHDRY": {
+      "ticker": "CHDRY",
+      "matched_rule": "R0",
+      "name": "CHRISTIAN DIOR SE UNSPON ADR EACH REPR 0.25 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "USB": {
+      "ticker": "USB",
+      "matched_rule": null,
+      "name": "U.S. Bancorp",
+      "classification": "us_common"
+    },
+    "ATLKY": {
+      "ticker": "ATLKY",
+      "matched_rule": "R0",
+      "name": "ATLAS COPCO AB ADR-CNV INTO 1 SER'A'NPV",
+      "classification": "foreign_excluded"
+    },
+    "PROSY": {
+      "ticker": "PROSY",
+      "matched_rule": "R0",
+      "name": "Prosus N.V. Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    "AAGIY": {
+      "ticker": "AAGIY",
+      "matched_rule": "R0",
+      "name": "AIA GROUP LTD",
+      "classification": "foreign_excluded"
+    },
+    "ADP": {
+      "ticker": "ADP",
+      "matched_rule": null,
+      "name": "Automatic Data Processing",
+      "classification": "us_common"
+    },
+    "UPS": {
+      "ticker": "UPS",
+      "matched_rule": null,
+      "name": "United Parcel Service",
+      "classification": "us_common"
+    },
+    "OVCHY": {
+      "ticker": "OVCHY",
+      "matched_rule": "R0",
+      "name": "OVERSEA-CHINESE BANKING CORP UNSP ADR EACH REP 2 ORD",
+      "classification": "foreign_excluded"
+    },
+    "BX": {
+      "ticker": "BX",
+      "matched_rule": null,
+      "name": "Blackstone",
+      "classification": "us_common"
+    },
+    "ITUB": {
+      "ticker": "ITUB",
+      "matched_rule": "R0",
+      "name": "Itau Unibanco",
+      "classification": "foreign_excluded"
+    },
+    "NET": {
+      "ticker": "NET",
+      "matched_rule": null,
+      "name": "Cloudflare",
+      "classification": "us_common"
+    },
+    "ASX": {
+      "ticker": "ASX",
+      "matched_rule": "R0",
+      "name": "ASE Technology",
+      "classification": "foreign_excluded"
+    },
+    "MNST": {
+      "ticker": "MNST",
+      "matched_rule": null,
+      "name": "Monster Beverage",
+      "classification": "us_common"
+    },
+    "MELI": {
+      "ticker": "MELI",
+      "matched_rule": null,
+      "name": "MercadoLibre",
+      "classification": "us_common"
+    },
+    "MCK": {
+      "ticker": "MCK",
+      "matched_rule": null,
+      "name": "McKesson",
+      "classification": "us_common"
+    },
+    "CMI": {
+      "ticker": "CMI",
+      "matched_rule": null,
+      "name": "Cummins",
+      "classification": "us_common"
+    },
+    "WM": {
+      "ticker": "WM",
+      "matched_rule": null,
+      "name": "Waste Management",
+      "classification": "us_common"
+    },
+    "ING": {
+      "ticker": "ING",
+      "matched_rule": "R0",
+      "name": "ING Groep",
+      "classification": "foreign_excluded"
+    },
+    "BCS": {
+      "ticker": "BCS",
+      "matched_rule": "R0",
+      "name": "Barclays",
+      "classification": "foreign_excluded"
+    },
+    "DDOG": {
+      "ticker": "DDOG",
+      "matched_rule": null,
+      "name": "Datadog",
+      "classification": "us_common"
+    },
+    "CSX": {
+      "ticker": "CSX",
+      "matched_rule": null,
+      "name": "CSX Corp",
+      "classification": "us_common"
+    },
+    "WMB": {
+      "ticker": "WMB",
+      "matched_rule": null,
+      "name": "Williams",
+      "classification": "us_common"
+    },
+    "TKOMY": {
+      "ticker": "TKOMY",
+      "matched_rule": "R0",
+      "name": "Tokio Marine Holdings (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "CEG": {
+      "ticker": "CEG",
+      "matched_rule": null,
+      "name": "Constellation Energy",
+      "classification": "us_common"
+    },
+    "SNOW": {
+      "ticker": "SNOW",
+      "matched_rule": null,
+      "name": "Snowflake",
+      "classification": "us_common"
+    },
+    "ELV": {
+      "ticker": "ELV",
+      "matched_rule": null,
+      "name": "Elevance Health",
+      "classification": "us_common"
+    },
+    "HCA": {
+      "ticker": "HCA",
+      "matched_rule": null,
+      "name": "HCA Healthcare",
+      "classification": "us_common"
+    },
+    "ESLOY": {
+      "ticker": "ESLOY",
+      "matched_rule": "R0",
+      "name": "ESSILORLUXOTTICA UNSPON ADR EACH REP 0.5 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "FCX": {
+      "ticker": "FCX",
+      "matched_rule": null,
+      "name": "Freeport-McMoRan",
+      "classification": "us_common"
+    },
+    "ADBE": {
+      "ticker": "ADBE",
+      "matched_rule": null,
+      "name": "Adobe",
+      "classification": "us_common"
+    },
+    "ABNB": {
+      "ticker": "ABNB",
+      "matched_rule": null,
+      "name": "Airbnb",
+      "classification": "us_common"
+    },
+    "RACE": {
+      "ticker": "RACE",
+      "matched_rule": "R0",
+      "name": "Ferrari",
+      "classification": "foreign_excluded"
+    },
+    "JCI": {
+      "ticker": "JCI",
+      "matched_rule": null,
+      "name": "Johnson Controls",
+      "classification": "us_common"
+    },
+    "KKR": {
+      "ticker": "KKR",
+      "matched_rule": null,
+      "name": "KKR & Co",
+      "classification": "us_common"
+    },
+    "LYG": {
+      "ticker": "LYG",
+      "matched_rule": "R0",
+      "name": "Lloyds Banking",
+      "classification": "foreign_excluded"
+    },
+    "CME": {
+      "ticker": "CME",
+      "matched_rule": null,
+      "name": "CME Group",
+      "classification": "us_common"
+    },
+    "CNQ": {
+      "ticker": "CNQ",
+      "matched_rule": "R0",
+      "name": "Canadian Natural Resources",
+      "classification": "foreign_excluded"
+    },
+    "MRSH": {
+      "ticker": "MRSH",
+      "matched_rule": null,
+      "name": "Marsh",
+      "classification": "us_common"
+    },
+    "MGCLY": {
+      "ticker": "MGCLY",
+      "matched_rule": "R0",
+      "name": "MIDEA GROUP CO LTD UNSPON ADS EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "XIACY": {
+      "ticker": "XIACY",
+      "matched_rule": "R0",
+      "name": "Xiaomi Corp. Unsponsored ADR Class B",
+      "classification": "foreign_excluded"
+    },
+    "SNPS": {
+      "ticker": "SNPS",
+      "matched_rule": null,
+      "name": "Synopsys",
+      "classification": "us_common"
+    },
+    "MCO": {
+      "ticker": "MCO",
+      "matched_rule": null,
+      "name": "Moody's",
+      "classification": "us_common"
+    },
+    "ATLCY": {
+      "ticker": "ATLCY",
+      "matched_rule": "R0",
+      "name": "Atlas Copco AB Sponsored ADR Class B",
+      "classification": "foreign_excluded"
+    },
+    "NABZY": {
+      "ticker": "NABZY",
+      "matched_rule": "R0",
+      "name": "National Australia Bank Limited Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    "SHECY": {
+      "ticker": "SHECY",
+      "matched_rule": "R0",
+      "name": "Shin-Etsu Chemical (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "CMCSA": {
+      "ticker": "CMCSA",
+      "matched_rule": null,
+      "name": "Comcast",
+      "classification": "us_common"
+    },
+    "DASH": {
+      "ticker": "DASH",
+      "matched_rule": null,
+      "name": "DoorDash",
+      "classification": "us_common"
+    },
+    "VLO": {
+      "ticker": "VLO",
+      "matched_rule": null,
+      "name": "Valero Energy",
+      "classification": "us_common"
+    },
+    "SHW": {
+      "ticker": "SHW",
+      "matched_rule": null,
+      "name": "Sherwin-Williams",
+      "classification": "us_common"
+    },
+    "ACN": {
+      "ticker": "ACN",
+      "matched_rule": null,
+      "name": "Accenture",
+      "classification": "us_common"
+    },
+    "MMM": {
+      "ticker": "MMM",
+      "matched_rule": null,
+      "name": "3M",
+      "classification": "us_common"
+    },
+    "NGG": {
+      "ticker": "NGG",
+      "matched_rule": "R0",
+      "name": "National Grid",
+      "classification": "foreign_excluded"
+    },
+    "MPC": {
+      "ticker": "MPC",
+      "matched_rule": null,
+      "name": "Marathon Petroleum",
+      "classification": "us_common"
+    },
+    "NTES": {
+      "ticker": "NTES",
+      "matched_rule": "R0",
+      "name": "NetEase",
+      "classification": "foreign_excluded"
+    },
+    "ITOCY": {
+      "ticker": "ITOCY",
+      "matched_rule": "R0",
+      "name": "ITOCHU (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "MITSY": {
+      "ticker": "MITSY",
+      "matched_rule": "R0",
+      "name": "Mitsui (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "EPD": {
+      "ticker": "EPD",
+      "matched_rule": null,
+      "name": "Enterprise Products",
+      "classification": "us_common"
+    },
+    "EQNR": {
+      "ticker": "EQNR",
+      "matched_rule": "R0",
+      "name": "Equinor",
+      "classification": "foreign_excluded"
+    },
+    "CP": {
+      "ticker": "CP",
+      "matched_rule": "R0",
+      "name": "Canadian Pacific Railway",
+      "classification": "foreign_excluded"
+    },
+    "MHVIY": {
+      "ticker": "MHVIY",
+      "matched_rule": "R0",
+      "name": "MITSUBISHI HEAVY INDUSTRIES UNSPON ADS EACH REP 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    "GLNCY": {
+      "ticker": "GLNCY",
+      "matched_rule": "R0",
+      "name": "GLENCORE PLC",
+      "classification": "foreign_excluded"
+    },
+    "ENGIY": {
+      "ticker": "ENGIY",
+      "matched_rule": "R0",
+      "name": "ENGIE SPON ADR EACH REPR 1 SHARE",
+      "classification": "foreign_excluded"
+    },
+    "EMR": {
+      "ticker": "EMR",
+      "matched_rule": null,
+      "name": "Emerson Electric",
+      "classification": "us_common"
+    },
+    "ITW": {
+      "ticker": "ITW",
+      "matched_rule": null,
+      "name": "Illinois Tool Works",
+      "classification": "us_common"
+    },
+    "AMX": {
+      "ticker": "AMX",
+      "matched_rule": null,
+      "name": "America Movil SAB de CV",
+      "classification": "us_common"
+    },
+    "ECL": {
+      "ticker": "ECL",
+      "matched_rule": null,
+      "name": "Ecolab",
+      "classification": "us_common"
+    },
+    "CI": {
+      "ticker": "CI",
+      "matched_rule": null,
+      "name": "Cigna Group",
+      "classification": "us_common"
+    },
+    "LOBLY": {
+      "ticker": "LOBLY",
+      "matched_rule": "R0",
+      "name": "LOBLAWS COMPANIES LIMITED UNSPN ADS ECH REP 0.25 COM",
+      "classification": "foreign_excluded"
+    },
+    "RCL": {
+      "ticker": "RCL",
+      "matched_rule": null,
+      "name": "Royal Caribbean",
+      "classification": "us_common"
+    },
+    "HLT": {
+      "ticker": "HLT",
+      "matched_rule": null,
+      "name": "Hilton Worldwide",
+      "classification": "us_common"
+    },
+    "NOC": {
+      "ticker": "NOC",
+      "matched_rule": null,
+      "name": "Northrop Grumman",
+      "classification": "us_common"
+    },
+    "ICE": {
+      "ticker": "ICE",
+      "matched_rule": null,
+      "name": "Intercontinental Exchange",
+      "classification": "us_common"
+    },
+    "AON": {
+      "ticker": "AON",
+      "matched_rule": null,
+      "name": "Aon PLC",
+      "classification": "us_common"
+    },
+    "CNI": {
+      "ticker": "CNI",
+      "matched_rule": "R0",
+      "name": "Canadian National Railway",
+      "classification": "foreign_excluded"
+    },
+    "ANZGY": {
+      "ticker": "ANZGY",
+      "matched_rule": "R0",
+      "name": "Australia & New Zealand Banking Group Ltd",
+      "classification": "foreign_excluded"
+    },
+    "MDLZ": {
+      "ticker": "MDLZ",
+      "matched_rule": null,
+      "name": "Mondelez International",
+      "classification": "us_common"
+    },
+    "CHGCY": {
+      "ticker": "CHGCY",
+      "matched_rule": "R0",
+      "name": "Chugai Pharmaceutical (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "PSX": {
+      "ticker": "PSX",
+      "matched_rule": null,
+      "name": "Phillips 66",
+      "classification": "us_common"
+    },
+    "INTU": {
+      "ticker": "INTU",
+      "matched_rule": null,
+      "name": "Intuit",
+      "classification": "us_common"
+    },
+    "FDX": {
+      "ticker": "FDX",
+      "matched_rule": null,
+      "name": "FedEx",
+      "classification": "us_common"
+    },
+    "VCISY": {
+      "ticker": "VCISY",
+      "matched_rule": "R0",
+      "name": "VINCI ADR EACH REPR 0.25 ORD EUR2.5",
+      "classification": "foreign_excluded"
+    },
+    "MIELY": {
+      "ticker": "MIELY",
+      "matched_rule": "R0",
+      "name": "Mitsubishi Electric (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "BAM": {
+      "ticker": "BAM",
+      "matched_rule": "R0",
+      "name": "Brookfield Asset Management",
+      "classification": "foreign_excluded"
+    },
+    "NTTYY": {
+      "ticker": "NTTYY",
+      "matched_rule": "R0",
+      "name": "Nippon Telegraph & Telephone (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "CL": {
+      "ticker": "CL",
+      "matched_rule": null,
+      "name": "Colgate-Palmolive",
+      "classification": "us_common"
+    },
+    "AEM": {
+      "ticker": "AEM",
+      "matched_rule": "R0",
+      "name": "Agnico Eagle",
+      "classification": "foreign_excluded"
+    },
+    "METRY": {
+      "ticker": "METRY",
+      "matched_rule": "R0",
+      "name": "METRO INC UNSPON ADS EACH REP 0.2 COM",
+      "classification": "foreign_excluded"
+    },
+    "AEP": {
+      "ticker": "AEP",
+      "matched_rule": null,
+      "name": "American Electric Power",
+      "classification": "us_common"
+    },
+    "NXPI": {
+      "ticker": "NXPI",
+      "matched_rule": null,
+      "name": "NXP Semiconductors",
+      "classification": "us_common"
+    },
+    "NSC": {
+      "ticker": "NSC",
+      "matched_rule": null,
+      "name": "Norfolk Southern",
+      "classification": "us_common"
+    },
+    "BAESY": {
+      "ticker": "BAESY",
+      "matched_rule": "R0",
+      "name": "BAE Systems plc Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    "BCMXY": {
+      "ticker": "BCMXY",
+      "matched_rule": "R0",
+      "name": "BANK OF COMMUNICAT",
+      "classification": "foreign_excluded"
+    },
+    "JPPTY": {
+      "ticker": "JPPTY",
+      "matched_rule": "R0",
+      "name": "JAPAN POST BANK CO LTD UNSP ADR EA REPR 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    "CVNA": {
+      "ticker": "CVNA",
+      "matched_rule": null,
+      "name": "Carvana",
+      "classification": "us_common"
+    },
+    "TDG": {
+      "ticker": "TDG",
+      "matched_rule": null,
+      "name": "TransDigm",
+      "classification": "us_common"
+    },
+    "HON": {
+      "ticker": "HON",
+      "matched_rule": null,
+      "name": "Honeywell",
+      "classification": "us_common"
+    },
+    "TRV": {
+      "ticker": "TRV",
+      "matched_rule": null,
+      "name": "The Travelers Companies",
+      "classification": "us_common"
+    },
+    "DHLGY": {
+      "ticker": "DHLGY",
+      "matched_rule": "R0",
+      "name": "Deutsche Post AG",
+      "classification": "foreign_excluded"
+    },
+    "ARZGY": {
+      "ticker": "ARZGY",
+      "matched_rule": "R0",
+      "name": "GENERALI SPA UNSP ADR EACH REPR 0.50 ORD",
+      "classification": "foreign_excluded"
+    },
+    "CTAS": {
+      "ticker": "CTAS",
+      "matched_rule": null,
+      "name": "Cintas",
+      "classification": "us_common"
+    },
+    "KMI": {
+      "ticker": "KMI",
+      "matched_rule": null,
+      "name": "Kinder Morgan",
+      "classification": "us_common"
+    },
+    "SLB": {
+      "ticker": "SLB",
+      "matched_rule": null,
+      "name": "SLB Ltd",
+      "classification": "us_common"
+    },
+    "ORLY": {
+      "ticker": "ORLY",
+      "matched_rule": null,
+      "name": "O'Reilly Automotive",
+      "classification": "us_common"
+    },
+    "ROST": {
+      "ticker": "ROST",
+      "matched_rule": null,
+      "name": "Ross Stores",
+      "classification": "us_common"
+    },
+    "EOG": {
+      "ticker": "EOG",
+      "matched_rule": null,
+      "name": "EOG Resources",
+      "classification": "us_common"
+    },
+    "PSTVY": {
+      "ticker": "PSTVY",
+      "matched_rule": "R0",
+      "name": "POSTAL SAVINGS BANK OF CHINA CO UNSP ADR EACH REP 20 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "VLVLY": {
+      "ticker": "VLVLY",
+      "matched_rule": "R0",
+      "name": "Volvo AB Unsponsored ADR Class B",
+      "classification": "foreign_excluded"
+    },
+    "NWG": {
+      "ticker": "NWG",
+      "matched_rule": null,
+      "name": "NatWest",
+      "classification": "us_common"
+    },
+    "WFAFY": {
+      "ticker": "WFAFY",
+      "matched_rule": "R0",
+      "name": "WESFARMERS LTD ADR EACH REPR 0.5 ORD SHS UNSPO",
+      "classification": "foreign_excluded"
+    },
+    "GM": {
+      "ticker": "GM",
+      "matched_rule": null,
+      "name": "General Motors",
+      "classification": "us_common"
+    },
+    "CRH": {
+      "ticker": "CRH",
+      "matched_rule": null,
+      "name": "CRH PLC",
+      "classification": "us_common"
+    },
+    "MSI": {
+      "ticker": "MSI",
+      "matched_rule": null,
+      "name": "Motorola Solutions",
+      "classification": "us_common"
+    },
+    "ALAB": {
+      "ticker": "ALAB",
+      "matched_rule": null,
+      "name": "Astera Labs",
+      "classification": "us_common"
+    },
+    "TRP": {
+      "ticker": "TRP",
+      "matched_rule": "R0",
+      "name": "TC Energy",
+      "classification": "foreign_excluded"
+    },
+    "SU": {
+      "ticker": "SU",
+      "matched_rule": "R0",
+      "name": "Suncor Energy",
+      "classification": "foreign_excluded"
+    },
+    "HONA": {
+      "ticker": "HONA",
+      "matched_rule": null,
+      "name": "Honeywell Aerospace",
+      "classification": "us_common"
+    },
+    "NOK": {
+      "ticker": "NOK",
+      "matched_rule": "R0",
+      "name": "Nokia Oyj",
+      "classification": "foreign_excluded"
+    },
+    "APO": {
+      "ticker": "APO",
+      "matched_rule": null,
+      "name": "Apollo Global Management",
+      "classification": "us_common"
+    },
+    "SE": {
+      "ticker": "SE",
+      "matched_rule": "R0",
+      "name": "Sea",
+      "classification": "foreign_excluded"
+    },
+    "MKKGY": {
+      "ticker": "MKKGY",
+      "matched_rule": "R0",
+      "name": "MERCK KGAA SPON ADR EACH REPR 0.2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "REGN": {
+      "ticker": "REGN",
+      "matched_rule": null,
+      "name": "Regeneron Pharmaceuticals",
+      "classification": "us_common"
+    },
+    "BE": {
+      "ticker": "BE",
+      "matched_rule": null,
+      "name": "Bloom Energy",
+      "classification": "us_common"
+    },
+    "E": {
+      "ticker": "E",
+      "matched_rule": "R0",
+      "name": "Eni SpA",
+      "classification": "foreign_excluded"
+    },
+    "MFC": {
+      "ticker": "MFC",
+      "matched_rule": "R0",
+      "name": "Manulife Financial",
+      "classification": "foreign_excluded"
+    },
+    "URI": {
+      "ticker": "URI",
+      "matched_rule": null,
+      "name": "United Rentals",
+      "classification": "us_common"
+    },
+    "DB": {
+      "ticker": "DB",
+      "matched_rule": "R0",
+      "name": "Deutsche Bank",
+      "classification": "foreign_excluded"
+    },
+    "ET": {
+      "ticker": "ET",
+      "matched_rule": null,
+      "name": "Energy Transfer",
+      "classification": "us_common"
+    },
+    "MQBKY": {
+      "ticker": "MQBKY",
+      "matched_rule": "R0",
+      "name": "MACQUARIE GROUP LIMITED ADR EACH REPR 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    "JAPAY": {
+      "ticker": "JAPAY",
+      "matched_rule": "R0",
+      "name": "Japan Tobacco (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "RSG": {
+      "ticker": "RSG",
+      "matched_rule": null,
+      "name": "Republic Services",
+      "classification": "us_common"
+    },
+    "APD": {
+      "ticker": "APD",
+      "matched_rule": null,
+      "name": "Air Products & Chemicals",
+      "classification": "us_common"
+    },
+    "WBD": {
+      "ticker": "WBD",
+      "matched_rule": null,
+      "name": "Warner Bros Discovery",
+      "classification": "us_common"
+    },
+    "NU": {
+      "ticker": "NU",
+      "matched_rule": "R0",
+      "name": "Nu Holdings",
+      "classification": "foreign_excluded"
+    },
+    "MPWR": {
+      "ticker": "MPWR",
+      "matched_rule": null,
+      "name": "Monolithic Power Systems",
+      "classification": "us_common"
+    },
+    "BSX": {
+      "ticker": "BSX",
+      "matched_rule": null,
+      "name": "Boston Scientific",
+      "classification": "us_common"
+    },
+    "NKE": {
+      "ticker": "NKE",
+      "matched_rule": null,
+      "name": "Nike",
+      "classification": "us_common"
+    },
+    "KDDIY": {
+      "ticker": "KDDIY",
+      "matched_rule": "R0",
+      "name": "KDDI (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "PCAR": {
+      "ticker": "PCAR",
+      "matched_rule": null,
+      "name": "PACCAR Inc",
+      "classification": "us_common"
+    },
+    "CIEN": {
+      "ticker": "CIEN",
+      "matched_rule": null,
+      "name": "Ciena",
+      "classification": "us_common"
+    },
+    "NRDBY": {
+      "ticker": "NRDBY",
+      "matched_rule": "R0",
+      "name": "NORDEA BANK ABP SPON ADS EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "GWW": {
+      "ticker": "GWW",
+      "matched_rule": null,
+      "name": "W.W. Grainger",
+      "classification": "us_common"
+    },
+    "PCRHY": {
+      "ticker": "PCRHY",
+      "matched_rule": "R0",
+      "name": "PANASONIC HOLDINGS CORP UNSPON ADR EACH REP 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    "AJG": {
+      "ticker": "AJG",
+      "matched_rule": null,
+      "name": "Arthur J. Gallagher",
+      "classification": "us_common"
+    },
+    "TFC": {
+      "ticker": "TFC",
+      "matched_rule": null,
+      "name": "Truist Financial",
+      "classification": "us_common"
+    },
+    "ALL": {
+      "ticker": "ALL",
+      "matched_rule": null,
+      "name": "Allstate",
+      "classification": "us_common"
+    },
+    "HPE": {
+      "ticker": "HPE",
+      "matched_rule": null,
+      "name": "Hewlett Packard Enterprise",
+      "classification": "us_common"
+    },
+    "COHR": {
+      "ticker": "COHR",
+      "matched_rule": null,
+      "name": "Coherent",
+      "classification": "us_common"
+    },
+    "CMCLY": {
+      "ticker": "CMCLY",
+      "matched_rule": "R1",
+      "name": "CMOC GROUP LIMITED UNSP ADS EACH REPR 50 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "STM": {
+      "ticker": "STM",
+      "matched_rule": "R0",
+      "name": "STMicroelectronics",
+      "classification": "foreign_excluded"
+    },
+    "SCBFY": {
+      "ticker": "SCBFY",
+      "matched_rule": "R1",
+      "name": "STANDARD CHARTERED PLC UNSPON ADS EACH REP 2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "CCZ": {
+      "ticker": "CCZ",
+      "matched_rule": null,
+      "name": "COMCAST HOLDINGS CORPORATION 2% CNV PREF SEC15/10/2029 USD71",
+      "classification": "us_common"
+    },
+    "SOBKY": {
+      "ticker": "SOBKY",
+      "matched_rule": "R1",
+      "name": "SoftBank (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "HKXCY": {
+      "ticker": "HKXCY",
+      "matched_rule": "R2",
+      "name": "HONG KONG EXCHANGE",
+      "classification": "foreign_excluded"
+    },
+    "AFL": {
+      "ticker": "AFL",
+      "matched_rule": null,
+      "name": "Aflac Inc",
+      "classification": "us_common"
+    },
+    "SCGLY": {
+      "ticker": "SCGLY",
+      "matched_rule": "R2",
+      "name": "SOCIETE GENERLE",
+      "classification": "foreign_excluded"
+    },
+    "LITE": {
+      "ticker": "LITE",
+      "matched_rule": null,
+      "name": "Lumentum",
+      "classification": "us_common"
+    },
+    "MPNGY": {
+      "ticker": "MPNGY",
+      "matched_rule": "R1",
+      "name": "Meituan ADR",
+      "classification": "foreign_excluded"
+    },
+    "VALE": {
+      "ticker": "VALE",
+      "matched_rule": "R0",
+      "name": "Vale SA",
+      "classification": "foreign_excluded"
+    },
+    "FIX": {
+      "ticker": "FIX",
+      "matched_rule": null,
+      "name": "Comfort Systems USA",
+      "classification": "us_common"
+    },
+    "D": {
+      "ticker": "D",
+      "matched_rule": null,
+      "name": "Dominion Resources",
+      "classification": "us_common"
+    },
+    "B": {
+      "ticker": "B",
+      "matched_rule": null,
+      "name": "Barrick Mining",
+      "classification": "us_common"
+    },
+    "UMC": {
+      "ticker": "UMC",
+      "matched_rule": "R0",
+      "name": "United Microelectronics",
+      "classification": "foreign_excluded"
+    },
+    "BHKLY": {
+      "ticker": "BHKLY",
+      "matched_rule": "R2",
+      "name": "BOC HONG KONG HLDG",
+      "classification": "foreign_excluded"
+    },
+    "SRE": {
+      "ticker": "SRE",
+      "matched_rule": null,
+      "name": "Sempra Energy",
+      "classification": "us_common"
+    },
+    "TGT": {
+      "ticker": "TGT",
+      "matched_rule": null,
+      "name": "Target",
+      "classification": "us_common"
+    },
+    "DSDVY": {
+      "ticker": "DSDVY",
+      "matched_rule": "R1",
+      "name": "DSV A/S UNSP ADR EACH REPR 0.5 ORD",
+      "classification": "foreign_excluded"
+    },
+    "CRARY": {
+      "ticker": "CRARY",
+      "matched_rule": "R1",
+      "name": "CREDIT AGRICOLE SA ADR EA REPR 0.5 ORD EUR3.0",
+      "classification": "foreign_excluded"
+    },
+    "COR": {
+      "ticker": "COR",
+      "matched_rule": null,
+      "name": "Cencora",
+      "classification": "us_common"
+    },
+    "MET": {
+      "ticker": "MET",
+      "matched_rule": null,
+      "name": "MetLife",
+      "classification": "us_common"
+    },
+    "WUXAY": {
+      "ticker": "WUXAY",
+      "matched_rule": "R1",
+      "name": "WUXI APPTEC CO LTD UNSPON ADS EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "TRGP": {
+      "ticker": "TRGP",
+      "matched_rule": null,
+      "name": "Targa Resources",
+      "classification": "us_common"
+    },
+    "LSEGY": {
+      "ticker": "LSEGY",
+      "matched_rule": "R2",
+      "name": "London Stock Exchange Group",
+      "classification": "foreign_excluded"
+    },
+    "TEL": {
+      "ticker": "TEL",
+      "matched_rule": null,
+      "name": "TE Connectivity",
+      "classification": "us_common"
+    },
+    "CARR": {
+      "ticker": "CARR",
+      "matched_rule": null,
+      "name": "Carrier Global",
+      "classification": "us_common"
+    },
+    "IMO": {
+      "ticker": "IMO",
+      "matched_rule": "R0",
+      "name": "Imperial Oil",
+      "classification": "foreign_excluded"
+    },
+    "MPLX": {
+      "ticker": "MPLX",
+      "matched_rule": null,
+      "name": "MPLX LP",
+      "classification": "us_common"
+    },
+    "DAL": {
+      "ticker": "DAL",
+      "matched_rule": null,
+      "name": "Delta Air Lines",
+      "classification": "us_common"
+    },
+    "BKR": {
+      "ticker": "BKR",
+      "matched_rule": null,
+      "name": "Baker Hughes",
+      "classification": "us_common"
+    },
+    "CTVA": {
+      "ticker": "CTVA",
+      "matched_rule": null,
+      "name": "Corteva",
+      "classification": "us_common"
+    },
+    "RELX": {
+      "ticker": "RELX",
+      "matched_rule": "R0",
+      "name": "RELX PLC",
+      "classification": "foreign_excluded"
+    },
+    "OKE": {
+      "ticker": "OKE",
+      "matched_rule": null,
+      "name": "ONEOK Inc",
+      "classification": "us_common"
+    },
+    "EONGY": {
+      "ticker": "EONGY",
+      "matched_rule": "R1",
+      "name": "E.ON SE SPONS ADR EACH REPR 1 ORD NPV",
+      "classification": "foreign_excluded"
+    },
+    "UOVEY": {
+      "ticker": "UOVEY",
+      "matched_rule": "R1",
+      "name": "UNITED OVERSEAS BANK LTD SPON ADR EACH REP 2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "SGAPY": {
+      "ticker": "SGAPY",
+      "matched_rule": "R1",
+      "name": "SINGAPORE TELECOMMUNICATIONS NEW ADR-EACH REPR 10 ORD CDI NPV",
+      "classification": "foreign_excluded"
+    },
+    "TER": {
+      "ticker": "TER",
+      "matched_rule": null,
+      "name": "Teradyne",
+      "classification": "us_common"
+    },
+    "NBIS": {
+      "ticker": "NBIS",
+      "matched_rule": null,
+      "name": "NEBIUS",
+      "classification": "us_common"
+    },
+    "BAYRY": {
+      "ticker": "BAYRY",
+      "matched_rule": "R2",
+      "name": "BAYER AG",
+      "classification": "foreign_excluded"
+    },
+    "F": {
+      "ticker": "F",
+      "matched_rule": null,
+      "name": "Ford Motor",
+      "classification": "us_common"
+    },
+    "KEYS": {
+      "ticker": "KEYS",
+      "matched_rule": null,
+      "name": "Keysight Technologies",
+      "classification": "us_common"
+    },
+    "CAH": {
+      "ticker": "CAH",
+      "matched_rule": null,
+      "name": "Cardinal Health",
+      "classification": "us_common"
+    },
+    "CMPGY": {
+      "ticker": "CMPGY",
+      "matched_rule": "R1",
+      "name": "COMPASS GROUP PLC SPON ADR EACH REP 1 ORD SHS (POST SPLT)",
+      "classification": "foreign_excluded"
+    },
+    "ARGX": {
+      "ticker": "ARGX",
+      "matched_rule": null,
+      "name": "argenx SE",
+      "classification": "us_common"
+    },
+    "KBCSY": {
+      "ticker": "KBCSY",
+      "matched_rule": "R1",
+      "name": "KBC GROEP NV UNSP ADR EA REPR 0.50 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "LHX": {
+      "ticker": "LHX",
+      "matched_rule": null,
+      "name": "L3Harris Technologies",
+      "classification": "us_common"
+    },
+    "TRMOY": {
+      "ticker": "TRMOY",
+      "matched_rule": "R1",
+      "name": "TOURMALINE OIL CORP UNSPON ADS EACH REP 0.3 COM",
+      "classification": "foreign_excluded"
+    },
+    "RNECY": {
+      "ticker": "RNECY",
+      "matched_rule": "R1",
+      "name": "Renesas Electronics (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "LNG": {
+      "ticker": "LNG",
+      "matched_rule": null,
+      "name": "Cheniere Energy",
+      "classification": "us_common"
+    },
+    "MDLN": {
+      "ticker": "MDLN",
+      "matched_rule": null,
+      "name": "Medline",
+      "classification": "us_common"
+    },
+    "AME": {
+      "ticker": "AME",
+      "matched_rule": null,
+      "name": "AMETEK",
+      "classification": "us_common"
+    },
+    "ETR": {
+      "ticker": "ETR",
+      "matched_rule": null,
+      "name": "Entergy",
+      "classification": "us_common"
+    },
+    "VST": {
+      "ticker": "VST",
+      "matched_rule": null,
+      "name": "Vistra Energy",
+      "classification": "us_common"
+    },
+    "FAST": {
+      "ticker": "FAST",
+      "matched_rule": null,
+      "name": "Fastenal",
+      "classification": "us_common"
+    },
+    "FJIKY": {
+      "ticker": "FJIKY",
+      "matched_rule": "R1",
+      "name": "FUJIKURA UNSPON ADS EACH REP 0.5 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "DANOY": {
+      "ticker": "DANOY",
+      "matched_rule": "R1",
+      "name": "DANONE SPONS ADR",
+      "classification": "foreign_excluded"
+    },
+    "EW": {
+      "ticker": "EW",
+      "matched_rule": null,
+      "name": "Edwards Lifesciences",
+      "classification": "us_common"
+    },
+    "TAK": {
+      "ticker": "TAK",
+      "matched_rule": "R0",
+      "name": "Takeda Pharmaceutical",
+      "classification": "foreign_excluded"
+    },
+    "NGLOY": {
+      "ticker": "NGLOY",
+      "matched_rule": "R1",
+      "name": "ANGLO AMERICAN SPON ADR EACH REP 0.5 ORD (P/S)",
+      "classification": "foreign_excluded"
+    },
+    "LBLCF": {
+      "ticker": "LBLCF",
+      "matched_rule": "R2",
+      "name": "LOBLAWS COMPANIES LIMITED",
+      "classification": "foreign_excluded"
+    },
+    "RNMBY": {
+      "ticker": "RNMBY",
+      "matched_rule": "R1",
+      "name": "RHEINMETALL AG UNSP ADR EACH REPR 0.2 ORD",
+      "classification": "foreign_excluded"
+    },
+    "ROK": {
+      "ticker": "ROK",
+      "matched_rule": null,
+      "name": "Rockwell Automation",
+      "classification": "us_common"
+    },
+    "THLLY": {
+      "ticker": "THLLY",
+      "matched_rule": "R1",
+      "name": "THALES SA UNSPN ADS EACH REP 0.2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "EBKDY": {
+      "ticker": "EBKDY",
+      "matched_rule": "R1",
+      "name": "ERSTE GROUP BANK AG ADR EACH REP 0.5 ORD NPV SPON",
+      "classification": "foreign_excluded"
+    },
+    "HOCPY": {
+      "ticker": "HOCPY",
+      "matched_rule": "R1",
+      "name": "Hoya (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "OXY": {
+      "ticker": "OXY",
+      "matched_rule": null,
+      "name": "Occidental Petroleum",
+      "classification": "us_common"
+    },
+    "EBAY": {
+      "ticker": "EBAY",
+      "matched_rule": null,
+      "name": "eBay",
+      "classification": "us_common"
+    },
+    "FITB": {
+      "ticker": "FITB",
+      "matched_rule": null,
+      "name": "Fifth Third Bancorp",
+      "classification": "us_common"
+    },
+    "NUE": {
+      "ticker": "NUE",
+      "matched_rule": null,
+      "name": "Nucor",
+      "classification": "us_common"
+    },
+    "DBOEY": {
+      "ticker": "DBOEY",
+      "matched_rule": "R2",
+      "name": "DEUTSCHE BOERSE AG",
+      "classification": "foreign_excluded"
+    },
+    "EA": {
+      "ticker": "EA",
+      "matched_rule": null,
+      "name": "Electronic Arts Inc",
+      "classification": "us_common"
+    },
+    "UCBJY": {
+      "ticker": "UCBJY",
+      "matched_rule": "R1",
+      "name": "UCB S.A. UNSP ADR EACH REPR 0.5 ORD",
+      "classification": "foreign_excluded"
+    },
+    "FANG": {
+      "ticker": "FANG",
+      "matched_rule": null,
+      "name": "Diamondback Energy",
+      "classification": "us_common"
+    },
+    "NTDOY": {
+      "ticker": "NTDOY",
+      "matched_rule": "R0",
+      "name": "Nintendo (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "ASMIY": {
+      "ticker": "ASMIY",
+      "matched_rule": "R1",
+      "name": "ASM INTERNATIONAL NV SPON ADR EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "SDVKY": {
+      "ticker": "SDVKY",
+      "matched_rule": "R1",
+      "name": "SANDVIK AB ADR-EACH REPR 1 ORD SEK6",
+      "classification": "foreign_excluded"
+    },
+    "LZAGY": {
+      "ticker": "LZAGY",
+      "matched_rule": "R1",
+      "name": "LONZA GROUP AG UNSP ADR EACH REP 0.1 ORD",
+      "classification": "foreign_excluded"
+    },
+    "HCMLY": {
+      "ticker": "HCMLY",
+      "matched_rule": "R1",
+      "name": "HOLCIM LTD SPON ADS EACH REPR 0.20 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "MT": {
+      "ticker": "MT",
+      "matched_rule": null,
+      "name": "ArcelorMittal SA",
+      "classification": "us_common"
+    },
+    "GALDY": {
+      "ticker": "GALDY",
+      "matched_rule": "R1",
+      "name": "GALDERMA GROUP AG UNSP ADS EACH REPR 0.2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "WPM": {
+      "ticker": "WPM",
+      "matched_rule": "R0",
+      "name": "Wheaton Precious Metals",
+      "classification": "foreign_excluded"
+    },
+    "STT": {
+      "ticker": "STT",
+      "matched_rule": null,
+      "name": "State Street",
+      "classification": "us_common"
+    },
+    "AZO": {
+      "ticker": "AZO",
+      "matched_rule": null,
+      "name": "AutoZone",
+      "classification": "us_common"
+    },
+    "XEL": {
+      "ticker": "XEL",
+      "matched_rule": null,
+      "name": "Xcel Energy",
+      "classification": "us_common"
+    },
+    "NDAQ": {
+      "ticker": "NDAQ",
+      "matched_rule": null,
+      "name": "Nasdaq",
+      "classification": "us_common"
+    },
+    "FLEX": {
+      "ticker": "FLEX",
+      "matched_rule": null,
+      "name": "Flex Ltd",
+      "classification": "us_common"
+    },
+    "DSCSY": {
+      "ticker": "DSCSY",
+      "matched_rule": "R1",
+      "name": "Disco (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "HEI": {
+      "ticker": "HEI",
+      "matched_rule": null,
+      "name": "Heico",
+      "classification": "us_common"
+    },
+    "CVE": {
+      "ticker": "CVE",
+      "matched_rule": "R0",
+      "name": "Cenovus Energy",
+      "classification": "foreign_excluded"
+    },
+    "WMMVY": {
+      "ticker": "WMMVY",
+      "matched_rule": "R1",
+      "name": "WAL-MART DE MEXICO SAB DE CV ADR EACH REPR'10'V'SHS NPV(SPON)",
+      "classification": "foreign_excluded"
+    },
+    "HEINY": {
+      "ticker": "HEINY",
+      "matched_rule": "R1",
+      "name": "Heineken NV Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    "DVN": {
+      "ticker": "DVN",
+      "matched_rule": null,
+      "name": "Devon Energy",
+      "classification": "us_common"
+    },
+    "CBRS": {
+      "ticker": "CBRS",
+      "matched_rule": null,
+      "name": "Cerebras Systems",
+      "classification": "us_common"
+    },
+    "CRZBY": {
+      "ticker": "CRZBY",
+      "matched_rule": "R1",
+      "name": "COMMERZBANK AG SPON ADR EA REPR 1 ORD(POST REV SPLIT)",
+      "classification": "foreign_excluded"
+    },
+    "SSREY": {
+      "ticker": "SSREY",
+      "matched_rule": "R1",
+      "name": "SWISS RE AG SPON ADR EACH REPR 0.25 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "CRWV": {
+      "ticker": "CRWV",
+      "matched_rule": null,
+      "name": "CoreWeave",
+      "classification": "us_common"
+    },
+    "CIIHY": {
+      "ticker": "CIIHY",
+      "matched_rule": "R2",
+      "name": "CITIC SECURITIES",
+      "classification": "foreign_excluded"
+    },
+    "ORANY": {
+      "ticker": "ORANY",
+      "matched_rule": "R1",
+      "name": "ORANGE SPON ADR EACH REPR 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "MCHP": {
+      "ticker": "MCHP",
+      "matched_rule": null,
+      "name": "Microchip Technology",
+      "classification": "us_common"
+    },
+    "EXC": {
+      "ticker": "EXC",
+      "matched_rule": null,
+      "name": "Exelon",
+      "classification": "us_common"
+    },
+    "CRDO": {
+      "ticker": "CRDO",
+      "matched_rule": null,
+      "name": "Credo Technology",
+      "classification": "us_common"
+    },
+    "BASFY": {
+      "ticker": "BASFY",
+      "matched_rule": "R2",
+      "name": "BASF SE",
+      "classification": "foreign_excluded"
+    },
+    "CHCJY": {
+      "ticker": "CHCJY",
+      "matched_rule": "R2",
+      "name": "CHINA CITIC BK COR",
+      "classification": "foreign_excluded"
+    },
+    "ITCTY": {
+      "ticker": "ITCTY",
+      "matched_rule": "R2",
+      "name": "ITC LTD GDR-REPR 1 ORD INR1 REG S",
+      "classification": "foreign_excluded"
+    },
+    "ABEV": {
+      "ticker": "ABEV",
+      "matched_rule": "R0",
+      "name": "Ambev SA",
+      "classification": "foreign_excluded"
+    },
+    "ODFL": {
+      "ticker": "ODFL",
+      "matched_rule": null,
+      "name": "Old Dominion Freight Line",
+      "classification": "us_common"
+    },
+    "GRMN": {
+      "ticker": "GRMN",
+      "matched_rule": null,
+      "name": "Garmin",
+      "classification": "us_common"
+    },
+    "HUM": {
+      "ticker": "HUM",
+      "matched_rule": null,
+      "name": "Humana",
+      "classification": "us_common"
+    },
+    "RKLB": {
+      "ticker": "RKLB",
+      "matched_rule": null,
+      "name": "Rocket Lab",
+      "classification": "us_common"
+    },
+    "CCEP": {
+      "ticker": "CCEP",
+      "matched_rule": null,
+      "name": "Coca-Cola Europacific",
+      "classification": "us_common"
+    },
+    "DRPRY": {
+      "ticker": "DRPRY",
+      "matched_rule": "R2",
+      "name": "DR ING H C F PORSCHE AG",
+      "classification": "foreign_excluded"
+    },
+    "ANYYY": {
+      "ticker": "ANYYY",
+      "matched_rule": "R1",
+      "name": "AENA SME S.A. UNSP ADR EACH REPR 0.1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "FER": {
+      "ticker": "FER",
+      "matched_rule": null,
+      "name": "Ferrovial SE",
+      "classification": "us_common"
+    },
+    "XYZ": {
+      "ticker": "XYZ",
+      "matched_rule": null,
+      "name": "Block",
+      "classification": "us_common"
+    },
+    "DNKEY": {
+      "ticker": "DNKEY",
+      "matched_rule": "R1",
+      "name": "Danske Bank A/S Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    "RWEOY": {
+      "ticker": "RWEOY",
+      "matched_rule": "R1",
+      "name": "RWE AG ADR EACH REPR 1 ORD NPV",
+      "classification": "foreign_excluded"
+    },
+    "ELEZY": {
+      "ticker": "ELEZY",
+      "matched_rule": "R1",
+      "name": "ENDESA SA UNSP ADR EA REPR 0.50 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "DKILY": {
+      "ticker": "DKILY",
+      "matched_rule": "R1",
+      "name": "Daikin Industries (ADR)",
+      "classification": "foreign_excluded"
+    },
+    "DEO": {
+      "ticker": "DEO",
+      "matched_rule": "R0",
+      "name": "Diageo",
+      "classification": "foreign_excluded"
+    },
+    "AXON": {
+      "ticker": "AXON",
+      "matched_rule": null,
+      "name": "Axon Enterprise",
+      "classification": "us_common"
+    },
+    "TTWO": {
+      "ticker": "TTWO",
+      "matched_rule": null,
+      "name": "Take-Two Interactive Software",
+      "classification": "us_common"
+    },
+    "AMP": {
+      "ticker": "AMP",
+      "matched_rule": null,
+      "name": "Ameriprise Financial",
+      "classification": "us_common"
+    },
+    "CMG": {
+      "ticker": "CMG",
+      "matched_rule": null,
+      "name": "Chipotle Mexican Grill",
+      "classification": "us_common"
+    },
+    "IX": {
+      "ticker": "IX",
+      "matched_rule": null,
+      "name": "ORIX",
+      "classification": "us_common"
+    },
+    "YUM": {
+      "ticker": "YUM",
+      "matched_rule": null,
+      "name": "Yum! Brands",
+      "classification": "us_common"
+    },
+    "JHPCY": {
+      "ticker": "JHPCY",
+      "matched_rule": "R1",
+      "name": "JIANGSU HENGRUI PHARMACEUTICALS CO ADS EACH REP 2 ORD",
+      "classification": "foreign_excluded"
+    },
+    "SLF": {
+      "ticker": "SLF",
+      "matched_rule": "R0",
+      "name": "Sun Life Financial",
+      "classification": "foreign_excluded"
+    },
+    "BSQKZ": {
+      "ticker": "BSQKZ",
+      "matched_rule": null,
+      "name": "BLOCK INC",
+      "classification": "us_common"
+    },
+    "IDXX": {
+      "ticker": "IDXX",
+      "matched_rule": null,
+      "name": "IDEXX Laboratories Inc",
+      "classification": "us_common"
+    },
+    "WAB": {
+      "ticker": "WAB",
+      "matched_rule": null,
+      "name": "Westinghouse Air Brake Technologies",
+      "classification": "us_common"
+    },
+    "MBGYY": {
+      "ticker": "MBGYY",
+      "matched_rule": "R1",
+      "name": "MERCEDES-BENZ GROUP AG UNSP ADR EACH REP 0.25 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "PRYMY": {
+      "ticker": "PRYMY",
+      "matched_rule": "R1",
+      "name": "PRYSMIAN SPA UNSP ADR EACH REPR 0.50 ORD EUR0.10",
+      "classification": "foreign_excluded"
+    },
+    "VIK": {
+      "ticker": "VIK",
+      "matched_rule": null,
+      "name": "Viking Holdings",
+      "classification": "us_common"
+    },
+    "INFY": {
+      "ticker": "INFY",
+      "matched_rule": "R0",
+      "name": "Infosys",
+      "classification": "foreign_excluded"
+    },
+    "SMMNY": {
+      "ticker": "SMMNY",
+      "matched_rule": "R1",
+      "name": "SIEMENS HEALTHINEERS AG UNSPON ADR EACH REP 0.50 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "DNBBY": {
+      "ticker": "DNBBY",
+      "matched_rule": "R1",
+      "name": "DNB BANK ASA SPON ADR EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "MSCI": {
+      "ticker": "MSCI",
+      "matched_rule": null,
+      "name": "MSCI Inc",
+      "classification": "us_common"
+    },
+    "FERG": {
+      "ticker": "FERG",
+      "matched_rule": null,
+      "name": "Ferguson",
+      "classification": "us_common"
+    },
+    "ADSK": {
+      "ticker": "ADSK",
+      "matched_rule": null,
+      "name": "Autodesk",
+      "classification": "us_common"
+    },
+    "KB": {
+      "ticker": "KB",
+      "matched_rule": "R0",
+      "name": "KB Financial",
+      "classification": "foreign_excluded"
+    },
+    "SUHJY": {
+      "ticker": "SUHJY",
+      "matched_rule": "R2",
+      "name": "SUN HUNG KAI PROP",
+      "classification": "foreign_excluded"
+    },
+    "FMX": {
+      "ticker": "FMX",
+      "matched_rule": null,
+      "name": "FEMSA",
+      "classification": "us_common"
+    },
+    "RBGLY": {
+      "ticker": "RBGLY",
+      "matched_rule": "R1",
+      "name": "RECKITT BENCKISER GROUP PLC SPON ADR EACH REP 0.20 ORD (P/S)",
+      "classification": "foreign_excluded"
+    },
+    "WCN": {
+      "ticker": "WCN",
+      "matched_rule": "R0",
+      "name": "Waste Connections",
+      "classification": "foreign_excluded"
+    },
+    "DHI": {
+      "ticker": "DHI",
+      "matched_rule": null,
+      "name": "D.R. Horton",
+      "classification": "us_common"
+    },
+    "KDP": {
+      "ticker": "KDP",
+      "matched_rule": null,
+      "name": "Keurig Dr Pepper",
+      "classification": "us_common"
+    },
+    "HLN": {
+      "ticker": "HLN",
+      "matched_rule": null,
+      "name": "Haleon",
+      "classification": "us_common"
+    },
+    "SWDBY": {
+      "ticker": "SWDBY",
+      "matched_rule": "R1",
+      "name": "SWEDBANK AB ADR EACH REP 1 SER'A'SEK20(MGT)",
+      "classification": "foreign_excluded"
+    },
+    "LYV": {
+      "ticker": "LYV",
+      "matched_rule": null,
+      "name": "Live Nation Entertainment",
+      "classification": "us_common"
+    },
+    "CNSWF": {
+      "ticker": "CNSWF",
+      "matched_rule": "R2",
+      "name": "Constellation Software Inc.",
+      "classification": "foreign_excluded"
+    },
+    "CNSWY": {
+      "ticker": "CNSWY",
+      "matched_rule": "R1",
+      "name": "CONSTELLATION SOFTWARE INC UNSPON ADS EACH REP 0.005",
+      "classification": "foreign_excluded"
+    },
+    "COIN": {
+      "ticker": "COIN",
+      "matched_rule": null,
+      "name": "Coinbase",
+      "classification": "us_common"
+    },
+    "ENBA": {
+      "ticker": "ENBA",
+      "matched_rule": null,
+      "name": "Enbridge Inc 6.375% Fxd Fltg Sub Nts Sr 18 B 15/04/78",
+      "classification": "us_common"
+    },
+    "PBCRY": {
+      "ticker": "PBCRY",
+      "matched_rule": "R1",
+      "name": "BANK CENTRAL ASIA UNSP ADR EA REPR  25 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    "DLICY": {
+      "ticker": "DLICY",
+      "matched_rule": "R1",
+      "name": "DAIICHI LIFE GROUP INC UNSP ADR EACH REPR 2 ORD",
+      "classification": "foreign_excluded"
+    },
+    "AIG": {
+      "ticker": "AIG",
+      "matched_rule": null,
+      "name": "American International Group",
+      "classification": "us_common"
+    },
+    "BDX": {
+      "ticker": "BDX",
+      "matched_rule": null,
+      "name": "Becton Dickinson & Co",
+      "classification": "us_common"
+    },
+    "CCJ": {
+      "ticker": "CCJ",
+      "matched_rule": null,
+      "name": "Cameco",
+      "classification": "us_common"
+    },
+    "LGRDY": {
+      "ticker": "LGRDY",
+      "matched_rule": "R1",
+      "name": "LEGRAND SA UNSPON ADR EACH REPR 0.20 ORD",
+      "classification": "foreign_excluded"
+    },
+    "AU": {
+      "ticker": "AU",
+      "matched_rule": null,
+      "name": "AUSTERLITZ ACQUISITION CORPORATION I",
+      "classification": "us_common"
+    }
+  },
+  "adr_excluded_count": 230,
+  "adr_excluded_by_rule": {
+    "R0": 166,
+    "R2": 15,
+    "R1": 49
+  },
+  "adr_keep_carveouts": [],
+  "adr_refill_waves": [
+    {
+      "wave": 0,
+      "scanned": 296,
+      "excluded": [
+        "TSM",
+        "ASML",
+        "TCEHY",
+        "ITFCY",
+        "ARM",
+        "CYATY",
+        "HSBC",
+        "RHHBY",
+        "IDCBY",
+        "CGXYY",
+        "NVS",
+        "RY",
+        "LVMUY",
+        "CICHY",
+        "BABA",
+        "AZN",
+        "KXIAY",
+        "NSRGY",
+        "ACGBY",
+        "MUFG",
+        "SIEGY",
+        "LRLCY",
+        "SHEL",
+        "SFTBY",
+        "NVO",
+        "TM",
+        "BACHY",
+        "BHP",
+        "TOELY",
+        "SAN",
+        "TD",
+        "CMWAY",
+        "HESAY",
+        "IDEXY",
+        "ABBNY",
+        "SAP",
+        "ALIZY",
+        "EADSY",
+        "TTE",
+        "WBKCY",
+        "SBGSY",
+        "UBS",
+        "SMFG",
+        "IBDRY",
+        "RYCEY",
+        "SHOP",
+        "SAFRY",
+        "FRCOY",
+        "BUD",
+        "DBSDY",
+        "RIO",
+        "CIHKY",
+        "BBVA",
+        "DTEGY",
+        "UNCRY",
+        "HDB",
+        "ATEYY",
+        "CFRUY",
+        "UL",
+        "HTHIY",
+        "BTI",
+        "MFG",
+        "BNPQY",
+        "BMO",
+        "ISNPY",
+        "SONY",
+        "PNGAY",
+        "PDD",
+        "ENB",
+        "AIQUY",
+        "ENLAY",
+        "ZURVY",
+        "CSUAY",
+        "MRAAY",
+        "PBR",
+        "IFNNY",
+        "CM",
+        "BNS",
+        "HNHPF",
+        "RCRUY",
+        "GSK",
+        "IBN",
+        "SNY",
+        "AXAHY",
+        "ZIJMY",
+        "MTSUY",
+        "BP",
+        "PBR.A",
+        "CAIXY",
+        "SPOT",
+        "BYDDY",
+        "BN",
+        "CHDRY",
+        "ATLKY",
+        "PROSY",
+        "AAGIY",
+        "OVCHY",
+        "ITUB",
+        "ASX",
+        "ING",
+        "BCS",
+        "TKOMY",
+        "ESLOY",
+        "RACE",
+        "LYG",
+        "CNQ",
+        "MGCLY",
+        "XIACY",
+        "ATLCY",
+        "NABZY",
+        "SHECY",
+        "NGG",
+        "NTES",
+        "ITOCY",
+        "MITSY",
+        "EQNR",
+        "CP",
+        "MHVIY",
+        "GLNCY",
+        "ENGIY",
+        "LOBLY",
+        "CNI",
+        "ANZGY",
+        "CHGCY"
+      ],
+      "n_excluded": 124,
+      "clean_kept": 172
+    },
+    {
+      "wave": 1,
+      "scanned": 296,
+      "excluded": [
+        "VCISY",
+        "MIELY",
+        "BAM",
+        "NTTYY",
+        "AEM",
+        "METRY",
+        "BAESY",
+        "BCMXY",
+        "JPPTY",
+        "DHLGY",
+        "ARZGY",
+        "PSTVY",
+        "VLVLY",
+        "WFAFY",
+        "TRP",
+        "SU",
+        "NOK",
+        "SE",
+        "MKKGY",
+        "E",
+        "MFC",
+        "DB",
+        "MQBKY",
+        "JAPAY",
+        "NU",
+        "KDDIY",
+        "NRDBY",
+        "PCRHY",
+        "CMCLY",
+        "STM",
+        "SCBFY",
+        "SOBKY",
+        "HKXCY",
+        "SCGLY",
+        "MPNGY",
+        "VALE",
+        "UMC",
+        "BHKLY",
+        "DSDVY",
+        "CRARY",
+        "WUXAY",
+        "LSEGY",
+        "IMO",
+        "RELX",
+        "EONGY",
+        "UOVEY",
+        "SGAPY",
+        "BAYRY",
+        "CMPGY",
+        "KBCSY",
+        "TRMOY",
+        "RNECY"
+      ],
+      "n_excluded": 52,
+      "clean_kept": 244
+    },
+    {
+      "wave": 2,
+      "scanned": 296,
+      "excluded": [
+        "FJIKY",
+        "DANOY",
+        "TAK",
+        "NGLOY",
+        "LBLCF",
+        "RNMBY",
+        "THLLY",
+        "EBKDY",
+        "HOCPY",
+        "DBOEY",
+        "UCBJY",
+        "NTDOY",
+        "ASMIY",
+        "SDVKY",
+        "LZAGY",
+        "HCMLY",
+        "GALDY",
+        "WPM",
+        "DSCSY",
+        "CVE",
+        "WMMVY",
+        "HEINY",
+        "CRZBY",
+        "SSREY",
+        "CIIHY",
+        "ORANY",
+        "BASFY",
+        "CHCJY",
+        "ITCTY",
+        "ABEV"
+      ],
+      "n_excluded": 30,
+      "clean_kept": 266
+    },
+    {
+      "wave": 3,
+      "scanned": 296,
+      "excluded": [
+        "DRPRY",
+        "ANYYY",
+        "DNKEY",
+        "RWEOY",
+        "ELEZY",
+        "DKILY",
+        "DEO",
+        "JHPCY",
+        "SLF",
+        "MBGYY",
+        "PRYMY",
+        "INFY",
+        "SMMNY",
+        "DNBBY"
+      ],
+      "n_excluded": 14,
+      "clean_kept": 282
+    },
+    {
+      "wave": 4,
+      "scanned": 296,
+      "excluded": [
+        "KB",
+        "SUHJY",
+        "RBGLY",
+        "WCN",
+        "SWDBY",
+        "CNSWF"
+      ],
+      "n_excluded": 6,
+      "clean_kept": 290
+    },
+    {
+      "wave": 5,
+      "scanned": 296,
+      "excluded": [
+        "CNSWY",
+        "PBCRY",
+        "DLICY"
+      ],
+      "n_excluded": 3,
+      "clean_kept": 293
+    },
+    {
+      "wave": 6,
+      "scanned": 296,
+      "excluded": [
+        "LGRDY"
+      ],
+      "n_excluded": 1,
+      "clean_kept": 295
+    },
+    {
+      "wave": 7,
+      "scanned": 296,
+      "excluded": [],
+      "n_excluded": 0,
+      "clean_kept": 296
+    }
+  ],
+  "adr_refill_depth": 8,
+  "adr_scan_depth": 526,
+  "prescreen_probe": {
+    "available_volume_field": "VOLUME",
+    "attempts": [
+      {
+        "mode": "snapshot_dollar_volume",
+        "key": "VOLUME"
+      },
+      {
+        "mode": "market_val",
+        "key": "MARKET_VAL"
+      }
+    ],
+    "failed_attempts": [
+      {
+        "mode": "snapshot_dollar_volume",
+        "key": "VOLUME",
+        "error": "get_stock_filter(US) failed: This filter field is not supported."
+      }
+    ],
+    "used": {
+      "mode": "market_val",
+      "key": "MARKET_VAL"
+    }
+  },
+  "curated_adr_list_size": 232,
+  "adr_disclosure": {
+    "operative_prescreen_key": "MARKET_VAL",
+    "selection_effect": "superset pre-screened by MARKET_VAL (market-cap under the (ii) MARKET_VAL fallback; the final 250 is 60-day-dollar-volume-ranked in stage-1). The MARKET_VAL fallback is what surfaces ADR contamination \u2014 high market cap, low US liquidity.",
+    "adr_excluded_total": 230,
+    "adr_excluded_by_rule": {
+      "R0": 166,
+      "R2": 15,
+      "R1": 49
+    },
+    "refill_depth": 8,
+    "scan_depth": 526,
+    "keep_carveouts_hit": [],
+    "residual_note": "any well-known ADR the rule misses \u21d2 add to RESIDUAL_ADR_EXCLUDE.txt before the results commit; residual unidentified foreign names are bounded and cannot turn a fail into a pass (same discipline as survivorship, per addendum A/\u00a7A2 residual clause)."
+  }
+}

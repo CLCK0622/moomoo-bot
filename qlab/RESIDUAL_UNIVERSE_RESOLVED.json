@@ -1,0 +1,1731 @@
+{
+  "target_n": 250,
+  "selected": [
+    "MU",
+    "NVDA",
+    "TSLA",
+    "MSFT",
+    "AMD",
+    "AAPL",
+    "INTC",
+    "AMZN",
+    "GOOGL",
+    "META",
+    "AVGO",
+    "MRVL",
+    "GOOG",
+    "PLTR",
+    "ORCL",
+    "LITE",
+    "AMAT",
+    "QCOM",
+    "WDC",
+    "NBIS",
+    "LRCX",
+    "STX",
+    "NFLX",
+    "LLY",
+    "BE",
+    "DELL",
+    "RKLB",
+    "NOW",
+    "JPM",
+    "GLW",
+    "HOOD",
+    "CAT",
+    "UNH",
+    "CSCO",
+    "V",
+    "WMT",
+    "KLAC",
+    "TXN",
+    "CRM",
+    "XOM",
+    "APP",
+    "BRK.B",
+    "IBM",
+    "COST",
+    "COHR",
+    "PANW",
+    "GS",
+    "VRT",
+    "CRWD",
+    "BAC",
+    "JNJ",
+    "MA",
+    "ADI",
+    "CRDO",
+    "GE",
+    "CVX",
+    "SNOW",
+    "TER",
+    "COIN",
+    "ABBV",
+    "INTU",
+    "C",
+    "HD",
+    "ANET",
+    "ADBE",
+    "BA",
+    "APH",
+    "UBER",
+    "CIEN",
+    "KO",
+    "BKNG",
+    "PG",
+    "WFC",
+    "MPWR",
+    "AZO",
+    "MRK",
+    "MCD",
+    "VZ",
+    "DDOG",
+    "ACN",
+    "PEP",
+    "ABT",
+    "NXPI",
+    "T",
+    "MS",
+    "LIN",
+    "TMO",
+    "HPE",
+    "HON",
+    "MCHP",
+    "TMUS",
+    "BSX",
+    "SCHW",
+    "ISRG",
+    "ETN",
+    "AXP",
+    "NKE",
+    "NEE",
+    "PFE",
+    "RTX",
+    "CEG",
+    "DIS",
+    "FLEX",
+    "GILD",
+    "FCX",
+    "AMGN",
+    "SPGI",
+    "NET",
+    "MELI",
+    "SNPS",
+    "MCK",
+    "TJX",
+    "COF",
+    "COP",
+    "CDNS",
+    "PWR",
+    "CMCSA",
+    "PM",
+    "CME",
+    "FIX",
+    "F",
+    "NEM",
+    "DASH",
+    "DHR",
+    "SYK",
+    "CVNA",
+    "MDT",
+    "FTNT",
+    "UNP",
+    "RCL",
+    "SBUX",
+    "SLB",
+    "CVS",
+    "VLO",
+    "HWM",
+    "WELL",
+    "DE",
+    "SHW",
+    "BLK",
+    "LMT",
+    "VST",
+    "ROST",
+    "VRTX",
+    "CMI",
+    "PH",
+    "FDX",
+    "DVN",
+    "REGN",
+    "TGT",
+    "ELV",
+    "BX",
+    "ORLY",
+    "PGR",
+    "BMY",
+    "LOW",
+    "TT",
+    "AEP",
+    "ADP",
+    "DAL",
+    "OXY",
+    "HLT",
+    "CMG",
+    "HCA",
+    "GM",
+    "ICE",
+    "MO",
+    "MMM",
+    "MPC",
+    "UPS",
+    "TEL",
+    "JCI",
+    "CSX",
+    "TTWO",
+    "ADSK",
+    "LNG",
+    "MAR",
+    "CB",
+    "EBAY",
+    "SO",
+    "BNY",
+    "KEYS",
+    "BKR",
+    "URI",
+    "AXON",
+    "WBD",
+    "NOC",
+    "ABNB",
+    "APO",
+    "TRV",
+    "EOG",
+    "CRH",
+    "COR",
+    "MDLZ",
+    "USB",
+    "WMB",
+    "AON",
+    "TDG",
+    "HUM",
+    "WM",
+    "CAH",
+    "FANG",
+    "MNST",
+    "B",
+    "MCO",
+    "D",
+    "MRSH",
+    "CL",
+    "CI",
+    "PNC",
+    "MSI",
+    "LYV",
+    "GD",
+    "KKR",
+    "XEL",
+    "PSX",
+    "TFC",
+    "LHX",
+    "EW",
+    "ECL",
+    "CARR",
+    "DUK",
+    "IBKR",
+    "ODFL",
+    "XYZ",
+    "KDP",
+    "ETR",
+    "EXC",
+    "EMR",
+    "MSCI",
+    "AJG",
+    "EA",
+    "GWW",
+    "NUE",
+    "ALL",
+    "APD",
+    "PCAR",
+    "CTAS",
+    "IDXX",
+    "ROK",
+    "STT",
+    "RSG",
+    "ITW",
+    "DHI",
+    "NSC",
+    "FITB",
+    "SRE",
+    "OKE",
+    "KMI",
+    "NDAQ",
+    "FERG"
+  ],
+  "selected_count": 250,
+  "n_ranked": 275,
+  "n_after_dedup": 275,
+  "n_after_borrow": 275,
+  "clean_names_below_target": false,
+  "padded": false,
+  "cut_60d_dollar_volume_250th": 332273960.4612228,
+  "dual_class_drops": [],
+  "borrow_substitutions": [],
+  "borrow_filter_applied": false,
+  "ranking_60d": [
+    {
+      "code": "MU",
+      "dollar_volume": 43993492158.43728,
+      "issuer": "micron technology"
+    },
+    {
+      "code": "NVDA",
+      "dollar_volume": 33178727270.469078,
+      "issuer": "nvidia"
+    },
+    {
+      "code": "TSLA",
+      "dollar_volume": 21411548425.204582,
+      "issuer": "tesla"
+    },
+    {
+      "code": "MSFT",
+      "dollar_volume": 16182657384.847067,
+      "issuer": "microsoft"
+    },
+    {
+      "code": "AMD",
+      "dollar_volume": 16066580237.9945,
+      "issuer": "advanced micro devices"
+    },
+    {
+      "code": "AAPL",
+      "dollar_volume": 15934822969.0083,
+      "issuer": "apple"
+    },
+    {
+      "code": "INTC",
+      "dollar_volume": 14757230000.411165,
+      "issuer": "intel"
+    },
+    {
+      "code": "AMZN",
+      "dollar_volume": 12516492021.868168,
+      "issuer": "amazon"
+    },
+    {
+      "code": "GOOGL",
+      "dollar_volume": 11584868005.993078,
+      "issuer": "alphabet a"
+    },
+    {
+      "code": "META",
+      "dollar_volume": 10833583658.363436,
+      "issuer": "meta platforms"
+    },
+    {
+      "code": "AVGO",
+      "dollar_volume": 10719843289.072102,
+      "issuer": "broadcom"
+    },
+    {
+      "code": "MRVL",
+      "dollar_volume": 10452057789.086994,
+      "issuer": "marvell technology"
+    },
+    {
+      "code": "GOOG",
+      "dollar_volume": 7886517382.841735,
+      "issuer": "alphabet c"
+    },
+    {
+      "code": "PLTR",
+      "dollar_volume": 5838848128.298665,
+      "issuer": "palantir"
+    },
+    {
+      "code": "ORCL",
+      "dollar_volume": 5197002355.588711,
+      "issuer": "oracle"
+    },
+    {
+      "code": "LITE",
+      "dollar_volume": 5074304975.123868,
+      "issuer": "lumentum"
+    },
+    {
+      "code": "AMAT",
+      "dollar_volume": 4841396194.751287,
+      "issuer": "applied materials"
+    },
+    {
+      "code": "QCOM",
+      "dollar_volume": 4702746713.183599,
+      "issuer": "qualcomm"
+    },
+    {
+      "code": "WDC",
+      "dollar_volume": 4509797014.719141,
+      "issuer": "western digital"
+    },
+    {
+      "code": "NBIS",
+      "dollar_volume": 3722461297.4316483,
+      "issuer": "nebius"
+    },
+    {
+      "code": "LRCX",
+      "dollar_volume": 3656554290.49577,
+      "issuer": "lam research"
+    },
+    {
+      "code": "STX",
+      "dollar_volume": 3611513180.317214,
+      "issuer": "seagate technology"
+    },
+    {
+      "code": "NFLX",
+      "dollar_volume": 3576706282.8205004,
+      "issuer": "netflix"
+    },
+    {
+      "code": "LLY",
+      "dollar_volume": 3480785780.159431,
+      "issuer": "eli lilly and"
+    },
+    {
+      "code": "BE",
+      "dollar_volume": 3270328088.6491666,
+      "issuer": "bloom energy"
+    },
+    {
+      "code": "DELL",
+      "dollar_volume": 3036656510.4621024,
+      "issuer": "dell technologies"
+    },
+    {
+      "code": "RKLB",
+      "dollar_volume": 2914713379.7707,
+      "issuer": "rocket lab"
+    },
+    {
+      "code": "NOW",
+      "dollar_volume": 2913487230.4690003,
+      "issuer": "servicenow"
+    },
+    {
+      "code": "JPM",
+      "dollar_volume": 2883619081.2964826,
+      "issuer": "jpmorgan"
+    },
+    {
+      "code": "GLW",
+      "dollar_volume": 2823273160.3370547,
+      "issuer": "corning"
+    },
+    {
+      "code": "HOOD",
+      "dollar_volume": 2807561980.4751663,
+      "issuer": "robinhood"
+    },
+    {
+      "code": "CAT",
+      "dollar_volume": 2804020209.3299356,
+      "issuer": "caterpillar"
+    },
+    {
+      "code": "UNH",
+      "dollar_volume": 2759572161.730266,
+      "issuer": "unitedhealth"
+    },
+    {
+      "code": "CSCO",
+      "dollar_volume": 2738052059.23119,
+      "issuer": "cisco"
+    },
+    {
+      "code": "V",
+      "dollar_volume": 2714855672.848632,
+      "issuer": "visa"
+    },
+    {
+      "code": "WMT",
+      "dollar_volume": 2673734045.2794285,
+      "issuer": "walmart"
+    },
+    {
+      "code": "KLAC",
+      "dollar_volume": 2652504078.1048098,
+      "issuer": "kla"
+    },
+    {
+      "code": "TXN",
+      "dollar_volume": 2626621220.6010303,
+      "issuer": "texas instruments"
+    },
+    {
+      "code": "CRM",
+      "dollar_volume": 2591283079.111488,
+      "issuer": "salesforce"
+    },
+    {
+      "code": "XOM",
+      "dollar_volume": 2508102341.9104934,
+      "issuer": "exxon mobil"
+    },
+    {
+      "code": "APP",
+      "dollar_volume": 2501952720.8905005,
+      "issuer": "applovin"
+    },
+    {
+      "code": "BRK.B",
+      "dollar_volume": 2489787020.1504993,
+      "issuer": "berkshire hathaway b"
+    },
+    {
+      "code": "IBM",
+      "dollar_volume": 2427661097.1766567,
+      "issuer": "ibm"
+    },
+    {
+      "code": "COST",
+      "dollar_volume": 2270773331.551325,
+      "issuer": "costco"
+    },
+    {
+      "code": "COHR",
+      "dollar_volume": 2182920360.150833,
+      "issuer": "coherent"
+    },
+    {
+      "code": "PANW",
+      "dollar_volume": 2091221230.5610836,
+      "issuer": "palo alto networks"
+    },
+    {
+      "code": "GS",
+      "dollar_volume": 2080604431.6367738,
+      "issuer": "goldman sachs"
+    },
+    {
+      "code": "VRT",
+      "dollar_volume": 2003600574.848441,
+      "issuer": "vertiv"
+    },
+    {
+      "code": "CRWD",
+      "dollar_volume": 1973242279.7030137,
+      "issuer": "crowdstrike"
+    },
+    {
+      "code": "BAC",
+      "dollar_volume": 1928559272.9202192,
+      "issuer": "bank of america"
+    },
+    {
+      "code": "JNJ",
+      "dollar_volume": 1904591774.9211779,
+      "issuer": "johnson johnson"
+    },
+    {
+      "code": "MA",
+      "dollar_volume": 1902016782.319386,
+      "issuer": "mastercard"
+    },
+    {
+      "code": "ADI",
+      "dollar_volume": 1889138690.2273674,
+      "issuer": "analog devices"
+    },
+    {
+      "code": "CRDO",
+      "dollar_volume": 1879582673.2234166,
+      "issuer": "credo technology"
+    },
+    {
+      "code": "GE",
+      "dollar_volume": 1790500555.559593,
+      "issuer": "ge aerospace"
+    },
+    {
+      "code": "CVX",
+      "dollar_volume": 1766536358.3685904,
+      "issuer": "chevron"
+    },
+    {
+      "code": "SNOW",
+      "dollar_volume": 1715483813.082833,
+      "issuer": "snowflake"
+    },
+    {
+      "code": "TER",
+      "dollar_volume": 1692692500.4782062,
+      "issuer": "teradyne"
+    },
+    {
+      "code": "COIN",
+      "dollar_volume": 1667237228.3309171,
+      "issuer": "coinbase"
+    },
+    {
+      "code": "ABBV",
+      "dollar_volume": 1615046805.071667,
+      "issuer": "abbvie"
+    },
+    {
+      "code": "INTU",
+      "dollar_volume": 1581938551.8159862,
+      "issuer": "intuit"
+    },
+    {
+      "code": "C",
+      "dollar_volume": 1581483323.1864717,
+      "issuer": "citigroup"
+    },
+    {
+      "code": "HD",
+      "dollar_volume": 1566688446.7696831,
+      "issuer": "home depot"
+    },
+    {
+      "code": "ANET",
+      "dollar_volume": 1563625231.882,
+      "issuer": "arista networks"
+    },
+    {
+      "code": "ADBE",
+      "dollar_volume": 1471099022.0759165,
+      "issuer": "adobe"
+    },
+    {
+      "code": "BA",
+      "dollar_volume": 1462390811.9775002,
+      "issuer": "boeing"
+    },
+    {
+      "code": "APH",
+      "dollar_volume": 1434240718.0945494,
+      "issuer": "amphenol"
+    },
+    {
+      "code": "UBER",
+      "dollar_volume": 1433310643.257583,
+      "issuer": "uber technologies"
+    },
+    {
+      "code": "CIEN",
+      "dollar_volume": 1384356335.1756668,
+      "issuer": "ciena"
+    },
+    {
+      "code": "KO",
+      "dollar_volume": 1345548489.21444,
+      "issuer": "coca cola"
+    },
+    {
+      "code": "BKNG",
+      "dollar_volume": 1336492251.6613193,
+      "issuer": "booking"
+    },
+    {
+      "code": "PG",
+      "dollar_volume": 1314019852.425917,
+      "issuer": "procter gamble"
+    },
+    {
+      "code": "WFC",
+      "dollar_volume": 1299422564.0258791,
+      "issuer": "wells fargo"
+    },
+    {
+      "code": "MPWR",
+      "dollar_volume": 1273355512.5350604,
+      "issuer": "monolithic power systems"
+    },
+    {
+      "code": "AZO",
+      "dollar_volume": 1234067957.7711668,
+      "issuer": "autozone"
+    },
+    {
+      "code": "MRK",
+      "dollar_volume": 1218784286.3973405,
+      "issuer": "merck"
+    },
+    {
+      "code": "MCD",
+      "dollar_volume": 1214809314.665505,
+      "issuer": "mcdonald s"
+    },
+    {
+      "code": "VZ",
+      "dollar_volume": 1209844258.2351625,
+      "issuer": "verizon"
+    },
+    {
+      "code": "DDOG",
+      "dollar_volume": 1207264056.4495,
+      "issuer": "datadog"
+    },
+    {
+      "code": "ACN",
+      "dollar_volume": 1205888130.1569617,
+      "issuer": "accenture"
+    },
+    {
+      "code": "PEP",
+      "dollar_volume": 1198029378.0105104,
+      "issuer": "pepsico"
+    },
+    {
+      "code": "ABT",
+      "dollar_volume": 1196460951.7588334,
+      "issuer": "abbott laboratories"
+    },
+    {
+      "code": "NXPI",
+      "dollar_volume": 1195430188.806054,
+      "issuer": "nxp semiconductors"
+    },
+    {
+      "code": "T",
+      "dollar_volume": 1174349765.3610113,
+      "issuer": "at t"
+    },
+    {
+      "code": "MS",
+      "dollar_volume": 1172725739.0742118,
+      "issuer": "morgan stanley"
+    },
+    {
+      "code": "LIN",
+      "dollar_volume": 1144340720.8388913,
+      "issuer": "linde"
+    },
+    {
+      "code": "TMO",
+      "dollar_volume": 1119816615.174198,
+      "issuer": "thermo fisher scientific"
+    },
+    {
+      "code": "HPE",
+      "dollar_volume": 1118041402.9602008,
+      "issuer": "hewlett packard enterprise"
+    },
+    {
+      "code": "HON",
+      "dollar_volume": 1109698584.5882313,
+      "issuer": "honeywell"
+    },
+    {
+      "code": "MCHP",
+      "dollar_volume": 1095959743.6190913,
+      "issuer": "microchip technology"
+    },
+    {
+      "code": "TMUS",
+      "dollar_volume": 1084202933.5270395,
+      "issuer": "t mobile us"
+    },
+    {
+      "code": "BSX",
+      "dollar_volume": 1071044638.7854167,
+      "issuer": "boston scientific"
+    },
+    {
+      "code": "SCHW",
+      "dollar_volume": 1064077319.2408847,
+      "issuer": "charles schwab"
+    },
+    {
+      "code": "ISRG",
+      "dollar_volume": 1061930654.582,
+      "issuer": "intuitive surgical"
+    },
+    {
+      "code": "ETN",
+      "dollar_volume": 1058557632.3260354,
+      "issuer": "eaton"
+    },
+    {
+      "code": "AXP",
+      "dollar_volume": 1042174278.2015812,
+      "issuer": "american express"
+    },
+    {
+      "code": "NKE",
+      "dollar_volume": 1037635733.1364703,
+      "issuer": "nike"
+    },
+    {
+      "code": "NEE",
+      "dollar_volume": 1033048285.7121716,
+      "issuer": "nextera energy"
+    },
+    {
+      "code": "PFE",
+      "dollar_volume": 1024567331.2725079,
+      "issuer": "pfizer"
+    },
+    {
+      "code": "RTX",
+      "dollar_volume": 1012550967.0082266,
+      "issuer": "rtx"
+    },
+    {
+      "code": "CEG",
+      "dollar_volume": 1007970858.1182649,
+      "issuer": "constellation energy"
+    },
+    {
+      "code": "DIS",
+      "dollar_volume": 973943960.3470578,
+      "issuer": "disney"
+    },
+    {
+      "code": "FLEX",
+      "dollar_volume": 973577623.3452498,
+      "issuer": "flex"
+    },
+    {
+      "code": "GILD",
+      "dollar_volume": 967976084.4963844,
+      "issuer": "gilead sciences"
+    },
+    {
+      "code": "FCX",
+      "dollar_volume": 947876719.9057499,
+      "issuer": "freeport mcmoran"
+    },
+    {
+      "code": "AMGN",
+      "dollar_volume": 930732785.6542923,
+      "issuer": "amgen"
+    },
+    {
+      "code": "SPGI",
+      "dollar_volume": 929580262.7760941,
+      "issuer": "s p global"
+    },
+    {
+      "code": "NET",
+      "dollar_volume": 922368635.8684999,
+      "issuer": "cloudflare"
+    },
+    {
+      "code": "MELI",
+      "dollar_volume": 908350895.7983333,
+      "issuer": "mercadolibre"
+    },
+    {
+      "code": "SNPS",
+      "dollar_volume": 907316014.7075,
+      "issuer": "synopsys"
+    },
+    {
+      "code": "MCK",
+      "dollar_volume": 903333187.5205369,
+      "issuer": "mckesson"
+    },
+    {
+      "code": "TJX",
+      "dollar_volume": 900807462.4979324,
+      "issuer": "tjx companies"
+    },
+    {
+      "code": "COF",
+      "dollar_volume": 897917390.9550823,
+      "issuer": "capital one financial"
+    },
+    {
+      "code": "COP",
+      "dollar_volume": 895408161.4639866,
+      "issuer": "conocophillips"
+    },
+    {
+      "code": "CDNS",
+      "dollar_volume": 893849824.9338335,
+      "issuer": "cadence design systems"
+    },
+    {
+      "code": "PWR",
+      "dollar_volume": 886244400.083453,
+      "issuer": "quanta services"
+    },
+    {
+      "code": "CMCSA",
+      "dollar_volume": 885514609.2476908,
+      "issuer": "comcast"
+    },
+    {
+      "code": "PM",
+      "dollar_volume": 869635473.8140877,
+      "issuer": "philip morris international"
+    },
+    {
+      "code": "CME",
+      "dollar_volume": 867159632.7739987,
+      "issuer": "cme"
+    },
+    {
+      "code": "FIX",
+      "dollar_volume": 862986081.0012763,
+      "issuer": "comfort systems usa"
+    },
+    {
+      "code": "F",
+      "dollar_volume": 853494382.2708377,
+      "issuer": "ford motor"
+    },
+    {
+      "code": "NEM",
+      "dollar_volume": 847164793.3826338,
+      "issuer": "newmont"
+    },
+    {
+      "code": "DASH",
+      "dollar_volume": 839838929.9169167,
+      "issuer": "doordash"
+    },
+    {
+      "code": "DHR",
+      "dollar_volume": 838492767.9310479,
+      "issuer": "danaher"
+    },
+    {
+      "code": "SYK",
+      "dollar_volume": 831468998.3110526,
+      "issuer": "stryker"
+    },
+    {
+      "code": "CVNA",
+      "dollar_volume": 829363231.7678332,
+      "issuer": "carvana"
+    },
+    {
+      "code": "MDT",
+      "dollar_volume": 818136435.4366719,
+      "issuer": "medtronic"
+    },
+    {
+      "code": "FTNT",
+      "dollar_volume": 794076534.2186666,
+      "issuer": "fortinet"
+    },
+    {
+      "code": "UNP",
+      "dollar_volume": 783365199.6620771,
+      "issuer": "union pacific"
+    },
+    {
+      "code": "RCL",
+      "dollar_volume": 782786524.5360116,
+      "issuer": "royal caribbean"
+    },
+    {
+      "code": "SBUX",
+      "dollar_volume": 782530108.3565471,
+      "issuer": "starbucks"
+    },
+    {
+      "code": "SLB",
+      "dollar_volume": 767576119.2943454,
+      "issuer": "slb"
+    },
+    {
+      "code": "CVS",
+      "dollar_volume": 760157375.4234757,
+      "issuer": "cvs health"
+    },
+    {
+      "code": "VLO",
+      "dollar_volume": 758849875.7719625,
+      "issuer": "valero energy"
+    },
+    {
+      "code": "HWM",
+      "dollar_volume": 744461793.4867432,
+      "issuer": "howmet aerospace"
+    },
+    {
+      "code": "WELL",
+      "dollar_volume": 742591874.8241667,
+      "issuer": "welltower"
+    },
+    {
+      "code": "DE",
+      "dollar_volume": 741428630.576701,
+      "issuer": "deere"
+    },
+    {
+      "code": "SHW",
+      "dollar_volume": 739265311.4390361,
+      "issuer": "sherwin williams"
+    },
+    {
+      "code": "BLK",
+      "dollar_volume": 737548030.9001653,
+      "issuer": "blackrock"
+    },
+    {
+      "code": "LMT",
+      "dollar_volume": 734198239.2378938,
+      "issuer": "lockheed martin"
+    },
+    {
+      "code": "VST",
+      "dollar_volume": 717540141.118946,
+      "issuer": "vistra energy"
+    },
+    {
+      "code": "ROST",
+      "dollar_volume": 685579685.913422,
+      "issuer": "ross stores"
+    },
+    {
+      "code": "VRTX",
+      "dollar_volume": 679848560.3220834,
+      "issuer": "vertex pharmaceuticals"
+    },
+    {
+      "code": "CMI",
+      "dollar_volume": 679143181.6056362,
+      "issuer": "cummins"
+    },
+    {
+      "code": "PH",
+      "dollar_volume": 673661251.9392848,
+      "issuer": "parker hannifin"
+    },
+    {
+      "code": "FDX",
+      "dollar_volume": 667575496.5698911,
+      "issuer": "fedex"
+    },
+    {
+      "code": "DVN",
+      "dollar_volume": 662601221.768694,
+      "issuer": "devon energy"
+    },
+    {
+      "code": "REGN",
+      "dollar_volume": 660057983.0367736,
+      "issuer": "regeneron pharmaceuticals"
+    },
+    {
+      "code": "TGT",
+      "dollar_volume": 658763339.0038434,
+      "issuer": "target"
+    },
+    {
+      "code": "ELV",
+      "dollar_volume": 658039593.7936175,
+      "issuer": "elevance health"
+    },
+    {
+      "code": "BX",
+      "dollar_volume": 650490351.6689669,
+      "issuer": "blackstone"
+    },
+    {
+      "code": "ORLY",
+      "dollar_volume": 649981208.9356666,
+      "issuer": "o reilly automotive"
+    },
+    {
+      "code": "PGR",
+      "dollar_volume": 648709427.7678801,
+      "issuer": "progressive"
+    },
+    {
+      "code": "BMY",
+      "dollar_volume": 647900827.8409895,
+      "issuer": "bristol myers squibb"
+    },
+    {
+      "code": "LOW",
+      "dollar_volume": 646025256.2931771,
+      "issuer": "lowe s companies"
+    },
+    {
+      "code": "TT",
+      "dollar_volume": 640338329.1482174,
+      "issuer": "trane technologies"
+    },
+    {
+      "code": "AEP",
+      "dollar_volume": 633693419.6621318,
+      "issuer": "american electric power"
+    },
+    {
+      "code": "ADP",
+      "dollar_volume": 627706889.4038788,
+      "issuer": "automatic data processing"
+    },
+    {
+      "code": "DAL",
+      "dollar_volume": 626371957.5593668,
+      "issuer": "delta air lines"
+    },
+    {
+      "code": "OXY",
+      "dollar_volume": 623663933.655363,
+      "issuer": "occidental petroleum"
+    },
+    {
+      "code": "HLT",
+      "dollar_volume": 621997907.6722045,
+      "issuer": "hilton worldwide"
+    },
+    {
+      "code": "CMG",
+      "dollar_volume": 619223813.7498333,
+      "issuer": "chipotle mexican grill"
+    },
+    {
+      "code": "HCA",
+      "dollar_volume": 613847434.9176953,
+      "issuer": "hca healthcare"
+    },
+    {
+      "code": "GM",
+      "dollar_volume": 612130088.3170966,
+      "issuer": "general motors"
+    },
+    {
+      "code": "ICE",
+      "dollar_volume": 609367022.5938104,
+      "issuer": "intercontinental exchange"
+    },
+    {
+      "code": "MO",
+      "dollar_volume": 598726926.9592289,
+      "issuer": "altria"
+    },
+    {
+      "code": "MMM",
+      "dollar_volume": 592589717.1377091,
+      "issuer": "3m"
+    },
+    {
+      "code": "MPC",
+      "dollar_volume": 584426366.3904884,
+      "issuer": "marathon petroleum"
+    },
+    {
+      "code": "UPS",
+      "dollar_volume": 584280374.4873326,
+      "issuer": "united parcel service"
+    },
+    {
+      "code": "TEL",
+      "dollar_volume": 580952023.8060825,
+      "issuer": "te connectivity"
+    },
+    {
+      "code": "JCI",
+      "dollar_volume": 577054306.5288781,
+      "issuer": "johnson controls"
+    },
+    {
+      "code": "CSX",
+      "dollar_volume": 571488748.7642729,
+      "issuer": "csx"
+    },
+    {
+      "code": "TTWO",
+      "dollar_volume": 566036399.9925,
+      "issuer": "take two interactive software"
+    },
+    {
+      "code": "ADSK",
+      "dollar_volume": 562173886.0655833,
+      "issuer": "autodesk"
+    },
+    {
+      "code": "LNG",
+      "dollar_volume": 561894808.0346285,
+      "issuer": "cheniere energy"
+    },
+    {
+      "code": "MAR",
+      "dollar_volume": 557486551.2074481,
+      "issuer": "marriott international"
+    },
+    {
+      "code": "CB",
+      "dollar_volume": 554079964.5058662,
+      "issuer": "chubb"
+    },
+    {
+      "code": "EBAY",
+      "dollar_volume": 549282491.5494195,
+      "issuer": "ebay"
+    },
+    {
+      "code": "SO",
+      "dollar_volume": 544302066.1011496,
+      "issuer": "southern"
+    },
+    {
+      "code": "BNY",
+      "dollar_volume": 543087061.480099,
+      "issuer": "bank of new york mellon"
+    },
+    {
+      "code": "KEYS",
+      "dollar_volume": 534321695.54408336,
+      "issuer": "keysight technologies"
+    },
+    {
+      "code": "BKR",
+      "dollar_volume": 533005355.2684078,
+      "issuer": "baker hughes"
+    },
+    {
+      "code": "URI",
+      "dollar_volume": 532220896.421609,
+      "issuer": "united rentals"
+    },
+    {
+      "code": "AXON",
+      "dollar_volume": 528840729.0115001,
+      "issuer": "axon enterprise"
+    },
+    {
+      "code": "WBD",
+      "dollar_volume": 526134029.7706668,
+      "issuer": "warner bros discovery"
+    },
+    {
+      "code": "NOC",
+      "dollar_volume": 524735261.8183704,
+      "issuer": "northrop grumman"
+    },
+    {
+      "code": "ABNB",
+      "dollar_volume": 523055508.9656667,
+      "issuer": "airbnb"
+    },
+    {
+      "code": "APO",
+      "dollar_volume": 520274586.27952474,
+      "issuer": "apollo global management"
+    },
+    {
+      "code": "TRV",
+      "dollar_volume": 519258333.9900198,
+      "issuer": "the travelers companies"
+    },
+    {
+      "code": "EOG",
+      "dollar_volume": 514359027.40185714,
+      "issuer": "eog resources"
+    },
+    {
+      "code": "CRH",
+      "dollar_volume": 513961111.63094103,
+      "issuer": "crh"
+    },
+    {
+      "code": "COR",
+      "dollar_volume": 512641411.1012238,
+      "issuer": "cencora"
+    },
+    {
+      "code": "MDLZ",
+      "dollar_volume": 509920541.32151383,
+      "issuer": "mondelez international"
+    },
+    {
+      "code": "USB",
+      "dollar_volume": 504053164.52494466,
+      "issuer": "u s bancorp"
+    },
+    {
+      "code": "WMB",
+      "dollar_volume": 503817431.62759703,
+      "issuer": "williams"
+    },
+    {
+      "code": "AON",
+      "dollar_volume": 498937859.55478024,
+      "issuer": "aon"
+    },
+    {
+      "code": "TDG",
+      "dollar_volume": 494200658.24791664,
+      "issuer": "transdigm"
+    },
+    {
+      "code": "HUM",
+      "dollar_volume": 492843798.7330906,
+      "issuer": "humana"
+    },
+    {
+      "code": "WM",
+      "dollar_volume": 491544809.98897016,
+      "issuer": "waste management"
+    },
+    {
+      "code": "CAH",
+      "dollar_volume": 489800101.12217903,
+      "issuer": "cardinal health"
+    },
+    {
+      "code": "FANG",
+      "dollar_volume": 489505176.95928806,
+      "issuer": "diamondback energy"
+    },
+    {
+      "code": "MNST",
+      "dollar_volume": 487908164.82566667,
+      "issuer": "monster beverage"
+    },
+    {
+      "code": "B",
+      "dollar_volume": 486370179.35842353,
+      "issuer": "barrick mining"
+    },
+    {
+      "code": "MCO",
+      "dollar_volume": 479961759.0916729,
+      "issuer": "moody s"
+    },
+    {
+      "code": "D",
+      "dollar_volume": 477751387.4335044,
+      "issuer": "dominion resources"
+    },
+    {
+      "code": "MRSH",
+      "dollar_volume": 474266972.45750004,
+      "issuer": "marsh"
+    },
+    {
+      "code": "CL",
+      "dollar_volume": 470124731.3073059,
+      "issuer": "colgate palmolive"
+    },
+    {
+      "code": "CI",
+      "dollar_volume": 466801853.69827306,
+      "issuer": "cigna"
+    },
+    {
+      "code": "PNC",
+      "dollar_volume": 466033760.106875,
+      "issuer": "pnc financial services"
+    },
+    {
+      "code": "MSI",
+      "dollar_volume": 464627876.3648638,
+      "issuer": "motorola solutions"
+    },
+    {
+      "code": "LYV",
+      "dollar_volume": 456716946.6868334,
+      "issuer": "live nation entertainment"
+    },
+    {
+      "code": "GD",
+      "dollar_volume": 456149382.51247257,
+      "issuer": "general dynamics"
+    },
+    {
+      "code": "KKR",
+      "dollar_volume": 451088712.01949465,
+      "issuer": "kkr"
+    },
+    {
+      "code": "XEL",
+      "dollar_volume": 445709264.9044085,
+      "issuer": "xcel energy"
+    },
+    {
+      "code": "PSX",
+      "dollar_volume": 443875076.2077843,
+      "issuer": "phillips 66"
+    },
+    {
+      "code": "TFC",
+      "dollar_volume": 437169881.7226476,
+      "issuer": "truist financial"
+    },
+    {
+      "code": "LHX",
+      "dollar_volume": 437150632.3197143,
+      "issuer": "l3harris technologies"
+    },
+    {
+      "code": "EW",
+      "dollar_volume": 436907880.46049994,
+      "issuer": "edwards lifesciences"
+    },
+    {
+      "code": "ECL",
+      "dollar_volume": 435657234.13563114,
+      "issuer": "ecolab"
+    },
+    {
+      "code": "CARR",
+      "dollar_volume": 431910580.5424331,
+      "issuer": "carrier global"
+    },
+    {
+      "code": "DUK",
+      "dollar_volume": 426278222.08063686,
+      "issuer": "duke energy"
+    },
+    {
+      "code": "IBKR",
+      "dollar_volume": 425573375.1767769,
+      "issuer": "interactive brokers"
+    },
+    {
+      "code": "ODFL",
+      "dollar_volume": 425535577.8577124,
+      "issuer": "old dominion freight line"
+    },
+    {
+      "code": "XYZ",
+      "dollar_volume": 417628809.2524167,
+      "issuer": "block"
+    },
+    {
+      "code": "KDP",
+      "dollar_volume": 412713110.2762838,
+      "issuer": "keurig dr pepper"
+    },
+    {
+      "code": "ETR",
+      "dollar_volume": 408556364.27762735,
+      "issuer": "entergy"
+    },
+    {
+      "code": "EXC",
+      "dollar_volume": 405974955.12725055,
+      "issuer": "exelon"
+    },
+    {
+      "code": "EMR",
+      "dollar_volume": 399343914.5894058,
+      "issuer": "emerson electric"
+    },
+    {
+      "code": "MSCI",
+      "dollar_volume": 398199590.7882365,
+      "issuer": "msci"
+    },
+    {
+      "code": "AJG",
+      "dollar_volume": 394845310.5838642,
+      "issuer": "arthur j gallagher"
+    },
+    {
+      "code": "EA",
+      "dollar_volume": 385729597.9969446,
+      "issuer": "electronic arts"
+    },
+    {
+      "code": "GWW",
+      "dollar_volume": 382152859.9312633,
+      "issuer": "w w grainger"
+    },
+    {
+      "code": "NUE",
+      "dollar_volume": 380804671.68120027,
+      "issuer": "nucor"
+    },
+    {
+      "code": "ALL",
+      "dollar_volume": 380039650.08457494,
+      "issuer": "allstate"
+    },
+    {
+      "code": "APD",
+      "dollar_volume": 369745150.3638896,
+      "issuer": "air products chemicals"
+    },
+    {
+      "code": "PCAR",
+      "dollar_volume": 365227420.9121217,
+      "issuer": "paccar"
+    },
+    {
+      "code": "CTAS",
+      "dollar_volume": 360494846.7371198,
+      "issuer": "cintas"
+    },
+    {
+      "code": "IDXX",
+      "dollar_volume": 360304134.51075006,
+      "issuer": "idexx laboratories"
+    },
+    {
+      "code": "ROK",
+      "dollar_volume": 358798931.5267516,
+      "issuer": "rockwell automation"
+    },
+    {
+      "code": "STT",
+      "dollar_volume": 358643017.9867615,
+      "issuer": "state street"
+    },
+    {
+      "code": "RSG",
+      "dollar_volume": 357584184.7033754,
+      "issuer": "republic services"
+    },
+    {
+      "code": "ITW",
+      "dollar_volume": 357024942.2078463,
+      "issuer": "illinois tool works"
+    },
+    {
+      "code": "DHI",
+      "dollar_volume": 356104891.4791008,
+      "issuer": "d r horton"
+    },
+    {
+      "code": "NSC",
+      "dollar_volume": 354834353.9699091,
+      "issuer": "norfolk southern"
+    },
+    {
+      "code": "FITB",
+      "dollar_volume": 349865261.83078825,
+      "issuer": "fifth third bancorp"
+    },
+    {
+      "code": "SRE",
+      "dollar_volume": 345471961.58219814,
+      "issuer": "sempra energy"
+    },
+    {
+      "code": "OKE",
+      "dollar_volume": 343383123.89627963,
+      "issuer": "oneok"
+    },
+    {
+      "code": "KMI",
+      "dollar_volume": 338640953.4547347,
+      "issuer": "kinder morgan"
+    },
+    {
+      "code": "NDAQ",
+      "dollar_volume": 332702515.5810025,
+      "issuer": "nasdaq"
+    },
+    {
+      "code": "FERG",
+      "dollar_volume": 332273960.4612228,
+      "issuer": "ferguson"
+    },
+    {
+      "code": "YUM",
+      "dollar_volume": 327842146.37815326,
+      "issuer": "yum! brands"
+    },
+    {
+      "code": "TRGP",
+      "dollar_volume": 319396873.02857953,
+      "issuer": "targa resources"
+    },
+    {
+      "code": "AMP",
+      "dollar_volume": 318892377.4779437,
+      "issuer": "ameriprise financial"
+    },
+    {
+      "code": "FAST",
+      "dollar_volume": 317330942.9996954,
+      "issuer": "fastenal"
+    },
+    {
+      "code": "CTVA",
+      "dollar_volume": 305848219.9742753,
+      "issuer": "corteva"
+    },
+    {
+      "code": "MET",
+      "dollar_volume": 293896699.0137173,
+      "issuer": "metlife"
+    },
+    {
+      "code": "AFL",
+      "dollar_volume": 288675274.93542606,
+      "issuer": "aflac"
+    },
+    {
+      "code": "ARGX",
+      "dollar_volume": 288522584.40975,
+      "issuer": "argenx se"
+    },
+    {
+      "code": "AME",
+      "dollar_volume": 282497409.76573664,
+      "issuer": "ametek"
+    },
+    {
+      "code": "SCCO",
+      "dollar_volume": 244143873.48844603,
+      "issuer": "southern copper"
+    },
+    {
+      "code": "WAB",
+      "dollar_volume": 243564537.66698688,
+      "issuer": "westinghouse air brake technologies"
+    },
+    {
+      "code": "ET",
+      "dollar_volume": 224806426.41380733,
+      "issuer": "energy transfer"
+    },
+    {
+      "code": "HEI",
+      "dollar_volume": 205348270.86526793,
+      "issuer": "heico"
+    },
+    {
+      "code": "GRMN",
+      "dollar_volume": 196802640.79194036,
+      "issuer": "garmin"
+    },
+    {
+      "code": "CCEP",
+      "dollar_volume": 179437937.5657942,
+      "issuer": "coca cola europacific"
+    },
+    {
+      "code": "BRK.A",
+      "dollar_volume": 156746404.01700002,
+      "issuer": "berkshire hathaway a"
+    },
+    {
+      "code": "EPD",
+      "dollar_volume": 142643584.82624465,
+      "issuer": "enterprise products"
+    },
+    {
+      "code": "MT",
+      "dollar_volume": 124209466.13809212,
+      "issuer": "arcelormittal"
+    },
+    {
+      "code": "MPLX",
+      "dollar_volume": 104043883.90190431,
+      "issuer": "mplx"
+    },
+    {
+      "code": "HLN",
+      "dollar_volume": 84522053.23625,
+      "issuer": "haleon"
+    },
+    {
+      "code": "NWG",
+      "dollar_volume": 71582137.90725,
+      "issuer": "natwest"
+    },
+    {
+      "code": "FMX",
+      "dollar_volume": 64263381.405307814,
+      "issuer": "femsa"
+    },
+    {
+      "code": "AMX",
+      "dollar_volume": 37204889.128,
+      "issuer": "america movil sab de cv"
+    },
+    {
+      "code": "IX",
+      "dollar_volume": 11060459.763666665,
+      "issuer": "orix"
+    },
+    {
+      "code": "CCZ",
+      "dollar_volume": 20774.649696441098,
+      "issuer": "comcast 2% cnv pref sec15 10 2029 usd71"
+    }
+  ],
+  "selection_effect": {
+    "stage0_prescreen_key": "MARKET_VAL",
+    "stage0_prescreen_mode": "market_val",
+    "superset_size": 296,
+    "cut_296th_code": "AU",
+    "cut_296th_prescreen_value": 41668483234.74,
+    "cut_296th_60d_dollar_volume": null,
+    "stage0_excluded_counts": {
+      "factor_etf": 0,
+      "non_us_market": 0,
+      "flagged_non_common": 36,
+      "excluded_sec_type": 0,
+      "unconfirmed_common": 0,
+      "below_cap": 0,
+      "no_prescreen_value": 0
+    },
+    "stage1_dual_class_dropped": 0,
+    "stage1_non_borrowable_dropped": 0,
+    "disclosure": "names ranked outside the Stage-0 top-296 that would have entered the 60d-dollar-volume top-250 are unobservable under the \u2264300 quota \u2014 a bounded, disclosed selection effect that cannot turn a fail into a pass (prereg \u00a72/\u00a713)."
+  },
+  "too_short_history": [
+    {
+      "symbol": "SPCX",
+      "n_bars": 19,
+      "weeks": 3.8
+    },
+    {
+      "symbol": "SKHYV",
+      "n_bars": 1,
+      "weeks": 0.2
+    },
+    {
+      "symbol": "GEV",
+      "n_bars": 573,
+      "weeks": 114.6
+    },
+    {
+      "symbol": "SNDK",
+      "n_bars": 352,
+      "weeks": 70.4
+    },
+    {
+      "symbol": "ALAB",
+      "n_bars": 578,
+      "weeks": 115.6
+    },
+    {
+      "symbol": "HONA",
+      "n_bars": 18,
+      "weeks": 3.6
+    },
+    {
+      "symbol": "MDLN",
+      "n_bars": 140,
+      "weeks": 28.0
+    },
+    {
+      "symbol": "CBRS",
+      "n_bars": 39,
+      "weeks": 7.8
+    },
+    {
+      "symbol": "CRWV",
+      "n_bars": 322,
+      "weeks": 64.4
+    },
+    {
+      "symbol": "FER",
+      "n_bars": 571,
+      "weeks": 114.2
+    },
+    {
+      "symbol": "VIK",
+      "n_bars": 549,
+      "weeks": 109.8
+    }
+  ],
+  "unreadable_or_missing_bars": [
+    "SKHY",
+    "GDVTZ",
+    "NEMCL",
+    "ATVK",
+    "BSQKZ",
+    "ENBA",
+    "AIG",
+    "BDX",
+    "CCJ",
+    "AU"
+  ]
+}

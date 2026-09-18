@@ -1,0 +1,16 @@
+{
+  "purpose": "EVO-130 full-depth daily bars for swing eval (S5 SPY essential); produced by qlab.events.datafetch.opend_daily.fetch_daily_parquet",
+  "source": "opend",
+  "autype": "qfq",
+  "ktype": "K_DAY",
+  "start": "2006-01-01",
+  "end": "2026-07-10",
+  "note": "data/daily (EVO-24) stays 2019-2024; this dir is the full-depth swing dataset.",
+  "written": {
+    "SPY": {
+      "path": "data/daily_full/SPY_1d.parquet",
+      "rows": 5017
+    }
+  },
+  "failed": {}
+}

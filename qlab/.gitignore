@@ -1,0 +1,44 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+# Ad-hoc run outputs are ignored; curated sample + real-evidence dirs are kept.
+reports/*
+!reports/SAMPLE_paper_run/
+!reports/opend_probe/
+!reports/opend_session_live/
+!reports/SAMPLE_events_synth/
+!reports/opend_kline_depth/
+!reports/swing_s5_fomc/
+!reports/swing_s1_meanrev/
+# EVO-8 前向纸面轨：决策记录**必须**入库——冻结的时序证明靠「决策 commit 是 freeze_sha 的
+# DAG 后代」，被 ignore 掉就等于该轮证据不存在（工部 2026-08-10 第 1 轮起跑时发现并修）。
+!reports/llm_paper/
+data/cache/
+# EVO tooling (工部/都水): derived Qlib .bin store + CSV intermediates are
+# rebuildable from committed data/daily_full via tools/qlib_gen/build_qlib_data.py
+data/qlib_store/
+*.parquet
+# EVO-24: the delivered adjusted daily bars ARE committed (real OpenD qfq data)
+# so the serial 真跑 step reads them from the branch without re-hitting the
+# 30-day historical-K quota. Ad-hoc parquet elsewhere stays ignored.
+!data/daily/*.parquet
+# EVO-130: full-depth (2006→) swing dataset — committed for reproducible
+# walk-forward without re-hitting the 30-day historical-K quota.
+!data/daily_full/*.parquet
+# EVO-25 candidate-8: committed ETP execution snapshots + carry report
+!data/vix_etp/*.parquet
+!reports/carry_vixts_svxy/
+!reports/carry_vixts_svix/
+# EVO-8 candidate A (rate carry): FRED yield-curve panel is committed for
+# offline reproducible backtest (free/keyless source, small file)
+!data/fred_yields.parquet
+# EVO-8 candidate A universe bars (BIL/IEF/TLT total-return daily), gathered
+# from sibling branches into A's data dir; committed for offline reproducibility
+!data/rate_carry/*.parquet
+# EVO-8 candidate C credit-spread signal (BAA10YM latest + vintage samples via
+# FRED API point-in-time); small, committed for offline reproducible backtest
+!data/credit_baa10ym_latest.parquet
+!data/credit_baa10ym_vintages.parquet
