@@ -1,0 +1,81 @@
+{
+  "issue": "EVO-8",
+  "sleeve": "gem_certify_archival",
+  "candidate": "gem_dual_momentum_12m",
+  "note": "GEM 归档统一走 certify() 口径；结论与 EVO-149 原判一致（负向）。",
+  "shared_ledger": "/Users/clck/multica_workspaces_desktop-api.multica.ai/6923f0cb-c7a3-4bc4-9d15-8d431e57a0ba/dfb40353/workdir/qlab-mf2/research/gate/state/trial_ledger.jsonl",
+  "cumulative_n": 22,
+  "trial_sharpes": [
+    0.45189898575243165,
+    0.587510092418884
+  ],
+  "certify_verdict": {
+    "certified": false,
+    "decision": "REJECTED_dsr",
+    "reasons": [
+      "DSR=0.000 < 0.95（N=22 累计试验下选择偏差过大）→ 疑似伪 alpha。"
+    ],
+    "gates": {
+      "prereg_unchanged": true,
+      "n_trials": 22,
+      "cost_per_turnover_effective": 0.001,
+      "cost_stress": {
+        "sharpe_x1": 0.038259447578927464,
+        "sharpe_x2": 0.03700965707811764,
+        "passed_early": true,
+        "robust": true
+      },
+      "capacity": {
+        "participation": 0.0002,
+        "passed": true
+      },
+      "rationale": {
+        "accepted": true,
+        "quarantined": false,
+        "reason": "ex-ante 经济理由充分。"
+      },
+      "dsr": {
+        "sr_per_period": 0.03700965707811764,
+        "n_obs": 4818,
+        "n_trials": 22,
+        "expected_max_sr": 0.1862542325842309,
+        "psr_vs_zero": 0.9943415518218982,
+        "dsr": 8.62081357289838e-25,
+        "passed": false
+      }
+    }
+  },
+  "metrics": {
+    "n_obs": 4818,
+    "cagr": 0.07981748476729478,
+    "mdd": 0.320489482839883,
+    "sharpe_ann": 0.587510092418884,
+    "sharpe_per_period": 0.03700965707811764,
+    "mar": 0.2490486865903544,
+    "skew": -0.6625183736065943,
+    "kurtosis": 12.727732365069805,
+    "crisis": {
+      "2008_GFC": {
+        "n_obs": 441,
+        "cagr": 0.03148210047446498,
+        "mdd": 0.11047859609178079
+      },
+      "2020_COVID": {
+        "n_obs": 62,
+        "cagr": -0.6489949135516311,
+        "mdd": 0.3204894828398829
+      },
+      "2022_RATE": {
+        "n_obs": 251,
+        "cagr": -0.16808130302693058,
+        "mdd": 0.2129200501377403
+      }
+    },
+    "official_pass": false,
+    "shadow_report_pass": false,
+    "shadow_floor_pass": false,
+    "decision": "FAIL"
+  },
+  "window_start": "2007-05-30",
+  "run_date": "2026-07-29"
+}

@@ -1,0 +1,99 @@
+{
+  "download_date": "2026-07-10",
+  "path": "C",
+  "signal_primary": "CBOE public CSV",
+  "sources": {
+    "VIX": {
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+      "rows": 9225,
+      "bytes": 470218,
+      "coverage": [
+        "1990-01-02",
+        "2026-07-09"
+      ],
+      "snapshot": "data/vix_raw/VIX_History.csv"
+    },
+    "VIX3M": {
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv",
+      "rows": 4226,
+      "bytes": 215551,
+      "coverage": [
+        "2009-09-18",
+        "2026-07-09"
+      ],
+      "snapshot": "data/vix_raw/VIX3M_History.csv"
+    }
+  },
+  "execution": {
+    "snapshots": {
+      "SVIX": {
+        "rows": 1072,
+        "coverage": [
+          "2022-03-30",
+          "2026-07-09"
+        ],
+        "snapshot": "data/vix_etp/SVIX_1d.parquet"
+      },
+      "SVOL": {
+        "rows": 1294,
+        "coverage": [
+          "2021-05-13",
+          "2026-07-09"
+        ],
+        "snapshot": "data/vix_etp/SVOL_1d.parquet"
+      },
+      "SVXY": {
+        "rows": 3710,
+        "coverage": [
+          "2011-10-04",
+          "2026-07-09"
+        ],
+        "snapshot": "data/vix_etp/SVXY_1d.parquet"
+      },
+      "UVXY": {
+        "rows": 3533,
+        "coverage": [
+          "2012-06-18",
+          "2026-07-09"
+        ],
+        "snapshot": "data/vix_etp/UVXY_1d.parquet"
+      },
+      "VIXM": {
+        "rows": 3647,
+        "coverage": [
+          "2012-01-03",
+          "2026-07-09"
+        ],
+        "snapshot": "data/vix_etp/VIXM_1d.parquet"
+      },
+      "VIXY": {
+        "rows": 3647,
+        "coverage": [
+          "2012-01-03",
+          "2026-07-09"
+        ],
+        "snapshot": "data/vix_etp/VIXY_1d.parquet"
+      }
+    }
+  },
+  "crosscheck_yfinance": {
+    "VIX": {
+      "available": true,
+      "overlap_days": 9193,
+      "max_abs_diff_points": 2.610000839233397,
+      "median_abs_diff_points": 3.433227533378158e-07,
+      "corr": 0.9999924172589242,
+      "within_tol": true,
+      "tol_points": 0.75
+    },
+    "VIX3M": {
+      "available": true,
+      "overlap_days": 4222,
+      "max_abs_diff_points": 1.0499995422363284,
+      "median_abs_diff_points": 3.8146972514141453e-07,
+      "corr": 0.9999956982024645,
+      "within_tol": true,
+      "tol_points": 0.75
+    }
+  }
+}

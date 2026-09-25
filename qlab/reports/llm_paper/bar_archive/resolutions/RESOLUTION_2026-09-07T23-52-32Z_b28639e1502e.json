@@ -1,0 +1,100 @@
+{
+  "basis": "结算政策裁定：派生结算不消费 volume；为保持 append-only 首见观察的政策权威，本键采用 archived。该选择不构成对真实成交量的事实认证。",
+  "content_sha256": "b28639e1502e2f152f9a65c14ade37911818b0b3c76da3aa1df1f949b83291ed",
+  "note": "追加式裁定：不回改 archive；同键同字段差异才被此裁定覆盖。",
+  "resolved_differences": [
+    {
+      "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+      "date": "2026-09-01",
+      "fields": {
+        "volume": {
+          "archived": 15040655.0,
+          "refetched": 15897531.0
+        }
+      },
+      "symbol": "CRM"
+    },
+    {
+      "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+      "date": "2026-09-01",
+      "fields": {
+        "volume": {
+          "archived": 13846929.0,
+          "refetched": 14173011.0
+        }
+      },
+      "symbol": "CSCO"
+    },
+    {
+      "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+      "date": "2026-09-01",
+      "fields": {
+        "volume": {
+          "archived": 2274118.0,
+          "refetched": 2311017.0
+        }
+      },
+      "symbol": "DE"
+    },
+    {
+      "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+      "date": "2026-09-01",
+      "fields": {
+        "volume": {
+          "archived": 3284495.0,
+          "refetched": 3292566.0
+        }
+      },
+      "symbol": "HD"
+    },
+    {
+      "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+      "date": "2026-09-01",
+      "fields": {
+        "volume": {
+          "archived": 2626150.0,
+          "refetched": 2673411.0
+        }
+      },
+      "symbol": "INTU"
+    },
+    {
+      "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+      "date": "2026-09-01",
+      "fields": {
+        "volume": {
+          "archived": 106855211.0,
+          "refetched": 109756184.0
+        }
+      },
+      "symbol": "NVDA"
+    },
+    {
+      "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+      "date": "2026-09-01",
+      "fields": {
+        "volume": {
+          "archived": 3802576.0,
+          "refetched": 3982974.0
+        }
+      },
+      "symbol": "TGT"
+    },
+    {
+      "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+      "date": "2026-09-01",
+      "fields": {
+        "volume": {
+          "archived": 21964131.0,
+          "refetched": 22074574.0
+        }
+      },
+      "symbol": "WMT"
+    }
+  ],
+  "resolved_utc": "2026-09-07T23:52:32Z",
+  "ruling_reference": "01a07e44-ace1-7350-95db-b1ca0403b329",
+  "schema": "llm_paper_bar_archive_resolution/v1",
+  "selected_version": "archived",
+  "source_archive_content_sha256": "648e2a570c1ecf04dcb6284914dfe2d75990e39a90a458ac7bd100a3ad375629"
+}

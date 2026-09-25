@@ -1,0 +1,1098 @@
+{
+  "archive": {
+    "archive_file": "qlab/reports/llm_paper/bar_archive/archive_20260925_2026-09-25T02-02-05-987596-00-00_3565b3b16874.json",
+    "content_sha256": "3565b3b16874ba5fd2b36c497089ce85366637444378c359aeec5ac00279ecc2",
+    "n_bars": 900,
+    "symbols": [
+      "CRM",
+      "CSCO",
+      "DE",
+      "HD",
+      "INTU",
+      "NVDA",
+      "SPY",
+      "TGT",
+      "WMT"
+    ],
+    "unresolved_differences": [
+      {
+        "archive": "archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+        "differences": [
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 15040655.0,
+                "refetched": 15897531.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 13846929.0,
+                "refetched": 14173011.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 2274118.0,
+                "refetched": 2311017.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 3284495.0,
+                "refetched": 3292566.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 2626150.0,
+                "refetched": 2673411.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 106855211.0,
+                "refetched": 109756184.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 37889249.0,
+                "refetched": 41126315.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 3802576.0,
+                "refetched": 3982974.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-01",
+            "fields": {
+              "volume": {
+                "archived": 21964131.0,
+                "refetched": 22074574.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260903_2026-09-03T02-01-51-355718-00-00_648e2a570c1e.json",
+        "differences": [
+          {
+            "date": "2026-09-02",
+            "fields": {
+              "volume": {
+                "archived": 13161816.0,
+                "refetched": 14393707.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-02",
+            "fields": {
+              "volume": {
+                "archived": 11356569.0,
+                "refetched": 11371861.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-02",
+            "fields": {
+              "volume": {
+                "archived": 2024848.0,
+                "refetched": 2028617.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-02",
+            "fields": {
+              "volume": {
+                "archived": 3493820.0,
+                "refetched": 3509005.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-02",
+            "fields": {
+              "volume": {
+                "archived": 3095156.0,
+                "refetched": 3135304.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-02",
+            "fields": {
+              "volume": {
+                "archived": 153067307.0,
+                "refetched": 157104683.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-02",
+            "fields": {
+              "volume": {
+                "archived": 27826259.0,
+                "refetched": 29566216.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-02",
+            "fields": {
+              "volume": {
+                "archived": 2738184.0,
+                "refetched": 2805256.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-02",
+            "fields": {
+              "volume": {
+                "archived": 17994224.0,
+                "refetched": 25181796.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260904_2026-09-04T02-01-41-950331-00-00_7a6a3aaf54fb.json",
+        "differences": [
+          {
+            "date": "2026-09-03",
+            "fields": {
+              "volume": {
+                "archived": 14905853.0,
+                "refetched": 16037830.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-03",
+            "fields": {
+              "volume": {
+                "archived": 14188259.0,
+                "refetched": 14219126.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-03",
+            "fields": {
+              "volume": {
+                "archived": 1691747.0,
+                "refetched": 1693773.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-03",
+            "fields": {
+              "volume": {
+                "archived": 2788886.0,
+                "refetched": 3378119.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-03",
+            "fields": {
+              "volume": {
+                "archived": 3603985.0,
+                "refetched": 3697127.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-03",
+            "fields": {
+              "volume": {
+                "archived": 131388930.0,
+                "refetched": 134681610.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-03",
+            "fields": {
+              "volume": {
+                "archived": 40658097.0,
+                "refetched": 43531581.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-03",
+            "fields": {
+              "volume": {
+                "archived": 1977705.0,
+                "refetched": 1986981.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-03",
+            "fields": {
+              "volume": {
+                "archived": 25368340.0,
+                "refetched": 25541209.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260910_2026-09-10T02-03-24-117625-00-00_798ea677039d.json",
+        "differences": [
+          {
+            "date": "2026-09-09",
+            "fields": {
+              "volume": {
+                "archived": 11813072.0,
+                "refetched": 11858964.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-09",
+            "fields": {
+              "volume": {
+                "archived": 10793639.0,
+                "refetched": 10837245.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-09",
+            "fields": {
+              "volume": {
+                "archived": 1032952.0,
+                "refetched": 1035901.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-09",
+            "fields": {
+              "volume": {
+                "archived": 3351603.0,
+                "refetched": 3612375.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-09",
+            "fields": {
+              "volume": {
+                "archived": 2389813.0,
+                "refetched": 2417982.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-09",
+            "fields": {
+              "volume": {
+                "archived": 79115838.0,
+                "refetched": 82955478.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-09",
+            "fields": {
+              "volume": {
+                "archived": 31586975.0,
+                "refetched": 32812411.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-09",
+            "fields": {
+              "volume": {
+                "archived": 3375259.0,
+                "refetched": 3394933.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-09",
+            "fields": {
+              "volume": {
+                "archived": 15323621.0,
+                "refetched": 15460827.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260915_2026-09-15T02-01-46-478151-00-00_a48f35cb043d.json",
+        "differences": [
+          {
+            "date": "2026-09-14",
+            "fields": {
+              "volume": {
+                "archived": 12728916.0,
+                "refetched": 12966104.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-14",
+            "fields": {
+              "volume": {
+                "archived": 12379021.0,
+                "refetched": 12547117.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-14",
+            "fields": {
+              "volume": {
+                "archived": 1029128.0,
+                "refetched": 1029734.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-14",
+            "fields": {
+              "volume": {
+                "archived": 4078780.0,
+                "refetched": 4179165.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-14",
+            "fields": {
+              "volume": {
+                "archived": 3612952.0,
+                "refetched": 3633230.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-14",
+            "fields": {
+              "volume": {
+                "archived": 130604234.0,
+                "refetched": 132267244.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-14",
+            "fields": {
+              "volume": {
+                "archived": 42472944.0,
+                "refetched": 43992428.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-14",
+            "fields": {
+              "volume": {
+                "archived": 3277414.0,
+                "refetched": 3288381.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-14",
+            "fields": {
+              "volume": {
+                "archived": 22971741.0,
+                "refetched": 23884512.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260916_2026-09-16T02-01-44-116468-00-00_8c9d79a9ecfa.json",
+        "differences": [
+          {
+            "date": "2026-09-15",
+            "fields": {
+              "volume": {
+                "archived": 10208606.0,
+                "refetched": 11502819.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-15",
+            "fields": {
+              "volume": {
+                "archived": 15587920.0,
+                "refetched": 15609253.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-15",
+            "fields": {
+              "volume": {
+                "archived": 1137363.0,
+                "refetched": 1526767.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-15",
+            "fields": {
+              "volume": {
+                "archived": 4464209.0,
+                "refetched": 4497244.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-15",
+            "fields": {
+              "volume": {
+                "archived": 2840088.0,
+                "refetched": 2907429.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-15",
+            "fields": {
+              "volume": {
+                "archived": 84970737.0,
+                "refetched": 88059658.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-15",
+            "fields": {
+              "volume": {
+                "archived": 44101683.0,
+                "refetched": 46194964.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-15",
+            "fields": {
+              "volume": {
+                "archived": 3576501.0,
+                "refetched": 3620802.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-15",
+            "fields": {
+              "volume": {
+                "archived": 18975916.0,
+                "refetched": 19316333.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260917_2026-09-17T02-01-17-826474-00-00_6e255ef794a6.json",
+        "differences": [
+          {
+            "date": "2026-09-16",
+            "fields": {
+              "volume": {
+                "archived": 9301391.0,
+                "refetched": 9432373.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-16",
+            "fields": {
+              "volume": {
+                "archived": 15508239.0,
+                "refetched": 15563778.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-16",
+            "fields": {
+              "volume": {
+                "archived": 844840.0,
+                "refetched": 872155.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-16",
+            "fields": {
+              "volume": {
+                "archived": 3662838.0,
+                "refetched": 3724885.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-16",
+            "fields": {
+              "volume": {
+                "archived": 2400305.0,
+                "refetched": 2496472.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-16",
+            "fields": {
+              "volume": {
+                "archived": 95442292.0,
+                "refetched": 96563590.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-16",
+            "fields": {
+              "volume": {
+                "archived": 54319706.0,
+                "refetched": 59217653.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-16",
+            "fields": {
+              "volume": {
+                "archived": 2730540.0,
+                "refetched": 2744975.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-16",
+            "fields": {
+              "volume": {
+                "archived": 15095335.0,
+                "refetched": 15150852.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260918_2026-09-18T02-01-20-426984-00-00_dca2f2f85c1e.json",
+        "differences": [
+          {
+            "date": "2026-09-17",
+            "fields": {
+              "volume": {
+                "archived": 14928596.0,
+                "refetched": 16611316.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-17",
+            "fields": {
+              "volume": {
+                "archived": 15797036.0,
+                "refetched": 16160055.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-17",
+            "fields": {
+              "volume": {
+                "archived": 1205479.0,
+                "refetched": 1232318.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-17",
+            "fields": {
+              "volume": {
+                "archived": 4138166.0,
+                "refetched": 4156393.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-17",
+            "fields": {
+              "volume": {
+                "archived": 4077579.0,
+                "refetched": 4122567.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-17",
+            "fields": {
+              "volume": {
+                "archived": 92320819.0,
+                "refetched": 94191263.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-17",
+            "fields": {
+              "volume": {
+                "archived": 45073734.0,
+                "refetched": 49652754.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-17",
+            "fields": {
+              "volume": {
+                "archived": 4062247.0,
+                "refetched": 4094873.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-17",
+            "fields": {
+              "volume": {
+                "archived": 19123543.0,
+                "refetched": 19216189.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260922_2026-09-22T02-02-03-445523-00-00_bfab2c23dada.json",
+        "differences": [
+          {
+            "date": "2026-09-21",
+            "fields": {
+              "volume": {
+                "archived": 9875029.0,
+                "refetched": 10581926.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-21",
+            "fields": {
+              "volume": {
+                "archived": 21167684.0,
+                "refetched": 21567235.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-21",
+            "fields": {
+              "volume": {
+                "archived": 931323.0,
+                "refetched": 953193.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-21",
+            "fields": {
+              "volume": {
+                "archived": 5356613.0,
+                "refetched": 5434330.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-21",
+            "fields": {
+              "volume": {
+                "archived": 2873423.0,
+                "refetched": 2949261.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-21",
+            "fields": {
+              "volume": {
+                "archived": 108658854.0,
+                "refetched": 109806067.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-21",
+            "fields": {
+              "volume": {
+                "archived": 48689091.0,
+                "refetched": 50484685.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-21",
+            "fields": {
+              "volume": {
+                "archived": 2073642.0,
+                "refetched": 2255318.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-21",
+            "fields": {
+              "volume": {
+                "archived": 22569757.0,
+                "refetched": 23976089.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260923_2026-09-23T02-01-45-264348-00-00_7bd315882848.json",
+        "differences": [
+          {
+            "date": "2026-09-22",
+            "fields": {
+              "volume": {
+                "archived": 11863329.0,
+                "refetched": 13644146.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-22",
+            "fields": {
+              "volume": {
+                "archived": 32301893.0,
+                "refetched": 32892687.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-22",
+            "fields": {
+              "volume": {
+                "archived": 1497807.0,
+                "refetched": 1548261.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-22",
+            "fields": {
+              "volume": {
+                "archived": 5436862.0,
+                "refetched": 5458306.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-22",
+            "fields": {
+              "volume": {
+                "archived": 4789567.0,
+                "refetched": 4821781.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-22",
+            "fields": {
+              "volume": {
+                "archived": 92943501.0,
+                "refetched": 95746745.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-22",
+            "fields": {
+              "volume": {
+                "archived": 33575342.0,
+                "refetched": 34802336.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-22",
+            "fields": {
+              "volume": {
+                "archived": 2174887.0,
+                "refetched": 2194981.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-22",
+            "fields": {
+              "volume": {
+                "archived": 19322208.0,
+                "refetched": 19372765.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      },
+      {
+        "archive": "archive_20260924_2026-09-24T02-01-22-813892-00-00_3aa85879a07c.json",
+        "differences": [
+          {
+            "date": "2026-09-23",
+            "fields": {
+              "volume": {
+                "archived": 11444065.0,
+                "refetched": 12357594.0
+              }
+            },
+            "symbol": "CRM"
+          },
+          {
+            "date": "2026-09-23",
+            "fields": {
+              "volume": {
+                "archived": 17535565.0,
+                "refetched": 17637884.0
+              }
+            },
+            "symbol": "CSCO"
+          },
+          {
+            "date": "2026-09-23",
+            "fields": {
+              "volume": {
+                "archived": 1614667.0,
+                "refetched": 1819234.0
+              }
+            },
+            "symbol": "DE"
+          },
+          {
+            "date": "2026-09-23",
+            "fields": {
+              "volume": {
+                "archived": 4591984.0,
+                "refetched": 4689631.0
+              }
+            },
+            "symbol": "HD"
+          },
+          {
+            "date": "2026-09-23",
+            "fields": {
+              "volume": {
+                "archived": 3253841.0,
+                "refetched": 3425310.0
+              }
+            },
+            "symbol": "INTU"
+          },
+          {
+            "date": "2026-09-23",
+            "fields": {
+              "volume": {
+                "archived": 86416379.0,
+                "refetched": 89547290.0
+              }
+            },
+            "symbol": "NVDA"
+          },
+          {
+            "date": "2026-09-23",
+            "fields": {
+              "volume": {
+                "archived": 43595512.0,
+                "refetched": 54931688.0
+              }
+            },
+            "symbol": "SPY"
+          },
+          {
+            "date": "2026-09-23",
+            "fields": {
+              "volume": {
+                "archived": 2772523.0,
+                "refetched": 2989017.0
+              }
+            },
+            "symbol": "TGT"
+          },
+          {
+            "date": "2026-09-23",
+            "fields": {
+              "volume": {
+                "archived": 20173358.0,
+                "refetched": 22770767.0
+              }
+            },
+            "symbol": "WMT"
+          }
+        ]
+      }
+    ]
+  },
+  "content_sha256": "58947a6d379412feaf92f9e005c478278d15facbd233d85b8cc8a3b5be8a8eb9",
+  "coverage": {
+    "ageing_clock": {
+      "as_of": "2026-09-25",
+      "basis": "archived_source_trade_dates_only",
+      "calendar_lag_days_diagnostic_only": 1,
+      "hard_alert_semantics": "unchanged_observed_trading_days_le_20",
+      "observed_through": "2026-09-24",
+      "status": "complete_no_missing_keys",
+      "unobserved_time_excluded": false
+    },
+    "missing_count": 0,
+    "missing_keys": [],
+    "oldest_missing": null
+  },
+  "executor": "non_round_archive_scanner",
+  "hard_alerts": [],
+  "note": "幂等追赶：每次按全部已落盘轮次重建缺口；只取仍缺键对应标的和当前开窗持仓。append-only，不改写既有归档值；供应商差异沿用 RESOLUTION。",
+  "quota_purpose": "marking",
+  "requested_symbols": [
+    "CRM",
+    "CSCO",
+    "DE",
+    "HD",
+    "INTU",
+    "NVDA",
+    "SPY",
+    "TGT",
+    "WMT"
+  ],
+  "scan_date": "2026-09-25",
+  "schema": "llm_paper_archive_scanner/v1",
+  "source": "AV TIME_SERIES_DAILY compact"
+}

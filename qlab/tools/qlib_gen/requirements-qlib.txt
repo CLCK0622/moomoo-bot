@@ -1,0 +1,10 @@
+# Direct deps for the Qlib factor-generator stack (persistent venv qlab-py312).
+# CPU-only, no torch. Pins numpy/pandas to what the qlab lock uses so factor
+# values match the harness. Full frozen graph: requirements-qlib-lock.txt.
+pyqlib==0.9.7
+numpy==1.26.4          # <2, Qlib-compatible; same as qlab requirements-lock
+pandas>=2.0,<2.2       # 2.1.4 resolved; matches qlab lock
+pyarrow>=14.0.0
+pytest>=7.4.0
+# transitively required by the vendored dump_bin.py (pulled by pyqlib anyway):
+# fire, loguru, tqdm

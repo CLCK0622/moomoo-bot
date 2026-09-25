@@ -1,0 +1,38 @@
+{
+  "issue": "EVO-23",
+  "candidate": "candidate-2 sector ETF relative-strength rotation (top-3, long-only/cash)",
+  "sleeve": "sector_rs",
+  "preregistration_commit": "6eeccab4cbb59ce606a289e3021d3a55dbf7b493",
+  "overall_verdict": "\u6570\u636e\u4e0d\u8db3-\u65e0\u6cd5\u8bc4\u4f30",
+  "verdict_reason": "0/11 frozen universe symbols have real OpenD bars; engine is reproducible but no verdict can be formed.",
+  "data_complete": false,
+  "universe_frozen": [
+    "XLY",
+    "XLI",
+    "XLK",
+    "XLF",
+    "XLV",
+    "XLP",
+    "XLU",
+    "XLE",
+    "XLB",
+    "XLRE",
+    "XLC"
+  ],
+  "universe_present": [],
+  "universe_missing": [
+    "XLY",
+    "XLI",
+    "XLK",
+    "XLF",
+    "XLV",
+    "XLP",
+    "XLU",
+    "XLE",
+    "XLB",
+    "XLRE",
+    "XLC"
+  ],
+  "runs": [],
+  "benchmarks": {}
+}
