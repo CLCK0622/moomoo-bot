@@ -1,0 +1,30 @@
+{
+  "artifact": "data/qlib_store/ (Qlib binary store for factor mining — candidate (i))",
+  "status": "BUILT locally; NOT committed (derived, 125M, gitignored). Rebuildable byte-for-byte from committed inputs.",
+  "recorded_date": "2026-07-30",
+  "recorded_by": "都水主事 (工部)",
+
+  "build_command": "PYTHONPATH=<repo>/qlab ~/.venvs/qlab-py312/bin/python -m tools.qlib_gen.build_qlib_data --src data/daily_full --out data/qlib_store --max-workers 4",
+  "builder": "qlab/tools/qlib_gen/build_qlib_data.py -> vendored tools/qlib_gen/vendor/dump_bin.py (Qlib v0.9.7, pinned)",
+  "interpreter": "~/.venvs/qlab-py312 (CPython 3.12.13, pyqlib 0.9.7, numpy 1.26.4, pandas 2.1.4)",
+
+  "source_commit": "1960091db04307b80a4fad983cdcea6083106eb4",
+  "source_note": "data/daily_full is byte-identical to commit e68e0fc (工部尚书's named baseline); diff e68e0fc..1960091 touches no daily_full file, so the store is the same whichever of those you build from.",
+  "source_dir": "data/daily_full (291 OpenD K_DAY qfq total-return daily parquets)",
+
+  "n_instruments": 291,
+  "calendar_span": "2006-06-26 .. 2026-07-10",
+  "store_size": "125M",
+  "store_files": 1748,
+
+  "fingerprints_sha256": {
+    "input_parquets": "541cb575d8e20cfca15ccb8a90a32f0487063d0a2fb8c9de5d8598ac8f25da97",
+    "store": "ae8fbdc617ec1927cac2bcb724e7b6e1cea681c95a0258bf36e1d79c51e5c1bf",
+    "dump_bin_py": "b8f34c57ce1ef4b1772f3909735e66058f21b25bd7ab8a5f16318822401fe53f",
+    "method": "input: sha256 over sorted (basename + sha256(bytes)) of data/daily_full/*.parquet. store: sha256 over sorted (relpath + sha256(bytes)) of every file under data/qlib_store/bin. Deterministic regardless of parallel write order; a rebuild MUST reproduce store=ae8fbdc6..."
+  },
+
+  "usage_note": "factor_export / rdagent must init Qlib with kernels=1 on this macOS host (multi-process feature compute deadlocks under spawn). Verified: factor_export over the full 291-instrument store, 2024-H1 window, produced 8 factors x 291 = 278,319 rows, 0 discarded — store is usable by the engine.",
+  "not_committed": "data/qlib_store/ is gitignored (.gitignore: data/qlib_store/). It is a large derived artifact; rebuild with build_command above rather than committing. Verify a rebuild against fingerprints_sha256.store.",
+  "boundary": "Qlib store feeds the factor generator ONLY. Verdict authority stays 100% in research/gate (certify()); Qlib's own backtest is never an acceptance criterion."
+}

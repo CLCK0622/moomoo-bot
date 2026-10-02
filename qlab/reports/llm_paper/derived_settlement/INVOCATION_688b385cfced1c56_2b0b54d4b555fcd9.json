@@ -1,0 +1,32 @@
+{
+  "calculation_artifact": {
+    "content_sha256": "688b385cfced1c56a037d415b894b39738ea9fdea8a5e78c3b8bde44785c437f",
+    "file": "SETTLEMENT_688b385cfced1c56.json",
+    "implementation_source_sha256": "aa4003e17a528682798edcee7b555ed145c2928239d8f00c7800d000c41b4210",
+    "implementation_version": "llm_paper_derived_settlement/evo-489-v3",
+    "input_manifest_sha256": "830cd475f7f8554ae14149377554b00a4a881b444b4ac0c3956244667e0be5b3"
+  },
+  "content_sha256": "2b0b54d4b555fcd995e923b4bd638d27088712ed32799cecbd6921c869356dd0",
+  "invocation": {
+    "branch_head_commit": "dec47602ffa1c6e4d263dc89c9b0e50063e7623e",
+    "command": {
+      "equivalence_round": "20260831",
+      "evidence_commit": "023293e88ea4c727bc9f706cb8c673d12f2cb26b",
+      "expected_implementation_source_sha256": "aa4003e17a528682798edcee7b555ed145c2928239d8f00c7800d000c41b4210",
+      "expected_implementation_version": "llm_paper_derived_settlement/evo-489-v3",
+      "expected_input_manifest_sha256": "830cd475f7f8554ae14149377554b00a4a881b444b4ac0c3956244667e0be5b3",
+      "expected_settlement_content_sha256": "688b385cfced1c56a037d415b894b39738ea9fdea8a5e78c3b8bde44785c437f",
+      "out_dir": "qlab/reports/llm_paper"
+    },
+    "python_runtime": {
+      "implementation": "cpython",
+      "version": "3.9.6"
+    }
+  },
+  "note": "Git HEAD identifies this invocation only. A changed HEAD may create another invocation sidecar without changing the stable calculation artifact.",
+  "schema": "llm_paper_derived_settlement_invocation/v2",
+  "verification_scope": {
+    "calculation_artifact": "its own content_sha256 covers the complete v2 artifact",
+    "this_invocation": "this sidecar content_sha256 covers every field in this file"
+  }
+}

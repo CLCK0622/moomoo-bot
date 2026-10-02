@@ -1,0 +1,517 @@
+{
+  "issue": "EVO-130",
+  "candidate": "S5 FOMC pre-meeting drift (SPY)",
+  "preregistration_commit": "c025d56",
+  "primary_hypothesis": "effect has decayed post-2015 (Kurov et al. 2021); default = FAIL",
+  "decision_\u53e3\u5f84": "2015\u2192 subsample pre-FOMC edge significantly positive after \u00d72 costs AND survives haircut",
+  "decay_observed": true,
+  "params": {
+    "entry": "close[T-offset] \u2192 exit close[T]",
+    "offsets": [
+      1,
+      2,
+      3
+    ],
+    "primary_offset": 1,
+    "cost_bps_per_side_base": 10.0,
+    "decay_split": "2015-01-01",
+    "fomc_source": "data/fomc_meetings.csv"
+  },
+  "overall_verdict": "\u5df2\u8870\u51cf/\u4e0d\u53ef\u7528",
+  "verdict_reason": "2015\u2192 pre-FOMC edge not significantly positive after \u00d72 costs (mean=-0.3190%, p(mean\u22640)=0.998); pre-2015 mean=+0.1396%. Confirms the pre-registered default: effect has decayed. Value is methodology calibration, not a strategy.",
+  "multiple_testing": {
+    "method": "preregistered_primary + bonferroni + benjamini_hochberg + deflated_sharpe",
+    "alpha": 0.05,
+    "family_size": 3,
+    "primary_spec": {
+      "mode": "s5_fomc",
+      "hold": 1,
+      "quantile": 0.0,
+      "max_concurrent": 1
+    },
+    "primary_found": true,
+    "primary_cell": {
+      "mode": "s5_fomc",
+      "hold": 1,
+      "is_primary": true,
+      "p_value_raw": 0.9978004399120176,
+      "p_value_bonferroni": 1.0,
+      "p_value_bh": 0.9978004399120176,
+      "gates_passed_point": false,
+      "survives_bonferroni": false,
+      "survives_bh": false
+    },
+    "deflated_sharpe": {
+      "dsr": 0.25638085704513824,
+      "sr0_annual": 0.2597746918436916,
+      "n_trials": 3,
+      "expected_max_z": 0.8528044961494174,
+      "significant": false
+    },
+    "per_cell": [
+      {
+        "mode": "s5_fomc",
+        "hold": 1,
+        "is_primary": true,
+        "p_value_raw": 0.9978004399120176,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 0.9978004399120176,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "s5_fomc",
+        "hold": 2,
+        "is_primary": false,
+        "p_value_raw": 0.9276144771045791,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 0.9978004399120176,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "s5_fomc",
+        "hold": 3,
+        "is_primary": false,
+        "p_value_raw": 0.7944411117776444,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 0.9978004399120176,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      }
+    ],
+    "verdict_basis": "primary_only",
+    "primary_survives_haircut": false,
+    "note": "PASS is decided ONLY by the pre-registered primary cell surviving the Bonferroni haircut; all other cells are robustness evidence. any_full_pass (best-of-grid) is deliberately NOT used."
+  },
+  "runs": [
+    {
+      "mode": "s5_fomc",
+      "hold": 1,
+      "cost_variants": {
+        "x1": {
+          "n_events": 160,
+          "diagnostics": {
+            "n_trades_generated": 160,
+            "n_trades_admitted": 160,
+            "capacity_skipped": 0,
+            "max_concurrent": 1,
+            "sleeve_weight": 1.0,
+            "n_calendar_days": 5017,
+            "n_active_days": 320,
+            "mean_active_positions": 0.06378313733306758
+          },
+          "evo12_full_capital_gates": {
+            "gate1": {
+              "cagr": 0.005712101853043272,
+              "mdd": 0.12387714864262034,
+              "passed": false
+            },
+            "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+            "note": "sparse event sleeve is mostly cash \u2192 cannot clear 50%-CAGR full-capital hurdle by construction; reported for the record."
+          },
+          "event_edge_full": {
+            "n": 160,
+            "mean": 0.0007874448973513714,
+            "std": 0.012601398551499525,
+            "t_stat": 0.7904263633377451,
+            "win_rate": 0.4375,
+            "mean_ci_low": -0.001118330548834239,
+            "mean_ci_high": 0.0027737879198729927,
+            "p_mean_le_0": 0.20515896820635873,
+            "event_sharpe_annual": 0.17674470796311456,
+            "skew": 0.6065488829319527,
+            "kurtosis": 4.728977434973972,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_pre2015": {
+            "n": 69,
+            "mean": 0.003398605035202421,
+            "std": 0.014325397568076416,
+            "t_stat": 1.9706911135895788,
+            "win_rate": 0.5362318840579711,
+            "mean_ci_low": 0.0001709138945937153,
+            "mean_ci_high": 0.006762877520996047,
+            "p_mean_le_0": 0.019396120775844832,
+            "event_sharpe_annual": 0.671025472220544,
+            "skew": 0.7015961752000641,
+            "kurtosis": 4.217395262346164,
+            "significant_positive": true,
+            "degenerate": false
+          },
+          "event_edge_post2015": {
+            "n": 91,
+            "mean": -0.0011924457566236007,
+            "std": 0.010783999013865692,
+            "t_stat": -1.0548227529916854,
+            "win_rate": 0.3626373626373626,
+            "mean_ci_low": -0.0033694002143455724,
+            "mean_ci_high": 0.0009564016073690114,
+            "p_mean_le_0": 0.860627874425115,
+            "event_sharpe_annual": -0.3127546579414674,
+            "skew": 0.03689916358928667,
+            "kurtosis": 3.696481173160377,
+            "significant_positive": false,
+            "degenerate": false
+          }
+        },
+        "x2": {
+          "n_events": 160,
+          "diagnostics": {
+            "n_trades_generated": 160,
+            "n_trades_admitted": 160,
+            "capacity_skipped": 0,
+            "max_concurrent": 1,
+            "sleeve_weight": 1.0,
+            "n_calendar_days": 5017,
+            "n_active_days": 320,
+            "mean_active_positions": 0.06378313733306758
+          },
+          "evo12_full_capital_gates": {
+            "gate1": {
+              "cagr": -0.01032679335991804,
+              "mdd": 0.3143510457271471,
+              "passed": false
+            },
+            "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+            "note": "sparse event sleeve is mostly cash \u2192 cannot clear 50%-CAGR full-capital hurdle by construction; reported for the record."
+          },
+          "event_edge_full": {
+            "n": 160,
+            "mean": -0.0012123443367801356,
+            "std": 0.012588784538935452,
+            "t_stat": -1.2181539530759715,
+            "win_rate": 0.36875,
+            "mean_ci_low": -0.0031162120998364314,
+            "mean_ci_high": 0.0007720103543876054,
+            "p_mean_le_0": 0.8818236352729454,
+            "event_sharpe_annual": -0.2723875046137961,
+            "skew": 0.6065488829319541,
+            "kurtosis": 4.7289774349739675,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_pre2015": {
+            "n": 69,
+            "mean": 0.001396202027159143,
+            "std": 0.014311057830771022,
+            "t_stat": 0.810403061282989,
+            "win_rate": 0.4492753623188406,
+            "mean_ci_low": -0.001828258191386899,
+            "mean_ci_high": 0.0047571068728268365,
+            "p_mean_le_0": 0.20855828834233153,
+            "event_sharpe_annual": 0.2759443593856107,
+            "skew": 0.7015961752000665,
+            "kurtosis": 4.2173952623461615,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_post2015": {
+            "n": 91,
+            "mean": -0.0031902531182285998,
+            "std": 0.01077320422005801,
+            "t_stat": -2.824886124645026,
+            "win_rate": 0.3076923076923077,
+            "mean_ci_low": -0.005365028442359275,
+            "mean_ci_high": -0.0010435567525983419,
+            "p_mean_le_0": 0.9978004399120176,
+            "event_sharpe_annual": -0.8375779638154207,
+            "skew": 0.03689916358928873,
+            "kurtosis": 3.6964811731603886,
+            "significant_positive": false,
+            "degenerate": false
+          }
+        }
+      }
+    },
+    {
+      "mode": "s5_fomc",
+      "hold": 2,
+      "cost_variants": {
+        "x1": {
+          "n_events": 160,
+          "diagnostics": {
+            "n_trades_generated": 160,
+            "n_trades_admitted": 160,
+            "capacity_skipped": 0,
+            "max_concurrent": 1,
+            "sleeve_weight": 1.0,
+            "n_calendar_days": 5017,
+            "n_active_days": 480,
+            "mean_active_positions": 0.09567470599960136
+          },
+          "evo12_full_capital_gates": {
+            "gate1": {
+              "cagr": 0.012866892535238206,
+              "mdd": 0.11891464549512065,
+              "passed": false
+            },
+            "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+            "note": "sparse event sleeve is mostly cash \u2192 cannot clear 50%-CAGR full-capital hurdle by construction; reported for the record."
+          },
+          "event_edge_full": {
+            "n": 160,
+            "mean": 0.001735687569404252,
+            "std": 0.0171535550583207,
+            "t_stat": 1.2799040215507036,
+            "win_rate": 0.5375,
+            "mean_ci_low": -0.0008758798398890791,
+            "mean_ci_high": 0.004534621169854839,
+            "p_mean_le_0": 0.09658068386322735,
+            "event_sharpe_annual": 0.2861952396862729,
+            "skew": 1.5199020832213987,
+            "kurtosis": 10.976710220969178,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_pre2015": {
+            "n": 69,
+            "mean": 0.00418551708480083,
+            "std": 0.020139802707181288,
+            "t_stat": 1.7263086734638542,
+            "win_rate": 0.5797101449275363,
+            "mean_ci_low": -0.0003253009107687952,
+            "mean_ci_high": 0.009056076510246121,
+            "p_mean_le_0": 0.03719256148770246,
+            "event_sharpe_annual": 0.5878126129566312,
+            "skew": 1.8811947522876398,
+            "kurtosis": 11.075098588600477,
+            "significant_positive": true,
+            "degenerate": false
+          },
+          "event_edge_post2015": {
+            "n": 91,
+            "mean": -0.00012187546974260402,
+            "std": 0.014327580736990739,
+            "t_stat": -0.0811454427741676,
+            "win_rate": 0.5054945054945055,
+            "mean_ci_low": -0.003060949048938989,
+            "mean_ci_high": 0.0028020284799952708,
+            "p_mean_le_0": 0.5306938612277544,
+            "event_sharpe_annual": -0.02405960160260569,
+            "skew": 0.24995733866470995,
+            "kurtosis": 3.927574567860688,
+            "significant_positive": false,
+            "degenerate": false
+          }
+        },
+        "x2": {
+          "n_events": 160,
+          "diagnostics": {
+            "n_trades_generated": 160,
+            "n_trades_admitted": 160,
+            "capacity_skipped": 0,
+            "max_concurrent": 1,
+            "sleeve_weight": 1.0,
+            "n_calendar_days": 5017,
+            "n_active_days": 480,
+            "mean_active_positions": 0.09567470599960136
+          },
+          "evo12_full_capital_gates": {
+            "gate1": {
+              "cagr": -0.003286105846821652,
+              "mdd": 0.29197341448164693,
+              "passed": false
+            },
+            "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+            "note": "sparse event sleeve is mostly cash \u2192 cannot clear 50%-CAGR full-capital hurdle by construction; reported for the record."
+          },
+          "event_edge_full": {
+            "n": 160,
+            "mean": -0.00026602727695446626,
+            "std": 0.01712664812022058,
+            "t_stat": -0.19647793520445148,
+            "win_rate": 0.4375,
+            "mean_ci_low": -0.002873274799408203,
+            "mean_ci_high": 0.0025287297352609038,
+            "p_mean_le_0": 0.595880823835233,
+            "event_sharpe_annual": -0.043933801919595256,
+            "skew": 1.5178950829571454,
+            "kurtosis": 10.959169961409916,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_pre2015": {
+            "n": 69,
+            "mean": 0.002181455549222729,
+            "std": 0.020105176266055506,
+            "t_stat": 0.9012868368462057,
+            "win_rate": 0.5217391304347826,
+            "mean_ci_low": -0.0023230008278890472,
+            "mean_ci_high": 0.007043567920989592,
+            "p_mean_le_0": 0.1829634073185363,
+            "event_sharpe_annual": 0.306890522380891,
+            "skew": 1.8793493626306423,
+            "kurtosis": 11.060055960712873,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_post2015": {
+            "n": 91,
+            "mean": -0.00212181095834157,
+            "std": 0.014307984796544283,
+            "t_stat": -1.4146497077959885,
+            "win_rate": 0.37362637362637363,
+            "mean_ci_low": -0.005057610863318327,
+            "mean_ci_high": 0.000798100102527584,
+            "p_mean_le_0": 0.9276144771045791,
+            "event_sharpe_annual": -0.41944325168744123,
+            "skew": 0.2495820237263902,
+            "kurtosis": 3.9271329837530713,
+            "significant_positive": false,
+            "degenerate": false
+          }
+        }
+      }
+    },
+    {
+      "mode": "s5_fomc",
+      "hold": 3,
+      "cost_variants": {
+        "x1": {
+          "n_events": 159,
+          "diagnostics": {
+            "n_trades_generated": 159,
+            "n_trades_admitted": 159,
+            "capacity_skipped": 0,
+            "max_concurrent": 1,
+            "sleeve_weight": 1.0,
+            "n_calendar_days": 5017,
+            "n_active_days": 636,
+            "mean_active_positions": 0.1267689854494718
+          },
+          "evo12_full_capital_gates": {
+            "gate1": {
+              "cagr": 0.01279549019344417,
+              "mdd": 0.1396244946022004,
+              "passed": false
+            },
+            "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+            "note": "sparse event sleeve is mostly cash \u2192 cannot clear 50%-CAGR full-capital hurdle by construction; reported for the record."
+          },
+          "event_edge_full": {
+            "n": 159,
+            "mean": 0.0017461292405165753,
+            "std": 0.017609964518057946,
+            "t_stat": 1.250306434750837,
+            "win_rate": 0.5283018867924528,
+            "mean_ci_low": -0.0009789168640790295,
+            "mean_ci_high": 0.004494836206688995,
+            "p_mean_le_0": 0.10677864427114576,
+            "event_sharpe_annual": 0.28045481307614833,
+            "skew": 0.570460200652339,
+            "kurtosis": 4.659153227786269,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_pre2015": {
+            "n": 68,
+            "mean": 0.003344305823702198,
+            "std": 0.01867836621525938,
+            "t_stat": 1.476459557177705,
+            "win_rate": 0.6029411764705882,
+            "mean_ci_low": -0.0011399751488785207,
+            "mean_ci_high": 0.0077400627929471175,
+            "p_mean_le_0": 0.07458508298340331,
+            "event_sharpe_annual": 0.5064214501522232,
+            "skew": 0.5515474022760791,
+            "kurtosis": 4.8496000085441855,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_post2015": {
+            "n": 91,
+            "mean": 0.0005518873981361102,
+            "std": 0.016772660971530018,
+            "t_stat": 0.31388401920462355,
+            "win_rate": 0.4725274725274725,
+            "mean_ci_low": -0.002869496489615886,
+            "mean_ci_high": 0.003966447447992778,
+            "p_mean_le_0": 0.377124575084983,
+            "event_sharpe_annual": 0.09306652589850689,
+            "skew": 0.5343584577509629,
+            "kurtosis": 4.174030643150652,
+            "significant_positive": false,
+            "degenerate": false
+          }
+        },
+        "x2": {
+          "n_events": 159,
+          "diagnostics": {
+            "n_trades_generated": 159,
+            "n_trades_admitted": 159,
+            "capacity_skipped": 0,
+            "max_concurrent": 1,
+            "sleeve_weight": 1.0,
+            "n_calendar_days": 5017,
+            "n_active_days": 636,
+            "mean_active_positions": 0.1267689854494718
+          },
+          "evo12_full_capital_gates": {
+            "gate1": {
+              "cagr": -0.003257087024863159,
+              "mdd": 0.2647163397835064,
+              "passed": false
+            },
+            "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+            "note": "sparse event sleeve is mostly cash \u2192 cannot clear 50%-CAGR full-capital hurdle by construction; reported for the record."
+          },
+          "event_edge_full": {
+            "n": 159,
+            "mean": -0.0002557225581111497,
+            "std": 0.017581567477189287,
+            "t_stat": -0.18340450984164827,
+            "win_rate": 0.46540880503144655,
+            "mean_ci_low": -0.002976581703862957,
+            "mean_ci_high": 0.002488395726148642,
+            "p_mean_le_0": 0.5804839032193562,
+            "event_sharpe_annual": -0.04113925682163865,
+            "skew": 0.5703790162230494,
+            "kurtosis": 4.65724345323732,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_pre2015": {
+            "n": 68,
+            "mean": 0.001341695558791499,
+            "std": 0.01864654832576843,
+            "t_stat": 0.5933486894917306,
+            "win_rate": 0.5588235294117647,
+            "mean_ci_low": -0.003135429827803535,
+            "mean_ci_high": 0.005729321332756304,
+            "p_mean_le_0": 0.27074585082983404,
+            "event_sharpe_annual": 0.20351692148798717,
+            "skew": 0.5516387267440597,
+            "kurtosis": 4.84698345992472,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "event_edge_post2015": {
+            "n": 91,
+            "mean": -0.0014493976344779641,
+            "std": 0.016746792804420613,
+            "t_stat": -0.8256131416425881,
+            "win_rate": 0.3956043956043956,
+            "mean_ci_low": -0.004865688943148241,
+            "mean_ci_high": 0.0019603243870706293,
+            "p_mean_le_0": 0.7944411117776444,
+            "event_sharpe_annual": -0.24479407082759738,
+            "skew": 0.5341624071424503,
+            "kurtosis": 4.173584514856116,
+            "significant_positive": false,
+            "degenerate": false
+          }
+        }
+      }
+    }
+  ],
+  "notes": [
+    "SCHEDULED FOMC meetings only; schedule is public months ahead so close[T-1] entry is not look-ahead. 2020-03 scheduled meeting was cancelled (excluded).",
+    "Daily-bar granularity: exit at decision-day close captures pre-announcement drift + the announcement session; it cannot isolate the exact 2pm ET cutoff.",
+    "Negative result is delivered as-is \u2014 it is the calibration value, not a failure."
+  ]
+}

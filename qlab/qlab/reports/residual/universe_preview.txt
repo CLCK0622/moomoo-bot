@@ -1,0 +1,22 @@
+# EVO-162 C1 universe PREVIEW — NOT the frozen list.
+# Pool has only 20 eligible names (< target 250); full OpenD cold-fetch required to freeze the real list.
+NVDA
+QQQ
+MSFT
+AAPL
+INTC
+AMZN
+GOOGL
+META
+ORCL
+JPM
+CSCO
+WMT
+GS
+BAC
+JNJ
+CVX
+HD
+KO
+PG
+PFE
