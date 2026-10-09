@@ -1,0 +1,45 @@
+{
+  "schema": "llm_paper_runtime_gap/v1",
+  "event_id": "multica-autopilot-run:01a07b86-b9b9-7aa3-8554-e503e20c2d58",
+  "recorded_utc": "2026-09-07T14:13:01Z",
+  "track": "EVO-8 LLM qualitative forward-paper weekly round",
+  "run_evidence": {
+    "autopilot_id": "e57deb91-efc8-4ccd-8e88-cbc586e56c70",
+    "trigger_id": "90206170-837b-47c3-a9fe-afe70bd05788",
+    "run_id": "01a07b86-b9b9-7aa3-8554-e503e20c2d58",
+    "task_id": "01a07b86-b9be-77cd-9995-9210fa252149",
+    "source": "schedule",
+    "triggered_at": "2026-09-07T11:00:22Z",
+    "completed_at": "2026-09-07T11:00:25Z",
+    "status": "failed",
+    "failure_reason": "You've hit your session limit · resets 7:30am (America/Chicago)",
+    "result": null
+  },
+  "gap": {
+    "round": "20260907",
+    "classification": "permanent_missing_forward_round",
+    "reason": "session_limit_before_agent_result",
+    "classified_as_market_holiday_skip": false,
+    "runner_policy": "scheduled Mondays run even on market holidays; actual_start rolls to the first observed bar",
+    "decision_record_present": false,
+    "backfill_allowed": false,
+    "retry_or_manual_trigger_performed": false,
+    "next_scheduled_trigger": "2026-09-14T11:00:00Z"
+  },
+  "existing_failure_monitor_coverage": {
+    "autopilot_id": "b86a3df6-4dc6-4597-a20a-198c674d7a96",
+    "covers_this_event": false,
+    "reason": "existing audit matches only status=skipped with runtime-offline failure_reason; this event is status=failed/session-limit",
+    "monitor_changed": false,
+    "new_monitor_created": false
+  },
+  "provenance": {
+    "verified_via": [
+      "multica autopilot get e57deb91-efc8-4ccd-8e88-cbc586e56c70",
+      "multica autopilot runs e57deb91-efc8-4ccd-8e88-cbc586e56c70",
+      "repository absence of qlab/reports/llm_paper/round_20260907.json"
+    ],
+    "engineering_artifact_only": true,
+    "investment_or_acceptance_reading": false
+  }
+}

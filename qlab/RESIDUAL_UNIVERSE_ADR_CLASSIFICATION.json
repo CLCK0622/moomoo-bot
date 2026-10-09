@@ -1,0 +1,3467 @@
+{
+  "issue": "EVO-162",
+  "addendum": "C (9f34ae5)",
+  "operative_prescreen_key": "MARKET_VAL",
+  "clean_superset_count": 296,
+  "superset_target": 296,
+  "adr_excluded_count": 230,
+  "adr_excluded_by_rule": {
+    "R0": 166,
+    "R2": 15,
+    "R1": 49
+  },
+  "keep_carveouts_hit": [],
+  "refill_waves": [
+    {
+      "wave": 0,
+      "scanned": 296,
+      "excluded": [
+        "TSM",
+        "ASML",
+        "TCEHY",
+        "ITFCY",
+        "ARM",
+        "CYATY",
+        "HSBC",
+        "RHHBY",
+        "IDCBY",
+        "CGXYY",
+        "NVS",
+        "RY",
+        "LVMUY",
+        "CICHY",
+        "BABA",
+        "AZN",
+        "KXIAY",
+        "NSRGY",
+        "ACGBY",
+        "MUFG",
+        "SIEGY",
+        "LRLCY",
+        "SHEL",
+        "SFTBY",
+        "NVO",
+        "TM",
+        "BACHY",
+        "BHP",
+        "TOELY",
+        "SAN",
+        "TD",
+        "CMWAY",
+        "HESAY",
+        "IDEXY",
+        "ABBNY",
+        "SAP",
+        "ALIZY",
+        "EADSY",
+        "TTE",
+        "WBKCY",
+        "SBGSY",
+        "UBS",
+        "SMFG",
+        "IBDRY",
+        "RYCEY",
+        "SHOP",
+        "SAFRY",
+        "FRCOY",
+        "BUD",
+        "DBSDY",
+        "RIO",
+        "CIHKY",
+        "BBVA",
+        "DTEGY",
+        "UNCRY",
+        "HDB",
+        "ATEYY",
+        "CFRUY",
+        "UL",
+        "HTHIY",
+        "BTI",
+        "MFG",
+        "BNPQY",
+        "BMO",
+        "ISNPY",
+        "SONY",
+        "PNGAY",
+        "PDD",
+        "ENB",
+        "AIQUY",
+        "ENLAY",
+        "ZURVY",
+        "CSUAY",
+        "MRAAY",
+        "PBR",
+        "IFNNY",
+        "CM",
+        "BNS",
+        "HNHPF",
+        "RCRUY",
+        "GSK",
+        "IBN",
+        "SNY",
+        "AXAHY",
+        "ZIJMY",
+        "MTSUY",
+        "BP",
+        "PBR.A",
+        "CAIXY",
+        "SPOT",
+        "BYDDY",
+        "BN",
+        "CHDRY",
+        "ATLKY",
+        "PROSY",
+        "AAGIY",
+        "OVCHY",
+        "ITUB",
+        "ASX",
+        "ING",
+        "BCS",
+        "TKOMY",
+        "ESLOY",
+        "RACE",
+        "LYG",
+        "CNQ",
+        "MGCLY",
+        "XIACY",
+        "ATLCY",
+        "NABZY",
+        "SHECY",
+        "NGG",
+        "NTES",
+        "ITOCY",
+        "MITSY",
+        "EQNR",
+        "CP",
+        "MHVIY",
+        "GLNCY",
+        "ENGIY",
+        "LOBLY",
+        "CNI",
+        "ANZGY",
+        "CHGCY"
+      ],
+      "n_excluded": 124,
+      "clean_kept": 172
+    },
+    {
+      "wave": 1,
+      "scanned": 296,
+      "excluded": [
+        "VCISY",
+        "MIELY",
+        "BAM",
+        "NTTYY",
+        "AEM",
+        "METRY",
+        "BAESY",
+        "BCMXY",
+        "JPPTY",
+        "DHLGY",
+        "ARZGY",
+        "PSTVY",
+        "VLVLY",
+        "WFAFY",
+        "TRP",
+        "SU",
+        "NOK",
+        "SE",
+        "MKKGY",
+        "E",
+        "MFC",
+        "DB",
+        "MQBKY",
+        "JAPAY",
+        "NU",
+        "KDDIY",
+        "NRDBY",
+        "PCRHY",
+        "CMCLY",
+        "STM",
+        "SCBFY",
+        "SOBKY",
+        "HKXCY",
+        "SCGLY",
+        "MPNGY",
+        "VALE",
+        "UMC",
+        "BHKLY",
+        "DSDVY",
+        "CRARY",
+        "WUXAY",
+        "LSEGY",
+        "IMO",
+        "RELX",
+        "EONGY",
+        "UOVEY",
+        "SGAPY",
+        "BAYRY",
+        "CMPGY",
+        "KBCSY",
+        "TRMOY",
+        "RNECY"
+      ],
+      "n_excluded": 52,
+      "clean_kept": 244
+    },
+    {
+      "wave": 2,
+      "scanned": 296,
+      "excluded": [
+        "FJIKY",
+        "DANOY",
+        "TAK",
+        "NGLOY",
+        "LBLCF",
+        "RNMBY",
+        "THLLY",
+        "EBKDY",
+        "HOCPY",
+        "DBOEY",
+        "UCBJY",
+        "NTDOY",
+        "ASMIY",
+        "SDVKY",
+        "LZAGY",
+        "HCMLY",
+        "GALDY",
+        "WPM",
+        "DSCSY",
+        "CVE",
+        "WMMVY",
+        "HEINY",
+        "CRZBY",
+        "SSREY",
+        "CIIHY",
+        "ORANY",
+        "BASFY",
+        "CHCJY",
+        "ITCTY",
+        "ABEV"
+      ],
+      "n_excluded": 30,
+      "clean_kept": 266
+    },
+    {
+      "wave": 3,
+      "scanned": 296,
+      "excluded": [
+        "DRPRY",
+        "ANYYY",
+        "DNKEY",
+        "RWEOY",
+        "ELEZY",
+        "DKILY",
+        "DEO",
+        "JHPCY",
+        "SLF",
+        "MBGYY",
+        "PRYMY",
+        "INFY",
+        "SMMNY",
+        "DNBBY"
+      ],
+      "n_excluded": 14,
+      "clean_kept": 282
+    },
+    {
+      "wave": 4,
+      "scanned": 296,
+      "excluded": [
+        "KB",
+        "SUHJY",
+        "RBGLY",
+        "WCN",
+        "SWDBY",
+        "CNSWF"
+      ],
+      "n_excluded": 6,
+      "clean_kept": 290
+    },
+    {
+      "wave": 5,
+      "scanned": 296,
+      "excluded": [
+        "CNSWY",
+        "PBCRY",
+        "DLICY"
+      ],
+      "n_excluded": 3,
+      "clean_kept": 293
+    },
+    {
+      "wave": 6,
+      "scanned": 296,
+      "excluded": [
+        "LGRDY"
+      ],
+      "n_excluded": 1,
+      "clean_kept": 295
+    },
+    {
+      "wave": 7,
+      "scanned": 296,
+      "excluded": [],
+      "n_excluded": 0,
+      "clean_kept": 296
+    }
+  ],
+  "classification": [
+    {
+      "ticker": "NVDA",
+      "matched_rule": null,
+      "name": "NVIDIA",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AAPL",
+      "matched_rule": null,
+      "name": "Apple",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "GOOGL",
+      "matched_rule": null,
+      "name": "Alphabet-A",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "GOOG",
+      "matched_rule": null,
+      "name": "Alphabet-C",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MSFT",
+      "matched_rule": null,
+      "name": "Microsoft",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AMZN",
+      "matched_rule": null,
+      "name": "Amazon",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TSM",
+      "matched_rule": "R0",
+      "name": "Taiwan Semiconductor",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SPCX",
+      "matched_rule": null,
+      "name": "SpaceX",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AVGO",
+      "matched_rule": null,
+      "name": "Broadcom",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "META",
+      "matched_rule": null,
+      "name": "Meta Platforms",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TSLA",
+      "matched_rule": null,
+      "name": "Tesla",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SKHYV",
+      "matched_rule": null,
+      "name": "SK hynix-WI",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LLY",
+      "matched_rule": null,
+      "name": "Eli Lilly and Co",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MU",
+      "matched_rule": null,
+      "name": "Micron Technology",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SKHY",
+      "matched_rule": null,
+      "name": "SK hynix",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BRK.B",
+      "matched_rule": null,
+      "name": "Berkshire Hathaway-B",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BRK.A",
+      "matched_rule": null,
+      "name": "Berkshire Hathaway-A",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "WMT",
+      "matched_rule": null,
+      "name": "Walmart",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AMD",
+      "matched_rule": null,
+      "name": "Advanced Micro Devices",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "JPM",
+      "matched_rule": null,
+      "name": "JPMorgan",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ASML",
+      "matched_rule": "R0",
+      "name": "ASML Holding",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "V",
+      "matched_rule": null,
+      "name": "Visa",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "JNJ",
+      "matched_rule": null,
+      "name": "Johnson & Johnson",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "XOM",
+      "matched_rule": null,
+      "name": "Exxon Mobil",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "INTC",
+      "matched_rule": null,
+      "name": "Intel",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TCEHY",
+      "matched_rule": "R0",
+      "name": "Tencent",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ITFCY",
+      "matched_rule": "R0",
+      "name": "INTACT FINANCIAL CORPORATION UNSPON ADS EACH REP 0.06 COM",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AMAT",
+      "matched_rule": null,
+      "name": "Applied Materials",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CSCO",
+      "matched_rule": null,
+      "name": "Cisco",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MA",
+      "matched_rule": null,
+      "name": "MasterCard",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LRCX",
+      "matched_rule": null,
+      "name": "Lam Research",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CAT",
+      "matched_rule": null,
+      "name": "Caterpillar",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ABBV",
+      "matched_rule": null,
+      "name": "AbbVie",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BAC",
+      "matched_rule": null,
+      "name": "Bank of America",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ORCL",
+      "matched_rule": null,
+      "name": "Oracle",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "COST",
+      "matched_rule": null,
+      "name": "Costco",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "UNH",
+      "matched_rule": null,
+      "name": "UnitedHealth",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "GE",
+      "matched_rule": null,
+      "name": "GE Aerospace",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "KO",
+      "matched_rule": null,
+      "name": "Coca-Cola",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MS",
+      "matched_rule": null,
+      "name": "Morgan Stanley",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CVX",
+      "matched_rule": null,
+      "name": "Chevron",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ARM",
+      "matched_rule": "R0",
+      "name": "Arm Holdings",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CYATY",
+      "matched_rule": "R0",
+      "name": "CONTEMPORARY AMPEREX TECHNOLOGY CO UNSPON ADS EACH REP 0.4 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PG",
+      "matched_rule": null,
+      "name": "Procter & Gamble",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HD",
+      "matched_rule": null,
+      "name": "Home Depot",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HSBC",
+      "matched_rule": "R0",
+      "name": "HSBC Holdings",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "RHHBY",
+      "matched_rule": "R0",
+      "name": "ROCHE HOLDING AG",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "GS",
+      "matched_rule": null,
+      "name": "Goldman Sachs",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NFLX",
+      "matched_rule": null,
+      "name": "Netflix",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MRK",
+      "matched_rule": null,
+      "name": "Merck & Co",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "PLTR",
+      "matched_rule": null,
+      "name": "Palantir",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "IDCBY",
+      "matched_rule": "R0",
+      "name": "Industrial And Commercial Bank Of China (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CGXYY",
+      "matched_rule": "R0",
+      "name": "CHINA GALAXY SECUR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "KLAC",
+      "matched_rule": null,
+      "name": "KLA Corp",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NVS",
+      "matched_rule": "R0",
+      "name": "Novartis AG",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "GEV",
+      "matched_rule": null,
+      "name": "GE Vernova",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "RY",
+      "matched_rule": "R0",
+      "name": "Royal Bank of Canada",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SNDK",
+      "matched_rule": null,
+      "name": "SanDisk",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DELL",
+      "matched_rule": null,
+      "name": "Dell Technologies",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TXN",
+      "matched_rule": null,
+      "name": "Texas Instruments",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "PM",
+      "matched_rule": null,
+      "name": "Philip Morris International",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LVMUY",
+      "matched_rule": "R0",
+      "name": "LVMH Moet Hennessy Louis Vuitton",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "IBM",
+      "matched_rule": null,
+      "name": "IBM Corp",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CICHY",
+      "matched_rule": "R0",
+      "name": "CHINA CONST BK",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BABA",
+      "matched_rule": "R0",
+      "name": "Alibaba",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AZN",
+      "matched_rule": "R0",
+      "name": "AstraZeneca",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "WFC",
+      "matched_rule": null,
+      "name": "Wells Fargo & Co",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "KXIAY",
+      "matched_rule": "R0",
+      "name": "KIOXIA HOLDINGS CORPORATION UNSPON ADR EACH REP 0.1 COM",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NSRGY",
+      "matched_rule": "R0",
+      "name": "NESTLE S.A SPONS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PANW",
+      "matched_rule": null,
+      "name": "Palo Alto Networks",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "RTX",
+      "matched_rule": null,
+      "name": "RTX Corp",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "GDVTZ",
+      "matched_rule": null,
+      "name": "GOULD INVESTORS L P",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LIN",
+      "matched_rule": null,
+      "name": "Linde",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ACGBY",
+      "matched_rule": "R0",
+      "name": "AGRICULTURAL BK CH",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MUFG",
+      "matched_rule": "R0",
+      "name": "Mitsubishi UFJ Financial Group",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "C",
+      "matched_rule": null,
+      "name": "Citigroup",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AXP",
+      "matched_rule": null,
+      "name": "American Express",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SIEGY",
+      "matched_rule": "R0",
+      "name": "SIEMENS AG",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ANET",
+      "matched_rule": null,
+      "name": "Arista Networks",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LRLCY",
+      "matched_rule": "R0",
+      "name": "L'Oreal SA Unsponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SHEL",
+      "matched_rule": "R0",
+      "name": "Shell",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SFTBY",
+      "matched_rule": "R0",
+      "name": "SoftBank Group (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NVO",
+      "matched_rule": "R0",
+      "name": "Novo-Nordisk A/S",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "TM",
+      "matched_rule": "R0",
+      "name": "Toyota Motor",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BACHY",
+      "matched_rule": "R0",
+      "name": "BANK OF CHINA LTD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BHP",
+      "matched_rule": "R0",
+      "name": "BHP Group Ltd",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "TOELY",
+      "matched_rule": "R0",
+      "name": "Tokyo Electron (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MRVL",
+      "matched_rule": null,
+      "name": "Marvell Technology",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "STX",
+      "matched_rule": null,
+      "name": "Seagate Technology",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TMUS",
+      "matched_rule": null,
+      "name": "T-Mobile US",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "WDC",
+      "matched_rule": null,
+      "name": "Western Digital",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SAN",
+      "matched_rule": "R0",
+      "name": "Banco Santander",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "QCOM",
+      "matched_rule": null,
+      "name": "Qualcomm",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TD",
+      "matched_rule": "R0",
+      "name": "The Toronto-Dominion Bank",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CMWAY",
+      "matched_rule": "R0",
+      "name": "COMMONWEALTH BANK OF AUSTRALIA SPON ADR EACH REPR 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "HESAY",
+      "matched_rule": "R0",
+      "name": "Hermes International SA",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AMGN",
+      "matched_rule": null,
+      "name": "Amgen",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MCD",
+      "matched_rule": null,
+      "name": "McDonald's",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TMO",
+      "matched_rule": null,
+      "name": "Thermo Fisher Scientific",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "IDEXY",
+      "matched_rule": "R0",
+      "name": "INDITEX (IND.DE DISENO TEXTIL SA) UNSP ADR EACH REP 0.50 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "APH",
+      "matched_rule": null,
+      "name": "Amphenol",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ADI",
+      "matched_rule": null,
+      "name": "Analog Devices",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CRWD",
+      "matched_rule": null,
+      "name": "CrowdStrike",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ABBNY",
+      "matched_rule": "R0",
+      "name": "ABB LTD SPON ADR EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PEP",
+      "matched_rule": null,
+      "name": "PepsiCo",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SAP",
+      "matched_rule": "R0",
+      "name": "SAP SE",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NEE",
+      "matched_rule": null,
+      "name": "NextEra Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ALIZY",
+      "matched_rule": "R0",
+      "name": "ALLIANZ SE UNSPON ADS EACH REP 1/10 ORD SHARES",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SCHW",
+      "matched_rule": null,
+      "name": "Charles Schwab",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "EADSY",
+      "matched_rule": "R0",
+      "name": "AIRBUS SE",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "VZ",
+      "matched_rule": null,
+      "name": "Verizon",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BA",
+      "matched_rule": null,
+      "name": "Boeing",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TTE",
+      "matched_rule": "R0",
+      "name": "TotalEnergies",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "WBKCY",
+      "matched_rule": "R0",
+      "name": "WESTPAC BANKING CORPORATION UNSPON ADS EACH REP 2 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SBGSY",
+      "matched_rule": "R0",
+      "name": "SCHNEIDER ELECTRIC SE UNSPON ADR EA REPR 0.20 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "UNP",
+      "matched_rule": null,
+      "name": "Union Pacific",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "UBS",
+      "matched_rule": "R0",
+      "name": "UBS Group",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "APP",
+      "matched_rule": null,
+      "name": "Applovin",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TJX",
+      "matched_rule": null,
+      "name": "TJX Companies",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DIS",
+      "matched_rule": null,
+      "name": "Disney",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "GLW",
+      "matched_rule": null,
+      "name": "Corning",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ABT",
+      "matched_rule": null,
+      "name": "Abbott Laboratories",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SMFG",
+      "matched_rule": "R0",
+      "name": "Sumitomo Mitsui Financial",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "WELL",
+      "matched_rule": null,
+      "name": "Welltower",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "IBDRY",
+      "matched_rule": "R0",
+      "name": "IBERDROLA SA SPON ADR EACH REP 4 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "GILD",
+      "matched_rule": null,
+      "name": "Gilead Sciences",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "RYCEY",
+      "matched_rule": "R0",
+      "name": "ROLLS ROYCE ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BLK",
+      "matched_rule": null,
+      "name": "Blackrock",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SHOP",
+      "matched_rule": "R0",
+      "name": "Shopify",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "IBKR",
+      "matched_rule": null,
+      "name": "Interactive Brokers",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SAFRY",
+      "matched_rule": "R0",
+      "name": "SAFRAN SA UNSPON ADR EA REP 0.25 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DE",
+      "matched_rule": null,
+      "name": "Deere",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ETN",
+      "matched_rule": null,
+      "name": "Eaton",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "FRCOY",
+      "matched_rule": "R0",
+      "name": "Fast Retailing (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BUD",
+      "matched_rule": "R0",
+      "name": "Anheuser-Busch Inbev",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DBSDY",
+      "matched_rule": "R0",
+      "name": "DBS GROUP HLDGS LTD SPONS ADR EACH REP 4 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "UBER",
+      "matched_rule": null,
+      "name": "Uber Technologies",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "RIO",
+      "matched_rule": "R0",
+      "name": "Rio Tinto",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "T",
+      "matched_rule": null,
+      "name": "AT&T",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CIHKY",
+      "matched_rule": "R0",
+      "name": "CHINA MERCHANTS BK",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SCCO",
+      "matched_rule": null,
+      "name": "Southern Copper",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BBVA",
+      "matched_rule": "R0",
+      "name": "Banco Bilbao Vizcaya Argentaria",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DTEGY",
+      "matched_rule": "R0",
+      "name": "DEUTSCHE TELEKOM",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ISRG",
+      "matched_rule": null,
+      "name": "Intuitive Surgical",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "UNCRY",
+      "matched_rule": "R0",
+      "name": "UNICREDIT SPA UNSPON ADR EACH REP 0.5 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DHR",
+      "matched_rule": null,
+      "name": "Danaher",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "PFE",
+      "matched_rule": null,
+      "name": "Pfizer",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BKNG",
+      "matched_rule": null,
+      "name": "Booking Holdings",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HDB",
+      "matched_rule": "R0",
+      "name": "HDFC Bank",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ATEYY",
+      "matched_rule": "R0",
+      "name": "Advantest (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CB",
+      "matched_rule": null,
+      "name": "Chubb Ltd",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CRM",
+      "matched_rule": null,
+      "name": "Salesforce",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "PGR",
+      "matched_rule": null,
+      "name": "Progressive",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CFRUY",
+      "matched_rule": "R0",
+      "name": "COMPAGNE FIN ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "UL",
+      "matched_rule": "R0",
+      "name": "Unilever",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CVS",
+      "matched_rule": null,
+      "name": "CVS Health",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HTHIY",
+      "matched_rule": "R0",
+      "name": "Hitachi (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "COP",
+      "matched_rule": null,
+      "name": "ConocoPhillips",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BTI",
+      "matched_rule": "R0",
+      "name": "British American Tobacco",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MFG",
+      "matched_rule": "R0",
+      "name": "Mizuho Financial",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SPGI",
+      "matched_rule": null,
+      "name": "S&P Global",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SYK",
+      "matched_rule": null,
+      "name": "Stryker Corp",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BNPQY",
+      "matched_rule": "R0",
+      "name": "BNP PARIBAS SPON",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BMO",
+      "matched_rule": "R0",
+      "name": "Bank of Montreal",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ISNPY",
+      "matched_rule": "R0",
+      "name": "INTESA SANP ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "COF",
+      "matched_rule": null,
+      "name": "Capital One Financial",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "VRTX",
+      "matched_rule": null,
+      "name": "Vertex Pharmaceuticals",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "VRT",
+      "matched_rule": null,
+      "name": "Vertiv Holdings",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SONY",
+      "matched_rule": "R0",
+      "name": "Sony",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PNGAY",
+      "matched_rule": "R0",
+      "name": "PING AN INSURANCE",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PDD",
+      "matched_rule": "R0",
+      "name": "PDD Holdings",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PH",
+      "matched_rule": null,
+      "name": "Parker Hannifin",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SBUX",
+      "matched_rule": null,
+      "name": "Starbucks",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LMT",
+      "matched_rule": null,
+      "name": "Lockheed Martin",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MO",
+      "matched_rule": null,
+      "name": "Altria",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NEMCL",
+      "matched_rule": null,
+      "name": "NEWMONT CORPORATION CDI 1:1",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LOW",
+      "matched_rule": null,
+      "name": "Lowe's Companies",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ENB",
+      "matched_rule": "R0",
+      "name": "Enbridge",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BMY",
+      "matched_rule": null,
+      "name": "Bristol-Myers Squibb",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "FTNT",
+      "matched_rule": null,
+      "name": "Fortinet",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AIQUY",
+      "matched_rule": "R0",
+      "name": "Air Liquide SA Unsponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ENLAY",
+      "matched_rule": "R0",
+      "name": "ENEL SPA UN SPON ADR EA REPR 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ZURVY",
+      "matched_rule": "R0",
+      "name": "Zurich Insurance Group Ltd Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CSUAY",
+      "matched_rule": "R0",
+      "name": "CHINA SHENHUA ENER",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MRAAY",
+      "matched_rule": "R0",
+      "name": "Murata Manufacturing (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PBR",
+      "matched_rule": "R0",
+      "name": "Petroleo Brasileiro SA Petrobras",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NOW",
+      "matched_rule": null,
+      "name": "ServiceNow",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HWM",
+      "matched_rule": null,
+      "name": "Howmet Aerospace",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "IFNNY",
+      "matched_rule": "R0",
+      "name": "INFINEON TECHNOLOG",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SO",
+      "matched_rule": null,
+      "name": "Southern",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MDT",
+      "matched_rule": null,
+      "name": "Medtronic",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CM",
+      "matched_rule": "R0",
+      "name": "Canadian Imperial Bank of Commerce",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BNS",
+      "matched_rule": "R0",
+      "name": "Bank of Nova Scotia",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ATVK",
+      "matched_rule": null,
+      "name": "Ameritek Ventures",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HNHPF",
+      "matched_rule": "R2",
+      "name": "HON HAI PRECISION INDUSTRY SPON GDS EACH REP 2 SHS TWD10 REG'S'",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "RCRUY",
+      "matched_rule": "R0",
+      "name": "Recruit Holdings (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "TT",
+      "matched_rule": null,
+      "name": "Trane Technologies",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CDNS",
+      "matched_rule": null,
+      "name": "Cadence Design Systems",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "GSK",
+      "matched_rule": "R0",
+      "name": "GlaxoSmithKline",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "IBN",
+      "matched_rule": "R0",
+      "name": "ICICI Bank",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SNY",
+      "matched_rule": "R0",
+      "name": "Sanofi",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BNY",
+      "matched_rule": null,
+      "name": "Bank of New York Mellon",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AXAHY",
+      "matched_rule": "R0",
+      "name": "AXA SA Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NEM",
+      "matched_rule": null,
+      "name": "Newmont",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "PNC",
+      "matched_rule": null,
+      "name": "PNC Financial Services",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ZIJMY",
+      "matched_rule": "R0",
+      "name": "ZiJin Mining ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "GD",
+      "matched_rule": null,
+      "name": "General Dynamics",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HOOD",
+      "matched_rule": null,
+      "name": "Robinhood",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MTSUY",
+      "matched_rule": "R0",
+      "name": "Mitsubishi (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BP",
+      "matched_rule": "R0",
+      "name": "BP PLC",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PBR.A",
+      "matched_rule": "R0",
+      "name": "Petroleo Brasileiro SA Petrobras",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MAR",
+      "matched_rule": null,
+      "name": "Marriott International",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CAIXY",
+      "matched_rule": "R0",
+      "name": "CAIXABANK SA UNSP ADR EA REPR 1/3 ORD EUR0.00",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PWR",
+      "matched_rule": null,
+      "name": "Quanta Services",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SPOT",
+      "matched_rule": "R0",
+      "name": "Spotify Technology",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BYDDY",
+      "matched_rule": "R0",
+      "name": "BYD Company ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DUK",
+      "matched_rule": null,
+      "name": "Duke Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BN",
+      "matched_rule": "R0",
+      "name": "Brookfield",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CHDRY",
+      "matched_rule": "R0",
+      "name": "CHRISTIAN DIOR SE UNSPON ADR EACH REPR 0.25 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "USB",
+      "matched_rule": null,
+      "name": "U.S. Bancorp",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ATLKY",
+      "matched_rule": "R0",
+      "name": "ATLAS COPCO AB ADR-CNV INTO 1 SER'A'NPV",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PROSY",
+      "matched_rule": "R0",
+      "name": "Prosus N.V. Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AAGIY",
+      "matched_rule": "R0",
+      "name": "AIA GROUP LTD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ADP",
+      "matched_rule": null,
+      "name": "Automatic Data Processing",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "UPS",
+      "matched_rule": null,
+      "name": "United Parcel Service",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "OVCHY",
+      "matched_rule": "R0",
+      "name": "OVERSEA-CHINESE BANKING CORP UNSP ADR EACH REP 2 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BX",
+      "matched_rule": null,
+      "name": "Blackstone",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ITUB",
+      "matched_rule": "R0",
+      "name": "Itau Unibanco",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NET",
+      "matched_rule": null,
+      "name": "Cloudflare",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ASX",
+      "matched_rule": "R0",
+      "name": "ASE Technology",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MNST",
+      "matched_rule": null,
+      "name": "Monster Beverage",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MELI",
+      "matched_rule": null,
+      "name": "MercadoLibre",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MCK",
+      "matched_rule": null,
+      "name": "McKesson",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CMI",
+      "matched_rule": null,
+      "name": "Cummins",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "WM",
+      "matched_rule": null,
+      "name": "Waste Management",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ING",
+      "matched_rule": "R0",
+      "name": "ING Groep",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BCS",
+      "matched_rule": "R0",
+      "name": "Barclays",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DDOG",
+      "matched_rule": null,
+      "name": "Datadog",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CSX",
+      "matched_rule": null,
+      "name": "CSX Corp",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "WMB",
+      "matched_rule": null,
+      "name": "Williams",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TKOMY",
+      "matched_rule": "R0",
+      "name": "Tokio Marine Holdings (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CEG",
+      "matched_rule": null,
+      "name": "Constellation Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SNOW",
+      "matched_rule": null,
+      "name": "Snowflake",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ELV",
+      "matched_rule": null,
+      "name": "Elevance Health",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HCA",
+      "matched_rule": null,
+      "name": "HCA Healthcare",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ESLOY",
+      "matched_rule": "R0",
+      "name": "ESSILORLUXOTTICA UNSPON ADR EACH REP 0.5 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "FCX",
+      "matched_rule": null,
+      "name": "Freeport-McMoRan",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ADBE",
+      "matched_rule": null,
+      "name": "Adobe",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ABNB",
+      "matched_rule": null,
+      "name": "Airbnb",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "RACE",
+      "matched_rule": "R0",
+      "name": "Ferrari",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "JCI",
+      "matched_rule": null,
+      "name": "Johnson Controls",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "KKR",
+      "matched_rule": null,
+      "name": "KKR & Co",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LYG",
+      "matched_rule": "R0",
+      "name": "Lloyds Banking",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CME",
+      "matched_rule": null,
+      "name": "CME Group",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CNQ",
+      "matched_rule": "R0",
+      "name": "Canadian Natural Resources",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MRSH",
+      "matched_rule": null,
+      "name": "Marsh",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MGCLY",
+      "matched_rule": "R0",
+      "name": "MIDEA GROUP CO LTD UNSPON ADS EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "XIACY",
+      "matched_rule": "R0",
+      "name": "Xiaomi Corp. Unsponsored ADR Class B",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SNPS",
+      "matched_rule": null,
+      "name": "Synopsys",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MCO",
+      "matched_rule": null,
+      "name": "Moody's",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ATLCY",
+      "matched_rule": "R0",
+      "name": "Atlas Copco AB Sponsored ADR Class B",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NABZY",
+      "matched_rule": "R0",
+      "name": "National Australia Bank Limited Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SHECY",
+      "matched_rule": "R0",
+      "name": "Shin-Etsu Chemical (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CMCSA",
+      "matched_rule": null,
+      "name": "Comcast",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DASH",
+      "matched_rule": null,
+      "name": "DoorDash",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "VLO",
+      "matched_rule": null,
+      "name": "Valero Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SHW",
+      "matched_rule": null,
+      "name": "Sherwin-Williams",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ACN",
+      "matched_rule": null,
+      "name": "Accenture",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MMM",
+      "matched_rule": null,
+      "name": "3M",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NGG",
+      "matched_rule": "R0",
+      "name": "National Grid",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MPC",
+      "matched_rule": null,
+      "name": "Marathon Petroleum",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NTES",
+      "matched_rule": "R0",
+      "name": "NetEase",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ITOCY",
+      "matched_rule": "R0",
+      "name": "ITOCHU (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MITSY",
+      "matched_rule": "R0",
+      "name": "Mitsui (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "EPD",
+      "matched_rule": null,
+      "name": "Enterprise Products",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "EQNR",
+      "matched_rule": "R0",
+      "name": "Equinor",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CP",
+      "matched_rule": "R0",
+      "name": "Canadian Pacific Railway",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MHVIY",
+      "matched_rule": "R0",
+      "name": "MITSUBISHI HEAVY INDUSTRIES UNSPON ADS EACH REP 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "GLNCY",
+      "matched_rule": "R0",
+      "name": "GLENCORE PLC",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ENGIY",
+      "matched_rule": "R0",
+      "name": "ENGIE SPON ADR EACH REPR 1 SHARE",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "EMR",
+      "matched_rule": null,
+      "name": "Emerson Electric",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ITW",
+      "matched_rule": null,
+      "name": "Illinois Tool Works",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AMX",
+      "matched_rule": null,
+      "name": "America Movil SAB de CV",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ECL",
+      "matched_rule": null,
+      "name": "Ecolab",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CI",
+      "matched_rule": null,
+      "name": "Cigna Group",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LOBLY",
+      "matched_rule": "R0",
+      "name": "LOBLAWS COMPANIES LIMITED UNSPN ADS ECH REP 0.25 COM",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "RCL",
+      "matched_rule": null,
+      "name": "Royal Caribbean",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HLT",
+      "matched_rule": null,
+      "name": "Hilton Worldwide",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NOC",
+      "matched_rule": null,
+      "name": "Northrop Grumman",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ICE",
+      "matched_rule": null,
+      "name": "Intercontinental Exchange",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AON",
+      "matched_rule": null,
+      "name": "Aon PLC",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CNI",
+      "matched_rule": "R0",
+      "name": "Canadian National Railway",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ANZGY",
+      "matched_rule": "R0",
+      "name": "Australia & New Zealand Banking Group Ltd",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MDLZ",
+      "matched_rule": null,
+      "name": "Mondelez International",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CHGCY",
+      "matched_rule": "R0",
+      "name": "Chugai Pharmaceutical (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PSX",
+      "matched_rule": null,
+      "name": "Phillips 66",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "INTU",
+      "matched_rule": null,
+      "name": "Intuit",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "FDX",
+      "matched_rule": null,
+      "name": "FedEx",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "VCISY",
+      "matched_rule": "R0",
+      "name": "VINCI ADR EACH REPR 0.25 ORD EUR2.5",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MIELY",
+      "matched_rule": "R0",
+      "name": "Mitsubishi Electric (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BAM",
+      "matched_rule": "R0",
+      "name": "Brookfield Asset Management",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NTTYY",
+      "matched_rule": "R0",
+      "name": "Nippon Telegraph & Telephone (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CL",
+      "matched_rule": null,
+      "name": "Colgate-Palmolive",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AEM",
+      "matched_rule": "R0",
+      "name": "Agnico Eagle",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "METRY",
+      "matched_rule": "R0",
+      "name": "METRO INC UNSPON ADS EACH REP 0.2 COM",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AEP",
+      "matched_rule": null,
+      "name": "American Electric Power",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NXPI",
+      "matched_rule": null,
+      "name": "NXP Semiconductors",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NSC",
+      "matched_rule": null,
+      "name": "Norfolk Southern",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BAESY",
+      "matched_rule": "R0",
+      "name": "BAE Systems plc Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BCMXY",
+      "matched_rule": "R0",
+      "name": "BANK OF COMMUNICAT",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "JPPTY",
+      "matched_rule": "R0",
+      "name": "JAPAN POST BANK CO LTD UNSP ADR EA REPR 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CVNA",
+      "matched_rule": null,
+      "name": "Carvana",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TDG",
+      "matched_rule": null,
+      "name": "TransDigm",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HON",
+      "matched_rule": null,
+      "name": "Honeywell",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TRV",
+      "matched_rule": null,
+      "name": "The Travelers Companies",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DHLGY",
+      "matched_rule": "R0",
+      "name": "Deutsche Post AG",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ARZGY",
+      "matched_rule": "R0",
+      "name": "GENERALI SPA UNSP ADR EACH REPR 0.50 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CTAS",
+      "matched_rule": null,
+      "name": "Cintas",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "KMI",
+      "matched_rule": null,
+      "name": "Kinder Morgan",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SLB",
+      "matched_rule": null,
+      "name": "SLB Ltd",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ORLY",
+      "matched_rule": null,
+      "name": "O'Reilly Automotive",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ROST",
+      "matched_rule": null,
+      "name": "Ross Stores",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "EOG",
+      "matched_rule": null,
+      "name": "EOG Resources",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "PSTVY",
+      "matched_rule": "R0",
+      "name": "POSTAL SAVINGS BANK OF CHINA CO UNSP ADR EACH REP 20 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "VLVLY",
+      "matched_rule": "R0",
+      "name": "Volvo AB Unsponsored ADR Class B",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NWG",
+      "matched_rule": null,
+      "name": "NatWest",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "WFAFY",
+      "matched_rule": "R0",
+      "name": "WESFARMERS LTD ADR EACH REPR 0.5 ORD SHS UNSPO",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "GM",
+      "matched_rule": null,
+      "name": "General Motors",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CRH",
+      "matched_rule": null,
+      "name": "CRH PLC",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MSI",
+      "matched_rule": null,
+      "name": "Motorola Solutions",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ALAB",
+      "matched_rule": null,
+      "name": "Astera Labs",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TRP",
+      "matched_rule": "R0",
+      "name": "TC Energy",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SU",
+      "matched_rule": "R0",
+      "name": "Suncor Energy",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "HONA",
+      "matched_rule": null,
+      "name": "Honeywell Aerospace",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NOK",
+      "matched_rule": "R0",
+      "name": "Nokia Oyj",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "APO",
+      "matched_rule": null,
+      "name": "Apollo Global Management",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SE",
+      "matched_rule": "R0",
+      "name": "Sea",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MKKGY",
+      "matched_rule": "R0",
+      "name": "MERCK KGAA SPON ADR EACH REPR 0.2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "REGN",
+      "matched_rule": null,
+      "name": "Regeneron Pharmaceuticals",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BE",
+      "matched_rule": null,
+      "name": "Bloom Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "E",
+      "matched_rule": "R0",
+      "name": "Eni SpA",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MFC",
+      "matched_rule": "R0",
+      "name": "Manulife Financial",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "URI",
+      "matched_rule": null,
+      "name": "United Rentals",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DB",
+      "matched_rule": "R0",
+      "name": "Deutsche Bank",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ET",
+      "matched_rule": null,
+      "name": "Energy Transfer",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MQBKY",
+      "matched_rule": "R0",
+      "name": "MACQUARIE GROUP LIMITED ADR EACH REPR 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "JAPAY",
+      "matched_rule": "R0",
+      "name": "Japan Tobacco (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "RSG",
+      "matched_rule": null,
+      "name": "Republic Services",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "APD",
+      "matched_rule": null,
+      "name": "Air Products & Chemicals",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "WBD",
+      "matched_rule": null,
+      "name": "Warner Bros Discovery",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NU",
+      "matched_rule": "R0",
+      "name": "Nu Holdings",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MPWR",
+      "matched_rule": null,
+      "name": "Monolithic Power Systems",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BSX",
+      "matched_rule": null,
+      "name": "Boston Scientific",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NKE",
+      "matched_rule": null,
+      "name": "Nike",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "KDDIY",
+      "matched_rule": "R0",
+      "name": "KDDI (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PCAR",
+      "matched_rule": null,
+      "name": "PACCAR Inc",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CIEN",
+      "matched_rule": null,
+      "name": "Ciena",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NRDBY",
+      "matched_rule": "R0",
+      "name": "NORDEA BANK ABP SPON ADS EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "GWW",
+      "matched_rule": null,
+      "name": "W.W. Grainger",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "PCRHY",
+      "matched_rule": "R0",
+      "name": "PANASONIC HOLDINGS CORP UNSPON ADR EACH REP 1 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AJG",
+      "matched_rule": null,
+      "name": "Arthur J. Gallagher",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TFC",
+      "matched_rule": null,
+      "name": "Truist Financial",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ALL",
+      "matched_rule": null,
+      "name": "Allstate",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HPE",
+      "matched_rule": null,
+      "name": "Hewlett Packard Enterprise",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "COHR",
+      "matched_rule": null,
+      "name": "Coherent",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CMCLY",
+      "matched_rule": "R1",
+      "name": "CMOC GROUP LIMITED UNSP ADS EACH REPR 50 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "STM",
+      "matched_rule": "R0",
+      "name": "STMicroelectronics",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SCBFY",
+      "matched_rule": "R1",
+      "name": "STANDARD CHARTERED PLC UNSPON ADS EACH REP 2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CCZ",
+      "matched_rule": null,
+      "name": "COMCAST HOLDINGS CORPORATION 2% CNV PREF SEC15/10/2029 USD71",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SOBKY",
+      "matched_rule": "R1",
+      "name": "SoftBank (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "HKXCY",
+      "matched_rule": "R2",
+      "name": "HONG KONG EXCHANGE",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AFL",
+      "matched_rule": null,
+      "name": "Aflac Inc",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SCGLY",
+      "matched_rule": "R2",
+      "name": "SOCIETE GENERLE",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "LITE",
+      "matched_rule": null,
+      "name": "Lumentum",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MPNGY",
+      "matched_rule": "R1",
+      "name": "Meituan ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "VALE",
+      "matched_rule": "R0",
+      "name": "Vale SA",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "FIX",
+      "matched_rule": null,
+      "name": "Comfort Systems USA",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "D",
+      "matched_rule": null,
+      "name": "Dominion Resources",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "B",
+      "matched_rule": null,
+      "name": "Barrick Mining",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "UMC",
+      "matched_rule": "R0",
+      "name": "United Microelectronics",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BHKLY",
+      "matched_rule": "R2",
+      "name": "BOC HONG KONG HLDG",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SRE",
+      "matched_rule": null,
+      "name": "Sempra Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TGT",
+      "matched_rule": null,
+      "name": "Target",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DSDVY",
+      "matched_rule": "R1",
+      "name": "DSV A/S UNSP ADR EACH REPR 0.5 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CRARY",
+      "matched_rule": "R1",
+      "name": "CREDIT AGRICOLE SA ADR EA REPR 0.5 ORD EUR3.0",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "COR",
+      "matched_rule": null,
+      "name": "Cencora",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MET",
+      "matched_rule": null,
+      "name": "MetLife",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "WUXAY",
+      "matched_rule": "R1",
+      "name": "WUXI APPTEC CO LTD UNSPON ADS EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "TRGP",
+      "matched_rule": null,
+      "name": "Targa Resources",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LSEGY",
+      "matched_rule": "R2",
+      "name": "London Stock Exchange Group",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "TEL",
+      "matched_rule": null,
+      "name": "TE Connectivity",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CARR",
+      "matched_rule": null,
+      "name": "Carrier Global",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "IMO",
+      "matched_rule": "R0",
+      "name": "Imperial Oil",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MPLX",
+      "matched_rule": null,
+      "name": "MPLX LP",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DAL",
+      "matched_rule": null,
+      "name": "Delta Air Lines",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BKR",
+      "matched_rule": null,
+      "name": "Baker Hughes",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CTVA",
+      "matched_rule": null,
+      "name": "Corteva",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "RELX",
+      "matched_rule": "R0",
+      "name": "RELX PLC",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "OKE",
+      "matched_rule": null,
+      "name": "ONEOK Inc",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "EONGY",
+      "matched_rule": "R1",
+      "name": "E.ON SE SPONS ADR EACH REPR 1 ORD NPV",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "UOVEY",
+      "matched_rule": "R1",
+      "name": "UNITED OVERSEAS BANK LTD SPON ADR EACH REP 2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SGAPY",
+      "matched_rule": "R1",
+      "name": "SINGAPORE TELECOMMUNICATIONS NEW ADR-EACH REPR 10 ORD CDI NPV",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "TER",
+      "matched_rule": null,
+      "name": "Teradyne",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NBIS",
+      "matched_rule": null,
+      "name": "NEBIUS",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BAYRY",
+      "matched_rule": "R2",
+      "name": "BAYER AG",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "F",
+      "matched_rule": null,
+      "name": "Ford Motor",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "KEYS",
+      "matched_rule": null,
+      "name": "Keysight Technologies",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CAH",
+      "matched_rule": null,
+      "name": "Cardinal Health",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CMPGY",
+      "matched_rule": "R1",
+      "name": "COMPASS GROUP PLC SPON ADR EACH REP 1 ORD SHS (POST SPLT)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ARGX",
+      "matched_rule": null,
+      "name": "argenx SE",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "KBCSY",
+      "matched_rule": "R1",
+      "name": "KBC GROEP NV UNSP ADR EA REPR 0.50 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "LHX",
+      "matched_rule": null,
+      "name": "L3Harris Technologies",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TRMOY",
+      "matched_rule": "R1",
+      "name": "TOURMALINE OIL CORP UNSPON ADS EACH REP 0.3 COM",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "RNECY",
+      "matched_rule": "R1",
+      "name": "Renesas Electronics (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "LNG",
+      "matched_rule": null,
+      "name": "Cheniere Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MDLN",
+      "matched_rule": null,
+      "name": "Medline",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AME",
+      "matched_rule": null,
+      "name": "AMETEK",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ETR",
+      "matched_rule": null,
+      "name": "Entergy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "VST",
+      "matched_rule": null,
+      "name": "Vistra Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "FAST",
+      "matched_rule": null,
+      "name": "Fastenal",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "FJIKY",
+      "matched_rule": "R1",
+      "name": "FUJIKURA UNSPON ADS EACH REP 0.5 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DANOY",
+      "matched_rule": "R1",
+      "name": "DANONE SPONS ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "EW",
+      "matched_rule": null,
+      "name": "Edwards Lifesciences",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TAK",
+      "matched_rule": "R0",
+      "name": "Takeda Pharmaceutical",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "NGLOY",
+      "matched_rule": "R1",
+      "name": "ANGLO AMERICAN SPON ADR EACH REP 0.5 ORD (P/S)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "LBLCF",
+      "matched_rule": "R2",
+      "name": "LOBLAWS COMPANIES LIMITED",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "RNMBY",
+      "matched_rule": "R1",
+      "name": "RHEINMETALL AG UNSP ADR EACH REPR 0.2 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ROK",
+      "matched_rule": null,
+      "name": "Rockwell Automation",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "THLLY",
+      "matched_rule": "R1",
+      "name": "THALES SA UNSPN ADS EACH REP 0.2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "EBKDY",
+      "matched_rule": "R1",
+      "name": "ERSTE GROUP BANK AG ADR EACH REP 0.5 ORD NPV SPON",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "HOCPY",
+      "matched_rule": "R1",
+      "name": "Hoya (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "OXY",
+      "matched_rule": null,
+      "name": "Occidental Petroleum",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "EBAY",
+      "matched_rule": null,
+      "name": "eBay",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "FITB",
+      "matched_rule": null,
+      "name": "Fifth Third Bancorp",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NUE",
+      "matched_rule": null,
+      "name": "Nucor",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DBOEY",
+      "matched_rule": "R2",
+      "name": "DEUTSCHE BOERSE AG",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "EA",
+      "matched_rule": null,
+      "name": "Electronic Arts Inc",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "UCBJY",
+      "matched_rule": "R1",
+      "name": "UCB S.A. UNSP ADR EACH REPR 0.5 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "FANG",
+      "matched_rule": null,
+      "name": "Diamondback Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NTDOY",
+      "matched_rule": "R0",
+      "name": "Nintendo (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ASMIY",
+      "matched_rule": "R1",
+      "name": "ASM INTERNATIONAL NV SPON ADR EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SDVKY",
+      "matched_rule": "R1",
+      "name": "SANDVIK AB ADR-EACH REPR 1 ORD SEK6",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "LZAGY",
+      "matched_rule": "R1",
+      "name": "LONZA GROUP AG UNSP ADR EACH REP 0.1 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "HCMLY",
+      "matched_rule": "R1",
+      "name": "HOLCIM LTD SPON ADS EACH REPR 0.20 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MT",
+      "matched_rule": null,
+      "name": "ArcelorMittal SA",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "GALDY",
+      "matched_rule": "R1",
+      "name": "GALDERMA GROUP AG UNSP ADS EACH REPR 0.2 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "WPM",
+      "matched_rule": "R0",
+      "name": "Wheaton Precious Metals",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "STT",
+      "matched_rule": null,
+      "name": "State Street",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AZO",
+      "matched_rule": null,
+      "name": "AutoZone",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "XEL",
+      "matched_rule": null,
+      "name": "Xcel Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "NDAQ",
+      "matched_rule": null,
+      "name": "Nasdaq",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "FLEX",
+      "matched_rule": null,
+      "name": "Flex Ltd",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DSCSY",
+      "matched_rule": "R1",
+      "name": "Disco (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "HEI",
+      "matched_rule": null,
+      "name": "Heico",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CVE",
+      "matched_rule": "R0",
+      "name": "Cenovus Energy",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "WMMVY",
+      "matched_rule": "R1",
+      "name": "WAL-MART DE MEXICO SAB DE CV ADR EACH REPR'10'V'SHS NPV(SPON)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "HEINY",
+      "matched_rule": "R1",
+      "name": "Heineken NV Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DVN",
+      "matched_rule": null,
+      "name": "Devon Energy",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CBRS",
+      "matched_rule": null,
+      "name": "Cerebras Systems",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CRZBY",
+      "matched_rule": "R1",
+      "name": "COMMERZBANK AG SPON ADR EA REPR 1 ORD(POST REV SPLIT)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SSREY",
+      "matched_rule": "R1",
+      "name": "SWISS RE AG SPON ADR EACH REPR 0.25 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CRWV",
+      "matched_rule": null,
+      "name": "CoreWeave",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CIIHY",
+      "matched_rule": "R2",
+      "name": "CITIC SECURITIES",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ORANY",
+      "matched_rule": "R1",
+      "name": "ORANGE SPON ADR EACH REPR 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MCHP",
+      "matched_rule": null,
+      "name": "Microchip Technology",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "EXC",
+      "matched_rule": null,
+      "name": "Exelon",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CRDO",
+      "matched_rule": null,
+      "name": "Credo Technology",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BASFY",
+      "matched_rule": "R2",
+      "name": "BASF SE",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CHCJY",
+      "matched_rule": "R2",
+      "name": "CHINA CITIC BK COR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ITCTY",
+      "matched_rule": "R2",
+      "name": "ITC LTD GDR-REPR 1 ORD INR1 REG S",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ABEV",
+      "matched_rule": "R0",
+      "name": "Ambev SA",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ODFL",
+      "matched_rule": null,
+      "name": "Old Dominion Freight Line",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "GRMN",
+      "matched_rule": null,
+      "name": "Garmin",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HUM",
+      "matched_rule": null,
+      "name": "Humana",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "RKLB",
+      "matched_rule": null,
+      "name": "Rocket Lab",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CCEP",
+      "matched_rule": null,
+      "name": "Coca-Cola Europacific",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DRPRY",
+      "matched_rule": "R2",
+      "name": "DR ING H C F PORSCHE AG",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ANYYY",
+      "matched_rule": "R1",
+      "name": "AENA SME S.A. UNSP ADR EACH REPR 0.1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "FER",
+      "matched_rule": null,
+      "name": "Ferrovial SE",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "XYZ",
+      "matched_rule": null,
+      "name": "Block",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "DNKEY",
+      "matched_rule": "R1",
+      "name": "Danske Bank A/S Sponsored ADR",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "RWEOY",
+      "matched_rule": "R1",
+      "name": "RWE AG ADR EACH REPR 1 ORD NPV",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "ELEZY",
+      "matched_rule": "R1",
+      "name": "ENDESA SA UNSP ADR EA REPR 0.50 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DKILY",
+      "matched_rule": "R1",
+      "name": "Daikin Industries (ADR)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DEO",
+      "matched_rule": "R0",
+      "name": "Diageo",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AXON",
+      "matched_rule": null,
+      "name": "Axon Enterprise",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "TTWO",
+      "matched_rule": null,
+      "name": "Take-Two Interactive Software",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "AMP",
+      "matched_rule": null,
+      "name": "Ameriprise Financial",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CMG",
+      "matched_rule": null,
+      "name": "Chipotle Mexican Grill",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "IX",
+      "matched_rule": null,
+      "name": "ORIX",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "YUM",
+      "matched_rule": null,
+      "name": "Yum! Brands",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "JHPCY",
+      "matched_rule": "R1",
+      "name": "JIANGSU HENGRUI PHARMACEUTICALS CO ADS EACH REP 2 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SLF",
+      "matched_rule": "R0",
+      "name": "Sun Life Financial",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "BSQKZ",
+      "matched_rule": null,
+      "name": "BLOCK INC",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "IDXX",
+      "matched_rule": null,
+      "name": "IDEXX Laboratories Inc",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "WAB",
+      "matched_rule": null,
+      "name": "Westinghouse Air Brake Technologies",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "MBGYY",
+      "matched_rule": "R1",
+      "name": "MERCEDES-BENZ GROUP AG UNSP ADR EACH REP 0.25 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "PRYMY",
+      "matched_rule": "R1",
+      "name": "PRYSMIAN SPA UNSP ADR EACH REPR 0.50 ORD EUR0.10",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "VIK",
+      "matched_rule": null,
+      "name": "Viking Holdings",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "INFY",
+      "matched_rule": "R0",
+      "name": "Infosys",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SMMNY",
+      "matched_rule": "R1",
+      "name": "SIEMENS HEALTHINEERS AG UNSPON ADR EACH REP 0.50 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DNBBY",
+      "matched_rule": "R1",
+      "name": "DNB BANK ASA SPON ADR EACH REP 1 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "MSCI",
+      "matched_rule": null,
+      "name": "MSCI Inc",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "FERG",
+      "matched_rule": null,
+      "name": "Ferguson",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ADSK",
+      "matched_rule": null,
+      "name": "Autodesk",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "KB",
+      "matched_rule": "R0",
+      "name": "KB Financial",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "SUHJY",
+      "matched_rule": "R2",
+      "name": "SUN HUNG KAI PROP",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "FMX",
+      "matched_rule": null,
+      "name": "FEMSA",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "RBGLY",
+      "matched_rule": "R1",
+      "name": "RECKITT BENCKISER GROUP PLC SPON ADR EACH REP 0.20 ORD (P/S)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "WCN",
+      "matched_rule": "R0",
+      "name": "Waste Connections",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DHI",
+      "matched_rule": null,
+      "name": "D.R. Horton",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "KDP",
+      "matched_rule": null,
+      "name": "Keurig Dr Pepper",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "HLN",
+      "matched_rule": null,
+      "name": "Haleon",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "SWDBY",
+      "matched_rule": "R1",
+      "name": "SWEDBANK AB ADR EACH REP 1 SER'A'SEK20(MGT)",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "LYV",
+      "matched_rule": null,
+      "name": "Live Nation Entertainment",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CNSWF",
+      "matched_rule": "R2",
+      "name": "Constellation Software Inc.",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "CNSWY",
+      "matched_rule": "R1",
+      "name": "CONSTELLATION SOFTWARE INC UNSPON ADS EACH REP 0.005",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "COIN",
+      "matched_rule": null,
+      "name": "Coinbase",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "ENBA",
+      "matched_rule": null,
+      "name": "Enbridge Inc 6.375% Fxd Fltg Sub Nts Sr 18 B 15/04/78",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "PBCRY",
+      "matched_rule": "R1",
+      "name": "BANK CENTRAL ASIA UNSP ADR EA REPR  25 ORD SHS",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "DLICY",
+      "matched_rule": "R1",
+      "name": "DAIICHI LIFE GROUP INC UNSP ADR EACH REPR 2 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AIG",
+      "matched_rule": null,
+      "name": "American International Group",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "BDX",
+      "matched_rule": null,
+      "name": "Becton Dickinson & Co",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "CCJ",
+      "matched_rule": null,
+      "name": "Cameco",
+      "classification": "us_common"
+    },
+    {
+      "ticker": "LGRDY",
+      "matched_rule": "R1",
+      "name": "LEGRAND SA UNSPON ADR EACH REPR 0.20 ORD",
+      "classification": "foreign_excluded"
+    },
+    {
+      "ticker": "AU",
+      "matched_rule": null,
+      "name": "AUSTERLITZ ACQUISITION CORPORATION I",
+      "classification": "us_common"
+    }
+  ]
+}

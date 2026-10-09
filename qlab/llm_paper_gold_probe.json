@@ -1,0 +1,34 @@
+{
+  "probe_id": "gold_probe_v1",
+  "purpose": "金标准复现：逐轮用同一份固定输入调一次模型，输出与冻结基线逐字比对，检测供应商换权重/非确定性带来的模型漂移（工部 2026-08-08 第三节）。",
+  "immutable": "本文件写定后一字不得改。改动会使指纹变化 → check() 返回 probe_input_changed 并 fail-closed（因为此时「输出相同」比对的已不是同一个输入）。若确需换探针，必须新开 probe_id 并在报告里说明前后基线不可比。",
+  "never_a_decision": true,
+  "not_in_nav_or_ledger": "探针输出只用于漂移检测：不产生仓位、不进净值序列、不登记试验、不影响任何验收判定。",
+  "prompt_template": "你是一个只读公开信息做定性判断的投资分析助手。仅依据下面这条证据作答，不得引入任何外部信息、不得使用任何晚于证据时间的知识。严格只输出一行 minified JSON（键按字母序、无空格、无 markdown、无解释文字），键与取值域如下：{\"confidence\":两位小数 0.00-1.00,\"risk\":\"margin\"|\"demand\"|\"regulatory\"|\"leverage\",\"stance\":\"long\"|\"flat\",\"top_driver\":\"revenue\"|\"margin\"|\"guidance\"|\"buyback\"|\"none\"}",
+  "evidence": {
+    "ref_id": "gold_probe_v1_synthetic_8k",
+    "synthetic": true,
+    "synthetic_note": "刻意使用**合成**证据而非真实申报：探针的唯一职责是可复现性测量，用合成文本可避免把一条真实公司信息写死在仓里、也避免被误读为对该公司的看法。格式与真实 EDGAR/RSS 记录一致，走的是同一条推理路径。",
+    "source_time_utc": "2019-06-03T18:00:00+00:00",
+    "source_type": "synthetic_8k_vignette",
+    "text": "ACME INDUSTRIES INC. (fictional, ticker ACME) reported quarterly revenue of USD 1.20B, up 4.0% year over year, with gross margin of 38.0% versus 41.5% a year earlier. The company reiterated full-year revenue guidance and disclosed a new USD 300M share repurchase authorization. Inventory rose 18% year over year. No litigation or regulatory matters were disclosed."
+  },
+  "params": {
+    "temperature": 0.0,
+    "seed": 11,
+    "prompt_variant": "pv1_baseline",
+    "max_output_tokens": 200,
+    "note": "参数取冻结网格的第 1 格；探针不轮换 seed/变体——它测的是模型本身是否被换掉，不是策略离散度。"
+  },
+  "output_contract": {
+    "shape": "single line minified JSON, keys sorted, no whitespace, no prose",
+    "keys": {
+      "confidence": "number, two decimals, 0.00-1.00",
+      "risk": ["margin", "demand", "regulatory", "leverage"],
+      "stance": ["long", "flat"],
+      "top_driver": ["revenue", "margin", "guidance", "buyback", "none"]
+    },
+    "why_enumerated": "全枚举 + 定点数值：对「换权重」足够敏感（排序与置信度会动），又不受散文级抖动影响 ⇒ 真漂移抓得住、误报压得低。自由文本论点会让批处理/浮点非确定性天天误报，故探针不要散文。"
+  },
+  "comparison_rule": "逐字（byte-exact）比对模型原样输出，不 strip、不解析、不归一。不一致即 model_drift_detected，落 ALERT 并回报工部；基线**绝不**被改写。"
+}

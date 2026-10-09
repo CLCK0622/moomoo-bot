@@ -1,0 +1,57 @@
+{
+  "purpose": "预注册冻结的服务端时间锚点（git 日期可伪造，故不作证据）",
+  "repo": "CLCK0622/moomoo-bot",
+  "branch": "agent/evo-llm-paper",
+  "freeze_sha": "8603989e0e431b7cabf190cb1bd0b7a585fb58d3",
+  "push_event": {
+    "kind": "PushEvent",
+    "created_at": "2026-08-08T02:10:26Z",
+    "ref": "refs/heads/agent/evo-llm-paper",
+    "head": "8603989e0e431b7cabf190cb1bd0b7a585fb58d3",
+    "event_id": "17098337839"
+  },
+  "server_ref_state": {
+    "branch": "agent/evo-llm-paper",
+    "server_ref_sha": "8603989e0e431b7cabf190cb1bd0b7a585fb58d3",
+    "matches_freeze": true
+  },
+  "superseded_freezes": [
+    {
+      "freeze_sha": "3d2701601336ff379b177b99fda631920a63e19e",
+      "push_event": {
+        "kind": "CreateEvent(branch first push)",
+        "created_at": "2026-08-08T01:46:30Z",
+        "ref": "agent/evo-llm-paper",
+        "head": null,
+        "event_id": "17097548507",
+        "note": "新建分支首推只发 CreateEvent；服务端时间同样不可由提交者设定"
+      },
+      "server_ref_state": {
+        "branch": "agent/evo-llm-paper",
+        "server_ref_sha": "3d2701601336ff379b177b99fda631920a63e19e",
+        "matches_freeze": true
+      },
+      "status": "anchored"
+    },
+    {
+      "freeze_sha": "3618e28f7614c184865d57a5fb439207a8254027",
+      "push_event": {
+        "kind": "PushEvent",
+        "created_at": "2026-08-08T02:05:50Z",
+        "ref": "refs/heads/agent/evo-llm-paper",
+        "head": "3618e28f7614c184865d57a5fb439207a8254027",
+        "event_id": "17098194067"
+      },
+      "server_ref_state": {
+        "branch": "agent/evo-llm-paper",
+        "server_ref_sha": "3618e28f7614c184865d57a5fb439207a8254027",
+        "matches_freeze": true
+      },
+      "status": "anchored"
+    }
+  ],
+  "dag_rule": "每笔决策 commit 必须是 freeze_sha 的 DAG 后代；自本锚点起永不 rebase / 永不 force-push。（唯一一次基线推进用 merge 完成，未改写历史——见预注册冻结沿革）",
+  "status": "anchored",
+  "note": "PushEvent.created_at 为 GitHub 服务端观测、提交者不可设定",
+  "superseded_note": "v1 锚点自 git 历史 77e390c 回填（v2 落锚时 superseded 机制尚未实现、曾被覆盖）；至此 v1/v2/v3 三版锚点全部在档，零决策产出，冻结沿革可从头核"
+}
