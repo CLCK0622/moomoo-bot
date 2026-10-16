@@ -1,0 +1,176 @@
+# qlab — quant-strategies → moomoo OpenD execution layer (EVO-65)
+
+Scope (per the updated EVO-65 / 吏部 brief): **wire the existing
+`quant-strategies` signals into a `qlab` skeleton and a moomoo OpenD execution
+layer, paper-trading first.** This is *not* a from-scratch backtest rebuild —
+the author's research/backtest stands; we only take their **decision functions**
+and put a live-capable, risk-controlled, observable execution engine around them.
+
+> **Live trading is OFF by default.** Default mode is offline **paper** trading
+> on a deterministic fixture, which runs anywhere with no OpenD gateway and no
+> brokerage account. Real-money (`live`) orders require an explicit triple gate.
+
+## What's here
+
+```
+qlab/
+  vendor/qstrat/          # quant-strategies deterministic CORE, vendored VERBATIM @ 61341f0
+                          #   (signals/indicators/exit logic — the author's code, unchanged)
+  qlab/
+    signals.py            # SignalAdapter — calls the vendored combiner/conditions/exit_manager
+    config.py             # env-driven ExecConfig + RiskLimits (NO secrets in repo)
+    risk.py               # RiskManager — kill switch, caps, intraday loss, 20% DD breaker, …
+    observability.py      # JSONL channels: signals/orders/fills/positions/equity/
+                          #   broker_events/errors/heartbeat (credential-redacted).
+                          #   equity + positions logged per-bar (1m MTM) -> 1m
+                          #   equity curve / 1m max-drawdown is recomputable.
+    engine.py             # ExecutionEngine — signal→risk→broker→observability tick loop
+    run_paper.py          # CLI (paper-first)
+    brokers/
+      base.py             # Broker interface + Order/Fill/Position/Account model
+      paper.py            # PaperBroker — in-memory simulated fills (default, no deps)
+      moomoo_opend.py     # MoomooOpenDBroker — real OpenD adapter (SIMULATE by default)
+    synthetic.py          # deterministic fixture bars (replay/testing only — NOT performance)
+    datasource.py, params.py, runner.py   # bar sources, baseline params, offline driver
+  tests/                  # 12 tests: paper broker, risk controls, engine replay, redaction
+  reports/SAMPLE_paper_run/   # committed sample paper run (synthetic; non-performance)
+```
+
+## Run it
+
+```bash
+python -m venv .venv && . .venv/bin/activate
+pip install -r requirements-lock.txt      # pandas/numpy/pyarrow/pytest (no moomoo-api needed)
+
+# Default: offline PAPER trading on a synthetic fixture (no OpenD, reproducible):
+python -m qlab.run_paper --mode paper --out reports/paper_run
+
+# Signals + intended orders only, no fills:
+python -m qlab.run_paper --mode dry_run --out reports/dryrun
+
+# Real OpenD SIMULATE account (needs OpenD gateway + SDK — see preconditions):
+python -m qlab.run_paper --mode opend_paper --out reports/opend_paper
+
+pytest tests/ -q
+```
+
+Each run writes `config.json`, `params.json`, `summary.json` and the eight JSONL
+observability channels.
+
+## Execution modes & the live gate
+
+| mode | broker | fills | external deps |
+|---|---|---|---|
+| `dry_run` | none | none (intended orders logged) | none |
+| `paper` | `PaperBroker` | simulated | none |
+| `opend_paper` | `MoomooOpenDBroker` (`TrdEnv.SIMULATE`) | real paper account | OpenD gateway + SDK |
+| `live` | `MoomooOpenDBroker` (`TrdEnv.REAL`) | **real money** | OpenD + SDK + **triple gate** |
+
+**`live` triple gate** (all required): `QLAB_ALLOW_LIVE=1` **and** CLI
+`--i-understand-live` **and** `MOOMOO_TRADING_PASSWORD` in the env for
+`unlock_trade`. Absent any one, the engine refuses to start.
+
+## Risk controls (all enforced in `risk.py` + wired in `engine.py`)
+
+- **Global kill switch** (manual + auto-tripped by the breakers below); once set,
+  `engine.on_bar` / `run_replay` **halt the engine** (stop all trading), emitting
+  an `engine_halted` broker_event.
+- **Unified kill gate.** `on_bar` re-checks the switch (`_halt_if_killed`) after
+  *every* step that can trip it — mark/quote, account read, drawdown breaker,
+  reconcile, and the trailing MTM read — so a trip mid-bar aborts the bar in the
+  **same call** (no exit/entry order slips through) and `engine_halted` lands in
+  that call, not on the next bar.
+- **Tradeoff (flagged for 都察院): kill switch = FULL STOP, including exits — no
+  auto-flatten on halt.** On a connection loss orders can't be sent; into an
+  abnormal/halted market they'd get unsafe fills; forced liquidation is a
+  deliberate operator action. So no "flatten-then-stop" is kept for any trip
+  point (incl. the drawdown breaker). Consequence: after a kill, `place_order`
+  is called 0 times and open positions are left as-is for the operator.
+- **Connection failure → kill switch (end-to-end).** A `BrokerConnectionError`
+  from any broker path — **connect / account / order / reconcile** — is routed to
+  `risk.on_connection_error()` and trips the kill switch (a business *reject* stays
+  local and does not halt). Wired at `engine.connect`, `engine._equity`,
+  `engine._submit`, and the reconcile hook.
+- **Abnormal single-bar move → GLOBAL halt** (default `abnormal_move_global_halt=
+  True`), via `risk.on_market_halt()` — not a per-symbol soft block. Set the flag
+  False to fall back to the legacy per-symbol soft block.
+- **20% drawdown circuit breaker** → kill switch. **Intraday loss limit** → blocks
+  new entries. **Trading-session validation** (entries only inside RTH).
+- **EVO-10 exposure caps** — **per-symbol 10% / per-industry 25% / per-strategy 30%
+  of equity**, each enforced alongside an absolute notional backstop; the **tighter
+  binds**. Industry from `ExecConfig.industry_map` (unmapped symbol → its own
+  bucket, so it's only bound by the per-symbol cap).
+
+  *EVO-10 tradeoff (recorded, not silently changed):* the pre-existing caps were
+  absolute **notional** (`per_symbol_max_notional` $25k, `per_strategy_max_notional`
+  $100k). Rather than replace them, the % caps are **added and enforced jointly**
+  (min of pct·equity and notional), so behaviour only ever gets *more* conservative
+  and both semantics stay configurable. Consequence to note: per-symbol 10% with
+  `max_positions=5` bounds deployment to ≤50% of equity (5×10%) — intentional
+  diversification, not a bug. Industry classification is a static map for the
+  default universe; extend it (or wire an OpenD `get_stock_basicinfo` lookup) when
+  the universe grows.
+
+Exits are *never* blocked by `check_entry`.
+
+## Credentials & logging
+
+No secrets in the repo. Config is env-only (`QLAB_*`); the REAL trading password
+is read from `MOOMOO_TRADING_PASSWORD` at unlock time only. The observability
+sink redacts any field whose key matches `password|token|secret|api_key|unlock`.
+(The legacy `backend/config.py` committed a plaintext trading password — this
+layer deliberately does not.)
+
+## OpenD connection preconditions (for `opend_paper` / `live`)
+
+1. `pip install moomoo-api` (or `futu-api`).
+2. moomoo **OpenD** gateway running and logged in on `127.0.0.1:11111`.
+3. A moomoo account with a **paper (SIMULATE)** sub-account enabled.
+4. For `live` only: the triple gate above.
+
+## Lightweight consistency check (NOT a full historical reproduction)
+
+`tests/test_harness.py::test_adapter_uses_vendored_entry_logic_verbatim` replays
+a fixture and asserts the adapter's entry decision **never diverges** from the
+vendored `build_entry_evaluator` — i.e. the integrated signal/order behaviour is
+the author's logic, not a reimplementation. Exits call the vendored
+`ExitManager.evaluate` directly for the same reason. Per the brief we do **not**
+re-run the author's full multi-month backtest.
+
+## Real OpenD evidence (SIMULATE)
+
+`python -m qlab.opend_probe` collects first-hand real-environment metrics against
+a live OpenD gateway + SIMULATE account, safely even when the market is closed
+(resting far-limit orders, qty 1, cancelled immediately, flat-after sweep):
+
+- order submit→ack **latency P50/P95/max**, cancel latency (first-hand
+  `submit_ts`/`ack_ts`/`latency_ms` on every order — see `brokers/base.py::Order`
+  and `MoomooOpenDBroker.place_order`);
+- accept/reject rate, disconnects;
+- **position reconciliation** (`MoomooOpenDBroker.reconcile_positions`, also wired
+  into the live loop every `reconcile_every_bars` bars) — first-hand source for
+  the "position deviation" metric.
+
+`python -m qlab.opend_session_probe` (fill-lag-safe) captures the **session-only**
+metrics during US regular hours — measured slippage, fill rate, partial-fill
+behaviour, SIMULATE fill latency — via marketable cross-price orders polled to
+terminal and a close-out that flattens the **actual** position (no fill race).
+
+Committed runs:
+- `reports/opend_probe/` — order-path latency/reject/reconcile (after-hours safe; P50 ≈ 562 ms).
+- `reports/opend_session_live/` — in-session slippage/fill-rate/partial-fill (AFTERNOON).
+
+> ⚠️ **SIMULATE ≠ real market.** The in-session slippage/fill/latency numbers
+> characterise the OpenD adapter + the **SIMULATE matching engine**, NOT real
+> market impact/slippage. Near-zero slippage, whole-lot matching, and seconds-scale
+> fill lag are SIMULATE traits — not proof that real execution cost is acceptable.
+> Real execution quality needs real fills (out of scope, controlled). No PnL claim.
+
+## Status / blocker
+
+The paper path is proven end-to-end (`reports/SAMPLE_paper_run/`, synthetic
+fixture). A **real paper-account run is blocked here**: no OpenD gateway and no
+moomoo/futu SDK/account in this workspace — `opend_paper` connects and returns a
+precise blocker rather than fabricating fills. To clear it, run on a host with
+OpenD + a SIMULATE account (see preconditions). **Synthetic numbers are harness
+self-tests, never strategy performance.**
