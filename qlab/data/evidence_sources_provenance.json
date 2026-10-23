@@ -1,0 +1,48 @@
+{
+  "artifact": "qlab/qlab/events/datafetch/evidence_sources.py — public-information ingestion for the thin-alpha paper-decision track",
+  "status": "DELIVERED (module + tests). No bulk data committed: evidence is fetched per decision run and persisted by the runner alongside its decision records.",
+  "recorded_date": "2026-08-08",
+  "recorded_by": "都水主事 (工部)",
+  "baseline_commit": "1748065",
+
+  "purpose": "Supply the `evidence_time` leg of the audit chain `evidence_time <= decision_time <= return_start`. The whole chain is only auditable if evidence_time comes from the INFORMATION SOURCE's own clock, never ours — a self-generated timestamp is self-attestation and proves nothing to 都察院.",
+
+  "hard_contract": {
+    "rule": "A record with no parseable SOURCE timestamp is REJECTED, not stamped with our clock. There is no now()-fallback path anywhere in the module (fail-closed, same discipline as fred_vintage's missing-key behaviour).",
+    "two_clocks_kept_separate": "source_time_utc = THE audit anchor (from the source). retrieved_utc = OUR clock, labelled, for lag diagnostics ONLY — never used as evidence time.",
+    "naive_timestamps_refused": "a source timestamp without a timezone offset is rejected rather than guessed (a wrong tz silently shifts an event across the 09:30/16:00 boundary).",
+    "validation": "validate_records() raises on missing/naive timestamps and on retrieved_utc < source_time_utc (clock skew)."
+  },
+
+  "sources": {
+    "sec_edgar": {
+      "endpoint": "https://data.sec.gov/submissions/CIK{cik10}.json",
+      "source_time_field": "acceptanceDateTime",
+      "why": "second-resolution UTC time EDGAR actually accepted the filing — NOT the calendar `filingDate`, which cannot tell pre-open from post-close. filing_date/report_date are kept in `extra` for reference only.",
+      "auth": "none (free); requires a descriptive User-Agent per SEC policy",
+      "live_verified_2026_08_08": "AAPL CIK 0000320193 -> 139 records, 0 rejected; e.g. 8-K acc 0000320193-26-000018 @ 2026-07-30T20:30:28Z (post-close), 10-Q @ 2026-07-31T10:01:02Z (pre-open)"
+    },
+    "rss": {
+      "source_time_field": "pubDate (RFC-822) / published / updated (Atom ISO-8601)",
+      "feeds_verified_2026_08_08": {
+        "yahoo_symbol": "https://feeds.finance.yahoo.com/rss/2.0/headline?s={symbol}&region=US&lang=en-US — 16 records, 0 rejected",
+        "yahoo_market": "same endpoint with s=^GSPC — broad market headlines, 20 items with pubDate",
+        "globenewswire_public": "GlobeNewswire public-company press releases — 20 records, 0 rejected"
+      },
+      "excluded": "prnewswire.com RSS returns HTTP 404 under the SEC User-Agent (works only with a browser UA); deliberately NOT shipped as a default to avoid a UA-fragile source.",
+      "auth": "none (free)"
+    },
+    "fred": {
+      "module": "qlab/qlab/events/datafetch/fred_yields.py (latest) + fred_vintage.py (point-in-time)",
+      "note": "already delivered and point-in-time aware; FRED_API_KEY persists at ~/.config/fred/api.env (chmod 600, persistent user layer) and is reusable — not re-implemented here.",
+      "source_time_semantics": "FRED observation `date` is the observation period; the publication/vintage axis is handled by fred_vintage realtime_start/realtime_end. Publication lag (not revision) is the live look-ahead axis — see credit_regime_provenance.json."
+    }
+  },
+
+  "record_schema": ["source", "source_time_utc", "source_time_field", "symbol", "title", "url", "ref_id", "retrieved_utc", "extra"],
+  "live_check_2026_08_08": "combined EDGAR + yahoo_symbol + globenewswire pull = 175 records, 0 rejected, validate_records() passed; source_time span 2015-06-10T20:05:10Z .. 2026-08-08T01:30:18Z; lag (retrieved - source) >= 0 for every record, confirming the SOURCE clock was preserved rather than overwritten.",
+  "tests": "qlab/tests/test_evidence_sources.py (9): EDGAR acceptance-time anchor + rejection of a filing with no acceptance time, form/since filters, RSS pubDate anchor + rejection of missing and naive dates, fail-closed parser, clock-skew detection, parquet round-trip keeping both clocks.",
+
+  "usage_for_the_decision_chain": "For each decision: pull evidence, keep source_time_utc as `evidence_time`, and assert evidence_time <= decision_time <= return_start. Rejected records must be logged (they are returned as the second element of every fetch) — a dropped source timestamp is a broken audit link, not a silent skip.",
+  "boundary": "This module only supplies evidence with trustworthy timestamps. It makes no decisions and produces no verdicts; acceptance stays with research/gate certify()."
+}

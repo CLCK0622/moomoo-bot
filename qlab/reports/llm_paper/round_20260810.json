@@ -1,0 +1,327 @@
+{
+  "round_decision_ts": "2026-08-10T11:10:44.325227+00:00",
+  "preflight": {
+    "anchor_ok": true,
+    "prereg_frozen_at": "2026-08-08T02:10:26Z",
+    "paradigm": "llm_agent",
+    "grid_cells": 10,
+    "quota": {
+      "utc_day": "2026-08-10",
+      "cap_per_day": 25,
+      "used_total": 0,
+      "remaining_total": 25,
+      "used_marking": 0,
+      "used_exploration": 0,
+      "reserve_for_marking": 15,
+      "exploration_cap": 10,
+      "remaining_exploration": 10,
+      "ledger": "/Users/clck/.local/state/qlab/av_quota.jsonl"
+    },
+    "quota_caveat": "guard 台账仅计经 guard 的调用；vendor 侧可能已被 guard 外调用消耗",
+    "quota_ok_for_marking": true
+  },
+  "n_decisions": 7,
+  "portfolio_check": {
+    "ok": true,
+    "gross": 0.49,
+    "gross_cap": 1.0,
+    "cash": 0.51,
+    "violations_single_name": [],
+    "violations_short": [],
+    "leverage_ok": true
+  },
+  "actual_start_settlement": {
+    "settled": 0,
+    "pending": 7,
+    "n_trading_days_observed": 100,
+    "days_source": "quotes_api.trading_days（观测 bar，非预测日历）",
+    "note": "pending 表示价格腿尚无 >= intended 的 bar —— 留待行情到位后回填，不估算"
+  },
+  "book": {
+    "status": "pending_entry_bar",
+    "pending_symbols": [
+      "EMR",
+      "MET",
+      "GD",
+      "CAT",
+      "COP",
+      "MRK",
+      "GILD"
+    ],
+    "reason": "建仓 bar 尚未出现（决策先于建仓日）→ 本轮不产生净值点。仓位还没建立，此刻的任何净值都是编的；等首根建仓 bar 出现再起算。"
+  },
+  "book_x2_cost": null,
+  "mark_to_market": null,
+  "nav_point": null,
+  "ledger": {
+    "run_id": "llm_paper-2026-08-10",
+    "n_trials_total": 10
+  },
+  "rejected_evidence": [
+    {
+      "reason": "派生可得时间晚于本轮 decision_ts（盘前/周末发布 → 顺延至今日 09:30 ET 开盘），按 evidence_available_utc <= decision_ts 铁律本轮不得入证",
+      "n_rss_items_rejected": 100,
+      "n_rss_items_total": 180,
+      "examples": [
+        "GD 创纪录订单/上调指引报道 (2026-08-09)",
+        "LLY Blowout Growth And Raises Its Outlook (2026-08-09)",
+        "DIS 估值多年低位+回购九年新高 (2026-08-10 盘前)",
+        "JPMorgan 上调标普目标 (2026-08-10 盘前)"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "symbol": "EMR",
+      "target_weight": 0.09,
+      "confidence": 0.78,
+      "thesis": "Q3 FY26 业绩 + 上调全年指引（EX-99.1 原文核过）：净销售 $4,873M/+7%，税前利润率 18.8%（+270bps），调整后 EBITA 利润率 28.5%（+140bps），调整后 EPS +13%，自由现金流 +36% 至 $1,323M，并 declared 季度股息 $0.555。量价与利润率同向扩张、现金流转换强，指引上调而非维持 ⇒ 定性上是「兑现 + 上修」而非「beat-and-lower」。风险：自动化资本开支周期性、并购整合（Glue Inc.）。",
+      "evidence_refs": [
+        "0000032604-26-000042"
+      ],
+      "evidence_available_utc": "2026-08-04T20:05:37+00:00",
+      "evidence_acceptance_utc": "2026-08-04T20:05:37+00:00",
+      "decision_ts": "2026-08-10T11:10:44.325227+00:00",
+      "intended_start": "2026-08-10T13:30:00+00:00",
+      "seed": 11,
+      "prompt_variant": "pv1_baseline",
+      "actual_start": null,
+      "actual_start_rolled_days": null,
+      "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+      "model": "claude-opus-5",
+      "extra": {},
+      "evidence_max_ts": "2026-08-04T20:05:37+00:00",
+      "effective_from": "2026-08-10T13:30:00+00:00",
+      "effective_from_is_actual": false
+    },
+    {
+      "symbol": "MET",
+      "target_weight": 0.08,
+      "confidence": 0.72,
+      "thesis": "2Q26 业绩（EX-99.1 原文核过）：调整后利润 +15% 至 $1.6B，调整后 EPS +20% 至 $2.43，PFOs +7%，净投资收益 +18% 至 $6.7B，BVPS +8%，季内回购+分红返还超 $1.1B，控股公司现金 $3.4B 在目标区间内。叠加 $3B 新回购授权。定性：承保与投资收益双轮、资本返还有额度支撑；高利率对寿险投资端仍是顺风。风险：利率快速下行会压投资收益增速。",
+      "evidence_refs": [
+        "0001099219-26-000048",
+        "0c693d28-a0a6-3523-a260-fa1103b23c38"
+      ],
+      "evidence_available_utc": "2026-08-07T13:30:00+00:00",
+      "evidence_acceptance_utc": "2026-08-07T12:14:47+00:00",
+      "decision_ts": "2026-08-10T11:10:44.325227+00:00",
+      "intended_start": "2026-08-10T13:30:00+00:00",
+      "seed": 11,
+      "prompt_variant": "pv1_baseline",
+      "actual_start": null,
+      "actual_start_rolled_days": null,
+      "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+      "model": "claude-opus-5",
+      "extra": {},
+      "evidence_max_ts": "2026-08-07T13:30:00+00:00",
+      "effective_from": "2026-08-10T13:30:00+00:00",
+      "effective_from_is_actual": false
+    },
+    {
+      "symbol": "GD",
+      "target_weight": 0.07,
+      "confidence": 0.62,
+      "thesis": "GDIT 获 $1.3B 企业网络运营与网络安全合同（公司 PR，2026-08-07 16:00Z）+ 8-K 在档。定性：政府 IT/防务订单是多年期、抗周期的收入可见度来源；当前中东（霍尔木兹）不确定性对防务需求偏顺风。风险：预算审批节奏、固定价合同的成本风险。**本轮不采用 08-09 的「创纪录订单+上调指引」报道**——其派生可得时间晚于本轮决策时点，按时序铁律不得入证。",
+      "evidence_refs": [
+        "0001193125-26-340490",
+        "728ee777-f113-3c81-afef-9b4f3c892569"
+      ],
+      "evidence_available_utc": "2026-08-07T21:11:06+00:00",
+      "evidence_acceptance_utc": "2026-08-07T21:11:06+00:00",
+      "decision_ts": "2026-08-10T11:10:44.325227+00:00",
+      "intended_start": "2026-08-10T13:30:00+00:00",
+      "seed": 11,
+      "prompt_variant": "pv1_baseline",
+      "actual_start": null,
+      "actual_start_rolled_days": null,
+      "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+      "model": "claude-opus-5",
+      "extra": {},
+      "evidence_max_ts": "2026-08-07T21:11:06+00:00",
+      "effective_from": "2026-08-10T13:30:00+00:00",
+      "effective_from_is_actual": false
+    },
+    {
+      "symbol": "CAT",
+      "target_weight": 0.07,
+      "confidence": 0.6,
+      "thesis": "10-Q 已在档（2026-08-05 受理）+ 报道口径「record quarter and raised outlook」（08-07 20:12Z）。定性：基建/数据中心电力设备需求带动，订单与积压支撑营收可见度。风险：关税对利润率的传导（08-08 报道已点出，但该条不可入证）、经销商库存周期。因主证据为二手报道而非原始 EX-99.1 数字，置信度与仓位低于 EMR/MET。",
+      "evidence_refs": [
+        "0000018230-26-000046",
+        "5bc04ae6-555a-3da0-9bb1-d9723b8a6ff0"
+      ],
+      "evidence_available_utc": "2026-08-07T20:12:32+00:00",
+      "evidence_acceptance_utc": "2026-08-07T20:12:32+00:00",
+      "decision_ts": "2026-08-10T11:10:44.325227+00:00",
+      "intended_start": "2026-08-10T13:30:00+00:00",
+      "seed": 11,
+      "prompt_variant": "pv1_baseline",
+      "actual_start": null,
+      "actual_start_rolled_days": null,
+      "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+      "model": "claude-opus-5",
+      "extra": {},
+      "evidence_max_ts": "2026-08-07T20:12:32+00:00",
+      "effective_from": "2026-08-10T13:30:00+00:00",
+      "effective_from_is_actual": false
+    },
+    {
+      "symbol": "COP",
+      "target_weight": 0.07,
+      "confidence": 0.6,
+      "thesis": "Q2 业绩 8-K + 10-Q 在档；业绩电话会重申 2029 自由现金流路径（08-07 19:02Z）。定性：低成本资源库 + 资本纪律，FCF 路径被重申而非下修；能源腿同时对霍尔木兹地缘风险提供组合级对冲（本轨禁做空、无衍生品，能源多头是可用的少数尾部对冲之一）。风险：油价回落直接压 FCF。",
+      "evidence_refs": [
+        "0001163165-26-000030",
+        "2531efc4-23e9-3ba4-992e-40920b2846c2"
+      ],
+      "evidence_available_utc": "2026-08-07T19:02:00+00:00",
+      "evidence_acceptance_utc": "2026-08-07T19:02:00+00:00",
+      "decision_ts": "2026-08-10T11:10:44.325227+00:00",
+      "intended_start": "2026-08-10T13:30:00+00:00",
+      "seed": 11,
+      "prompt_variant": "pv1_baseline",
+      "actual_start": null,
+      "actual_start_rolled_days": null,
+      "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+      "model": "claude-opus-5",
+      "extra": {},
+      "evidence_max_ts": "2026-08-07T19:02:00+00:00",
+      "effective_from": "2026-08-10T13:30:00+00:00",
+      "effective_from_is_actual": false
+    },
+    {
+      "symbol": "MRK",
+      "target_weight": 0.06,
+      "confidence": 0.55,
+      "thesis": "10-Q 在档（2026-08-07 受理）+ 报道口径「上调指引与关键药物获批」（08-07 可得）。定性：在研管线获批推进 + 指引上修，估值相对同业不高。风险：Keytruda 专利悬崖与 IRA 定价谈判是结构性压制，故仓位低于医药同侪的常规配置。",
+      "evidence_refs": [
+        "0000310158-26-000212",
+        "1a794dc2-fca9-31a8-a577-d75b6947ce3f"
+      ],
+      "evidence_available_utc": "2026-08-07T20:11:12+00:00",
+      "evidence_acceptance_utc": "2026-08-07T20:11:12+00:00",
+      "decision_ts": "2026-08-10T11:10:44.325227+00:00",
+      "intended_start": "2026-08-10T13:30:00+00:00",
+      "seed": 11,
+      "prompt_variant": "pv1_baseline",
+      "actual_start": null,
+      "actual_start_rolled_days": null,
+      "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+      "model": "claude-opus-5",
+      "extra": {},
+      "evidence_max_ts": "2026-08-07T20:11:12+00:00",
+      "effective_from": "2026-08-10T13:30:00+00:00",
+      "effective_from_is_actual": false
+    },
+    {
+      "symbol": "GILD",
+      "target_weight": 0.05,
+      "confidence": 0.45,
+      "thesis": "**双向证据、故意小仓**：正面 = Q2 电话会上调 HIV/PrEP 指引（08-07 14:00Z）、Q2 业绩 8-K 在档；负面 = 「Gilead Slumps As Long-Term Uncertainty Clouds Massive HIV Beat」（08-05 20:04Z）与MSD/Gilead 终止 Trodelvy-Keytruda 三期（08-06，中期数据不佳）。定性：当期基本面强但长期管线不确定性被市场定价，两边证据都在可得窗口内、不挑单边 ⇒ 只给最小建仓仓位。",
+      "evidence_refs": [
+        "0000882095-26-000028",
+        "654a4b80-4da0-3da6-b88d-16c6aa67e8ae"
+      ],
+      "evidence_available_utc": "2026-08-07T14:00:00+00:00",
+      "evidence_acceptance_utc": "2026-08-07T14:00:00+00:00",
+      "decision_ts": "2026-08-10T11:10:44.325227+00:00",
+      "intended_start": "2026-08-10T13:30:00+00:00",
+      "seed": 11,
+      "prompt_variant": "pv1_baseline",
+      "actual_start": null,
+      "actual_start_rolled_days": null,
+      "actual_start_reason": "价格腿尚无 >= intended 的 bar（行情未到/价格腿不可用）→ pending，不猜",
+      "model": "claude-opus-5",
+      "extra": {},
+      "evidence_max_ts": "2026-08-07T14:00:00+00:00",
+      "effective_from": "2026-08-10T13:30:00+00:00",
+      "effective_from_is_actual": false
+    }
+  ],
+  "determinism": {
+    "probe_id": "gold_probe_v1",
+    "probe_fingerprint": "sha256:7d48529b2486c7a0b53193d1f8a706deb6ab3f2214e83bb64a4adb210ee7f39a",
+    "model": "claude-opus-5",
+    "output_sha256": "sha256:17e0b7a645a9fea9eecac654a48d0250aacc7de9752a467cb9e0f9de78346d88",
+    "output_matches": true,
+    "reasons": [],
+    "baseline_recorded_at": "2026-08-10T11:10:35.455770+00:00",
+    "baseline_model": "claude-opus-5",
+    "status": "determinism_ok",
+    "note": "输出逐字一致 ⇒ 模型未被换掉，且「temperature=0 下 seed 无离散」的前提仍成立",
+    "drift": false,
+    "verified": true
+  },
+  "gold_probe_output": "{\"confidence\":0.60,\"risk\":\"margin\",\"stance\":\"flat\",\"top_driver\":\"margin\"}",
+  "seed_semantics": {
+    "temperature": 0.0,
+    "seed_status": "nominal",
+    "statement": "`temperature=0`，**seed 为名义值、不产生离散**；离散度由 2 个 prompt 变体承担；`seed_distribution` 的 25% 分位在此配置下等于**较差的那个变体**。",
+    "dispersion_carried_by": "2 prompt variants (pv1_baseline / pv2_riskaware)",
+    "n_seeds_nominal": 5,
+    "effective_distinct_outputs": 2,
+    "dsr_n_used": 10,
+    "dsr_note": "DSR 仍按冻结网格 N=10 计（> 有效 2）⇒ 多重检验 haircut 偏严，与下四分位取较差变体同朝保守一侧。",
+    "must_not_claim": [
+      "seed 稳健性通过 / seed-robust",
+      "跨 seed 结果稳定（temperature=0 下相同不叫稳定，叫同一次计算）",
+      "下四分位体现了 seed 敏感性（它体现的是较差的 prompt 变体）"
+    ],
+    "ruling": "工部 2026-08-08 第二节：不改 temperature、不重冻；仅改报告口径措辞。",
+    "determinism_status": "determinism_ok",
+    "drift_consequence": "金标准复现逐字一致 ⇒ 「seed 名义化」的前提经本轮实测仍成立。",
+    "caliber_doc": "qlab/LLM_PAPER_REPORTING_CALIBER.md"
+  },
+  "seed_quantile_caliber": {
+    "quantile": 0.25,
+    "grid": "5 seeds × 2 variants = 10 cells",
+    "measured_judged": 0.1,
+    "measured_min": 0.1,
+    "lower_quartile_equals_worse_variant": true,
+    "min_worse_count_for_equality": 4,
+    "worse_count_is": 5,
+    "boundary_scan": {
+      "worse_count_1": {
+        "judged": 0.4,
+        "equals_worse": false
+      },
+      "worse_count_2": {
+        "judged": 0.4,
+        "equals_worse": false
+      },
+      "worse_count_3": {
+        "judged": 0.17500000000000002,
+        "equals_worse": false
+      },
+      "worse_count_4": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_5": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_6": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_7": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_8": {
+        "judged": 0.1,
+        "equals_worse": true
+      },
+      "worse_count_9": {
+        "judged": 0.1,
+        "equals_worse": true
+      }
+    },
+    "reading": "在本轨冻结的 5/5 等分网格下，下四分位**结构性地等于较差的 prompt 变体**（较差者占 5 ≥ 阈值 4)——保守方向、非空壳；该等式在较差者占比低于阈值时不再成立，故变体数一经改动本口径即失效。"
+  },
+  "alerts": [],
+  "verdict": null,
+  "note": "中途读数只作监控、**不出 verdict**；判定一律走 certify()+llm_paradigm（预注册 §4）"
+}

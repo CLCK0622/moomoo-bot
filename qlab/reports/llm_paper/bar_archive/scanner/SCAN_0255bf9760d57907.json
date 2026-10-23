@@ -1,0 +1,57 @@
+{
+  "archive": {
+    "archive_file": "qlab/reports/llm_paper/bar_archive/archive_20260902_2026-09-02T02-01-41-810388-00-00_65805f8325f2.json",
+    "content_sha256": "65805f8325f2a6e550568a33e0a7bce0acb873f24358d73b392c53ca75604b94",
+    "n_bars": 1600,
+    "symbols": [
+      "CAT",
+      "COP",
+      "CRM",
+      "CSCO",
+      "DE",
+      "EMR",
+      "GD",
+      "GILD",
+      "HD",
+      "INTU",
+      "MET",
+      "MRK",
+      "NVDA",
+      "SPY",
+      "TGT",
+      "WMT"
+    ],
+    "unresolved_differences": []
+  },
+  "content_sha256": "0255bf9760d57907e2250067c0a02b13068c75e23a057eba02b6a446a66a7f55",
+  "coverage": {
+    "missing_count": 0,
+    "missing_keys": [],
+    "oldest_missing": null
+  },
+  "executor": "non_round_archive_scanner",
+  "hard_alerts": [],
+  "note": "幂等追赶：每次按全部已落盘轮次重建缺口；只取仍缺键对应标的和当前开窗持仓。append-only，不改写既有归档值；供应商差异沿用 RESOLUTION。",
+  "quota_purpose": "marking",
+  "requested_symbols": [
+    "CAT",
+    "COP",
+    "CRM",
+    "CSCO",
+    "DE",
+    "EMR",
+    "GD",
+    "GILD",
+    "HD",
+    "INTU",
+    "MET",
+    "MRK",
+    "NVDA",
+    "SPY",
+    "TGT",
+    "WMT"
+  ],
+  "scan_date": "2026-09-02",
+  "schema": "llm_paper_archive_scanner/v1",
+  "source": "AV TIME_SERIES_DAILY compact"
+}

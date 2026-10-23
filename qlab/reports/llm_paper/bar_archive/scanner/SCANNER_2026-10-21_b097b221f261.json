@@ -1,0 +1,7 @@
+{
+  "content_sha256": "b097b221f261bb3b92b1e3411e9c98797179af099e30b8681fb7cff3a81a6800",
+  "note": "非轮次日扫描机制已成功执行；此后轮次不再适用首份归档前的一次性回补授权。",
+  "report_sha256": "94bebb5dd2e2380c1a69ef94c8d5f328c5a84db5b82076fd1c11e33374aedf2e",
+  "scan_date": "2026-10-21",
+  "schema": "llm_paper_archive_scanner_state/v1"
+}

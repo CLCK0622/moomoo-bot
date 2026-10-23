@@ -1,0 +1,394 @@
+"""Execution engine — signal -> risk -> broker -> observability.
+
+Two entry points share one core tick loop:
+
+* ``run_replay(data)`` — deterministic offline paper-trading over a set of
+  pre-fetched bars (fixtures / cached history). This is what runs in CI and in
+  this workspace, since it needs no OpenD gateway.
+* ``connect()`` + ``on_bar(...)`` — the same per-bar logic a live loop calls
+  after each realtime bar/snapshot from the OpenD adapter.
+
+Modes (``ExecConfig.mode``): ``dry_run`` logs signals + intended orders only;
+``paper`` simulates fills via ``PaperBroker``; ``opend_paper`` / ``live`` use the
+real OpenD adapter (``live`` is hard-gated, off by default).
+"""
+from __future__ import annotations
+
+import math
+from pathlib import Path
+
+import pandas as pd
+
+from .config import ExecConfig
+from .observability import Observability
+from .params import default_params
+from .risk import RiskManager
+from .signals import SignalAdapter
+from .brokers.base import (BrokerError, BrokerConnectionError, Order, OrderType,
+                           Side, TrdMode)
+from .brokers.paper import PaperBroker
+
+
+def build_broker(cfg: ExecConfig, obs: Observability):
+    mode = cfg.mode
+    if mode in (TrdMode.DRY_RUN.value, TrdMode.PAPER.value):
+        return PaperBroker(cfg.initial_capital, cfg.commission_per_order, cfg.slippage_pct)
+    if mode in (TrdMode.OPEND_PAPER.value, TrdMode.LIVE.value):
+        if mode == TrdMode.LIVE.value and not cfg.allow_live:
+            raise BrokerError("LIVE trading refused: set allow_live=True / "
+                              "QLAB_ALLOW_LIVE=1 AND pass --i-understand-live.")
+        from .brokers.moomoo_opend import MoomooOpenDBroker
+        trd_env = "REAL" if mode == TrdMode.LIVE.value else "SIMULATE"
+        return MoomooOpenDBroker(host=cfg.opend_host, port=cfg.opend_port,
+                                 trd_env=trd_env, security_firm=cfg.security_firm,
+                                 logger=obs)
+    raise BrokerError(f"unknown mode {mode}")
+
+
+class ExecutionEngine:
+    def __init__(self, cfg: ExecConfig, run_dir: str | Path, params: dict | None = None,
+                 also_stdout: bool = False):
+        self.cfg = cfg
+        self.params = params or default_params()
+        self.obs = Observability(run_dir, also_stdout=also_stdout)
+        self.adapter = SignalAdapter(self.params)
+        self.risk = RiskManager(cfg.risk, cfg.initial_capital, logger=self.obs)
+        self.broker = build_broker(cfg, self.obs)
+        self.dry_run = cfg.mode == TrdMode.DRY_RUN.value
+        self.state: dict[str, dict] = {}       # symbol -> vendored position state (exit logic)
+        self.strategy_of: dict[str, str] = {}
+        self._prev_price: dict[str, float] = {}
+        self._day_realized = 0.0
+        self._last_equity = cfg.initial_capital     # fallback when account read fails
+        self._halt_logged = False
+        self.equity_curve: list[dict] = []
+        self.obs.text(f"engine init mode={cfg.mode} broker={self.broker.name} "
+                      f"symbols={len(cfg.symbols)}")
+
+    # --- connection / halt lifecycle ---
+    def connect(self) -> None:
+        """Connect the broker; a gateway failure trips the kill switch."""
+        try:
+            self.broker.connect()
+        except BrokerConnectionError as e:
+            self.risk.on_connection_error("connect")
+            self.obs.error("connect", str(e))
+            raise
+
+    def _log_halt(self, when=None) -> bool:
+        """Emit a single engine_halted event once the kill switch is set."""
+        if self.risk.kill_switch and not self._halt_logged:
+            self._halt_logged = True
+            self.obs.broker_event("engine", "engine_halted", reason=self.risk.kill_reason,
+                                  time=str(when) if when is not None else None)
+        return self.risk.kill_switch
+
+    def _halt_if_killed(self, now) -> bool:
+        """Unified kill gate. Call after EVERY step in on_bar that can trip the
+        switch (quote/mark, account read, drawdown breaker, reconcile, MTM). If
+        the switch is set it logs engine_halted in THIS call and returns True so
+        the caller aborts the bar immediately — no exit/entry/reconcile/MTM order
+        activity slips through on the same bar."""
+        if self.risk.kill_switch:
+            self._log_halt(now)
+            return True
+        return False
+
+    # --- helpers ---
+    def _equity(self) -> float:
+        if self.dry_run:
+            return self.cfg.initial_capital
+        try:
+            eq = self.broker.get_account().total_assets
+            self._last_equity = eq
+            return eq
+        except BrokerConnectionError as e:
+            # account read failed after retries -> real outage -> global kill switch
+            self.risk.on_connection_error("account")
+            self.obs.error("get_account", str(e))
+            return self._last_equity
+
+    def _position_size(self, equity: float, price: float) -> int:
+        budget = min(equity / self.cfg.risk.max_positions,
+                     self.cfg.risk.per_symbol_max_notional,
+                     self.cfg.risk.per_symbol_max_pct * equity)
+        return int(budget // price) if price > 0 else 0
+
+    def _strategy_notional(self, strategy: str) -> float:
+        total = 0.0
+        for sym, st in self.state.items():
+            if self.strategy_of.get(sym) == strategy:
+                total += st["shares"] * self._prev_price.get(sym, st["entry_price"])
+        return total
+
+    def _industry_notional(self, industry: str) -> float:
+        total = 0.0
+        for sym, st in self.state.items():
+            if self.cfg.industry_of(sym) == industry:
+                total += st["shares"] * self._prev_price.get(sym, st["entry_price"])
+        return total
+
+    # --- per-bar core (shared by replay + live) ---
+    def on_bar(self, rows: dict[str, pd.Series]) -> None:
+        if not rows:
+            return
+        sample = next(iter(rows.values()))
+        now = sample["time"]
+
+        # GATE 0 — entered already halted (a prior bar / startup tripped it).
+        if self._halt_if_killed(now):
+            return
+
+        # mark + abnormal-move detection (quote/market trip point)
+        for sym, row in rows.items():
+            price = float(row["close"])
+            if not self.dry_run and hasattr(self.broker, "mark"):
+                self.broker.mark(sym, price, now)
+            prev = self._prev_price.get(sym)
+            if prev and prev > 0 and abs(price - prev) / prev >= self.cfg.risk.max_price_move_halt_pct:
+                move = abs(price - prev) / prev
+                self.obs.broker_event("market", "abnormal_move", symbol=sym,
+                                      prev=prev, price=price, move=round(move, 4))
+                if self.cfg.risk.abnormal_move_global_halt:
+                    # EVO-10 / final-review: abnormal market -> GLOBAL halt,
+                    # not a per-symbol soft block.
+                    self.risk.on_market_halt(f"{sym} move={move:.1%}")
+        # GATE 1 — abnormal-market halt from the mark/quote step.
+        if self._halt_if_killed(now):
+            return
+
+        # account read (may trip the connection kill switch inside _equity) and
+        # the 1m drawdown breaker.
+        equity = self._equity()
+        self.risk.update_equity(equity)
+        # GATE 2 — account-read connection loss OR drawdown breaker just tripped.
+        # This is the fix for the flagged gap: without it, a kill set here still
+        # fell through into the EXIT scan and placed one SELL on the same bar.
+        if self._halt_if_killed(now):
+            return
+
+        # --- EXIT scan ---
+        # Not blocked by the per-entry risk caps (you can always reduce risk),
+        # but the kill switch DOES stop this whole bar via the gates above/below:
+        # once halted, no orders (incl. exits) are sent. See the flatten-on-halt
+        # tradeoff note at the top of run_replay's halt handling.
+        for sym in list(self.state.keys()):
+            if sym not in rows:
+                continue
+            row = rows[sym]
+            sig = self.adapter.exit_signal(self.state[sym], row)
+            if sig is None:
+                continue
+            self.obs.signal(kind="exit", symbol=sym, time=str(now),
+                            reason=sig.reason, price=sig.price, qty_pct=sig.quantity_pct)
+            shares = self.state[sym]["shares"]
+            qty = shares if sig.quantity_pct >= 1.0 else max(1, int(shares * sig.quantity_pct))
+            self._submit(sym, Side.SELL, qty, sig.reason, self.strategy_of.get(sym, ""), row)
+            if sig.quantity_pct >= 1.0:
+                self.state.pop(sym, None)
+                self.strategy_of.pop(sym, None)
+            else:
+                self.state[sym]["shares"] -= qty
+
+        # --- ENTRY scan ---
+        candidates = []
+        for sym, row in rows.items():
+            if sym in self.state:
+                continue
+            esig = self.adapter.entry_signal(_with_symbol(row, sym))
+            if esig is not None:
+                candidates.append(esig)
+        candidates.sort(key=lambda e: e.score, reverse=True)
+
+        for esig in candidates:
+            sym = esig.symbol
+            if sym in self.state:
+                continue
+            price = esig.price
+            qty = self._position_size(equity, price)
+            if qty < 1:
+                continue
+            notional = qty * price
+            strat = esig.strategy
+            industry = self.cfg.industry_of(sym)
+            decision = self.risk.check_entry(
+                symbol=sym, strategy=strat, notional=notional, now=now,
+                n_positions=len(self.state), equity=equity,
+                strategy_notional=self._strategy_notional(strat),
+                last_price=price, prev_price=self._prev_price.get(sym),
+                industry=industry, industry_notional=self._industry_notional(industry))
+            self.obs.signal(kind="entry", symbol=sym, time=str(now), reason=esig.reason,
+                            price=price, score=esig.score, qty=qty,
+                            risk_ok=decision.allowed, risk_reason=decision.reason)
+            if not decision.allowed:
+                continue
+            order = self._submit(sym, Side.BUY, qty, esig.reason, strat, rows[sym])
+            if order is not None and not self.dry_run:
+                fill_px = order.avg_fill_price or price
+                self.state[sym] = self.adapter.new_position_state(fill_px, qty, esig.orb_low, now)
+                self.strategy_of[sym] = strat
+
+        # update prev prices (this bar's close is the latest mark)
+        for sym, row in rows.items():
+            self._prev_price[sym] = float(row["close"])
+
+        # --- periodic position reconciliation (live/opend: engine vs broker) ---
+        self._bar_count = getattr(self, "_bar_count", 0) + 1
+        every = getattr(self.cfg, "reconcile_every_bars", 0)
+        if (every and self._bar_count % every == 0
+                and hasattr(self.broker, "reconcile_positions")):
+            try:
+                self.broker.reconcile_positions({s: st["shares"] for s, st in self.state.items()})
+            except BrokerConnectionError as e:  # reconcile round-trip failed -> outage
+                self.risk.on_connection_error("reconcile")
+                self.obs.error("reconcile", str(e))
+            except Exception as e:  # non-connection issue: log, don't halt
+                self.obs.error("reconcile", str(e))
+        # GATE 3 — reconcile round-trip lost the gateway.
+        if self._halt_if_killed(now):
+            return
+
+        # --- per-bar (1m) mark-to-market observability ---
+        # Emit AFTER fills + marks so 户部 can recompute the 1m equity curve and
+        # 1m max-drawdown independently. MTM = cash + positions marked at the
+        # current bar close (PaperBroker.get_account / OpenD nominal price).
+        mtm_equity = self._equity()
+        self.risk.update_equity(mtm_equity)        # keep the DD breaker on the 1m mark
+        intraday_pnl = mtm_equity - self.risk.day_start_equity
+        self.obs.equity(time=str(now), equity=mtm_equity, mark_to_market=True,
+                        intraday_pnl=intraday_pnl, open_positions=len(self.state),
+                        kill_switch=self.risk.kill_switch, peak_equity=self.risk.peak_equity)
+        self.snapshot_positions(now)               # per-bar open-position snapshot
+        # GATE 4 — trailing MTM account read / drawdown breaker tripped: land
+        # engine_halted in THIS call, not on the next bar / run_replay outer.
+        self._halt_if_killed(now)
+
+    def emit_heartbeat(self, when, equity: float) -> None:
+        """Periodic liveness signal — call from the live loop on a timer, or
+        once per session in replay."""
+        self.obs.heartbeat(time=str(when), equity=equity,
+                           kill_switch=self.risk.kill_switch,
+                           kill_reason=self.risk.kill_reason,
+                           open_positions=len(self.state),
+                           peak_equity=self.risk.peak_equity)
+
+    def snapshot_positions(self, when) -> None:
+        for sym, st in self.state.items():
+            last = self._prev_price.get(sym, st["entry_price"])
+            self.obs.position_snapshot(time=str(when), symbol=sym, qty=st["shares"],
+                                       entry_price=st["entry_price"], last_price=last,
+                                       strategy=self.strategy_of.get(sym, ""),
+                                       unrealized=(last - st["entry_price"]) * st["shares"])
+
+    def _submit(self, symbol, side, qty, reason, strategy, row) -> Order | None:
+        order = Order(symbol=symbol, side=side, qty=qty, order_type=OrderType.MARKET,
+                      reason=reason, strategy=strategy)
+        if self.dry_run:
+            order.status = order.status  # NEW
+            self.obs.order(intended=True, **order.to_dict())
+            return order
+        try:
+            order = self.broker.place_order(order)
+        except BrokerConnectionError as e:
+            # order path lost the gateway -> global kill switch + halt
+            self.risk.on_connection_error("order")
+            self.obs.error("place_order", str(e), symbol=symbol, side=side.value,
+                           qty=qty, connection=True)
+            return None
+        except BrokerError as e:
+            # business reject (insufficient funds, bad request) -> local, no halt
+            self.obs.error("place_order", str(e), symbol=symbol, side=side.value, qty=qty)
+            return None
+        self.obs.order(intended=False, **order.to_dict())
+        if order.filled_qty:
+            self.obs.fill(order_id=order.order_id, symbol=symbol, side=side.value,
+                          qty=order.filled_qty, price=order.avg_fill_price, reason=reason)
+        return order
+
+    # --- offline replay ---
+    def run_replay(self, data: dict[str, tuple[pd.DataFrame, pd.DataFrame]]) -> dict:
+        prepared: dict[str, pd.DataFrame] = {}
+        dates = set()
+        for sym, (df1, df15) in data.items():
+            df = self.adapter.prepare(df1, df15)
+            df["symbol"] = sym
+            prepared[sym] = df
+            dates.update(df["date"].unique())
+        all_dates = sorted(dates)
+
+        halted = False
+        for date in all_dates:
+            day = {s: df[df["date"] == date].sort_values("time").reset_index(drop=True)
+                   for s, df in prepared.items()}
+            day = {s: d for s, d in day.items() if not d.empty}
+            if not day:
+                continue
+            self.risk.start_new_day(self._equity())
+            # reset the abnormal-move reference each session so an overnight gap
+            # (prior close vs next open) is not mistaken for an intraday flash move
+            # that would trip the global halt. (Strategy is flat EOD.)
+            self._prev_price.clear()
+            n_bars = max(len(d) for d in day.values())
+            last_time = date
+            for i in range(n_bars):
+                rows = {s: d.iloc[i] for s, d in day.items() if i < len(d)}
+                if rows:
+                    last_time = next(iter(rows.values()))["time"]
+                self.on_bar(rows)
+                # Halt semantics / TRADEOFF (flagged for 都察院): kill switch = FULL
+                # STOP, including exits — we do NOT auto-flatten on halt. Rationale:
+                # on a connection loss orders can't be sent at all; into an abnormal/
+                # halted market they'd get unsafe fills; and forced liquidation is a
+                # deliberate operator action, not an automatic reaction. So no
+                # "flatten-then-stop" is kept for any trip point (incl. the drawdown
+                # breaker). This matches the anchor: kill set -> place_order == 0.
+                if self.risk.kill_switch:      # global halt -> stop trading entirely
+                    self._log_halt(last_time)
+                    halted = True
+                    break
+            # per-bar equity/positions are written inside on_bar (1m MTM). Here we
+            # only keep an in-memory daily marker for the summary + a session
+            # heartbeat (a live loop would heartbeat on a wall-clock timer).
+            eq = self._equity()
+            self.equity_curve.append({"date": str(date), "equity": eq,
+                                      "kill_switch": self.risk.kill_switch})
+            self.emit_heartbeat(last_time, eq)
+            if halted:
+                break
+
+        return self.summary()
+
+    def summary(self) -> dict:
+        acct = None
+        if not self.dry_run:
+            try:
+                acct = self.broker.get_account()
+            except BrokerConnectionError:
+                acct = None  # gateway down at teardown -> report last-known equity
+        fills = [] if self.dry_run else [f.to_dict() for f in getattr(self.broker, "fills", [])]
+        return {
+            "mode": self.cfg.mode,
+            "broker": self.broker.name,
+            "final_equity": (acct.total_assets if acct else self._last_equity),
+            "realized_pnl": (acct.realized_pnl if acct else 0.0),
+            "num_fills": len(fills),
+            "open_positions": len(self.state),
+            "kill_switch": self.risk.kill_switch,
+            "kill_reason": self.risk.kill_reason,
+            "halted": self._halt_logged,
+            "trading_days": len(self.equity_curve),
+        }
+
+    def close(self) -> None:
+        try:
+            self.broker.close()
+        finally:
+            self.obs.close()
+
+
+def _with_symbol(row: pd.Series, sym: str) -> pd.Series:
+    if row.get("symbol") == sym:
+        return row
+    row = row.copy()
+    row["symbol"] = sym
+    return row
