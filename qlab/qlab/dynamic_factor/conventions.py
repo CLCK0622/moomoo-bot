@@ -109,6 +109,8 @@ class Conventions:
         }
         if self.raw_profile:
             binding["profile_sha256"] = sha256(self.raw_profile)
+            binding["prereg_sha256"] = sha256(self.raw_profile)
+            binding["prereg_version"] = self.profile["version"]
             binding["common_profile_sha256"] = self.document["variance_layers"][
                 "probe_profile"
             ]["common_profile_sha256"]
@@ -134,7 +136,7 @@ class Conventions:
 
     @property
     def family_size(self):
-        if self.document["version"] == "v0.2":
+        if "variance_layers" in self.document:
             return len(
                 self.document["variance_layers"]["family_definitions"]["meta_members"]
             )
@@ -186,25 +188,32 @@ class Conventions:
         return report
 
 
-def load_conventions(path=FIXTURES / "conventions-v0.2.json", *, expected_sha256=None):
+def load_conventions(
+    path=FIXTURES / "conventions-v1.0.1.json", *, expected_sha256=None
+):
     raw = Path(path).read_bytes()
     provenance = json.loads((FIXTURES / "provenance.json").read_bytes())
     if expected_sha256 is None:
         expected_sha256 = provenance.get(
-            Path(path).name, provenance["conventions-v0.2.json"]
+            Path(path).name, provenance["conventions-v1.0.1.json"]
         )["sha256"]
     if sha256(raw) != expected_sha256:
         raise ConventionConflict("conventions.hash_mismatch")
     p = json.loads(raw)
-    if p["schema"] == "EVO883.executable-conventions.v0.2":
+    authority = provenance.get("conventions-" + p["version"] + ".json")
+    if authority is None or sha256(raw) != authority["sha256"]:
+        raise ConventionConflict("conventions.authority_hash_mismatch")
+    if p["schema"] in (
+        "EVO883.executable-conventions.v0.2",
+        "EVO883.executable-conventions.v1.0.1",
+    ):
         profile_raw = validate_v02(p, provenance)
-        # Reuse unchanged date/seed/scale checks through the v0.1 parser.
+        # Reuse frozen date/seed/scale checks; v1 changes profile/fees/actions.
         legacy = load_conventions(FIXTURES / "conventions-v0.1.json")
         for key in (
             "genesis",
             "N_counting",
             "folds",
-            "labels",
             "label_boundary",
             "units",
             "DSR",
@@ -345,8 +354,11 @@ def validate_v02(p, provenance):
     """Verify the companion profile, common hash, and the reviewed acyclic contract."""
     from .contract import digest
 
-    raw = (FIXTURES / "prereg-v1-draft2.json").read_bytes()
-    if sha256(raw) != provenance["prereg-v1-draft2.json"]["sha256"]:
+    profile_file = (
+        "prereg-v1.json" if p["version"] == "v1.0.1" else "prereg-v1-draft2.json"
+    )
+    raw = (FIXTURES / profile_file).read_bytes()
+    if sha256(raw) != provenance[profile_file]["sha256"]:
         raise ConventionConflict("conventions.profile_hash_mismatch")
     profile = json.loads(raw)
     for key in ("initialization", "gain_model", "variance_layers", "price_basis_gate"):

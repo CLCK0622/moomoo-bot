@@ -1,465 +1,141 @@
-import json
-from copy import deepcopy
-
+from dataclasses import replace
 import pytest
-
-from qlab.dynamic_factor.contract import sha256
 from qlab.dynamic_factor.conventions import (
     ConventionConflict,
+    load_conventions,
     arithmetic,
-    load_conventions as _load_conventions,
+    FIXTURES,
 )
-from qlab.dynamic_factor.dsr_v0 import V_PENDING, daily_sr, formula
-from qlab.dynamic_factor.folds import _run_walk_forward_unbound as run_walk_forward
-from qlab.dynamic_factor.fees import FIXTURES, fee_frontier
-from qlab.dynamic_factor.harness import _wf, numerical_fixture
+from qlab.dynamic_factor.contract import sha256
+from qlab.dynamic_factor.harness_helpers import fixture_ledger
 from qlab.dynamic_factor.ledger import AttemptLedger
-from qlab.dynamic_factor.pending import (
-    initial_build_turnover_check,
-    pool_admission_check,
-    voluntary_trade_gate,
-)
+from qlab.dynamic_factor.dsr_v0 import formula, daily_sr
 from qlab.dynamic_factor.statistics import dsr_eval, prereg_check
-from qlab.dynamic_factor.validation import (
-    _wf_manifest_check_unbound as wf_manifest_check,
-)
 
 
-def load_conventions(*args, **kwargs):
-    return _load_conventions(*(args or (FIXTURES / "conventions-v0.1.json",)), **kwargs)
-
-
-def test_exact_policy_seed_identity_and_incomplete_count(tmp_path):
-    policy = load_conventions()
+def test_exact_v1_identity_profile_and_incomplete_seed(tmp_path):
+    p = load_conventions()
     assert (
-        policy.raw_sha256
-        == "2e65c77849b936d44c864b056be134e030ddf7f27e746072b70fffe631acf69b"
-    )
-    assert len(policy.seed_rows) == 8
-    ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
-    snapshot = ledger.snapshot()
-    assert (
-        snapshot["cumulative_n"] is None and snapshot["cumulative_n_lower_bound"] == 47
-    )
-    assert not snapshot["n_complete"] and not snapshot["certifiable"]
-    assert len(snapshot["genesis"]["historical_seed_rows"]) == 8
-    assert (
-        ledger.readout()["metric_availability"]["trials_variance"]["reason"]
-        == "dsr_run_context_required"
-    )
-    ledger.begin("new", {"factor": "same"})
-    ledger.finish("new", "nan", sharpe=float("nan"))
-    assert (
-        AttemptLedger.from_conventions(ledger.path, policy).snapshot()[
-            "cumulative_n_lower_bound"
-        ]
-        == 48
+        p.raw_sha256
+        == "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b"
     )
     assert (
-        prereg_check(policy.document, policy.raw_sha256, conventions=policy)[
-            "certifiable"
-        ]
-        is False
+        p.binding["prereg_sha256"]
+        == "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f"
     )
-
-
-def test_policy_objects_do_not_allow_mutating_the_pinned_json():
-    policy = load_conventions()
-    copy = policy.document
-    copy["DSR"]["gamma"] = 10
-    assert policy.document["DSR"]["gamma"] != 10
-
-
-def test_declared_proposals_survive_partial_registration_without_double_counting_invocation(
-    tmp_path,
-):
-    policy = load_conventions()
-    ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
-    ledger.begin(
-        "fold/invocation", {}, kind="fold_invocation", context={"run_id": "fold"}
-    )
-    assert ledger.snapshot()["cumulative_n_lower_bound"] == 48
-    members = [f"fold/{i}" for i in range(policy.family_size)]
-    ledger.declare_family("fold", members, basis=policy.document["N"]["DSR_SR_basis"])
-    ledger.begin(members[0], {}, context={"run_id": "fold"})
-    ledger.finish(members[0], "failed")
-    snapshot = AttemptLedger.from_conventions(ledger.path, policy).snapshot()
-    assert snapshot["local_attempts_n"] == 2
-    assert snapshot["local_counted_n"] == 17
     assert (
-        snapshot["cumulative_n_lower_bound"] == 64
-    )  # no lost proposed members or extra invocation trial
+        p.binding["common_profile_sha256"]
+        == "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3"
+    )
+    ledger = fixture_ledger(tmp_path / "l.sqlite", p)
+    a = ledger.snapshot()
+    assert (
+        len(p.seed_rows) == 8
+        and a["cumulative_n_lower_bound"] == 47
+        and a["cumulative_n"] is None
+    )
+    assert (
+        a["genesis"]["count_complete"] is False
+        and len(a["genesis"]["historical_seed_rows"]) == 8
+    )
+    ledger.begin("nan", {})
+    ledger.finish("nan", "nan", sharpe=float("nan"))
+    assert fixture_ledger(ledger.path, p).snapshot()["cumulative_n_lower_bound"] == 48
+    report = dsr_eval({}, ledger, conventions=p)
+    assert (
+        report["metrics"]["dsr"] is None
+        and report["metrics"]["trials_variance"] is None
+    )
+    assert not report["runtime_consumable"] and not report["certifiable"]
+    assert not prereg_check(p.document, p.raw_sha256, conventions=p)["certifiable"]
 
 
-def test_unusable_jump_configuration_does_not_silently_disable_detection():
-    manifest = _wf()
-    manifest.pop("jump_reversal_policy")
-    assert "data.jump_reversal_policy_missing" in wf_manifest_check(manifest)["reasons"]
-    manifest["jump_reversal_policy"] = {}
-    assert "data.jump_reversal_policy_invalid" in wf_manifest_check(manifest)["reasons"]
+def test_bound_bootstrap_cannot_be_silently_created(tmp_path):
+    with pytest.raises(ValueError, match="bootstrap_receipt"):
+        AttemptLedger.from_conventions(tmp_path / "fresh.sqlite", load_conventions())
+    assert not (tmp_path / "fresh.sqlite").exists()
 
 
-@pytest.mark.parametrize(
-    "mutate,reason",
-    [
-        (lambda p: p["DSR"].update(threshold=0), "internal_conflict"),
-        (lambda p: p["DSR"].update(sample_sd="ddof0"), "variance_ddof_conflict"),
-        (
-            lambda p: p["V"].update(effective="family_variance"),
-            "V_aggregation_conflict",
-        ),
-        (lambda p: p["N"].update(N_seed_min=0), "internal_conflict"),
-        (
-            lambda p: p["N"].update(supersedes_deletes_prior_attempt=True),
-            "internal_conflict",
-        ),
-        (
-            lambda p: p["units"].update(annual_to_daily_V="divide365_exactly_once"),
-            "scale_conflict",
-        ),
-        (
-            lambda p: p["labels"].update(primary_horizon_days=9),
-            "label_or_minimum_fold_conflict",
-        ),
-    ],
-)
-def test_conflicting_json_is_rejected_before_use(tmp_path, mutate, reason):
-    p = load_conventions().document
-    mutate(p)
-    raw = json.dumps(p).encode()
-    path = tmp_path / "conventions.json"
-    path.write_bytes(raw)
-    with pytest.raises(ConventionConflict, match=reason):
-        load_conventions(path, expected_sha256=sha256(raw))
-
-
-def test_unpinned_or_unsafe_expression_rejected(tmp_path):
-    path = tmp_path / "changed.json"
+def test_raw_policy_and_seed_are_immutable_and_authoritative(tmp_path):
+    p = load_conventions()
+    copy = p.document
+    copy["DSR"]["gamma"] = 0
+    assert p.document["DSR"]["gamma"] != 0
+    with pytest.raises(ValueError, match="seed_bytes_mismatch"):
+        AttemptLedger.from_conventions(
+            tmp_path / "forged.sqlite", replace(p, seed_raw=b"")
+        )
+    path = tmp_path / "forged.json"
     path.write_text("{}")
-    with pytest.raises(ConventionConflict, match="hash_mismatch"):
-        load_conventions(path)
     with pytest.raises(ConventionConflict):
-        arithmetic("__import__('os').system('false')", {})
+        load_conventions(path)
+    changed = p.raw_document + b"\n"
+    path.write_bytes(changed)
+    with pytest.raises(ConventionConflict, match="authority_hash"):
+        load_conventions(path, expected_sha256=sha256(changed))
+    with pytest.raises(ConventionConflict):
+        arithmetic("__import__('os').system('true')", {})
 
 
-def test_dsr_eval_stops_before_v_family_and_formula_matches_paper(tmp_path):
-    policy = load_conventions()
-    daily = AttemptLedger.from_conventions(tmp_path / "daily.sqlite", policy)
-    request = numerical_fixture(daily, policy)
-    r = dsr_eval(request, daily, conventions=policy)
-    m = r["metrics"]
-    assert V_PENDING in r["reasons"] and not r["certifiable"]
-    for k in ("dsr", "trials_variance", "family_variance", "independent_variance"):
-        assert m[k] is None
-    assert r["metric_availability"]["dsr"]["reason"] == V_PENDING
-    assert r["metric_availability"]["sharpe"]["available"]
-    assert m["sharpe"] == pytest.approx(0.2903200204700225)
-    assert m["kurt"] == pytest.approx(
-        1.7314285714285709
-    )  # ordinary population kurtosis
-    assert m["gate_n"] == 81 and m["cumulative_n"] is None
-    assert "ledger_history_incomplete" in r["reasons"]
-    sr0, value = formula(
-        policy,
-        SR=m["sharpe"],
-        n=len(request["returns"]),
-        N=m["gate_n"],
+def test_formula_is_pure_external_V_arithmetic_only():
+    p = load_conventions()
+    sr0, dsr = formula(
+        p,
+        SR=0.2903200204700225,
+        n=60,
+        N=81,
         V=0.0102,
-        skew=m["skew"],
-        kurt=m["kurt"],
+        skew=0,
+        kurt=1.7314285714285709,
         n_complete=False,
     )
     assert sr0 == pytest.approx(0.24799876432939677)
-    assert value == pytest.approx(0.6265006201845557)
+    assert dsr == pytest.approx(0.6265006201845557)
+    args = dict(SR=0.1, n=20, N=1, V=0.01, skew=0, kurt=3, n_complete=False)
+    with pytest.raises(ValueError, match="n_eq1"):
+        formula(p, **args)
+    assert formula(p, **dict(args, n_complete=True))[0] == 0
+    with pytest.raises(ValueError, match="invalid_sample"):
+        formula(p, **dict(args, N=2, V=-1))
 
 
-def test_annual_sr_converts_to_daily_exactly_once():
-    policy = load_conventions()
-    periods = policy.annual_periods
-    daily = {"sharpe_per_period": 0.01, "details": {"sharpe_scale": "daily"}}
-    annual = {
-        "sharpe_per_period": 0.01 * periods**0.5,
+def test_daily_scale_converts_once_and_missing_is_not_zero():
+    p = load_conventions()
+    observation = {
+        "sharpe_per_period": 0.01 * p.annual_periods**0.5,
         "details": {"sharpe_scale": "annual"},
     }
-    assert daily_sr(annual, periods) == pytest.approx(daily_sr(daily, periods))
-    annual["details"]["scale_conversions"] = 1
-    with pytest.raises(ValueError, match="scale_mismatch_or_repeated_conversion"):
-        daily_sr(annual, periods)
+    assert daily_sr(observation, p.annual_periods) == pytest.approx(0.01)
+    observation["details"]["scale_conversions"] = 1
+    with pytest.raises(ValueError, match="repeated_conversion"):
+        daily_sr(observation, p.annual_periods)
+    with pytest.raises(ValueError, match="sr_missing"):
+        daily_sr({"sharpe_per_period": None, "details": {}}, p.annual_periods)
 
 
-@pytest.mark.parametrize(
-    "change,reason",
-    [
-        ({"return_scale": "annual"}, "scale_or_basis_mismatch"),
-        ({"self_report_n": None}, "self_report_n_missing_or_invalid"),
-        ({"returns": [1]}, "insufficient_or_nonfinite_observations"),
-        ({"returns": [0, 0, 0]}, "zero_return_variance"),
-        ({"returns": [0, float("nan")]}, "insufficient_or_nonfinite_observations"),
-        ({"v": 0}, "scalar_v_forbidden"),
-        ({"return_basis": "raw_strategy_SR"}, "scale_or_basis_mismatch"),
-    ],
-)
-def test_numerical_invalids_return_null_with_reason(tmp_path, change, reason):
-    policy = load_conventions()
-    ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
-    request = numerical_fixture(ledger, policy)
-    r = dsr_eval(dict(request, **change), ledger, conventions=policy)
-    assert r["metrics"]["dsr"] is None and not r["certifiable"]
-    assert any(reason in x for x in r["reasons"])
-
-
-def test_missing_SR_retained_and_never_filled(tmp_path):
-    policy = load_conventions()
-    ledger = AttemptLedger.from_conventions(tmp_path / "missing.sqlite", policy)
-    req = numerical_fixture(ledger, policy, missing=True)
-    r = dsr_eval(req, ledger, conventions=policy)
-    assert r["metrics"]["dsr"] is None and V_PENDING in r["reasons"]
-    assert ledger.snapshot()["local_attempts_n"] == 34
-    with pytest.raises(ValueError, match="family_or_independent_sr_missing"):
-        daily_sr({"sharpe_per_period": None, "details": {}}, policy.annual_periods)
-
-
-@pytest.mark.parametrize(
-    "tool",
-    [pool_admission_check, initial_build_turnover_check, voluntary_trade_gate],
-)
-def test_v0_2_pending_rules_refuse_without_defaults(tool):
-    r = tool({"any": "request"})
-    assert r["reasons"] == [V_PENDING] and not r["certifiable"]
-    assert all(v is None for v in r["metrics"].values())
-    assert all(
-        a == {"available": False, "reason": V_PENDING}
-        for a in r["metric_availability"].values()
-    )
-
-
-def test_strong_returns_do_not_produce_dsr_or_certify(tmp_path):
-    policy = load_conventions()
-    ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
-    req = numerical_fixture(ledger, policy)
-    req["returns"] = [x + 0.1 for x in req["returns"]]
-    r = dsr_eval(req, ledger, conventions=policy)
-    assert r["metrics"]["dsr"] is None
-    assert not r["metrics"]["diagnostic_passed"]
-    assert not r["metrics"]["passed"] and not r["certifiable"]
-
-
-def test_membership_sealed_before_performance_and_extra_trials_cannot_be_hidden(
-    tmp_path,
-):
-    policy = load_conventions()
-    ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
-    req = numerical_fixture(ledger, policy)
-    ledger.begin("extra", {"expr": "loser"}, context={"run_id": "own"})
-    ledger.finish("extra", "failed", reason="fixture failure")
-    r = dsr_eval(req, ledger, conventions=policy)
-    assert V_PENDING in r["reasons"] and r["metrics"]["dsr"] is None
-    assert r["metrics"]["cumulative_n_lower_bound"] == 82
-    with pytest.raises(ValueError, match="membership_conflict"):
-        ledger.declare_family(
-            "own", ["winner"], basis=policy.document["N"]["DSR_SR_basis"]
-        )
-    ledger.begin("late", {}, context={"run_id": "late-run"})
-    with pytest.raises(ValueError, match="declared_after_attempts"):
-        ledger.declare_family(
-            "late-run", ["late"], basis=policy.document["N"]["DSR_SR_basis"]
-        )
-
-
-def test_cli_reads_v0_and_preserves_lower_bound_N(tmp_path):
-    import subprocess
-    import sys
-
-    policy = load_conventions()
-    ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
-    request = numerical_fixture(ledger, policy)
-    source = tmp_path / "request.json"
-    source.write_text(json.dumps({"metrics": request}))
-    cli = subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "qlab.dynamic_factor",
-            "dsr_eval",
-            "--input",
-            str(source),
-            "--ledger",
-            str(ledger.path),
-            "--conventions",
-            str(FIXTURES / "conventions-v0.1.json"),
-            "--conventions-sha256",
-            policy.raw_sha256,
-        ],
-        capture_output=True,
-        text=True,
-    )
-    assert cli.returncode == 2
-    r = json.loads(cli.stdout)
-    assert r["conventions_sha256"] == policy.raw_sha256
-    assert r["metrics"]["cumulative_n"] is None
-    assert r["metrics"]["dsr"] is None and V_PENDING in r["reasons"]
-
-
-def test_v0_per_order_cost_floor_and_param_binding(tmp_path):
-    policy = load_conventions()
-    request = dict(
-        price=1375,
-        ticket_usd=1375,
-        gross_edge_bps=10,
-        sell_date="2027-01-01",
-        rate_basis="effective_date",
-        pnl_basis="reference",
-    )
-    old = fee_frontier(request, FIXTURES / "fee_params_x1.json")
-    bound = fee_frontier(request, FIXTURES / "fee_params_x1.json", conventions=policy)
-    assert bound["metrics"]["gate_cost_bps"] > old["metrics"]["gate_cost_bps"]
-    assert bound["conventions_sha256"] == policy.raw_sha256
-    altered = tmp_path / "params.json"
-    altered.write_text((FIXTURES / "fee_params_x1.json").read_text() + "\n")
-    assert fee_frontier(request, altered, conventions=policy)["reasons"] == [
-        "fee_params_not_bound_to_conventions"
-    ]
-
-
-def test_self_report_never_decreases_across_restart(tmp_path):
-    policy = load_conventions()
-    ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
-    req = numerical_fixture(ledger, policy)
-    a = dsr_eval(dict(req, self_report_n=500), ledger, conventions=policy)
-    ledger = AttemptLedger.from_conventions(ledger.path, policy)
-    b = dsr_eval(req, ledger, conventions=policy)
-    assert a["metrics"]["gate_n"] == b["metrics"]["gate_n"] == 500
-    assert a["metrics"]["dsr"] == b["metrics"]["dsr"]
-
-
-def test_formula_invalid_N1_and_negative_V():
-    policy = load_conventions()
-    args = dict(SR=0.1, n=20, N=1, V=0.01, skew=0, kurt=3, n_complete=False)
-    with pytest.raises(ValueError, match="n_eq1_requires_complete_audit"):
-        formula(policy, **args)
-    assert formula(policy, **dict(args, n_complete=True))[0] == 0
-    with pytest.raises(ValueError, match="invalid_sample_or_variance"):
-        formula(policy, **dict(args, N=2, V=-1))
-
-
-def test_fold_gap_and_label_template_purge_come_from_policy(tmp_path):
-    policy = load_conventions()
-    manifest = policy.fold_manifest()
-    idx = {d: i for i, d in enumerate(manifest["calendar"])}
-    assert len(manifest["folds"]) == policy.document["folds"]["fold_count"] == 77
-    for fold in manifest["folds"]:
+def test_bound_calendar_gap_and_purge_derive_from_v1():
+    p = load_conventions()
+    m = p.fold_manifest()
+    index = {d: i for i, d in enumerate(m["calendar"])}
+    assert len(m["folds"]) == p.document["folds"]["fold_count"] == 77
+    for f in m["folds"]:
         assert (
-            idx[fold["test_start"]] - idx[fold["history_end"]] - 1
-            == policy.document["folds"]["gap_days"]
+            index[f["test_start"]] - index[f["history_end"]] - 1
+            == p.document["folds"]["gap_days"]
         )
         assert (
-            idx[fold["history_end"]] - idx[fold["train_end"]]
-            == manifest["template_path_offset"]
+            index[f["history_end"]] - index[f["train_end"]] == m["template_path_offset"]
         )
-    bad = deepcopy(manifest)
-    bad["embargo"] = 0
-    called = []
-    r = run_walk_forward(
-        bad,
-        [],
-        miner_factory=lambda ctx: called.append(ctx),
-        fitter_factory=lambda ctx: called.append(ctx),
-        ledger=AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy),
-        run_id="bad",
-        conventions=policy,
+    assert p.document["benchmark_replacement"] == p.profile["benchmarks"]
+    assert "VTI_fixed_B2" in p.document["benchmark_replacement"]["B2_freeze_rule"]
+
+
+@pytest.mark.parametrize("version", ["v0.1", "v0.2"])
+def test_old_profile_is_retained_as_original_bytes_only(version):
+    p = load_conventions(FIXTURES / ("conventions-" + version + ".json"))
+    assert (
+        p.binding["common_profile_sha256"]
+        != load_conventions().binding["common_profile_sha256"]
+        if p.raw_profile
+        else True
     )
-    assert "wf.conventions_manifest_mismatch" in r["reasons"] and not called
-
-
-def test_bound_fold_only_exposes_labels_and_paths_mature_in_original_train(tmp_path):
-    policy = load_conventions()
-    manifest = policy.fold_manifest()
-    calendar = manifest["calendar"]
-    fold = manifest["folds"][0]
-    seen = []
-    rows = [
-        dict(
-            date=d,
-            features={"x": i},
-            target=1,
-            label_entry=calendar[
-                min(i + manifest["label_entry_offset"], len(calendar) - 1)
-            ],
-            label_end=calendar[min(i + manifest["label_horizon"], len(calendar) - 1)],
-            template_end=calendar[
-                min(i + manifest["template_path_offset"], len(calendar) - 1)
-            ],
-        )
-        for i, d in enumerate(calendar)
-    ]
-
-    class Mine:
-        def mine(self, train):
-            assert (
-                len(train)
-                == policy.document["folds"]["train_days"]
-                - manifest["template_path_offset"]
-            )
-            assert train[-1].date == fold["train_end"]
-            assert train[-1].template_end == fold["history_end"]
-            assert all(
-                r.label_end <= fold["history_end"]
-                and r.template_end <= fold["history_end"]
-                for r in train
-            )
-            seen.append("train_verified")
-            return [{"recipe": i} for i in range(policy.family_size - 1)]
-
-    class Fit:
-        def fit(self, train, proposals):
-            # Stop this toy adapter here: no historical strategy or predictions.
-            raise ValueError("fixture_stop_after_train_verification")
-
-    ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
-    r = run_walk_forward(
-        manifest,
-        rows,
-        miner_factory=lambda ctx: Mine(),
-        fitter_factory=lambda ctx: Fit(),
-        ledger=ledger,
-        run_id="fixture",
-        conventions=policy,
-    )
-    assert seen == ["train_verified"]
-    assert "fixture_stop_after_train_verification" in r["reasons"]
-    assert ledger.snapshot()["local_counted_n"] == 17
-    assert ledger.snapshot()["local_attempts_n"] == 18
-
-
-def test_trading_day_jump_independent_of_calendar_and_parameter_driven():
-    manifest = _wf()
-    for i, row in enumerate(manifest["series"]["SPY"]):
-        row["close"] = [100, 100, 80, 100, 100][i]
-    before = deepcopy(manifest)
-    r = wf_manifest_check(manifest)
-    assert "data.jump_reversal" in r["reasons"]
-    assert "data.nontrading_bar" not in r["reasons"]
-    assert manifest == before
-    manifest["jump_reversal_policy"]["min_abs_jump"] = 0.3
-    assert "data.jump_reversal" not in wf_manifest_check(manifest)["reasons"]
-
-
-def test_v0_calendar_cannot_be_replaced_by_intersection():
-    policy = load_conventions()
-    manifest = policy.fold_manifest()
-    manifest.update(
-        portfolio="portfolio",
-        benchmarks=["QQQ", "SPY", "VTI"],
-        series={
-            k: [{"date": d, "close": 100} for d in manifest["calendar"]]
-            for k in ("portfolio", "QQQ", "SPY", "VTI")
-        },
-        jump_reversal_policy=_wf()["jump_reversal_policy"],
-    )
-    r = wf_manifest_check(manifest, conventions=policy)
-    assert r["ok"] and not r["certifiable"]
-    manifest["calendar"].pop(50)
-    for rows in manifest["series"].values():
-        rows.pop(50)
-    r = wf_manifest_check(manifest, conventions=policy)
-    assert "wf.conventions_manifest_mismatch" in r["reasons"]

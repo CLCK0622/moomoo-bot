@@ -25,7 +25,7 @@ def _pending(tool, request, metric_names, gap):
 
 def pool_admission_check(request, *, conventions=None, ledger=None):
     """Pool admission needs DSR>=threshold, whose V family needs post-admission members."""
-    if conventions is not None and conventions.document["version"] == "v0.2":
+    if conventions is not None and conventions.document["version"] == "v1.0.1":
         from .pipeline import evaluate
 
         if ledger is None:
@@ -56,7 +56,7 @@ def pool_admission_check(request, *, conventions=None, ledger=None):
 
 def initial_build_turnover_check(request, *, conventions=None, ledger=None):
     """First-day 0->98% build implies tau=49%, above the 20% turnover cap."""
-    if conventions is not None and conventions.document["version"] == "v0.2":
+    if conventions is not None and conventions.document["version"] == "v1.0.1":
         from .execution import initial_build_turnover_check as calculate
 
         return calculate(request, conventions=conventions, ledger=ledger)
@@ -70,7 +70,7 @@ def initial_build_turnover_check(request, *, conventions=None, ledger=None):
 
 def voluntary_trade_gate(request, *, conventions=None, ledger=None):
     """Gain-to-NAV conversion for voluntary trades is not specified in v0.1."""
-    if conventions is not None and conventions.document["version"] == "v0.2":
+    if conventions is not None and conventions.document["version"] == "v1.0.1":
         from .execution import voluntary_trade_gate as calculate
 
         return calculate(request, conventions=conventions, ledger=ledger)

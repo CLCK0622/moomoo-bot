@@ -1,8 +1,4 @@
-"""Offline v0.2 startup and M -> P NAV arithmetic; never sends orders.
-
-The x2 quote below uses existing bound fee bytes and the existing per-order
-mapping. It does not implement the still-pending next-version fee policy.
-"""
+"""Offline startup and M -> P NAV arithmetic with the frozen v1 fee budget."""
 
 from __future__ import annotations
 
@@ -15,7 +11,7 @@ from .conventions import FIXTURES
 from .fees import finite, iso_date
 from .pipeline import price_basis_check
 
-FEE_PENDING = "费用政策待 EVO-883 下一版"
+FEE_PENDING = "Frozen v1 fee policy; actual billing and order-versus-fill minima remain unverified."
 
 
 class OptionalRejected(ValueError):
@@ -40,6 +36,10 @@ class OrderCosts:
             "rate_basis": rate_basis,
         }
         schedule = json.loads(raw_schedule)
+        if rate_basis not in ("effective_date", "research_restored"):
+            raise ValueError("rate_basis_unknown")
+        if policy.document["version"] == "v1.0.1":
+            rate_basis = "research_restored"
         if rate_basis == "research_restored":
             field = schedule["research_rate_field"]
         elif rate_basis == "effective_date":
@@ -54,61 +54,37 @@ class OrderCosts:
             field = periods[0]["rate_field"]
         else:
             raise ValueError("rate_basis_unknown")
+        if policy.document["version"] == "v1.0.1":
+            field = "taf_per_share_sell_restored"
+            self.binding["rate_basis"] = "research_restored"
         self.taf_rate = self.params[field]
 
     def quote(self, orders, prices):
-        p = self.params
+        from .fee_model import order_cost
+
         floor = float(
             re.search(
-                r",([0-9.]+)\*order_notional\)$",
-                self.policy.document["cost_mapping"]["legacy_floor_mapping"][
-                    "per_order_cost_x1"
-                ],
+                r",([0-9.]+)\*filled_notional\)",
+                self.policy.document["cost_mapping"]["floor_policy"]["x1"],
             )[1]
         )
         total = 0.0
         for symbol in sorted(orders):
-            qty = orders[symbol]
-            if type(qty) is not int:
+            q = orders[symbol]
+            if type(q) is not int:
                 raise ValueError("trade.integer_quantity_required")
-            if qty == 0:
-                continue
-            price = prices[symbol]
-            if not finite(price) or price <= 0:
-                raise ValueError("data.raw_open_price_invalid")
-            n, value = abs(qty), abs(qty) * price
-            broker = p["commission_per_order"] + p["platform_per_order"]
-            settlement = min(
-                p["settlement_per_share"] * n,
-                p["settlement_cap_fraction_of_value"] * value,
-            )
-            sec = (
-                max(p["sec_fraction_of_sell_value"] * value, p["sec_min_per_sell"])
-                if qty < 0
-                else 0
-            )
-            taf = (
-                min(
-                    max(self.taf_rate * n, p["taf_min_per_sell"]), p["taf_max_per_sell"]
-                )
-                if qty < 0 and self.taf_rate
-                else 0
-            )
-            passthrough = settlement + sec + taf + p["cat_per_share_each_side"] * n
-            gst = (broker + passthrough if p["gst_base"] == "all_fees" else broker) * p[
-                "gst_rate"
-            ]
-            friction = (
-                (p["spread_roundtrip_bps"] + p["extra_slippage_roundtrip_bps"])
-                / 2
-                / 1e4
-                * value
-            )
-            total += p["cost_multiplier"] * max(
-                broker + passthrough + gst + friction, floor * value
-            )
-        if not finite(total):
-            raise ValueError("fee_numeric_overflow")
+            if q:
+                price = prices[symbol]
+                if not finite(price) or price <= 0:
+                    raise ValueError("data.raw_open_price_invalid")
+                total += order_cost(
+                    self.params,
+                    "buy" if q > 0 else "sell",
+                    abs(q),
+                    abs(q) * price,
+                    floor,
+                    "reference",
+                )["research_cost_usd"]
         return total
 
 
@@ -181,7 +157,7 @@ def _tool(tool, request, policy, names, calculate):
     metrics = dict.fromkeys(names)
     reasons = []
     try:
-        if policy.document["version"] != "v0.2":
+        if policy.document["version"] != "v1.0.1":
             raise ValueError("prereg_pending_v0.2")
         metrics.update(calculate())
     except (ValueError, KeyError, TypeError, OverflowError, ZeroDivisionError) as exc:

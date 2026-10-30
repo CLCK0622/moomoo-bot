@@ -24,6 +24,11 @@
     "source_member": "EVO883-executable-conventions-v0.2.json",
     "source_zip_sha256": "6f7bba19db12639621e000b4f72d797f7c43f04a4737d9e4d58fec724b9053d2"
   },
+  "conventions-v1.0.1.json": {
+    "sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+    "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
+    "source_member": "EVO883-executable-conventions-v1.0.1.json"
+  },
   "fee_params_x1.json": {
     "sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
     "source_member": "evo882/fee/fee_params_x1.json",
@@ -49,9 +54,24 @@
     "source_member": "EVO883-prereg-v1-draft2.json",
     "source_zip_sha256": "6f7bba19db12639621e000b4f72d797f7c43f04a4737d9e4d58fec724b9053d2"
   },
+  "prereg-v1.json": {
+    "sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
+    "source_member": "EVO883-prereg-v1.json"
+  },
+  "qqq-events-v1.csv": {
+    "sha256": "1ab413d1a1c4118ae58d21e476454502d613f1c88914a9076b90de8fa6247c87",
+    "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
+    "source_member": "EVO889-qqq-events.csv"
+  },
   "spy-anomalies.json": {
     "parameters": "jump thresholds are explicit manifest QA inputs, not frozen strategy choices",
     "sha256": "39c3ebee74ff68fc04227dd870a60bfa1e69f61e1988dcb8e7f6902246587ed9",
     "source": "selected rows from git e51f8023 SPY/AAPL parquet; vti_pull calendar QA cross-check"
+  },
+  "supplement-disposition-v1.json": {
+    "sha256": "2fe8eede3b04328dc468eb6fdce7d60686b5e807aa57e8869e8eea24e91a1cc6",
+    "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
+    "source_member": "EVO883-supplement-disposition-v03.json"
   }
 }

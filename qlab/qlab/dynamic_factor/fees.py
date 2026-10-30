@@ -23,7 +23,7 @@ def iso_date(value):
     return value
 
 
-def fee_frontier(
+def _legacy_fee_frontier(
     request,
     params_path,
     schedule_path=FIXTURES / "fee_schedule.json",
@@ -249,3 +249,18 @@ def fee_frontier(
         return conventions.bind(report) if conventions else report
     except (KeyError, TypeError, ValueError, OverflowError):
         return reject("fee_input_invalid_or_missing")
+
+
+def fee_frontier(
+    request,
+    params_path,
+    schedule_path=FIXTURES / "fee_schedule.json",
+    *,
+    conventions=None,
+):
+    from .conventions import load_conventions
+    from .fee_model import evaluate
+
+    return evaluate(
+        request, params_path, schedule_path, conventions or load_conventions()
+    )
