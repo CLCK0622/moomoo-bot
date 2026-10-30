@@ -99,7 +99,9 @@ def reference_proofs(guard):
             for route in sorted(ROUTES)
         }
         reads = {
-            role: numeric_read(guard, actor, role, ["QQQ"], synthetic_numeric_reader)[1]
+            role: numeric_read(
+                guard, actor, role, ["QQQ"], synthetic_numeric_reader, initial=initial
+            )[1]
             for role in sorted(CONSUMERS)
         }
         out[actor] = packet(guard, actor, initial, routes, reads)

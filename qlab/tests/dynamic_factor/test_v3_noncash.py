@@ -91,6 +91,8 @@ def test_actor_zero_origin_and_no_read_receipts_are_separate_and_conditional(act
             consumer,
             ["AAPL", "QQQ"],
             lambda s: called.append((consumer, s)) or 100,
+            actor=actor,
+            origin=origin,
         )
         assert values == {"AAPL": 100, "QQQ": 100}
         reads[consumer] = numeric_receipt

@@ -134,7 +134,12 @@ def test_directory_hashes_empty_reads_or_missing_paths_cannot_close_reference_pr
         reads = {role: {"catalog_sha256": g["catalog_sha256"]} for role in CONSUMERS}
     if attack == "empty_numeric":
         reads["score"] = numeric_read(
-            g, ACTORS[0], "score", [], synthetic_numeric_reader
+            g,
+            ACTORS[0],
+            "score",
+            [],
+            synthetic_numeric_reader,
+            initial=p["zero_origin"],
         )[1]
     if attack == "missing_role":
         reads.pop("label")

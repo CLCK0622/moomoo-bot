@@ -107,13 +107,22 @@ def acquisition(guard, actor, initial, before, after, route, policy=None):
     return dict(payload, route_receipt_sha256=digest(payload))
 
 
-def numeric_read(guard, actor, consumer, symbols, reader, policy=None):
+def numeric_read(guard, actor, consumer, symbols, reader, policy=None, *, initial=None):
     p = policy or load_conventions()
     if actor not in actors() or consumer not in CONSUMERS:
         raise ValueError("reference.separate_actor_and_consumer_required")
     # The common B guard dominates the injected numeric callback. Each actor
     # gets its own invocation and receipt, even when the submitted values match.
-    values, inner = economic_read_receipt(guard, consumer, symbols, reader, policy=p)
+    assert_consumer_symbols(guard, consumer, symbols, p)
+    if (
+        not isinstance(initial, dict)
+        or origin(guard, actor, initial["initial_state"], initial["source_sha256"], p)
+        != initial
+    ):
+        raise ValueError("reference.separate_zero_origin_required")
+    values, inner = economic_read_receipt(
+        guard, consumer, symbols, reader, actor=actor, origin=initial, policy=p
+    )
     payload = dict(
         actor=actor,
         producer_kind="reference",

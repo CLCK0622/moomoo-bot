@@ -226,10 +226,44 @@ def economic_values(guard, consumer, symbols, reader, *, policy=None):
     }
 
 
-def economic_read_receipt(guard, consumer, symbols, reader, *, policy=None):
+def economic_read_receipt(
+    guard, consumer, symbols, reader, *, actor=None, origin=None, policy=None
+):
     """Witness the numeric boundary; a catalog/hash lookup is not this receipt."""
-    values = economic_values(guard, consumer, symbols, reader, policy=policy)
+    p = policy or load_conventions()
+    if not isinstance(origin, dict) or actor is None:
+        raise ValueError("B.actor_bound_numeric_origin_required")
+    if (
+        origin.get("actor") != actor
+        or origin.get("noncash_guard_manifest_sha256")
+        != guard["noncash_guard_manifest_sha256"]
+        or not is_sha(origin.get("source_sha256"))
+        or origin.get("zero_origin_receipt_sha256")
+        != digest(
+            {k: v for k, v in origin.items() if k != "zero_origin_receipt_sha256"}
+        )
+    ):
+        raise ValueError("B.numeric_actor_origin_source_mismatch")
+    if actor in actor_ids(p):
+        if (
+            zero_origin(
+                guard, actor, origin["initial_state"], origin["source_sha256"], p
+            )
+            != origin
+        ):
+            raise ValueError("B.zero_origin_or_actor_mismatch")
+    elif actor not in {
+        "reference/CREF-F1-L020",
+        "reference/CREF-F3-L020",
+        "reference/MREF-F2-L020",
+        "reference/MREF-F4-L020",
+    }:
+        raise ValueError("B.actor_bound_numeric_origin_required")
+    values = economic_values(guard, consumer, symbols, reader, policy=p)
     payload = dict(
+        actor=actor,
+        zero_origin_receipt_sha256=origin["zero_origin_receipt_sha256"],
+        source_sha256=origin["source_sha256"],
         consumer=consumer,
         symbols=list(symbols),
         numeric_values_sha256=digest(values),
@@ -354,6 +388,9 @@ def no_dependency_receipt(guard, actor, origin, reads, policy=None):
         raise ValueError("B.all_economic_consumers_required")
     for consumer, receipt in reads.items():
         required = {
+            "actor",
+            "zero_origin_receipt_sha256",
+            "source_sha256",
             "consumer",
             "symbols",
             "numeric_values_sha256",
@@ -370,6 +407,10 @@ def no_dependency_receipt(guard, actor, origin, reads, policy=None):
             not isinstance(receipt, dict)
             or set(receipt) != required
             or receipt["consumer"] != consumer
+            or receipt["actor"] != actor
+            or receipt["zero_origin_receipt_sha256"]
+            != origin["zero_origin_receipt_sha256"]
+            or receipt["source_sha256"] != origin["source_sha256"]
             or not isinstance(receipt["symbols"], list)
             or not receipt["symbols"]
             or receipt["input_kind"] != "numeric_values"

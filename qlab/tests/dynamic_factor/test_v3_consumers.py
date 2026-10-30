@@ -163,7 +163,9 @@ def test_v3_K5_closes_only_conditional_new_path_with_all_factor_proofs():
     state = synthetic_zero_state(guard)
     origin = zero_origin(guard, actor, state, digest("SYNTHETIC_SOURCE"))
     reads = {
-        k: economic_read_receipt(guard, k, ["AAPL"], lambda s: 100)[1]
+        k: economic_read_receipt(
+            guard, k, ["AAPL"], lambda s: 100, actor=actor, origin=origin
+        )[1]
         for k in CONSUMERS
     }
     proof = no_dependency_receipt(guard, actor, origin, reads)
