@@ -165,7 +165,7 @@ def normalize_dependencies(request):
         required = {"role", "records", "mode", "sealed_at", "first_performance_at"}
         if (
             not required.issubset(declaration)
-            or set(declaration) - required - {"signal_close"}
+            or set(declaration) - required - {"signal_close", "noncash_guard_manifest"}
             or declaration["role"]
             not in {
                 "train_solo_probes",
@@ -195,6 +195,12 @@ def normalize_dependencies(request):
             instant(declaration["signal_close"])
         if declaration["mode"] == "forward" and "signal_close" not in declaration:
             raise ValueError("data.v3_isolation_schema_invalid")
+        guarded = set()
+        if "noncash_guard_manifest" in declaration:
+            from .noncash_v3 import checked_guard
+
+            guard = checked_guard(declaration["noncash_guard_manifest"], policy)
+            guarded = set(guard["B"]) | set(guard["unknown"])
         fields = {
             "symbol",
             "field_role",
@@ -250,6 +256,8 @@ def normalize_dependencies(request):
                 and received > instant(declaration["signal_close"])
             ):
                 raise ValueError("data.v3_isolation_information_cutoff")
+            if row["symbol"] in guarded and row["gates_by_date"]:
+                raise ValueError("B.guarded_numeric_evidence_forbidden")
             for date, gates in row["gates_by_date"].items():
                 if (
                     not isinstance(gates, dict)
@@ -337,9 +345,23 @@ def normalize_dependencies(request):
 
     from .lineage_schema import consumer_schema_v3
 
+    # Only this registered root field is delegated to the strict v3 adapter.
+    # Every remaining consumer byte still traverses the closed B8 schema.
+    extra_symbols = {"VSNT"}
+    if "noncash_guard_manifest" in request:
+        from .noncash_v3 import checked_guard
+
+        extra_symbols.update(
+            checked_guard(request["noncash_guard_manifest"])["children"]
+        )
     validate_consumer(
-        {k: v for k, v in request.items() if k != "isolation_manifest"},
-        schema=consumer_schema_v3(),
+        {
+            k: v
+            for k, v in request.items()
+            if k not in {"isolation_manifest", "noncash_guard_manifest"}
+        },
+        schema=consumer_schema_v3(extra_symbols),
+        securities=extra_symbols,
     )
 
     pending = [request]

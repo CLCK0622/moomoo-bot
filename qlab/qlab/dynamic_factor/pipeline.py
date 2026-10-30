@@ -182,6 +182,15 @@ def _reference_variance(registry, layer, context, policy):
             for key in ("quarantine_manifest_sha256", "eligible_set_derivation_sha256")
         ):
             raise ValueError("dsr.reference_isolation_mismatch")
+        if policy.document["version"] == "v3.0.0" and (
+            not is_sha(context.get("noncash_guard_manifest_sha256"))
+            or trial.get("noncash_guard_manifest_sha256")
+            != context["noncash_guard_manifest_sha256"]
+            or not is_sha(
+                trial.get("zero_exposure_and_consumer_dependency_receipt_sha256")
+            )
+        ):
+            raise ValueError("dsr.reference_B_release_or_proof_mismatch")
         if trial["source_returns_sha256"] != digest(returns) or len(returns) != len(
             context["train_calendar"]
         ):

@@ -45,8 +45,14 @@ class OrderCosts:
         self.binding["rate_basis"] = "research_restored"
         self.taf_rate = self.params[field]
 
-    def quote(self, orders, prices):
+    def quote(self, orders, prices, *, guard=None):
         reject_b2_inputs({"orders": orders, "prices": prices}, "orders")
+        if self.policy.document["version"] == "v3.0.0" and guard is not None:
+            from .noncash_v3 import assert_consumer_symbols
+
+            names = [s for s, q in orders.items() if q and s != "QQQ"]
+            if names:
+                assert_consumer_symbols(guard, "order", names, self.policy)
         from .fee_model import order_cost
 
         floor = float(
@@ -78,6 +84,10 @@ class OrderCosts:
 def startup_intent(position, previous_nav, inventory, previous_close, policy):
     """Lock the budget at the prior close; the next open only rounds/checks cash."""
     reject_b2_inputs(inventory, "orders")
+    if policy.document["version"] == "v3.0.0" and any(
+        q and s != "QQQ" for s, q in inventory.items()
+    ):
+        raise ValueError("B.nonzero_startup_inventory_no_automatic_migration")
     init = policy.document["initialization"]
     if (
         type(position) is not int
@@ -324,6 +334,15 @@ def _v2_calibration_rows(rows, matured_dates, policy, context):
     ids = policy.document["variance_layers"]["family_definitions"]["candidate_members"]
     for row in rows:
         d, symbol = row["date"], row["symbol"]
+        if policy.document["version"] == "v3.0.0":
+            from .noncash_v3 import assert_consumer_symbols
+
+            assert_consumer_symbols(
+                isolation["manifest"]["request"]["noncash_guard_manifest"],
+                "calibration",
+                [symbol],
+                policy,
+            )
         if d not in receipts or symbol not in receipts[d]["day"]["eligible"]:
             raise ValueError("gain.label_not_in_signal_E_t")
         if (d, symbol) in seen:
@@ -539,6 +558,13 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
             raise ValueError("gain.frozen_calibration_or_pool_receipt_missing")
         M, P, original = request["M"], request["P"], request["original_inventory"]
         prices, cash = request["raw_open_prices"], request["cash"]
+        guard = None
+        if conventions.document["version"] == "v3.0.0":
+            from .noncash_v3 import assert_consumer_symbols
+
+            guard = request["isolation_manifest"]["request"]["noncash_guard_manifest"]
+            used = {s for plan in (M, P, original) for s, q in plan.items() if q}
+            assert_consumer_symbols(guard, "order", used, conventions)
         if conventions.document["version"] in ("v2.0.0", "v3.0.0"):
             from .state_v2 import necessary_state_known
 
@@ -579,6 +605,7 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
                     for s in set(original) | set(plan)
                 },
                 prices,
+                guard=guard,
             )
             for plan in (M, P)
         ]

@@ -94,7 +94,10 @@ def cash_source_reason(event):
 def _panel_input_check(request, *, conventions=None):
     policy = conventions or load_conventions()
     isolated, days = [], {}
-    if policy.document["version"] in ("v2.0.0", "v3.0.0") and "isolation_manifest" in request:
+    if (
+        policy.document["version"] in ("v2.0.0", "v3.0.0")
+        and "isolation_manifest" in request
+    ):
         from .isolation import selection_projection
 
         request, isolated, days = selection_projection(request, policy)

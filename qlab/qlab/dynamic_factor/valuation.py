@@ -142,10 +142,15 @@ def benchmark_valuation(request, *, conventions=None):
     )
 
 
-def integer_cash_valuation(request, *, conventions=None):
+def integer_cash_valuation(request, *, conventions=None, factor_scope=False):
     from .input_disposition import quarantine_check
 
     policy = conventions or load_conventions()
+    factor_scope = (
+        factor_scope
+        or "noncash_guard_manifest" in request
+        or request.get("consumer_role") in {"strategy", "virtual_monitor"}
+    )
     metrics = {
         "nav": None,
         "available_cash": None,
@@ -157,6 +162,8 @@ def integer_cash_valuation(request, *, conventions=None):
         "account_cash_credited_amount": None,
         "account_cash_credited_at": None,
         "account_verified": False,
+        "consumer_scope": "factor_arm" if factor_scope else "unbound_accounting_only",
+        "factor_arm_numeric_scope_checked": False,
     }
     reasons = []
     quarantine = None
@@ -167,6 +174,28 @@ def integer_cash_valuation(request, *, conventions=None):
         as_of = iso_date(request["as_of"])
         inventory = request["inventory"]
         quarantine = quarantine_check(request)
+        if policy.document["version"] == "v3.0.0" and factor_scope:
+            from .noncash_v3 import assert_consumer_symbols
+
+            # Preserve the declared cash even when no v3 numeric read is
+            # permitted. The original quarantine result still dominates.
+            metrics["known_available_cash"] = (
+                cash if finite(cash) and cash >= 0 else None
+            )
+            held = [s for s, q in inventory.items() if q]
+            assert_consumer_symbols(
+                request.get("noncash_guard_manifest"),
+                "holdings_valuation",
+                held,
+                policy,
+            )
+            assert_consumer_symbols(
+                request.get("noncash_guard_manifest"),
+                "cash_valuation",
+                [e.get("symbol") for e in request.get("events", [])],
+                policy,
+            )
+            metrics["factor_arm_numeric_scope_checked"] = True
         if quarantine["ok"] and policy.document["version"] in ("v2.0.0", "v3.0.0"):
             from .k5 import k5_dependency_check, CHILDREN
 
@@ -374,6 +403,12 @@ def integer_cash_valuation(request, *, conventions=None):
         reasons.extend(quarantine["reasons"])
     metrics["event_quarantine"] = quarantine
     metrics["k5_dependencies"] = k5_reports
+    if policy.document["version"] == "v3.0.0" and reasons:
+        metrics["R2_stop"] = True
+        metrics["retained_state_declaration"] = {
+            k: request.get(k)
+            for k in ("inventory", "rights", "receivables", "known_cash", "events")
+        }
     return policy.bind(
         result(
             "integer_cash_valuation",
@@ -402,3 +437,18 @@ def integer_cash_valuation(request, *, conventions=None):
             },
         )
     )
+
+
+def factor_cash_valuation(request, *, conventions=None):
+    """Typed factor entrypoint; generic accounting readouts are not this proof."""
+    policy = conventions or load_conventions()
+    if policy.document["version"] != "v3.0.0":
+        return policy.bind(
+            result(
+                "factor_cash_valuation",
+                request,
+                reasons=["B.v3_profile_required"],
+                metrics={"nav": None, "factor_arm_numeric_scope_checked": False},
+            )
+        )
+    return integer_cash_valuation(request, conventions=policy, factor_scope=True)

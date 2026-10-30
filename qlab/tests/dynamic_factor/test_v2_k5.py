@@ -4,12 +4,20 @@ from decimal import Decimal
 
 import pytest
 
-from qlab.dynamic_factor.conventions import load_conventions, FIXTURES
+from qlab.dynamic_factor.conventions import (
+    load_conventions as load_historical_conventions,
+    FIXTURES,
+)
 from qlab.dynamic_factor.contract import digest
 from qlab.dynamic_factor.isolation import seal_manifest
 from qlab.dynamic_factor.k5 import k5_dependency_check, vsnt_quote
 from qlab.dynamic_factor.valuation import integer_cash_valuation
 from test_v2_isolation import synthetic_manifest
+
+
+def load_conventions():
+    """Legacy K5 quote/entitlement cases remain explicitly bound to v2."""
+    return load_historical_conventions(FIXTURES / "conventions-v2.0.0.json")
 
 
 def dependency(parent, role="historical_inventory", fold="0", **kw):
@@ -43,7 +51,7 @@ def test_ADP_closes_only_pre_initialization_inventory_for_every_registered_ledge
 
 @pytest.mark.parametrize("role", ["warmup", "TR", "label"])
 def test_ADP_inventory_fact_never_certifies_warmup_TR_labels_or_252_day_release(role):
-    r = k5_dependency_check(dependency("ADP", role))
+    r = k5_dependency_check(dependency("ADP", role), conventions=load_conventions())
     assert not r["ok"] and r["metrics"]["R2_stop"]
     assert r["metrics"]["dependency_value"] is None
 
@@ -61,7 +69,7 @@ def test_reachable_candidate_paths_remain_unknown_without_actual_E_t_admission_a
 ):
     req = dependency(parent, fold=fold)
     req["account_role"] = scope
-    r = k5_dependency_check(req)
+    r = k5_dependency_check(req, conventions=load_conventions())
     assert not r["ok"] and r["metrics"]["reachability"]["possible"] is None
     assert (
         r["metrics"]["entitlement"]
@@ -108,7 +116,7 @@ def test_VSNT_256_exact_source_fields_are_K5_quotes_only():
     assert len(rows) == 128
     for row in rows:
         for field in ("raw_open", "raw_close"):
-            q = vsnt_quote(row["date"], field, purpose="K5")
+            q = vsnt_quote(row["date"], field, purpose="K5", policy=load_conventions())
             assert Decimal(q["value"]) == Decimal(row[field + "_none"])
             assert (
                 q["entitlement"]
@@ -122,7 +130,7 @@ def test_VSNT_256_exact_source_fields_are_K5_quotes_only():
 def test_known_VSNT_price_does_not_impute_entitlement_or_spend_unknown_cash():
     req = dependency("CMCSA", fold="72", quote_date="2026-01-05")
     req["account_role"] = "continuous_test"
-    r = k5_dependency_check(req)
+    r = k5_dependency_check(req, conventions=load_conventions())
     assert r["metrics"]["quote"]["value"] == "40.57"
     assert (
         r["metrics"]["entitlement"]
@@ -140,7 +148,8 @@ def test_known_VSNT_price_does_not_impute_entitlement_or_spend_unknown_cash():
             as_of="2026-01-05",
             events=[],
             k5_dependencies=[req],
-        )
+        ),
+        conventions=load_conventions(),
     )
     assert (
         cash["metrics"]["nav"] is None
@@ -164,7 +173,7 @@ def test_no_tax_FMV_raw_close_substitution_new_disposal_or_post_result_exemption
         req["observed_zero_after_performance"] = True
     else:
         req["event_date"] = "2014-01-01"
-    r = k5_dependency_check(req)
+    r = k5_dependency_check(req, conventions=load_conventions())
     assert (
         not r["ok"] and r["metrics"]["dependency_value"] is r["metrics"]["nav"] is None
     )
@@ -173,7 +182,9 @@ def test_no_tax_FMV_raw_close_substitution_new_disposal_or_post_result_exemption
 @pytest.mark.parametrize("purpose", ["selection", "calibration", "ordinary_mark"])
 def test_VSNT_quotes_cannot_enter_selection_panel(purpose):
     with pytest.raises(ValueError, match="role_or_field"):
-        vsnt_quote("2026-01-05", "raw_close", purpose=purpose)
+        vsnt_quote(
+            "2026-01-05", "raw_close", purpose=purpose, policy=load_conventions()
+        )
     request = synthetic_manifest()
     request["records"][0]["symbol"] = "VSNT"
     with pytest.raises(ValueError, match="evidence_incomplete"):
@@ -191,4 +202,4 @@ def test_VSNT_wrong_receipt_SHA_refuses_before_using_values(tmp_path, monkeypatc
     )
     monkeypatch.setattr(k5, "FIXTURES", tmp_path)
     with pytest.raises(ValueError, match="identity_mismatch"):
-        vsnt_quote("2026-01-05", "raw_close", purpose="K5")
+        vsnt_quote("2026-01-05", "raw_close", purpose="K5", policy=load_conventions())

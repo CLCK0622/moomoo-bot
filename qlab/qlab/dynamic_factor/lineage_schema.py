@@ -141,9 +141,9 @@ EVIDENCE_KEYS = {
 }
 
 
-def consumer_schema_v3():
-    """Block 4: preserve the original account state and R2 declarations."""
-    symbols = set(load_conventions().profile["universe"]) | {"VSNT"}
+def consumer_schema_v3(securities=()):
+    """Explicit consumer records introduced by the EVO-900 state contract."""
+    symbols = set(load_conventions().profile["universe"]) | set(securities) | {"VSNT"}
     rights = dict.fromkeys(symbols | {"child", "LEGACY"}, SCALAR)
     receivables = dict.fromkeys(symbols | {"cash_event", "LEGACY"}, SCALAR)
     state = dict(
@@ -167,26 +167,30 @@ def consumer_schema_v3():
     )
     return dict(
         CONSUMER,
-        k5_dependencies=("list", k5),
         folds=("list", fold),
         input_state=state,
         output_state=state,
+        inputs=("list", dict(NODE, consumer_role="string")),
         rights=rights,
         receivables=receivables,
+        k5_dependencies=("list", k5),
     )
 
 
-def validate_consumer(request, *, schema=CONSUMER):
+def validate_consumer(request, *, schema=CONSUMER, securities=()):
     """Iteratively validate every depth, without a recursion-limit loophole."""
-    securities = set(load_conventions().profile["universe"]) | {
-        "B",
-        "COR",
-        "QQQ",
-        "VTI",
-        "X",
-        "H",
-        "VSNT",
-    }
+    securities = (
+        set(securities)
+        | set(load_conventions().profile["universe"])
+        | {
+            "B",
+            "COR",
+            "QQQ",
+            "VTI",
+            "X",
+            "H",
+        }
+    )
     pending = [(request, schema)]
     while pending:
         value, schema = pending.pop()

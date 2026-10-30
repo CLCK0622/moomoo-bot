@@ -61,13 +61,18 @@ def synthetic_manifest(p=None, verified=50, unknown=0, *, date=None):
                 },
             )
         )
-    return dict(
+    request = dict(
         role="train_solo_probes",
         records=records,
         mode="history",
         sealed_at="2026-10-02T00:00:00Z",
         first_performance_at="2026-10-03T00:00:00Z",
     )
+    if p.document["version"] == "v3.0.0":
+        from v3_test_helpers import synthetic_guard
+
+        request["noncash_guard_manifest"] = synthetic_guard(p)
+    return request
 
 
 def synthetic_scores(p, names):

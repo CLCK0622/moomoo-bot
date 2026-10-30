@@ -58,7 +58,10 @@ def test_old_registered_reference_does_not_become_v3_by_default():
     assert r["metrics"]["trials_variance"] is None
 
 
-@pytest.mark.parametrize("mismatch", ["old_profile", "other_mask", "other_derivation"])
+@pytest.mark.parametrize(
+    "mismatch",
+    ["old_profile", "v2_profile", "other_mask", "other_derivation", "other_B_release"],
+)
 def test_old_V_and_other_mask_reference_are_rejected(mismatch):
     p = load_conventions()
     context = dict(
@@ -69,6 +72,7 @@ def test_old_V_and_other_mask_reference_are_rejected(mismatch):
         cost_model_sha256=digest("fees"),
         quarantine_manifest_sha256=digest("mask"),
         eligible_set_derivation_sha256=digest("derive"),
+        noncash_guard_manifest_sha256=digest("synthetic_guard"),
     )
     spec = p.document["variance_layers"]["independent_reference"]
     trials = {}
@@ -96,10 +100,17 @@ def test_old_V_and_other_mask_reference_are_rejected(mismatch):
             ),
         )
     t = trials["0"]
-    if mismatch == "old_profile":
+    if mismatch in ("old_profile", "v2_profile"):
         t["profile_id_and_sha256"]["sha256"] = load_conventions(
-            FIXTURES / "conventions-v1.0.1.json"
+            FIXTURES
+            / (
+                "conventions-v2.0.0.json"
+                if mismatch == "v2_profile"
+                else "conventions-v1.0.1.json"
+            )
         ).binding["common_profile_sha256"]
+    elif mismatch == "other_B_release":
+        t["noncash_guard_manifest_sha256"] = digest("other_guard")
     else:
         t[
             "quarantine_manifest_sha256"

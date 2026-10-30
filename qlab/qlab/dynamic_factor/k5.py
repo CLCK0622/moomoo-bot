@@ -18,6 +18,8 @@ EVENT_DATES = {"ADP": "2014-10-01", "APD": "2016-10-03", "CMCSA": "2026-01-05"}
 
 def vsnt_quote(date, field, *, purpose, policy=None):
     p = policy or load_conventions()
+    if p.document["version"] == "v3.0.0":
+        raise ValueError("B.v3_child_price_reader_forbidden_use_explicit_legacy_scope")
     if purpose != "K5" or field not in ("raw_open", "raw_close"):
         raise ValueError("K5.quote_role_or_field_forbidden")
     receipt_raw = (FIXTURES / "k5/S2-field-receipt-v1.json").read_bytes()
@@ -202,25 +204,67 @@ def k5_dependency_check(request, *, conventions=None):
             "force_disposal"
         ):
             raise ValueError("K5.post_result_waiver_or_new_disposal_forbidden")
-        reach = inventory_reachability(request, p)
-        metrics["reachability"] = reach
-        if (
-            request["dependency_role"] == "historical_inventory"
-            and reach["possible"] is False
-        ):
-            metrics.update(inventory_origin_dependency_closed=True, R2_stop=False)
-        else:
-            if request["parent"] == "CMCSA" and request.get("quote_date") is not None:
-                metrics["quote"] = vsnt_quote(
-                    request["quote_date"], "raw_close", purpose="K5", policy=p
-                )
-            reasons.append(
-                "K5.required_entitlement_analysis_or_disposal_contract_missing"
+        if p.document["version"] == "v3.0.0":
+            from .noncash_v3 import (
+                checked_guard,
+                no_dependency_receipt,
+                acquisition_check,
             )
+
+            guard = checked_guard(request["noncash_guard_manifest"], p)
+            expected = no_dependency_receipt(
+                guard,
+                request["actor"],
+                request["zero_origin"],
+                request["numeric_read_receipts"],
+                p,
+            )
+            if (
+                request.get("no_dependency_receipt") != expected
+                or request["parent"] not in guard["B"]
+            ):
+                raise ValueError("B.v3_zero_origin_and_no_read_proof_required")
+            acquisition_check(
+                guard,
+                request["actor"],
+                request["zero_origin"],
+                request["state"],
+                request["state"],
+                "old_rights",
+                p,
+            )
+            metrics.update(
+                inventory_origin_dependency_closed=True,
+                R2_stop=False,
+                child_price_status="CONDITIONAL_NOT_APPLICABLE_MECHANISM_ONLY",
+                real_catalog_sha256=guard["accepted_catalog_sha256"],
+                noncash_proof=expected,
+            )
+        else:
+            reach = inventory_reachability(request, p)
+            metrics["reachability"] = reach
+            if (
+                request["dependency_role"] == "historical_inventory"
+                and reach["possible"] is False
+            ):
+                metrics.update(inventory_origin_dependency_closed=True, R2_stop=False)
+            else:
+                if (
+                    request["parent"] == "CMCSA"
+                    and request.get("quote_date") is not None
+                ):
+                    metrics["quote"] = vsnt_quote(
+                        request["quote_date"], "raw_close", purpose="K5", policy=p
+                    )
+                reasons.append(
+                    "K5.required_entitlement_analysis_or_disposal_contract_missing"
+                )
     except (ValueError, KeyError, TypeError, StopIteration, OSError) as exc:
         reasons.append(
             str(exc) if isinstance(exc, ValueError) else "K5.required_evidence_missing"
         )
+    if p.document["version"] == "v3.0.0" and reasons:
+        metrics["retained_state_declaration"] = request.get("state")
     return p.bind(
         result(
             "k5_dependency_check",

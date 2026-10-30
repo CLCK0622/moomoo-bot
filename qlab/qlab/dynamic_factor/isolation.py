@@ -65,6 +65,7 @@ def seal_manifest(request, policy=None):
         "sealed_at",
         "first_performance_at",
         "signal_close",
+        "noncash_guard_manifest",
     }
     if set(request) - allowed or request.get("role") not in ROLES:
         raise ValueError("isolation.outcome_selector_or_role_forbidden")
@@ -74,6 +75,18 @@ def seal_manifest(request, policy=None):
     if sealed >= timestamp(request["first_performance_at"]):
         raise ValueError("isolation.not_preperformance")
     universe = p.profile["universe"]
+    guard = None
+    if p.document["version"] == "v3.0.0":
+        from .noncash_v3 import checked_guard
+
+        guard = checked_guard(request.get("noncash_guard_manifest"), p)
+        if (
+            timestamp(guard["request"]["sealed_at"]) > timestamp(request["sealed_at"])
+            or guard["request"]["first_performance_at"]
+            != request["first_performance_at"]
+            or guard["request"]["mode"] != request["mode"]
+        ):
+            raise ValueError("B.isolation_guard_timing_or_mode_mismatch")
     records = deepcopy(request["records"])
     if not isinstance(records, list):
         raise ValueError("isolation.records_required")
@@ -104,6 +117,10 @@ def seal_manifest(request, policy=None):
             and received > timestamp(request["signal_close"])
         ):
             raise ValueError("isolation.evidence_not_received_in_time")
+        if guard and r["symbol"] in set(guard["B"]) | set(guard["unknown"]):
+            if r["gates_by_date"]:
+                raise ValueError("B.guarded_numeric_evidence_forbidden")
+            continue
         for date, g in r["gates_by_date"].items():
             if (
                 set(g) != GATES
@@ -140,7 +157,16 @@ def eligible_day(sealed, date, policy=None):
     i = p.calendar.index(date)
     history = list(p.calendar[max(0, i - 251) : i + 1])
     status, reasons = {}, {}
+    guard = sealed["request"].get("noncash_guard_manifest")
     for symbol in p.profile["universe"]:
+        if guard and (symbol in guard["B"] or symbol in guard["unknown"]):
+            status[symbol] = "QUARANTINED" if symbol in guard["B"] else "UNKNOWN"
+            reasons[symbol] = [
+                "B.whole_domain_no_entry"
+                if symbol in guard["B"]
+                else "B.catalog_membership_unknown"
+            ]
+            continue
         rows = [
             r
             for r in sealed["request"]["records"]
@@ -211,6 +237,17 @@ def eligible_day(sealed, date, policy=None):
         "quarantine_manifest_sha256": sealed["quarantine_manifest_sha256"],
         "new_tilt_allowed": quantity == "VERIFIED_GE50",
         "required_M_valuation_cash_fees_still_required": True,
+        **(
+            {
+                "noncash_guard_manifest_sha256": guard["noncash_guard_manifest_sha256"],
+                "B_catalog_sha256": guard["accepted_catalog_sha256"],
+                "synthetic_catalog_sha256": guard["catalog_sha256"]
+                if guard["request"]["synthetic"]
+                else None,
+            }
+            if guard
+            else {}
+        ),
         **p.binding,
     }
     return dict(payload, eligible_set_derivation_sha256=digest(payload))
