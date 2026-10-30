@@ -1,0 +1,17 @@
+{
+  "PR10_files_modified": false,
+  "implementation_commit": "3bc37cc2452c8d4f7d5b2bda53a1d481c5abf886",
+  "new_base": "6c63505f72135063162c1f55ecfaa03514f1fa32",
+  "old_base": "4e076c87af50e3388229b5edc9a44a888addabb5",
+  "old_head": "2a0aad4a3f542aa071990d91cbbdf88b187fd3ad",
+  "old_policy_SQLite_reopen": "reject_genesis_or_fee_binding_conflict; no automatic historical repricing",
+  "pure_rebase_head": "1fab8c4fd27729da95f173952a33fd75149cea80",
+  "range_diff": "1:  2a0aad4 = 1:  1fab8c4 EVO-885: add isolated offline 15k shadow accounting\n",
+  "semantic_adaptations": [
+    "QQQ integer cash source mapping and persistent simulated receipts",
+    "v1 restored TAF and per-net-order floor via shared order_cost",
+    "v1 runtime-evidence refusal replaces outdated prereg-pending reason"
+  ],
+  "shared_or_legacy_ledger_migrated": false,
+  "text_conflicts": []
+}

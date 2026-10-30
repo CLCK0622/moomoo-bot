@@ -1,0 +1,14 @@
+{
+  "conflicts": [],
+  "fix_commit": "Exact subsequent commit is bound in the clean-clone final handoff; this file records the preceding pure rebase only.",
+  "new_base": "08c9d87ab4bef9abae6b5edabaf07c0adcb40052",
+  "old_base": "6c63505f72135063162c1f55ecfaa03514f1fa32",
+  "old_head": "703e27c084ad3d059968a01e52ce3a5b3c80c024",
+  "old_new_commits": {
+    "1fab8c4": "9280c41",
+    "3bc37cc": "28c751c",
+    "703e27c": "cf1a5b7"
+  },
+  "pure_replay_head": "cf1a5b753a11246c3235c041711f547c46f9b4a4",
+  "range_diff_all_equal": true
+}

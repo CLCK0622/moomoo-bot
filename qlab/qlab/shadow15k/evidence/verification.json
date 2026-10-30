@@ -1,0 +1,52 @@
+{
+  "assumptions": [
+    "Offline synthetic receipts only; no broker, OpenD, REAL or forward sampling.",
+    "Execution is never verified by this module, including cash_bid_ask fixtures.",
+    "No frozen meta-strategy is installed; all strategy interfaces refuse.",
+    "Fees policy pending EVO-883 next version; accounting arithmetic is provisional.",
+    "A per-order gate floor is diagnostic, never an extra cash charge.",
+    "Each order is confined to one explicit trading date; cross-day orders require separate IDs.",
+    "Unknown fees/quantities block new intents; no marks are carried forward.",
+    "No authoritative N ledger or return series is supplied; N and Sharpe remain null.",
+    "Prices and marks use caller-supplied consistent units; dividends, corporate actions and total returns are not modeled.",
+    "Failed protective orders freeze this offline version; no automatic override or strategy repair is installed.",
+    "actual $0-commission eligibility of the future account (T&C page link resolved to a promotions index, not the T&C)",
+    "per-invoice rounding of each fee line",
+    "actual spread / slippage (no fills observed)",
+    "whether GST is charged on pass-through regulatory fees (two notes on F1 disagree; x1 takes the wider reading)",
+    "FY2027 Section 31 rate (F5: changes 60 days after FY2027 appropriation; none published as of fetch)",
+    "historical TAF/SEC rates before 2026 (fold back-test applies 2026 schedule to all years; assumption, not history)",
+    "SEC/TAF minima and caps applied per order; actual broker invoice mapping unverified.",
+    "Frozen Section 31 rate and open-ended future schedule are provisional, not live fee validation.",
+    "TAF effective_date basis only, not the research_restored budget convention.",
+    "No cent rounding; amounts retain Decimal precision until a rounding contract is frozen."
+  ],
+  "base_commit": "4e076c87af50e3388229b5edc9a44a888addabb5",
+  "certifiable": false,
+  "determinism": "two new workdirs; complete harness outputs cmp identical",
+  "files_sha256": {
+    "qlab/qlab/shadow15k/README.md": "b23bb7b27e42b49f0282b5469a8a76812f369741df1e1940d65ded0cd0e60c2e",
+    "qlab/qlab/shadow15k/__init__.py": "0007e498101775baa450895c22c486ad0de5b882b6d6fd1ed64bdaa48efe2dbc",
+    "qlab/qlab/shadow15k/contract.py": "916846b8926bde97f05c1361438d1f3db380497b1455335b8f7ebdbb5ce10482",
+    "qlab/qlab/shadow15k/fees.py": "52968e085ca1ccf0d51804c2c22b6d59e344254083f12be7a1034a2cb3a66484",
+    "qlab/qlab/shadow15k/fixtures/cases.json": "d1051263846f189a9b62ee6e86bcfe43b8376f80e6109c5b27bf3eb52394941a",
+    "qlab/qlab/shadow15k/harness.py": "4cc73c3c863fd812adc46808b7abd7bd31f583ca014ebe131cbf15ac1ae0d9e8",
+    "qlab/qlab/shadow15k/ledger.py": "371ae850c1ca849ff4bf2b3f823199372c453117134fcf91f87fc0d0df9a2a5c",
+    "qlab/qlab/shadow15k/policy.py": "8081cdb91e7259cbdce5b08041f687342d982ab5c385e212131134884cd1ab00",
+    "qlab/tests/shadow15k/test_accounting.py": "21fde32f028cf484d8d4afde470cb480909984d4fbe8c5bc1e239dc08c200b7e"
+  },
+  "harness_cases_passed": 9,
+  "harness_sha256": "41e6b548cd4f7041e7dfd8b9f5b4f5a1d4433185fa66255536457d9dc75ae6d5",
+  "input_sha256": "10a15b15e65bab5c357d638b9c0621ec327ae5848f9a993b650628b94ad158c3",
+  "lint": "ruff 0.15.17 check and format --check passed (7 Python files)",
+  "meta_strategy_status": "prereg_pending_v0.2",
+  "network_attempts": 0,
+  "source_sha256": "f2fe3008b7124c826624dfb5fe3ae636abbaf4dec988c8f3c0d7ea67bdd2e78f",
+  "test_breakdown": {
+    "dynamic_factor": 79,
+    "shadow15k": 72,
+    "test_qlib_gen": "module skipped because qlib is unavailable; 8 tests when installed"
+  },
+  "test_command": "PYTHONPATH=qlab:. python3 -m pytest qlab/tests/shadow15k qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q",
+  "test_result": "151 passed, 1 skipped"
+}

@@ -1,0 +1,49 @@
+{
+  "account_operations": 0,
+  "actual_reference_runs": 0,
+  "actual_strategy_backtests": 0,
+  "base_commit": "6c63505f72135063162c1f55ecfaa03514f1fa32",
+  "canonical_recipe": "remove entire root dependencies block; UTF8 sorted keys ensure_ascii=False compact separators no trailing newline",
+  "certifiable": false,
+  "clean_clone_branch": "evo-885-shadow15k",
+  "clean_clone_source": "https://github.com/CLCK0622/moomoo-bot.git",
+  "clone_git_status_before_and_after": "",
+  "cross_interpreter_difference": "dependencies.python and dependencies.sqlite only",
+  "forward_samples": 0,
+  "implementation_commit": "3bc37cc2452c8d4f7d5b2bda53a1d481c5abf886",
+  "original_PR10_seal": "2026-10-30T06:05:55Z",
+  "producer_boundary_untouched": true,
+  "ruff": "0.14.3 check and format --check --no-cache; all 68 files pass",
+  "runtime_consumable": false,
+  "shadow_harness": {
+    "canonical_without_dependencies_SHA256": "f9c0810a6cda79926ef2c7a1716bf3873b6089d211e201ed36ba66acf4086bc4",
+    "cash_revision": 8,
+    "fixed": 9,
+    "full_SHA256": {
+      "312": "987106838b89256d4a29bd7f12bb0cc9ca4395a50d5a22a699f6cdbed368a0c3",
+      "39": "f5f5f06afcd84f58d50f80b6aec4bf3e24b01437cc4d183ed6fdfec590db8419"
+    },
+    "network_attempts": 0
+  },
+  "shared_authority_ledger_mutations": 0,
+  "tests": {
+    "3.12.13": {
+      "passed": 315
+    },
+    "3.9.6": {
+      "passed": 307,
+      "skipped_modules": 1
+    },
+    "dynamic_factor": 223,
+    "qlib_optional": 8,
+    "shadow15k": 84
+  },
+  "tools_harness": {
+    "3.12.13_SHA256": "a4c5f96699380414efaa060babd9f1e3ab7191956c8cd957cef2a5a064aa70a7",
+    "3.9.6_SHA256": "3ba688d14bed370c5a8069fbd4aef4d2953220630b06dab39a2ca2f35fed0a6d",
+    "byte_identical_to_6c63505": true,
+    "fixed": 10,
+    "revision": 45
+  },
+  "two_fresh_processes_same_interpreter_identical": true
+}
