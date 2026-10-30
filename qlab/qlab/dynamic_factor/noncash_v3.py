@@ -14,7 +14,7 @@ from .fees import finite
 from .state_v2 import necessary_state_known
 
 ACCEPTED_CATALOG_SHA256 = None
-CATALOG_REASON = "EVO883/01a18c7b-9344-7219-ae63-da5fda531e72: 61 pending names; B catalog not accepted for runtime sealing"
+CATALOG_REASON = "EVO883/01a18ca6-5887-71b9-b06d-7777e5139585: v21 protective registration; 61 fact UNKNOWN; runtime B release remains absent"
 ROUTES = {
     "buy",
     "pending_order",
@@ -50,7 +50,9 @@ def seal_guard(request, policy=None):
         p.document["version"] != "v3.0.0"
         or not isinstance(request, dict)
         or not required.issubset(request)
-        or set(request) - required - {"signal_close", "prior_guard_sha256"}
+        or set(request)
+        - required
+        - {"signal_close", "prior_guard_sha256", "catalog_registration"}
         or request["mode"] not in {"history", "forward"}
         or type(request["synthetic"]) is not bool
     ):
@@ -82,7 +84,7 @@ def seal_guard(request, policy=None):
         raise ValueError("B.full_U64_catalog_required")
     for row in catalog["entries"]:
         if (
-            set(row)
+            set(row) - {"guard_pending_review", "fact_state", "B_membership"}
             != {
                 "symbol",
                 "status",
@@ -93,6 +95,20 @@ def seal_guard(request, policy=None):
                 "event_or_candidate_id",
             }
             or row["status"] not in STATUSES
+            or (
+                "guard_pending_review" in row
+                and type(row["guard_pending_review"]) is not bool
+            )
+            or (
+                row.get("guard_pending_review") is True
+                and (
+                    row["status"] != "UNKNOWN"
+                    or row.get("fact_state") != "UNKNOWN"
+                    or row["credible_event_evidence"] is not True
+                )
+            )
+            or ("fact_state" in row and row["fact_state"] not in STATUSES)
+            or ("B_membership" in row and row["B_membership"] is not None)
             or not isinstance(row["children"], list)
             or len(set(row["children"])) != len(row["children"])
             or any(
@@ -121,8 +137,25 @@ def seal_guard(request, policy=None):
         ):
             raise ValueError("B.catalog_evidence_invalid")
     catalog_sha = digest(catalog)
-    if not request["synthetic"] and (
-        ACCEPTED_CATALOG_SHA256 is None or catalog_sha != ACCEPTED_CATALOG_SHA256
+    registration = request.get("catalog_registration")
+    if registration is not None:
+        from .catalog_v21 import derive, BINDINGS
+
+        derived = derive(p)
+        if (
+            request["synthetic"]
+            or catalog != derived["catalog"]
+            or registration
+            != dict(
+                source_bindings=BINDINGS,
+                B_derivation_sha256=derived["B_derivation_sha256"],
+            )
+        ):
+            raise ValueError("B.v21_registered_derivation_required")
+    if (
+        not request["synthetic"]
+        and registration is None
+        and (ACCEPTED_CATALOG_SHA256 is None or catalog_sha != ACCEPTED_CATALOG_SHA256)
     ):
         raise ValueError("B.catalog_not_accepted_for_runtime_sealing")
     payload = dict(
@@ -133,18 +166,28 @@ def seal_guard(request, policy=None):
             r["symbol"]
             for r in catalog["entries"]
             if r["status"] == "UNRESOLVED"
+            or r.get("guard_pending_review") is True
             or (r["status"] == "UNKNOWN" and r["credible_event_evidence"])
         ),
         unknown=sorted(
             r["symbol"]
             for r in catalog["entries"]
-            if r["status"] == "UNKNOWN" and not r["credible_event_evidence"]
+            if r["status"] == "UNKNOWN"
+            and not r["credible_event_evidence"]
+            and not r.get("guard_pending_review", False)
         ),
         children=sorted({s for r in catalog["entries"] for s in r["children"]}),
         runtime_consumable=False,
         certifiable=False,
         **p.binding,
     )
+    if registration is not None:
+        payload.update(
+            B_catalog_release_sha256=None,
+            B_derivation_sha256=derived["B_derivation_sha256"],
+            catalog_registration_only=True,
+            fact_counts=derived["fact_counts"],
+        )
     return dict(payload, noncash_guard_manifest_sha256=digest(payload))
 
 
@@ -225,6 +268,11 @@ def zero_exposure(state, guard, *, initial=False):
     ):
         raise ValueError("B.zero_exposure_unproven_or_old_rights")
     blocked = set(guard["B"]) | set(guard["unknown"]) | set(guard["children"])
+    # An undeclared child cannot acquire an exemption by being absent from
+    # the current directory. The frozen domain plus QQQ is the outer boundary.
+    blocked.update(
+        set(state["inventory"]) - set(guard["request"]["catalog"]["universe"]) - {"QQQ"}
+    )
     if any(q and (initial or s in blocked) for s, q in state["inventory"].items()):
         raise ValueError("B.nonzero_initial_or_guarded_exposure")
     for order in state["pending_orders"]:
@@ -240,7 +288,12 @@ def zero_exposure(state, guard, *, initial=False):
         if (
             order["side"] == "BUY"
             and order["quantity"]
-            and (initial or order["symbol"] in blocked)
+            and (
+                initial
+                or order["symbol"] in blocked
+                or order["symbol"]
+                not in set(guard["request"]["catalog"]["universe"]) | {"QQQ"}
+            )
         ):
             raise ValueError("B.guarded_pending_buy")
 

@@ -80,7 +80,16 @@ IMPORTS = {
     },
     "scope_reader": {"contract", "input_scope", "json", "pathlib"},
     "input_scope": set(),
-    "noncash_v3": {"copy", "datetime", "contract", "conventions", "fees", "state_v2"},
+    "noncash_v3": {
+        "copy",
+        "datetime",
+        "contract",
+        "conventions",
+        "fees",
+        "state_v2",
+        "catalog_v21",
+    },
+    "catalog_v21": {"csv", "io", "json", "contract", "conventions"},
     "pending": {"__future__", "contract", "execution", "input_scope", "pipeline"},
     "validation": {
         "__future__",
@@ -227,6 +236,7 @@ def b2_isolation_proof(policy):
     if set(gates) != set(ROLES) or len(readers) != 2:
         raise ValueError("scope.reader_or_role_set_changed")
     if file_reads != {
+        "catalog_v21": 1,
         "execution": 2,
         "pipeline": 1,
         "reference_inputs": 1,
@@ -257,6 +267,11 @@ def b2_isolation_proof(policy):
         ],
         "reference_benchmark_symbol": "QQQ",
         "non_market_read_whitelist": {
+            "catalog_v21": [
+                "catalog-v21/EVO893-B-noncash-catalog-v21.csv",
+                "catalog-v21/EVO893-B-CMI-guard-v21.json",
+                "catalog-v21/EVO883-v21-final-receipt.json",
+            ],
             "execution": ["fee_params_x2.json", "fee_schedule.json"],
             "pipeline": [
                 "predeclared_reference_registry.json",
@@ -285,7 +300,15 @@ def noncash_isolation_proof(policy):
     )
 
     root = Path(__file__).parent
-    names = ("noncash_v3", "isolation", "execution", "valuation", "k5", "folds")
+    names = (
+        "noncash_v3",
+        "catalog_v21",
+        "isolation",
+        "execution",
+        "valuation",
+        "k5",
+        "folds",
+    )
     raw_sources = {name: (root / (name + ".py")).read_bytes() for name in names}
     trees = {name: ast.parse(raw) for name, raw in raw_sources.items()}
 
