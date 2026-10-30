@@ -21,6 +21,7 @@ def prepare_request(
     *,
     sealed_scope=None,
     sealed_manifest=None,
+    reference_proofs=None,
 ):
     from .reference_check import verify_registry
 
@@ -79,6 +80,15 @@ def prepare_request(
         if sealed_scope is not None and sealed_scope != expected:
             raise ValueError("reference.same_B_and_E_t_required")
         request["sealed_scope"] = expected
+        from .reference_noncash import actors, validate_packet
+
+        if not isinstance(reference_proofs, dict) or set(reference_proofs) != set(
+            actors()
+        ):
+            raise ValueError("reference.separate_three_proofs_required")
+        for actor, packet in reference_proofs.items():
+            validate_packet(expected["guard"], actor, packet, policy)
+        request["reference_proofs"] = reference_proofs
     return request
 
 

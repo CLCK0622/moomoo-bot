@@ -237,7 +237,7 @@ def economic_read_receipt(guard, consumer, symbols, reader, *, policy=None):
         guard_mechanism_sha256=code_sha(guarded_value),
         noncash_guard_manifest_sha256=guard["noncash_guard_manifest_sha256"],
         input_kind="numeric_values",
-        read_boundary_exercised=True,
+        read_boundary_exercised=bool(symbols),
         independently_verified=False,
         runtime_consumable=False,
     )
@@ -371,6 +371,7 @@ def no_dependency_receipt(guard, actor, origin, reads, policy=None):
             or set(receipt) != required
             or receipt["consumer"] != consumer
             or not isinstance(receipt["symbols"], list)
+            or not receipt["symbols"]
             or receipt["input_kind"] != "numeric_values"
             or receipt["read_boundary_exercised"] is not True
             or receipt["noncash_guard_manifest_sha256"]

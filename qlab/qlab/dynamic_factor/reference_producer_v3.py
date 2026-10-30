@@ -12,7 +12,7 @@ import json
 from .fold_split import train_slice
 from .reference_inputs import read_inputs
 from .reference_guard import install
-from .reference_v3_scope import validate_scope, check_panel
+from .reference_v3_scope import validate_scope, check_panel, check_reference_packets
 
 
 def prepare(root, request):
@@ -22,6 +22,7 @@ def prepare(root, request):
         "profile_binding",
         "dispatch",
         "sealed_scope",
+        "reference_proofs",
     }:
         raise ValueError("reference.request_contains_non_train_inputs")
     if (
@@ -54,6 +55,7 @@ def prepare(root, request):
         if hashlib.sha256(raw).hexdigest() != receipt[role + "_calendar_sha256"]:
             raise ValueError("reference.view_hash_mismatch")
     scope = validate_scope(request["sealed_scope"], view, request["profile_binding"])
+    check_reference_packets(request["reference_proofs"], scope)
     inputs = read_inputs(root, request["inputs"], dates)
     check_panel(scope, inputs["panel"]["rows"], dates)
     projection_raw = inputs["profile"]["fold_bindings_raw"]

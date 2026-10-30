@@ -1,5 +1,4 @@
 import json
-from copy import deepcopy
 
 import pytest
 
@@ -28,7 +27,7 @@ from qlab.dynamic_factor.reference_boundary import (
 from qlab.dynamic_factor.reference_v3_evidence import lineage_proof, runtime_check
 from qlab.dynamic_factor.reference_v3_scope import check_panel
 from qlab.dynamic_factor.isolation import eligible_day, score_day
-from v3_reference_helpers import sealed, unit_scope, protocol_scope
+from v3_reference_helpers import sealed, unit_scope, protocol_scope, reference_proofs
 from test_v2_isolation import synthetic_scores
 
 
@@ -98,7 +97,17 @@ def test_real_v21_worker_reads_no_files_and_does_not_substitute_QQQ(tmp_path):
     p = load_conventions()
     fold = p.fold_manifest()["folds"][0]
     view = shared_views(p.calendar, fold, train_days=1260, warmup_days=252)
-    request = prepare_request(p, fold, view, {}, sealed_manifest=sealed(real=True))
+    manifest = sealed(real=True)
+    request = prepare_request(
+        p,
+        fold,
+        view,
+        {},
+        sealed_manifest=manifest,
+        reference_proofs=reference_proofs(
+            manifest["request"]["noncash_guard_manifest"]
+        ),
+    )
     report = run_isolated(tmp_path, request)
     assert "quantity_unknown" in report["reason"]
     assert report["access_boundary_receipt"]["accessed_roles"] == []
@@ -191,6 +200,7 @@ def test_v3_full_protocol_positive_is_train_only_and_prepares_no_performance(tmp
         },
         dispatch={m: member_spec(m) for m in sorted(DISPATCH)},
         sealed_scope=scope,
+        reference_proofs=reference_proofs(scope["guard"]),
     )
     assert declared["train_session_count"] == 1260
     report = run_isolated(tmp_path, request)

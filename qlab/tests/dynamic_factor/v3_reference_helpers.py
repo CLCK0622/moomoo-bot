@@ -71,3 +71,36 @@ def protocol_scope(train, warmup):
     )
     s["scope_sha256"] = digest({k: v for k, v in s.items() if k != "scope_sha256"})
     return s
+
+
+def synthetic_numeric_reader(symbol):
+    return 100.0
+
+
+def reference_proofs(guard):
+    from qlab.dynamic_factor.reference_noncash import (
+        actors,
+        origin,
+        acquisition,
+        numeric_read,
+        packet,
+    )
+    from qlab.dynamic_factor.noncash_v3 import CONSUMERS, ROUTES
+    from v3_test_helpers import synthetic_zero_state
+
+    out = {}
+    for actor in actors():
+        state = synthetic_zero_state(guard)
+        initial = origin(
+            guard, actor, state, digest("SYNTHETIC_REFERENCE_STATE/" + actor)
+        )
+        routes = {
+            route: acquisition(guard, actor, initial, state, state, route)
+            for route in sorted(ROUTES)
+        }
+        reads = {
+            role: numeric_read(guard, actor, role, ["QQQ"], synthetic_numeric_reader)[1]
+            for role in sorted(CONSUMERS)
+        }
+        out[actor] = packet(guard, actor, initial, routes, reads)
+    return out

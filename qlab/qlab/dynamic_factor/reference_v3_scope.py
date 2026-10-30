@@ -315,6 +315,209 @@ def validate_scope(scope, view, binding):
     return scope
 
 
+def zero_state(state, scope, initial=False):
+    fields = {
+        "inventory",
+        "cash",
+        "nav",
+        "age",
+        "origin",
+        "rights",
+        "receivables",
+        "pending_orders",
+        "unknown_components",
+        "initialization_count",
+    }
+    if (
+        not isinstance(state, dict)
+        or not fields.issubset(state)
+        or set(state) - fields - {"date", "retired_ids", "exit_intents"}
+    ):
+        raise ValueError("reference.R2_zero_exposure_state_unknown")
+
+    def unknown(value):
+        return (
+            value is None
+            or (isinstance(value, dict) and any(unknown(v) for v in value.values()))
+            or (isinstance(value, list) and any(unknown(v) for v in value))
+        )
+
+    if (
+        any(unknown(state[k]) for k in fields)
+        or state["rights"]
+        or state["receivables"]
+        or state["unknown_components"]
+        or state["initialization_count"] != 1
+    ):
+        raise ValueError("reference.R2_zero_exposure_state_unknown")
+    if (
+        type(state["cash"]) not in (int, float)
+        or type(state["nav"]) not in (int, float)
+        or not math.isfinite(state["cash"])
+        or not math.isfinite(state["nav"])
+        or state["cash"] < 0
+        or state["nav"] <= 0
+    ):
+        raise ValueError("reference.R2_zero_exposure_state_unknown")
+    guard = scope["guard"]
+    domain = set(scope["universe"]) | set(guard["children"])
+    if not domain.issubset(state["inventory"]) or any(
+        type(q) is not int or q < 0 for q in state["inventory"].values()
+    ):
+        raise ValueError("reference.R2_zero_exposure_state_unknown")
+    blocked = set(guard["B"]) | set(guard["unknown"]) | set(guard["children"])
+    if any(
+        q and (initial or s in blocked or s not in set(scope["universe"]) | {"QQQ"})
+        for s, q in state["inventory"].items()
+    ):
+        raise ValueError("reference.R2_nonzero_guarded_exposure")
+    if not isinstance(state["pending_orders"], list):
+        raise ValueError("reference.R2_zero_exposure_state_unknown")
+    for order in state["pending_orders"]:
+        if (
+            set(order) != {"symbol", "side", "quantity"}
+            or order["side"] not in {"BUY", "SELL"}
+            or type(order["quantity"]) is not int
+            or order["quantity"] < 0
+        ):
+            raise ValueError("reference.R2_zero_exposure_state_unknown")
+        if (
+            order["side"] == "BUY"
+            and order["quantity"]
+            and (
+                initial
+                or order["symbol"] in blocked
+                or order["symbol"] not in set(scope["universe"]) | {"QQQ"}
+            )
+        ):
+            raise ValueError("reference.R2_guarded_pending_buy")
+
+
+def check_reference_packets(proofs, scope):
+    actors = {
+        "reference/CREF-F1-L020",
+        "reference/CREF-F3-L020",
+        "reference/MREF-F2-L020",
+        "reference/MREF-F4-L020",
+    }
+    routes = {
+        "buy",
+        "pending_order",
+        "migration",
+        "exchange",
+        "in_kind_distribution",
+        "old_rights",
+    }
+    consumers = {
+        "score",
+        "label",
+        "calibration",
+        "holdings_valuation",
+        "cash_valuation",
+        "order",
+    }
+    if not isinstance(proofs, dict) or set(proofs) != actors:
+        raise ValueError("reference.separate_three_proofs_required")
+    for actor, packet in proofs.items():
+        fields = {
+            "actor",
+            "producer_kind",
+            "registry_sha256",
+            "noncash_guard_manifest_sha256",
+            "zero_origin",
+            "no_acquisition",
+            "economic_no_read",
+            "scope",
+            "independently_verified",
+            "real_runtime_proven",
+            "runtime_consumable",
+            "certifiable",
+            "reference_proof_packet_sha256",
+        }
+        if (
+            set(packet) != fields
+            or packet["actor"] != actor
+            or packet["producer_kind"] != "reference"
+            or packet["real_runtime_proven"] is not False
+            or packet["independently_verified"] is not False
+            or packet["runtime_consumable"] is not False
+            or packet["certifiable"] is not False
+            or packet["registry_sha256"]
+            != "f531d65a5ad54fc68a8be40bc25cbb3987d0aeedd4c2c345ed334b1599445c48"
+            or packet["noncash_guard_manifest_sha256"]
+            != scope["guard"]["noncash_guard_manifest_sha256"]
+            or packet["reference_proof_packet_sha256"]
+            != digest(
+                {
+                    k: v
+                    for k, v in packet.items()
+                    if k != "reference_proof_packet_sha256"
+                }
+            )
+        ):
+            raise ValueError("reference.separate_proof_packet_mismatch")
+        origin = packet["zero_origin"]
+        no_buy = packet["no_acquisition"]
+        no_read = packet["economic_no_read"]
+        zero_state(origin["initial_state"], scope, initial=True)
+        if (
+            origin["actor"] != actor
+            or no_buy["actor"] != actor
+            or no_read["actor"] != actor
+            or set(no_buy["routes"]) != routes
+            or set(no_read["reads"]) != consumers
+        ):
+            raise ValueError("reference.separate_routes_and_consumers_required")
+        for doc, key in [
+            (origin, "zero_origin_receipt_sha256"),
+            (no_buy, "no_acquisition_receipt_sha256"),
+            (no_read, "economic_no_read_receipt_sha256"),
+        ]:
+            if doc[key] != digest({k: v for k, v in doc.items() if k != key}):
+                raise ValueError("reference.proof_receipt_identity_invalid")
+        if (
+            no_buy["zero_origin_receipt_sha256"] != origin["zero_origin_receipt_sha256"]
+            or no_read["zero_origin_receipt_sha256"]
+            != origin["zero_origin_receipt_sha256"]
+            or no_read["no_acquisition_receipt_sha256"]
+            != no_buy["no_acquisition_receipt_sha256"]
+        ):
+            raise ValueError("reference.proof_origin_link_invalid")
+        for route, receipt in no_buy["routes"].items():
+            if (
+                receipt["actor"] != actor
+                or receipt["route"] != route
+                or receipt["zero_origin_receipt_sha256"]
+                != origin["zero_origin_receipt_sha256"]
+                or receipt["noncash_guard_manifest_sha256"]
+                != scope["guard"]["noncash_guard_manifest_sha256"]
+                or receipt["route_receipt_sha256"]
+                != digest(
+                    {k: v for k, v in receipt.items() if k != "route_receipt_sha256"}
+                )
+            ):
+                raise ValueError("reference.acquisition_induction_receipt_mismatch")
+            zero_state(receipt["before"], scope)
+            zero_state(receipt["after"], scope)
+        for role, read in no_read["reads"].items():
+            inner = read["numeric_receipt"]
+            if (
+                read["actor"] != actor
+                or read["consumer"] != role
+                or not inner["symbols"]
+                or inner["input_kind"] != "numeric_values"
+                or inner["read_boundary_exercised"] is not True
+                or set(inner["symbols"])
+                & (
+                    set(scope["guard"]["B"])
+                    | set(scope["guard"]["unknown"])
+                    | set(scope["guard"]["children"])
+                )
+                or not set(inner["symbols"]).issubset(set(scope["universe"]) | {"QQQ"})
+            ):
+                raise ValueError("reference.numeric_boundary_proof_required")
+
+
 def check_panel(scope, rows, dates):
     if [r["date"] for r in rows] != list(dates):
         raise ValueError("reference.only_complete_train_warmup_visible")

@@ -306,6 +306,8 @@ def noncash_isolation_proof(policy):
     names = (
         "noncash_v3",
         "catalog_v21",
+        "catalog_members",
+        "reference_noncash",
         "isolation",
         "execution",
         "valuation",
@@ -426,6 +428,8 @@ def noncash_isolation_proof(policy):
         B_catalog_reason=CATALOG_REASON,
         scope="Owned factor and virtual-monitor input boundaries, supplied complete source states, and trusted callbacks; not an arbitrary Python OS sandbox or real-account attestation.",
         reference_producer_proof_completed=False,
+        reference_producer_separate_mechanism_proof_available=True,
+        reference_producer_real_runtime_proven=False,
         factor_cash_entrypoint="factor_cash_valuation",
         generic_accounting_is_factor_proof=False,
         real_origin_proofs=None,
