@@ -442,6 +442,9 @@ def run(workdir):
         from .f1f2_harness import cases as review_cases
 
         revisions.extend(review_cases(workdir, policy))
+        from .f3_harness import cases as metadata_cases
+
+        revisions.extend(metadata_cases(policy))
         from .invariance_harness import probe as invariance_probe
 
         invariance = invariance_probe(workdir, policy)

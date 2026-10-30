@@ -53,13 +53,35 @@ def continuous_path_check(request, *, conventions=None):
     seen_results, attempts = set(), set()
     retained_inventory, retained_exit_intents = None, None
     try:
+        # Preserve submitted declarations before any validation can halt. Map
+        # by frozen ID so a missing/reordered row cannot shift later receipts.
+        rows = request["folds"]
+        by_id = {out["fold_id"]: out for out in outputs}
+        for row in rows:
+            if not isinstance(row, dict) or type(row.get("fold_id")) not in (int, str):
+                continue
+            out = by_id.get(row["fold_id"])
+            if out is not None:
+                out.update(
+                    {
+                        k: deepcopy(row.get(k))
+                        for k in (
+                            "attempt_id",
+                            "attempted",
+                            "budget_state",
+                            "N_receipt",
+                            "inventory",
+                            "exit_intents",
+                        )
+                    }
+                )
+                out["metadata_validation_status"] = "pending"
         published = latest_external_witness()
         n_previous = request.get("initial_recorded_N", published["n_high_water"])
         sources()
         if type(n_previous) is not int or n_previous < published["n_high_water"]:
             raise ValueError("ledger.N_receipt_below_published_anchor")
         reject_b2_inputs(request, "qqq_labels")
-        rows = request["folds"]
         ids = [r["fold_id"] for r in rows]
         if ids != [r["fold_id"] for r in expected["folds"]]:
             raise ValueError("wf.all_original_folds_required")
@@ -68,13 +90,6 @@ def continuous_path_check(request, *, conventions=None):
         if request.get("restart_capital"):
             raise ValueError("wf.capital_restart_forbidden")
         for i, (row, fold, out) in enumerate(zip(rows, expected["folds"], outputs)):
-            out.update(
-                {
-                    k: deepcopy(row.get(k))
-                    for k in ("attempt_id", "budget_state", "inventory", "exit_intents")
-                }
-            )
-            out["attempted"] = row.get("attempted") is True
             out["reasons"] = list(row.get("reasons", []))
             budget = row.get("budget_state") or {}
             if (
@@ -101,7 +116,7 @@ def continuous_path_check(request, *, conventions=None):
             if row["attempt_id"] in attempts:
                 raise ValueError("ledger.fold_attempt_identity_reused")
             attempts.add(row["attempt_id"])
-            if out["attempted"]:
+            if row.get("attempted") is True:
                 n = row.get("N_receipt", {})
                 if (
                     n.get("attempt_id") != row["attempt_id"]
@@ -112,7 +127,7 @@ def continuous_path_check(request, *, conventions=None):
                 ):
                     raise ValueError("ledger.failure_or_retry_not_counted")
                 n_previous = n["N_after"]
-                out["N_receipt"] = deepcopy(n)
+            out["metadata_validation_status"] = "consistent"
             if stopped:
                 out.update(
                     status="blocked",
@@ -185,7 +200,8 @@ def continuous_path_check(request, *, conventions=None):
         reasons.append(
             str(exc) if isinstance(exc, ValueError) else "wf.continuity_receipt_invalid"
         )
-        # Never leave a fragment interpretable as an accepted full path.
+        # Only mark blocked/reason here; retain every pre-copied declaration,
+        # including pending metadata on rows validation has not reached.
         for out in outputs:
             if out["status"] == "not_run":
                 out.update(status="blocked", reasons=[reasons[-1]])

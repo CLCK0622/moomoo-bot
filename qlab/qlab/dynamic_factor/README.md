@@ -128,8 +128,15 @@ claims; acceptance of authority and history remains external.
 The runtime checker requires that seal to precede every reference start, and
 sidecars to precede current S0. `lineage_proof` enumerates P1–P7 and leaves actual
 run/output fields null. The earlier registration/R1 seal and proof remain archived in `evidence/evo892/`.
-The current input/scope increment is resealed in `evidence/evo884-input-v1/`;
-old source seals cannot authenticate changed code.
+The effective seal is indexed by `evidence/current-seal-index.json` and stored
+in `evidence/evo884-f3-t1-v1/`. Old source seals cannot authenticate changed code.
+05:16 件是历史 `45eb817` 封存，已由 06:05:55 当前件替代。
+The 06:05:55 seal in `evidence/evo884-handoff-v1/` matches historical HEAD
+`6c63505f72135063162c1f55ecfaa03514f1fa32`. F3 changes the sealed `continuity.py`,
+so the new seal supersedes that receipt for this commit's sources. Historical
+files and platform attachments remain intact. The final handoff binds the exact
+commit SHA after a fresh clone verifies the seal's 21 source hashes; no earlier
+seal is claimed to match the F3 HEAD. Independent review is still required.
 There are no fabricated actual run IDs or real return artifacts. Harness runtime
 sentinels are explicitly SYNTHETIC_UNIT values, never authority/research inputs.
 
@@ -283,6 +290,17 @@ dates use restored research TAF; original x1/x2 parameter bytes remain unchanged
 The earlier 45eb817 output identities include the now-rejected F1 cache input;
 use the subsequent clean-clone F1/F2 receipts for current reproduction. Historical
 archives are preserved with their original commits, not upgraded to current proof.
+
+F3: `continuous_path_check` copies submitted attempt, attempted, budget and N
+declarations by frozen fold ID before validating any row or prerequisite.
+`metadata_validation_status=pending` means an unchecked declaration, not an
+accepted N/budget receipt; `consistent` means the local metadata checks passed.
+Hard rejection changes only blocked status/reasons on unvisited rows. Missing
+folds retain their null placeholders; later submitted declarations remain on
+their original IDs. Rejection still stops validation, returns stay null, and
+no A/IR/interval or runtime acceptance is produced. Harness regressions cover
+early rejection, the audit's index-31 state-link mismatch, and a missing fold,
+comparing all four metadata fields on every submitted row, including 32–76.
 
 ## B2 field provenance and snapshot switch
 
