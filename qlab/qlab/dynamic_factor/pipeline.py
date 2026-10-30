@@ -19,8 +19,12 @@ from .fees import finite
 from .input_scope import reject_b2_inputs
 
 
-def read_pinned(path, expected_sha256):
+def read_pinned(path, expected_sha256, *, conventions=None):
     from .reference_registry import HASHES
+    from .conventions import load_conventions
+
+    if (conventions or load_conventions()).document["version"] == "v3.0.0":
+        from .reference_registry_v3 import HASHES
 
     if (
         Path(path).name

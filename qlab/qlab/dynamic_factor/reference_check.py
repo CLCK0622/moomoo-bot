@@ -15,6 +15,17 @@ from .contract import digest, result, sha256, unavailable
 from .conventions import load_conventions
 
 MODULES = {
+    "reference_producer_v3": {
+        "argparse",
+        "hashlib",
+        "json",
+        "fold_split",
+        "reference_inputs",
+        "reference_guard",
+        "reference_v3_scope",
+    },
+    "reference_v3_scope": {"hashlib", "json", "math", "catalog_members"},
+    "catalog_members": set(),
     "reference_producer": {
         "argparse",
         "hashlib",
@@ -53,7 +64,7 @@ def static_proof():
                 except (ValueError, TypeError):
                     pass
             if (
-                name == "reference_producer"
+                name in {"reference_producer", "reference_producer_v3"}
                 and isinstance(statement, ast.If)
                 and ast.unparse(statement.test) == "__name__ == '__main__'"
             ):
@@ -99,7 +110,7 @@ def static_proof():
             raise ValueError("reference.static_dependency_forbidden")
         graph[name] = sorted(imports)
         sources[name + ".py"] = sha256(raw)
-        if name == "reference_producer":
+        if name in {"reference_producer", "reference_producer_v3"}:
             main = next(
                 n
                 for n in tree.body
@@ -137,10 +148,22 @@ def static_proof():
 def verify_registry(registry, manifests, policy, first_performance_at):
     from .reference_registry import artifact, HASHES, DISPATCH
 
+    if policy.document["version"] == "v3.0.0":
+        from .reference_registry_v3 import artifact, HASHES, DISPATCH
+
     if registry is None:
         raise ValueError("reference.registry_missing")
     if manifests is None or set(manifests) != {"candidate", "meta"}:
         raise ValueError("reference.manifest_missing")
+    if (
+        policy.document["version"] == "v3.0.0"
+        and isinstance(registry, dict)
+        and isinstance(registry.get("raw"), str)
+        and registry.get("sha256") == sha256(registry["raw"].encode())
+        and registry.get("document") == json.loads(registry["raw"])
+        and registry["document"].get("version") in {"1.0.0", "2.0.0"}
+    ):
+        raise ValueError("reference.profile_or_version_mismatch")
 
     def checked(wrapper, name, reason):
         if (

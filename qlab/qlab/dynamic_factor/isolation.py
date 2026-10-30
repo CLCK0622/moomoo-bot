@@ -152,6 +152,11 @@ def checked_manifest(sealed, policy):
 def eligible_day(sealed, date, policy=None):
     p = policy or load_conventions()
     checked_manifest(sealed, p)
+    return _eligible_day(sealed, date, p)
+
+
+def _eligible_day(sealed, date, p):
+    """Shared derivation after a caller has authenticated the whole manifest."""
     if date not in p.calendar:
         raise ValueError("isolation.date_outside_calendar")
     i = p.calendar.index(date)

@@ -12,6 +12,7 @@ from .contract import code_sha, digest, is_sha, result
 from .conventions import load_conventions
 from .fees import finite
 from .state_v2 import necessary_state_known
+from .catalog_members import members
 
 ACCEPTED_CATALOG_SHA256 = None
 CATALOG_REASON = "EVO883/01a18ca6-5887-71b9-b06d-7777e5139585: v21 protective registration; 61 fact UNKNOWN; runtime B release remains absent"
@@ -158,24 +159,13 @@ def seal_guard(request, policy=None):
         and (ACCEPTED_CATALOG_SHA256 is None or catalog_sha != ACCEPTED_CATALOG_SHA256)
     ):
         raise ValueError("B.catalog_not_accepted_for_runtime_sealing")
+    blocked, unknown = members(catalog["entries"])
     payload = dict(
         request=deepcopy(request),
         catalog_sha256=catalog_sha,
         accepted_catalog_sha256=ACCEPTED_CATALOG_SHA256,
-        B=sorted(
-            r["symbol"]
-            for r in catalog["entries"]
-            if r["status"] == "UNRESOLVED"
-            or r.get("guard_pending_review") is True
-            or (r["status"] == "UNKNOWN" and r["credible_event_evidence"])
-        ),
-        unknown=sorted(
-            r["symbol"]
-            for r in catalog["entries"]
-            if r["status"] == "UNKNOWN"
-            and not r["credible_event_evidence"]
-            and not r.get("guard_pending_review", False)
-        ),
+        B=blocked,
+        unknown=unknown,
         children=sorted({s for r in catalog["entries"] for s in r["children"]}),
         runtime_consumable=False,
         certifiable=False,

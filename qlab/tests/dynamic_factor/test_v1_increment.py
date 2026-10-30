@@ -102,6 +102,9 @@ def test_reference_uses_shared_splitter_and_pinned_three_reader_graph(tmp_path):
     proof = static_proof()
     assert set(proof["import_graph"]) == {
         "reference_producer",
+        "reference_producer_v3",
+        "reference_v3_scope",
+        "catalog_members",
         "reference_inputs",
         "fold_split",
         "reference_guard",
@@ -110,6 +113,7 @@ def test_reference_uses_shared_splitter_and_pinned_three_reader_graph(tmp_path):
     assert proof["reader_sites"][0]["module"] == "reference_inputs"
     assert len(proof["reader_sites"]) == 1
     assert "pipeline" not in proof["import_graph"]["reference_producer"]
+    assert "pipeline" not in proof["import_graph"]["reference_producer_v3"]
     command = [
         sys.executable,
         "-m",

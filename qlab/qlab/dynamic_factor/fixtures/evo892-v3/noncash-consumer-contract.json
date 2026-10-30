@@ -1,0 +1,157 @@
+{
+  "acquisition_paths": [
+    "ordinary_buy",
+    "pending_order",
+    "migration",
+    "exchange",
+    "in_kind_distribution",
+    "legacy_entitlement"
+  ],
+  "actual_B_catalog_release_sha256": null,
+  "actual_B_derivation_sha256": null,
+  "actual_noncash_guard_manifest_sha256": null,
+  "actual_zero_exposure_and_consumer_dependency_receipt_sha256": null,
+  "bindings": {
+    "N_scope_contract_sha256": "307941909d1adc921af700f12a58370b309148a6799bdc14bc76747a4bcfa27e",
+    "common_calendar_sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "common_profile_sha256": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",
+    "cost_x1_sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "cost_x2_sha256": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "fold_manifest_sha256": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "frozen_interface_sha256": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+    "interface_to_consume_sha256": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+    "isolation_contract_id": "PRE_SCORE_ISOLATION_V3",
+    "isolation_contract_sha256": "4cc2e04bb1b1e3b604f08f2c3577eb9bc8aac63d70c07811e012241b17ae0ed3",
+    "noncash_contract_id": "NO_UNCLOSED_IN_KIND_EXPOSURE_V3",
+    "noncash_contract_sha256": "78271bf1093f32a56a8d6036e5b9d9cb1de7900697a012fe7504af36df8c5752",
+    "panel64_sha256": "ae9332ff345dae69866a6a78fcbb07201ef7ac14b4ff82d714a1282330103ee4",
+    "prereg_sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+    "prereg_version": "v3",
+    "profile_serialization": "canonical_UTF8_sort_keys_ensure_ascii_false_compact_comma_colon_no_final_LF"
+  },
+  "capacity61_not_verified_count": true,
+  "child_price_result_only_after_all_proofs": "not_applicable_with_evidence_not_zero_price",
+  "core_QQQ_dependency_not_waived": true,
+  "directory_or_audit_SHA_read_not_economic_no_read_proof": true,
+  "economic_consumers": [
+    "scoring",
+    "labels",
+    "calibration",
+    "valuation",
+    "cash",
+    "orders"
+  ],
+  "economic_order": "apply_B_guard_before_numeric_price_TR_ADV_recipe_or_label_validation_then_v3_eligibility_and_rank",
+  "existing_or_unknown_v2_state_not_erased": true,
+  "forward_branches_exact": {
+    "already_flat_with_no_pending_buy_or_rights": "continue_other_paths_only_if_all_original_gates_and_no_dependency_proof_complete",
+    "already_held_or_rights_or_state_unknown": "stop_formal_v3_path_at_detection_preserve_inventory_and_rights_no_automatic_exit_no_complete63_day_claim",
+    "continuous_horizon_guaranteed": false,
+    "information": "only_evidence_received_by_signal_close_no_future_announcements_or_backdated_orders",
+    "new_unclosed_event": "add_parent_to_B_from_received_cutoff_block_new_buys_immediately",
+    "recovery": "no_automatic_restart_of_stopped_or_retired_version_no_clock_reset_original_authority_and_version_controls",
+    "unexpected_event_discovered_late": "do_not_rewrite_prior_orders_or_assume_no_entitlement_R2_stop_affected_formal_path_and_preserve_invalid_days"
+  },
+  "forward_unconditional_stop_on_event": false,
+  "frozen_policy_exact": {
+    "all64_catalog_complete_or_strict_count_claimed": false,
+    "benchmark_core": "if_required_QQQ_or_other_nonisolatable_core_right_is_unclosed_use_original_R2_or_B2_scoped_rule_no_forced_satellite_waiver",
+    "child_prices": {
+      "VSM_2016_10_03_to_2021_08_31_series_mandatory_for_valid_zero_exposure_path": false,
+      "noncash_sale_fractional_or_delisting_conversion_algorithm_introduced": false,
+      "proxy_highlow_FMV_or_later_close_as_execution_price": false,
+      "rights_for_preexisting_or_unproven_inventory": "still_required_not_discarded",
+      "value_for_absent_child": "not_applicable_with_induction_and_no_read_proof_not_a_zero_market_price"
+    },
+    "choice": "authorized_option_b_conservative_no_entry_not_forced_exit_or_proxy_price_liquidation",
+    "existing_state_and_migration": {
+      "actual_historical_budget_consumed": "reconcile_existing_persisted_budget_before_any_run_no_new_cash_reset_permission_from_this_version",
+      "existing_parent_child_right_cash_or_age_may_be_erased": false,
+      "inherited_real_account_access_required": false,
+      "nonzero_or_unknown_guarded_state": "reject_automatic_migration_keep_known_state_and_unknown_components_R2_no_synthetic_liquidation_or_clock_restart",
+      "zero_origin_proof_required": "source_state_inventory_pending_orders_entitlements_receivables_cash_migration_and_all_producer_reads"
+    },
+    "forward": {
+      "already_flat_with_no_pending_buy_or_rights": "continue_other_paths_only_if_all_original_gates_and_no_dependency_proof_complete",
+      "already_held_or_rights_or_state_unknown": "stop_formal_v3_path_at_detection_preserve_inventory_and_rights_no_automatic_exit_no_complete63_day_claim",
+      "continuous_horizon_guaranteed": false,
+      "information": "only_evidence_received_by_signal_close_no_future_announcements_or_backdated_orders",
+      "new_unclosed_event": "add_parent_to_B_from_received_cutoff_block_new_buys_immediately",
+      "recovery": "no_automatic_restart_of_stopped_or_retired_version_no_clock_reset_original_authority_and_version_controls",
+      "unexpected_event_discovered_late": "do_not_rewrite_prior_orders_or_assume_no_entitlement_R2_stop_affected_formal_path_and_preserve_invalid_days"
+    },
+    "guard_manifest_required_fields": [
+      "symbol",
+      "event_or_candidate_id",
+      "direct_holder_role",
+      "dependency_scope",
+      "evidence_sha256",
+      "state_reason",
+      "release_and_information_cutoff",
+      "B_membership",
+      "zero_origin_state_proof",
+      "consumer_no_read_proof"
+    ],
+    "guard_seed_is_full_action_inventory": false,
+    "held_age_turnover_gain_and_fee_policy": "original_rebalance_unchanged_no_D04_min_age_or_fee_gain_waiver",
+    "history": {
+      "after_first_outcome": "B_and_catalog_release_immutable_for_this_history_attempt_no_post_result_unblocking_reselection_or_rerun_without_version_N_budget_adjudication",
+      "analytical_dependency": "do_not_construct_or_consume_B_TR_or_H10_H5_or_factor_features_in_score_calibration_or_reference_portfolio_forecasts",
+      "bias": "uses_ex_post_event_and_evidence_availability_across_registered_domain_not_point_in_time_not_lookahead_free_not_a_forward_performance_proof",
+      "domain": "whole_original_3191_session_registered_input_domain_including_warmup_train_labels_test_post",
+      "effect": "B_excluded_from_all_signal_date_E_t_and_all_calibration_label_members_for_entire_registered_evaluation_domain",
+      "evaluation_order": "apply_B_guard_before_numerical_price_TR_ADV_recipe_or_label_validation_for_guarded_roles_no_evaluate_then_drop",
+      "guard_set_B": "union_of_parents_with_unclosed_direct_in_kind_dependency_in_this_domain_or_its_required_input_lineage",
+      "initial_state": "registered_simulation_accounts_start_all_inventory_zero_no_child_rights_or_non_cash_receivables_from_B_unproven_initial_state_reject",
+      "inventory_invariant": "q_parent_B_equals0_at_all_closes_and_entitlement_cutoffs_by_zero_initial_and_no_acquisition_induction_not_by_deleting_state",
+      "orders": "every_buy_or_increase_for_B_rejected_from_account_initialization_through_terminal_no_pending_buy_carry",
+      "ranking": "same_E_t_minus_B_for_all16_no_rank_or_denominator_or_zero_imputation_for_B",
+      "scope_cannot_be_proven": "consumer_unavailable_R2_if_necessary_not_field_zero_or_quiet_waiver",
+      "timing": "complete_catalog_scope_states_and_B_derivation_sealed_before_first_current_version_reference_or_strategy_performance_not_selected_per_fold_returns"
+    },
+    "id": "NO_UNCLOSED_IN_KIND_EXPOSURE_V3",
+    "initial_required_guards": [
+      {
+        "basis": "accepted_v2_and_v16_analytical_dependency_still_unclosed_not_event_before_inventory_exception_for_features",
+        "event": "ADP_CDK_2014",
+        "symbol": "ADP"
+      },
+      {
+        "basis": "v16_v17_event_value_child_lifecycle_unclosed",
+        "event": "APD_VSM_2016",
+        "symbol": "APD"
+      },
+      {
+        "basis": "v16_rights_fractional_cash_disposal_and_execution_contract_unclosed_quotes_alone_not_closure",
+        "event": "CMCSA_VSNT_2026",
+        "symbol": "CMCSA"
+      }
+    ],
+    "missing_catalog_evidence": "UNKNOWN_not_no_event_no_named_verified_count_without_original_gates",
+    "not_lookthrough": "not_child_securities_in_ETF_holdings_not_a_new_selection_member_or_global_ETF_replacement_rule",
+    "quantity": "original50_and252_thresholds_and_GE50_LT50_UNKNOWN_rules_unchanged_64_minus3_is_capacity_only",
+    "reference": "same_B_catalog_release_mask_derivation_zero_origin_and_no_read_contract_for_each_independent_candidate_meta_reference_producer",
+    "run_authorization": false,
+    "scope": "satellite_parent_securities_with_direct_holder_non_cash_distribution_dependency_not_closed_in_registered_required_input_domain",
+    "trigger": {
+      "applies_uniformly": "all_U64_no_ticker_specific_performance_exemptions",
+      "credible_unresolved_candidate": "guard_pending_review_keep_underlying_fact_unknown_no_default_no_event",
+      "unclosed_direct_in_kind_entitlement": "missing_or_unverified_necessary_identity_units_entitlement_valuation_fractional_cash_payment_subsequent_action_or_approved_execution_contract"
+    }
+  },
+  "historical_B_metadata_policy_may_use_ex_post_events": true,
+  "history_B_event_information_is_not_point_in_time_or_forward_performance": true,
+  "history_catalog_scope": "whole_registered3191_session_U64_domain_and_required_lineage",
+  "initial_guard_examples_not_full_catalog": true,
+  "known_ADP_APD_CMCSA_not_used_as_complete_runtime_B": true,
+  "same_B_and_release_for_all16_and_every_independent_reference": true,
+  "schema": "EVO892.reference-noncash-consumer-contract.v3",
+  "test_market_or_strategy_performance_inputs_visible_to_reference": false,
+  "three_proofs_required_per_actual_virtual_and_reference_book": [
+    "zero_origin_inventory_orders_rights_receivables_and_migration",
+    "no_acquisition_induction_across_all_paths",
+    "economic_consumer_no_read_of_guarded_parent_TR_features_labels_forecasts_or_child_prices"
+  ],
+  "version": "3.0.0",
+  "withdrawn_exit_age_gain_or_proportional_restore_not_adopted": true
+}

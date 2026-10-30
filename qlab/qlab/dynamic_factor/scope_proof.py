@@ -62,6 +62,7 @@ IMPORTS = {
         "pathlib",
         "re",
         "reference_registry",
+        "reference_registry_v3",
         "statistics",
     },
     "reference_inputs": {"hashlib", "input_scope", "json", "pathlib"},
@@ -88,7 +89,9 @@ IMPORTS = {
         "fees",
         "state_v2",
         "catalog_v21",
+        "catalog_members",
     },
+    "catalog_members": set(),
     "catalog_v21": {"csv", "io", "json", "contract", "conventions"},
     "pending": {"__future__", "contract", "execution", "input_scope", "pipeline"},
     "validation": {
