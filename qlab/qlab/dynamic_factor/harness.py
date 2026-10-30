@@ -246,7 +246,9 @@ def run(workdir):
         require("dsr.runtime_bindings_pending" in scalar["reasons"], "scalar V bypass")
         require(
             numeric["metrics"]["cumulative_n"] is None
-            and numeric["metrics"]["cumulative_n_lower_bound"] == 47,
+            and numeric["metrics"]["cumulative_n_lower_bound"] is None
+            and numeric["metrics"]["arm_n"]["global_history"]["legacy_count_readout"]
+            == 47,
             "lower bound certified",
         )
         record(
@@ -258,6 +260,7 @@ def run(workdir):
                 "reason": "dsr.runtime_bindings_pending",
                 "cumulative_n": None,
                 "seed_lower_bound": 47,
+                "own_arm_N": None,
                 "scalar_V_rejected": True,
             },
         )

@@ -9,7 +9,10 @@ from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
-from qlab.llm_direct.arm_n import event, project
+from qlab.llm_direct.arm_n import event
+from qlab.dynamic_factor.pipeline import _n_snapshot
+from qlab.dynamic_factor.statistics import dsr_eval
+from qlab.dynamic_factor.contract import source_manifest as dynamic_sources
 from qlab.dynamic_factor.ledger import AttemptLedger
 from qlab.shadow15k import ledger as ledger_module
 from qlab.shadow15k.harness import fixture_fees, offline
@@ -648,9 +651,56 @@ def run(workdir):
                         evidence_sha256=digest([arm, "outcome", i]),
                     ),
                 )
-        factor = project(chain.safe_snapshot(), "EVO883_FACTOR")
-        llm = project(chain.safe_snapshot(), ARM)
-        assert factor["observed_N_config"] == llm["observed_N_config"] == 1
+        # Extra evaluated LLM configurations make cross-arm leakage observable,
+        # while a reserved, unevaluated factor config must add nothing to primary N.
+        for i in range(2):
+            extra = dict(c, parameters={"synthetic_variant": i})
+            chain.record(
+                "extra:%d:reserve" % i, event("configuration_reserved", ARM, extra)
+            )
+            chain.record(
+                "extra:%d:outcome" % i,
+                event(
+                    "market_outcome_evaluated",
+                    ARM,
+                    extra,
+                    evaluation_id="extra:%d" % i,
+                    evidence_sha256=digest(["extra", i]),
+                ),
+            )
+        chain.record(
+            "document-only",
+            event(
+                "configuration_reserved",
+                "EVO883_FACTOR",
+                dict(c, ruleset="unevaluated"),
+            ),
+        )
+
+        def arm_inputs(arm_tag):
+            # Exercise the actual readout/DSR/pipeline entries, not project().
+            before = (chain.path.read_bytes(), chain.anchor_path.read_bytes())
+            ledger_report = chain.arm_readout(arm_tag)
+            request = {} if arm_tag is None else {"arm_tag": arm_tag}
+            dsr_report = dsr_eval(request, chain)
+            pipeline_n = _n_snapshot(chain, 10**9, arm_tag)
+            assert before == (chain.path.read_bytes(), chain.anchor_path.read_bytes())
+            arm = dsr_report["metrics"]["arm_n"]
+            assert ledger_report["metrics"]["arm_n"] == pipeline_n["arm_n"] == arm
+            assert (
+                dsr_report["metrics"]["N_rows"]
+                == ledger_report["metrics"]["N_rows"]
+                == pipeline_n["N_rows"]
+            )
+            assert (
+                dsr_report["metrics"]["dsr"] is None and not dsr_report["certifiable"]
+            )
+            assert pipeline_n["gate_n"] is None and not pipeline_n["n_complete"]
+            return arm
+
+        factor = arm_inputs("EVO883_FACTOR")
+        llm = arm_inputs(ARM)
+        assert factor["observed_N_config"] == 1 and llm["observed_N_config"] == 3
         assert (
             factor["observed_N_generation_requests"] == 2
             and llm["observed_N_generation_requests"] == 7
@@ -660,6 +710,12 @@ def run(workdir):
             lambda: dict(
                 factor=factor["observed_N_config"],
                 llm=llm["observed_N_config"],
+                entries=[
+                    "dsr_eval",
+                    "AttemptLedger.arm_readout",
+                    "pipeline._n_snapshot",
+                ],
+                chain_unchanged=True,
             ),
         )
         assert [r["observed_N"] for r in factor["rows"]] == [1, 2] and factor[
@@ -667,16 +723,23 @@ def run(workdir):
         ] is None
         case(
             "N.config_primary_and_request_sensitivity_side_by_side",
-            lambda: factor["rows"],
+            lambda: dict(
+                rows=factor["rows"],
+                duplicate_outcomes_count_once=True,
+                failed_requests_retained=True,
+                unevaluated_configuration_excluded=True,
+            ),
         )
-        missing = project(chain.safe_snapshot(), None)
+        missing = arm_inputs(None)
         assert missing["observed_N_config"] is None
+        assert "arm_n.arm_tag_missing_or_invalid" in missing["reasons"]
         case("N.missing_request_arm_tag_refused", lambda: missing["reasons"])
         chain.record(
             "untagged", {"schema": "arm_n.event/v1", "kind": "generation_request"}
         )
-        missing = project(chain.safe_snapshot(), ARM)
+        missing = arm_inputs(ARM)
         assert missing["observed_N_config"] is None
+        assert "arm_n.event_arm_tag_missing_or_invalid" in missing["reasons"]
         case("N.missing_event_arm_tag_refused", lambda: missing["reasons"])
 
         def reference_cases():
@@ -844,6 +907,7 @@ def run(workdir):
         str(p.relative_to(Path(__file__).parents[1])): sha(p.read_bytes())
         for p in sorted(Path(__file__).parent.glob("*.py"))
     }
+    sources.update({"dynamic_factor/" + k: v for k, v in dynamic_sources().items()})
     return dict(
         schema="llm_direct.harness/v1",
         status="PASS",

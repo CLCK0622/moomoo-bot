@@ -125,8 +125,16 @@ def main():
                     else None,
                 )
             )
+            metrics = request.get("metrics", {})
+            if not isinstance(metrics, dict):
+                raise ConventionConflict("dsr.request_invalid")
+            metrics = dict(metrics)
+            if "arm_tag" in request:
+                if "arm_tag" in metrics and metrics["arm_tag"] != request["arm_tag"]:
+                    raise ConventionConflict("arm_n.request_arm_tag_conflict")
+                metrics["arm_tag"] = request["arm_tag"]
             report = dsr_eval(
-                request.get("metrics", {}),
+                metrics,
                 ledger,
                 prereg=request.get("prereg"),
                 prereg_sha256=request.get("prereg_sha256"),

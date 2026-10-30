@@ -410,6 +410,12 @@ class AuthorityLedger:
                 "reasons": ["ledger_unreadable_or_corrupt"],
             }
 
+    def arm_readout(self, arm_tag=None):
+        """Read-only arm projection; never installs or invokes an authority writer."""
+        from .arm_n import readout
+
+        return readout(self, arm_tag)
+
     def readout(self):
         cur = self.verify()
         return result(

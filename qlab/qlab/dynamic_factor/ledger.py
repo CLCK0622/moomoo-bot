@@ -487,6 +487,12 @@ class AttemptLedger:
             "reasons": reasons,
         }
 
+    def arm_readout(self, arm_tag=None):
+        """Read-only arm N entry; absent tags refuse without altering history."""
+        from .arm_n import readout
+
+        return readout(self, arm_tag)
+
     def readout(self):
         snapshot = self.safe_snapshot()
         report = result(

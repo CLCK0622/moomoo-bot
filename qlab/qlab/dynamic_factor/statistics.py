@@ -79,8 +79,12 @@ def dsr_eval(
     request, ledger, *, prereg=None, prereg_sha256=None, plugin=None, conventions=None
 ):
     """All public paths refuse runtime DSR/V, including the legacy plugin seam."""
-    snapshot = ledger.safe_snapshot()
-    reasons = list(snapshot["reasons"])
+    readout = ledger.arm_readout(
+        request.get("arm_tag") if isinstance(request, dict) else None
+    )
+    snapshot = readout["artifacts"]["ledger"]
+    reasons = list(readout["reasons"])
+    arm = readout["metrics"]["arm_n"]
     if conventions is not None:
         from .ledger import bound_genesis
 
@@ -120,8 +124,11 @@ def dsr_eval(
         "sharpe": None,
         "sr0": None,
         "passed": False,
-        "cumulative_n": snapshot["cumulative_n"],
-        "cumulative_n_lower_bound": snapshot["cumulative_n_lower_bound"],
+        "cumulative_n": arm["cumulative_n"],
+        "cumulative_n_lower_bound": arm["cumulative_n_lower_bound"],
+        "arm_n": arm,
+        "N_rows": arm["rows"],
+        "n_complete": arm["n_complete"],
         "n_ledger_hash": snapshot["n_ledger_hash"],
         "recorded_N": snapshot.get("recorded_N"),
         "n_high_water": snapshot.get("n_high_water"),

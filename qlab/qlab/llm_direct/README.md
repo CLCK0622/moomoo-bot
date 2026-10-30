@@ -145,14 +145,14 @@ Actual forward-reference execution is still disabled.
 
 ## N wiring and reference books
 
-Read-only inspection found that the fixed base's `statistics.dsr_eval()` and
-`pipeline._n_snapshot()` read the whole-chain counter. Those files remain
-unchanged in this PR. `llm_direct.arm_n.project()` is an isolated **fixture
-projection prototype** for the three required negative cases. It does not wire
-that projection into factor DSR, install a chain writer or resolve historical N.
-The uncommitted wiring draft was preserved separately in the earlier stop
-snapshot; it awaits the amended item-2 dependency. In the offline prototype,
-every event needs an explicit recognized arm tag. A
+`dynamic_factor.arm_n` now owns the shared read-only implementation;
+`llm_direct.arm_n` preserves its original API through re-exports. Actual
+`statistics.dsr_eval()`, `pipeline._n_snapshot()` and both ledger classes'
+`arm_readout()` consume this projection from one verified snapshot. The legacy
+`dsr_v0.evaluate()` route delegates to the same public gate. No reader writes a
+self-reported N. The actual DSR/readout/pipeline paths are exercised by all three
+N negative classes in the synthetic harness, rather than testing only project().
+Every event and read request needs an explicit recognized arm tag. A
 configuration is prompt version × model snapshot × parameters × ruleset. It
 must be reserved before any outcome; its first market-outcome evaluation counts
 one, and repeated evaluations do not add configurations. Every actual request,
@@ -189,7 +189,7 @@ From repository root, Python 3.9.6 or 3.12.13 (harness uses standard library):
 ```sh
 PYTHONPATH=qlab:. PYTHONDONTWRITEBYTECODE=1 python3 -B -m qlab.llm_direct.harness --workdir ./repro-e0 > harness-e0.json
 PYTHONPATH=qlab:. PYTHONDONTWRITEBYTECODE=1 python3 -B -m pytest qlab/tests/llm_direct qlab/tests/shadow15k qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q -p no:cacheprovider
-python3 -m ruff check --no-cache qlab/qlab/llm_direct qlab/tests/llm_direct qlab/qlab/dynamic_factor
+python3 -m ruff check --isolated --no-cache --exclude fixtures qlab/qlab/llm_direct qlab/tests/llm_direct qlab/qlab/dynamic_factor qlab/tests/dynamic_factor/test_arm_n.py
 ```
 
 Use a fresh workdir for each harness run. Networking is denied and counted.

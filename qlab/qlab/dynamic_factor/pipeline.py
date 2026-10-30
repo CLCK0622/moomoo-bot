@@ -197,14 +197,19 @@ def _dsr(m, v, n_snapshot, policy):
     return dict(m, sr0=sr0, dsr=value)
 
 
-def _n_snapshot(ledger, self_report_n):
-    high = ledger.observe_self_report_n(self_report_n)
-    s = ledger.snapshot()
+def _n_snapshot(ledger, self_report_n, arm_tag=None):
+    # Self-reported whole-chain N cannot substitute for arm/configuration N.
+    # This is now a read-only projection; never append to authority here.
+    report = ledger.arm_readout(arm_tag)
+    arm = report["metrics"]["arm_n"]
     return {
-        "gate_n": max(high, s["cumulative_n_lower_bound"]),
-        "n_ledger_hash": s["n_ledger_hash"],
-        "n_complete": s["n_complete"],
-        "cumulative_n": s["cumulative_n"],
+        "gate_n": arm["cumulative_n"],
+        "n_ledger_hash": arm["n_ledger_hash"],
+        "n_complete": arm["n_complete"],
+        "cumulative_n": arm["cumulative_n"],
+        "N_rows": arm["rows"],
+        "arm_n": arm,
+        "reasons": report["reasons"],
     }
 
 
@@ -311,6 +316,14 @@ def run_train_pipeline(
     build_meta(pool, frozen_calibration) -> {returns}.
     Errors retain every proposal and stop downstream work; no rescue/reselection.
     """
+    from .arm_n import valid_arm
+
+    if not isinstance(context, dict) or not valid_arm(context.get("arm_tag")):
+        return {
+            "candidate": None,
+            "meta": None,
+            "reason": "arm_n.arm_tag_missing_or_invalid",
+        }
     if policy.document.get("runtime_consumable", False) is False:
         return {
             "candidate": None,
@@ -411,7 +424,9 @@ def run_train_pipeline(
             for e in ledger.snapshot()["events"]
         ):
             raise ValueError("pipeline.undeclared_candidate_attempt")
-        n_candidate = _n_snapshot(ledger, self_report_n)
+        n_candidate = _n_snapshot(ledger, self_report_n, context.get("arm_tag"))
+        if not n_candidate["n_complete"]:
+            raise ValueError("ledger_history_incomplete")
         candidate_v = _layer(
             [evaluations[x]["sharpe"] for x in ids],
             "candidate",
@@ -453,7 +468,7 @@ def run_train_pipeline(
             context={"run_id": run_id},
             replay=False,
         )
-        n_meta = _n_snapshot(ledger, self_report_n)
+        n_meta = _n_snapshot(ledger, self_report_n, context.get("arm_tag"))
         ledger.record(key + "/S3", {"meta_attempt_id": meta_id, "pool": pool, **n_meta})
         try:
             observation = build_meta(tuple(pool), deepcopy(calibration))
