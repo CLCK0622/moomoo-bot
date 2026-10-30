@@ -1,0 +1,18 @@
+[
+  {
+    "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=qlab:. python -B -m pytest qlab/tests/shadow15k qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q --tb=short -rs -p no:cacheprovider",
+    "exit_code": 0,
+    "output": "........................................................................ [ 23%]\n........................................................................ [ 46%]\n........................................................................ [ 70%]\n........................................................................ [ 93%]\n...................                                                      [100%]\n=========================== short test summary info ============================\nSKIPPED [1] qlab/tests/test_qlib_gen.py:21: qlib not in this venv (lean runtime) — skip\n307 passed, 1 skipped in 18.96s\n",
+    "passed": 307,
+    "python": "3.9.6",
+    "skipped_modules": 1
+  },
+  {
+    "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=qlab:. python -B -m pytest qlab/tests/shadow15k qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q --tb=short -rs -p no:cacheprovider",
+    "exit_code": 0,
+    "output": "........................................................................ [ 22%]\n........................................................................ [ 45%]\n........................................................................ [ 68%]\n........................................................................ [ 91%]\n...........................                                              [100%]\n315 passed in 15.84s\n",
+    "passed": 315,
+    "python": "3.12.13",
+    "skipped_modules": 0
+  }
+]
