@@ -213,6 +213,11 @@ def quarantined_manifest(manifest, rows, conventions):
             "replacement_symbols": manifest.get("replacement_symbols"),
             "truncate_sample": manifest.get("truncate_sample"),
             **(
+                {"isolation_manifest": manifest["isolation_manifest"]}
+                if "isolation_manifest" in manifest
+                else {}
+            ),
+            **(
                 {"panel_symbols": manifest["panel_symbols"]}
                 if "panel_symbols" in manifest
                 else {}
@@ -247,6 +252,11 @@ def wf_manifest_check(manifest, *, conventions=None):
             panel = panel_input_check(
                 {
                     "inputs": manifest.get("panel_inputs", []),
+                    **(
+                        {"isolation_manifest": manifest["isolation_manifest"]}
+                        if "isolation_manifest" in manifest
+                        else {}
+                    ),
                     "replacement_symbols": manifest.get("replacement_symbols"),
                     "truncate_sample": manifest.get("truncate_sample"),
                     "dependency_nodes": manifest.get("dependency_nodes", []),

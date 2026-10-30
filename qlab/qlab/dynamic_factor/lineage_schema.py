@@ -25,6 +25,7 @@ NODE = dict.fromkeys(
         "receipt_id",
         "order_id",
         "client_identity",
+        "consumer_role",
     ),
     "string",
 )

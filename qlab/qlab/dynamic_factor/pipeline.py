@@ -88,6 +88,23 @@ def validate_context(context, policy):
         for key in ("quarantine_manifest_sha256", "eligible_set_derivation_sha256")
     ):
         raise ValueError("pipeline.v2_isolation_identity_missing")
+    if policy.document["version"] in ("v2.0.0", "v3.0.0"):
+        from .isolation import checked_manifest, eligible_day
+
+        isolation = context.get("isolation")
+        if not isolation:
+            raise ValueError("pipeline.v2_isolation_receipts_missing")
+        checked_manifest(isolation["manifest"], policy)
+        days = {
+            d: eligible_day(isolation["manifest"], d, policy)[
+                "eligible_set_derivation_sha256"
+            ]
+            for d in context["train_calendar"]
+        }
+        if context["quarantine_manifest_sha256"] != isolation["manifest"][
+            "quarantine_manifest_sha256"
+        ] or context["eligible_set_derivation_sha256"] != digest(days):
+            raise ValueError("pipeline.v2_isolation_identity_mismatch")
     calendar = context["train_calendar"]
     if len(calendar) != policy.document["folds"]["train_days"] or calendar != sorted(
         set(calendar)
@@ -228,7 +245,7 @@ def _n_snapshot(ledger, self_report_n, policy=None):
     }
 
 
-def select_pool(evaluations, scores, policy, retired_ids):
+def select_pool(evaluations, scores, policy, retired_ids, *, isolation=None):
     """Unique greedy pool. Unusable correlations isolate a recipe, retaining N/V."""
     reject_b2_inputs({"evaluations": evaluations, "scores": scores}, "admission")
     if policy.document["version"] in (
@@ -240,6 +257,20 @@ def select_pool(evaluations, scores, policy, retired_ids):
     expected = policy.document["variance_layers"]["family_definitions"][
         "candidate_members"
     ]
+    if policy.document["version"] in ("v2.0.0", "v3.0.0"):
+        from .isolation import verify_rank_receipt
+
+        if not isolation or set(scores) != set(expected):
+            raise ValueError("pool.v2_isolation_receipts_missing")
+        dates = set(isolation["rank_receipts"])
+        if not dates or any(set(scores[k]) != dates for k in expected):
+            raise ValueError("pool.v2_score_dates_mismatch")
+        for d, receipt in isolation["rank_receipts"].items():
+            verify_rank_receipt(receipt, isolation["manifest"], policy)
+            if d != receipt["day"]["date"] or any(
+                scores[k][d] != receipt["scores"][k] for k in expected
+            ):
+                raise ValueError("pool.v2_score_membership_or_values_mismatch")
     if set(evaluations) != set(expected) or any(
         any(not finite(m.get(k)) for k in ("mean", "sharpe", "dsr"))
         for m in evaluations.values()
@@ -459,7 +490,9 @@ def run_train_pipeline(
             or not set(retired).issubset(ids)
         ):
             raise ValueError("pool.retirement_state_invalid")
-        selection = select_pool(candidate_dsr, scores, policy, retired)
+        selection = select_pool(
+            candidate_dsr, scores, policy, retired, isolation=context.get("isolation")
+        )
         pool = selection["pool"]
         candidate = {
             **selection,

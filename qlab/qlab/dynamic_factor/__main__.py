@@ -45,6 +45,7 @@ def main():
             "input_migration_check",
             "continuous_path_check",
             "b2_input_readout",
+            "pre_score_isolation",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -92,6 +93,10 @@ def main():
                 report = input_migration_check(request, ledger, conventions=policy)
             else:
                 report = ledger.readout()
+        elif args.tool == "pre_score_isolation":
+            from .isolation import isolation_readout
+
+            report = isolation_readout(request, conventions=policy)
         elif args.tool == "b2_input_readout":
             from .b2_inputs import b2_input_readout
 
