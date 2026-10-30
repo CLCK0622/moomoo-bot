@@ -1,0 +1,3 @@
+# Offline suite dependencies plus the reviewed linter version.
+-r requirements.txt
+ruff==0.15.17
