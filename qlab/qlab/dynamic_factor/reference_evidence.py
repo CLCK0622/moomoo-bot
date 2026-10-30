@@ -208,11 +208,15 @@ def verify_N(
         or tail.get("n_high_water", -1) < tail["N"]
     ):
         raise ValueError("reference.complete_N_missing_or_retry_not_counted")
-    from .authority_ledger import verify_bytes, state as authority_state
+    from .authority_ledger import (
+        verify_bytes,
+        state as authority_state,
+        CURRENT_PUBLISHED,
+    )
 
     raw_ledger = files.get(tail["ledger_file_sha256"])
     try:
-        _, authority_rows = verify_bytes(raw_ledger.encode(), tail)
+        _, authority_rows = verify_bytes(raw_ledger.encode(), tail, CURRENT_PUBLISHED)
     except (ValueError, AttributeError, TypeError, KeyError):
         raise ValueError("reference.complete_N_missing_or_retry_not_counted") from None
     review = blob(files, tail.get("complete_history_acceptance_receipt_sha256"))

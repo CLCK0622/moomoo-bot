@@ -1,0 +1,77 @@
+{
+  "schema": "EVO883.EVO893.input_review.v1",
+  "source_issue": "01a18b04-828a-7e2f-ba25-be0b6a75624b",
+  "source_package_sha256": "578a12befe1196719c6fc79dd55e1e914de2d5ad7de0477ec325ab3d926c1cfd",
+  "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+  "design_unchanged": true,
+  "evidence_acceptance": {
+    "file_identity_and_ledger_structure": "accepted",
+    "counting_policy_and_complete_N": "returned_for_append_only_correction_and_remaining_coverage",
+    "eligibility_tables": "conditional_data_diagnostics_not_strict_gate_acceptance",
+    "QQQ_source_status_updates": "accepted_supplied_exchange_record_scope_only"
+  },
+  "ledger": {
+    "ledger_id": "37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc",
+    "sequence": 182,
+    "tip": "c9082ec0f045796754e12506cc468a09ac88a36873aee8cacbe5cf5d0769f851",
+    "recorded_N": 280,
+    "n_high_water": 280,
+    "complete_N": null,
+    "n_complete": false,
+    "mutations_by_reviewer": 0,
+    "P02_normal_scheduled_continuation_receipt_accepted": true,
+    "same_output_bytes_exempt_new_computation": false,
+    "B0": "fresh_settlement_computation_two_documented_round_readings_require_append_not_zero_byte_delivery",
+    "G4_unit": "expression_parameter_H_seed_combination_fold_and_actual_retries_not_one_per_direction",
+    "Y_one": "retain_conservative_historical_screening_floor_not_claim_one_evaluated_performance",
+    "EVO168_two": "retain_conservative_non_decreasing_contribution_not_certify_exact_execution_count",
+    "C1": "keep_declared24_and_map_plan_generated_prescreen_executed_failed_unattempted_vs_current6_results_no_automatic_plus18_or_family_shrink",
+    "remaining_policy_corrections": [
+      "G1_blanket_byte_equal_reexecution_exemption",
+      "G4_07_and_G4_08_actual_reruns_versus_reads_copies",
+      "failed_attempts_and_first_unregistered_performance_views_not_silently_zero",
+      "source_inventory_blind_spots_not_proof_of_complete_history"
+    ]
+  },
+  "panel": {
+    "frozen_members": 64,
+    "calendar_days": 3191,
+    "folds": 77,
+    "conditional_test_proxy_min": 48,
+    "conditional_test_proxy_days_below50": 76,
+    "certified_usable_count": null,
+    "ADV_basis_verified": false,
+    "additional_ADP_CMCSA_missing_event_markers_fit_existing_missingness_branch": true,
+    "one_day_missing_marker_closes_unknown_cash_or_spinoff_position_state": false,
+    "test_position_risks": [
+      {"fold": 45, "symbol": "COP", "date": "2023-09-27"},
+      {"fold": 72, "symbol": "CMCSA", "date": "2026-01-05"}
+    ],
+    "actual_positions_proven": false,
+    "Lk_369_to1249_is_complete_calibration_set": false,
+    "label_endpoint_correction_t1_to_t11": "accepted_as_offset_correction_not_complete_label_contract_validation",
+    "entry_ex_open_dividend_entitlement": "exclude_new_entry_dividend_per_frozen_contract_no_blanket_entry_tr_ret_dependency",
+    "S2_reference_V_current_null_folds": 77,
+    "SR16_potential_data_dependency_folds": 77,
+    "SR16_actual_failures_computed": false
+  },
+  "QQQ": {
+    "source_rows_accepted": 53,
+    "D_2022_12_19": 0.65541,
+    "basis": "supplied_Nasdaq_exchange_records_and_source_map_71953b09",
+    "cash_fields": "future_authorized_simulated_inventory_outputs_not_real_account_evidence_requirement",
+    "integer_cash_or_open_price_execution_verified": false
+  },
+  "current_result": {
+    "EVO883_status": "in_review",
+    "EVO886_launch_authorized": false,
+    "runtime_consumable": false,
+    "certifiable": false,
+    "V": null,
+    "DSR": null,
+    "shadow_clock_started": false,
+    "global_legal_free_input_impossibility_confirmed": false,
+    "new_performance_attempts": 0,
+    "new_provider_or_account_queries": 0
+  }
+}

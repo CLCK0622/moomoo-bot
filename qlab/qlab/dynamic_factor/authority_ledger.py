@@ -24,6 +24,14 @@ PUBLISHED = {
     "tip": "9e3220aa6aa6dcc7f2a03c4f1f917b2da40af78c90173156f6ca4e9efd8e9c0d",
     "n_high_water": 75,
 }
+CURRENT_FIXTURES = FIXTURES.parent / "evo893"
+CURRENT_PUBLISHED = {
+    "ledger_id": PUBLISHED["ledger_id"],
+    "sequence": 182,
+    "tip": "c9082ec0f045796754e12506cc468a09ac88a36873aee8cacbe5cf5d0769f851",
+    "n_high_water": 280,
+}
+CURRENT_SOURCE_SHA = "8169337c4c8095cc93c1771d67ff6448de9628ca44c97ca9f8fd5711e7a99cf6"
 SOURCE_SHA = "a8f50e02644ec4a86460f8038b89edcbc1811352e5bf320dca592cef6abcb87e"
 TOOL_SHA = "36ab3dd0cfc7d9c68a0e9ab2f0cc5774f0f7ccb260a2db61b36abbe040181969"
 FIELDS = (
@@ -221,6 +229,12 @@ class AuthorityLedger:
         self.external_anchor = dict(
             PUBLISHED if external_anchor is None else external_anchor
         )
+        if self.path.resolve() == PROJECT_LEDGER.resolve():
+            if self.witness.resolve() != PROJECT_WITNESS.resolve() or (
+                external_anchor is not None and external_anchor != CURRENT_PUBLISHED
+            ):
+                raise ValueError("ledger.formal_current_anchor_required")
+            self.external_anchor = dict(CURRENT_PUBLISHED)
         self.writable = writable
         if (
             self.path.resolve() == self.witness.resolve()
@@ -240,7 +254,7 @@ class AuthorityLedger:
         # missing state is ever silently recreated from a request/receipt.
         if not PROJECT_LEDGER.is_file() or not PROJECT_WITNESS.is_file():
             raise ValueError("ledger.trusted_project_installation_required")
-        return cls(PROJECT_LEDGER, PROJECT_WITNESS)
+        return cls(PROJECT_LEDGER, PROJECT_WITNESS, external_anchor=CURRENT_PUBLISHED)
 
     def _verify(self):
         raw = self.path.read_bytes()
@@ -322,6 +336,11 @@ class AuthorityLedger:
 
     def snapshot(self):
         cur, rows, _ = self._verify()
+        try:
+            verify_ancestor(rows, CURRENT_PUBLISHED)
+            current = True
+        except ValueError:
+            current = False
         return {
             "authority_ledger": True,
             "genesis": rows[0],
@@ -338,8 +357,11 @@ class AuthorityLedger:
             "complete_N": None,
             "n_ledger_hash": cur["snapshot_sha256"],
             "certifiable": False,
-            "reasons": ["ledger_history_incomplete"],
+            "reasons": ["ledger_history_incomplete"]
+            + ([] if current else ["ledger.archival_snapshot_below_current_anchor"]),
             "external_anchor": dict(PUBLISHED),
+            "current_published_anchor": dict(CURRENT_PUBLISHED),
+            "is_current_authority": current,
         }
 
     def safe_snapshot(self):
@@ -368,6 +390,8 @@ class AuthorityLedger:
                 "cumulative_n": None,
                 "complete_N": None,
                 "dsr": None,
+                "current_published_anchor": dict(CURRENT_PUBLISHED),
+                "is_current_authority": self.snapshot()["is_current_authority"],
             },
             missing=["complete_history_acceptance"],
             assumptions=[

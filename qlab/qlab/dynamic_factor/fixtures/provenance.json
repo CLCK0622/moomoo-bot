@@ -89,6 +89,26 @@
     "sha256": "98d1a2d49a054c1167e6744758d1dcdbfa65d3ca2474033b5102c0f2c812fec6",
     "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
   },
+  "evo893/EVO891-B-ledger-v4.jsonl": {
+    "sha256": "8169337c4c8095cc93c1771d67ff6448de9628ca44c97ca9f8fd5711e7a99cf6",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
+  "evo893/EVO891-B-ledger-v4.tip.json": {
+    "sha256": "c739c88d983a3f51540d54ec175f1ca416cd01ec72c8fc29f24dc8d308a92457",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
+  "evo893/EVO893-receipt-v1.md": {
+    "sha256": "6fe8290cbb806f28c72bb02a969ffb0a1027c70eceb7e9a87877e2afc62cf921",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
+  "evo893/EVO893-review-ruling-v1.json": {
+    "sha256": "f55d563f7123c98b9b3b8be61dbc3e720de133bc34ba53e0b3f11293926b1a22",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
+  "evo893/EVO893-review-ruling-v1.md": {
+    "sha256": "9301feb3d2e6096494c4dbee11bc9346eff841bb505c6af8fa475bbbc9e68bd1",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
   "fee_params_x1.json": {
     "sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
     "source_member": "evo882/fee/fee_params_x1.json",

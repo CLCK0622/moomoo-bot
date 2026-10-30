@@ -8,6 +8,9 @@ import pytest
 
 from qlab.dynamic_factor.authority_ledger import (
     AuthorityLedger,
+    CURRENT_FIXTURES,
+    CURRENT_PUBLISHED,
+    CURRENT_SOURCE_SHA,
     FIXTURES,
     PUBLISHED,
     SOURCE_SHA,
@@ -20,11 +23,13 @@ from qlab.dynamic_factor.ledger import AttemptLedger
 from qlab.dynamic_factor.statistics import dsr_eval
 
 
-def authority_copy(root):
+def authority_copy(root, latest=False):
     root.mkdir(parents=True)
     ledger, tip = root / "ledger.jsonl", root / "tip.json"
-    shutil.copyfile(FIXTURES / "EVO891-B-ledger-v2.jsonl", ledger)
-    shutil.copyfile(FIXTURES / "EVO891-B-ledger-v2.tip.json", tip)
+    src = CURRENT_FIXTURES if latest else FIXTURES
+    version = "v4" if latest else "v2"
+    shutil.copyfile(src / f"EVO891-B-ledger-{version}.jsonl", ledger)
+    shutil.copyfile(src / f"EVO891-B-ledger-{version}.tip.json", tip)
     return ledger, tip
 
 
@@ -126,12 +131,12 @@ def test_formal_project_location_is_fixed_and_cannot_select_another_anchor(
 ):
     from qlab.dynamic_factor import authority_ledger as module
 
-    ledger, tip = authority_copy(tmp_path / "installed-unit-project")
+    ledger, tip = authority_copy(tmp_path / "installed-unit-project", latest=True)
     monkeypatch.setattr(module, "PROJECT_LEDGER", ledger)
     monkeypatch.setattr(module, "PROJECT_WITNESS", tip)
     p = load_conventions()
     formal = AttemptLedger.from_conventions(ledger, p)
-    assert formal.snapshot()["recorded_N"] == 75
+    assert formal.snapshot()["recorded_N"] == 280
     with pytest.raises(ValueError, match="project_path_migration"):
         AttemptLedger.from_conventions(tmp_path / "reset.sqlite", p)
     with pytest.raises(ValueError, match="anchor_override_forbidden"):
@@ -195,3 +200,31 @@ def test_R1_retargeted_bootstrap_rejected_by_API_and_CLI_before_mutation(tmp_pat
     ]
     assert not reset.exists() and not new_tip.exists()
     assert (old.path.read_bytes(), old.anchor_path.read_bytes()) == source_before
+
+
+def test_current_published_v4_anchor_matches_vendor_and_keeps_complete_N_null(tmp_path):
+    ledger, tip = authority_copy(tmp_path / "current", latest=True)
+    assert sha256(ledger.read_bytes()) == CURRENT_SOURCE_SHA
+    current = AuthorityLedger(ledger, tip, external_anchor=CURRENT_PUBLISHED)
+    cur = current.verify()
+    assert cur == vendor(ledger, tip, CURRENT_PUBLISHED["tip"])
+    assert cur["N"] == 280 and cur["sequence"] == 182
+    assert (
+        current.snapshot()["is_current_authority"]
+        and current.snapshot()["complete_N"] is None
+    )
+
+
+def test_formal_entry_rejects_old_75_snapshot_even_with_matching_retained_old_witness(
+    tmp_path, monkeypatch
+):
+    from qlab.dynamic_factor import authority_ledger as module
+
+    ledger, tip = authority_copy(tmp_path / "stale")
+    assert AuthorityLedger(ledger, tip).verify()["N"] == 75  # Historical read only.
+    monkeypatch.setattr(module, "PROJECT_LEDGER", ledger)
+    monkeypatch.setattr(module, "PROJECT_WITNESS", tip)
+    with pytest.raises(ValueError, match="external_anchor_mismatch"):
+        AuthorityLedger(ledger, tip)
+    with pytest.raises(ValueError, match="external_anchor_mismatch"):
+        AttemptLedger.from_conventions(ledger, load_conventions())

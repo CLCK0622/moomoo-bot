@@ -1,8 +1,9 @@
+from qlab.dynamic_factor.authority_ledger import CURRENT_PUBLISHED
 from copy import deepcopy
 
 import pytest
 
-from qlab.dynamic_factor.authority_ledger import AuthorityLedger, PUBLISHED
+from qlab.dynamic_factor.authority_ledger import AuthorityLedger
 from qlab.dynamic_factor.contract import sha256
 from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.disposition_harness import cases, migration_input
@@ -198,14 +199,16 @@ def test_zero_continuation_requires_explicit_existing_run_artifact_identity(tmp_
 def test_same_chain_versioned_input_migration_receipt_binds_current_tip_and_both_QQQ_sources(
     tmp_path,
 ):
-    ledger, tip = authority_copy(tmp_path / "unit")
+    ledger, tip = authority_copy(tmp_path / "unit", latest=True)
     writer = AuthorityLedger(ledger, tip, writable=True)
     before = ledger.read_bytes(), tip.read_bytes()
     request = migration_input(writer)
     r = input_migration_check(request, writer)
     receipt = r["metrics"]["receipt"]
-    assert r["ok"] and receipt["old_anchor"]["tip"] == PUBLISHED["tip"]
-    assert receipt["new_anchor"]["N"] == 75 and receipt["new_anchor"]["sequence"] == 20
+    assert r["ok"] and receipt["old_anchor"]["tip"] == CURRENT_PUBLISHED["tip"]
+    assert (
+        receipt["new_anchor"]["N"] == 280 and receipt["new_anchor"]["sequence"] == 182
+    )
     assert receipt["complete_N"] is None and not receipt["installed"]
     assert (
         not receipt["SQLite_conversion_accepted"]

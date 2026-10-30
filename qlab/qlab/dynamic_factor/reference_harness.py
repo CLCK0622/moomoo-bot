@@ -141,9 +141,9 @@ def runtime_fixture(policy):
             "kind": "meta",
         }
     )
-    from .authority_ledger import FIXTURES as AUTHORITY_FIXTURES, records, state
+    from .authority_ledger import CURRENT_FIXTURES as AUTHORITY_FIXTURES, records, state
 
-    rows = records((AUTHORITY_FIXTURES / "EVO891-B-ledger-v2.jsonl").read_bytes())
+    rows = records((AUTHORITY_FIXTURES / "EVO891-B-ledger-v4.jsonl").read_bytes())
     n = state(rows)["N"]
     for attempt in attempts:
         attempt["sequence"] = len(rows)

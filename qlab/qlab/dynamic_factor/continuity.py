@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from .contract import digest, is_sha, result, unavailable
 from .conventions import load_conventions
-from .authority_ledger import PUBLISHED
+from .authority_ledger import CURRENT_PUBLISHED as PUBLISHED
 from .fees import finite
 from .input_scope import reject_b2_inputs
 from .input_disposition import HASHES, sources

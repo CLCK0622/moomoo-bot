@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 
-from .authority_ledger import PUBLISHED
+from .authority_ledger import CURRENT_PUBLISHED as PUBLISHED
 from .continuity import continuous_path_check
 from .contract import digest
 from .execution import calibrate_gain, initial_build_turnover_check
