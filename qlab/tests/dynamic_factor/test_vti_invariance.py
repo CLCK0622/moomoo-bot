@@ -17,3 +17,9 @@ def test_replacing_only_VTI_bytes_changes_B2_binding_but_not_seven_role_outputs(
         == switch["strategy_output_sha256_disabled"]
     )
     assert switch["B2_changed_daily_TR_dates"] == ["2013-12-20", "2014-03-25"]
+    missing = r["B2_missing_file_receipt"]
+    assert (
+        missing["strategy_output_sha256_present"]
+        == missing["strategy_output_sha256_absent"]
+    )
+    assert missing["VTI_source_sha256"] is None

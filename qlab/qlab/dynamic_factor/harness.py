@@ -447,6 +447,7 @@ def run(workdir):
         invariance = invariance_probe(workdir, policy)
         revisions.append(invariance)
         revisions.append(invariance["snapshot_switch_receipt"])
+        revisions.append(invariance["B2_missing_file_receipt"])
     specified = json.loads((FIXTURES / "harness_cases.json").read_bytes())
     require(
         [c["case_id"] for c in cases]

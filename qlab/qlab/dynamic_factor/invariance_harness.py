@@ -57,13 +57,21 @@ def probe(workdir, policy=None):
     B2 = []
     input_sha = []
     diagnostics = []
-    for index, (value, snapshot) in enumerate([(99, True), (777, True), (777, False)]):
-        VTI.write_bytes(
-            canonical(
-                {"symbol": "VTI", "rows": [{"date": d, "close": value} for d in dates]}
+    for index, (value, snapshot) in enumerate(
+        [(99, True), (777, True), (777, False), (None, False)]
+    ):
+        if value is None:
+            VTI.unlink()
+        else:
+            VTI.write_bytes(
+                canonical(
+                    {
+                        "symbol": "VTI",
+                        "rows": [{"date": d, "close": value} for d in dates],
+                    }
+                )
             )
-        )
-        input_sha.append(sha256(VTI.read_bytes()))
+        input_sha.append(sha256(VTI.read_bytes()) if value is not None else None)
         data = {
             role: read_strategy_inputs(root, binding, dates, role=role, policy=policy)
             for role in (
@@ -211,7 +219,7 @@ def probe(workdir, policy=None):
             )
         )
     assert input_sha[0] != input_sha[1] and B2[0] != B2[1] and outputs[0] == outputs[1]
-    on, off = diagnostics[1:]
+    on, off = diagnostics[1:3]
     assert on["ok"] and off["ok"] and outputs[1] == outputs[2]
     changed = []
     for left, right in zip(on["metrics"]["daily"], off["metrics"]["daily"]):
@@ -221,6 +229,7 @@ def probe(workdir, policy=None):
             assert right["daily_total_return"] is None
             changed.append(left["date"])
     assert changed == ["2013-12-20", "2014-03-25"]
+    assert outputs[1] == outputs[3] and input_sha[3] is None
     return dict(
         case_id="scope.VTI_file_replacement_output_SHA_invariant",
         status="PASS",
@@ -245,6 +254,15 @@ def probe(workdir, policy=None):
             raw_close_date_and_price_returns_unchanged=True,
             B2_event_source_provenance=on["input_sha256"],
             no_actual_strategy_or_reference_rerun=True,
+        ),
+        B2_missing_file_receipt=dict(
+            case_id="scope.B2_file_missing_strategy_SHA_invariant",
+            status="PASS",
+            scope="SYNTHETIC_UNIT_INTERFACES_NOT_ACTUAL_PERFORMANCE",
+            strategy_output_sha256_present=outputs[1],
+            strategy_output_sha256_absent=outputs[3],
+            B2_formal_return=None,
+            VTI_source_sha256=None,
         ),
         evidence_scope="Owned fixed interfaces and synthetic caller inputs; actual runtime DAG and market-source acceptance remain separate.",
     )
