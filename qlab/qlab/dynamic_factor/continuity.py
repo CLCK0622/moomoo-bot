@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from .contract import digest, is_sha, result, unavailable
 from .conventions import load_conventions
-from .authority_ledger import CURRENT_PUBLISHED as PUBLISHED
+from .authority_ledger import latest_external_witness
 from .fees import finite
 from .input_scope import reject_b2_inputs
 from .input_disposition import HASHES, sources
@@ -52,10 +52,11 @@ def continuous_path_check(request, *, conventions=None):
     reasons, stopped, previous, consumed = [], False, None, set()
     seen_results, attempts = set(), set()
     retained_inventory, retained_exit_intents = None, None
-    n_previous = request.get("initial_recorded_N", PUBLISHED["n_high_water"])
     try:
+        published = latest_external_witness()
+        n_previous = request.get("initial_recorded_N", published["n_high_water"])
         sources()
-        if type(n_previous) is not int or n_previous < PUBLISHED["n_high_water"]:
+        if type(n_previous) is not int or n_previous < published["n_high_water"]:
             raise ValueError("ledger.N_receipt_below_published_anchor")
         reject_b2_inputs(request, "qqq_labels")
         rows = request["folds"]

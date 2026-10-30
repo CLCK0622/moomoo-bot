@@ -218,12 +218,12 @@ def input_migration_check(request, ledger, *, conventions=None):
         # Only a byte-preserving same-chain copy is covered by this receipt.
         if new != old:
             raise ValueError("ledger.migration_chain_mapping_acceptance_required")
-        from .authority_ledger import verify_bytes, TOOL_SHA, CURRENT_PUBLISHED
+        from .authority_ledger import verify_bytes, TOOL_SHA, latest_external_witness
 
         cur, _ = verify_bytes(
             request["new_ledger_raw"].encode("utf-8"),
             request["new_witness"],
-            CURRENT_PUBLISHED,
+            latest_external_witness(),
         )
         if cur != new:
             raise ValueError("ledger.migration_new_anchor_mismatch")

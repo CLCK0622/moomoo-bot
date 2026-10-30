@@ -228,3 +228,45 @@ def test_formal_entry_rejects_old_75_snapshot_even_with_matching_retained_old_wi
         AuthorityLedger(ledger, tip)
     with pytest.raises(ValueError, match="external_anchor_mismatch"):
         AttemptLedger.from_conventions(ledger, load_conventions())
+
+
+def test_formal_reader_reloads_new_controlled_witness_without_source_change(
+    tmp_path, monkeypatch
+):
+    from qlab.dynamic_factor import authority_ledger as module
+
+    ledger, tip = authority_copy(tmp_path / "installed", latest=True)
+    later, later_tip = authority_copy(tmp_path / "authority-unit", latest=True)
+    published = tmp_path / "published.json"
+    published.write_bytes(tip.read_bytes())
+    monkeypatch.setattr(module, "PROJECT_LEDGER", ledger)
+    monkeypatch.setattr(module, "PROJECT_WITNESS", tip)
+    monkeypatch.setattr(module, "CURRENT_WITNESS_INPUT", published)
+    reader = AuthorityLedger.open_project(ledger)
+    before = reader.verify()
+    future = AuthorityLedger(later, later_tip, writable=True).append(attempt())
+    published.write_bytes(later_tip.read_bytes())
+    original = ledger.read_bytes(), tip.read_bytes()
+    with pytest.raises(ValueError, match="external_anchor_mismatch"):
+        reader.verify()
+    assert (ledger.read_bytes(), tip.read_bytes()) == original
+    ledger.write_bytes(later.read_bytes())
+    tip.write_bytes(later_tip.read_bytes())
+    assert reader.verify() == future
+    assert future["N"] == before["N"] + 1
+    assert reader.snapshot()["current_published_anchor"]["tip"] == future["tip"]
+
+
+@pytest.mark.parametrize(
+    "mutation", [{"sequence": 20}, {"tip": "bad"}, {"n_high_water": -1}]
+)
+def test_invalid_or_old_controlled_witness_is_rejected(tmp_path, monkeypatch, mutation):
+    from qlab.dynamic_factor import authority_ledger as module
+
+    witness = json.loads(module.CURRENT_WITNESS_INPUT.read_bytes())
+    witness.update(mutation)
+    path = tmp_path / "published.json"
+    path.write_text(json.dumps(witness))
+    monkeypatch.setattr(module, "CURRENT_WITNESS_INPUT", path)
+    with pytest.raises(ValueError, match="latest_external_witness_missing_or_invalid"):
+        module.latest_external_witness()
