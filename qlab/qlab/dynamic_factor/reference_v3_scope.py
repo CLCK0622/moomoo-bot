@@ -5,6 +5,7 @@ import json
 import math
 
 from .catalog_members import members
+from .reference_validation import validate_timing
 
 
 UNIVERSE_SHA256 = "3a1f8ddcdc7707d9e0033a41e3a280ceb6396a483090435b17afd2c461b4d939"
@@ -57,6 +58,7 @@ def validate_scope(scope, view, binding):
         "source_evidence_version_sha256",
         "B_catalog_release_sha256",
         "B_derivation_sha256",
+        "mode",
         "sealed_at",
         "first_performance_at",
         "bindings",
@@ -92,12 +94,12 @@ def validate_scope(scope, view, binding):
         or scope["warmup"] != list(view["warmup"])
         or set(scope["days"]) != set(view["train"])
         or any(scope["bindings"].get(k) != v for k, v in binding.items())
-        or scope["sealed_at"] >= scope["first_performance_at"]
         or scope["runtime_consumable"] is not False
         or scope["certifiable"] is not False
     ):
         raise ValueError("reference.scope_view_or_preperformance_mismatch")
     guard = scope["guard"]
+    validate_timing(scope, guard["request"])
     binding_keys = {
         "conventions_version",
         "conventions_status",

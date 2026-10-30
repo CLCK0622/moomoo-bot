@@ -5,6 +5,7 @@ from .conventions import load_conventions
 from .isolation import checked_manifest, _eligible_day
 from .noncash_v3 import checked_guard, assert_consumer_symbols
 from .fees import finite
+from .reference_validation import validate_timing
 
 
 def seal_scope(sealed, train, warmup, policy=None):
@@ -48,6 +49,7 @@ def seal_scope(sealed, train, warmup, policy=None):
         source_evidence_version_sha256=digest(sealed["request"]["records"]),
         B_catalog_release_sha256=guard["accepted_catalog_sha256"],
         B_derivation_sha256=guard.get("B_derivation_sha256", guard["catalog_sha256"]),
+        mode=sealed["request"]["mode"],
         sealed_at=sealed["request"]["sealed_at"],
         first_performance_at=sealed["request"]["first_performance_at"],
         bindings=p.binding,
@@ -55,6 +57,7 @@ def seal_scope(sealed, train, warmup, policy=None):
         runtime_consumable=False,
         certifiable=False,
     )
+    validate_timing(payload, guard["request"])
     return dict(payload, scope_sha256=digest(payload))
 
 

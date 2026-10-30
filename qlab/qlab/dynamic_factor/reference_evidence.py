@@ -44,6 +44,7 @@ def lineage_sources():
         "reference_registry_v3",
         "reference_compile_v3",
         "reference_v3_scope",
+        "reference_validation",
         "reference_v3_evidence",
         "reference_noncash",
         "reference_producer_v3",

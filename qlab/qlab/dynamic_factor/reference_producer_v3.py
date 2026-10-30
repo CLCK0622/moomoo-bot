@@ -110,6 +110,7 @@ def prepare(root, request):
     ).encode()
     return {
         "schema": "reference.producer/v3.0.0",
+        "complete": True,
         "shared_scope_sha256": scope["scope_sha256"],
         "eligible_set_manifest_sha256": scope["eligible_set_manifest_sha256"],
         "B_derivation_sha256": scope["B_derivation_sha256"],
@@ -132,6 +133,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inputs-root", required=True)
     args = parser.parse_args()
+    reads = []
     try:
         request = json.loads(input())
         reads = install(args.inputs_root)
@@ -146,6 +148,7 @@ def main():
         AttributeError,
     ) as exc:
         report = {
+            "complete": False,
             "returns": None,
             "sr": None,
             "certifiable": False,
@@ -154,6 +157,8 @@ def main():
             if isinstance(exc, ValueError)
             else "reference.input_invalid",
         }
+    report["accessed_roles"] = list(reads)
+    report["reader_calls"] = len(reads)
     print(json.dumps(report, sort_keys=True, allow_nan=False))
     return 2
 

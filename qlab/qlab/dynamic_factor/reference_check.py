@@ -24,7 +24,14 @@ MODULES = {
         "reference_guard",
         "reference_v3_scope",
     },
-    "reference_v3_scope": {"hashlib", "json", "math", "catalog_members"},
+    "reference_v3_scope": {
+        "hashlib",
+        "json",
+        "math",
+        "catalog_members",
+        "reference_validation",
+    },
+    "reference_validation": {"datetime"},
     "catalog_members": set(),
     "reference_producer": {
         "argparse",
