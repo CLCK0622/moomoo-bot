@@ -52,16 +52,50 @@ def continuous_path_check(request, *, conventions=None):
     reasons, stopped, previous, consumed = [], False, None, set()
     seen_results, attempts = set(), set()
     retained_inventory, retained_exit_intents = None, None
+    declarations = []
     try:
-        # Preserve submitted declarations before any validation can halt. Map
-        # by frozen ID so a missing/reordered row cannot shift later receipts.
+        # Capture every declaration in input order, before shape, membership or
+        # grid validation. This list is raw pending evidence, never acceptance.
         rows = request["folds"]
+        for index, row in enumerate(rows):
+            fields = row if isinstance(row, dict) else {}
+            declarations.append(
+                dict(
+                    input_index=index,
+                    raw_declaration=deepcopy(row),
+                    metadata_validation_status="pending",
+                    **{
+                        k: deepcopy(fields.get(k))
+                        for k in (
+                            "fold_id",
+                            "attempt_id",
+                            "attempted",
+                            "budget_state",
+                            "N_receipt",
+                        )
+                    },
+                )
+            )
         by_id = {out["fold_id"]: out for out in outputs}
-        for row in rows:
+        for out in outputs:
+            out["declaration_indices"] = []
+        for declaration in declarations:
+            row = declaration["raw_declaration"]
             if not isinstance(row, dict) or type(row.get("fold_id")) not in (int, str):
                 continue
             out = by_id.get(row["fold_id"])
             if out is not None:
+                out["declaration_indices"].append(declaration["input_index"])
+        for out in outputs:
+            indices = out["declaration_indices"]
+            if indices:
+                # Duplicate declarations have no singular metadata projection;
+                # keep all of them in the ordered list via their input indices.
+                row = (
+                    declarations[indices[0]]["raw_declaration"]
+                    if len(indices) == 1
+                    else {}
+                )
                 out.update(
                     {
                         k: deepcopy(row.get(k))
@@ -223,6 +257,7 @@ def continuous_path_check(request, *, conventions=None):
             reasons=reasons,
             metrics={
                 "folds": outputs,
+                "submitted_declarations": declarations,
                 "state_receipt_grid_complete": complete,
                 "strategy_path_complete": None,
                 "S2_admission_accepted": None,

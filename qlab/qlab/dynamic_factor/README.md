@@ -129,14 +129,16 @@ The runtime checker requires that seal to precede every reference start, and
 sidecars to precede current S0. `lineage_proof` enumerates P1–P7 and leaves actual
 run/output fields null. The earlier registration/R1 seal and proof remain archived in `evidence/evo892/`.
 The effective seal is indexed by `evidence/current-seal-index.json` and stored
-in `evidence/evo884-f3-t1-v1/`. Old source seals cannot authenticate changed code.
+in `evidence/evo884-f3b-v1/`. Old source seals cannot authenticate changed code.
 05:16 件是历史 `45eb817` 封存，已由 06:05:55 当前件替代。
 The 06:05:55 seal in `evidence/evo884-handoff-v1/` matches historical HEAD
 `6c63505f72135063162c1f55ecfaa03514f1fa32`. F3 changes the sealed `continuity.py`,
 so the new seal supersedes that receipt for this commit's sources. Historical
 files and platform attachments remain intact. The final handoff binds the exact
 commit SHA after a fresh clone verifies the seal's 21 source hashes; no earlier
-seal is claimed to match the F3 HEAD. Independent review is still required.
+seal is claimed to match the F3 HEAD. The 07:09:57Z F3/T1 seal matches historical
+`08c9d87ab4bef9abae6b5edabaf07c0adcb40052` and is superseded by the F3b seal.
+Independent review is still required for the new sources.
 There are no fabricated actual run IDs or real return artifacts. Harness runtime
 sentinels are explicitly SYNTHETIC_UNIT values, never authority/research inputs.
 
@@ -301,6 +303,20 @@ their original IDs. Rejection still stops validation, returns stay null, and
 no A/IR/interval or runtime acceptance is produced. Harness regressions cover
 early rejection, the audit's index-31 state-link mismatch, and a missing fold,
 comparing all four metadata fields on every submitted row, including 32–76.
+
+F3b: `metrics.submitted_declarations` preserves every input row in order before
+shape, fold membership or grid validation. Each entry includes `input_index`,
+`fold_id`, `attempt_id`, raw `attempted`/budget/N fields and a deep copy of the
+entire `raw_declaration`. All entries remain `pending`, independent of the grid's
+local validation status. Unknown IDs and malformed rows are retained too.
+The separate frozen 77-row grid exposes `declaration_indices`; multiple entries
+for one fold have null singular attempt/attempted/budget/N projections. Duplicate,
+missing and extra folds are still rejected only after capturing the whole list;
+no fragment returns or metrics are produced. Regressions cover the audit's
+ORIGINAL/RETRY fold-0 declarations (N 280→281→282, fold 32 absent) and a retry
+appended after all 77 original rows. The unmodified audit script's final assertion
+requires the old overwrite defect, so its expected assertion failure after the
+fix is archived separately from the passing ordered-declaration checks.
 
 ## B2 field provenance and snapshot switch
 
