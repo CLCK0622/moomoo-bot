@@ -246,7 +246,8 @@ def run(workdir):
         require("dsr.runtime_bindings_pending" in scalar["reasons"], "scalar V bypass")
         require(
             numeric["metrics"]["cumulative_n"] is None
-            and numeric["metrics"]["cumulative_n_lower_bound"] == 47,
+            and numeric["metrics"]["cumulative_n_lower_bound"]
+            == (0 if policy.document["version"] in ("v2.0.0", "v3.0.0") else 47),
             "lower bound certified",
         )
         record(
@@ -257,7 +258,10 @@ def run(workdir):
                 "trials_variance": None,
                 "reason": "dsr.runtime_bindings_pending",
                 "cumulative_n": None,
-                "seed_lower_bound": 47,
+                "seed_lower_bound": 0
+                if policy.document["version"] in ("v2.0.0", "v3.0.0")
+                else 47,
+                "historical_seed_book_count": 47,
                 "scalar_V_rejected": True,
             },
         )
@@ -425,32 +429,33 @@ def run(workdir):
 
     from .v1_harness import revision_cases
 
+    legacy_policy = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     with offline():
-        revisions = revision_cases(workdir, policy)
+        revisions = revision_cases(workdir, legacy_policy)
         from .reference_harness import runtime_negative_cases
 
-        revisions.extend(runtime_negative_cases(policy, workdir))
+        revisions.extend(runtime_negative_cases(legacy_policy, workdir))
         from .authority_harness import cases as authority_cases
 
-        revisions.extend(authority_cases(workdir, policy))
+        revisions.extend(authority_cases(workdir, legacy_policy))
         from .disposition_harness import cases as disposition_cases
 
-        revisions.extend(disposition_cases(workdir, policy))
+        revisions.extend(disposition_cases(workdir, legacy_policy))
         from .scope_harness import cases as scope_cases
 
-        revisions.extend(scope_cases(workdir, policy))
+        revisions.extend(scope_cases(workdir, legacy_policy))
         from .f1f2_harness import cases as review_cases
 
-        revisions.extend(review_cases(workdir, policy))
+        revisions.extend(review_cases(workdir, legacy_policy))
         from .f3_harness import cases as metadata_cases
 
-        revisions.extend(metadata_cases(policy))
+        revisions.extend(metadata_cases(legacy_policy))
         from .f3b_harness import cases as declaration_cases
 
-        revisions.extend(declaration_cases(policy))
+        revisions.extend(declaration_cases(legacy_policy))
         from .invariance_harness import probe as invariance_probe
 
-        invariance = invariance_probe(workdir, policy)
+        invariance = invariance_probe(workdir, legacy_policy)
         revisions.append(invariance)
         revisions.append(invariance["snapshot_switch_receipt"])
         revisions.append(invariance["B2_missing_file_receipt"])
@@ -471,6 +476,7 @@ def run(workdir):
         "fixture_sha256": frozen_fixture_hashes(),
         "cases": cases,
         "revision_cases": revisions,
+        "historical_revision_binding": legacy_policy.binding,
         "revision_cases_passed": len(revisions),
         "strategy_backtests": 0,
         "certification": False,

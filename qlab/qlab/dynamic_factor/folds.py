@@ -7,6 +7,8 @@ not an OS sandbox against a malicious adapter reading other files itself.
 
 from __future__ import annotations
 
+from .conventions import authoritative
+
 from dataclasses import asdict, dataclass
 
 from .contract import code_sha, digest, result
@@ -175,6 +177,8 @@ def _run_walk_forward_unbound(
             bound_v02 = conventions is not None and conventions.document["version"] in (
                 "v0.2",
                 "v1.0.1",
+                "v2.0.0",
+                "v3.0.0",
             )
             if bound_v02:
                 from .pipeline import run_train_pipeline
@@ -183,7 +187,7 @@ def _run_walk_forward_unbound(
                     ctx.fold_id, {}
                 )
                 context = dict(context, fold_id=ctx.fold_id)
-                if conventions.document["version"] == "v1.0.1":
+                if conventions.document["version"] in ("v1.0.1", "v2.0.0", "v3.0.0"):
                     sizes = conventions.document["folds"]
                     views = shared_views(
                         calendar,
@@ -391,7 +395,7 @@ def run_walk_forward(
             },
         )
     reasons = ["wf.conventions_required"] if conventions is None else []
-    if conventions is not None and conventions != load_conventions():
+    if conventions is not None and not authoritative(conventions):
         reasons.append("wf.conventions_mismatch")
     if conventions is not None:
         reasons.extend(convention_manifest_reasons(manifest, conventions))

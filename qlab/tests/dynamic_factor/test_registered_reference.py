@@ -6,7 +6,7 @@ from copy import deepcopy
 import pytest
 
 from qlab.dynamic_factor.contract import canonical, sha256
-from qlab.dynamic_factor.conventions import load_conventions
+from qlab.dynamic_factor.conventions import load_conventions, FIXTURES
 from qlab.dynamic_factor.fold_split import shared_views, reference_view, train_dates
 from qlab.dynamic_factor.reference_boundary import run_isolated, prepare_request
 from qlab.dynamic_factor.reference_registry import (
@@ -45,7 +45,9 @@ def mutate_sidecars(request, modify):
 
 
 def refused(request, reason):
-    report = reference_runtime_check(request)
+    report = reference_runtime_check(
+        request, conventions=load_conventions(FIXTURES / "conventions-v1.0.1.json")
+    )
     assert report["reasons"] == [reason]
     assert not report["certifiable"] and report["runtime_consumable"] is False
     assert (
@@ -57,7 +59,10 @@ def refused(request, reason):
 def test_registered_bytes_dispatch_and_roles_are_closed():
     for name, expected in HASHES.items():
         assert artifact(name)["sha256"] == expected
-    assert reference_manifest_check(registered_request())["ok"]
+    assert reference_manifest_check(
+        registered_request(),
+        conventions=load_conventions(FIXTURES / "conventions-v1.0.1.json"),
+    )["ok"]
     assert {member_spec(m)["recipe_id"] for m in DISPATCH} == {
         "F1-L020",
         "F2-L020",
@@ -77,7 +82,7 @@ def test_registered_bytes_dispatch_and_roles_are_closed():
 
 
 def test_all_77_same_object_views_and_seven_proposition_statuses():
-    policy = load_conventions()
+    policy = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     seal = seal_static("2026-10-30T03:40:00Z")
     proof = lineage_proof(policy, seal)
     assert len(proof["fold_view_receipts"]) == 77
@@ -105,7 +110,9 @@ def test_isolated_preparation_reads_only_three_inputs_and_emits_no_performance(
     tmp_path,
 ):
     root = tmp_path / "sealed"
-    request = producer_fixture(root, load_conventions())
+    request = producer_fixture(
+        root, load_conventions(FIXTURES / "conventions-v1.0.1.json")
+    )
     report = run_isolated(root, request)
     assert report["accessed_roles"] == ["benchmark", "panel", "profile"]
     assert len(report["train_dates"]) == 1260 and len(report["warmup_dates"]) == 252
@@ -152,7 +159,9 @@ def test_worker_audit_hook_refuses_write_and_process(tmp_path, operation):
 @pytest.mark.parametrize("tamper", ["dispatch", "short", "profile", "extra_test"])
 def test_worker_rejects_self_reported_weakened_contract(tmp_path, tamper):
     root = tmp_path / "sealed"
-    request = producer_fixture(root, load_conventions())
+    request = producer_fixture(
+        root, load_conventions(FIXTURES / "conventions-v1.0.1.json")
+    )
     if tamper == "dispatch":
         request["dispatch"]["CREF-F1-L020"]["fixed_rule"]["lookback_sessions"] = 1
     elif tamper == "profile":
@@ -170,10 +179,12 @@ def test_worker_rejects_self_reported_weakened_contract(tmp_path, tamper):
     artifact("runtime-evidence-contract.json")["document"]["negative_cases_required"],
 )
 def test_seven_required_negatives_refuse_with_specific_reason_and_preserve_input(case):
-    r = runtime_fixture(load_conventions())
+    r = runtime_fixture(load_conventions(FIXTURES / "conventions-v1.0.1.json"))
     before = canonical(r)
     bad = mutate_case(r, case)
-    report = reference_runtime_check(bad)
+    report = reference_runtime_check(
+        bad, conventions=load_conventions(FIXTURES / "conventions-v1.0.1.json")
+    )
     assert not report["ok"] and len(report["reasons"]) == 1
     assert (
         report["metrics"]["dsr"] is None
@@ -183,12 +194,14 @@ def test_seven_required_negatives_refuse_with_specific_reason_and_preserve_input
 
 
 def test_two_hash_domains_accept_synthetic_receipts_without_certifying():
-    r = runtime_fixture(load_conventions())
+    r = runtime_fixture(load_conventions(FIXTURES / "conventions-v1.0.1.json"))
     assert all(
         r["sidecars"][role] != r["manifests"][role]["sha256"]
         for role in ("candidate", "meta")
     )
-    result = reference_runtime_check(r)
+    result = reference_runtime_check(
+        r, conventions=load_conventions(FIXTURES / "conventions-v1.0.1.json")
+    )
     assert result["ok"] and result["metrics"]["evidence_valid"]
     assert (
         result["metrics"]["dsr"] is None
@@ -199,7 +212,7 @@ def test_two_hash_domains_accept_synthetic_receipts_without_certifying():
 
 @pytest.mark.parametrize("count", [None, True, 2])
 def test_unknown_boolean_or_repeated_scale_conversion_refuses(count):
-    r = runtime_fixture(load_conventions())
+    r = runtime_fixture(load_conventions(FIXTURES / "conventions-v1.0.1.json"))
 
     def modify(req, sidecar):
         sidecar["trials"][0]["scale_conversions"] = count
@@ -213,7 +226,7 @@ def test_unknown_boolean_or_repeated_scale_conversion_refuses(count):
     ["missing_retry", "zero_retry", "meta_not_registered", "candidate_omitted"],
 )
 def test_N_map_and_snapshot_order_refuse_missing_real_computations(tamper):
-    r = runtime_fixture(load_conventions())
+    r = runtime_fixture(load_conventions(FIXTURES / "conventions-v1.0.1.json"))
 
     def modify(req, sidecar):
         env = sidecar["envelope"]
@@ -255,7 +268,7 @@ def test_N_map_and_snapshot_order_refuse_missing_real_computations(tamper):
     ],
 )
 def test_runtime_lineage_time_policy_window_and_failure_guards(tamper):
-    r = runtime_fixture(load_conventions())
+    r = runtime_fixture(load_conventions(FIXTURES / "conventions-v1.0.1.json"))
     reason = "reference.seal_or_output_not_preperformance"
     if tamper == "source_change":
         seal = json.loads(r["evidence_files"][r["static_seal_sha256"]])

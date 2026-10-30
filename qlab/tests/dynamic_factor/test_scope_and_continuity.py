@@ -27,7 +27,7 @@ from qlab.dynamic_factor.v1_harness import producer_fixture
 
 @pytest.mark.parametrize("role", ROLES)
 def test_actual_role_entry_and_market_reader_reject_VTI_before_consumer(tmp_path, role):
-    policy = load_conventions()
+    policy = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     expect_scope_refusal(role_calls(tmp_path, policy)[role])
     with pytest.raises(ValueError, match="B2_dependency_forbidden"):
         read_strategy_inputs(
@@ -55,7 +55,7 @@ def test_actual_role_entry_and_market_reader_reject_VTI_before_consumer(tmp_path
 
 
 def test_reference_benchmark_header_cannot_be_VTI_in_isolated_worker(tmp_path):
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     req = producer_fixture(tmp_path / "input", p)
     path = tmp_path / "input" / "benchmark.json"
     doc = json.loads(path.read_bytes())
@@ -96,7 +96,7 @@ def test_static_proof_rejects_new_dependency_reader_or_read_before_guard(
 
     monkeypatch.setattr(Path, "read_bytes", altered)
     with pytest.raises(ValueError, match=reason):
-        b2_isolation_proof(load_conventions())
+        b2_isolation_proof(load_conventions(FIXTURES / "conventions-v1.0.1.json"))
 
 
 def b2_manifest(policy):
@@ -115,7 +115,7 @@ def b2_manifest(policy):
 
 
 def test_independent_B2_null_keeps_original_primary_precheck_and_full_dates():
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     m = p.fold_manifest()
     m.update(
         portfolio="portfolio",
@@ -163,7 +163,7 @@ def test_independent_B2_null_keeps_original_primary_precheck_and_full_dates():
 
 
 def test_full_grid_receipt_is_consistent_but_never_claims_N_or_profitability():
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     request = continuity_fixture(p)
     r = continuous_path_check(request, conventions=p)
     assert r["ok"] and r["metrics"]["state_receipt_grid_complete"]
@@ -188,7 +188,7 @@ def test_full_grid_receipt_is_consistent_but_never_claims_N_or_profitability():
     ],
 )
 def test_invalid_path_cannot_create_fragment_stats_or_restore_budget(change, reason):
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     req = continuity_fixture(p)
     if change == "missing_fold":
         req["folds"].pop(1)
@@ -218,7 +218,7 @@ def test_invalid_path_cannot_create_fragment_stats_or_restore_budget(change, rea
 
 
 def test_unknown_NAV_stops_all_future_values_retains_inventory_intents_N_and_budget():
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     req = continuity_fixture(p)
     req["folds"][1].update(
         status="failed",
@@ -314,7 +314,7 @@ def test_actual_fold_mechanism_stops_after_failure_and_persists_all_77_records(
 
 
 def test_formal_pending_path_also_retains_all_77_folds_without_invoking_adapters():
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     calls = []
     r = run_walk_forward(
         p.fold_manifest(),
@@ -332,11 +332,11 @@ def test_formal_pending_path_also_retains_all_77_folds_without_invoking_adapters
 
 
 def test_S2_missing_SR_N_V_never_becomes_empty_QQQ_pool():
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     with pytest.raises(ValueError, match="S2_unavailable_not_empty"):
         select_pool({}, {}, p, [])
 
 
 def test_four_required_minimum_scope_negatives(tmp_path):
-    r = cases(tmp_path, load_conventions())
+    r = cases(tmp_path, load_conventions(FIXTURES / "conventions-v1.0.1.json"))
     assert len(r) == 4 and all(c["status"] == "PASS" for c in r)

@@ -8,7 +8,7 @@ from qlab.dynamic_factor.conventions import load_conventions
 ASSUMPTIONS = [
     "Offline synthetic receipts only; no broker, OpenD, REAL or forward sampling.",
     "Execution is never verified by this module, including cash_bid_ask fixtures.",
-    "Definitions bind v1.0.1; runtime N/V/reference evidence and forward authorization remain missing, strategy interfaces refuse.",
+    "Definitions bind frozen v3.0.0; runtime N/V/reference evidence and forward authorization remain missing, strategy interfaces refuse.",
     "Fees policy pending EVO-883 next version; accounting arithmetic is provisional.",
     "Research charges reuse the frozen per-net-order floor before stress; actual invoice amounts remain unverified.",
     "Each order is confined to one explicit trading date; cross-day orders require separate IDs.",
