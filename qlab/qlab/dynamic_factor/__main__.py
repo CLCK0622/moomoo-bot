@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sqlite3
 from pathlib import Path
 
 from .contract import canonical, result, sha256
@@ -35,6 +36,9 @@ def main():
             "initial_build_turnover_check",
             "voluntary_trade_gate",
             "startup_intent",
+            "benchmark_valuation",
+            "integer_cash_valuation",
+            "reference_manifest_check",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -47,7 +51,7 @@ def main():
     parser.add_argument(
         "--conventions",
         type=Path,
-        help="EVO-883 v0 raw JSON, with bound companion artifacts",
+        help="EVO-883 raw JSON, with pinned companion artifacts",
     )
     parser.add_argument("--conventions-sha256")
     parser.add_argument(
@@ -55,6 +59,7 @@ def main():
     )
     args = parser.parse_args()
     raw = None
+    policy = None
     try:
         raw = args.input.read_bytes()
         request = json.loads(raw)
@@ -97,6 +102,19 @@ def main():
                 prereg_sha256=request.get("prereg_sha256"),
                 conventions=policy,
             )
+        elif args.tool in (
+            "benchmark_valuation",
+            "integer_cash_valuation",
+            "reference_manifest_check",
+        ):
+            from .valuation import benchmark_valuation, integer_cash_valuation
+            from .reference_check import reference_manifest_check
+
+            report = {
+                "benchmark_valuation": benchmark_valuation,
+                "integer_cash_valuation": integer_cash_valuation,
+                "reference_manifest_check": reference_manifest_check,
+            }[args.tool](request, conventions=policy)
         elif args.tool == "startup_intent":
             from .execution import lock_startup_intent
 
@@ -183,7 +201,7 @@ def main():
             }[args.tool](request)
         if policy is not None and "conventions_sha256" not in report:
             report = policy.bind(report)
-    except (ValueError, TypeError, KeyError, OSError) as exc:
+    except (ValueError, TypeError, KeyError, OSError, sqlite3.Error) as exc:
         report = result(
             args.tool,
             {"raw_input_sha256": sha256(raw) if raw is not None else None},
@@ -195,6 +213,8 @@ def main():
             missing=["valid tool inputs"],
             metrics={"sharpe": None},
         )
+    if policy is not None and "conventions_sha256" not in report:
+        report = policy.bind(report)
     report["input_file_sha256"] = sha256(raw) if raw is not None else None
     if args.out_dir:
         args.out_dir.mkdir(parents=True, exist_ok=True)

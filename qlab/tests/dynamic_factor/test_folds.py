@@ -3,7 +3,12 @@ from dataclasses import asdict
 import pytest
 
 from qlab.dynamic_factor.contract import digest
-from qlab.dynamic_factor.folds import FeatureRow, FitReceipt, TrainRow, run_walk_forward
+from qlab.dynamic_factor.folds import (
+    FeatureRow,
+    FitReceipt,
+    TrainRow,
+    _run_walk_forward_unbound as run_walk_forward,
+)
 from qlab.dynamic_factor.ledger import AttemptLedger
 
 

@@ -11,6 +11,7 @@ from dataclasses import asdict, dataclass
 
 from .contract import code_sha, digest, result
 from .fees import finite
+from .fold_split import train_dates as shared_train_dates
 from .validation import calendar_index, convention_manifest_reasons, fold_reasons
 
 
@@ -163,8 +164,9 @@ def _run_walk_forward_unbound(
 
             proposals = tuple(json.loads(canonical(proposals)))
             proposal_hash = digest(proposals)
-            bound_v02 = (
-                conventions is not None and conventions.document["version"] == "v0.2"
+            bound_v02 = conventions is not None and conventions.document["version"] in (
+                "v0.2",
+                "v1.0.1",
             )
             if bound_v02:
                 from .pipeline import run_train_pipeline
@@ -173,9 +175,7 @@ def _run_walk_forward_unbound(
                     ctx.fold_id, {}
                 )
                 context = dict(context, fold_id=ctx.fold_id)
-                history_dates = calendar[
-                    index[fold["train_start"]] : index[fold["history_end"]] + 1
-                ]
+                history_dates = list(shared_train_dates(calendar, fold))
                 history = tuple(
                     FeatureRow(d, _features(by_date[d])) for d in history_dates
                 )
@@ -344,6 +344,15 @@ def run_walk_forward(
             {"manifest": manifest, "rows": rows},
             reasons=reasons,
             metrics={"folds": [], "cumulative_n": None, "n_ledger_hash": None},
+        )
+    if not conventions.document.get("runtime_consumable", False):
+        return conventions.bind(
+            result(
+                "walk_forward",
+                {"manifest": manifest},
+                reasons=["wf.runtime_bindings_pending"],
+                metrics={"folds": [], "cumulative_n": None, "n_ledger_hash": None},
+            )
         )
     return _run_walk_forward_unbound(
         manifest,

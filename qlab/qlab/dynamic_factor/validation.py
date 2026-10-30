@@ -214,4 +214,26 @@ def wf_manifest_check(manifest, *, conventions=None):
             reasons=reasons,
             metrics={"beta": None, "information_ratio": None, "series_checks": {}},
         )
+    if conventions.document["version"] == "v1.0.1":
+        from .valuation import vti_evidence_check
+
+        try:
+            if "VTI" not in manifest.get("benchmarks", []):
+                raise ValueError("data.VTI_fixed_B2_required")
+            vti_evidence_check(
+                manifest.get("benchmark_evidence", {}).get("VTI"), conventions
+            )
+        except ValueError as exc:
+            return conventions.bind(
+                result(
+                    "wf_manifest_check",
+                    {"manifest": manifest, **conventions.binding},
+                    reasons=[str(exc)],
+                    metrics={
+                        "beta": None,
+                        "information_ratio": None,
+                        "series_checks": {},
+                    },
+                )
+            )
     return _wf_manifest_check_unbound(manifest, conventions=conventions)

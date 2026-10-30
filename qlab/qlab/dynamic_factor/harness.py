@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import socket
 import sys
 from contextlib import contextmanager
@@ -16,6 +15,7 @@ from .conventions import load_conventions
 from .fees import FIXTURES, fee_frontier
 from .folds import _run_walk_forward_unbound as run_walk_forward
 from .ledger import AttemptLedger
+from .harness_helpers import fixture_ledger
 from .receipts import IntentJournal, shadow_readout
 from .statistics import dsr_eval
 from .validation import _wf_manifest_check_unbound as wf_manifest_check
@@ -86,56 +86,6 @@ def _wf():
             k: [dict(date=d, close=100) for d in days] for k in ("portfolio", "SPY")
         },
     )
-
-
-def numerical_fixture(
-    ledger,
-    policy,
-    *,
-    annual=False,
-    missing=False,
-    include_independent=True,
-    conversions=0,
-):
-    """Labelled synthetic observations only, not a strategy or historical backtest."""
-    family_inputs = [("own", 0.01)] + (
-        [("independent", 0.02)] if include_independent else []
-    )
-    for name, step in family_inputs:
-        members = [f"{name}/{i}" for i in range(policy.family_size)]
-        ledger.declare_family(
-            name,
-            members,
-            basis=policy.document["N"]["DSR_SR_basis"],
-            authority_source={
-                "reference": "synthetic_harness_not_production",
-                "sha256": digest({"fixture": name}),
-            },
-        )
-        for i, aid in enumerate(members):
-            ledger.begin(
-                aid,
-                {"expression": "repeated_expression", "variant": i},
-                context={"run_id": name},
-            )
-            value = i * step * (math.sqrt(policy.annual_periods) if annual else 1)
-            ledger.finish(
-                aid,
-                "success",
-                sharpe=None if missing and i == 0 else value,
-                details={
-                    "sr_basis": policy.document["N"]["DSR_SR_basis"],
-                    "sharpe_scale": "annual" if annual else "daily",
-                    "scale_conversions": conversions,
-                },
-            )
-    return {
-        "returns": [-0.02, -0.01, 0, 0.01, 0.02, 0.03] * 10,
-        "run_id": "own",
-        "return_basis": policy.document["N"]["DSR_SR_basis"],
-        "return_scale": "daily",
-        "self_report_n": 1,
-    }
 
 
 def run(workdir):
@@ -279,9 +229,7 @@ def run(workdir):
             ),
             "invented DSR/V",
         )
-        numeric_ledger = AttemptLedger.from_conventions(
-            workdir / "numeric.sqlite", policy
-        )
+        numeric_ledger = fixture_ledger(workdir / "numeric.sqlite", policy)
         numeric = dsr_eval(
             {"run_id": "absent", "fold_id": "0", "layer": "meta"},
             numeric_ledger,
@@ -291,10 +239,10 @@ def run(workdir):
         require(
             numeric["metrics"]["dsr"] is None
             and numeric["metrics"]["trials_variance"] is None
-            and "dsr.v02_stage_receipt_missing" in numeric["reasons"],
+            and "dsr.runtime_bindings_pending" in numeric["reasons"],
             "missing sealed v0.2 prerequisites accepted",
         )
-        require("dsr.scalar_v_or_sr_forbidden" in scalar["reasons"], "scalar V bypass")
+        require("dsr.runtime_bindings_pending" in scalar["reasons"], "scalar V bypass")
         require(
             numeric["metrics"]["cumulative_n"] is None
             and numeric["metrics"]["cumulative_n_lower_bound"] == 47,
@@ -306,7 +254,7 @@ def run(workdir):
             {
                 "dsr": None,
                 "trials_variance": None,
-                "reason": "dsr.v02_stage_receipt_missing",
+                "reason": "dsr.runtime_bindings_pending",
                 "cumulative_n": None,
                 "seed_lower_bound": 47,
                 "scalar_V_rejected": True,
@@ -474,7 +422,7 @@ def run(workdir):
             },
         )
 
-    from .v02_harness import revision_cases
+    from .v1_harness import revision_cases
 
     with offline():
         revisions = revision_cases(workdir, policy)
@@ -502,6 +450,8 @@ def run(workdir):
         "revision_cases_passed": len(revisions),
         "strategy_backtests": 0,
         "certification": False,
+        "certifiable": False,
+        "runtime_consumable": False,
         **policy.binding,
     }
 

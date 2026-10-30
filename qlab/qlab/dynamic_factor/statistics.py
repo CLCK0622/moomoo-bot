@@ -10,7 +10,11 @@ from .contract import digest, is_sha, result, unavailable
 
 def prereg_check(prereg, expected_sha256, *, conventions=None):
     if conventions is not None:
-        reasons = ["prereg_draft_not_frozen"]
+        reasons = [
+            "prereg_runtime_bindings_pending"
+            if conventions.document.get("strategy_frozen")
+            else "prereg_draft_not_frozen"
+        ]
         if prereg is not None and prereg != conventions.document:
             reasons.append("prereg_payload_mismatch")
         if expected_sha256 is not None and expected_sha256 != conventions.raw_sha256:
@@ -77,12 +81,27 @@ def dsr_eval(
     """All public paths refuse runtime DSR/V, including the legacy plugin seam."""
     snapshot = ledger.safe_snapshot()
     reasons = list(snapshot["reasons"])
+    if conventions is not None:
+        from .ledger import bound_genesis
+
+        if snapshot["genesis"] != bound_genesis(conventions):
+            reasons.append("ledger.genesis_binding_mismatch")
+            snapshot = dict(snapshot, cumulative_n=None, cumulative_n_lower_bound=None)
+
     if conventions is None:
         reasons += [
             "prereg_missing" if prereg is None else "dsr.runtime_bindings_pending"
         ]
     else:
         reasons += ["dsr.runtime_bindings_pending"]
+    if conventions is not None and conventions.document["version"] == "v1.0.1":
+        from .reference_check import reference_manifest_check
+
+        if not isinstance(request, dict):
+            reasons.append("dsr.request_invalid")
+        else:
+            references = reference_manifest_check(request, conventions=conventions)
+            reasons.extend(references["reasons"])
     metrics = {
         "dsr": None,
         "trials_variance": None,

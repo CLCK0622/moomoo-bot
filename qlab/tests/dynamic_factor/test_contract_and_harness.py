@@ -11,7 +11,7 @@ from qlab.dynamic_factor.statistics import DSRPlugin, dsr_eval, prereg_check
 
 
 def synthetic_plugin(request, snapshot, prereg):
-    # Contract sentinel, NOT a DSR formula. Only reachable in this unit test.
+    # Compatibility sentinel: no public DSR route may invoke it.
     return dict(dsr=0.5, trials_variance=0.0, sharpe=0.0, passed=False)
 
 
@@ -29,7 +29,7 @@ def test_missing_policy_and_authority_produce_nulls(tmp_path):
     assert prereg_check(None, None)["missing_inputs"] == ["prereg"]
 
 
-def test_plugin_is_pinned_and_only_called_with_authority_and_matching_scale(tmp_path):
+def test_plugin_is_never_called_even_with_authority_and_matching_scale(tmp_path):
     genesis = dict(
         DEFAULT_GENESIS,
         prior_n=1,
@@ -58,7 +58,9 @@ def test_plugin_is_pinned_and_only_called_with_authority_and_matching_scale(tmp_
         prereg_sha256=pin,
         plugin=plugin,
     )
-    assert "dsr.scale_mismatch" in r["reasons"] and r["metrics"]["dsr"] is None
+    assert (
+        "dsr.runtime_bindings_pending" in r["reasons"] and r["metrics"]["dsr"] is None
+    )
     r = dsr_eval(
         {"sharpe_scale": "per_period"},
         ledger,
@@ -66,8 +68,8 @@ def test_plugin_is_pinned_and_only_called_with_authority_and_matching_scale(tmp_
         prereg_sha256=pin,
         plugin=plugin,
     )
-    assert r["certifiable"] and r["metrics"]["trials_variance"] == 0
-    assert r["metrics"]["passed"] is False  # computable does not mean passed
+    assert not r["certifiable"] and r["metrics"]["trials_variance"] is None
+    assert r["metrics"]["passed"] is False
     r = dsr_eval(
         {"sharpe_scale": "per_period"},
         ledger,
@@ -75,7 +77,7 @@ def test_plugin_is_pinned_and_only_called_with_authority_and_matching_scale(tmp_
         prereg_sha256="0" * 64,
         plugin=plugin,
     )
-    assert not r["certifiable"] and "prereg_hash_mismatch" in r["reasons"]
+    assert not r["certifiable"] and "dsr.runtime_bindings_pending" in r["reasons"]
 
 
 def test_offline_guard_rejects_network():
