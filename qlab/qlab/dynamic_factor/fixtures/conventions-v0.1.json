@@ -1,0 +1,245 @@
+{
+  "schema": "EVO883.executable-conventions.v0.1",
+  "version": "v0.1",
+  "status": "DRAFT_INTERFACE_CONVENTIONS_NOT_STRATEGY_FREEZE",
+  "deadline_utc": "2026-11-02T03:00:00Z",
+  "certifiable": false,
+  "strategy_frozen": false,
+  "strategy_backtests_executed": 0,
+  "purpose": "EVO884_wiring_six_items_before_final_freeze",
+  "change_control": "increment_v0_version_for_any_change_final_freeze_diff_against_last_v0",
+  "units": {
+    "SR": "daily_active_mean_over_sample_sd",
+    "V": "variance_of_daily_SR",
+    "IR": "sqrt252_times_daily_SR",
+    "annual_to_daily_SR": "divide_sqrt252",
+    "annual_to_daily_V": "divide252_exactly_once"
+  },
+  "DSR": {
+    "gamma": 0.5772156649015329,
+    "SR0": "sqrt(V)*((1-gamma)*norm_ppf(1-1/N)+gamma*norm_ppf(1-1/(N*exp(1))))",
+    "N_eq1": "SR0=0_only_if_complete_audited_N_really_1",
+    "value": "norm_cdf((SR-SR0)*sqrt(n-1)/sqrt(1-skew*SR+(kurt-1)*SR*SR/4))",
+    "skew": "population_m3/population_m2^1.5",
+    "kurt": "population_m4/population_m2^2_non_excess_normal3",
+    "sample_sd": "ddof1",
+    "threshold": 0.95,
+    "invalid": "null_with_reason_no_pass_for_n_lt2_nonfinite_zero_return_variance_negative_V_or_nonpositive_denominator",
+    "model_assumptions": "independent_trial_approximation_not_serial_dependence_or_sequential_error_control",
+    "source": "https://www.davidhbailey.com/dhbpapers/deflated-sharpe.pdf_eq1_eq2"
+  },
+  "V": {
+    "family": "all_16_primary_recipes_plus_single_meta_combination_per_fold_fixed_before_performance",
+    "family_variance": "sample_variance_ddof1_of_complete_finite_daily_active_SR_family",
+    "independent_floor": "sample_variance_ddof1_full_comparable_daily_active_SR_union_excluding_own_run",
+    "effective": "max(family_variance,independent_floor)",
+    "missing_failed_SR": "retain_entry_do_not_impute0_do_not_select_winners_return_unavailable",
+    "insufficient_independent_records": "null_certifiable_false",
+    "scalar_weighted_variance_fallback": false,
+    "historical_seed_raw_strategy_SRs_are_comparable_active_SRs": false
+  },
+  "N": {
+    "profile": "EVO881_relative_benchmark_research_only",
+    "global_EVO8_50_20_modified": false,
+    "DSR_min": 0.95,
+    "N": "max(authoritative_project_cumulative_attempts,self_report)_never_decrease",
+    "N0": null,
+    "N_ledger_sha256": null,
+    "append_only_attempts": true,
+    "supersedes_deletes_prior_attempt": false,
+    "failed_nan_duplicate_attempts_preserved": true,
+    "independent_V_required": true,
+    "V_effective": "max(full_family_daily_SR_sample_variance,independent_authoritative_daily_SR_sample_variance)",
+    "V_missing_attempt_SR": "unavailable_no_imputation_or_winner_subset",
+    "V_scalar_weighted_fallback": false,
+    "DSR_SR_basis": "daily_active_return_vs_QQQ",
+    "moments": "population_central_moments_skew_m3/m2^1.5_kurt_m4/m2^2_normal3",
+    "scale": "daily_SR_annual_div_sqrt252_V_annual_div252_exactly_once",
+    "DSR_invalid": "null_reason_no_pass",
+    "positive_sequential_acceptance": false,
+    "OOS_budget": "one_authoritative_persisted_consumption_per_frozen_protocol",
+    "old_gate_unadapted_CERTIFY_reusable": false,
+    "N_seed_min": 47,
+    "N_genesis_mode": "import_historical_not_zero",
+    "N_seed_repo_path": "research/gate/state/trial_ledger.jsonl",
+    "N_seed_source_commit": "e51f8023bd0c0b6cf45c5badbc9db2c45a3a14e9",
+    "N_seed_sha256": "76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b",
+    "N_seed_completeness_certified": false,
+    "N_seed_historical_sharpes_usable_as_active_V": false,
+    "N_complete_reconciliation": "include_same_universe_static_batches_and_true_retries_after_snapshot_no_assumed_zero_missing"
+  },
+  "genesis": {
+    "mode": "import_historical",
+    "repo_path": "research/gate/state/trial_ledger.jsonl",
+    "commit": "e51f8023bd0c0b6cf45c5badbc9db2c45a3a14e9",
+    "sha256": "76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b",
+    "bundle_file": "input-snapshots/historical-trial-ledger-e51f8023.jsonl",
+    "seed_runs": [
+      {
+        "run_id": "hist/human-screened-directions",
+        "n_trials_total": 9
+      },
+      {
+        "run_id": "hist/gem-dual-momentum",
+        "n_trials_total": 2
+      },
+      {
+        "run_id": "hist/residual-reversal-evo162",
+        "n_trials_total": 6
+      },
+      {
+        "run_id": "hist/residual-momentum",
+        "n_trials_total": 4
+      },
+      {
+        "run_id": "multifactor-longbias-0642967",
+        "n_trials_total": 8
+      },
+      {
+        "run_id": "carry_rates_A-16be273",
+        "n_trials_total": 3
+      },
+      {
+        "run_id": "fomc_seasonality-6c4c06a",
+        "n_trials_total": 3
+      },
+      {
+        "run_id": "alpha_mining_i-b1de1d8",
+        "n_trials_total": 12
+      }
+    ],
+    "seed_min_N": 47,
+    "complete_current_N": null,
+    "complete_current_N_verified": false,
+    "why_import": "same_project_same_universe_static_factor_and_mining_attempts_already_consumed_information_new_name_does_not_reset_search",
+    "reconciliation_required": "append_later_static_batches_and_real_retries_and_missing_superseded_attempts_before_certification",
+    "genesis_hash_payload": "source_file_sha256_sorted_seed_run_ids_and_counts_and_import_mapping_sha",
+    "no_current_ledger_write_performed": true,
+    "seed_import_payload_sha256": "29c9c5edb2dbfcfacb52e5679b00da17a438bbece5c4f9266187aa0243e1cd51"
+  },
+  "N_counting": {
+    "gate_N": "max(authoritative_cumulative_attempts,self_report)with_floor47_plus_new_attempts",
+    "failed_NaN_duplicate_proposals_and_evaluations": "persist_attempt_id_count_never_decrease",
+    "structural_prelabel_rejection": "record_proposed_and_conservatively_attempted",
+    "retry_with_new_performance_attempt": "new_attempt_count",
+    "byte_identical_delivery_retry_same_attempt_id": "idempotent_no_new_performance_count",
+    "supersedes": "link_only_never_delete_or_remove_prior_count",
+    "mandatory_x1_x2_and_three_benchmarks": "one_frozen_attempt_multi_readouts_not_six_optimizer_trials",
+    "change_after_results": "new_version_new_attempt_count_no_automatic_rerun_permission"
+  },
+  "folds": {
+    "calendar_source": "EVO883_common_complete_suffix_of_frozen_reference_and_all_benchmarks",
+    "index_base": 0,
+    "warmup_days": 252,
+    "train_days": 1260,
+    "gap_days": 21,
+    "test_days": 21,
+    "b_k": "1533+21*k",
+    "train_inclusive": "[b_k-1281,b_k-22]",
+    "test_inclusive": "[b_k,b_k+20]",
+    "valid_fold": "b_k+41<=M-1",
+    "minimum_complete_folds": 3,
+    "date_manifest": "EVO883-calendar-and-folds-draft.json",
+    "date_manifest_sha256": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "purge": "reject_any_train_label_or_template_path_not_mature_in_train_or_overlapping_test_timestamps",
+    "state_between_test_folds": "carry_cash_inventory_fees_age_downgrade_retirement_and_NAV",
+    "per_fold_remine_and_refit": true,
+    "all_history_fit_then_slice": "reject",
+    "phase_history_runs_allowed": 1,
+    "executor_issue": "01a18a63-0d0e-76d9-a8d2-2d127af3ac0a",
+    "hard_end_not_after": "2026-07-09",
+    "fold_count": 77
+  },
+  "labels": {
+    "primary_horizon_days": 10,
+    "diagnostic_horizon_days": 5,
+    "entry_open_offset_from_signal": 1,
+    "primary_exit_open_offset_from_signal": 11,
+    "diagnostic_exit_open_offset_from_signal": 6,
+    "label_basis": "stock_total_return_minus_QQQ_total_return_same_interval"
+  },
+  "label_boundary": "train_label_entry_exit_and_20_day_template_path_must_mature_in_train_and_not_overlap_test_exact_timestamps_purge_even_with21day_gap",
+  "benchmark_missing_days": {
+    "choice": "align_all_paths_before_daily_return_computation_not_weekly_downgrade",
+    "reference": "frozen_AAPL_dates_local_reference_not_exchange_certified",
+    "calendar_reference_sha256": "211b650901f68c7383b0a5b1bdc48c3a7ae98bf9a77cbfac8a319067362e868f",
+    "start_not_before": "2013-01-01",
+    "end_not_after": "2026-07-09",
+    "align_rule": "longest_common_complete_suffix_after_last_missing_reference_session_all_QQQ_SPY_and_validated_VTI_dates_identical",
+    "off_reference_bars": "quarantine_do_not_shift_dates",
+    "adjacent_rows_must_be_adjacent_reference_sessions": true,
+    "intersection_then_multiday_as_daily": "reject",
+    "forward_fill": "reject",
+    "too_short_after_alignment": "stop_history_run_do_not_shrink_train",
+    "new_harness_case": "data.benchmark_calendar_gap",
+    "common_span_choice": "one_shared_complete_suffix_for_all_benchmarks_not_mixed_full_and_short",
+    "reference_calendar_exchange_verified": false,
+    "aligned_range": [
+      "2013-10-29",
+      "2026-07-09"
+    ],
+    "full_date_manifest": "EVO883-calendar-and-folds-draft.json"
+  },
+  "benchmark_replacement": {
+    "B1": "QQQ_total_return_buy_and_hold",
+    "B2": "VTI_qfq_return_assuming_dividend_adjustment_unverified",
+    "B2_freeze_rule": "prefer_validated_VTI_before_history_run_else_mark_SPY_proxy_then_predeclared_VTI_readout_replace_with_SPY_retained",
+    "B3": "QQQ_if_close_total_return_price_gt_inclusive_SMA200_at_t_then_next_open_else_zero_interest_cash",
+    "benchmark_trading_cost": 0,
+    "post_freeze_VTI": "new_input_hash_readout_on_sealed_same_NAV_only_no_strategy_rerun_no_sample_extension_keep_SPY_results",
+    "beta": "covariance_ddof1(strategy_daily,benchmark_daily)/variance_ddof1(benchmark_daily)_after_common_calendar_alignment_else_null",
+    "retained_SPY": "additional_reference_same_aligned_span",
+    "VTI_sha256": "b016c7de796e6d5a806ff26e45dfa2f041b52696d4bf58b69806f426c8d7d943",
+    "VTI_adjustment_anchor": "2026-10-29",
+    "frozen_others_adjustment_anchor": "2026-07-10",
+    "mix_adjusted_price_levels_between_anchors": false,
+    "VTI_dividend_adjustment_verified": false
+  },
+  "cost_mapping": {
+    "owner_issue": "01a18a62-ff6c-76ec-986a-3a033e1120f1",
+    "x1_file": "EVO882-selected/fee_params_x1.json",
+    "x1_sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "x2_file": "EVO882-selected/fee_params_x2.json",
+    "x2_sha256": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "received_parameter_scope": "SG_eligible_zero_commission_research_assumption_not_verified_account_schedule",
+    "eligibility_or_conservative_schedule_receipt": "EVO883_issue_addendum_directed_exclude_frozen_sub20_four_names_and_algo_ban_conditional_research_fees_not_account_attestation",
+    "legacy_floor_mapping": {
+      "source": "research/gate/README.md@e51f8023_10bps_per_side_and_EVO882_20bps_roundtrip",
+      "per_order_cost_x1": "max(explicit_fees_including_GST_plus_half_RT_spread_and_slippage_notional,0.001*order_notional)",
+      "per_order_cost_x2": "2*per_order_cost_x1",
+      "partial_fills": "cumulative_order_fees_by_broker_order_id_charge_only_increment_no_repeated_minimum_per_fill",
+      "source_rates_repriced_by_author": false,
+      "mapping_business_receipt": null
+    },
+    "invent_rates_if_missing": false,
+    "charge_basis": "each_netted_integer_share_order_including_minima",
+    "reference_cash_pnl_same_spread_double_count": false,
+    "effective_dates": {
+      "historical_diagnostic": "use_restored_TAF_budget_all_years_disclose_not_historical_fee_schedule",
+      "shadow_TAF_2026_10_01_through_12_31": "0",
+      "shadow_TAF_from_2027_01_01": "source_restored_0.000195_per_share_max9.79_min0.01",
+      "FY2027_SEC_provisional": "20.60_per_million_until_new_authoritative_receipt",
+      "new_authoritative_rate": "version_new_input_keep_old_outputs_no_silent_rewrite"
+    }
+  },
+  "missing_authoritative_execution_inputs": [
+    "complete_N_reconciliation",
+    "independent_comparable_active_SR_variance",
+    "QQQ_VTI_total_return_and_execution_cash_actions_evidence",
+    "accepted_local_reference_calendar_assumption_or_official_calendar_receipt"
+  ],
+  "assumptions": [
+    "all_numeric_strategy_choices_are_unvalidated_design_values",
+    "EVO882_conditional_cost_files_received_but_applicability_and_complete_total_return_accounting_not_closed",
+    "historical_survivorship_and_LLM_knowledge_contamination_not_fixed_by_walk_forward",
+    "reference_open_close_prices_do_not_verify_executability",
+    "20_day_blocks_are_an_approximation_not_exact_coverage_or_sequential_error_control",
+    "raw_attempt_N_is_a_conservative_floor_not_a_proof_of_DSR_model_assumptions",
+    "quality_and_low_price_filters_and_64_panel_are_frozen_design_choices_with_selection_bias_not_empirical_success",
+    "VTI_and_QQQ_dividend_total_return_basis_unverified",
+    "AAPL_reference_calendar_not_exchange_verified",
+    "VTI_qfq_anchor_Oct29_differs_from_frozen_Jul10_only_ratio_returns_may_be_compared"
+  ],
+  "draft_panel_sha256": "ae9332ff345dae69866a6a78fcbb07201ef7ac14b4ff82d714a1282330103ee4",
+  "draft_selection_manifest_sha256": "f4ce708f230db2a5a26611857edc9d15a709f7a83ee068dbef573bc63b4c4ba7"
+}

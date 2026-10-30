@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from datetime import date
 from pathlib import Path
 
@@ -22,8 +23,16 @@ def iso_date(value):
     return value
 
 
-def fee_frontier(request, params_path, schedule_path=FIXTURES / "fee_schedule.json"):
+def fee_frontier(
+    request,
+    params_path,
+    schedule_path=FIXTURES / "fee_schedule.json",
+    *,
+    conventions=None,
+):
     inputs = {"request": request, "params_sha256": None, "schedule_sha256": None}
+    if conventions is not None:
+        inputs.update(conventions.binding)
     assumptions = []
     metrics = {
         "net_edge_bps": None,
@@ -32,7 +41,7 @@ def fee_frontier(request, params_path, schedule_path=FIXTURES / "fee_schedule.js
     }
 
     def reject(reason, missing=()):
-        return result(
+        report = result(
             "fee_frontier",
             inputs,
             metrics=metrics,
@@ -41,6 +50,7 @@ def fee_frontier(request, params_path, schedule_path=FIXTURES / "fee_schedule.js
             missing=missing,
             availability={"net_edge_bps": unavailable(reason)},
         )
+        return conventions.bind(report) if conventions else report
 
     for key, path in (
         ("params_sha256", params_path),
@@ -62,6 +72,11 @@ def fee_frontier(request, params_path, schedule_path=FIXTURES / "fee_schedule.js
     if not all(isinstance(v, dict) for v in (request, p, schedule)):
         return reject("fee_input_invalid_or_missing")
     assumptions = list(p.get("unverified", []))
+    if conventions is not None and inputs["params_sha256"] not in (
+        conventions.document["cost_mapping"]["x1_sha256"],
+        conventions.document["cost_mapping"]["x2_sha256"],
+    ):
+        return reject("fee_params_not_bound_to_conventions")
     try:
         price, budget, gross = (
             request[k] for k in ("price", "ticket_usd", "gross_edge_bps")
@@ -157,6 +172,38 @@ def fee_frontier(request, params_path, schedule_path=FIXTURES / "fee_schedule.js
         gate_bps = max(
             fee_bps, floor_bps - (friction_bps if basis == "cash_bid_ask" else 0)
         )
+        if conventions is not None:
+            mapping = conventions.document["cost_mapping"]["legacy_floor_mapping"]
+            match = re.search(
+                r",([0-9.]+)\*order_notional\)$", mapping["per_order_cost_x1"]
+            )
+            if match is None:
+                return reject("fee_order_mapping_unsupported")
+            coefficient = float(match[1])
+            broker_side, settlement_side, cat_side = broker / 2, settlement / 2, cat / 2
+            explicit_sides = []
+            for regulatory in (0, sec + taf):
+                passthrough_side = settlement_side + cat_side + regulatory
+                gst_side = (
+                    broker_side + passthrough_side
+                    if p["gst_base"] == "all_fees"
+                    else broker_side
+                ) * p["gst_rate"]
+                explicit_sides.append(broker_side + passthrough_side + gst_side)
+            gate_bps = (
+                sum(
+                    max(side + value * friction_bps / 2 / 1e4, coefficient * value)
+                    for side in explicit_sides
+                )
+                * mult
+                / value
+                * 1e4
+            )
+            if basis == "cash_bid_ask":
+                gate_bps -= friction_bps
+            assumptions.append(
+                "EVO-883 per-order floors are applied independently to the buy and sell scenario legs; business mapping receipt remains unverified."
+            )
         tau = request.get("one_way_daily_turnover")
         if tau is not None and (not finite(tau) or not 0 <= tau <= 1):
             return reject("invalid_turnover")
@@ -188,7 +235,7 @@ def fee_frontier(request, params_path, schedule_path=FIXTURES / "fee_schedule.js
                 "TAF switches on sell_date; dates and fee rates come from versioned inputs.",
             ]
         )
-        return result(
+        report = result(
             "fee_frontier",
             inputs,
             metrics=metrics,
@@ -199,5 +246,6 @@ def fee_frontier(request, params_path, schedule_path=FIXTURES / "fee_schedule.js
                 "fee_schedule_sha256": inputs["schedule_sha256"],
             },
         )
+        return conventions.bind(report) if conventions else report
     except (KeyError, TypeError, ValueError, OverflowError):
         return reject("fee_input_invalid_or_missing")

@@ -1,8 +1,23 @@
 {
+  "calendar-folds-v0.1.json": {
+    "sha256": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "source_member": "EVO883-calendar-and-folds-draft.json",
+    "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
+  },
   "calendar_gap_scan.json": {
     "sha256": "bc5423d7412618dcac3ddef095b668d787407b5b9a854fb0c022daf3656c75e8",
     "source_member": "calendar_gap_scan.json",
     "source_zip_sha256": "7a961b6052639d557858ef99093964cd36da39109ad1fbde803416318556503d"
+  },
+  "common-calendar-v0.1.txt": {
+    "sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "source_member": "EVO883-common-calendar-draft.txt",
+    "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
+  },
+  "conventions-v0.1.json": {
+    "sha256": "2e65c77849b936d44c864b056be134e030ddf7f27e746072b70fffe631acf69b",
+    "source_member": "EVO883-executable-conventions-v0.1.json",
+    "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
   },
   "fee_params_x1.json": {
     "sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
@@ -18,5 +33,15 @@
     "sha256": "dfde628ee0c5f7759488636281eda76ea44c763109ad92f20a06dd6e7cfadca0",
     "source_member": "harness_cases.json",
     "source_zip_sha256": "c2d4922aad8b2006c07fd875fb4c26bc87b1fff43b21f2717e87c78dba4f8676"
+  },
+  "historical-seed-e51f8023.jsonl": {
+    "sha256": "76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b",
+    "source_member": "input-snapshots/historical-trial-ledger-e51f8023.jsonl",
+    "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
+  },
+  "spy-anomalies.json": {
+    "parameters": "jump thresholds are explicit manifest QA inputs, not frozen strategy choices",
+    "sha256": "39c3ebee74ff68fc04227dd870a60bfa1e69f61e1988dcb8e7f6902246587ed9",
+    "source": "selected rows from git e51f8023 SPY/AAPL parquet; vti_pull calendar QA cross-check"
   }
 }

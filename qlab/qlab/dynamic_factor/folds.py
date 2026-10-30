@@ -11,7 +11,7 @@ from dataclasses import asdict, dataclass
 
 from .contract import code_sha, digest, result
 from .fees import finite
-from .validation import calendar_index, fold_reasons
+from .validation import calendar_index, convention_manifest_reasons, fold_reasons
 
 
 @dataclass(frozen=True)
@@ -26,6 +26,8 @@ class TrainRow:
     features: tuple
     target: float
     label_end: str
+    label_entry: str | None = None
+    template_end: str | None = None
 
 
 @dataclass(frozen=True)
@@ -53,7 +55,9 @@ def _features(row):
     return tuple(sorted(features.items()))
 
 
-def run_walk_forward(manifest, rows, *, miner_factory, fitter_factory, ledger, run_id):
+def run_walk_forward(
+    manifest, rows, *, miner_factory, fitter_factory, ledger, run_id, conventions=None
+):
     """Create a new miner, fitter and model per fold. No strategy is bundled.
 
     miner.mine(train_tuple) -> ALL proposed JSON specs (including duplicates).
@@ -63,6 +67,8 @@ def run_walk_forward(manifest, rows, *, miner_factory, fitter_factory, ledger, r
     A consumed run/fold ID cannot execute again, even after an interrupted call.
     """
     reasons = fold_reasons(manifest)
+    if conventions is not None:
+        reasons.extend(convention_manifest_reasons(manifest, conventions))
     outputs, instances = [], []
     inputs = {"manifest": manifest, "rows": rows, "run_id": run_id}
     active = []
@@ -100,10 +106,28 @@ def run_walk_forward(manifest, rows, *, miner_factory, fitter_factory, ledger, r
                     raise ValueError("wf.future_label_rejected")
                 if row["label_end"] != calendar[endpoint]:
                     raise ValueError("wf.label_horizon_mismatch")
+                if conventions is not None:
+                    history_end = index[fold["history_end"]]
+                    if (
+                        row.get("label_entry")
+                        != calendar[index[d] + manifest["label_entry_offset"]]
+                        or row.get("template_end")
+                        != calendar[index[d] + manifest["template_path_offset"]]
+                        or max(index[row["label_end"]], index[row["template_end"]])
+                        > history_end
+                    ):
+                        raise ValueError("wf.label_or_template_not_mature_in_train")
                 if not finite(row["target"]):
                     raise ValueError("wf.invalid_training_label")
                 train.append(
-                    TrainRow(d, _features(row), row["target"], row["label_end"])
+                    TrainRow(
+                        d,
+                        _features(row),
+                        row["target"],
+                        row["label_end"],
+                        row.get("label_entry"),
+                        row.get("template_end"),
+                    )
                 )
             train = tuple(train)
             test = tuple(FeatureRow(d, _features(by_date[d])) for d in test_dates)
@@ -115,11 +139,12 @@ def run_walk_forward(manifest, rows, *, miner_factory, fitter_factory, ledger, r
                 manifest["embargo"],
             )
             invocation = f"{run_id}/{ctx.fold_id}/invocation"
+            family_run = f"{run_id}/{ctx.fold_id}"
             ledger.begin(
                 invocation,
                 {"train_sha256": train_hash},
                 kind="fold_invocation",
-                context=asdict(ctx),
+                context=asdict(ctx) | ({"run_id": family_run} if conventions else {}),
                 replay=False,
             )
             active.append(invocation)
@@ -138,10 +163,30 @@ def run_walk_forward(manifest, rows, *, miner_factory, fitter_factory, ledger, r
 
             proposals = tuple(json.loads(canonical(proposals)))
             proposal_hash = digest(proposals)
+            if conventions is not None:
+                if len(proposals) + 1 != conventions.family_size:
+                    raise ValueError("wf.primary_family_size_mismatch")
+                family_run = f"{run_id}/{ctx.fold_id}"
+                members = [
+                    f"{family_run}/proposal/{i}" for i in range(len(proposals))
+                ] + [f"{family_run}/meta"]
+                ledger.declare_family(
+                    family_run, members, basis=conventions.document["N"]["DSR_SR_basis"]
+                )
             for number, proposal in enumerate(proposals):
                 attempt = f"{run_id}/{ctx.fold_id}/proposal/{number}"
-                ledger.begin(attempt, proposal, context=asdict(ctx), replay=False)
+                context = asdict(ctx) | ({"run_id": family_run} if conventions else {})
+                ledger.begin(attempt, proposal, context=context, replay=False)
                 active.append(attempt)
+            if conventions is not None:
+                meta = f"{family_run}/meta"
+                ledger.begin(
+                    meta,
+                    {"meta_combination": True},
+                    context=asdict(ctx) | {"run_id": family_run},
+                    replay=False,
+                )
+                active.append(meta)
             receipt = fitter.fit(train, proposals)
             if not isinstance(receipt, FitReceipt):
                 raise ValueError("wf.fit_receipt_missing")
@@ -196,7 +241,7 @@ def run_walk_forward(manifest, rows, *, miner_factory, fitter_factory, ledger, r
     snapshot = ledger.safe_snapshot()
     inputs["ledger"] = snapshot
     reasons.extend(snapshot["reasons"])
-    return result(
+    report = result(
         "walk_forward",
         inputs,
         metrics={
@@ -213,3 +258,4 @@ def run_walk_forward(manifest, rows, *, miner_factory, fitter_factory, ledger, r
             "No backtest or profitability calculation is performed.",
         ],
     )
+    return conventions.bind(report) if conventions else report

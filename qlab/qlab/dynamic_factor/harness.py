@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import socket
 import sys
 from contextlib import contextmanager
@@ -11,6 +12,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from .contract import digest, sha256, source_manifest
+from .conventions import load_conventions
 from .fees import FIXTURES, fee_frontier
 from .folds import run_walk_forward
 from .ledger import AttemptLedger
@@ -51,7 +53,7 @@ def _fee(basis="reference", path="fee_params_x1.json", **kwargs):
         pnl_basis=basis,
     )
     request.update(kwargs)
-    return fee_frontier(request, FIXTURES / path)
+    return fee_frontier(request, FIXTURES / path, conventions=load_conventions())
 
 
 def _receipt(**kwargs):
@@ -63,6 +65,9 @@ def _receipt(**kwargs):
 def _wf():
     days = ["2026-01-05", "2026-01-06", "2026-01-07", "2026-01-08", "2026-01-09"]
     return dict(
+        jump_reversal_policy=json.loads((FIXTURES / "spy-anomalies.json").read_bytes())[
+            "jump_reversal_policy"
+        ],
         calendar=days,
         label_horizon=1,
         embargo=0,
@@ -81,6 +86,56 @@ def _wf():
             k: [dict(date=d, close=100) for d in days] for k in ("portfolio", "SPY")
         },
     )
+
+
+def numerical_fixture(
+    ledger,
+    policy,
+    *,
+    annual=False,
+    missing=False,
+    include_independent=True,
+    conversions=0,
+):
+    """Labelled synthetic observations only, not a strategy or historical backtest."""
+    family_inputs = [("own", 0.01)] + (
+        [("independent", 0.02)] if include_independent else []
+    )
+    for name, step in family_inputs:
+        members = [f"{name}/{i}" for i in range(policy.family_size)]
+        ledger.declare_family(
+            name,
+            members,
+            basis=policy.document["N"]["DSR_SR_basis"],
+            authority_source={
+                "reference": "synthetic_harness_not_production",
+                "sha256": digest({"fixture": name}),
+            },
+        )
+        for i, aid in enumerate(members):
+            ledger.begin(
+                aid,
+                {"expression": "repeated_expression", "variant": i},
+                context={"run_id": name},
+            )
+            value = i * step * (math.sqrt(policy.annual_periods) if annual else 1)
+            ledger.finish(
+                aid,
+                "success",
+                sharpe=None if missing and i == 0 else value,
+                details={
+                    "sr_basis": policy.document["N"]["DSR_SR_basis"],
+                    "sharpe_scale": "annual" if annual else "daily",
+                    "scale_conversions": conversions,
+                },
+            )
+    return {
+        "returns": [-0.02, -0.01, 0, 0.01, 0.02, 0.03] * 10,
+        "run_id": "own",
+        "return_basis": policy.document["N"]["DSR_SR_basis"],
+        "return_scale": "daily",
+        "self_report_n": 1,
+    }
 
 
 def run(workdir):
@@ -110,6 +165,7 @@ def run(workdir):
         )
 
     with offline() as network:
+        policy = load_conventions()
         r = _fee()
         require(
             r["ok"] and r["metrics"]["net_edge_bps"] == -10, "10 gross - 20 gate != -10"
@@ -223,10 +279,70 @@ def run(workdir):
             ),
             "invented DSR/V",
         )
+        numeric_ledger = AttemptLedger.from_conventions(
+            workdir / "numeric.sqlite", policy
+        )
+        request = numerical_fixture(numeric_ledger, policy)
+        numeric = dsr_eval(request, numeric_ledger, conventions=policy)
+        annual_ledger = AttemptLedger.from_conventions(
+            workdir / "annual.sqlite", policy
+        )
+        annual = dsr_eval(
+            numerical_fixture(annual_ledger, policy, annual=True),
+            annual_ledger,
+            conventions=policy,
+        )
+        absent_ledger = AttemptLedger.from_conventions(
+            workdir / "missing-sr.sqlite", policy
+        )
+        absent = dsr_eval(
+            numerical_fixture(absent_ledger, policy, missing=True),
+            absent_ledger,
+            conventions=policy,
+        )
+        mismatch = dsr_eval(
+            dict(request, return_scale="annual"), numeric_ledger, conventions=policy
+        )
+        require(
+            math.isclose(numeric["metrics"]["family_variance"], 0.00255, abs_tol=1e-12),
+            "family V changed",
+        )
+        require(
+            math.isclose(numeric["metrics"]["trials_variance"], 0.0102, abs_tol=1e-12),
+            "independent V floor lost",
+        )
+        require(
+            math.isclose(
+                numeric["metrics"]["dsr"], annual["metrics"]["dsr"], abs_tol=1e-12
+            ),
+            "annual/daily double conversion",
+        )
+        require(
+            math.isclose(numeric["metrics"]["dsr"], 0.6265006201845557, abs_tol=1e-12),
+            "DSR numerical fixture drifted",
+        )
+        require(
+            absent["metrics"]["dsr"] is None and mismatch["metrics"]["dsr"] is None,
+            "missing SR or mixed units accepted",
+        )
+        require(
+            numeric["metrics"]["cumulative_n"] is None
+            and numeric["metrics"]["gate_n"] == 81,
+            "historical lower bound masqueraded as complete N",
+        )
         record(
             "dsr.scale_and_v_required",
-            reports,
-            {"dsr": None, "trials_variance": None, "reason": "prereg_missing"},
+            reports + [numeric, annual, absent, mismatch],
+            {
+                "dsr_diagnostic": numeric["metrics"]["dsr"],
+                "family_variance": 0.00255,
+                "independent_variance": 0.0102,
+                "gate_n_lower_bound": 81,
+                "cumulative_n": None,
+                "annual_daily_equal": True,
+                "missing_sr_rejected": True,
+                "mixed_scale_rejected": True,
+            },
         )
 
         r = shadow_readout(_receipt(confirmed_qty=60))
@@ -315,69 +431,78 @@ def run(workdir):
             {"cash_x1_friction_deducted_bps": 0, "cash_x2_increment_bps": 4},
         )
 
-        scan_raw = (FIXTURES / "calendar_gap_scan.json").read_bytes()
-        scan = json.loads(scan_raw)
-        spy = scan["files"]["SPY"]
-        start, end, length = spy["longest_runs"][0]
+        anomaly_raw = (FIXTURES / "spy-anomalies.json").read_bytes()
+        anomaly = json.loads(anomaly_raw)
+        reports, date_reasons = [], {}
+        for window in anomaly["windows"]:
+            calendar = window["calendar"]
+            manifest = _wf()
+            manifest.update(
+                calendar=calendar,
+                label_horizon=0,
+                embargo=0,
+                folds=[
+                    dict(
+                        fold_id="anomaly",
+                        train_start=calendar[0],
+                        train_end=calendar[0],
+                        test_start=calendar[-1],
+                        test_end=calendar[-1],
+                    )
+                ],
+                source={
+                    "spy_anomalies_sha256": sha256(anomaly_raw),
+                    "spy_sha256": anomaly["inputs_sha256"]["SPY_1d.parquet"],
+                },
+                jump_reversal_policy=anomaly["jump_reversal_policy"],
+                series={
+                    "portfolio": [dict(date=d, close=100) for d in calendar],
+                    "SPY": window["SPY"],
+                },
+            )
+            r = wf_manifest_check(manifest, conventions=policy)
+            reports.append(r)
+            date_reasons.update(r["metrics"]["series_checks"]["SPY"]["date_reasons"])
         require(
-            (start, end, length) == ("2011-07-18", "2011-07-27", 8),
-            "wrong real SPY gap",
-        )
-        calendar = [
-            "2011-07-15",
-            "2011-07-18",
-            "2011-07-19",
-            "2011-07-20",
-            "2011-07-21",
-            "2011-07-22",
-            "2011-07-25",
-            "2011-07-26",
-            "2011-07-27",
-            "2011-07-28",
-        ]
-        manifest = _wf()
-        manifest.update(
-            calendar=calendar,
-            label_horizon=0,
-            embargo=0,
-            folds=[
-                dict(
-                    fold_id="gap",
-                    train_start=calendar[0],
-                    train_end=calendar[0],
-                    test_start=calendar[-1],
-                    test_end=calendar[-1],
-                )
-            ],
-            source={
-                "scan_sha256": sha256(scan_raw),
-                "spy_sha256": spy["sha256"],
-                "prices": "synthetic constants; only missing dates taken from real evidence",
-            },
-            series={
-                "portfolio": [dict(date=d, close=100) for d in calendar],
-                "SPY": [dict(date=d, close=100) for d in (calendar[0], calendar[-1])],
-            },
-        )
-        r = wf_manifest_check(manifest)
-        require(
-            "data.benchmark_calendar_gap" in r["reasons"]
-            and r["metrics"]["beta"] is None
-            and r["metrics"]["information_ratio"] is None,
-            "benchmark gap computed beta/IR",
+            "data.jump_reversal" in date_reasons["2011-07-04"],
+            "bad-price reversal missed",
         )
         require(
-            len(r["metrics"]["series_checks"]["SPY"]["missing_dates"]) == 8,
-            "gap not preserved",
+            all(
+                "data.nontrading_bar" in date_reasons[d]
+                for d in ("2011-07-04", "2012-04-06", "2012-05-28")
+            ),
+            "off-calendar bars missed",
+        )
+        require("data.calendar_gap" in date_reasons["2012-05-29"], "May 29 gap missed")
+        # Same anomaly on a true trading date must be caught independently of holiday checks.
+        trading = _wf()
+        for i, row in enumerate(trading["series"]["SPY"]):
+            row["close"] = [100, 100, 80, 100, 100][i]
+        r = wf_manifest_check(trading)
+        require(
+            "data.jump_reversal" in r["reasons"]
+            and "data.nontrading_bar" not in r["reasons"],
+            "jump detector depends on holiday membership",
+        )
+        reports.append(r)
+        require(
+            all(
+                r["metrics"]["beta"] is None
+                and r["metrics"]["information_ratio"] is None
+                for r in reports
+            ),
+            "invalid daily beta/IR computed",
         )
         record(
             "data.benchmark_calendar_gap",
-            [r],
+            reports,
             {
-                "real_gap": [start, end, length],
+                "date_reasons": date_reasons,
+                "trading_day_reversal_rejected": True,
                 "beta": None,
                 "information_ratio": None,
-                "scan_sha256": sha256(scan_raw),
+                "spy_anomalies_sha256": sha256(anomaly_raw),
             },
         )
 
@@ -396,11 +521,14 @@ def run(workdir):
         "source_sha256": digest(source_manifest()),
         "source_files": source_manifest(),
         "fixture_sha256": {
-            p.name: sha256(p.read_bytes()) for p in sorted(FIXTURES.glob("*.json"))
+            p.name: sha256(p.read_bytes())
+            for p in sorted(FIXTURES.iterdir())
+            if p.is_file()
         },
         "cases": cases,
         "strategy_backtests": 0,
         "certification": False,
+        **policy.binding,
     }
 
 

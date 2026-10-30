@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import date
+
 from .contract import result, unavailable
 from .fees import finite, iso_date
 
@@ -45,12 +47,78 @@ def fold_reasons(manifest):
     return list(dict.fromkeys(reasons))
 
 
-def wf_manifest_check(manifest):
+def convention_manifest_reasons(manifest, conventions):
+    expected = conventions.fold_manifest()
+    return (
+        ["wf.conventions_manifest_mismatch"]
+        if any(manifest.get(k) != v for k, v in expected.items())
+        else []
+    )
+
+
+def jump_reversals(rows, config, index):
+    """Flag raw adjacent-observation reversal patterns, including off-calendar bad bars."""
+    jump, tolerance, gap = (
+        config[k]
+        for k in (
+            "min_abs_jump",
+            "max_abs_roundtrip",
+            "max_observation_gap_calendar_days",
+        )
+    )
+    if (
+        not finite(jump)
+        or jump <= 0
+        or not finite(tolerance)
+        or tolerance < 0
+        or type(gap) is not int
+        or gap < 1
+    ):
+        raise ValueError("invalid_jump_policy")
+    found = []
+    for before, middle, after in zip(rows, rows[1:], rows[2:]):
+        prices = [r["close"] for r in (before, middle, after)]
+        if not all(finite(v) and v > 0 for v in prices):
+            continue
+        d0, d1, d2 = [date.fromisoformat(r["date"]) for r in (before, middle, after)]
+        if not (0 < (d1 - d0).days <= gap and 0 < (d2 - d1).days <= gap):
+            continue
+        first, second = prices[1] / prices[0] - 1, prices[2] / prices[1] - 1
+        restore = prices[2] / prices[0] - 1
+        if abs(first) >= jump and first * second < 0 and abs(restore) <= tolerance:
+            dates = [r["date"] for r in (before, middle, after)]
+            found.append(
+                {
+                    "date": middle["date"],
+                    "window_dates": dates,
+                    "observed_jump": first,
+                    "next_observation_change": second,
+                    "roundtrip_change": restore,
+                    "adjacent_reference_sessions": all(d in index for d in dates)
+                    and index[dates[1]] == index[dates[0]] + 1
+                    and index[dates[2]] == index[dates[1]] + 1,
+                }
+            )
+    return found
+
+
+def wf_manifest_check(manifest, *, conventions=None):
     reasons, issues = [], {}
     try:
         index = calendar_index(manifest["calendar"])
         calendar = manifest["calendar"]
         series = manifest["series"]
+        config = manifest.get("jump_reversal_policy")
+        if config is None and conventions is not None:
+            config = conventions.document.get("jump_reversal_policy")
+        if config is None:
+            reasons.append("data.jump_reversal_policy_missing")
+        else:
+            try:
+                jump_reversals([], config, index)
+            except (ValueError, TypeError, KeyError):
+                reasons.append("data.jump_reversal_policy_invalid")
+                config = None
         if not isinstance(series, dict) or not series:
             raise ValueError("series_missing")
         for name, rows in series.items():
@@ -75,7 +143,21 @@ def wf_manifest_check(manifest):
                 "nontrading_dates": holidays,
                 "nonpositive_or_unknown_prices": bad_prices,
                 "calendar_coverage_incomplete": outside,
+                "date_reasons": {d: ["data.nontrading_bar"] for d in holidays},
             }
+            for d in missing:
+                issues[name]["date_reasons"].setdefault(d, []).append(
+                    "data.calendar_gap"
+                )
+            if config is not None:
+                patterns = jump_reversals(rows, config, index)
+                issues[name]["jump_reversals"] = patterns
+                if patterns:
+                    reasons.append("data.jump_reversal")
+                for pattern in patterns:
+                    issues[name]["date_reasons"].setdefault(pattern["date"], []).append(
+                        "data.jump_reversal"
+                    )
             if dates != sorted(set(dates)):
                 reasons.append("data.duplicate_or_unsorted_dates")
             if missing:
@@ -94,15 +176,17 @@ def wf_manifest_check(manifest):
             if [r["date"] for r in series[name]] != portfolio_dates:
                 reasons.append("data.benchmark_calendar_gap")
         reasons.extend(fold_reasons(manifest))
+        if conventions is not None:
+            reasons.extend(convention_manifest_reasons(manifest, conventions))
     except (KeyError, ValueError, TypeError):
         reasons.append("data.manifest_invalid_or_missing")
     # Validation is not a beta/IR estimator. It never forward-fills prices.
     reason = (
         "calendar_or_price_validation_failed" if reasons else "estimator_not_connected"
     )
-    return result(
+    report = result(
         "wf_manifest_check",
-        manifest,
+        {"manifest": manifest, **(conventions.binding if conventions else {})},
         reasons=reasons,
         metrics={"beta": None, "information_ratio": None, "series_checks": issues},
         availability={k: unavailable(reason) for k in ("beta", "information_ratio")},
@@ -112,3 +196,4 @@ def wf_manifest_check(manifest):
             "No price repair, calendar alignment, or forward-fill is performed.",
         ],
     )
+    return conventions.bind(report) if conventions else report

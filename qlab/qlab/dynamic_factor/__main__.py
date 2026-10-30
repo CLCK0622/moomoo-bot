@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from .contract import canonical, result, sha256
+from .conventions import ConventionConflict, load_conventions
 from .fees import fee_frontier
 from .ledger import AttemptLedger
 from .receipts import decay_check, shadow_readout
@@ -33,6 +34,12 @@ def main():
     parser.add_argument("--ledger", type=Path)
     parser.add_argument("--genesis", type=Path)
     parser.add_argument(
+        "--conventions",
+        type=Path,
+        help="EVO-883 v0 raw JSON, with bound companion artifacts",
+    )
+    parser.add_argument("--conventions-sha256")
+    parser.add_argument(
         "--out-dir", type=Path, help="write an immutable content-addressed report"
     )
     args = parser.parse_args()
@@ -42,34 +49,55 @@ def main():
         request = json.loads(raw)
         if not isinstance(request, dict):
             raise ValueError("input must be a JSON object")
+        policy = (
+            load_conventions(args.conventions, expected_sha256=args.conventions_sha256)
+            if args.conventions
+            else None
+        )
         if args.tool == "fee_frontier":
             if args.params is None:
                 raise ValueError("--params required")
             kwargs = {"schedule_path": args.schedule} if args.schedule else {}
-            report = fee_frontier(request, args.params, **kwargs)
+            report = fee_frontier(request, args.params, conventions=policy, **kwargs)
         elif args.tool == "dsr_eval":
             if args.ledger is None:
                 raise ValueError("--ledger required")
             genesis = json.loads(args.genesis.read_bytes()) if args.genesis else None
+            ledger = (
+                AttemptLedger(args.ledger, genesis)
+                if genesis is not None or policy is None
+                else AttemptLedger.from_conventions(args.ledger, policy)
+            )
             report = dsr_eval(
                 request.get("metrics", {}),
-                AttemptLedger(args.ledger, genesis),
+                ledger,
                 prereg=request.get("prereg"),
                 prereg_sha256=request.get("prereg_sha256"),
+                conventions=policy,
             )
         elif args.tool == "prereg_check":
-            report = prereg_check(request.get("prereg"), request.get("prereg_sha256"))
+            report = prereg_check(
+                request.get("prereg"), request.get("prereg_sha256"), conventions=policy
+            )
+        elif args.tool == "wf_manifest_check":
+            report = wf_manifest_check(request, conventions=policy)
         else:
             report = {
                 "wf_manifest_check": wf_manifest_check,
                 "shadow_readout": shadow_readout,
                 "decay_check": decay_check,
             }[args.tool](request)
+        if policy is not None and "conventions_sha256" not in report:
+            report = policy.bind(report)
     except (ValueError, TypeError, KeyError, OSError) as exc:
         report = result(
             args.tool,
             {"raw_input_sha256": sha256(raw) if raw is not None else None},
-            reasons=[f"input_invalid_or_missing:{type(exc).__name__}"],
+            reasons=[
+                str(exc)
+                if isinstance(exc, ConventionConflict)
+                else f"input_invalid_or_missing:{type(exc).__name__}"
+            ],
             missing=["valid tool inputs"],
             metrics={"sharpe": None},
         )

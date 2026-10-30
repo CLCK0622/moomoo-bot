@@ -9,7 +9,21 @@ from .contract import code_sha, digest, is_sha, result, unavailable
 from .fees import finite
 
 
-def prereg_check(prereg, expected_sha256):
+def prereg_check(prereg, expected_sha256, *, conventions=None):
+    if conventions is not None:
+        reasons = ["prereg_draft_not_frozen"]
+        if prereg is not None and prereg != conventions.document:
+            reasons.append("prereg_payload_mismatch")
+        if expected_sha256 is not None and expected_sha256 != conventions.raw_sha256:
+            reasons.append("prereg_hash_mismatch")
+        return conventions.bind(
+            result(
+                "prereg_check",
+                {"prereg": prereg, **conventions.binding},
+                reasons=reasons,
+                metrics={"prereg_sha256": conventions.raw_sha256},
+            )
+        )
     reasons, missing = [], []
     if prereg is None:
         reasons.append("prereg_missing")
@@ -58,7 +72,13 @@ class DSRPlugin:
     evaluate: Callable
 
 
-def dsr_eval(request, ledger, *, prereg=None, prereg_sha256=None, plugin=None):
+def dsr_eval(
+    request, ledger, *, prereg=None, prereg_sha256=None, plugin=None, conventions=None
+):
+    if conventions is not None:
+        from .dsr_v0 import evaluate
+
+        return evaluate(request, ledger, conventions)
     snapshot = ledger.safe_snapshot()
     inputs = {
         "request": request,
