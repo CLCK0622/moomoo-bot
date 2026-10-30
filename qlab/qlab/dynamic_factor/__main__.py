@@ -10,6 +10,11 @@ from .contract import canonical, result, sha256
 from .conventions import ConventionConflict, load_conventions
 from .fees import fee_frontier
 from .ledger import AttemptLedger
+from .pending import (
+    pool_admission_check,
+    initial_build_turnover_check,
+    voluntary_trade_gate,
+)
 from .receipts import decay_check, shadow_readout
 from .statistics import dsr_eval, prereg_check
 from .validation import wf_manifest_check
@@ -26,6 +31,10 @@ def main():
             "fee_frontier",
             "shadow_readout",
             "decay_check",
+            "pool_admission_check",
+            "initial_build_turnover_check",
+            "voluntary_trade_gate",
+            "startup_intent",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -75,6 +84,57 @@ def main():
                 prereg_sha256=request.get("prereg_sha256"),
                 conventions=policy,
             )
+        elif args.tool == "startup_intent":
+            from .execution import lock_startup_intent
+
+            if policy is None or args.ledger is None:
+                raise ValueError("--conventions and --ledger required")
+            ledger = AttemptLedger.from_conventions(args.ledger, policy)
+            intent = lock_startup_intent(
+                request["position"],
+                request["previous_nav"],
+                request["inventory"],
+                request["previous_close"],
+                policy=policy,
+                ledger=ledger,
+                start_id=request["start_id"],
+                scope_id=request["scope_id"],
+            )
+            report = policy.bind(
+                result(
+                    "startup_intent",
+                    {"request": request, **policy.binding},
+                    metrics={
+                        "intent": intent,
+                        "n_ledger_hash": ledger.snapshot()["n_ledger_hash"],
+                    },
+                    assumptions=[
+                        "Prior-close intent only; next-open prices cannot change the locked budget."
+                    ],
+                )
+            )
+        elif args.tool in (
+            "pool_admission_check",
+            "initial_build_turnover_check",
+            "voluntary_trade_gate",
+        ):
+            if policy is None:
+                raise ValueError("--conventions required")
+            if args.tool == "voluntary_trade_gate":
+                if args.ledger is None:
+                    raise ValueError("--ledger required")
+                ledger = AttemptLedger.from_conventions(args.ledger, policy)
+                report = voluntary_trade_gate(
+                    request, conventions=policy, ledger=ledger
+                )
+            else:
+                if args.ledger is None:
+                    raise ValueError("--ledger required")
+                ledger = AttemptLedger.from_conventions(args.ledger, policy)
+                report = {
+                    "pool_admission_check": pool_admission_check,
+                    "initial_build_turnover_check": initial_build_turnover_check,
+                }[args.tool](request, conventions=policy, ledger=ledger)
         elif args.tool == "prereg_check":
             report = prereg_check(
                 request.get("prereg"), request.get("prereg_sha256"), conventions=policy

@@ -7,7 +7,7 @@ from qlab.dynamic_factor.contract import sha256
 from qlab.dynamic_factor.conventions import (
     ConventionConflict,
     arithmetic,
-    load_conventions,
+    load_conventions as _load_conventions,
 )
 from qlab.dynamic_factor.dsr_v0 import V_PENDING, daily_sr, formula
 from qlab.dynamic_factor.folds import run_walk_forward
@@ -21,6 +21,10 @@ from qlab.dynamic_factor.pending import (
 )
 from qlab.dynamic_factor.statistics import dsr_eval, prereg_check
 from qlab.dynamic_factor.validation import wf_manifest_check
+
+
+def load_conventions(*args, **kwargs):
+    return _load_conventions(*(args or (FIXTURES / "conventions-v0.1.json",)), **kwargs)
 
 
 def test_exact_policy_seed_identity_and_incomplete_count(tmp_path):

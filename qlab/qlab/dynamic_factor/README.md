@@ -1,204 +1,208 @@
-# EVO-884 dynamic-factor gate mechanisms
+# EVO-884 dynamic-factor tools
 
-Offline qlab tools for EVO-881. No broker, account, credential, scheduler, order or
-network integration. No strategy backtest is run by this package or its harness.
-The old paper executor and shared `research/gate/state` remain untouched.
+Offline deterministic mechanisms for EVO-881. No broker, account, credential,
+scheduler, live data, or order-sending integration. Tests use labelled synthetic
+unit inputs, not strategy backtests. The old paper executor and shared research
+ledger remain untouched.
 
-EVO-883 **v0.1 is wired as a draft**, with raw attachment SHA256
-`2e65c77849b936d44c864b056be134e030ddf7f27e746072b70fffe631acf69b`.
-It is not a strategy freeze or authorization to run history/shadow sampling.
-All official v0 reports include version, raw SHA and draft status and remain
-`certifiable: false`. Full current-project N and independent comparable V still
-need their own receipts; a high diagnostic DSR cannot bypass these limits.
+## Authority and limits
+
+The default adapter binds EVO-883 **v0.2**, raw SHA256
+`b873b30b754695bef82ff37b95fc7628b0cc45ad7eb76e9cb091f9164cfc0a17`,
+and the unmodified `prereg-v1-draft2.json` companion. The loader verifies both raw
+identities, their shared fields and the common profile SHA
+`e2ed67fc4ec9ed709c4a77ac5a72165da7dc3843e8030e5fa57aee0164058d30`.
+It retains immutable bytes and returns dictionary copies. Reports carry convention
+version/SHA/status, companion SHA and common profile SHA. v0.2 is a revised design
+draft, so **every bound report remains `certifiable: false`**.
+
+The normal ledger imports the exact eight source rows / **47 observed attempts**
+from `e51f8023bd0c0b6cf45c5badbc9db2c45a3a14e9`:
+`research/gate/state/trial_ledger.jsonl`, SHA256
+`76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b`.
+This is an incomplete lower bound: `cumulative_n: null`, `n_complete: false`.
+No real complete-N reconciliation or comparable reference families have arrived.
+Default research admission, meta generation and formal DSR therefore refuse with
+null values. Verified raw execution/total-return/cross-anchor evidence is also
+required; qfq price ratios or an AAPL calendar receipt do not supply that evidence.
+No reference backtests are automatically created to fill gaps.
+
+The v0.1 raw artifact and adapter remain only for historical regression and pure
+formula checks. Explicitly binding v0.1 still refuses V/admission with
+`prereg_pending_v0.2`. The generic injected-plugin seam is a trusted engine-test
+extension; it is not an alternative EVO-883 certification route.
 
 ## Run and verify
 
-From the repository root, using Python 3.9+ (stdlib tools/harness; pytest for tests):
+Tested with Python 3.12.13, pytest 9.1.1 and Ruff 0.14.3. Tools/harness use the
+standard library. From the repository root:
 
 ```bash
-PYTHONPATH=qlab:. python -m qlab.dynamic_factor.harness --workdir ./harness-run-1
+PYTHONPATH=qlab:. python -m pytest qlab/tests/dynamic_factor -q
 PYTHONPATH=qlab:. python -m pytest qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q
 ruff check qlab/qlab/dynamic_factor qlab/tests/dynamic_factor
 ruff format --check qlab/qlab/dynamic_factor qlab/tests/dynamic_factor
+PYTHONPATH=qlab:. python -m qlab.dynamic_factor.harness --workdir ./harness-run-1
+PYTHONPATH=qlab:. python -m qlab.dynamic_factor.harness --workdir ./harness-run-2
 ```
 
-The harness needs an empty directory and preserves prior evidence. Repeat into a
-second empty directory to get identical JSON bytes on the same interpreter. It
-runs the original 9 case IDs plus `data.benchmark_calendar_gap`, with network
-blocked and no current-date, random, live-data or model-call inputs. Output pins
-Python version, all source modules and frozen input bytes. Ruff used: 0.14.3.
+The original 76-vs-84 report used the six dynamic-factor test files at `527de0e`:
+76 tests there, plus the 8 tests in `test_qlib_gen.py`, gives 84. Without `qlib`,
+that optional module is skipped. Subsequent stub and v0.2 tests increase the
+current count; consult the current PR validation output, not the old total.
 
-Every report has `ok`, `certifiable`, input/source SHA256, complete source-file
-fingerprints, assumptions, missing inputs, reasons, metrics and availability.
-Unknown numerical values are null; zero is retained as zero. Input SHA covers
-canonical semantic JSON plus exact consumed-file hashes; CLI additionally reports
-`input_file_sha256`. Source SHA covers the full package and injected callback
-modules, including helpers/constants. `ok` is tool validation/calculation status;
-certifiability and numerical threshold passing are separate fields.
+Harness directories must be empty. On the same interpreter, the two JSON reports
+are byte-identical. The original nine fixed case IDs plus
+`data.benchmark_calendar_gap` remain; four additional v0.2 revision cases cover
+the DAG, staged startup, NAV gain units and affine qfq refusal. Network is blocked;
+there are no clock, RNG, model-call or live-data inputs. Toy complete ledgers and
+reference registries are explicitly labelled **synthetic unit only**; they are
+never imported as research authority.
 
-## Pinned conventions and historical seed
+## S0 -> S4 and true folds
 
-`load_conventions()` verifies the v0.1 raw SHA and its bound date table, common
-calendar, seed SHA, eight run IDs/counts, formula thresholds, scales, label offsets
-and fold widths. Conflicting or unsupported conventions raise `ConventionConflict`.
-The JSON is never evaluated as Python: only a restricted arithmetic AST with
-explicit math functions is accepted for the published DSR expressions. Returned
-policy dictionaries are copies, so callers cannot silently mutate pinned bytes.
+`run_walk_forward(..., conventions=policy)` checks the pinned 77-fold manifest.
+Labels and the 20-session template path must mature inside the original train;
+next-open entry gives a 21-session template offset. The separate train/test gap
+is also 21 sessions, read from JSON. No full-history receipt, test label or reused
+model can pass the existing fold guards.
 
-`AttemptLedger.from_conventions(path, policy)` imports exactly the seed at commit
-`e51f8023bd0c0b6cf45c5badbc9db2c45a3a14e9`,
-`research/gate/state/trial_ledger.jsonl`, SHA256
-`76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b`.
-Its 8 rows / 47 attempts are stored in genesis as provenance, **not complete N**:
+For v0.2 each new trusted fitter implements:
 
-- `cumulative_n: null`, `n_complete: false`;
-- `cumulative_n_lower_bound: 47 + local_counted_n`;
-- `ledger_history_incomplete`, so no certification;
-- old raw strategy Sharpe values and scalar variance estimates never feed active-return V.
+- `probe(train_labels, train_features, proposal, probe_profile)` returning daily
+  active `returns`, daily cross-sectional `scores`, exact `fit_dates`, and
+  `train_sha256`. Train features cover the full 1260 sessions; labels stop at the
+  purged eligible signal endpoint. The profile disables DSR admission, decay
+  selection and voluntary gain gating for the fixed 16 solo probes.
+- `calibration_rows(train_labels, train_features, proposals)` returning every
+  common mature date and its stock/QQQ H10 labels plus all 16 rank values. The
+  engine builds and seals the equal-date calibration table in S1, before S2.
+- `fit_meta(train_labels, train_features, proposals, pool, calibration)` returning train
+  diagnostic `returns` and a `FitReceipt` whose model predicts feature-only test
+  rows. The receipt must match labels' exact dates, train SHA and all proposal SHA
+  before the meta diagnostic can be sealed.
 
-A bare `AttemptLedger(path)` still defaults to unknown history and
-`authority_source: null`, yielding `ledger_authority_unset`. Genesis is immutable;
-reopening with a different genesis fails. A later full reconciliation needs a
-separately reviewed migration, never a reset or silent history replacement.
+`manifest.research_context_by_fold[fold_id]` pins the full train calendar, dataset,
+x2 fee and common profile hashes, explicit carried `retired_ids`, plus a trusted price-basis receipt bound to that
+dataset. `manifest.reference_registry` is loaded separately with
+`pipeline.read_pinned(path, expected_raw_sha)`. `self_report_n` is explicit.
+Adapters are trusted Python code; this is a data-flow contract, not an OS sandbox.
 
-`local_attempts_n` counts begin records; `local_counted_n` follows v0 proposal rules.
-Declared family members count even if a later child registration is interrupted;
-a fold invocation with a declared family is orchestration metadata, while a failed
-pre-family discovery is a conservatively counted structural attempt.
+The actual orchestration is in `pipeline.run_train_pipeline`:
 
-Attempts are transactional SQLite events inserted **before execution**. All
-failed/NaN/repeated/interrupted begins remain counted. Same ID/same input is an
-idempotent delivery retry; a new performance attempt gets a new ID. Supersedes is
-only metadata and never deletes an earlier attempt. NaN/Inf Sharpe observations
-retain status/reason and null rather than zero. Family declarations and observed
-self-reported N high-water marks are metadata events, not extra attempts. A lower
-self-report after restart cannot reduce the gate N. Readout exports the full
-logical snapshot plus `n_ledger_hash`, independent of SQLite layout and filename.
-Preserve the DB and exported hash. This is a local-filesystem ledger, not a
-multi-host distributed database or protection against rewriting every anchor.
+1. S0 pins all 16 candidate roles, the future meta policy role, input/profile hashes
+   and the external registry identity before performance.
+2. S1 registers all candidate attempts before invoking probes. Failures/NaN and
+   duplicated proposals stay in N; all 16 finite observations are required.
+3. S2 uses the candidate-only sample V and its candidate reference floor, then
+   daily DSR at the candidate N/hash snapshot. Positive-mean/DSR-qualified recipes
+   are ordered by mean then ID, with the frozen correlation/pool-size rule. Missing
+   prerequisites yield null, never a fabricated empty pool. A fully evaluated
+   legitimate empty pool can proceed through the fixed base-only meta policy.
+4. S3 registers exactly one meta attempt after the unique pool is sealed.
+5. S4 reuses the original 16 SRs without duplicate N and adds the meta SR. It uses
+   the separate meta reference floor and the later N/hash snapshot. Failure cannot
+   trigger another pool, another meta attempt or an earlier DSR rescore.
 
-## DSR / V numerical interface
+External references require their complete predeclared memberships and every
+trial's source run/return SHA, daily active basis, exact train calendar, profile,
+dataset and x2 cost identities. Current-run/derived copies, v0.1 profiles, annual
+or mixed scales, missing trials and winner subsets are refused. Source provenance
+does not prove IID. Stage successes and failures are immutable ledger records;
+a consumed run/fold cannot evaluate again.
 
-```python
-from qlab.dynamic_factor.conventions import load_conventions
-from qlab.dynamic_factor.ledger import AttemptLedger
-from qlab.dynamic_factor.statistics import dsr_eval
+`dsr_eval` v0.2 reads those sealed layer records. Request `layer: candidate` with
+`run_id`, `fold_id` and optional `candidate_id`, or `layer: meta`. Scalar V/SR
+cannot bypass the stages. The OOS readout requires every prescribed fold receipt,
+aligned return dates, complete N and data guards; its V is the maximum frozen
+train meta V across all folds, never a new V estimated from OOS controls. Neither
+train DSR nor this predeclared max rule proves market performance or coverage.
 
-policy = load_conventions()
-ledger = AttemptLedger.from_conventions("./dynamic-factor.sqlite", policy)
-# Before evaluating a run, declare all its family IDs (16 recipes + one meta).
-ledger.declare_family("run", all_attempt_ids,
-                      basis=policy.document["N"]["DSR_SR_basis"])
-# Each member is begun before evaluation, then finished with a Sharpe observation:
-ledger.begin(attempt_id, proposal, context={"run_id": "run"})
-ledger.finish(attempt_id, "success", sharpe=observed_sr,
-              details={"sr_basis": policy.document["N"]["DSR_SR_basis"],
-                       "sharpe_scale": "daily", "scale_conversions": 0})
-report = dsr_eval({"run_id": "run", "self_report_n": reported_total,
-                   "returns": daily_active_returns,
-                   "return_basis": policy.document["N"]["DSR_SR_basis"],
-                   "return_scale": "daily"}, ledger, conventions=policy)
+DSR expressions, gamma, threshold, sample standard deviation, population skew,
+ordinary kurtosis and daily/annual factors come from the pinned JSON. The pure
+`dsr_v0.formula()` accepts an external V for unit arithmetic. It does not certify a
+research path. Unknown numerical outputs are null, never zero.
+
+## Startup and voluntary gains
+
+`execution.lock_startup_intent` seals a budget at the previous reference close.
+O0 starts with $15000 and zero inventory. Each probe/meta uses its own identified
+train scope; stitched test/forward uses one continuing scope across folds. A scope
+cannot be reset under a new start ID. Open calculations require the exact persisted
+intent, adjacent reference-session dates, carried cash/inventory and valid prices.
+
+`initial_build_turnover_check` uses only QQQ at opens 0, 1 and 2. It caps buying at
+40% of previous-close canonical x2 NAV (E0 at O0), applies the normal tau <=20%,
+integer floor, bound fees, no borrowing, 2% post-fee cash and 98% invested target.
+It decrements quantity until feasible; missing prices/fees refuse, never create a
+zero-cost fill. After O2 it retains unfilled cash with no extension. First regular
+signal is position 5 close / 6 open, then the global five-session clock.
+
+`calibrate_gain` consumes only verified mature H10 labels: common dates with at
+least 50 stocks and all ten buckets for all 16 recipes. It averages stocks within
+each date/bucket, then dates equally. No bucket interpolation or missing-as-zero.
+Forecast weights use frozen active/half coefficients and current pool identities.
+
+`voluntary_trade_gate` takes the unique final feasible holdings plans M and P,
+original inventory/cash, raw open prices, frozen calibration/ranks/pool and a
+trusted feasibility receipt bound to those exact plans. Required exits cannot be
+undone. It nets each complete plan from original inventory once, quotes x2 fees
+including QQQ, and computes:
+
+```text
+delta_w_i = (q_P_i - q_M_i) * raw_open_price_i / pretrade_canonical_NAV
+G_H10 = sum_stock(delta_w_s * alpha_s) + mu_Q * sum_non_cash(delta_w_i)
+K = max(0, C2(P) - C2(M)) / pretrade_canonical_NAV
+accept optional P iff all inputs are verified/finite and G_H10 > K
 ```
 
-**V family aggregation is not wired (EVO-883 v0.2 pending).** v0.1 makes pool
-admission require DSR>=threshold while the V family includes the post-admission
-meta-portfolio, so the two depend on each other. Until v0.2 closes that loop,
-`dsr_eval` computes SR/skew/kurt and the lower-bound N, then returns `dsr`,
-`trials_variance`, `family_variance` and `independent_variance` as `null` with
-reason `prereg_pending_v0.2`; it is never certifiable. No default or custom family
-is substituted. Family declarations are still recorded in the ledger because they
-feed N. Three further v0.1 gaps have interface stubs in `pending.py` that refuse
-with the same reason: `pool_admission_check`, `initial_build_turnover_check`
-(first-day 0->98% build vs the 20% turnover cap) and `voluntary_trade_gate`
-(gain->NAV conversion unspecified).
+Quantities already include tilt; no second theta or horizon multiplier is applied.
+The gate checks its calibration and pool against sealed S1/S2 records. It seals
+one plan per `account_scope`/`signal_close`, preventing a second subset search; an
+identical delivery retry returns the immutable prior report. Missing old/new
+forecasts reject optional changes and retain verified M, with
+null gain metrics. Rejection selects M once; no second optional subset search.
+The pure unit counterexample 1% alpha ×20% NAV exposure versus 0.3% incremental
+NAV cost gives 0.2%-0.3% = -0.1% and rejects.
 
-DSR expressions, gamma, threshold, sample ddof, population skew/ordinary kurtosis,
-and annual/daily conversion factor come from v0.1. `daily_sr` divides annual
-observations by sqrt(periods) exactly once; repeated conversion or mixed units is
-refused. Candidate SR/moments are computed from supplied daily active returns,
-not a competing scalar SR. Scalar V inputs are rejected. N uses the nondecreasing
-maximum of observed lower-bound history and self-report. `diagnostic_passed`,
-`passed` and `certifiable` stay false while V is pending. Missing policy still gives `prereg_missing`.
-The earlier generic injected-plugin seam remains for engine tests; the official
-EVO-883 route is the `conventions` adapter above.
+## Ledger, data, fees and CLI
 
-The fixed synthetic fixture gives daily SR=0.2903200204700225, ordinary population
-kurtosis 1.7314285714285709 and gate N=81 (only 47+34 observed attempts) from
-`dsr_eval`, with DSR/V null. Separately, the pure `formula()` with a
-fixture-supplied V=0.0102 gives SR0=0.24799876432939677 and DSR=0.6265006201845557
-(checked against the paper, eq. 1-2); this is a formula unit check, not a wired V.
-Annual/daily inputs to `daily_sr` match; missing SR and scale errors are refused.
+`AttemptLedger.from_conventions(path, policy)` is append-only SQLite. Begin before
+work; all outcomes survive restart. Same ID/same delivery is idempotent; a real
+retry uses a new ID. Self-report high-water marks never decrease. Declared proposals
+count even if registration is interrupted. The future meta role pinned at S0 does
+not count as an attempted meta until S3; reusing probe SRs in S4 does not count twice.
+Immutable stage/intent records are metadata. Logical hashes cover complete genesis
+and events. Corruption never becomes a new empty history. Existing v0.1 DB genesis
+is immutable; this version refuses a mismatch rather than silently rebasing it.
+A real reconciliation/migration needs a separately reviewed append-only procedure.
 
-## Fold and data rules
+`wf_manifest_check` preserves the existing data gates: own-span missing sessions,
+nontrading/duplicate bars, nonpositive/unknown prices, alignment and configured
+jump/reversal detection. It flags, never repairs/fills/shifts. The SPY fixture uses
+2011-07-04, 2012-04-06, 2012-05-28 and missing 2012-05-29, with distinct
+`data.jump_reversal`, `data.nontrading_bar`, `data.calendar_gap` codes. A trading-day
+bad-price variant verifies independent jump detection. Beta/IR remain unavailable.
+The AAPL-derived reference calendar remains an explicit unverified exchange
+calendar assumption.
 
-`policy.fold_manifest()` reads the author-supplied 3,191-day complete common suffix
-and 77-fold date table, verifying the formulas from v0.1. It retains each original
-`history_end`, the 21-session gap and the prescribed test dates. Eligible training
-signals are purged so their label entry/exit and the entire 20-session template
-path mature **inside train**, not merely before test. Next-open entry means the
-20-session path endpoint is signal+21; the primary 10-session label exits at
-signal+11. These offsets are derived from the JSON. `train_end` is the purged
-eligible-signal endpoint, while `history_end` preserves the original train bound.
-No cutoffs or gap lengths can be overridden in a bound manifest.
-
-`run_walk_forward(..., conventions=policy)` validates that binding, then creates a
-new miner, fitter and model per fold. The miner receives immutable train rows;
-all proposals (including duplicates) and the meta attempt are logged before fit.
-Selection/scaling/refitting occur inside the train-only fitter. A FitReceipt must
-match exact training dates, train SHA and proposal SHA. Predict receives immutable
-feature-only rows with no test labels. Full-history receipts, reused instances,
-unmatured labels/template paths and consumed run/fold IDs are rejected. Failed
-mining invocations are conservatively recorded too. This is data-flow checking
-for trusted adapters, **not an OS sandbox** against malicious adapters reading
-other files or fabricating receipts. It does not authorize a historical run.
-
-`wf_manifest_check(manifest, conventions=policy)` requires the pinned common
-calendar and benchmark/portfolio date alignment before daily metrics. A caller
-cannot hide holes by intersecting away the same missing date from every series.
-The tool checks own-span omissions, nontrading bars, duplicate/unsorted dates,
-nonpositive/nonfinite prices and jump/reversal patterns. It never repairs prices,
-shifts dates, forward-fills or silently aligns rows. Beta/IR remain null here.
-
-v0.1 supplies no jump threshold; callers must supply `jump_reversal_policy` in the
-manifest (otherwise refusal). Fields are `min_abs_jump`, `max_abs_roundtrip`, and
-`max_observation_gap_calendar_days`. The explicit harness QA inputs are 0.15, 0.03
-and 5, not strategy acceptance parameters. Opposite-sign adjacent-observation
-moves with a large first jump and near-restored price are flagged independently
-of calendar membership. Observed moves spanning missing/off-calendar sessions are
-labelled as such and are never treated as daily returns.
-
-The updated fixed SPY case uses exact frozen parquet prices in three windows:
-2011-07-04 bad price/rebound, 2012-04-06 and 2012-05-28 nontrading bars, and the
-missing 2012-05-29 session. Date-level reason codes distinguish
-`data.jump_reversal`, `data.nontrading_bar` and `data.calendar_gap`. A separate
-trading-day variant proves the detector does not depend on holidays. Inputs retain
-SPY/AAPL source SHAs and the VTI QA check SHA. AAPL is still a local, unverified
-exchange-calendar assumption, exactly as v0.1 discloses.
-
-## Fees and CLI
-
-Fee rates stay in unmodified EVO-882 x1/x2 files. The separate date mapping switches
-TAF on sell date at 2027-01-01; earlier history requires the explicit
-`research_restored` assumption. A bound v0 call verifies the raw fee-file SHA and
-applies v0.1's per-order floor independently to each scenario leg. The cost mapping
-business receipt and actual account eligibility remain unverified. Cash bid/ask
-P&L already contains x1 friction; x2 stress only adds incremental friction. The
-scenario gate floor is not an observed cash fee. No actual shadow portfolio or
-partial-fill cost accounting is implemented in this D3–5 tool.
+**`fee_frontier` arithmetic is unchanged.** Both raw EVO-882 parameter files and
+the existing effective-date TAF switch remain intact. Reports explicitly say
+“费用政策待 EVO-883 下一版”. The new complete-plan quote uses those same bound
+bytes and the existing per-order mapping; it does not pre-implement the next
+fee-policy choices or claim account fee applicability.
 
 ```bash
 PYTHONPATH=qlab:. python -m qlab.dynamic_factor dsr_eval \
-  --input dsr-request.json --ledger ./dynamic-factor.sqlite \
-  --conventions qlab/qlab/dynamic_factor/fixtures/conventions-v0.1.json
-PYTHONPATH=qlab:. python -m qlab.dynamic_factor wf_manifest_check \
-  --input manifest.json \
-  --conventions qlab/qlab/dynamic_factor/fixtures/conventions-v0.1.json
+  --input request.json --ledger ./dynamic-factor-v02.sqlite \
+  --conventions qlab/qlab/dynamic_factor/fixtures/conventions-v0.2.json
 ```
 
-CLI DSR input wraps the request under `metrics`. `--conventions-sha256` can specify
-an expected raw SHA; default matches the frozen provenance file. CLI never imports
-code named in JSON. It prints JSON and exits 2 on refusal, 0 on an ok calculation.
-`--out-dir` writes immutable content-addressed reports, refusing conflicting bytes.
-`shadow_readout`, `IntentJournal` and `decay_check` remain offline receipt/extension
-seams, not the D6–8 shadow ledger or an order simulator. Full input provenance is
-in `fixtures/provenance.json`; original attached files remain byte-for-byte intact.
+DSR CLI input wraps the selector under `metrics`. Other CLI tools accept their
+request directly: `prereg_check`, `wf_manifest_check`, `fee_frontier`,
+`pool_admission_check`, `startup_intent`, `initial_build_turnover_check`,
+`voluntary_trade_gate`, `shadow_readout`, `decay_check`. Startup intent, state and voluntary-gain
+checks require a ledger. `--conventions-sha256` pins raw bytes; default uses the
+frozen provenance record. CLI never imports code named in JSON, emits JSON with
+input/source/file hashes and assumptions, exits 2 on refusal, and optionally
+writes immutable content-addressed reports using `--out-dir`.

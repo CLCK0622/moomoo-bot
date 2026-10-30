@@ -1,8 +1,7 @@
-"""Interface stubs for rules EVO-883 v0.1 leaves unresolved (review draft1).
+"""Compatibility dispatch: v0.1 refuses; explicitly bound v0.2 uses reviewed rules.
 
-Each tool accepts its future request shape, fingerprints it, and refuses with
-``prereg_pending_v0.2``. No default, family or conversion is invented here; the
-bodies are filled only after v0.2 is delivered with a pinned SHA.
+Unbound and historical v0.1 requests refuse with ``prereg_pending_v0.2``.
+Explicit v0.2 bindings dispatch to the ordered pipeline and execution arithmetic.
 """
 
 from __future__ import annotations
@@ -24,8 +23,29 @@ def _pending(tool, request, metric_names, gap):
     )
 
 
-def pool_admission_check(request):
+def pool_admission_check(request, *, conventions=None, ledger=None):
     """Pool admission needs DSR>=threshold, whose V family needs post-admission members."""
+    if conventions is not None and conventions.document["version"] == "v0.2":
+        from .pipeline import evaluate
+
+        if ledger is None:
+            return conventions.bind(
+                result(
+                    "pool_admission_check",
+                    {"request": request},
+                    metrics={"admitted": None, "dsr": None, "pool": None},
+                    reasons=["ledger_missing"],
+                )
+            )
+        report = evaluate(dict(request, layer="candidate"), ledger, conventions)
+        report["tool"] = "pool_admission_check"
+        pool = report["metrics"]["pool"]
+        report["metrics"]["admitted"] = (
+            (request["candidate_id"] in pool)
+            if pool is not None and request.get("candidate_id") is not None
+            else None
+        )
+        return report
     return _pending(
         "pool_admission_check",
         request,
@@ -34,8 +54,12 @@ def pool_admission_check(request):
     )
 
 
-def initial_build_turnover_check(request):
+def initial_build_turnover_check(request, *, conventions=None, ledger=None):
     """First-day 0->98% build implies tau=49%, above the 20% turnover cap."""
+    if conventions is not None and conventions.document["version"] == "v0.2":
+        from .execution import initial_build_turnover_check as calculate
+
+        return calculate(request, conventions=conventions, ledger=ledger)
     return _pending(
         "initial_build_turnover_check",
         request,
@@ -44,8 +68,12 @@ def initial_build_turnover_check(request):
     )
 
 
-def voluntary_trade_gate(request):
+def voluntary_trade_gate(request, *, conventions=None, ledger=None):
     """Gain-to-NAV conversion for voluntary trades is not specified in v0.1."""
+    if conventions is not None and conventions.document["version"] == "v0.2":
+        from .execution import voluntary_trade_gate as calculate
+
+        return calculate(request, conventions=conventions, ledger=ledger)
     return _pending(
         "voluntary_trade_gate",
         request,

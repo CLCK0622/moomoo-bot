@@ -13,15 +13,9 @@ from unittest.mock import patch
 
 from .contract import digest, sha256, source_manifest
 from .conventions import load_conventions
-from .dsr_v0 import V_PENDING, daily_sr, formula
 from .fees import FIXTURES, fee_frontier
 from .folds import run_walk_forward
 from .ledger import AttemptLedger
-from .pending import (
-    initial_build_turnover_check,
-    pool_admission_check,
-    voluntary_trade_gate,
-)
 from .receipts import IntentJournal, shadow_readout
 from .statistics import dsr_eval
 from .validation import wf_manifest_check
@@ -288,97 +282,34 @@ def run(workdir):
         numeric_ledger = AttemptLedger.from_conventions(
             workdir / "numeric.sqlite", policy
         )
-        request = numerical_fixture(numeric_ledger, policy)
-        numeric = dsr_eval(request, numeric_ledger, conventions=policy)
-        mismatch = dsr_eval(
-            dict(request, return_scale="annual"), numeric_ledger, conventions=policy
+        numeric = dsr_eval(
+            {"run_id": "absent", "fold_id": "0", "layer": "meta"},
+            numeric_ledger,
+            conventions=policy,
         )
-        m = numeric["metrics"]
+        scalar = dsr_eval({"v": 0}, numeric_ledger, conventions=policy)
         require(
-            V_PENDING in numeric["reasons"]
-            and m["dsr"] is None
-            and m["trials_variance"] is None
-            and m["family_variance"] is None
-            and not numeric["certifiable"],
-            "V family aggregation wired before EVO-883 v0.2",
+            numeric["metrics"]["dsr"] is None
+            and numeric["metrics"]["trials_variance"] is None
+            and "dsr.v02_stage_receipt_missing" in numeric["reasons"],
+            "missing sealed v0.2 prerequisites accepted",
         )
+        require("dsr.scalar_v_or_sr_forbidden" in scalar["reasons"], "scalar V bypass")
         require(
-            mismatch["metrics"]["dsr"] is None
-            and "dsr.scale_or_basis_mismatch" in mismatch["reasons"],
-            "mixed units accepted",
-        )
-        require(
-            m["cumulative_n"] is None and m["gate_n"] == 81,
-            "historical lower bound masqueraded as complete N",
-        )
-        # Pure formula check only: V is supplied by the fixture, never by dsr_eval.
-        basis = policy.document["N"]["DSR_SR_basis"]
-        one = {"sharpe_per_period": 0.01, "details": {"sr_basis": basis}}
-        periods = policy.annual_periods
-        annual = dict(
-            one,
-            sharpe_per_period=0.01 * math.sqrt(periods),
-            details={"sharpe_scale": "annual"},
-        )
-        twice = dict(annual, details={"sharpe_scale": "annual", "scale_conversions": 1})
-        daily = dict(one, details={"sharpe_scale": "daily"})
-        refused = []
-        for bad in (twice, dict(daily, sharpe_per_period=None)):
-            try:
-                daily_sr(bad, periods)
-            except ValueError as exc:
-                refused.append(str(exc))
-        require(
-            math.isclose(daily_sr(annual, periods), daily_sr(daily, periods))
-            and refused
-            == [
-                "dsr.scale_mismatch_or_repeated_conversion",
-                "dsr.family_or_independent_sr_missing",
-            ],
-            "annual/daily double conversion or missing SR accepted",
-        )
-        _, formula_dsr = formula(
-            policy,
-            SR=m["sharpe"],
-            n=len(request["returns"]),
-            N=m["gate_n"],
-            V=0.0102,
-            skew=m["skew"],
-            kurt=m["kurt"],
-            n_complete=False,
-        )
-        require(
-            math.isclose(formula_dsr, 0.6265006201845557, abs_tol=1e-12),
-            "DSR formula fixture drifted",
-        )
-        stubs = [
-            pool_admission_check({"candidate": "fixture"}),
-            initial_build_turnover_check({"target_gross": 0.98, "cash": 1.0}),
-            voluntary_trade_gate({"gain_bps": 10}),
-        ]
-        require(
-            all(
-                x["reasons"] == [V_PENDING]
-                and not x["certifiable"]
-                and all(v is None for v in x["metrics"].values())
-                for x in stubs
-            ),
-            "v0.2-pending rule given a default",
+            numeric["metrics"]["cumulative_n"] is None
+            and numeric["metrics"]["cumulative_n_lower_bound"] == 47,
+            "lower bound certified",
         )
         record(
             "dsr.scale_and_v_required",
-            reports + [numeric, mismatch] + stubs,
+            reports + [numeric, scalar],
             {
                 "dsr": None,
                 "trials_variance": None,
-                "v_reason": V_PENDING,
-                "formula_only_dsr_with_fixture_V": formula_dsr,
-                "gate_n_lower_bound": 81,
+                "reason": "dsr.v02_stage_receipt_missing",
                 "cumulative_n": None,
-                "annual_daily_equal": True,
-                "missing_sr_rejected": True,
-                "mixed_scale_rejected": True,
-                "v0_2_pending_tools_refused": [x["tool"] for x in stubs],
+                "seed_lower_bound": 47,
+                "scalar_V_rejected": True,
             },
         )
 
@@ -543,6 +474,10 @@ def run(workdir):
             },
         )
 
+    from .v02_harness import revision_cases
+
+    with offline():
+        revisions = revision_cases(workdir, policy)
     specified = json.loads((FIXTURES / "harness_cases.json").read_bytes())
     require(
         [c["case_id"] for c in cases]
@@ -563,6 +498,8 @@ def run(workdir):
             if p.is_file()
         },
         "cases": cases,
+        "revision_cases": revisions,
+        "revision_cases_passed": len(revisions),
         "strategy_backtests": 0,
         "certification": False,
         **policy.binding,

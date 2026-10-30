@@ -241,6 +241,29 @@ class AttemptLedger:
                 self._append(db, {"event": "self_report_n", "value": value})
             return max(prior, value)
 
+    def record(self, key, payload):
+        """Seal a stage/receipt once; metadata adds no trial and cannot be revised."""
+        event = clean({"event": "record", "key": key, "payload": payload})
+        with self._transaction() as db:
+            for previous in self._events(db):
+                if previous["event"] == "record" and previous["key"] == key:
+                    if {
+                        k: v for k, v in previous.items() if k != "previous_hash"
+                    } != event:
+                        raise ValueError("ledger.record_conflict")
+                    return previous
+            return self._append(db, event)
+
+    def recorded(self, key):
+        return next(
+            (
+                e["payload"]
+                for e in self.snapshot()["events"]
+                if e["event"] == "record" and e["key"] == key
+            ),
+            None,
+        )
+
     def snapshot(self):
         with self._transaction() as db:
             events = self._events(db)
@@ -333,6 +356,8 @@ class AttemptLedger:
                     "conventions_version",
                     "conventions_sha256",
                     "conventions_status",
+                    "profile_sha256",
+                    "common_profile_sha256",
                 )
                 if k in genesis
             }

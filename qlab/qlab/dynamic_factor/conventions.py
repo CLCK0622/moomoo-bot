@@ -84,6 +84,7 @@ class Conventions:
     calendar: tuple
     raw_date_manifest: bytes
     seed_raw: bytes
+    raw_profile: bytes = b""
 
     @property
     def document(self):
@@ -101,11 +102,17 @@ class Conventions:
 
     @property
     def binding(self):
-        return {
+        binding = {
             "conventions_version": self.document["version"],
             "conventions_sha256": self.raw_sha256,
             "conventions_status": self.document["status"],
         }
+        if self.raw_profile:
+            binding["profile_sha256"] = sha256(self.raw_profile)
+            binding["common_profile_sha256"] = self.document["variance_layers"][
+                "probe_profile"
+            ]["common_profile_sha256"]
+        return binding
 
     @property
     def annual_periods(self):
@@ -122,7 +129,15 @@ class Conventions:
         )
 
     @property
+    def profile(self):
+        return json.loads(self.raw_profile)
+
+    @property
     def family_size(self):
+        if self.document["version"] == "v0.2":
+            return len(
+                self.document["variance_layers"]["family_definitions"]["meta_members"]
+            )
         match = re.fullmatch(
             r"all_(\d+)_primary_recipes_plus_single_meta_combination_per_fold_fixed_before_performance",
             self.document["V"]["family"],
@@ -171,14 +186,46 @@ class Conventions:
         return report
 
 
-def load_conventions(path=FIXTURES / "conventions-v0.1.json", *, expected_sha256=None):
+def load_conventions(path=FIXTURES / "conventions-v0.2.json", *, expected_sha256=None):
     raw = Path(path).read_bytes()
     provenance = json.loads((FIXTURES / "provenance.json").read_bytes())
     if expected_sha256 is None:
-        expected_sha256 = provenance["conventions-v0.1.json"]["sha256"]
+        expected_sha256 = provenance.get(
+            Path(path).name, provenance["conventions-v0.2.json"]
+        )["sha256"]
     if sha256(raw) != expected_sha256:
         raise ConventionConflict("conventions.hash_mismatch")
     p = json.loads(raw)
+    if p["schema"] == "EVO883.executable-conventions.v0.2":
+        profile_raw = validate_v02(p, provenance)
+        # Reuse unchanged date/seed/scale checks through the v0.1 parser.
+        legacy = load_conventions(FIXTURES / "conventions-v0.1.json")
+        for key in (
+            "genesis",
+            "N_counting",
+            "folds",
+            "labels",
+            "label_boundary",
+            "units",
+            "DSR",
+        ):
+            if p[key] != legacy.document[key]:
+                raise ConventionConflict(
+                    "conventions.v02_unchanged_field_conflict:" + key
+                )
+        if p["benchmark_missing_days"] != dict(
+            legacy.document["benchmark_missing_days"],
+            local_calendar_condition_accepted_in_review=True,
+        ):
+            raise ConventionConflict("conventions.benchmark_rule_conflict")
+        return Conventions(
+            raw,
+            sha256(raw),
+            legacy.calendar,
+            legacy.raw_date_manifest,
+            legacy.seed_raw,
+            profile_raw,
+        )
     if p["schema"] != "EVO883.executable-conventions.v0.1":
         raise ConventionConflict("conventions.schema_unsupported")
     n, v, g, f = p["N"], p["V"], p["genesis"], p["folds"]
@@ -292,3 +339,58 @@ def load_conventions(path=FIXTURES / "conventions-v0.1.json", *, expected_sha256
     if not sr_scale or not v_scale or sr_scale[1] != v_scale[1]:
         raise ConventionConflict("conventions.scale_conflict")
     return Conventions(raw, sha256(raw), calendar, date_raw, seed_raw)
+
+
+def validate_v02(p, provenance):
+    """Verify the companion profile, common hash, and the reviewed acyclic contract."""
+    from .contract import digest
+
+    raw = (FIXTURES / "prereg-v1-draft2.json").read_bytes()
+    if sha256(raw) != provenance["prereg-v1-draft2.json"]["sha256"]:
+        raise ConventionConflict("conventions.profile_hash_mismatch")
+    profile = json.loads(raw)
+    for key in ("initialization", "gain_model", "variance_layers", "price_basis_gate"):
+        if p[key] != profile[key]:
+            raise ConventionConflict("conventions.profile_conflict:" + key)
+    if (
+        p["N"] != profile["gate_thresholds"]
+        or p["DSR"]["threshold"] != p["N"]["DSR_min"]
+    ):
+        raise ConventionConflict("conventions.internal_conflict")
+    v = p["variance_layers"]
+    recipe = v["common_profile_hash_recipe"]
+    common = {k: profile[k] for k in recipe["direct_root_keys"]}
+    for dest, path in recipe["scalar_key_paths"].items():
+        obj = profile
+        for part in path.split("."):
+            obj = obj[part]
+        common[dest] = obj
+    common.update(recipe["constant_fields"])
+    if (
+        digest(common) != v["probe_profile"]["common_profile_sha256"]
+        or digest(common)
+        != v["independent_reference"]["required_common_profile_sha256"]
+    ):
+        raise ConventionConflict("conventions.common_profile_hash_mismatch")
+    if [x["id"] for x in v["steps"]] != ["S0", "S1", "S2", "S3", "S4"] or [
+        x["depends_on"] for x in v["steps"]
+    ] != [[], ["S0"], ["S1"], ["S2"], ["S1", "S3"]]:
+        raise ConventionConflict("conventions.v02_stage_conflict")
+    families = v["family_definitions"]
+    if (
+        families != profile["family"]
+        or families["meta_members"][:-1] != families["candidate_members"]
+        or v["meta_results_feedback_to_candidate_admission"]
+    ):
+        raise ConventionConflict("conventions.v02_family_conflict")
+    if (
+        p["V"]["candidate_formula"] != v["candidate_V"]
+        or p["V"]["meta_formula"] != v["meta_V"]
+        or p["N"]["V_effective"]
+        != {
+            "candidate": "variance_layers.candidate_V",
+            "meta": "variance_layers.meta_V",
+        }
+    ):
+        raise ConventionConflict("conventions.V_aggregation_conflict")
+    return raw

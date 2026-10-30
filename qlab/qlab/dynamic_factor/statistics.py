@@ -76,8 +76,10 @@ def dsr_eval(
     request, ledger, *, prereg=None, prereg_sha256=None, plugin=None, conventions=None
 ):
     if conventions is not None:
-        from .dsr_v0 import evaluate
-
+        if conventions.document["version"] == "v0.2":
+            from .pipeline import evaluate
+        else:
+            from .dsr_v0 import evaluate
         return evaluate(request, ledger, conventions)
     snapshot = ledger.safe_snapshot()
     inputs = {

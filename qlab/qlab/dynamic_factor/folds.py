@@ -163,7 +163,73 @@ def run_walk_forward(
 
             proposals = tuple(json.loads(canonical(proposals)))
             proposal_hash = digest(proposals)
-            if conventions is not None:
+            bound_v02 = (
+                conventions is not None and conventions.document["version"] == "v0.2"
+            )
+            if bound_v02:
+                from .pipeline import run_train_pipeline
+
+                context = manifest.get("research_context_by_fold", {}).get(
+                    ctx.fold_id, {}
+                )
+                context = dict(context, fold_id=ctx.fold_id)
+                history_dates = calendar[
+                    index[fold["train_start"]] : index[fold["history_end"]] + 1
+                ]
+                history = tuple(
+                    FeatureRow(d, _features(by_date[d])) for d in history_dates
+                )
+                if context.get("train_calendar") != history_dates:
+                    raise ValueError("pipeline.train_window_mismatch")
+                fitted = []
+
+                def probe(proposal, profile):
+                    diagnostic = fitter.probe(train, history, proposal, profile)
+                    if (
+                        diagnostic.get("fit_dates") != list(train_dates)
+                        or diagnostic.get("train_sha256") != train_hash
+                    ):
+                        raise ValueError("wf.full_history_or_mutated_fit_rejected")
+                    return diagnostic
+
+                def calibrate():
+                    labels = fitter.calibration_rows(train, history, proposals)
+                    if not set(labels["matured_dates"]).issubset(train_dates):
+                        raise ValueError("gain.label_outside_mature_train")
+                    return labels
+
+                def meta(pool, calibration):
+                    diagnostic = fitter.fit_meta(
+                        train, history, proposals, pool, calibration
+                    )
+                    fitted_receipt = diagnostic["receipt"]
+                    if (
+                        not isinstance(fitted_receipt, FitReceipt)
+                        or fitted_receipt.train_sha256 != train_hash
+                        or fitted_receipt.fit_dates != tuple(train_dates)
+                        or fitted_receipt.proposals_sha256 != proposal_hash
+                        or digest(proposals) != proposal_hash
+                    ):
+                        raise ValueError("wf.full_history_or_mutated_fit_rejected")
+                    fitted.append(fitted_receipt)
+                    return {k: v for k, v in diagnostic.items() if k != "receipt"}
+
+                pipeline = run_train_pipeline(
+                    policy=conventions,
+                    ledger=ledger,
+                    run_id=family_run,
+                    context=context,
+                    registry=manifest.get("reference_registry"),
+                    proposals=proposals,
+                    probe=probe,
+                    build_meta=meta,
+                    self_report_n=manifest.get("self_report_n"),
+                    calibrate=calibrate,
+                )
+                if pipeline["reason"]:
+                    raise ValueError(pipeline["reason"])
+                receipt = fitted[0]
+            if conventions is not None and not bound_v02:
                 if len(proposals) + 1 != conventions.family_size:
                     raise ValueError("wf.primary_family_size_mismatch")
                 family_run = f"{run_id}/{ctx.fold_id}"
@@ -173,12 +239,12 @@ def run_walk_forward(
                 ledger.declare_family(
                     family_run, members, basis=conventions.document["N"]["DSR_SR_basis"]
                 )
-            for number, proposal in enumerate(proposals):
+            for number, proposal in enumerate(() if bound_v02 else proposals):
                 attempt = f"{run_id}/{ctx.fold_id}/proposal/{number}"
                 context = asdict(ctx) | ({"run_id": family_run} if conventions else {})
                 ledger.begin(attempt, proposal, context=context, replay=False)
                 active.append(attempt)
-            if conventions is not None:
+            if conventions is not None and not bound_v02:
                 meta = f"{family_run}/meta"
                 ledger.begin(
                     meta,
@@ -187,7 +253,8 @@ def run_walk_forward(
                     replay=False,
                 )
                 active.append(meta)
-            receipt = fitter.fit(train, proposals)
+            if not bound_v02:
+                receipt = fitter.fit(train, proposals)
             if not isinstance(receipt, FitReceipt):
                 raise ValueError("wf.fit_receipt_missing")
             if (

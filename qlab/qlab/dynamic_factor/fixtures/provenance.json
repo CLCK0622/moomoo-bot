@@ -19,6 +19,11 @@
     "source_member": "EVO883-executable-conventions-v0.1.json",
     "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
   },
+  "conventions-v0.2.json": {
+    "sha256": "b873b30b754695bef82ff37b95fc7628b0cc45ad7eb76e9cb091f9164cfc0a17",
+    "source_member": "EVO883-executable-conventions-v0.2.json",
+    "source_zip_sha256": "6f7bba19db12639621e000b4f72d797f7c43f04a4737d9e4d58fec724b9053d2"
+  },
   "fee_params_x1.json": {
     "sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
     "source_member": "evo882/fee/fee_params_x1.json",
@@ -38,6 +43,11 @@
     "sha256": "76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b",
     "source_member": "input-snapshots/historical-trial-ledger-e51f8023.jsonl",
     "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
+  },
+  "prereg-v1-draft2.json": {
+    "sha256": "39dac21665e980831f27a154b845341178100028a2ab0ff0741ca982d73e55b8",
+    "source_member": "EVO883-prereg-v1-draft2.json",
+    "source_zip_sha256": "6f7bba19db12639621e000b4f72d797f7c43f04a4737d9e4d58fec724b9053d2"
   },
   "spy-anomalies.json": {
     "parameters": "jump thresholds are explicit manifest QA inputs, not frozen strategy choices",

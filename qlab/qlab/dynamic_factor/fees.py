@@ -33,7 +33,7 @@ def fee_frontier(
     inputs = {"request": request, "params_sha256": None, "schedule_sha256": None}
     if conventions is not None:
         inputs.update(conventions.binding)
-    assumptions = []
+    assumptions = ["费用政策待 EVO-883 下一版"]
     metrics = {
         "net_edge_bps": None,
         "cash_net_edge_bps": None,
@@ -71,7 +71,7 @@ def fee_frontier(
             schedule = value
     if not all(isinstance(v, dict) for v in (request, p, schedule)):
         return reject("fee_input_invalid_or_missing")
-    assumptions = list(p.get("unverified", []))
+    assumptions += list(p.get("unverified", []))
     if conventions is not None and inputs["params_sha256"] not in (
         conventions.document["cost_mapping"]["x1_sha256"],
         conventions.document["cost_mapping"]["x2_sha256"],
