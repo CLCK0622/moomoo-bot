@@ -100,30 +100,34 @@ report = dsr_eval({"run_id": "run", "self_report_n": reported_total,
                    "return_scale": "daily"}, ledger, conventions=policy)
 ```
 
-Independent families must have an explicit source reference/SHA and the same
-basis, with all members and observations present. Own-run membership is sealed
-before performance; added or missing attempts cannot be hidden by choosing a
-winner subset. The independent union excludes the entire current run. V is the
-max of complete-family and complete-independent-union sample variances, with no
-weighted scalar fallback. Missing/failed missing SR, NaN, insufficient independent
-records or uncomparable basis yields unavailable V/DSR. Source declarations are
-caller assertions, not an independent audit.
+**V family aggregation is not wired (EVO-883 v0.2 pending).** v0.1 makes pool
+admission require DSR>=threshold while the V family includes the post-admission
+meta-portfolio, so the two depend on each other. Until v0.2 closes that loop,
+`dsr_eval` computes SR/skew/kurt and the lower-bound N, then returns `dsr`,
+`trials_variance`, `family_variance` and `independent_variance` as `null` with
+reason `prereg_pending_v0.2`; it is never certifiable. No default or custom family
+is substituted. Family declarations are still recorded in the ledger because they
+feed N. Three further v0.1 gaps have interface stubs in `pending.py` that refuse
+with the same reason: `pool_admission_check`, `initial_build_turnover_check`
+(first-day 0->98% build vs the 20% turnover cap) and `voluntary_trade_gate`
+(gain->NAV conversion unspecified).
 
 DSR expressions, gamma, threshold, sample ddof, population skew/ordinary kurtosis,
-and annual/daily conversion factor come from v0.1. Annual observations divide by
-sqrt(periods) exactly once before computing V; repeated conversion or mixed units
-is refused. Candidate SR/moments are computed from supplied daily active returns,
+and annual/daily conversion factor come from v0.1. `daily_sr` divides annual
+observations by sqrt(periods) exactly once; repeated conversion or mixed units is
+refused. Candidate SR/moments are computed from supplied daily active returns,
 not a competing scalar SR. Scalar V inputs are rejected. N uses the nondecreasing
-maximum of observed lower-bound history and self-report. A numerical DSR using
-incomplete N is explicitly **diagnostic**: `diagnostic_passed` may be true while
-`passed` and `certifiable` remain false. Missing policy still gives `prereg_missing`.
+maximum of observed lower-bound history and self-report. `diagnostic_passed`,
+`passed` and `certifiable` stay false while V is pending. Missing policy still gives `prereg_missing`.
 The earlier generic injected-plugin seam remains for engine tests; the official
 EVO-883 route is the `conventions` adapter above.
 
-The fixed synthetic numerical fixture gives family V=0.00255, independent V=0.0102,
-SR0=0.24799876432939677, daily SR=0.2903200204700225, ordinary population kurtosis
-1.7314285714285709 and DSR=0.6265006201845557. N=81 is only 47+34 observed attempts.
-Annual/daily inputs match; missing SR and scale errors are refused.
+The fixed synthetic fixture gives daily SR=0.2903200204700225, ordinary population
+kurtosis 1.7314285714285709 and gate N=81 (only 47+34 observed attempts) from
+`dsr_eval`, with DSR/V null. Separately, the pure `formula()` with a
+fixture-supplied V=0.0102 gives SR0=0.24799876432939677 and DSR=0.6265006201845557
+(checked against the paper, eq. 1-2); this is a formula unit check, not a wired V.
+Annual/daily inputs to `daily_sr` match; missing SR and scale errors are refused.
 
 ## Fold and data rules
 

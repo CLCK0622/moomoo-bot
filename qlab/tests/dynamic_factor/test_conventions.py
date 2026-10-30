@@ -9,11 +9,16 @@ from qlab.dynamic_factor.conventions import (
     arithmetic,
     load_conventions,
 )
-from qlab.dynamic_factor.dsr_v0 import formula
+from qlab.dynamic_factor.dsr_v0 import V_PENDING, daily_sr, formula
 from qlab.dynamic_factor.folds import run_walk_forward
 from qlab.dynamic_factor.fees import FIXTURES, fee_frontier
 from qlab.dynamic_factor.harness import _wf, numerical_fixture
 from qlab.dynamic_factor.ledger import AttemptLedger
+from qlab.dynamic_factor.pending import (
+    initial_build_turnover_check,
+    pool_admission_check,
+    voluntary_trade_gate,
+)
 from qlab.dynamic_factor.statistics import dsr_eval, prereg_check
 from qlab.dynamic_factor.validation import wf_manifest_check
 
@@ -131,28 +136,49 @@ def test_unpinned_or_unsafe_expression_rejected(tmp_path):
         arithmetic("__import__('os').system('false')", {})
 
 
-def test_dsr_numbers_and_annual_conversion_once(tmp_path):
+def test_dsr_eval_stops_before_v_family_and_formula_matches_paper(tmp_path):
     policy = load_conventions()
     daily = AttemptLedger.from_conventions(tmp_path / "daily.sqlite", policy)
-    r = dsr_eval(numerical_fixture(daily, policy), daily, conventions=policy)
+    request = numerical_fixture(daily, policy)
+    r = dsr_eval(request, daily, conventions=policy)
     m = r["metrics"]
-    assert m["family_variance"] == pytest.approx(0.00255)
-    assert m["independent_variance"] == pytest.approx(0.0102)
-    assert m["sr0"] == pytest.approx(0.24799876432939677)
+    assert V_PENDING in r["reasons"] and not r["certifiable"]
+    for k in ("dsr", "trials_variance", "family_variance", "independent_variance"):
+        assert m[k] is None
+    assert r["metric_availability"]["dsr"]["reason"] == V_PENDING
+    assert r["metric_availability"]["sharpe"]["available"]
     assert m["sharpe"] == pytest.approx(0.2903200204700225)
     assert m["kurt"] == pytest.approx(
         1.7314285714285709
     )  # ordinary population kurtosis
-    assert m["dsr"] == pytest.approx(0.6265006201845557)
     assert m["gate_n"] == 81 and m["cumulative_n"] is None
-    annual = AttemptLedger.from_conventions(tmp_path / "annual.sqlite", policy)
-    a = dsr_eval(
-        numerical_fixture(annual, policy, annual=True), annual, conventions=policy
-    )
-    assert a["metrics"]["trials_variance"] == pytest.approx(m["trials_variance"])
-    assert a["metrics"]["dsr"] == pytest.approx(m["dsr"])
-    assert r["metric_availability"]["dsr"]["available"] and not r["certifiable"]
     assert "ledger_history_incomplete" in r["reasons"]
+    sr0, value = formula(
+        policy,
+        SR=m["sharpe"],
+        n=len(request["returns"]),
+        N=m["gate_n"],
+        V=0.0102,
+        skew=m["skew"],
+        kurt=m["kurt"],
+        n_complete=False,
+    )
+    assert sr0 == pytest.approx(0.24799876432939677)
+    assert value == pytest.approx(0.6265006201845557)
+
+
+def test_annual_sr_converts_to_daily_exactly_once():
+    policy = load_conventions()
+    periods = policy.annual_periods
+    daily = {"sharpe_per_period": 0.01, "details": {"sharpe_scale": "daily"}}
+    annual = {
+        "sharpe_per_period": 0.01 * periods**0.5,
+        "details": {"sharpe_scale": "annual"},
+    }
+    assert daily_sr(annual, periods) == pytest.approx(daily_sr(daily, periods))
+    annual["details"]["scale_conversions"] = 1
+    with pytest.raises(ValueError, match="scale_mismatch_or_repeated_conversion"):
+        daily_sr(annual, periods)
 
 
 @pytest.mark.parametrize(
@@ -176,37 +202,39 @@ def test_numerical_invalids_return_null_with_reason(tmp_path, change, reason):
     assert any(reason in x for x in r["reasons"])
 
 
-def test_missing_SR_retained_and_historical_raw_SR_never_used_as_V(tmp_path):
+def test_missing_SR_retained_and_never_filled(tmp_path):
     policy = load_conventions()
     ledger = AttemptLedger.from_conventions(tmp_path / "missing.sqlite", policy)
     req = numerical_fixture(ledger, policy, missing=True)
     r = dsr_eval(req, ledger, conventions=policy)
-    assert r["metrics"]["dsr"] is None
-    assert "dsr.family_or_independent_sr_missing" in r["reasons"]
+    assert r["metrics"]["dsr"] is None and V_PENDING in r["reasons"]
     assert ledger.snapshot()["local_attempts_n"] == 34
-    historical = AttemptLedger.from_conventions(tmp_path / "history.sqlite", policy)
-    request = numerical_fixture(historical, policy, include_independent=False)
-    r = dsr_eval(request, historical, conventions=policy)
-    assert r["metrics"]["independent_variance"] is None
-    assert "dsr.independent_variance_unavailable" in r["reasons"]
+    with pytest.raises(ValueError, match="family_or_independent_sr_missing"):
+        daily_sr({"sharpe_per_period": None, "details": {}}, policy.annual_periods)
 
 
-def test_second_annual_conversion_is_refused(tmp_path):
-    policy = load_conventions()
-    ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
-    req = numerical_fixture(ledger, policy, annual=True, conversions=1)
-    r = dsr_eval(req, ledger, conventions=policy)
-    assert r["metrics"]["dsr"] is None
-    assert "dsr.scale_mismatch_or_repeated_conversion" in r["reasons"]
+@pytest.mark.parametrize(
+    "tool",
+    [pool_admission_check, initial_build_turnover_check, voluntary_trade_gate],
+)
+def test_v0_2_pending_rules_refuse_without_defaults(tool):
+    r = tool({"any": "request"})
+    assert r["reasons"] == [V_PENDING] and not r["certifiable"]
+    assert all(v is None for v in r["metrics"].values())
+    assert all(
+        a == {"available": False, "reason": V_PENDING}
+        for a in r["metric_availability"].values()
+    )
 
 
-def test_high_diagnostic_does_not_certify_incomplete_N(tmp_path):
+def test_strong_returns_do_not_produce_dsr_or_certify(tmp_path):
     policy = load_conventions()
     ledger = AttemptLedger.from_conventions(tmp_path / "ledger.sqlite", policy)
     req = numerical_fixture(ledger, policy)
     req["returns"] = [x + 0.1 for x in req["returns"]]
     r = dsr_eval(req, ledger, conventions=policy)
-    assert r["metrics"]["diagnostic_passed"]
+    assert r["metrics"]["dsr"] is None
+    assert not r["metrics"]["diagnostic_passed"]
     assert not r["metrics"]["passed"] and not r["certifiable"]
 
 
@@ -219,7 +247,7 @@ def test_membership_sealed_before_performance_and_extra_trials_cannot_be_hidden(
     ledger.begin("extra", {"expr": "loser"}, context={"run_id": "own"})
     ledger.finish("extra", "failed", reason="fixture failure")
     r = dsr_eval(req, ledger, conventions=policy)
-    assert "dsr.family_extra_or_unregistered_attempt" in r["reasons"]
+    assert V_PENDING in r["reasons"] and r["metrics"]["dsr"] is None
     assert r["metrics"]["cumulative_n_lower_bound"] == 82
     with pytest.raises(ValueError, match="membership_conflict"):
         ledger.declare_family(
@@ -263,7 +291,7 @@ def test_cli_reads_v0_and_preserves_lower_bound_N(tmp_path):
     r = json.loads(cli.stdout)
     assert r["conventions_sha256"] == policy.raw_sha256
     assert r["metrics"]["cumulative_n"] is None
-    assert r["metrics"]["dsr"] == pytest.approx(0.6265006201845557)
+    assert r["metrics"]["dsr"] is None and V_PENDING in r["reasons"]
 
 
 def test_v0_per_order_cost_floor_and_param_binding(tmp_path):

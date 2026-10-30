@@ -1,11 +1,18 @@
-"""EVO-883 v0 numerical adapter; full families only, no scalar V fallback."""
+"""EVO-883 v0.1 numerical adapter.
+
+V family aggregation is not wired: v0.1 makes pool admission depend on DSR while
+the V family depends on post-admission membership (EVO-883 review draft1). Until
+v0.2 resolves that loop, dsr_eval stops after SR/skew/kurt/N and returns
+DSR/V as null with ``prereg_pending_v0.2``. ``formula`` and ``daily_sr`` stay
+available as pure functions for unit checks with an externally supplied V.
+"""
 
 from __future__ import annotations
 
 import math
 import re
 
-from .contract import is_sha, result, unavailable
+from .contract import result, unavailable
 from .conventions import arithmetic
 from .fees import finite
 
@@ -46,7 +53,7 @@ def formula(policy, *, SR, n, N, V, skew, kurt, n_complete):
     return sr0, value
 
 
-def _daily_sr(observation, periods):
+def daily_sr(observation, periods):
     sr = observation["sharpe_per_period"]
     d = observation.get("details", {})
     scale = d.get("sharpe_scale")
@@ -62,34 +69,7 @@ def _daily_sr(observation, periods):
     raise ValueError("dsr.scale_mismatch_or_repeated_conversion")
 
 
-def _full_family(snapshot, declaration, policy):
-    p = policy.document
-    run = declaration["run_id"]
-    members = declaration["attempt_ids"]
-    if len(members) != policy.family_size:
-        raise ValueError("dsr.family_membership_incomplete")
-    begins = [
-        e
-        for e in snapshot["events"]
-        if e["event"] == "begin"
-        and e.get("kind") == "candidate"
-        and e.get("context", {}).get("run_id") == run
-    ]
-    if set(e["attempt_id"] for e in begins) != set(members):
-        raise ValueError("dsr.family_extra_or_unregistered_attempt")
-    outcomes = {
-        e["attempt_id"]: e for e in snapshot["events"] if e["event"] == "finish"
-    }
-    values = []
-    for member in members:
-        obs = outcomes.get(member)
-        if (
-            obs is None
-            or obs.get("details", {}).get("sr_basis") != p["N"]["DSR_SR_basis"]
-        ):
-            raise ValueError("dsr.family_or_independent_sr_missing")
-        values.append(_daily_sr(obs, policy.annual_periods))
-    return values
+V_PENDING = "prereg_pending_v0.2"
 
 
 def evaluate(request, ledger, policy):
@@ -161,47 +141,8 @@ def evaluate(request, ledger, policy):
         kurt = arithmetic(kurt_expr, central)
         sr = mean / math.sqrt(var)
         metrics.update(sharpe=sr, skew=skew, kurt=kurt)
-        families = [e for e in snapshot["events"] if e["event"] == "family"]
-        own = [e for e in families if e["run_id"] == request["run_id"]]
-        if len(own) != 1 or own[0]["basis"] != p["N"]["DSR_SR_basis"]:
-            raise ValueError("dsr.family_membership_missing")
-        own_values = _full_family(snapshot, own[0], policy)
-        metrics["family_variance"] = variance(own_values, ddof)
-        independent = []
-        for declaration in families:
-            if (
-                declaration["run_id"] == request["run_id"]
-                or declaration["basis"] != p["N"]["DSR_SR_basis"]
-            ):
-                continue
-            authority = declaration.get("authority_source")
-            if (
-                not isinstance(authority, dict)
-                or not authority.get("reference")
-                or not is_sha(authority.get("sha256"))
-            ):
-                raise ValueError("dsr.independent_authority_unset")
-            independent.extend(_full_family(snapshot, declaration, policy))
-        if len(independent) <= ddof:
-            raise ValueError("dsr.independent_variance_unavailable")
-        floor = variance(independent, ddof)
-        metrics["independent_variance"] = floor
-        effective = arithmetic(
-            p["V"]["effective"],
-            {"family_variance": metrics["family_variance"], "independent_floor": floor},
-        )
-        metrics["trials_variance"] = effective
-        sr0, dsr = formula(
-            policy,
-            SR=sr,
-            n=len(returns),
-            N=metrics["gate_n"],
-            V=effective,
-            skew=skew,
-            kurt=kurt,
-            n_complete=snapshot["n_complete"],
-        )
-        metrics.update(sr0=sr0, dsr=dsr, diagnostic_passed=dsr >= p["DSR"]["threshold"])
+        # V family aggregation / admission waits for EVO-883 v0.2; no default V.
+        raise ValueError(V_PENDING)
     except (ValueError, TypeError, KeyError, ZeroDivisionError, OverflowError) as exc:
         unavailable_reason = (
             str(exc)
@@ -227,7 +168,7 @@ def evaluate(request, ledger, policy):
             availability=availability,
             assumptions=[
                 "N is only a lower bound; numerical DSR may overstate confidence and is diagnostic only, never certification.",
-                "Independent family source identities are caller declarations, not an independent audit.",
+                "V family aggregation and DSR>=threshold admission are pending EVO-883 v0.2; DSR/V stay null.",
                 "Historical raw strategy Sharpe values are retained for provenance and never used as active-return V.",
             ],
         )
