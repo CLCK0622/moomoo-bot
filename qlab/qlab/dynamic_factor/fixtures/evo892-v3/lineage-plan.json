@@ -1,0 +1,185 @@
+{
+  "B_guard_contract_sha256": "216206a1c36fa61ad275692ee68d5247636ea94adb18cc127d2dfe170906802d",
+  "B_proof_acquisition_paths": [
+    "ordinary_buy",
+    "pending_order",
+    "migration",
+    "exchange",
+    "in_kind_distribution",
+    "legacy_entitlement"
+  ],
+  "B_proof_economic_consumers": [
+    "scoring",
+    "labels",
+    "calibration",
+    "valuation",
+    "cash",
+    "orders"
+  ],
+  "B_proof_per_reference_book_required": true,
+  "actual_run_or_source_code_exists_by_this_plan": false,
+  "authority_comments": [
+    "01a18ac0-580c-7466-85f7-229958c83b4f",
+    "01a18c5d-4662-72f6-befa-a048b83e4e8f",
+    "01a18c5f-380c-7eca-9fa0-a82f04b0f0a7",
+    "01a18c5f-be1d-7106-a5a8-8b6b9035c05b",
+    "01a18c64-dacd-72b1-98e8-6db00730fd5e",
+    "01a18c69-b12f-7a0e-b9db-364b5acadaf4",
+    "01a18c6c-30f9-7bcb-b79b-dea835cc8541"
+  ],
+  "before_first_performance_required": [
+    "real_entrypoint_source_mapping_with_SHA",
+    "static_proof_receipt_and_independent_review",
+    "complete_N_and_market_input_gates",
+    "platform_registration_anchor_verified",
+    "v3_registration_new_anchor_verified",
+    "quarantine_fields_ranges_sources_and_deterministic_E_t_derivation_sealed",
+    "factor_arm_projection_policy_and_trial_identity_mapping_bound",
+    "complete_B_catalog_scope_states_derivation_release_and_proofs_sealed",
+    "zero_origin_and_all_acquisition_path_no_read_proofs_per_reference_producer"
+  ],
+  "engineering_proof_owner": "EVO884_original_source_proof_with_v3_reference_integration_EVO900",
+  "entrypoint_names_are_logical_contracts_not_existing_paths": true,
+  "graph_edges_allowed": [
+    "SEALED_RAW_INPUTS -> REFERENCE_PRODUCER",
+    "SEALED_PROTOCOL_PROFILE -> REFERENCE_PRODUCER",
+    "SHARED_SPLITTER_TRAIN_WARMUP_VIEWS -> REFERENCE_PRODUCER",
+    "REFERENCE_PRODUCER -> IMMUTABLE_REFERENCE_SIDECARS -> CURRENT_S0",
+    "CURRENT_S1 -> CURRENT_S2 -> CURRENT_S3 -> CURRENT_S4",
+    "CURRENT_S1_ORIGINAL_ATTEMPTS -> CURRENT_S4",
+    "SEALED_FIELD_ROLE_RANGE_SOURCE_EVIDENCE -> PRE_PERFORMANCE_E_T_COMPILER -> TRAIN_WARMUP_E_T_VIEWS -> REFERENCE_PRODUCER",
+    "SEALED_COMPLETE_B_CATALOG_AND_RELEASE -> B_FIRST_GUARD -> ALLOWED_NUMERIC_INPUTS -> E_T_COMPILER -> REFERENCE_PRODUCER"
+  ],
+  "graph_edges_forbidden": [
+    "CURRENT_S1_S2_S3_S4 -> REFERENCE_PRODUCER",
+    "CURRENT_OUTPUT_CACHE -> REFERENCE_PRODUCER",
+    "CURRENT_FOLD_TEST_MARKET_OR_PERFORMANCE -> REFERENCE_PRODUCER",
+    "REFERENCE_RESULT -> CHANGE_PREDECLARED_MEMBERSHIP",
+    "CURRENT_META_RESULT -> CURRENT_S2_RESELECTION",
+    "CURRENT_SCORE_SR_POOL_OR_MARKET_RESULT_RANKING -> QUARANTINE_OR_E_T_COMPILER",
+    "FUTURE_LABEL_AVAILABILITY -> TRADING_E_T",
+    "RAW_BOOK_HIGH_WATER_OR_SEED -> CERTIFIED_FACTOR_GATE_N",
+    "B_GUARDED_ECONOMIC_FIELDS_OR_CHILD_PRICES -> REFERENCE_SCORE_LABEL_CALIBRATION_VALUATION_CASH_ORDERS",
+    "CURRENT_RESULTS -> B_MEMBERSHIP_OR_RELEASE"
+  ],
+  "independence_claim_scope": "auditable_source_provenance_only_not_statistical_IID",
+  "input_compiler": {
+    "actual_source_sha256": null,
+    "independent_of_current_strategy_outputs": true,
+    "logical_entrypoint": "compile_sealed_B_first_then_field_quarantines_and_E_t_views_v3",
+    "receipt_must_precede_every_reference_performance": true
+  },
+  "run_roles": [
+    {
+      "actual_entrypoint_source_path": null,
+      "actual_run_id": null,
+      "actual_source_sha256": null,
+      "artifact_directory_template": "EVO886/{v3_prereg_sha256}/{batch_uuid}/external-reference/fold-{k}/",
+      "forbidden_reads": [
+        "CURRENT_CANDIDATE.*",
+        "CURRENT_META.*",
+        "current_strategy_result_cache.*",
+        "current_fold_gap_test_future_market_data.*",
+        "current_score_or_SR_selected_quarantine_mask",
+        "future_label_availability_for_trading_E_t"
+      ],
+      "inputs": [
+        "sealed_registry_and_two_definition_manifests",
+        "sealed_profile_costs_and_64_panel",
+        "same_candidate_splitter.train_view_and_warmup_view",
+        "sealed_raw_market_corporate_actions_QQQ_TR_inputs",
+        "sealed_v3_quarantine_manifest_and_same16_recipe_E_t_derivation_train_warmup_view"
+      ],
+      "logical_entrypoint": "generate_predeclared_reference_train_artifacts",
+      "outputs": [
+        "four_reference_daily_active_series",
+        "four_reference_attempt_receipts",
+        "candidate_reference_V_manifest",
+        "meta_reference_V_manifest"
+      ],
+      "role": "external_reference_producer",
+      "run_id_template": "EVO886/{v3_prereg_sha256}/{batch_uuid}/REFERENCE_PRODUCER/fold-{k}/attempt-{producer_ordinal}"
+    },
+    {
+      "actual_entrypoint_source_path": null,
+      "actual_run_id": null,
+      "actual_source_sha256": null,
+      "artifact_directory_template": "EVO886/{v3_prereg_sha256}/{batch_uuid}/current-candidate/fold-{k}/",
+      "inputs": [
+        "same_candidate_splitter",
+        "sealed_raw_inputs_profile_and_frozen_policy",
+        "verified_external_reference_sidecars_at_S0",
+        "authoritative_N_candidate_snapshot_before_S2"
+      ],
+      "logical_entrypoint": "frozen_current_fold_S0_S1_S2",
+      "outputs": [
+        "current_16_probe_attempts_and_returns",
+        "current_calibration_table",
+        "current_S2_candidate_DSR_and_unique_pool"
+      ],
+      "role": "current_candidate",
+      "run_id_template": "EVO886/{v3_prereg_sha256}/{batch_uuid}/CURRENT_CANDIDATE/fold-{k}/attempt-{ordinal}"
+    },
+    {
+      "actual_entrypoint_source_path": null,
+      "actual_run_id": null,
+      "actual_source_sha256": null,
+      "artifact_directory_template": "EVO886/{v3_prereg_sha256}/{batch_uuid}/current-meta/fold-{k}/",
+      "inputs": [
+        "current_S2_unique_pool_and_current_calibration_table",
+        "current_S1_existing_attempt_references",
+        "verified_external_meta_reference_sidecar",
+        "authoritative_N_meta_snapshot_after_actual_meta_registration"
+      ],
+      "logical_entrypoint": "frozen_current_fold_S3_S4",
+      "outputs": [
+        "single_current_META_POLICY_V3_attempt",
+        "train_meta_diagnostic_DSR_no_feedback"
+      ],
+      "role": "current_meta",
+      "run_id_template": "EVO886/{v3_prereg_sha256}/{batch_uuid}/CURRENT_META/fold-{k}/attempt-{ordinal}"
+    }
+  ],
+  "runtime_root": "new_offline_EVO886_owned_root_only_not_existing_paper_REAL_or_protected_production_paths",
+  "schema": "EVO892.lineage-plan.v3",
+  "state": "proposed_not_engineering_proven",
+  "static_propositions_to_prove": [
+    {
+      "claim": "all_four_reference_rules_and_member_ids_are_closed_before_any_fold_performance",
+      "evidence": "entrypoint_source_mapping_and_fixed_dispatch_table_bound_to_definition_SHA_no_search_or_callbacks",
+      "id": "P1"
+    },
+    {
+      "claim": "reference_inputs_are_only_sealed_raw_inputs_and_same_splitter_train_warmup_views plus pre-performance v3 role/range/source quarantine and full16 E_t provenance B-first consumption before numeric validation and same whole-domain B release",
+      "evidence": "function_call_graph_argument_shapes_file_and_store_allowlists_no_gap_test_market_rows plus same mask source/derivation/E_t digest and no post-score exclusion plus approved_B_catalog_release_derivation_SHA_and_guarded_numeric_no_read_proof",
+      "id": "P2"
+    },
+    {
+      "claim": "reference_producer_cannot_read_current_candidate_meta_outputs_or_result_caches and no B economic consumer child-price reads",
+      "evidence": "process_or_capability_boundary_mount_or_object_store_policy_and_static_no_forbidden_dependency_edges_not_just_name_tags plus all_six_consumer_read_graphs_not_directory_hash_audit_only",
+      "id": "P3"
+    },
+    {
+      "claim": "actual_output_series_are_produced_by_external_reference_entrypoint_before_current_S0",
+      "evidence": "producer_code_SHA_actual_run_and_input_output_manifests_DAG_and_generation_timestamps",
+      "id": "P4"
+    },
+    {
+      "claim": "candidate and meta reference roles match frozen_v3 probe roles and same PRE_SCORE_ISOLATION_V3 same_B_zero_origin_and_all_acquisition_path_induction_per_reference_book",
+      "evidence": "CANDIDATE_PROBE_V3 execution overrides META_EVAL_V3 probe component mapping same E_t for all16",
+      "id": "P5"
+    },
+    {
+      "claim": "same_candidate_splitter_is_reused_and_1260_day_complete_calendar_preserved",
+      "evidence": "single_callable_source_SHA_same_fold_object_identity_receipt_exact_fold_calendar_hashes",
+      "id": "P6"
+    },
+    {
+      "claim": "every reference market evaluation and actual retry has authority factor-arm mapping before admission",
+      "evidence": "same append-only chain plus configuration-attempt identity/coverage mapping, separate book/request sensitivity, complete approved factor projection and snapshots plus noncash_guard_release_and_zero_exposure_consumer_proof_in_configuration_identity",
+      "id": "P7"
+    }
+  ],
+  "unproven_or_unmatched_behavior": "V_DSR_null_no_source_exclusion_relaxation",
+  "version": "3.0.0"
+}

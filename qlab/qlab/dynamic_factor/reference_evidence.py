@@ -41,6 +41,17 @@ def lineage_sources():
         "input_disposition",
         "validation",
         "fees",
+        "reference_registry_v3",
+        "reference_compile_v3",
+        "reference_v3_scope",
+        "reference_validation",
+        "reference_v3_evidence",
+        "reference_noncash",
+        "reference_producer_v3",
+        "catalog_members",
+        "catalog_v21",
+        "noncash_v3",
+        "isolation",
     )
     return {
         n + ".py": sha256((Path(__file__).parent / (n + ".py")).read_bytes())
@@ -546,6 +557,10 @@ def verify_runtime(request, policy):
 
 def reference_runtime_check(request, *, conventions=None):
     policy = conventions or load_conventions()
+    if policy.document["version"] == "v3.0.0":
+        from .reference_v3_evidence import runtime_check
+
+        return runtime_check(request, policy)
     reasons = []
     try:
         verify_runtime(request, policy)

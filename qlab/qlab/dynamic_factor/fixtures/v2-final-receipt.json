@@ -1,0 +1,146 @@
+{
+  "schema": "EVO883.S3-v15.v12-and-v2.final-ruling.v1",
+  "issue_id": "01a18a63-02ca-77bc-a7bf-9f0769ed8bbf",
+  "trigger_comment_id": "01a18c2a-2c9f-70a9-ba09-d3334a9e6f4d",
+  "reviewer_agent_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+  "S3": {
+    "package_sha256": "2eea50357364896087634d8ddb063836da64ac0a370699213bc30d2c907c13f6",
+    "accepted": "AUTHORIZED_BOUNDED_ROUTE_STOPPED_AFTER_STEP0",
+    "retained_request_count": 1,
+    "cap": 4,
+    "homepage_sha256": "8f063f2711d5816b6e3b32ad2b91d39ac53ca6354ab3d7fc8592769307c40d64",
+    "homepage_bytes": 365102,
+    "external_embed_traces_verified": true,
+    "share_price_page_or_currency_exchange_open_fields_verified": false,
+    "only_possible_history_route_or_global_free_source_impossibility_proven": false,
+    "copyright_terms_permission_or_original_copy_issued": false,
+    "new_queries_authorized": false,
+    "R3_triggered": false,
+    "action": "chief_default_v2_general_pre_score_isolation_not_more_fetches"
+  },
+  "v12": {
+    "package_sha256": "0d4b48dc8a76bf59ec74a3d73a73a75d4633c0b00fd6918e66449283d54a28ee",
+    "member_overlay_sha256": "2b2906828fc0642941f05343a0e55fd53bf45b7417f7c51132de237eb299a47f",
+    "accepted": "BOOK_IDENTITY_037_CLARIFICATION_LIMITED_PROPAGATION_AND_SPECIFIC_COUNTEREXAMPLES",
+    "book_anchor": {
+      "seq": 1356,
+      "tip": "483b6936938c0eac88eca4772683efe3ce94f929c3a5424c69e8d2f2742ca57a",
+      "book_N": 1313,
+      "ledger_sha256": "b40bddd506b2312b11d8b44ee9cf2b60865edc35b79c297220dcf2872f39c415"
+    },
+    "new_authority_attempts_in_received_extension": 0,
+    "book_is_deduplicated_total_or_lower_bound": false,
+    "view_1311": "only_037_old_contribution_excluded_not_complete_or_arm_gate_N",
+    "G1G_037": "accepted_non_market_clarification_formal_projection_excludes_original_book_contribution_preserve_chain",
+    "G1G_007_027": "direct_market_result_return_or_comparison_visible_despite_assertion_failure_no_incremental_N_count_certified",
+    "G1G_011": "old_commit_binding_rejected_merge_precedes_pytest_same_command_HEAD64b2bbc_reports_tree_changed",
+    "G1G_035": "seven_mutation_subcalls_require_individual_identity_reach_and_coverage_no_unified_count",
+    "submitted_54_reach_certified": false,
+    "six_source_keys_equal_six_strategy_configurations": false,
+    "seven_repeats_automatically_exempted": false,
+    "static_scan_rows": 204,
+    "distinct_tool_commands": 175,
+    "all_marker_union": 75,
+    "old56_union_omitted_failed_only_rows": 19,
+    "new_trials_inferred_from_marker_counts": null,
+    "null_source_sha_overlay": [
+      {
+        "source_csv_sha256": "a6d633032e40d2fa53612787182a5ba57af63824859d9c7a44e7e6eca5920717",
+        "row_key": {
+          "attempt_id": "G1G-045"
+        },
+        "column": "settlement_impl_sha256",
+        "original_value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reviewed_value": null,
+        "null_reason": "Object unavailable at the claimed commit; git show failed with empty stdout, not a verified empty source file.",
+        "git_show_returncode": 128,
+        "git_show_stdout_bytes": 0
+      },
+      {
+        "source_csv_sha256": "a6d633032e40d2fa53612787182a5ba57af63824859d9c7a44e7e6eca5920717",
+        "row_key": {
+          "attempt_id": "G1G-046"
+        },
+        "column": "settlement_impl_sha256",
+        "original_value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reviewed_value": null,
+        "null_reason": "Object unavailable at the claimed commit; git show failed with empty stdout, not a verified empty source file.",
+        "git_show_returncode": 128,
+        "git_show_stdout_bytes": 0
+      },
+      {
+        "source_csv_sha256": "a6d633032e40d2fa53612787182a5ba57af63824859d9c7a44e7e6eca5920717",
+        "row_key": {
+          "attempt_id": "G1G-047"
+        },
+        "column": "settlement_impl_sha256",
+        "original_value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reviewed_value": null,
+        "null_reason": "Object unavailable at the claimed commit; git show failed with empty stdout, not a verified empty source file.",
+        "git_show_returncode": 128,
+        "git_show_stdout_bytes": 0
+      }
+    ],
+    "propagation_535": "conditional_diagnostic_not_rejection_mask_three_noncash_rows_not_certified_by_cash_exopen_rule",
+    "ten_K3K5_rows": "candidate_consumer_dependencies_not_certified_minimum_query_budget",
+    "all64_score_requirement_in_static_code": false,
+    "actual_code_requirement": "passed_rows_at_least50_finite_nonconstant_and_name_sets_match_between_recipes",
+    "current_disposition_refusal_equates_permanent_frozen_rule": false,
+    "complete_isolation_and_runtime_proof": false,
+    "complete_N": null,
+    "n_complete": false
+  },
+  "K5_ruling": {
+    "status": "REACHABLE_NECESSARY_DEPENDENCY_WHEN_ORIGINAL_ALLOWED_STATE_REQUIRES_IT_NOT_GLOBAL_WAIVER",
+    "ADP_CDK": {
+      "all_registered_train_test_ledgers_initialize_after_event": true,
+      "first_train_start": "2014-10-29",
+      "pre_event_inventory_in_those_ledgers": false,
+      "analytical_TR_warmup_feature_label_dependencies_closed": false
+    },
+    "APD_VSM": "event_inside_train_reachable_inventory_or_analysis_dependency_still_requires_scope_proof_or_necessary_fields",
+    "CMCSA_VSNT": "event_in_test72_potential_entitled_state_requires_non_cash_contract_and_engineering_S2_quotes_alone_insufficient",
+    "Form8937": "unverified_candidate_not_proven_unique_legal_source_tax_FMV_not_automatic_raw_close_or_new_valuation_permission",
+    "S2_VSNT_source_receipt_retained_sha256": "9b5fd1e87a2cae26df8a0c1a8ee9fbd880c07234e05a9253ff9886d4dcb7711f",
+    "automatic_zero_rights_last_price_exit_or_state_reset": false
+  },
+  "v2": {
+    "design_frozen": true,
+    "main_sha256": "9bb933c21aea20270b792d3e77720c459fe80a3074f59884657a58d330e0088d",
+    "interface_sha256": "ea914ee6bb617a2a07dbadc1b02364b6f165b08d70af055f416e68d6b00510f4",
+    "common_profile_sha256": "98ed5a2bfb5163efae872020861ef630ce4746094af06f89e3e8056b6f56a05c",
+    "full_diff_sha256": "a3e872dca63e104753c12eeec2c3bfb9aff5325223c5f0781c13eab9010f7a49",
+    "fixed_parent_panel_and_date_comparability_broken_by_identity_change": false,
+    "return_equivalence_or_point_in_time_universe_claimed": false,
+    "N_cost_zero_or_empirically_acceptable_proven": false,
+    "evidence_establishes_unacceptable_N_cost_requiring_escalation": false,
+    "v1_frozen_bytes_modified": false,
+    "v1_V_reference_auto_reused": false,
+    "mask_or_eligible_set_manifest": null,
+    "mask_null_reason": "engineering_derivation_and_source_receipts_must_be_bound_before_performance_no_market_reconstruction_in_design_issue",
+    "current_authority_book_changed_by_publication": false,
+    "old_attempts_budget_or_63day_clock_reset": false,
+    "reference_and_strategy_execution_authorized": false
+  },
+  "engineering_negative_examples_proposed_not_run": [
+    "U64_with50_verified_and14_quarantined_scores_only50_no_zero_padding",
+    "49_verified_one_UNKNOWN_does_not_prove_LT50_or_legitimate_empty_pool",
+    "future_label_missing_does_not_rerank_signal_E_t_or_leak_into_trading_eligibility",
+    "quarantined_held_name_preserves_rights_cash_age_unknown_Nav_stops_no_last_price_sale",
+    "old_profile_or_other_mask_reference_rejected_V_DSR_null",
+    "missing_S2_prerequisite_does_not_build_pseudo_QQQ_meta_or_delete_fold",
+    "book1313_view1311_seed47_or_candidate253_do_not_substitute_complete_factor_N",
+    "known_VSNT_price_does_not_impute_noncash_entitlement_or_spend_unknown_cash"
+  ],
+  "runtime_consumable": false,
+  "certifiable": false,
+  "strict_eligible_count": null,
+  "V": null,
+  "DSR": null,
+  "EVO886_release": false,
+  "day63_clock_started": false,
+  "new_market_queries_or_strategy_tests_or_performance_calculations": 0,
+  "issue_status_after_delivery": "in_review",
+  "EVO886_status": "backlog",
+  "handoff": "Rebind existing engineering/meta/audit/reference and minimum-set tasks to frozen v2 identity. Scope residual evidence requests by actual roles; do not repeat closed packages or authorize more sources from unused caps. No run until all original applicable gates and persisted budget permit."
+}

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from .conventions import authoritative
+
 from datetime import date
 
 from .contract import result, unavailable
@@ -211,6 +213,11 @@ def quarantined_manifest(manifest, rows, conventions):
             "replacement_symbols": manifest.get("replacement_symbols"),
             "truncate_sample": manifest.get("truncate_sample"),
             **(
+                {"isolation_manifest": manifest["isolation_manifest"]}
+                if "isolation_manifest" in manifest
+                else {}
+            ),
+            **(
                 {"panel_symbols": manifest["panel_symbols"]}
                 if "panel_symbols" in manifest
                 else {}
@@ -221,10 +228,8 @@ def quarantined_manifest(manifest, rows, conventions):
 
 
 def wf_manifest_check(manifest, *, conventions=None):
-    from .conventions import load_conventions
-
     reasons = ["wf.conventions_required"] if conventions is None else []
-    if conventions is not None and conventions != load_conventions():
+    if conventions is not None and not authoritative(conventions):
         reasons.append("wf.conventions_mismatch")
     if conventions is not None:
         reasons.extend(convention_manifest_reasons(manifest, conventions))
@@ -235,7 +240,7 @@ def wf_manifest_check(manifest, *, conventions=None):
             reasons=reasons,
             metrics={"beta": None, "information_ratio": None, "series_checks": {}},
         )
-    if conventions.document["version"] == "v1.0.1":
+    if conventions.document["version"] in ("v1.0.1", "v2.0.0", "v3.0.0"):
         from .valuation import vti_evidence_check
         from .input_disposition import panel_input_check
         from .scope_proof import b2_manifest_check
@@ -245,6 +250,11 @@ def wf_manifest_check(manifest, *, conventions=None):
             panel = panel_input_check(
                 {
                     "inputs": manifest.get("panel_inputs", []),
+                    **(
+                        {"isolation_manifest": manifest["isolation_manifest"]}
+                        if "isolation_manifest" in manifest
+                        else {}
+                    ),
                     "replacement_symbols": manifest.get("replacement_symbols"),
                     "truncate_sample": manifest.get("truncate_sample"),
                     "dependency_nodes": manifest.get("dependency_nodes", []),

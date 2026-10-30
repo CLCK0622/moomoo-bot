@@ -1,0 +1,145 @@
+{
+  "bindings": {
+    "N_scope_contract_sha256": "307941909d1adc921af700f12a58370b309148a6799bdc14bc76747a4bcfa27e",
+    "common_calendar_sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "common_profile_sha256": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",
+    "cost_x1_sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "cost_x2_sha256": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "fold_manifest_sha256": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "frozen_interface_sha256": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+    "interface_to_consume_sha256": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+    "isolation_contract_id": "PRE_SCORE_ISOLATION_V3",
+    "isolation_contract_sha256": "4cc2e04bb1b1e3b604f08f2c3577eb9bc8aac63d70c07811e012241b17ae0ed3",
+    "noncash_contract_id": "NO_UNCLOSED_IN_KIND_EXPOSURE_V3",
+    "noncash_contract_sha256": "78271bf1093f32a56a8d6036e5b9d9cb1de7900697a012fe7504af36df8c5752",
+    "panel64_sha256": "ae9332ff345dae69866a6a78fcbb07201ef7ac14b4ff82d714a1282330103ee4",
+    "prereg_sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+    "prereg_version": "v3",
+    "profile_serialization": "canonical_UTF8_sort_keys_ensure_ascii_false_compact_comma_colon_no_final_LF"
+  },
+  "common_input_compiler": {
+    "actual_code_sha256": null,
+    "actual_eligible_set_derivation_sha256": null,
+    "actual_eligible_set_manifest_sha256": null,
+    "actual_quarantine_manifest_sha256": null,
+    "candidate_and_reference_same_evidence_digest_and_per_date_E_t_required": true,
+    "guard_before_numeric_read": true,
+    "logical_entrypoint": "compile_sealed_B_first_then_field_quarantines_and_E_t_views_v3",
+    "no_current_candidate_or_meta_output_input": true,
+    "produce_before": "any_reference_or_strategy_performance_in_same_fold",
+    "source": "sealed_nonperformance_field_evidence_and_raw_market_inputs_only",
+    "view_to_reference": "only_same_splitter_train_and_legal252_warmup_never_gap_test_E_t_or_market_rows"
+  },
+  "frozen_policy_copy": {
+    "applies_to": [
+      "train_solo_probes",
+      "train_calibration",
+      "train_meta",
+      "external_reference_roles",
+      "test_meta",
+      "authorized_forward"
+    ],
+    "calibration": {
+      "L_k": "original_common_matured_train_dates_min50_verified_label_members_and_labels_in_all16_recipe_10_buckets",
+      "empty_bucket_or_too_few_dates": "null_no_zero_no_interpolation_no_bucket_merge_keep_original_failure_gate",
+      "rank_then_label_filter": "compute_u_on_E_t_at_signal_date_then_use_only_verified_matured_train_labels_never_rerank_using_future_label_availability",
+      "selected_factor_or_failed_role_removed_to_complete_family": false
+    },
+    "eligible_set_E_t": {
+      "definition": "members_of_U64_not_in_B_apply_noncash_guard_first_then_all_original252_history_price_ADV_unit_and_recipe_input_gates_on_remaining_names_no_guarded_numeric_consumer",
+      "family_completeness_and_S2_missing_gate_unchanged": true,
+      "future_label_availability_used_to_choose_trading_E_t": false,
+      "isolated_name_in_denominator_or_bucket_padding": false,
+      "isolated_name_rank": null,
+      "mask_based_on_market_returns_SR_DSR_rank_winners_or_pool_results": false,
+      "mask_is_an_execution_or_cash_ledger_waiver": false,
+      "noncash_parent_guard": "noncash_exposure_policy_history_B_or_forward_received_B_applied_before_scoring",
+      "rank": "ascending_average_ties_(rank-0.5)/len(E_t)_only_E_t_sorted_ticker_for_identity",
+      "same_E_t_for_all_16_recipes": true,
+      "signal_dates_and_fold_ids_preserved": true,
+      "unexpected_nonfinite_recipe_output": "recipe_date_unavailable_not_post_score_symbol_drop_to_rescue",
+      "unverified_members_contribute_to_verified_count": false
+    },
+    "frozen_universe": "same_U64_ids_and_order_no_permanent_deletion_replacement_or_backfill",
+    "held_and_non_cash_state": {
+      "K5_quote_receipt_proves_full_non_cash_execution": false,
+      "isolation_is_a_sale_or_zero_position": false,
+      "missing_old_holding_forecast": "original_reject_optional_keep_only_computable_required_M",
+      "necessary_price_right_or_cash_state_unknown": "R2_stop_formal_path_no_last_price_fill_no_zero_rights_no_skip_or_capital_reset",
+      "new_non_cash_liquidation_fractional_share_or_tax_FMV_policy_introduced": false,
+      "new_optional_buys": "no_quarantined_or_UNKNOWN_required_field_name",
+      "noncash_entitlement_proved_by_cash_ex_open_rule": false,
+      "noncash_guard": "zero_origin_no_buy_proof_required_not_posthoc_position_erasure_existing_or_unknown_exposure_R2",
+      "retained_state": "original_inventory_age_origin_rights_receivables_known_cash_unknown_components_and_cross_fold_state"
+    },
+    "id": "PRE_SCORE_ISOLATION_V3",
+    "quantity_states": {
+      "UNKNOWN": "neither_bound_proved_freeze_additions_no_pseudo_empty_pool_or_formal_complete_statistics",
+      "VERIFIED_GE50": "at_least50_named_verified_E_t_members_quantity_gate_only_then_recipe_nonconstant_and_all_other_gates",
+      "VERIFIED_LT50": "verified_upper_bound_below50_no_new_tilt_M_valuation_cash_and_fees_still_required",
+      "proxy_counts_used_as_strict_count": false,
+      "threshold": 50
+    },
+    "quarantine_evidence": {
+      "CEG": "first10_identity_unclosed_preserve_rows_no_verified_252_credit_no_Feb2_restart",
+      "CRH": "unverified_ADR_line_and_dependent_fields_follow_bound_scope_not_ticker_special_rule_or_automatic_2023_release",
+      "absent_evidence": "UNKNOWN_not_default_VERIFIED_USABLE_or_F_equals1",
+      "history_noncash_policy_range": "explicit_v3_whole_registered_domain_B_rule_not_a_claim_of_natural_event_plus252_dependency",
+      "range": "actual_dependency_descendants_not_default_event_day_or_event_plus252_or_whole_economic_history",
+      "reasons": [
+        "missing_nonfinite_nonpositive_required_price",
+        "unverified_security_line_or_trading_regime",
+        "unresolved_adjustment_anchor_or_event_dependency",
+        "unverified_required_share_dollar_units",
+        "unresolved_required_analytical_total_return_or_entitlement"
+      ],
+      "required_record": [
+        "symbol",
+        "field_role",
+        "from_date",
+        "to_date_or_null_with_reason",
+        "reason",
+        "source_sha256",
+        "dependency_lineage",
+        "evidence_version"
+      ]
+    },
+    "receipt_timing": {
+      "forward": "use_received_verified_information_by_signal_close_no_rewrite_of_old_decisions",
+      "history": "seal_field_role_ranges_sources_and_deterministic_derivation_before_current_fold_reference_or_strategy_performance_pin_digest_with_each_S0",
+      "post_result_change": "append_new_evidence_version_no_retroactive_reselection_or_rerun_without_N_and_budget_adjudication",
+      "same_profile_reference_requires_same_mask_inputs_and_eligibility_contract": true
+    },
+    "selection_bias": "historical_data_quality_availability_selection_is_not_point_in_time_or_missing_at_random_proof_report_masks_and_denominators",
+    "selection_point": "before_recipe_scoring_and_before_any_current_fold_performance",
+    "state_domain": [
+      "VERIFIED_USABLE",
+      "VERIFIED_INELIGIBLE",
+      "QUARANTINED",
+      "UNKNOWN"
+    ]
+  },
+  "held_state": "unchanged_v3_held_and_non_cash_state_no_new_mandatory_sale_or_age_exception",
+  "noncash_consumer_contract": {
+    "file": "noncash-consumer-contract.json",
+    "sha256": "216206a1c36fa61ad275692ee68d5247636ea94adb18cc127d2dfe170906802d"
+  },
+  "output_hashes_are_not_generated_by_this_design_issue": true,
+  "role_scope": "same_U64_all16_recipe_date_t_eligibility_for_all_reference_probes_not_only_L20_inputs",
+  "runtime_required_input_bindings": [
+    "quarantine_manifest_sha256",
+    "eligible_set_derivation_sha256",
+    "eligible_set_manifest_sha256",
+    "source_evidence_version_sha256",
+    "all16_eligibility_input_contract_sha256",
+    "per_signal_date_state_and_named_E_t_count_evidence",
+    "noncash_guard_manifest_sha256",
+    "B_catalog_release_sha256",
+    "B_derivation_sha256",
+    "zero_exposure_and_consumer_dependency_receipt_sha256"
+  ],
+  "schema": "EVO892.reference-isolation-binding.v3",
+  "unknown_or_insufficient": "use_exact_frozen_v3_quantity_states_and_R2_no_zero_padding_no_date_drop_no_pseudo_empty_pool",
+  "version": "3.0.0",
+  "withdrawn_draft_D04_integrity_exit_not_adopted": true
+}

@@ -36,7 +36,7 @@ class OrderCosts:
             "date": sell_date,
             "rate_basis": rate_basis,
         }
-        if policy.document["version"] != "v1.0.1":
+        if policy.document["version"] not in ("v1.0.1", "v2.0.0", "v3.0.0"):
             raise ValueError("fee.legacy_date_policy_disabled")
         if rate_basis not in ("effective_date", "research_restored"):
             raise ValueError("rate_basis_unknown")
@@ -45,8 +45,14 @@ class OrderCosts:
         self.binding["rate_basis"] = "research_restored"
         self.taf_rate = self.params[field]
 
-    def quote(self, orders, prices):
+    def quote(self, orders, prices, *, guard=None):
         reject_b2_inputs({"orders": orders, "prices": prices}, "orders")
+        if self.policy.document["version"] == "v3.0.0" and guard is not None:
+            from .noncash_v3 import assert_consumer_symbols
+
+            names = [s for s, q in orders.items() if q and s != "QQQ"]
+            if names:
+                assert_consumer_symbols(guard, "order", names, self.policy)
         from .fee_model import order_cost
 
         floor = float(
@@ -78,6 +84,10 @@ class OrderCosts:
 def startup_intent(position, previous_nav, inventory, previous_close, policy):
     """Lock the budget at the prior close; the next open only rounds/checks cash."""
     reject_b2_inputs(inventory, "orders")
+    if policy.document["version"] == "v3.0.0" and any(
+        q and s != "QQQ" for s, q in inventory.items()
+    ):
+        raise ValueError("B.nonzero_startup_inventory_no_automatic_migration")
     init = policy.document["initialization"]
     if (
         type(position) is not int
@@ -146,7 +156,7 @@ def _tool(tool, request, policy, names, calculate):
     reasons = []
     try:
         reject_b2_inputs(request, "orders")
-        if policy.document["version"] != "v1.0.1":
+        if policy.document["version"] not in ("v1.0.1", "v2.0.0", "v3.0.0"):
             raise ValueError("prereg_pending_v0.2")
         metrics.update(calculate())
     except (ValueError, KeyError, TypeError, OverflowError, ZeroDivisionError) as exc:
@@ -301,10 +311,57 @@ def initial_build_turnover_check(request, *, conventions, ledger=None):
     )
 
 
+def _v2_calibration_rows(rows, matured_dates, policy, context):
+    """Consume signal-date ranks first; label maturity never defines the ranks."""
+    from .isolation import verify_rank_receipt
+
+    isolation = context.get("isolation")
+    if not isolation or not isolation.get("rank_receipts"):
+        raise ValueError("gain.pre_label_rank_receipts_missing")
+    receipts = isolation["rank_receipts"]
+    index = {d: i for i, d in enumerate(context["train_calendar"])}
+    offset = policy.document["labels"]["primary_exit_open_offset_from_signal"]
+    expected_dates = set()
+    for d, receipt in receipts.items():
+        if d not in index or receipt["day"]["date"] != d:
+            raise ValueError("gain.rank_date_outside_train")
+        verify_rank_receipt(receipt, isolation["manifest"], policy)
+        if index[d] + offset < len(index):
+            expected_dates.add(d)
+    if set(matured_dates) != expected_dates:
+        raise ValueError("gain.mature_dates_changed_after_ranking")
+    selected, seen = [], set()
+    ids = policy.document["variance_layers"]["family_definitions"]["candidate_members"]
+    for row in rows:
+        d, symbol = row["date"], row["symbol"]
+        if policy.document["version"] == "v3.0.0":
+            from .noncash_v3 import assert_consumer_symbols
+
+            assert_consumer_symbols(
+                isolation["manifest"]["request"]["noncash_guard_manifest"],
+                "calibration",
+                [symbol],
+                policy,
+            )
+        if d not in receipts or symbol not in receipts[d]["day"]["eligible"]:
+            raise ValueError("gain.label_not_in_signal_E_t")
+        if (d, symbol) in seen:
+            raise ValueError("gain.duplicate_label_member")
+        seen.add((d, symbol))
+        ranks = {k: receipts[d]["ranks"][k][symbol] for k in ids}
+        if row.get("ranks", ranks) != ranks:
+            raise ValueError("gain.future_label_reranking_forbidden")
+        if d in expected_dates and row.get("label_verified") is True:
+            selected.append(dict(row, ranks=ranks))
+    return selected
+
+
 def calibrate_gain(rows, matured_dates, *, conventions, context):
     """Equal-date means of within-date bucket means, on common mature labels."""
     reject_b2_inputs({"rows": rows, "context": context}, "calibration")
     price_basis_check(context)
+    if conventions.document["version"] in ("v2.0.0", "v3.0.0"):
+        rows = _v2_calibration_rows(rows, matured_dates, conventions, context)
     p = conventions.profile["signal_params"]
     ids = conventions.document["variance_layers"]["family_definitions"][
         "candidate_members"
@@ -373,6 +430,17 @@ def calibrate_gain(rows, matured_dates, *, conventions, context):
         "mu_Q": math.fsum(q_means) / len(q_means),
         "dates": sorted(by_date),
         "context_sha256": digest(context),
+        **(
+            {
+                "rank_receipts_sha256": digest(context["isolation"]["rank_receipts"]),
+                "quarantine_manifest_sha256": context["isolation"]["manifest"][
+                    "quarantine_manifest_sha256"
+                ],
+                "label_count_by_date": {d: len(rs) for d, rs in by_date.items()},
+            }
+            if conventions.document["version"] in ("v2.0.0", "v3.0.0")
+            else {}
+        ),
         **conventions.binding,
     }
     return dict(payload, calibration_sha256=digest(payload))
@@ -490,6 +558,20 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
             raise ValueError("gain.frozen_calibration_or_pool_receipt_missing")
         M, P, original = request["M"], request["P"], request["original_inventory"]
         prices, cash = request["raw_open_prices"], request["cash"]
+        guard = None
+        if conventions.document["version"] == "v3.0.0":
+            from .noncash_v3 import assert_consumer_symbols
+
+            guard = request["isolation_manifest"]["request"]["noncash_guard_manifest"]
+            used = {s for plan in (M, P, original) for s, q in plan.items() if q}
+            assert_consumer_symbols(guard, "order", used, conventions)
+        if conventions.document["version"] in ("v2.0.0", "v3.0.0"):
+            from .state_v2 import necessary_state_known
+
+            state = request.get("required_state")
+            necessary_state_known(state)
+            if state["inventory"] != original or state["cash"] != cash:
+                raise ValueError("state.required_state_identity_mismatch")
         if (
             not finite(cash)
             or cash < 0
@@ -523,6 +605,7 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
                     for s in set(original) | set(plan)
                 },
                 prices,
+                guard=guard,
             )
             for plan in (M, P)
         ]
@@ -538,6 +621,19 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
                 < 0
             ):
                 raise ValueError("gain.plan_not_cash_feasible")
+        if conventions.document["version"] in ("v2.0.0", "v3.0.0"):
+            from .isolation import eligible_day
+
+            day = eligible_day(request["isolation_manifest"], signal, conventions)
+            if day["quantity_state"] != "VERIFIED_GE50":
+                raise OptionalRejected(
+                    "gain." + day["quantity_state"] + "_no_new_tilt", M
+                )
+            if any(
+                P.get(s, 0) > M.get(s, 0) and s not in day["eligible"] and s != "QQQ"
+                for s in P
+            ):
+                raise OptionalRejected("gain.isolated_optional_buy_forbidden", M)
         qqq = conventions.profile["portfolio"]["base_ticker"]
         stocks = (set(original) | set(M) | set(P)) - {qqq}
         try:

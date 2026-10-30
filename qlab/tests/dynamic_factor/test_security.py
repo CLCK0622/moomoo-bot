@@ -107,7 +107,7 @@ def test_anchor_itself_is_not_replaced_on_read(tmp_path):
     ledger = fixture_ledger(tmp_path / "l.sqlite", load_conventions())
     ledger.begin("a", {})
     a = json.loads(ledger.anchor_path.read_bytes())
-    assert a["sequence"] == 1 and a["n_high_water"] == 48
+    assert a["sequence"] == 1 and a["n_high_water"] == 1
     before = ledger.anchor_path.read_bytes()
     ledger.snapshot()
     assert ledger.anchor_path.read_bytes() == before

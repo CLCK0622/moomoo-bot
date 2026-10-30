@@ -38,6 +38,7 @@ def main():
             "startup_intent",
             "benchmark_valuation",
             "integer_cash_valuation",
+            "factor_cash_valuation",
             "reference_manifest_check",
             "reference_runtime_check",
             "authority_ledger_check",
@@ -45,6 +46,10 @@ def main():
             "input_migration_check",
             "continuous_path_check",
             "b2_input_readout",
+            "pre_score_isolation",
+            "state_transition_check",
+            "k5_dependency_check",
+            "noncash_guard_status",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -92,6 +97,31 @@ def main():
                 report = input_migration_check(request, ledger, conventions=policy)
             else:
                 report = ledger.readout()
+        elif args.tool == "noncash_guard_status":
+            from .scope_proof import noncash_isolation_proof
+            from .noncash_v3 import CATALOG_REASON
+
+            bound = policy or load_conventions()
+            report = bound.bind(
+                result(
+                    "noncash_guard_status",
+                    request,
+                    reasons=[CATALOG_REASON],
+                    metrics=noncash_isolation_proof(bound),
+                )
+            )
+        elif args.tool == "k5_dependency_check":
+            from .k5 import k5_dependency_check
+
+            report = k5_dependency_check(request, conventions=policy)
+        elif args.tool == "state_transition_check":
+            from .state_v2 import state_transition_check
+
+            report = state_transition_check(request, conventions=policy)
+        elif args.tool == "pre_score_isolation":
+            from .isolation import isolation_readout
+
+            report = isolation_readout(request, conventions=policy)
         elif args.tool == "b2_input_readout":
             from .b2_inputs import b2_input_readout
 
@@ -135,16 +165,22 @@ def main():
         elif args.tool in (
             "benchmark_valuation",
             "integer_cash_valuation",
+            "factor_cash_valuation",
             "reference_manifest_check",
             "reference_runtime_check",
         ):
-            from .valuation import benchmark_valuation, integer_cash_valuation
+            from .valuation import (
+                benchmark_valuation,
+                integer_cash_valuation,
+                factor_cash_valuation,
+            )
             from .reference_check import reference_manifest_check
             from .reference_evidence import reference_runtime_check
 
             report = {
                 "benchmark_valuation": benchmark_valuation,
                 "integer_cash_valuation": integer_cash_valuation,
+                "factor_cash_valuation": factor_cash_valuation,
                 "reference_manifest_check": reference_manifest_check,
                 "reference_runtime_check": reference_runtime_check,
             }[args.tool](request, conventions=policy)

@@ -19,8 +19,12 @@ from .fees import finite
 from .input_scope import reject_b2_inputs
 
 
-def read_pinned(path, expected_sha256):
+def read_pinned(path, expected_sha256, *, conventions=None):
     from .reference_registry import HASHES
+    from .conventions import load_conventions
+
+    if (conventions or load_conventions()).document["version"] == "v3.0.0":
+        from .reference_registry_v3 import HASHES
 
     if (
         Path(path).name
@@ -83,6 +87,28 @@ def price_basis_check(context):
 
 def validate_context(context, policy):
     price_basis_check(context)
+    if policy.document["version"] in ("v2.0.0", "v3.0.0") and any(
+        not is_sha(context.get(key))
+        for key in ("quarantine_manifest_sha256", "eligible_set_derivation_sha256")
+    ):
+        raise ValueError("pipeline.v2_isolation_identity_missing")
+    if policy.document["version"] in ("v2.0.0", "v3.0.0"):
+        from .isolation import checked_manifest, eligible_day
+
+        isolation = context.get("isolation")
+        if not isolation:
+            raise ValueError("pipeline.v2_isolation_receipts_missing")
+        checked_manifest(isolation["manifest"], policy)
+        days = {
+            d: eligible_day(isolation["manifest"], d, policy)[
+                "eligible_set_derivation_sha256"
+            ]
+            for d in context["train_calendar"]
+        }
+        if context["quarantine_manifest_sha256"] != isolation["manifest"][
+            "quarantine_manifest_sha256"
+        ] or context["eligible_set_derivation_sha256"] != digest(days):
+            raise ValueError("pipeline.v2_isolation_identity_mismatch")
     calendar = context["train_calendar"]
     if len(calendar) != policy.document["folds"]["train_days"] or calendar != sorted(
         set(calendar)
@@ -155,6 +181,20 @@ def _reference_variance(registry, layer, context, policy):
         ):
             raise ValueError("dsr.reference_profile_window_or_source_mismatch")
         returns = trial["returns"]
+        if policy.document["version"] in ("v2.0.0", "v3.0.0") and any(
+            not is_sha(context.get(key)) or trial.get(key) != context[key]
+            for key in ("quarantine_manifest_sha256", "eligible_set_derivation_sha256")
+        ):
+            raise ValueError("dsr.reference_isolation_mismatch")
+        if policy.document["version"] == "v3.0.0" and (
+            not is_sha(context.get("noncash_guard_manifest_sha256"))
+            or trial.get("noncash_guard_manifest_sha256")
+            != context["noncash_guard_manifest_sha256"]
+            or not is_sha(
+                trial.get("zero_exposure_and_consumer_dependency_receipt_sha256")
+            )
+        ):
+            raise ValueError("dsr.reference_B_release_or_proof_mismatch")
         if trial["source_returns_sha256"] != digest(returns) or len(returns) != len(
             context["train_calendar"]
         ):
@@ -197,9 +237,19 @@ def _dsr(m, v, n_snapshot, policy):
     return dict(m, sr0=sr0, dsr=value)
 
 
-def _n_snapshot(ledger, self_report_n):
+def _n_snapshot(ledger, self_report_n, policy=None):
     high = ledger.observe_self_report_n(self_report_n)
     s = ledger.snapshot()
+    if policy is not None and policy.document["version"] in ("v2.0.0", "v3.0.0"):
+        # Neither a book high-water mark nor a synthetic local ledger is an
+        # authority-approved complete factor-arm configuration projection.
+        return {
+            "gate_n": None,
+            "n_complete": False,
+            "cumulative_n": None,
+            "n_ledger_hash": s["n_ledger_hash"],
+            "book_or_request_high_water": high,
+        }
     return {
         "gate_n": max(high, s["cumulative_n_lower_bound"]),
         "n_ledger_hash": s["n_ledger_hash"],
@@ -208,16 +258,32 @@ def _n_snapshot(ledger, self_report_n):
     }
 
 
-def select_pool(evaluations, scores, policy, retired_ids):
+def select_pool(evaluations, scores, policy, retired_ids, *, isolation=None):
     """Unique greedy pool. Unusable correlations isolate a recipe, retaining N/V."""
     reject_b2_inputs({"evaluations": evaluations, "scores": scores}, "admission")
-    if policy.document["version"] == "v1.0.1" and not policy.document.get(
-        "runtime_consumable"
-    ):
+    if policy.document["version"] in (
+        "v1.0.1",
+        "v2.0.0",
+        "v3.0.0",
+    ) and not policy.document.get("runtime_consumable"):
         raise ValueError("pool.S2_unavailable_not_empty")
     expected = policy.document["variance_layers"]["family_definitions"][
         "candidate_members"
     ]
+    if policy.document["version"] in ("v2.0.0", "v3.0.0"):
+        from .isolation import verify_rank_receipt
+
+        if not isolation or set(scores) != set(expected):
+            raise ValueError("pool.v2_isolation_receipts_missing")
+        dates = set(isolation["rank_receipts"])
+        if not dates or any(set(scores[k]) != dates for k in expected):
+            raise ValueError("pool.v2_score_dates_mismatch")
+        for d, receipt in isolation["rank_receipts"].items():
+            verify_rank_receipt(receipt, isolation["manifest"], policy)
+            if d != receipt["day"]["date"] or any(
+                scores[k][d] != receipt["scores"][k] for k in expected
+            ):
+                raise ValueError("pool.v2_score_membership_or_values_mismatch")
     if set(evaluations) != set(expected) or any(
         any(not finite(m.get(k)) for k in ("mean", "sharpe", "dsr"))
         for m in evaluations.values()
@@ -341,7 +407,7 @@ def run_train_pipeline(
         if (
             genesis.get("conventions_sha256") != policy.raw_sha256
             or type(genesis.get("prior_n")) is not int
-            or genesis["prior_n"] < p["genesis"]["seed_min_N"]
+            or genesis["prior_n"] < (p["genesis"]["seed_min_N"] or 0)
         ):
             raise ValueError("dsr.ledger_seed_or_conventions_not_bound")
         if [x["id"] for x in proposals] != ids:
@@ -411,7 +477,12 @@ def run_train_pipeline(
             for e in ledger.snapshot()["events"]
         ):
             raise ValueError("pipeline.undeclared_candidate_attempt")
-        n_candidate = _n_snapshot(ledger, self_report_n)
+        n_candidate = _n_snapshot(ledger, self_report_n, policy)
+        if (
+            policy.document["version"] in ("v2.0.0", "v3.0.0")
+            and not n_candidate["n_complete"]
+        ):
+            raise ValueError("ledger.factor_arm_projection_missing")
         candidate_v = _layer(
             [evaluations[x]["sharpe"] for x in ids],
             "candidate",
@@ -432,7 +503,9 @@ def run_train_pipeline(
             or not set(retired).issubset(ids)
         ):
             raise ValueError("pool.retirement_state_invalid")
-        selection = select_pool(candidate_dsr, scores, policy, retired)
+        selection = select_pool(
+            candidate_dsr, scores, policy, retired, isolation=context.get("isolation")
+        )
         pool = selection["pool"]
         candidate = {
             **selection,
@@ -453,7 +526,7 @@ def run_train_pipeline(
             context={"run_id": run_id},
             replay=False,
         )
-        n_meta = _n_snapshot(ledger, self_report_n)
+        n_meta = _n_snapshot(ledger, self_report_n, policy)
         ledger.record(key + "/S3", {"meta_attempt_id": meta_id, "pool": pool, **n_meta})
         try:
             observation = build_meta(tuple(pool), deepcopy(calibration))
@@ -517,9 +590,11 @@ def oos_dsr(returns, fold_receipts, expected_fold_ids, n_snapshot, policy):
     """No OOS-generated controls: V is max of ALL frozen train meta V values."""
     if expected_fold_ids != [f["fold_id"] for f in policy.fold_manifest()["folds"]]:
         raise ValueError("wf.all_original_folds_required")
-    if policy.document["version"] == "v1.0.1" and not policy.document.get(
-        "runtime_consumable"
-    ):
+    if policy.document["version"] in (
+        "v1.0.1",
+        "v2.0.0",
+        "v3.0.0",
+    ) and not policy.document.get("runtime_consumable"):
         raise ValueError("dsr.runtime_bindings_pending")
     if (
         set(fold_receipts) != set(expected_fold_ids)

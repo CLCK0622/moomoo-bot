@@ -1,0 +1,161 @@
+{
+  "N": {
+    "actual_or_certified_gate_N_increment": null,
+    "arm_scope": "factor_arm_actual_authority_label_mapping_required",
+    "authoritative_factor_arm_N": null,
+    "book_chain": "same_original_append_only_chain_no_new_genesis_preserve_book_rows_and_high_water",
+    "book_counts_seed47_source_keys_or_requested_reads_are_not_formal_N": true,
+    "candidate_snapshot": "after_all_four_reference_slot_identities_and_current_candidate_attempts_reconciled_in_complete_factor_projection_before_S2",
+    "complete_projection_owner": "EVO891_and_existing_EVO893_E0_identity_reconciliation",
+    "cross_manifest_attempt_sharing": false,
+    "expected_new_units_if_all_slots_qualify_as_distinct_authority_approved_configuration_attempts": 308,
+    "meta_snapshot": "after_register_actual_meta_attempt_same_scope_N_meta_ge_N_candidate",
+    "planned_execution_slots_per_fold": 4,
+    "planned_for_77_folds": 308,
+    "real_performance_attempts_this_issue": 0,
+    "scope_contract": {
+      "LLM_stability_replica_exception": "not_automatically_applicable_to_factor_history_pytest_or_real_retries",
+      "OOS": "retain_same_existing_persisted_budget_ledger_no_new_single_shot_by_version_name_no_automatic_run_permission",
+      "authority_comments": [
+        "01a18bb2-6a21-7033-9775-7186ef6526e4",
+        "01a18c24-7273-7d79-8a09-120f77cf2b7b"
+      ],
+      "documentation_only": "register_design_identity_and_source_lineage_no_fictitious_performance_execution_count",
+      "formal_gate": "complete_authority_approved_factor_arm_configuration_attempt_projection_not_raw_book_readouts_or_source_blob_keys",
+      "identity_evidence": [
+        "arm",
+        "strategy_rule_and_profile",
+        "expression_and_parameters",
+        "H",
+        "seed",
+        "combination_policy",
+        "fold_or_market_window",
+        "source_and_market_input_hashes",
+        "actual_producer_and_attempt_or_retry",
+        "prior_attempt_coverage"
+      ],
+      "missing_complete_projection": "DSR_null_certifiable_false",
+      "not_new_producer": "existing_identical_attempt_evidence_copy_or_delivery_retry_reference_original_attempt_not_new_market_evaluation",
+      "pytest_real_results": "configuration_market_evaluation_and_any_result_driven_rule_change_enter_factor_arm_reconciliation_no_automatic_one_or_two_per_pytest",
+      "recorded_and_request_attempt_sensitivity": "report_book_high_water_and_attempt_request_measure_separately_do_not_call_them_certified_configuration_N",
+      "storage": "same_append_only_authority_chain_preserve_old_rows_and_book_high_water_no_new_genesis",
+      "synthetic_or_pre_execution_pytest": "proven_no_real_market_result_evaluation_record_nontrial_not_gate_N",
+      "true_retries": "preserve_actual_new_execution_and_failed_NaN_evidence_no_blanket_exemption_for_same_parameter_key_same_source_or_equal_output",
+      "unknown_identity_or_reach": "retain_unknown_complete_N_null_no_assumed_zero_and_no_blanket_pass",
+      "v2_evaluations": "new_isolation_rule_profile_evaluated_on_real_market_results_register_version_and_configuration_attempts_before_evaluation_count_under_applicable_authority_no_reset"
+    },
+    "scope_contract_sha256": "088783e483ffc58b475367a4b909c95ebb6ba9584e0564ad94ec7c2710b1750f",
+    "snapshots_require": [
+      "authority_chain_tail_hash",
+      "approved_factor_projection_sha256",
+      "N_scope_contract_sha256",
+      "configuration_identity_and_prior_coverage_mapping_sha256"
+    ],
+    "unknown_mapping": "complete_factor_N_null_and_DSR_null"
+  },
+  "author_agent_id": "6aab6e70-8fa0-497b-8b5e-06f6ae3ac835",
+  "authority_comments": [
+    "01a18ac0-580c-7466-85f7-229958c83b4f",
+    "01a18c40-6792-76e4-be5e-4127b54f7aa5",
+    "01a18c42-d011-7bf3-9d6a-8dac0c169eae",
+    "01a18c43-870b-7775-882b-da919e4361b9"
+  ],
+  "bindings": {
+    "N_scope_contract_sha256": "088783e483ffc58b475367a4b909c95ebb6ba9584e0564ad94ec7c2710b1750f",
+    "common_calendar_sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "common_profile_sha256": "98ed5a2bfb5163efae872020861ef630ce4746094af06f89e3e8056b6f56a05c",
+    "cost_x1_sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "cost_x2_sha256": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "fold_manifest_sha256": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "frozen_interface_sha256": "ea914ee6bb617a2a07dbadc1b02364b6f165b08d70af055f416e68d6b00510f4",
+    "interface_to_consume_sha256": "ea914ee6bb617a2a07dbadc1b02364b6f165b08d70af055f416e68d6b00510f4",
+    "isolation_contract_id": "PRE_SCORE_ISOLATION_V2",
+    "isolation_contract_sha256": "545cdeffa4b04b71552bb6a9aa6988951c6f07cb16cff631dfa98f891f637746",
+    "panel64_sha256": "ae9332ff345dae69866a6a78fcbb07201ef7ac14b4ff82d714a1282330103ee4",
+    "prereg_sha256": "9bb933c21aea20270b792d3e77720c459fe80a3074f59884657a58d330e0088d",
+    "prereg_version": "v2",
+    "profile_serialization": "canonical_UTF8_sort_keys_ensure_ascii_false_compact_comma_colon_no_final_LF"
+  },
+  "certifiable": false,
+  "changes_beyond_frozen_prereg_v2": 0,
+  "closed_family_total_members": 4,
+  "definition_manifests": [
+    {
+      "file": "candidate_reference_manifest.json",
+      "member_count": 2,
+      "member_ids": [
+        "CREF-F1-L020",
+        "CREF-F3-L020"
+      ],
+      "planned_reference_execution_slots_per_fold": 2,
+      "profile_id": "CANDIDATE_PROBE_V2",
+      "role": "candidate",
+      "sha256": "46a9e140a9deeceb44e93d2408803cce431afa5949758556fc5302d4054277f3"
+    },
+    {
+      "file": "meta_reference_manifest.json",
+      "member_count": 2,
+      "member_ids": [
+        "MREF-F2-L020",
+        "MREF-F4-L020"
+      ],
+      "planned_reference_execution_slots_per_fold": 2,
+      "profile_id": "META_EVAL_V2",
+      "role": "meta",
+      "sha256": "871bcb14ec9198b322bbeb146cc04ff6db4959a3d88faa87400bf9e4fc85054b"
+    }
+  ],
+  "fold_binding": {
+    "count": 77,
+    "file": "fold-bindings.json",
+    "sha256": "c0c38eb9a61a572de1ae4b768b58a0fa0123179a6d111c611e67935ce8e4d47d"
+  },
+  "historical_or_shadow_run_authorized_by_this_registry": false,
+  "isolation_contract": {
+    "file": "reference-isolation-contract.json",
+    "sha256": "9a8c23e57bdb5bbb9fa23bad8c5c6b130996ce3a228b0f3b524e6dfb1afe4f37"
+  },
+  "issue_id": "01a18ac1-263c-755d-a3ac-008a535cd6b6",
+  "lineage_plan": {
+    "engineering_proof_owner": "EVO900_v2_integration_with_original_EVO884_proof",
+    "file": "lineage-plan.json",
+    "sha256": "e66dd5b97e22d06d5037516e1b40651b1e348fef7a12f4566b09a641946f5b84"
+  },
+  "parent_registration": {
+    "comment_id": "01a18ad3-1902-7e98-9148-ef585c05ce82",
+    "created_at": "2026-10-30T03:20:52Z",
+    "design_review_comment_id": "01a18adb-ed0c-7aa9-9a12-884c72cd1919",
+    "old_bytes_preserved": true,
+    "package_sha256": "30f0c7314c38af5aa42a90d059fed843be220d32dfb3a3634057d3d39e0c89b4",
+    "registry_sha256": "83c9d47f375235faf0021342ff2e0a36b8cdc46a58975da8b31c50bd73aea3b2",
+    "retained_for": "v1_ancestry_only_not_v2_time_priority"
+  },
+  "post_registration_new_member": "new_reference_registration_and_applicable_strategy_version_adjudication_plus_N_no_result_based_replacement",
+  "reference_formula_members_changed": false,
+  "registration_anchor": {
+    "anchor": "created_at_of_first_comment_attaching_this_exact_v2_registry_and_definition_manifest_bytes",
+    "comment_id": null,
+    "created_at": null,
+    "independent_non_author_verification_required": true,
+    "local_generation_time_is_not_anchor": true,
+    "must_precede": "every_reference_or_current_fold_performance_artifact_generation",
+    "platform": "multica",
+    "prior_v1_anchor_may_not_substitute": true,
+    "resolution": "resolve_from_platform_attachment_comment_metadata_after_upload_no_rewrite_to_registered_file"
+  },
+  "runtime_consumable": false,
+  "runtime_results_sidecars": "runtime-evidence-contract.json",
+  "schema": "EVO892.predeclared_reference_registry.v2",
+  "starts_63_day_clock": false,
+  "state": "re_registered_v2_scope_before_any_fold_performance_pending_lead_review",
+  "stop_conditions": {
+    "actual_plus_total_expected_increment_exceeds_agent_days": 2,
+    "fallback_does_not_authorize_run_by_this_author": true,
+    "needs_fold_performance_to_choose_family": "fallback_b_DSR_V_null"
+  },
+  "strategy_policy_changes": "inherited_approved_PRE_SCORE_ISOLATION_V2_and_N_scope_only_no_additional_policy_change_by_this_receipt",
+  "threshold_changes": 0,
+  "version": "2.0.0",
+  "version_decision": "fresh_reference_registration_as_versioned_input_under_frozen_prereg_v2_no_new_strategy_version",
+  "version_decision_authority": "formal_v2_changes_isolation_and_N_scope_require_fresh_registration_anchor_specific_scheme_pending_lead_review"
+}

@@ -25,6 +25,7 @@ NODE = dict.fromkeys(
         "receipt_id",
         "order_id",
         "client_identity",
+        "consumer_role",
     ),
     "string",
 )
@@ -140,17 +141,57 @@ EVIDENCE_KEYS = {
 }
 
 
-def validate_consumer(request):
+def consumer_schema_v3(securities=()):
+    """Explicit consumer records introduced by the EVO-900 state contract."""
+    symbols = set(load_conventions().profile["universe"]) | set(securities) | {"VSNT"}
+    rights = dict.fromkeys(symbols | {"child", "LEGACY"}, SCALAR)
+    receivables = dict.fromkeys(symbols | {"cash_event", "LEGACY"}, SCALAR)
+    state = dict(
+        STATE,
+        origin="security_map",
+        rights=rights,
+        receivables=receivables,
+        unknown_components=STRINGS,
+    )
+    fold = dict(FOLD, input_state=state, output_state=state)
+    k5 = dict.fromkeys(
+        (
+            "account_role",
+            "dependency_role",
+            "event_date",
+            "fold_id",
+            "parent",
+            "quote_date",
+        ),
+        "string",
+    )
+    return dict(
+        CONSUMER,
+        folds=("list", fold),
+        input_state=state,
+        output_state=state,
+        inputs=("list", dict(NODE, consumer_role="string")),
+        rights=rights,
+        receivables=receivables,
+        k5_dependencies=("list", k5),
+    )
+
+
+def validate_consumer(request, *, schema=CONSUMER, securities=()):
     """Iteratively validate every depth, without a recursion-limit loophole."""
-    securities = set(load_conventions().profile["universe"]) | {
-        "B",
-        "COR",
-        "QQQ",
-        "VTI",
-        "X",
-        "H",
-    }
-    pending = [(request, CONSUMER)]
+    securities = (
+        set(securities)
+        | set(load_conventions().profile["universe"])
+        | {
+            "B",
+            "COR",
+            "QQQ",
+            "VTI",
+            "X",
+            "H",
+        }
+    )
+    pending = [(request, schema)]
     while pending:
         value, schema = pending.pop()
         # Null is retained raw missing evidence; the owning business validator

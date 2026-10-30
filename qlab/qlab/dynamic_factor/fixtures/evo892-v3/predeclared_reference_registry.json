@@ -1,0 +1,174 @@
+{
+  "B_catalog_and_proofs_currently_missing": true,
+  "N": {
+    "actual_or_certified_gate_N_increment": null,
+    "arm_scope": "factor_arm_actual_authority_label_mapping_required",
+    "authoritative_factor_arm_N": null,
+    "book_chain": "same_original_append_only_chain_no_new_genesis_preserve_book_rows_and_high_water",
+    "book_counts_seed47_source_keys_or_requested_reads_are_not_formal_N": true,
+    "candidate_snapshot": "after_all_four_reference_slot_identities_and_current_candidate_attempts_reconciled_in_complete_factor_projection_before_S2",
+    "complete_projection_owner": "EVO891_and_existing_EVO893_E0_identity_reconciliation",
+    "cross_manifest_attempt_sharing": false,
+    "expected_new_units_if_all_slots_qualify_as_distinct_authority_approved_configuration_attempts": 308,
+    "meta_snapshot": "after_register_actual_meta_attempt_same_scope_N_meta_ge_N_candidate",
+    "planned_execution_slots_per_fold": 4,
+    "planned_for_77_folds": 308,
+    "real_performance_attempts_this_issue": 0,
+    "scope_contract": {
+      "LLM_stability_replica_exception": "not_automatically_applicable_to_factor_history_pytest_or_real_retries",
+      "OOS": "retain_same_existing_persisted_budget_ledger_no_new_single_shot_by_version_name_no_automatic_run_permission",
+      "authority_comments": [
+        "01a18bb2-6a21-7033-9775-7186ef6526e4",
+        "01a18c24-7273-7d79-8a09-120f77cf2b7b"
+      ],
+      "current_version_evaluations": "new_v3_no_exposure_rule_profile_and_guard_release_register_configuration_before_market_evaluation_count_per_authority_preserve_retries_no_reset",
+      "documentation_only": "register_design_identity_and_source_lineage_no_fictitious_performance_execution_count",
+      "formal_gate": "complete_authority_approved_factor_arm_configuration_attempt_projection_not_raw_book_readouts_or_source_blob_keys",
+      "identity_evidence": [
+        "arm",
+        "strategy_rule_and_profile",
+        "expression_and_parameters",
+        "H",
+        "seed",
+        "combination_policy",
+        "fold_or_market_window",
+        "source_and_market_input_hashes",
+        "actual_producer_and_attempt_or_retry",
+        "prior_attempt_coverage",
+        "noncash_parent_guard_release_and_zero_exposure_consumer_proof"
+      ],
+      "missing_complete_projection": "DSR_null_certifiable_false",
+      "not_new_producer": "existing_identical_attempt_evidence_copy_or_delivery_retry_reference_original_attempt_not_new_market_evaluation",
+      "pytest_real_results": "configuration_market_evaluation_and_any_result_driven_rule_change_enter_factor_arm_reconciliation_no_automatic_one_or_two_per_pytest",
+      "recorded_and_request_attempt_sensitivity": "report_book_high_water_and_attempt_request_measure_separately_do_not_call_them_certified_configuration_N",
+      "storage": "same_append_only_authority_chain_preserve_old_rows_and_book_high_water_no_new_genesis",
+      "synthetic_or_pre_execution_pytest": "proven_no_real_market_result_evaluation_record_nontrial_not_gate_N",
+      "true_retries": "preserve_actual_new_execution_and_failed_NaN_evidence_no_blanket_exemption_for_same_parameter_key_same_source_or_equal_output",
+      "unknown_identity_or_reach": "retain_unknown_complete_N_null_no_assumed_zero_and_no_blanket_pass"
+    },
+    "scope_contract_sha256": "307941909d1adc921af700f12a58370b309148a6799bdc14bc76747a4bcfa27e",
+    "snapshots_require": [
+      "authority_chain_tail_hash",
+      "approved_factor_projection_sha256",
+      "N_scope_contract_sha256",
+      "configuration_identity_and_prior_coverage_mapping_sha256",
+      "noncash_guard_release_and_zero_exposure_consumer_proof_sha256"
+    ],
+    "unknown_mapping": "complete_factor_N_null_and_DSR_null"
+  },
+  "author_agent_id": "6aab6e70-8fa0-497b-8b5e-06f6ae3ac835",
+  "authority_comments": [
+    "01a18ac0-580c-7466-85f7-229958c83b4f",
+    "01a18c5d-4662-72f6-befa-a048b83e4e8f",
+    "01a18c5f-380c-7eca-9fa0-a82f04b0f0a7",
+    "01a18c5f-be1d-7106-a5a8-8b6b9035c05b",
+    "01a18c64-dacd-72b1-98e8-6db00730fd5e",
+    "01a18c69-b12f-7a0e-b9db-364b5acadaf4",
+    "01a18c6c-30f9-7bcb-b79b-dea835cc8541"
+  ],
+  "bindings": {
+    "N_scope_contract_sha256": "307941909d1adc921af700f12a58370b309148a6799bdc14bc76747a4bcfa27e",
+    "common_calendar_sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "common_profile_sha256": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",
+    "cost_x1_sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "cost_x2_sha256": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "fold_manifest_sha256": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "frozen_interface_sha256": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+    "interface_to_consume_sha256": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+    "isolation_contract_id": "PRE_SCORE_ISOLATION_V3",
+    "isolation_contract_sha256": "4cc2e04bb1b1e3b604f08f2c3577eb9bc8aac63d70c07811e012241b17ae0ed3",
+    "noncash_contract_id": "NO_UNCLOSED_IN_KIND_EXPOSURE_V3",
+    "noncash_contract_sha256": "78271bf1093f32a56a8d6036e5b9d9cb1de7900697a012fe7504af36df8c5752",
+    "panel64_sha256": "ae9332ff345dae69866a6a78fcbb07201ef7ac14b4ff82d714a1282330103ee4",
+    "prereg_sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+    "prereg_version": "v3",
+    "profile_serialization": "canonical_UTF8_sort_keys_ensure_ascii_false_compact_comma_colon_no_final_LF"
+  },
+  "certifiable": false,
+  "changes_beyond_frozen_prereg_v3": 0,
+  "closed_family_total_members": 4,
+  "definition_manifests": [
+    {
+      "file": "candidate_reference_manifest.json",
+      "member_count": 2,
+      "member_ids": [
+        "CREF-F1-L020",
+        "CREF-F3-L020"
+      ],
+      "planned_reference_execution_slots_per_fold": 2,
+      "profile_id": "CANDIDATE_PROBE_V3",
+      "role": "candidate",
+      "sha256": "bcce6f17f3515d66eb5b87569720740efb6eb70eca2d774a853be8e3cdecb4a4"
+    },
+    {
+      "file": "meta_reference_manifest.json",
+      "member_count": 2,
+      "member_ids": [
+        "MREF-F2-L020",
+        "MREF-F4-L020"
+      ],
+      "planned_reference_execution_slots_per_fold": 2,
+      "profile_id": "META_EVAL_V3",
+      "role": "meta",
+      "sha256": "964e9903e13bd618777f00652bad09272d7aa4ddbb3cec2c28371a8378002ae6"
+    }
+  ],
+  "fold_binding": {
+    "count": 77,
+    "file": "fold-bindings.json",
+    "sha256": "f4ce91be042287d9e51f5117e0781f5c5e79cbf7d93d4808afe7ef391320d81b"
+  },
+  "historical_or_shadow_run_authorized_by_this_registry": false,
+  "isolation_contract": {
+    "file": "reference-isolation-contract.json",
+    "sha256": "d7cb2a57fd63ce6a1f57ecf1a9c3957de1314b31a64a133f1b560014544d5a97"
+  },
+  "issue_id": "01a18ac1-263c-755d-a3ac-008a535cd6b6",
+  "lineage_plan": {
+    "engineering_proof_owner": "EVO900_reference_blocks6_and7_plus_original_EVO884_source_proof",
+    "file": "lineage-plan.json",
+    "sha256": "c977dfbcce2b666f85c54ee771c709b8485470948aeab5daa2bf0e57ec76ab2a"
+  },
+  "noncash_consumer_contract": {
+    "file": "noncash-consumer-contract.json",
+    "sha256": "216206a1c36fa61ad275692ee68d5247636ea94adb18cc127d2dfe170906802d"
+  },
+  "parent_registration": {
+    "comment_id": "01a18c50-6b3e-715a-b141-b0b2422ff10f",
+    "created_at": "2026-10-30T10:17:23Z",
+    "design_review_comment_id": "01a18c56-4e33-7358-8734-f6d1c998cca4",
+    "old_bytes_preserved": true,
+    "package_sha256": "b6b267c92a2f02759022c7bfe7885b9ad21b01b9498095d5c49fb2d4975439b9",
+    "registry_sha256": "89e8ca8533a313b10e21e87683b10633091cc3f58b154c76ae5462e3710f426d",
+    "retained_for": "v2_ancestry_only_not_v3_time_priority"
+  },
+  "post_registration_new_member": "new_reference_registration_and_applicable_strategy_version_adjudication_plus_N_no_result_based_replacement",
+  "reference_formula_members_changed": false,
+  "registration_anchor": {
+    "anchor": "created_at_of_first_comment_attaching_this_exact_v3_registry_and_definition_manifest_bytes",
+    "comment_id": null,
+    "created_at": null,
+    "independent_non_author_verification_required": true,
+    "local_generation_time_is_not_anchor": true,
+    "must_precede": "every_reference_or_current_fold_performance_artifact_generation",
+    "platform": "multica",
+    "prior_v1_anchor_may_not_substitute": true,
+    "prior_v2_anchor_may_not_substitute": true,
+    "resolution": "resolve_from_platform_attachment_comment_metadata_after_upload_no_rewrite_to_registered_file"
+  },
+  "runtime_consumable": false,
+  "runtime_results_sidecars": "runtime-evidence-contract.json",
+  "schema": "EVO892.predeclared_reference_registry.v3",
+  "starts_63_day_clock": false,
+  "state": "re_registered_v3_before_any_fold_performance_pending_lead_review",
+  "stop_conditions": {
+    "actual_plus_total_expected_increment_exceeds_agent_days": 2,
+    "fallback_does_not_authorize_run_by_this_author": true,
+    "needs_fold_performance_to_choose_family": "fallback_b_DSR_V_null"
+  },
+  "strategy_policy_changes": "inherited_formal_v3_B_first_consumer_and_no_exposure_policy_and_scope_identity_only_no_additional_rule",
+  "threshold_changes": 0,
+  "version": "3.0.0",
+  "version_decision": "fresh_reference_registration_under_already_frozen_strategy_v3_no_new_strategy_v4",
+  "version_decision_authority": "formal_v3_B_guard_changes_economic_consumption_domain_and_profile"
+}

@@ -571,7 +571,7 @@ def bound_genesis(conventions):
         raise ValueError("ledger.seed_identity_or_completeness_invalid")
     return dict(
         DEFAULT_GENESIS,
-        prior_n=p["genesis"]["seed_min_N"],
+        prior_n=p["genesis"]["seed_min_N"] or 0,
         count_complete=False,
         authority_source={
             "reference": p["genesis"]["commit"] + ":" + p["genesis"]["repo_path"],

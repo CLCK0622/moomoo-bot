@@ -20,12 +20,15 @@ GATES = {
 
 IMPORTS = {
     "execution": {
+        "noncash_v3",
         "__future__",
         "contract",
         "conventions",
         "fee_model",
         "fees",
         "input_scope",
+        "isolation",
+        "state_v2",
         "json",
         "math",
         "pipeline",
@@ -53,15 +56,18 @@ IMPORTS = {
         "execution",
         "fees",
         "input_scope",
+        "isolation",
         "json",
         "math",
         "pathlib",
         "re",
         "reference_registry",
+        "reference_registry_v3",
         "statistics",
     },
     "reference_inputs": {"hashlib", "input_scope", "json", "pathlib"},
     "valuation": {
+        "noncash_v3",
         "__future__",
         "contract",
         "conventions",
@@ -71,9 +77,22 @@ IMPORTS = {
         "input_scope",
         "io",
         "math",
+        "k5",
     },
     "scope_reader": {"contract", "input_scope", "json", "pathlib"},
     "input_scope": set(),
+    "noncash_v3": {
+        "copy",
+        "datetime",
+        "contract",
+        "conventions",
+        "fees",
+        "state_v2",
+        "catalog_v21",
+        "catalog_members",
+    },
+    "catalog_members": set(),
+    "catalog_v21": {"csv", "io", "json", "contract", "conventions"},
     "pending": {"__future__", "contract", "execution", "input_scope", "pipeline"},
     "validation": {
         "__future__",
@@ -93,8 +112,36 @@ IMPORTS = {
         "fees",
         "input_scope",
         "input_disposition",
+        "state_v2",
+        "k5",
+    },
+    "isolation": {
+        "noncash_v3",
+        "event_quarantine",
+        "copy",
+        "datetime",
+        "contract",
+        "conventions",
+        "fees",
+        "math",
+        "input_scope",
+    },
+    "state_v2": {"copy", "contract", "conventions", "fees", "input_scope"},
+    "k5": {
+        "noncash_v3",
+        "csv",
+        "decimal",
+        "io",
+        "json",
+        "contract",
+        "conventions",
+        "fees",
+        "input_scope",
+        "isolation",
     },
     "scope_proof": {
+        "conventions",
+        "noncash_v3",
         "ast",
         "contract",
         "input_disposition",
@@ -192,12 +239,14 @@ def b2_isolation_proof(policy):
     if set(gates) != set(ROLES) or len(readers) != 2:
         raise ValueError("scope.reader_or_role_set_changed")
     if file_reads != {
+        "catalog_v21": 1,
         "execution": 2,
         "pipeline": 1,
         "reference_inputs": 1,
-        "scope_proof": 1,
+        "scope_proof": 2,
         "scope_reader": 1,
         "valuation": 1,
+        "k5": 2,
     }:
         raise ValueError("scope.file_access_not_whitelisted")
     ref = static_proof()
@@ -215,8 +264,17 @@ def b2_isolation_proof(policy):
         + [policy.profile["portfolio"]["base_ticker"]],
         "strategy_market_file_whitelist": "<frozen_symbol>.json, matching symbol header and SHA, exact supplied frozen date vector; no link/alias/path expansion",
         "reference_file_whitelist": ref["read_whitelist"],
+        "k5_scoped_quote_read_whitelist": [
+            "k5/S2-field-receipt-v1.json",
+            "k5/VSNT-open-close-none.csv",
+        ],
         "reference_benchmark_symbol": "QQQ",
         "non_market_read_whitelist": {
+            "catalog_v21": [
+                "catalog-v21/EVO893-B-noncash-catalog-v21.csv",
+                "catalog-v21/EVO893-B-CMI-guard-v21.json",
+                "catalog-v21/EVO883-v21-final-receipt.json",
+            ],
             "execution": ["fee_params_x2.json", "fee_schedule.json"],
             "pipeline": [
                 "predeclared_reference_registry.json",
@@ -234,14 +292,168 @@ def b2_isolation_proof(policy):
     }
 
 
+def noncash_isolation_proof(policy):
+    """Inspect owned economic boundaries; this does not attest a real account."""
+    from .noncash_v3 import (
+        ROUTES,
+        CONSUMERS,
+        actor_ids,
+        ACCEPTED_CATALOG_SHA256,
+        CATALOG_REASON,
+    )
+
+    root = Path(__file__).parent
+    names = (
+        "noncash_v3",
+        "catalog_v21",
+        "catalog_members",
+        "reference_noncash",
+        "isolation",
+        "execution",
+        "valuation",
+        "k5",
+        "folds",
+    )
+    raw_sources = {name: (root / (name + ".py")).read_bytes() for name in names}
+    trees = {name: ast.parse(raw) for name, raw in raw_sources.items()}
+
+    def function(module, name):
+        return next(
+            n
+            for n in trees[module].body
+            if isinstance(n, ast.FunctionDef) and n.name == name
+        )
+
+    def calls(node, name):
+        return sorted(
+            n.lineno
+            for n in ast.walk(node)
+            if isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Name)
+            and n.func.id == name
+        )
+
+    numeric = function("noncash_v3", "guarded_value")
+    guards = calls(numeric, "assert_consumer_symbols")
+    readers = calls(numeric, "reader")
+    if len(guards) != 1 or len(readers) != 1 or guards[0] >= readers[0]:
+        raise ValueError("B.static_numeric_guard_not_dominant")
+    economic = function("noncash_v3", "economic_values")
+    if min(calls(economic, "assert_consumer_symbols"), default=10**9) >= min(
+        calls(economic, "guarded_value"), default=-1
+    ):
+        raise ValueError("B.static_batch_guard_missing")
+    # A pure injected reader is the only numeric boundary in this module.
+    forbidden = {
+        "open",
+        "read_bytes",
+        "read_text",
+        "write_bytes",
+        "write_text",
+        "glob",
+        "rglob",
+        "eval",
+        "exec",
+        "__import__",
+    }
+    for n in ast.walk(trees["noncash_v3"]):
+        if isinstance(n, ast.Call):
+            name = (
+                n.func.id
+                if isinstance(n.func, ast.Name)
+                else n.func.attr
+                if isinstance(n.func, ast.Attribute)
+                else ""
+            )
+            if name in forbidden:
+                raise ValueError("B.static_unregistered_reader")
+    acquisition = function("noncash_v3", "acquisition_check")
+    if (
+        len(calls(acquisition, "zero_exposure")) != 2
+        or not calls(acquisition, "zero_origin")
+        or not calls(acquisition, "checked_guard")
+    ):
+        raise ValueError("B.static_acquisition_induction_missing")
+    calibration = function("execution", "_v2_calibration_rows")
+    voluntary = function("execution", "voluntary_trade_gate")
+    valuation = function("valuation", "integer_cash_valuation")
+    for node in (calibration, voluntary, valuation):
+        if not calls(node, "assert_consumer_symbols"):
+            raise ValueError("B.static_consumer_connection_missing")
+    factor_cash = function("valuation", "factor_cash_valuation")
+    if not any(
+        isinstance(n, ast.Call)
+        and isinstance(n.func, ast.Name)
+        and n.func.id == "integer_cash_valuation"
+        and any(
+            k.arg == "factor_scope"
+            and isinstance(k.value, ast.Constant)
+            and k.value.value is True
+            for k in n.keywords
+        )
+        for n in ast.walk(factor_cash)
+    ):
+        raise ValueError("B.static_factor_cash_scope_not_bound")
+    marks = [
+        n.lineno
+        for n in ast.walk(valuation)
+        if isinstance(n, ast.Subscript)
+        and isinstance(n.slice, ast.Constant)
+        and n.slice.value == "marks"
+    ]
+    if min(calls(valuation, "assert_consumer_symbols")) >= min(marks, default=-1):
+        raise ValueError("B.static_valuation_read_precedes_guard")
+    quote = function("k5", "vsnt_quote")
+    raises = [n.lineno for n in ast.walk(quote) if isinstance(n, ast.Raise)]
+    reads = [
+        n.lineno
+        for n in ast.walk(quote)
+        if isinstance(n, ast.Call)
+        and isinstance(n.func, ast.Attribute)
+        and n.func.attr == "read_bytes"
+    ]
+    if not raises or min(raises) >= min(reads, default=-1):
+        raise ValueError("B.static_v3_legacy_reader_not_closed")
+    files = {n + ".py": sha256(b) for n, b in raw_sources.items()}
+    payload = dict(
+        schema="EVO900.factor-arm-noncash-static-proof/v3",
+        source_files=files,
+        source_sha256=digest(files),
+        actor_ids=list(actor_ids(policy)),
+        acquisition_routes=sorted(ROUTES),
+        economic_consumer_roles=sorted(CONSUMERS),
+        numeric_guard_line=guards[0],
+        injected_reader_line=readers[0],
+        B_catalog_sha256=ACCEPTED_CATALOG_SHA256,
+        B_catalog_reason=CATALOG_REASON,
+        scope="Owned factor and virtual-monitor input boundaries, supplied complete source states, and trusted callbacks; not an arbitrary Python OS sandbox or real-account attestation.",
+        reference_producer_proof_completed=False,
+        reference_producer_separate_mechanism_proof_available=True,
+        reference_producer_real_runtime_proven=False,
+        factor_cash_entrypoint="factor_cash_valuation",
+        generic_accounting_is_factor_proof=False,
+        real_origin_proofs=None,
+        runtime_consumable=False,
+        certifiable=False,
+        **policy.binding,
+    )
+    return dict(payload, static_proof_sha256=digest(payload))
+
+
 def b2_manifest_check(manifest, policy):
     """An unavailable B2 entry is complete metadata, never available market data."""
     from .contract import is_sha
+    from .conventions import FIXTURES, load_conventions
     from .input_disposition import sources
     import json
 
     ruling = json.loads(sources()["EVO883-EVO886-minimum-scope-ruling-v1.json"])
-    if ruling["interface_sha256"] != policy.raw_sha256:
+    expected_interface = (
+        load_conventions(FIXTURES / "conventions-v1.0.1.json").raw_sha256
+        if policy.document["version"] in ("v2.0.0", "v3.0.0")
+        else policy.raw_sha256
+    )
+    if ruling["interface_sha256"] != expected_interface:
         raise ValueError("scope.ruling_identity_mismatch")
     proof = b2_isolation_proof(policy)
     if (

@@ -33,7 +33,7 @@ from qlab.dynamic_factor.validation import wf_manifest_check
     ],
 )
 def test_registry_manifest_guards_always_leave_DSR_V_null(role, failure):
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     request = registry_fixture(p)
     if failure == "missing_registry":
         request["registry"] = None
@@ -61,7 +61,7 @@ def test_registry_manifest_guards_always_leave_DSR_V_null(role, failure):
 def test_fixture_registry_validation_is_not_runtime_certification_and_refs_count_N(
     tmp_path,
 ):
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     request = registry_fixture(p)
     r = reference_manifest_check(request, conventions=p)
     assert r["ok"] and r["metrics"]["registry_valid"]
@@ -94,7 +94,7 @@ def test_fixture_registry_validation_is_not_runtime_certification_and_refs_count
 
 
 def test_reference_uses_shared_splitter_and_pinned_three_reader_graph(tmp_path):
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     request = producer_fixture(tmp_path / "inputs", p)
     result = prepare(tmp_path / "inputs", request)
     assert result["train_dates"] == list(request["view"]["train"])
@@ -102,6 +102,10 @@ def test_reference_uses_shared_splitter_and_pinned_three_reader_graph(tmp_path):
     proof = static_proof()
     assert set(proof["import_graph"]) == {
         "reference_producer",
+        "reference_producer_v3",
+        "reference_v3_scope",
+        "reference_validation",
+        "catalog_members",
         "reference_inputs",
         "fold_split",
         "reference_guard",
@@ -110,6 +114,7 @@ def test_reference_uses_shared_splitter_and_pinned_three_reader_graph(tmp_path):
     assert proof["reader_sites"][0]["module"] == "reference_inputs"
     assert len(proof["reader_sites"]) == 1
     assert "pipeline" not in proof["import_graph"]["reference_producer"]
+    assert "pipeline" not in proof["import_graph"]["reference_producer_v3"]
     command = [
         sys.executable,
         "-m",
@@ -128,7 +133,7 @@ def test_reference_uses_shared_splitter_and_pinned_three_reader_graph(tmp_path):
     ["candidate_path", "meta_role", "test_row", "copied_output", "candidate_stdin"],
 )
 def test_producer_cannot_read_or_copy_current_outputs_or_test(tmp_path, failure):
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     root = tmp_path / "inputs"
     request = producer_fixture(root, p)
     if failure == "candidate_path":
@@ -250,7 +255,7 @@ def test_VTI_missing_never_uses_SPY_as_B2(symbol):
 
 
 def test_formal_calendar_check_requires_VTI_evidence():
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     m = p.fold_manifest()
     m.update(benchmarks=["QQQ", "SPY"])
     assert wf_manifest_check(m, conventions=p)["reasons"] == [
@@ -371,7 +376,7 @@ def test_CLI_genesis_override_and_missing_conventions_refuse_before_DB_creation(
 
 
 def test_CLI_startup_refuses_synthetic_unit_ledger(tmp_path):
-    policy = load_conventions()
+    policy = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     ledger = fixture_ledger(tmp_path / "ledger.sqlite", policy)
     source = tmp_path / "intent.json"
     source.write_text(

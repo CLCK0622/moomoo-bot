@@ -93,6 +93,14 @@ def cash_source_reason(event):
 
 def _panel_input_check(request, *, conventions=None):
     policy = conventions or load_conventions()
+    isolated, days = [], {}
+    if (
+        policy.document["version"] in ("v2.0.0", "v3.0.0")
+        and "isolation_manifest" in request
+    ):
+        from .isolation import selection_projection
+
+        request, isolated, days = selection_projection(request, policy)
     doc = json.loads(sources()["EVO883-EVO891-disposition-draft-v1.json"])
     panel = doc["panel_disposition"]
     overlay = quarantine_check(request)
@@ -193,6 +201,8 @@ def _panel_input_check(request, *, conventions=None):
                 "replacements": [],
                 "dsr": None,
                 "event_quarantine": overlay,
+                "pre_score_isolated_inputs": isolated,
+                "daily_eligibility": days,
             },
             assumptions=[
                 "Retain frozen membership; only the source-specified affected date/dependency is quarantined. Passing this receipt is not 252-session/min50 eligibility acceptance."

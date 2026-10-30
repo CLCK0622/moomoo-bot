@@ -1,0 +1,60 @@
+{
+ "actual_residual_shares": null,
+ "actual_residual_shares_null_reason": "原件未写；不由差额或比例推出",
+ "amount": null,
+ "amount_null_reason": "原件未写；不由差额或比例推出",
+ "cap_difference": {
+  "implies_cleanup": false,
+  "implies_retained_shares": false,
+  "meaning": "要约上限 67,054,726 减申报换出 67,054,719；只是上限差",
+  "value": 7
+ },
+ "entitlement": null,
+ "entitlement_null_reason": "被动持有人是否获得任何非现金权益，原件未写；交换只发生在自愿投标者之间",
+ "exchange_ratio": {
+  "meaning": "每股被接受的 CMI 换得的 Atmus 股数（交换比例留证）",
+  "use_as_TR_label_or_cash_factor": false,
+  "use_as_holding_distribution_factor": false,
+  "value": "12.0298"
+ },
+ "fact_state": "UNKNOWN",
+ "guard_pending_review": true,
+ "machine_receipt": {
+  "comment": "01a18c9f-e186-79b2-a6fa-ba219e04b4f6",
+  "file": "EVO883-v20.1-final-receipt.json",
+  "sha256": "cdd7954a20102e1053f932fe559153b26336475afdb41b772004795708bf3c4e"
+ },
+ "old_rights_erasable": false,
+ "payment_date": null,
+ "payment_date_null_reason": "原件未写；不由差额或比例推出",
+ "proofs_still_required": [
+  "各 producer 零起点证明",
+  "全部取得路径无新增证明",
+  "经济消费者不读取证明"
+ ],
+ "recorded": {
+  "accepted_cummins_shares": 5574051,
+  "odd_lot_exception_present": true,
+  "offer_cap_atmus_shares": 67054726,
+  "proration_percent": "6.99255200",
+  "reported_exchanged_atmus_shares": 67054719,
+  "validly_tendered_cummins_shares": 65176180
+ },
+ "residual_disposition": null,
+ "residual_disposition_null_reason": "原件未写；不由差额或比例推出",
+ "ruling": {
+  "file": "EVO883-v20.1-final-ruling.md",
+  "sha256": "e15d75b37972a1fd672f410e7cbfa706f8003e9605adfe83eddf02c6d6651210"
+ },
+ "runtime_B_membership_release": null,
+ "runtime_B_membership_release_null_reason": "尚不发布可运行 B；null 不得解读为可无保护消费",
+ "source": {
+  "accession": "0001104659-24-035612",
+  "final_amendment_self_reported": true,
+  "referenced_documents_present": false,
+  "sha256": "bb2de4d32ac9350e27909589975235cdc75473243c7efce07400cb8d762c9eff",
+  "url": "https://www.sec.gov/Archives/edgar/data/26172/000110465924035612/0001104659-24-035612.txt"
+ },
+ "symbol": "CMI",
+ "unknown_required_state": "原 R2 停止并保留状态"
+}
