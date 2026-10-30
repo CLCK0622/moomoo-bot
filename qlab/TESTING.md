@@ -16,6 +16,9 @@ an accidental request into a data gap or skip. The switch is captured once at
 session configuration; changing the environment inside a test does not unlock
 networking. Blocked attempts also fail the test report if a worker thread or an
 overbroad exception handler swallows the immediate failure.
+Converting a report to a hard failure removes its xfail metadata. Violations
+remain recorded across reports, so the session exits nonzero even if a reporter
+discards failure counts. Already reported attempts do not fail unrelated tests.
 
 The Python guard covers collection, fixtures, and test bodies in the pytest
 process. For full isolation, run the suite inside an OS network sandbox too:

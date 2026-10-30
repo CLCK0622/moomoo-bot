@@ -11,9 +11,12 @@ import textwrap
 import pytest
 
 
-def _pytest_session(tmp_path, source, live_net=None):
+def _pytest_session(tmp_path, source, live_net=None, conftest_extra=""):
     tests = Path(__file__).parent
     shutil.copyfile(tests / "conftest.py", tmp_path / "conftest.py")
+    if conftest_extra:
+        with (tmp_path / "conftest.py").open("a", encoding="utf-8") as conftest:
+            conftest.write("\n" + textwrap.dedent(conftest_extra))
     shutil.copyfile(tests.parent / "pytest.ini", tmp_path / "pytest.ini")
     (tmp_path / "test_probe.py").write_text(textwrap.dedent(source), encoding="utf-8")
     env = os.environ.copy()
@@ -110,6 +113,73 @@ def test_swallowed_and_threaded_violations_still_fail(tmp_path):
     ''')
     assert result.returncode == 1, result.stdout + result.stderr
     assert "3 failed" in result.stdout and "external network blocked" in result.stdout
+
+
+def test_swallowed_violation_then_xfail_exits_nonzero(tmp_path):
+    result = _pytest_session(tmp_path, '''
+        import socket
+        import pytest
+
+        def test_external():
+            try:
+                socket.getaddrinfo("example.invalid", 443)
+            except BaseException:
+                pass
+            pytest.xfail("cannot hide a violation")
+    ''')
+    # A failed-looking terminal summary alone missed B8-G1: pytest exited 0.
+    assert result.returncode == 1, result.stdout + result.stderr
+    assert "external network blocked" in result.stdout
+
+
+@pytest.mark.parametrize("phase", ["setup", "teardown"])
+def test_swallowed_fixture_violation_then_xfail_exits_nonzero(tmp_path, phase):
+    violation = '''
+        try:
+            socket.getaddrinfo("example.invalid", 443)
+        except BaseException:
+            pass
+        pytest.xfail("cannot hide a fixture violation")
+    '''
+    body = textwrap.dedent(violation)
+    body = body + "\nyield\n" if phase == "setup" else "yield\n" + body
+    source = (
+        "import socket,pytest\n"
+        '@pytest.fixture(scope="session", autouse=True)\n'
+        "def fixture():\n" + textwrap.indent(body, "    ") + "\n"
+        "def test_body(): pass\n"
+    )
+    result = _pytest_session(tmp_path, source)
+    assert result.returncode == 1, result.stdout + result.stderr
+    assert "external network blocked" in result.stdout
+
+
+def test_reported_violation_remains_fatal_at_session_finish(tmp_path):
+    result = _pytest_session(tmp_path, '''
+        import socket
+
+        def test_external():
+            try:
+                socket.getaddrinfo("example.invalid", 443)
+            except BaseException:
+                pass
+
+        def test_clean():
+            assert True
+    ''', conftest_extra='''
+        def pytest_sessionstart(session):
+            global probe_session
+            probe_session = session
+
+        @pytest.hookimpl(trylast=True)
+        def pytest_runtest_logreport(report):
+            # Simulate a reporter that discards failure counts. The guard's
+            # persistent session record must still force a nonzero exit.
+            probe_session.testsfailed = 0
+    ''')
+    assert result.returncode == 1, result.stdout + result.stderr
+    assert "1 failed, 1 passed" in result.stdout, result.stdout
+    assert "external network blocked" in result.stdout
 
 
 @pytest.mark.parametrize("phase", ["collection", "setup", "teardown"])

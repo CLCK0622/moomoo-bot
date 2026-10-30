@@ -34,6 +34,7 @@ class _NetworkGuard:
     def __init__(self):
         self.active = True
         self.attempts = []
+        self.reported_attempts = 0
 
     def __call__(self, event, args):
         if not self.active:
@@ -92,13 +93,19 @@ def pytest_collection_modifyitems(config, items):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     guard = getattr(item.config, "_qlab_network_guard", None)
-    if guard is not None and guard.attempts:
+    if guard is not None and len(guard.attempts) > guard.reported_attempts:
         # A worker thread or an overbroad exception handler can swallow the
         # immediate failure. The test must still fail, including xfail/skip.
         report = outcome.get_result()
         report.outcome = "failed"
-        report.longrepr = "\n".join(guard.attempts)
-        guard.attempts.clear()
+        # Session.testsfailed excludes reports carrying wasxfail, even after
+        # their outcome is changed to failed. This is an unconditional failure.
+        if hasattr(report, "wasxfail"):
+            del report.wasxfail
+        report.longrepr = "\n".join(guard.attempts[guard.reported_attempts:])
+        # Keep every violation for sessionfinish; only advance the reporting
+        # cursor so later, unrelated tests are not blamed for the same attempt.
+        guard.reported_attempts = len(guard.attempts)
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -106,8 +113,8 @@ def pytest_sessionfinish(session, exitstatus):
     if guard is not None and guard.attempts and exitstatus in {
         pytest.ExitCode.OK, pytest.ExitCode.NO_TESTS_COLLECTED
     }:
-        # Also catch swallowed collection/late-teardown violations when there
-        # is no remaining test report to attach them to.
+        # Any violation makes a successful session impossible, even if a
+        # report was already emitted or no test report can carry the failure.
         session.config.get_terminal_writer().line("\n".join(guard.attempts), red=True)
         session.exitstatus = pytest.ExitCode.TESTS_FAILED
 
