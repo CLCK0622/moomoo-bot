@@ -54,6 +54,9 @@ python -m qlab.run_paper --mode opend_paper --out reports/opend_paper
 pytest tests/ -q
 ```
 
+Tests disable external networking by default. See [TESTING.md](TESTING.md) for
+the `live_net` marker, explicit `QLAB_LIVE_NET=1` opt-in, and the network inventory.
+
 Each run writes `config.json`, `params.json`, `summary.json` and the eight JSONL
 observability channels.
 
