@@ -26,7 +26,11 @@ def install(root):
                 & (os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC | os.O_APPEND)
             ):
                 raise ValueError("reference.access_boundary_read_or_write_forbidden")
-            reads.append(paths[str(Path(path).resolve())])
+            role = paths[str(Path(path).resolve())]
+            # CPython 3.9 may emit two open events for one logical read.
+            # Keep all permission checks above for EVERY event; record roles once.
+            if role not in reads:
+                reads.append(role)
         elif event.startswith(
             ("socket.", "subprocess.", "ctypes.", "os.exec", "os.spawn")
         ) or event in {
