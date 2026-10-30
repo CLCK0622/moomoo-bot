@@ -27,6 +27,8 @@ def continuity_fixture(policy):
         exit_intents=[],
         initialization_count=1,
     )
+    if policy.document["version"] == "v3.0.0":
+        state.update(origin={}, rights={}, receivables={}, unknown_components=[])
     rows = []
     base = PUBLISHED["n_high_water"]
     for i, f in enumerate(policy.fold_manifest()["folds"]):

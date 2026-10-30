@@ -335,7 +335,12 @@ def normalize_dependencies(request):
         # duplicate IDs, missing parents, cycles and inherited B/COR ancestry.
         return nodes
 
-    validate_consumer({k: v for k, v in request.items() if k != "isolation_manifest"})
+    from .lineage_schema import consumer_schema_v3
+
+    validate_consumer(
+        {k: v for k, v in request.items() if k != "isolation_manifest"},
+        schema=consumer_schema_v3(),
+    )
 
     pending = [request]
     while pending:

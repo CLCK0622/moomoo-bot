@@ -46,6 +46,7 @@ def main():
             "continuous_path_check",
             "b2_input_readout",
             "pre_score_isolation",
+            "state_transition_check",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -93,6 +94,10 @@ def main():
                 report = input_migration_check(request, ledger, conventions=policy)
             else:
                 report = ledger.readout()
+        elif args.tool == "state_transition_check":
+            from .state_v2 import state_transition_check
+
+            report = state_transition_check(request, conventions=policy)
         elif args.tool == "pre_score_isolation":
             from .isolation import isolation_readout
 

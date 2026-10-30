@@ -26,6 +26,8 @@ IMPORTS = {
         "fee_model",
         "fees",
         "input_scope",
+        "isolation",
+        "state_v2",
         "json",
         "math",
         "pipeline",
@@ -53,6 +55,7 @@ IMPORTS = {
         "execution",
         "fees",
         "input_scope",
+        "isolation",
         "json",
         "math",
         "pathlib",
@@ -93,7 +96,18 @@ IMPORTS = {
         "fees",
         "input_scope",
         "input_disposition",
+        "state_v2",
     },
+    "isolation": {
+        "copy",
+        "datetime",
+        "contract",
+        "conventions",
+        "fees",
+        "math",
+        "input_scope",
+    },
+    "state_v2": {"copy", "contract", "conventions", "fees", "input_scope"},
     "scope_proof": {
         "ast",
         "contract",
@@ -241,7 +255,12 @@ def b2_manifest_check(manifest, policy):
     import json
 
     ruling = json.loads(sources()["EVO883-EVO886-minimum-scope-ruling-v1.json"])
-    if ruling["interface_sha256"] != policy.raw_sha256:
+    expected_interface = (
+        policy.document["interface_correction"]["previous_interface_sha256"]
+        if policy.document["version"] == "v2.0.0"
+        else policy.raw_sha256
+    )
+    if ruling["interface_sha256"] != expected_interface:
         raise ValueError("scope.ruling_identity_mismatch")
     proof = b2_isolation_proof(policy)
     if (

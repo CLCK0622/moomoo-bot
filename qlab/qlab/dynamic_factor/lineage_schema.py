@@ -141,6 +141,29 @@ EVIDENCE_KEYS = {
 }
 
 
+def consumer_schema_v3():
+    """Block 4: preserve the original account state and R2 declarations."""
+    symbols = set(load_conventions().profile["universe"]) | {"VSNT"}
+    rights = dict.fromkeys(symbols | {"child", "LEGACY"}, SCALAR)
+    receivables = dict.fromkeys(symbols | {"cash_event", "LEGACY"}, SCALAR)
+    state = dict(
+        STATE,
+        origin="security_map",
+        rights=rights,
+        receivables=receivables,
+        unknown_components=STRINGS,
+    )
+    fold = dict(FOLD, input_state=state, output_state=state)
+    return dict(
+        CONSUMER,
+        folds=("list", fold),
+        input_state=state,
+        output_state=state,
+        rights=rights,
+        receivables=receivables,
+    )
+
+
 def validate_consumer(request, *, schema=CONSUMER):
     """Iteratively validate every depth, without a recursion-limit loophole."""
     securities = set(load_conventions().profile["universe"]) | {

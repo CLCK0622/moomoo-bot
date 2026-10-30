@@ -539,6 +539,13 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
             raise ValueError("gain.frozen_calibration_or_pool_receipt_missing")
         M, P, original = request["M"], request["P"], request["original_inventory"]
         prices, cash = request["raw_open_prices"], request["cash"]
+        if conventions.document["version"] in ("v2.0.0", "v3.0.0"):
+            from .state_v2 import necessary_state_known
+
+            state = request.get("required_state")
+            necessary_state_known(state)
+            if state["inventory"] != original or state["cash"] != cash:
+                raise ValueError("state.required_state_identity_mismatch")
         if (
             not finite(cash)
             or cash < 0
@@ -587,6 +594,19 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
                 < 0
             ):
                 raise ValueError("gain.plan_not_cash_feasible")
+        if conventions.document["version"] in ("v2.0.0", "v3.0.0"):
+            from .isolation import eligible_day
+
+            day = eligible_day(request["isolation_manifest"], signal, conventions)
+            if day["quantity_state"] != "VERIFIED_GE50":
+                raise OptionalRejected(
+                    "gain." + day["quantity_state"] + "_no_new_tilt", M
+                )
+            if any(
+                P.get(s, 0) > M.get(s, 0) and s not in day["eligible"] and s != "QQQ"
+                for s in P
+            ):
+                raise OptionalRejected("gain.isolated_optional_buy_forbidden", M)
         qqq = conventions.profile["portfolio"]["base_ticker"]
         stocks = (set(original) | set(M) | set(P)) - {qqq}
         try:
