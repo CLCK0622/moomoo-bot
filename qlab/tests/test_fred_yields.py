@@ -3,7 +3,7 @@
 Offline by default (canned CSV via a fake session), pinning the load-bearing
 bits: FRED's ``"."`` missing marker is dropped not filled, blocked pulls degrade
 to an honest ``(None, note)`` gap, and multi-series join stays NaN-not-fabricated.
-A network-gated live smoke fetches a real 2022 window when FRED is reachable.
+A live_net smoke fetches a real 2022 window only with QLAB_LIVE_NET=1.
 """
 from __future__ import annotations
 
@@ -84,8 +84,9 @@ def test_curve_all_blocked_returns_empty_with_notes():
     assert all("http 503" in n for n in notes.values())
 
 
+@pytest.mark.live_net
 def test_live_fred_covers_2022_rate_shock():
-    """Real fetch (network) — self-skips if FRED is unreachable from this host."""
+    """Opt-in real fetch; self-skips if FRED is unreachable after opting in."""
     df, note = fy.fetch_fred_series("DGS2", "2022-01-01", "2022-12-31")
     if df is None:
         pytest.skip(f"FRED unreachable: {note}")
