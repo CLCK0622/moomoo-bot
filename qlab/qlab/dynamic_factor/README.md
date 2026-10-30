@@ -348,3 +348,37 @@ Synthetic byte-replacement and snapshot-off probes compare actual owned interfac
 output SHA across all seven roles. Runtime DAG/source acceptance and formal B2
 return qualification remain separate; no real reference/strategy run, account
 arrival, suffix or SPY fallback is created by these diagnostics.
+
+
+## EVO-897 D routing supplement
+
+Approval: `EVO897-ARMTAG-D-v1.0.0`, raw SHA256
+`f47b559335b74f291d9232716930be7bd0b82007d20b78d9201612b66426ede1`.
+Only completely omitted labels at `statistics.dsr_eval` and `pipeline.evaluate`
+retain the original unavailable diagnostic and reason order. This never assigns
+factor identity, calls the formal consumer or yields formal N/DSR/V. Explicit
+null, empty, unknown, ambiguous or conflicting labels refuse; they cannot fall
+back. Frozen empty-context training keeps `dsr.runtime_bindings_pending`.
+
+Formal routes are `dsr_eval_arm`, `evaluate_arm`, the JSON DSR CLI,
+`AttemptLedger.arm_readout`, `AuthorityLedger.arm_readout`, and `_n_snapshot`.
+They require an explicit valid factor/LLM label. `_n_snapshot` preserves `policy`
+as its third positional argument; arm identity is keyword-only. Its self-report
+argument is retained as diagnostic metadata without observation or writes.
+Current complete arm N remains unavailable under both frozen contracts.
+The deprecated `dsr_v0.evaluate` is a formal alias and has no compatibility
+exception or self-report write path.
+
+In training, explicit invalid labels refuse even at frozen inputs. For omission,
+the frozen runtime guard retains its original first reason. An independent label
+guard and complete-arm-N preflight then dominate S0, all self-report observation,
+and probe/calibrate/meta callbacks. Frozen runtime false is never the only gate.
+Tests inject complete config/request N=7/11 and synthetic ready conditions,
+checking no-label refusal and valid-label consumer sentinels before side effects.
+Separate isolated mutations remove guards and diagnostic routing restrictions.
+
+Legacy factor harnesses, version-specific diagnostic lower bounds and scope
+proof semantics stay unchanged. Source identity changes are retained verbatim in
+reports; delivery comparisons exclude only source identity and audited derived
+hashes. No frozen policy, historical ledger/evidence or runtime authorization is
+rewritten. Only synthetic fixture chains are used.

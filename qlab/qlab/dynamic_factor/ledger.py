@@ -487,6 +487,12 @@ class AttemptLedger:
             "reasons": reasons,
         }
 
+    def arm_readout(self, arm_tag=None):
+        """Explicit formal arm read; absent/invalid identity never reads the chain."""
+        from .arm_n import readout
+
+        return readout(self, arm_tag)
+
     def readout(self):
         snapshot = self.safe_snapshot()
         report = result(

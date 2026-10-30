@@ -410,6 +410,12 @@ class AuthorityLedger:
                 "reasons": ["ledger_unreadable_or_corrupt"],
             }
 
+    def arm_readout(self, arm_tag=None):
+        """Explicit formal arm read; absent/invalid identity never reads the chain."""
+        from .arm_n import readout
+
+        return readout(self, arm_tag)
+
     def readout(self):
         cur = self.verify()
         return result(

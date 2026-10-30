@@ -1,5 +1,4 @@
 """v0.2 train-only S0 -> S4 orchestration for trusted, injected adapters.
-
 No price acquisition, strategy implementation, or automatic reference runs.
 Reference registries are separately pinned inputs, never scalar V supplied by a
 current candidate. Stage records are immutable, including failures and empty pools.
@@ -15,6 +14,7 @@ from pathlib import Path
 from .contract import digest, is_sha, sha256
 from .conventions import arithmetic
 from .dsr_v0 import formula, variance
+from .statistics import MISSING, label, valid_arm
 from .fees import finite
 from .input_scope import reject_b2_inputs
 
@@ -237,25 +237,25 @@ def _dsr(m, v, n_snapshot, policy):
     return dict(m, sr0=sr0, dsr=value)
 
 
-def _n_snapshot(ledger, self_report_n, policy=None):
-    high = ledger.observe_self_report_n(self_report_n)
-    s = ledger.snapshot()
-    if policy is not None and policy.document["version"] in ("v2.0.0", "v3.0.0"):
-        # Neither a book high-water mark nor a synthetic local ledger is an
-        # authority-approved complete factor-arm configuration projection.
-        return {
-            "gate_n": None,
-            "n_complete": False,
-            "cumulative_n": None,
-            "n_ledger_hash": s["n_ledger_hash"],
-            "book_or_request_high_water": high,
-        }
-    return {
-        "gate_n": max(high, s["cumulative_n_lower_bound"]),
-        "n_ledger_hash": s["n_ledger_hash"],
-        "n_complete": s["n_complete"],
-        "cumulative_n": s["cumulative_n"],
-    }
+def _n_snapshot(ledger, self_report_n, policy=None, *, arm_tag=None):
+    """Read the formal arm projection without observing or writing a self-report.
+
+    The third positional argument remains the factor policy object.
+    A label must be supplied by keyword; neither a function name nor a policy
+    version supplies identity. Omission and explicit null both refuse here.
+    A book high-water value remains diagnostic metadata, never complete arm N.
+    The shared readout verifies one chain and retains both N rows together.
+    Current factor v3 and LLM history still lack complete-arm acceptance.
+    This wrapper has no attempt registration, callbacks or ledger writes.
+    """
+    from .statistics import arm_snapshot
+
+    return arm_snapshot(
+        ledger,
+        self_report_n,
+        policy,
+        arm_tag=arm_tag,
+    )
 
 
 def select_pool(evaluations, scores, policy, retired_ids, *, isolation=None):
@@ -377,12 +377,35 @@ def run_train_pipeline(
     build_meta(pool, frozen_calibration) -> {returns}.
     Errors retain every proposal and stop downstream work; no rescue/reselection.
     """
+    if not isinstance(context, dict):
+        return dict(
+            candidate=None, meta=None, reason="arm_n.arm_tag_missing_or_invalid"
+        )
+    tag = label(context)
+    # Omission alone retains the frozen pending reason; explicit bad values refuse.
+    if tag is not MISSING and not valid_arm(tag):
+        return dict(
+            candidate=None, meta=None, reason="arm_n.arm_tag_missing_or_invalid"
+        )
     if policy.document.get("runtime_consumable", False) is False:
         return {
             "candidate": None,
             "meta": None,
             "reason": "dsr.runtime_bindings_pending",
         }
+    if not valid_arm(tag):  # D_TRAIN_LABEL_GUARD: independent of frozen runtime.
+        return dict(
+            candidate=None, meta=None, reason="arm_n.arm_tag_missing_or_invalid"
+        )
+    preflight_n = _n_snapshot(ledger, self_report_n, policy, arm_tag=tag)
+    if not preflight_n["n_complete"]:
+        return dict(
+            candidate=None,
+            meta=None,
+            reason="ledger.factor_arm_projection_missing"
+            if tag == "EVO883_FACTOR"
+            else "ledger_history_incomplete",
+        )
     context, proposals, registry = deepcopy((context, proposals, registry))
     proposal_hash = digest(proposals)
     key = f"v02/{run_id}/{context.get('fold_id')}"
@@ -477,7 +500,7 @@ def run_train_pipeline(
             for e in ledger.snapshot()["events"]
         ):
             raise ValueError("pipeline.undeclared_candidate_attempt")
-        n_candidate = _n_snapshot(ledger, self_report_n, policy)
+        n_candidate = _n_snapshot(ledger, self_report_n, policy, arm_tag=tag)
         if (
             policy.document["version"] in ("v2.0.0", "v3.0.0")
             and not n_candidate["n_complete"]
@@ -526,7 +549,7 @@ def run_train_pipeline(
             context={"run_id": run_id},
             replay=False,
         )
-        n_meta = _n_snapshot(ledger, self_report_n, policy)
+        n_meta = _n_snapshot(ledger, self_report_n, policy, arm_tag=tag)
         ledger.record(key + "/S3", {"meta_attempt_id": meta_id, "pool": pool, **n_meta})
         try:
             observation = build_meta(tuple(pool), deepcopy(calibration))
@@ -580,10 +603,16 @@ def run_train_pipeline(
         }
 
 
-def evaluate(request, ledger, policy):
+def evaluate(request, ledger, policy, *, arm_tag=MISSING):
     from .statistics import dsr_eval
 
-    return dsr_eval(request, ledger, conventions=policy)
+    return dsr_eval(request, ledger, conventions=policy, arm_tag=arm_tag)
+
+
+def evaluate_arm(request, ledger, policy, *, arm_tag=MISSING):
+    from .statistics import dsr_eval_arm
+
+    return dsr_eval_arm(request, ledger, conventions=policy, arm_tag=arm_tag)
 
 
 def oos_dsr(returns, fold_receipts, expected_fold_ids, n_snapshot, policy):

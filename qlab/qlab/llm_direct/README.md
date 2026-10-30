@@ -145,21 +145,28 @@ Actual forward-reference execution is still disabled.
 
 ## N wiring and reference books
 
-Read-only inspection found that the fixed base's `statistics.dsr_eval()` and
-`pipeline._n_snapshot()` read the whole-chain counter. Those files remain
-unchanged in this PR. `llm_direct.arm_n.project()` is an isolated **fixture
-projection prototype** for the three required negative cases. It does not wire
-that projection into factor DSR, install a chain writer or resolve historical N.
-The uncommitted wiring draft was preserved separately in the earlier stop
-snapshot; it awaits the amended item-2 dependency. In the offline prototype,
-every event needs an explicit recognized arm tag. A
-configuration is prompt version × model snapshot × parameters × ruleset. It
-must be reserved before any outcome; its first market-outcome evaluation counts
-one, and repeated evaluations do not add configurations. Every actual request,
-including repair/retry/failure, remains a separate request sensitivity event.
-Both rows are always reported together; other-arm trials contribute to neither.
-Unknown internal counts stay null, not zero. A document-only change is not an
-invented trial. A change after observing outcomes is a new configuration.
+The shared `dynamic_factor.arm_n` implementation is used only by explicit formal
+routes: `statistics.dsr_eval_arm`, `pipeline.evaluate_arm`, the formal CLI,
+`ledger.arm_readout` and `_n_snapshot(..., policy, arm_tag=...)`. Valid labels in
+`dsr_eval` / `pipeline.evaluate` dispatch to the formal route. Omission alone
+retains the baseline unavailable diagnostic; explicit null, empty, unknown,
+ambiguous or conflicting labels refuse. No arm identity is inferred.
+
+This is the external acceptance supplement **EVO897-ARMTAG-D-v1.0.0**, raw SHA256
+`f47b559335b74f291d9232716930be7bd0b82007d20b78d9201612b66426ede1`,
+committed under `rulings/` without rewriting any frozen source. It explicitly
+narrows the old unconditional missing-label error to formal reads/training.
+Diagnostic compatibility is permanently non-consumable, even if a synthetic
+complete projection and every other ready condition is injected. Counterfactual
+tests and guard/route mutations are in `tests/dynamic_factor/test_armtag_d.py`.
+The old E0 case disposition is documented in this revision's delivery evidence.
+
+Configurations still mean prompt × model snapshot × parameters × ruleset,
+reserved before a market-outcome evaluation. Repeated outcomes count once;
+unevaluated reservations do not count. Failure/repair/retry requests remain in
+parallel sensitivity. Other-arm events do not contribute to either row; unknown
+internal request counts remain null. The four N harness cases exercise the real
+formal DSR, ledger and pipeline N entries and compare chain/witness bytes.
 
 Historical records without explicit arm/config/outcome reconciliation **refuse**
 formal projection. Original recorded N/high water/tip are retained separately as

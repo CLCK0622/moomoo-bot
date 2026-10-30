@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from .contract import digest, is_sha, result, unavailable
+from .arm_n import MISSING, label, readout, valid_arm
 
 
 def prereg_check(prereg, expected_sha256, *, conventions=None):
@@ -75,11 +76,17 @@ class DSRPlugin:
     evaluate: Callable
 
 
-def dsr_eval(
+def _diagnostic_dsr(
     request, ledger, *, prereg=None, prereg_sha256=None, plugin=None, conventions=None
 ):
     """All public paths refuse runtime DSR/V, including the legacy plugin seam."""
     snapshot = ledger.safe_snapshot()
+    # Only future complete synthetic/readied snapshots need this clamp. Frozen
+    # diagnostics keep exact fields and order, including historical lower bounds.
+    if snapshot.get("n_complete") or snapshot["cumulative_n"] is not None:
+        snapshot = dict(
+            snapshot, cumulative_n=None, n_complete=False, certifiable=False
+        )
     reasons = list(snapshot["reasons"])
     if conventions is not None:
         from .ledger import bound_genesis
@@ -161,3 +168,129 @@ def dsr_eval(
     )
     report["runtime_consumable"] = False
     return conventions.bind(report) if conventions else report
+
+
+def dsr_eval(
+    request,
+    ledger,
+    *,
+    prereg=None,
+    prereg_sha256=None,
+    plugin=None,
+    conventions=None,
+    arm_tag=MISSING,
+):
+    """D compatibility only for a completely omitted label; never infer an arm."""
+    try:
+        tag = label(request, arm_tag)
+    except ValueError as exc:
+        return _arm_refusal(request, str(exc))
+    if tag is MISSING:  # D_COMPAT_ROUTE: no formal dispatch, regardless of readiness.
+        return _diagnostic_dsr(
+            request,
+            ledger,
+            prereg=prereg,
+            prereg_sha256=prereg_sha256,
+            plugin=plugin,
+            conventions=conventions,
+        )
+    return dsr_eval_arm(
+        request,
+        ledger,
+        prereg=prereg,
+        prereg_sha256=prereg_sha256,
+        plugin=plugin,
+        conventions=conventions,
+        arm_tag=tag,
+    )
+
+
+def _arm_refusal(request, reason, arm_tag=MISSING):
+    return result(
+        "dsr_eval",
+        {"request": request},
+        reasons=[reason],
+        metrics={
+            "gate_N": None,
+            "factor_arm_N_complete": False,
+            "n_complete": False,
+            "dsr": None,
+            "trials_variance": None,
+            "sharpe": None,
+            "passed": False,
+            "cumulative_n": None,
+            "cumulative_n_lower_bound": None,
+            "arm_n": readout(None, arm_tag)["metrics"]["arm_n"],
+            "N_rows": readout(None, arm_tag)["metrics"]["N_rows"],
+        },
+    )
+
+
+def dsr_eval_arm(
+    request,
+    ledger,
+    *,
+    prereg=None,
+    prereg_sha256=None,
+    plugin=None,
+    conventions=None,
+    arm_tag=MISSING,
+):
+    """Formal route: label identity is required before any chain consumer."""
+    try:
+        tag = label(request, arm_tag)
+    except ValueError as exc:
+        return _arm_refusal(request, str(exc))
+    if not valid_arm(tag):  # D_FORMAL_LABEL_GUARD
+        return _arm_refusal(request, "arm_n.arm_tag_missing_or_invalid", tag)
+    arm_report = ledger.arm_readout(tag)
+    snapshot = arm_report["artifacts"]["ledger"]
+    reasons = list(arm_report["reasons"]) + ["dsr.runtime_bindings_pending"]
+    metrics = dict(
+        arm_report["metrics"],
+        gate_N=None,
+        factor_arm_N_complete=False,
+        dsr=None,
+        trials_variance=None,
+        sharpe=None,
+        passed=False,
+        recorded_N=snapshot.get("recorded_N"),
+        n_high_water=snapshot.get("n_high_water"),
+        authority_tip=snapshot.get("authority_tip"),
+    )
+    report = result(
+        "dsr_eval",
+        {
+            "request": request,
+            "ledger": snapshot,
+            "prereg": prereg,
+            "prereg_sha256": prereg_sha256,
+        },
+        reasons=reasons,
+        metrics=metrics,
+        missing=["complete_N_and_ledger_hash", "runtime_bindings"],
+        assumptions=["Explicit arm identity never substitutes for history acceptance."],
+    )
+    return conventions.bind(report) if conventions else report
+
+
+def arm_snapshot(ledger, self_report_n, policy=None, *, arm_tag=None):
+    """Read-only v3 arm projection; a self-report is audit metadata, never gate N."""
+    if policy is not None and not hasattr(policy, "document"):
+        raise ValueError("dsr.policy_invalid")
+    arm_report = (
+        readout(None, arm_tag)
+        if not valid_arm(arm_tag)
+        else ledger.arm_readout(arm_tag)
+    )
+    arm = arm_report["metrics"]["arm_n"]
+    return dict(
+        gate_n=arm["cumulative_n"],
+        n_complete=arm["n_complete"],
+        cumulative_n=arm["cumulative_n"],
+        n_ledger_hash=arm["n_ledger_hash"],
+        book_or_request_high_water=self_report_n,
+        N_rows=arm["rows"],
+        arm_n=arm,
+        reasons=arm_report["reasons"],
+    )

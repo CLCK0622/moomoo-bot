@@ -12,7 +12,6 @@ from __future__ import annotations
 import math
 import re
 
-from .contract import result, unavailable
 from .conventions import arithmetic
 from .fees import finite
 
@@ -73,103 +72,7 @@ V_PENDING = "prereg_pending_v0.2"
 
 
 def evaluate(request, ledger, policy):
-    snapshot = ledger.safe_snapshot()
-    inputs = {"request": request, "ledger": snapshot, **policy.binding}
-    metrics = {
-        "dsr": None,
-        "trials_variance": None,
-        "family_variance": None,
-        "independent_variance": None,
-        "sharpe": None,
-        "skew": None,
-        "kurt": None,
-        "sr0": None,
-        "cumulative_n": snapshot["cumulative_n"],
-        "cumulative_n_lower_bound": snapshot["cumulative_n_lower_bound"],
-        "n_ledger_hash": snapshot["n_ledger_hash"],
-        "gate_n": None,
-        "n_complete": snapshot["n_complete"],
-        "gate_n_is_lower_bound": not snapshot["n_complete"],
-        "local_counted_n": snapshot["local_counted_n"],
-        "diagnostic_passed": False,
-        "passed": False,
-    }
-    reasons = list(snapshot["reasons"])
-    unavailable_reason = None
-    p = policy.document
-    try:
-        if not isinstance(request, dict):
-            raise ValueError("dsr.request_invalid")
-        if "v" in request or "trials_variance" in request:
-            raise ValueError("dsr.scalar_v_forbidden")
-        if "sharpe" in request or "sharpe_scale" in request:
-            raise ValueError("dsr.scalar_sr_forbidden")
-        if (
-            snapshot["genesis"] is None
-            or (snapshot["genesis"].get("authority_source") or {}).get("sha256")
-            != p["genesis"]["sha256"]
-        ):
-            raise ValueError("dsr.seed_not_imported")
-        reported = request.get("self_report_n")
-        if type(reported) is not int or reported < 1:
-            raise ValueError("dsr.self_report_n_missing_or_invalid")
-        reported = ledger.observe_self_report_n(reported)
-        snapshot = ledger.safe_snapshot()
-        inputs["ledger"] = snapshot
-        metrics["n_ledger_hash"] = snapshot["n_ledger_hash"]
-        metrics["gate_n"] = max(snapshot["cumulative_n_lower_bound"], reported)
-        if (
-            request.get("return_basis") != p["N"]["DSR_SR_basis"]
-            or request.get("return_scale") != "daily"
-        ):
-            raise ValueError("dsr.scale_or_basis_mismatch")
-        returns = request["returns"]
-        ddof = int(re.fullmatch(r"ddof(\d+)", p["DSR"]["sample_sd"])[1])
-        var = variance(returns, ddof)
-        if var <= 0:
-            raise ValueError("dsr.zero_return_variance")
-        mean = math.fsum(returns) / len(returns)
-        central = {
-            f"population_m{k}": math.fsum((x - mean) ** k for x in returns)
-            / len(returns)
-            for k in (2, 3, 4)
-        }
-        skew = arithmetic(p["DSR"]["skew"].replace("^", "**"), central)
-        kurt_expr = (
-            p["DSR"]["kurt"].removesuffix("_non_excess_normal3").replace("^", "**")
-        )
-        kurt = arithmetic(kurt_expr, central)
-        sr = mean / math.sqrt(var)
-        metrics.update(sharpe=sr, skew=skew, kurt=kurt)
-        # V family aggregation / admission waits for EVO-883 v0.2; no default V.
-        raise ValueError(V_PENDING)
-    except (ValueError, TypeError, KeyError, ZeroDivisionError, OverflowError) as exc:
-        unavailable_reason = (
-            str(exc)
-            if isinstance(exc, ValueError)
-            else "dsr.input_or_denominator_invalid"
-        )
-        reasons.append(unavailable_reason)
-    reasons.append("prereg_draft_not_frozen")
-    availability = {
-        k: (
-            {"available": True, "reason": None}
-            if metrics[k] is not None
-            else unavailable(unavailable_reason)
-        )
-        for k in ("dsr", "trials_variance", "sharpe")
-    }
-    return policy.bind(
-        result(
-            "dsr_eval",
-            inputs,
-            metrics=metrics,
-            reasons=reasons,
-            availability=availability,
-            assumptions=[
-                "N is only a lower bound; numerical DSR may overstate confidence and is diagnostic only, never certification.",
-                "V family aggregation and DSR>=threshold admission are pending EVO-883 v0.2; DSR/V stay null.",
-                "Historical raw strategy Sharpe values are retained for provenance and never used as active-return V.",
-            ],
-        )
-    )
+    """Deprecated formal alias; never restores the old self-report write path."""
+    from .statistics import dsr_eval_arm
+
+    return dsr_eval_arm(request, ledger, conventions=policy)

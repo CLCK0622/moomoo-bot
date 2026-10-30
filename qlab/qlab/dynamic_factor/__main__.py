@@ -17,7 +17,8 @@ from .pending import (
     voluntary_trade_gate,
 )
 from .receipts import decay_check, shadow_readout
-from .statistics import dsr_eval, prereg_check
+from .statistics import dsr_eval_arm, prereg_check
+from .arm_n import MISSING
 from .validation import wf_manifest_check
 
 
@@ -155,9 +156,10 @@ def main():
                     else None,
                 )
             )
-            report = dsr_eval(
+            report = dsr_eval_arm(
                 request.get("metrics", {}),
                 ledger,
+                arm_tag=request["arm_tag"] if "arm_tag" in request else MISSING,
                 prereg=request.get("prereg"),
                 prereg_sha256=request.get("prereg_sha256"),
                 conventions=policy,

@@ -1,0 +1,171 @@
+{
+  "schema": "evo897.armtag.supplement/v1",
+  "ruling_id": "EVO897-ARMTAG-D-v1.0.0",
+  "status": "FINAL_DESIGN_RULING",
+  "decision": "D",
+  "issuer_agent_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+  "issue_id": "01a18bd0-192f-79cd-bdc0-8cd704694cd4",
+  "question_comment_id": "01a18d84-6e94-72f4-ae30-798d69085caf",
+  "research_comment_id": "01a18d91-5a90-77c4-9118-d80308956f09",
+  "effective_condition": "本终裁作为附件在 EVO-897 指定线程成功发布时生效；不是研究草案的发布时间。",
+  "authority_scope": "仅裁定 dsr_eval、pipeline.evaluate、run_train_pipeline 的缺省 arm_tag 调用及其验收冲突；其余冻结合同和授权保持不变。",
+  "bindings": {
+    "factor_main_sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+    "factor_interface_sha256": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+    "factor_common_profile_sha256": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",
+    "llm_main_sha256": "e9e089b17e15b86d7bd96e0e8f69cced47759c181b1d2e3bb220743225c71b2c",
+    "llm_canonical_profile_sha256": "1736b460538b2b18142877e1729ed839ba83a4f99282c2461de07f2711277e8d",
+    "llm_acceptance_v3_sha256": "c05b8419d8c2d10f6e911e847dd9548af62624171cadde36dd20ba12a53c79de",
+    "baseline_commit": "98cd60f9d93dba3e44bd23a76261eaa8c9516d88",
+    "original_pr12_commit": "886e82de870783d454aa5bfb77e3f3780b363e6c",
+    "conflict_archive_sha256": "c03c1cf4b12da4280b184902f7eef96d2652fc437eea119dc44c6070d8e740fb",
+    "stop_archive_sha256": "d278f0dd8212491b1a061ca8635eb3d1ee99ce6e61ffce7b7505924abf11e17f",
+    "research_draft_sha256": "f1b09b9e4d4feb450789af6ca473468bd61ef5726e19ef1a414d93bc13a51286",
+    "same_input_probe_policy_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b"
+  },
+  "decision_basis": {
+    "contract_facts": [
+      "因子三件 /N_scope_contract 的正式门要求完整、获权威批准的因子臂配置/attempt 投影；身份或覆盖未知保留 UNKNOWN。",
+      "LLM 主稿 /N_accounting/arm_projection 与 profile /N/arm_projection 要求缺失或含混标签拒绝正式读数。",
+      "冻结合同没有授权把缺省标签解释为因子标签；核收回执 v3 第26/42行及 E0 清单要求缺标签拒绝。"
+    ],
+    "ruling_judgment": "采用 D：保留旧只读诊断的返回兼容，正式分臂读数和训练仍要求显式标签。兼容例外豁免的是指定输入域的诊断展示和首因格式，不豁免臂身份与正式消费的要求。",
+    "option_disposition": {
+      "A": "不采纳：未设置无标签路径的永久正式消费禁令。",
+      "B": "不采纳：虽满足原 E0 错误格式断言，但会改变本题已获审因子诊断输出。",
+      "C": "采其永久限制和可测性要求；不采默认因子身份。反事实负例须本次完成。",
+      "D": "批准，按本文件的入口矩阵和验收条件执行。"
+    }
+  },
+  "normative_rules": {
+    "label_identity": "不为请求、context、事件、历史行或缓存补因子标签；不以目录、函数名或既有调用方推定臂身份。无标签身份保持未知。",
+    "compatibility_eligibility": "只限原三个公共入口中 arm_tag 键或参数完全缺省的旧调用形式。显式 null、空串、未知值、含混或冲突标签不进入兼容回落。正式入口的标签缺省也不构成诊断兼容。",
+    "formal_route": "因子与 LLM 的正式分臂 N 读取及训练必须显式携带经校验的有效臂标签。可复用内部实现，但正式路由不得有默认臂值；LLM 正式调用只能走此路由。标签有效不替代完整性或其他授权门。",
+    "event_labels": "请求带有效标签不能替缺标签或含混标签的事件补身份。原 E0 的事件拒绝语义和拒绝码保持不变；旧全局历史可只读展示，但不得计入未经证明的本臂配置 N。",
+    "permanent_prohibition": "无标签路径永久不能输出可供正式消费的非 null gate N 或完整 N、DSR/V、通过或认证结论；完整性/通过/认证位只能为 false 或原拒绝体中的缺省。所有别名、嵌套结果和缓存同受此限。不得调用正式消费者或训练回调，不得写账。",
+    "diagnostic_counts": "旧47、v2/v3局部0及全局账面高水位只保留各自原有诊断/审计身份，不换算为完整本臂 N。保留基线字段名不构成给调用赋臂身份。",
+    "side_effect_order": "独立标签守卫必须在 S0、self-report 的观察/写入、probe、calibrate、build_meta 及其他训练或计数副作用之前阻断无标签调用。冻结 runtime 门可以先返回原 pending，但不得成为唯一保护。",
+    "no_automatic_upgrade": "将来其他前置条件齐备或完整本臂 N 可得，无标签兼容路径仍不得转为正式读取或训练；调用方须改走显式标签路由。"
+  },
+  "entry_matrix": [
+    {
+      "entry": "dsr_eval",
+      "input": "arm_tag 完全缺省；既有获审冻结输入",
+      "result": "仅返回与 98cd60f9 对应版本一致的只读不可用诊断，不调用正式分臂计算，不添加默认臂标签。",
+      "reason_contract": "兼容输出保持基线既有 reasons，不额外加入缺标签原因以改变旧诊断字节。"
+    },
+    {
+      "entry": "pipeline.evaluate",
+      "input": "arm_tag 完全缺省；既有获审冻结输入",
+      "result": "与 dsr_eval 的只读诊断兼容规则相同，不另开正式消费通路。",
+      "reason_contract": "保持对应基线既有 reasons。"
+    },
+    {
+      "entry": "run_train_pipeline",
+      "input": "context={} 且绑定的冻结 policy 的 runtime_consumable=false",
+      "result": "candidate=null、meta=null，零回调、零写入。",
+      "reason_contract": "保留首因 dsr.runtime_bindings_pending。"
+    },
+    {
+      "entry": "run_train_pipeline",
+      "input": "context 缺省 arm_tag；隔离单测中其他相关前置条件齐备",
+      "result": "独立标签守卫在首个副作用前拒绝，candidate/meta 继续不可用。",
+      "reason_contract": "arm_n.arm_tag_missing_or_invalid"
+    },
+    {
+      "entry": "显式分臂 N/训练入口",
+      "input": "请求缺失或无效 arm_tag",
+      "result": "拒绝正式读数和训练；不回落到因子或旧诊断路由。",
+      "reason_contract": "arm_n.arm_tag_missing_or_invalid"
+    },
+    {
+      "entry": "原三个入口及正式入口",
+      "input": "显式 null、空串、未知、含混或冲突标签",
+      "result": "沿用原 E0 拒绝语义，不给予本次缺省兼容例外。",
+      "reason_contract": "缺失/无效请求标签使用 arm_n.arm_tag_missing_or_invalid；既有冲突及事件拒绝码保留，不以本裁定重定义。"
+    }
+  ],
+  "acceptance_changes": {
+    "explicit_change": "原 E0『缺臂标签一律拒绝』改为『缺臂标签一律不得正式读取或训练；仅指定旧调用允许只读不可用诊断及冻结 pending 首因兼容』。这是本题的显式验收补充，不能表述为完全未改验收口径。",
+    "old_test_mapping": [
+      {
+        "source": "886e82d tests/dynamic_factor/test_arm_n.py:208",
+        "new_assertion": "旧 dsr_eval/evaluate 缺省调用保持基线诊断且永久不可正式消费；另保留/增加正式入口缺标签拒绝断言。"
+      },
+      {
+        "source": "886e82d tests/dynamic_factor/test_arm_n.py:240",
+        "new_assertion": "空 context 冻结输入保留 pending；另测 ready 合成条件下缺标签守卫的固定拒绝码、零回调、零写入。"
+      },
+      {
+        "source": "886e82d qlab/qlab/llm_direct/harness.py:733",
+        "new_assertion": "请求缺标签负例仍验正式入口拒绝；事件缺标签负例保留原正式拒绝语义。逐项登记旧 case 到新 case，不静默迁走或删除。"
+      }
+    ],
+    "unchanged_semantics": [
+      "他臂 trial 不计入本臂 N。",
+      "本臂配置 N 为主门，生成请求 N 为并列敏感度。",
+      "未知身份和完整性保留缺口；同一权威链、旧账和高水位不改写。"
+    ],
+    "mandatory_now": [
+      "对三个旧入口和正式路由逐项列清输入形式、标签来源、模式及拒绝码，交件引用本裁定 SHA。",
+      "在隔离单测用内存桩注入完整本臂投影（如配置7、请求11）及其他相关 ready 条件；无标签仍不得产生正式结果或副作用。不能依赖原 projector 固定 complete=False。",
+      "同条件仅加有效因子/LLM标签的正对照须到达标签守卫之后、首个副作用之前的消费者 sentinel；到达即中止，不执行真实消费者。",
+      "分别去掉相关缺标签守卫或兼容路由限制的隔离变异，原负例须失败或触发 forbidden sentinel，证明测试未被其他缺门遮挡。",
+      "无标签训练在 S0、self-report观察/写入、probe、calibrate、build_meta 前停止；回调和写入 spy 为0，链/witness原字节不变。",
+      "显式无效/含混/冲突请求标签、事件缺标签和他臂混入继续有拒绝/隔离负例；配置 N 与请求敏感度并列输出继续验证。",
+      "新 head 双解释器复现并经非作者复核；新增守卫结论不得复用旧 E0 回执代替。"
+    ],
+    "fixture_limits": "反事实仅在隔离单测中以合成对象/依赖注入构造，不改冻结 policy 字节、不解真实运行门、不制造或写入权威完整性凭证。到达 sentinel 不是 N、DSR 或认证通过。"
+  },
+  "byte_comparison": {
+    "baseline": "98cd60f9d93dba3e44bd23a76261eaa8c9516d88",
+    "scope": "本题零差异仅覆盖既有获审冻结夹具中三个缺省标签旧调用的原始输出，包括停手包 v1.0.1 同输入探针和绑定 v3 的基线工具场景；各版本各比原基线，不把两个版本混比。其余既有验收范围不由本裁定扩改。",
+    "future_inputs": "新造完整 N/ready 合成场景按永久拒绝规则验收，不要求复刻 98cd60f9 在未来可运行条件下的行为。",
+    "approved_exclusions_only": [
+      "dynamic_factor/contract.py:49 生成的 source_files",
+      "同处生成的 source_sha256",
+      "仅由上述源码身份字段派生的汇总哈希；逐项列出依赖和路径"
+    ],
+    "requirements": [
+      "以原始 reports 的字段存在性、null/false、数值、原因顺序及嵌套内容对比；不能用 .get() 把缺键补成 null 再宣称相同。",
+      "不得把原因、N、完整性或其他业务差异纳入源码身份排除。排除后本题兼容输入域的字段差异必须为空。",
+      "附排除后的完整字段差异清单及 git diff 98cd60f9 <新head> -- qlab/qlab/dynamic_factor 的逐文件说明。",
+      "保留原始 source_files/source_sha256，不删除字段或修改既有 harness 来掩盖差异；新增验证及获本裁定批准的 E0 负例调整另列映射和报告。",
+      "保留 _n_snapshot 第三位置参数 policy 合同；不得把它静默改解为 arm_tag。"
+    ]
+  },
+  "evidence_corrections_and_limits": {
+    "verified_by_issuer": [
+      "草案附件 SHA 核符；独立下载六份冻结合同所在原包及核收回执，核符六 SHA 并核读相关合同段。",
+      "独立下载并核符停手包 SHA；核读 probe_routing.py:17 的 v1.0.1 policy 绑定及包内原始 reports。",
+      "核读停手包 stage2 pipeline.py:380 和 :394、stage3 pipeline.py:321 和 :327 的标签/runtime/S0顺序，以及 stage2 harness.py:247 的版本下界断言。"
+    ],
+    "researcher_evidence": "两固定提交、冲突包及完整 file:line 对照以已核 SHA 的研究草案为取证回执；本终裁未重新 clone 或独立复跑工程命令。",
+    "corrections": [
+      "同输入探针加载 v1.0.1，47是其全局历史诊断；v3 基线场景为局部诊断下界0并保留历史47，均不是完整本臂 N。",
+      "886 metrics 缺 gate_N/factor_arm_N_complete 键；98 metrics 缺 n_complete 键。缺键与显式 null 不等价。",
+      "原886正常 loader 尚未支持 v3；不能把旧探针当作两个提交已按同一 v3 policy 实跑的证明。"
+    ],
+    "unverified_engineering": "推断·未验证：D 的新增路由/独立守卫可在最终集成中完整实现并通过新验收；尚缺新 head 的实现、反事实负例、变异检出及非作者实跑。以上是工程交件义务，不是本终裁已经证明的事实。"
+  },
+  "version_and_handoff": {
+    "external_supplement_only": true,
+    "frozen_versions_modified": false,
+    "frozen_source_rewrite_allowed": false,
+    "statistical_or_economic_rules_changed": false,
+    "binding_rule": "本文件作为六份冻结合同的外部入口/验收补充；仅上述冲突处以本裁定为准。新 head、工程报告和独审回执均引用本文件原字节 SHA；不得引用研究草案 SHA 充当批准输入。",
+    "engineering_next_step": "工部按既有执行令派营缮主事继续 #12 改写；本题设计阻塞解除，实际工程交件和复核仍待完成。",
+    "rewrite_deadline": "本终裁成功发布送达后36小时。",
+    "coordination": "请吏部登记本外部补充及期限，无需再次裁定同题或重复派发；由工部唯一派实现。",
+    "status_authority": "本次是工程主单上的设计咨询；终裁人不代工部改本单状态。工部在接续工程时处理 blocked 到 in_progress。",
+    "integration_branch": "integration/d10 保持 98cd60f9，按既定六PR一次集成、一次fast-forward；本裁定不授权提前改动。",
+    "main_commit_unchanged": "82c358c9a7ec048a85d1e2f0b825fac0d7f62db7",
+    "runtime_consumable": false,
+    "certifiable": false,
+    "P0_started": false,
+    "S0_started": false,
+    "L0_started": false,
+    "merge_or_runtime_authorization": false,
+    "research_order_closed": "校理本次一次性研究授权已随正式草案交件失效，不续派、不以其研究回执替代工程独审。"
+  }
+}
