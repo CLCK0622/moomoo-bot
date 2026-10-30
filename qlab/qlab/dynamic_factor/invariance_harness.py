@@ -19,6 +19,7 @@ from .reference_boundary import run_isolated
 from .scope_reader import read_strategy_inputs
 from .v1_harness import producer_fixture, unit_context
 from .valuation import benchmark_valuation, integer_cash_valuation
+from .b2_inputs import b2_input_readout
 
 
 class UnitMiner:
@@ -55,7 +56,8 @@ def probe(workdir, policy=None):
     outputs = []
     B2 = []
     input_sha = []
-    for index, value in enumerate([99, 777]):
+    diagnostics = []
+    for index, (value, snapshot) in enumerate([(99, True), (777, True), (777, False)]):
         VTI.write_bytes(
             canonical(
                 {"symbol": "VTI", "rows": [{"date": d, "close": value} for d in dates]}
@@ -197,7 +199,28 @@ def probe(workdir, policy=None):
         )
         assert b2["metrics"]["formal_return"] is None
         B2.append(b2["input_sha256"])
+        diagnostics.append(
+            b2_input_readout(
+                dict(
+                    include_issuer_snapshot_fields=snapshot,
+                    price_basis="raw_close",
+                    raw_source_sha256=digest("SYNTHETIC_UNIT_FLAT_VTI_PRICES"),
+                    prices=[dict(date=d, close=100) for d in policy.calendar],
+                ),
+                conventions=policy,
+            )
+        )
     assert input_sha[0] != input_sha[1] and B2[0] != B2[1] and outputs[0] == outputs[1]
+    on, off = diagnostics[1:]
+    assert on["ok"] and off["ok"] and outputs[1] == outputs[2]
+    changed = []
+    for left, right in zip(on["metrics"]["daily"], off["metrics"]["daily"]):
+        assert left["date"] == right["date"] and left["raw_close"] == right["raw_close"]
+        assert left["raw_price_return"] == right["raw_price_return"]
+        if left["daily_total_return"] != right["daily_total_return"]:
+            assert right["daily_total_return"] is None
+            changed.append(left["date"])
+    assert changed == ["2013-12-20", "2014-03-25"]
     return dict(
         case_id="scope.VTI_file_replacement_output_SHA_invariant",
         status="PASS",
@@ -210,5 +233,18 @@ def probe(workdir, policy=None):
         actual_reference_returns=None,
         main_market_file_bindings=binding,
         reference_file_bindings=reference["inputs"],
+        snapshot_switch_receipt=dict(
+            case_id="scope.B2_snapshot_fields_disabled_strategy_SHA_invariant",
+            status="PASS",
+            scope="SYNTHETIC_UNIT_INTERFACES_NOT_ACTUAL_PERFORMANCE",
+            strategy_output_sha256_enabled=outputs[1],
+            strategy_output_sha256_disabled=outputs[2],
+            B2_enabled_receipt_sha256=digest(on),
+            B2_disabled_receipt_sha256=digest(off),
+            B2_changed_daily_TR_dates=changed,
+            raw_close_date_and_price_returns_unchanged=True,
+            B2_event_source_provenance=on["input_sha256"],
+            no_actual_strategy_or_reference_rerun=True,
+        ),
         evidence_scope="Owned fixed interfaces and synthetic caller inputs; actual runtime DAG and market-source acceptance remain separate.",
     )

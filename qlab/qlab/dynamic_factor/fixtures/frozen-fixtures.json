@@ -37,7 +37,10 @@
     "provenance.json": "5a0bf6403b061dc27b0096c2dc72cc3e5ca0b554fa86ddbdac0ba58a08d9d111",
     "qqq-events-v1.csv": "1ab413d1a1c4118ae58d21e476454502d613f1c88914a9076b90de8fa6247c87",
     "spy-anomalies.json": "39c3ebee74ff68fc04227dd870a60bfa1e69f61e1988dcb8e7f6902246587ed9",
-    "supplement-disposition-v1.json": "2fe8eede3b04328dc468eb6fdce7d60686b5e807aa57e8869e8eea24e91a1cc6"
+    "supplement-disposition-v1.json": "2fe8eede3b04328dc468eb6fdce7d60686b5e807aa57e8869e8eea24e91a1cc6",
+    "vti-b2-r3/EVO891-VTI-B2-halfyear-check-r3.csv": "8008728ba5f5575bb9410cb4708cc7b1820d63f758e0bb9da1e155a4b6252cc6",
+    "vti-b2-r3/EVO891-VTI-B2-manifest-r3-events.csv": "2a7e56b23cb03c8257036794fb4e84bbacf78c2b7fc090244b8b40b24d5f8655",
+    "vti-b2-r3/EVO891-VTI-B2-manifest-r3.json": "d8d517dde6e7ccb04700a35eb778ed43bb94cef6be24ae51fc1b8150fa5d11f9"
   },
   "schema": "EVO884.frozen-fixture-inventory/v1"
 }

@@ -44,6 +44,7 @@ def main():
             "panel_input_check",
             "input_migration_check",
             "continuous_path_check",
+            "b2_input_readout",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -91,6 +92,10 @@ def main():
                 report = input_migration_check(request, ledger, conventions=policy)
             else:
                 report = ledger.readout()
+        elif args.tool == "b2_input_readout":
+            from .b2_inputs import b2_input_readout
+
+            report = b2_input_readout(request, conventions=policy)
         elif args.tool == "continuous_path_check":
             from .continuity import continuous_path_check
 

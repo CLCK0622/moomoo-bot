@@ -262,6 +262,11 @@ The seq20/N75 archive remains a legal ancestor, never the current formal floor.
 Formal construction and P7 reject older snapshots. The logical project path stays
 fixed; no shared ledger installation or writer run is performed. The EVO-883
 9301feb3 ruling accepts continuation structure, not complete N or S2 qualification.
+The current sequence/count/tip are loaded from the controlled versioned
+`evo893/EVO891-B-ledger-v4.tip.json` input, separately from the mutable project
+tip. Formal reads and appends reload that input and verify its ancestor against
+the retained chain. Authority updates replace accepted witness input bytes;
+candidate requests cannot select a different witness or reset the project.
 
 F1: `fixtures/frozen-fixtures.json` explicitly names and hashes committed inputs.
 `fixture_inventory.frozen_fixture_hashes` verifies only that inventory and its own
@@ -278,3 +283,26 @@ dates use restored research TAF; original x1/x2 parameter bytes remain unchanged
 The earlier 45eb817 output identities include the now-rejected F1 cache input;
 use the subsequent clean-clone F1/F2 receipts for current reproduction. Historical
 archives are preserved with their original commits, not upgraded to current proof.
+
+## B2 field provenance and snapshot switch
+
+The separate `b2_input_readout` CLI reads the frozen EVO-891 r3 event/manifest
+and audited aggregate receipts. Every event value records its source tier and
+SHA: OpenD `get_rehab` supplies 49 backbone events; audited half-year totals
+only constrain totals; the issuer public-page snapshot (terms verification
+pending) supplies supplemental crosschecks and the two missing distributions.
+These are offline source-receipt transcriptions, not freshly verified raw feeds.
+
+`include_issuer_snapshot_fields: false` nulls every snapshot-only field,
+including event split crosschecks and the 2013-12-20 / 2014-03-25 distributions.
+OpenD fields, audited constraints, raw prices, all original dates and unaffected
+daily B2 returns remain. Unknown distributions null their daily TR and dependent
+cumulative index; the index never restarts after an unknown. Without prices,
+the tool still returns field-level input receipts. Raw-price diagnostic requests
+require the entire frozen calendar, raw-close basis and a source SHA.
+
+This independent B2 tool has no imports into the seven strategy consumers.
+Synthetic byte-replacement and snapshot-off probes compare actual owned interface
+output SHA across all seven roles. Runtime DAG/source acceptance and formal B2
+return qualification remain separate; no real reference/strategy run, account
+arrival, suffix or SPY fallback is created by these diagnostics.

@@ -1,0 +1,451 @@
+{
+ "schema": "EVO891.VTI.B2.manifest.r3",
+ "ruling": "EVO-883 01a18b12-9f33 (R1/R3), 56d97ab7…",
+ "window": [
+  "2013-10-29",
+  "2026-07-09"
+ ],
+ "events_in_window": 51,
+ "event_status_counts": {
+  "missing_status": {
+   "已闭合（发行方逐笔）": 49,
+   "已闭合（发行方逐笔）；rehab/qfq 未含此事件": 2
+  },
+  "rehab_vs_issuer": {
+   "一致": 47,
+   "rehab 缺此事件": 2,
+   "一致（vendor 舍入差≤1e-5）": 2
+  }
+ },
+ "rehab_only_events_not_in_issuer": [],
+ "halfyear_issuer_vs_audited_max_abs_diff": 0.0009,
+ "events_file": "EVO891-VTI-B2-manifest-r3-events.csv",
+ "events_sha256": "2a7e56b23cb03c8257036794fb4e84bbacf78c2b7fc090244b8b40b24d5f8655",
+ "halfyear_file": "EVO891-VTI-B2-halfyear-check-r3.csv",
+ "halfyear_sha256": "8008728ba5f5575bb9410cb4708cc7b1820d63f758e0bb9da1e155a4b6252cc6",
+ "previously_verified_5_events_source": {
+  "url": "https://investor.vanguard.com/investment-products/etfs/profile/vti",
+  "retrieved_utc": "2026-10-30T02:05:12Z",
+  "sha256": "e4196a482f93dbc4da728d12c64aecc039d5e5d0b6921752829c959d2c2294e0",
+  "file": "EVO-888 workdir B/sources/vanguard_vti_profile.html (also A v1 package sources/issuer/vanguard_vti_profile.html)"
+ },
+ "non_event_inputs": [
+  {
+   "input": "VTI qfq daily bars (EVO-882 pull, anchor 2026-10-29)",
+   "sha256": "b016c7de796e6d5a806ff26e45dfa2f041b52696d4bf58b69806f426c8d7d943",
+   "status": "已到件；qfq 未含 2013-12-20、2014-03-25 两笔分配调整（rehab 缺）",
+   "dates": "2012-01-03..2026-10-29",
+   "impact": "仅 B2；分析 TR 须以原价+发行方逐笔金额重建，不直接用 qfq"
+  },
+  {
+   "input": "VTI rehab (OpenD get_rehab, EVO-891 A v1)",
+   "sha256": "b745e2926892de1f260cb0fc1bead6d5aed419619e39ca5b3f95026bbdf16440",
+   "status": "49 笔窗口内现金事件与发行方逐笔一致性见事件表；缺 2 笔",
+   "dates": "window",
+   "impact": "仅 B2"
+  },
+  {
+   "input": "VTI raw price reconstruction / analytic TR series (A v1 final)",
+   "sha256": "4f0ccb6f208551b7239c365b50bc439bd48dbad072470426475f4c88ab61a1fb",
+   "status": "原价抽样与 Nasdaq 收盘一致（A v1）；v1 TR 列自 2013-12-20 起 null（当时缺金额）——发行方金额到件后可另出版本化 TR，本件不重算",
+   "dates": "3,191 日",
+   "impact": "仅 B2"
+  },
+  {
+   "input": "VTI date column -> frozen common calendar",
+   "sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+   "status": "已闭合：日历由 AAPL 参照 + QQQ/SPY/VTI 日期列算出（/calendar_policy/align_rule），VTI 缺件只涉分红字段，不涉日期列",
+   "dates": "2013-10-29..2026-07-09",
+   "impact": "日期依赖进入全部路径，但分红缺件不改变任何日期"
+  },
+  {
+   "input": "2026-06-26 reinvest price 363.02 vs market close 362.22",
+   "sha256": "5ae861c4342d1d45d38c949f7cc1add01876dc24e26464c37303afedf25826a7",
+   "status": "未解释：发行方 API 同列再投价 363.02；推断为 NAV，未核实",
+   "dates": "2026-06-26",
+   "impact": "仅 B2 诊断"
+  }
+ ],
+ "isolation": {
+  "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+  "contract_v1_0_1_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+  "profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+  "profile_field_path": "/variance_layers/independent_reference/required_common_profile_sha256",
+  "items": [
+   {
+    "dependency": "特征",
+    "contract_fields": [
+     {
+      "doc": "prereg",
+      "path": "/signal_params/C_basis",
+      "value": "same_stock_analytical_total_return_index_not_qfq_level"
+     },
+     {
+      "doc": "prereg",
+      "path": "/signal_params/r_basis",
+      "value": "daily_return_of_same_C"
+     },
+     {
+      "doc": "prereg",
+      "path": "/signal_params/families[0]/expression",
+      "value": "C[t]/C[t-L]-1"
+     },
+     {
+      "doc": "prereg",
+      "path": "/signal_params/eligibility_history",
+      "value": "252_consecutive_complete_sessions"
+     }
+    ],
+    "contract_level": "未进入：特征只用面板股票自身分析 TR 指数 C 与日收益 r（same_stock），无基准项",
+    "implementation_level": "未证明（静态：特征相关 .py 无 VTI 读取）；未证明：EVO-884 代码按角色读取（benchmark/panel/profile），实际绑定由尚未生成的运行 manifest 决定；需工程依赖图/读取范围回执，户部不代证"
+   },
+   {
+    "dependency": "QQQ 标签",
+    "contract_fields": [
+     {
+      "doc": "contract",
+      "path": "/labels/label_basis",
+      "value": "stock_total_return_minus_QQQ_total_return_same_interval"
+     },
+     {
+      "doc": "prereg",
+      "path": "/signal_params/label_basis",
+      "value": "stock_total_return_minus_QQQ_total_return_same_interval"
+     },
+     {
+      "doc": "prereg",
+      "path": "/corporate_action_policy/consumers_same_contract",
+      "value": [
+       "B1",
+       "B3_TR_index_SMA200_and_hold_returns",
+       "H10_H5_QQQ_leg",
+       "mu_Q",
+       "solo_monitors",
+       "candidate_and_meta_active_SR_V",
+       "A_IR_bootstrap"
+      ]
+     }
+    ],
+    "contract_level": "未进入：标签 = 个股 TR − QQQ TR（同区间）；QQQ TR 消费者清单无 VTI",
+    "implementation_level": "未证明：EVO-884 代码按角色读取（benchmark/panel/profile），实际绑定由尚未生成的运行 manifest 决定；需工程依赖图/读取范围回执，户部不代证"
+   },
+   {
+    "dependency": "校准",
+    "contract_fields": [
+     {
+      "doc": "prereg",
+      "path": "/gain_model/calibration/m_j_b",
+      "value": "equal_date_mean_of_equal_stock_mean_of_stock_H10_total_return_minus_same_interval_QQQ_H10_total_return"
+     },
+     {
+      "doc": "prereg",
+      "path": "/gain_model/calibration/mu_Q",
+      "value": "equal_date_mean_QQQ_H10_total_return_on_same_L_k"
+     },
+     {
+      "doc": "prereg",
+      "path": "/gain_model/calibration/L_k",
+      "value": "common_matured_train_decision_dates_H10_entry_exit_inside_train_min50_stocks_and_all16_recipe_10_buckets_have_labels"
+     }
+    ],
+    "contract_level": "未进入：校准表只用个股 H10 TR 与 QQQ H10 TR",
+    "implementation_level": "未证明：EVO-884 代码按角色读取（benchmark/panel/profile），实际绑定由尚未生成的运行 manifest 决定；需工程依赖图/读取范围回执，户部不代证"
+   },
+   {
+    "dependency": "准入",
+    "contract_fields": [
+     {
+      "doc": "prereg",
+      "path": "/signal_params/train_score",
+      "value": "solo_probe_x2_daily_active_mean_descending_then_id_after_candidate_DSR_S2"
+     },
+     {
+      "doc": "prereg",
+      "path": "/signal_params/train_dsr_min",
+      "value": 0.95
+     },
+     {
+      "doc": "prereg",
+      "path": "/variance_layers/candidate_V",
+      "value": "max(sample_var_ddof1_complete_SR16,candidate_reference_V)"
+     },
+     {
+      "doc": "prereg",
+      "path": "/variance_layers/independent_reference/common_basis",
+      "value": [
+       "same64_panel_and_inputs",
+       "daily_active_vs_QQQ",
+       "x2_costs",
+       "v03_three_session_startup",
+       "same_valuation_convention"
+      ]
+     }
+    ],
+    "contract_level": "未进入：准入用 x2 日主动收益（vs QQQ，common_basis=daily_active_vs_QQQ）与候选 DSR/V",
+    "implementation_level": "未证明：EVO-884 代码按角色读取（benchmark/panel/profile），实际绑定由尚未生成的运行 manifest 决定；需工程依赖图/读取范围回执，户部不代证"
+   },
+   {
+    "dependency": "参考收益",
+    "contract_fields": [
+     {
+      "doc": "prereg",
+      "path": "/variance_layers/independent_reference/common_basis",
+      "value": [
+       "same64_panel_and_inputs",
+       "daily_active_vs_QQQ",
+       "x2_costs",
+       "v03_three_session_startup",
+       "same_valuation_convention"
+      ]
+     },
+     {
+      "doc": "prereg",
+      "path": "/variance_layers/independent_reference/required_common_profile_sha256",
+      "value": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3"
+     },
+     {
+      "doc": "prereg",
+      "path": "/variance_layers/common_profile_hash_recipe/direct_root_keys",
+      "value": [
+       "initialization",
+       "portfolio",
+       "rebalance",
+       "gain_model",
+       "metrics",
+       "cost_model",
+       "corporate_action_policy",
+       "signal_params"
+      ]
+     }
+    ],
+    "contract_level": "未进入（数据层）：参考收益为同 64 名、日主动收益 vs QQQ。注意：profile 哈希覆盖 corporate_action_policy 全节，其中含 VTI_analysis_TR 定义字符串——这是定义身份而非数据依赖；补齐 VTI 数据不改该字符串，不改 profile 4292eb47…",
+    "implementation_level": "未证明：reference_inputs.py 的 benchmark 角色文件内容未绑定；未证明：EVO-884 代码按角色读取（benchmark/panel/profile），实际绑定由尚未生成的运行 manifest 决定；需工程依赖图/读取范围回执，户部不代证"
+   },
+   {
+    "dependency": "持仓与现金",
+    "contract_fields": [
+     {
+      "doc": "prereg",
+      "path": "/gain_model/plans/asset_set",
+      "value": "union_of_old_new_satellite_names_plus_QQQ_and_cash"
+     },
+     {
+      "doc": "prereg",
+      "path": "/portfolio/base_ticker",
+      "value": "QQQ"
+     },
+     {
+      "doc": "prereg",
+      "path": "/initialization/startup_asset",
+      "value": "QQQ_only"
+     },
+     {
+      "doc": "prereg",
+      "path": "/corporate_action_policy/integer_cash_ledger/shares",
+      "value": "integer_actual_inventory"
+     }
+    ],
+    "contract_level": "未进入：资产集合 = 卫星股 + QQQ + 现金；整股现金账只涉持仓标的",
+    "implementation_level": "未证明：EVO-884 代码按角色读取（benchmark/panel/profile），实际绑定由尚未生成的运行 manifest 决定；需工程依赖图/读取范围回执，户部不代证"
+   },
+   {
+    "dependency": "订单",
+    "contract_fields": [
+     {
+      "doc": "prereg",
+      "path": "/rebalance/reference_execution",
+      "value": "next_session_raw_open"
+     },
+     {
+      "doc": "prereg",
+      "path": "/rebalance/order_priority",
+      "value": [
+       "mandatory_exits",
+       "other_reductions",
+       "buys_by_score_then_ticker"
+      ]
+     },
+     {
+      "doc": "prereg",
+      "path": "/gain_model/plans/netting",
+      "value": "each_complete_plan_net_orders_from_original_inventory_once"
+     }
+    ],
+    "contract_level": "未进入：订单只针对资产集合（卫星股、QQQ），按 raw open 执行",
+    "implementation_level": "未证明：EVO-884 代码按角色读取（benchmark/panel/profile），实际绑定由尚未生成的运行 manifest 决定；需工程依赖图/读取范围回执，户部不代证"
+   },
+   {
+    "dependency": "（补充）主读数与 B2 读数",
+    "contract_fields": [
+     {
+      "doc": "prereg",
+      "path": "/metrics/primary_stop_axis",
+      "value": "A_x2_vs_B1"
+     },
+     {
+      "doc": "prereg",
+      "path": "/benchmarks/B2",
+      "value": "VTI_fixed_primary_B2_formal_unavailable_pending_listed_evidence"
+     },
+     {
+      "doc": "prereg",
+      "path": "/benchmarks/B2_freeze_rule",
+      "value": "VTI_fixed_B2_no_result_driven_SPY_switch_missing_evidence_null_keep_SPY_reference"
+     },
+     {
+      "doc": "prereg",
+      "path": "/metrics/active_daily",
+      "value": "strategy_net_daily_return_minus_benchmark_daily_return"
+     },
+     {
+      "doc": "prereg",
+      "path": "/benchmarks/post_freeze_VTI",
+      "value": "versioned_input_readout_only_on_sealed_same_NAV_no_strategy_rerun_or_sample_extension"
+     }
+    ],
+    "contract_level": "B2 只进入以 VTI 为基准的读数列（active_daily 对 B2、相对复利、beta）；主停止轴 A_x2_vs_B1 不含 VTI",
+    "implementation_level": "未证明：报告层是否把 B2 列与 B1 列物理分开需工程回执"
+   },
+   {
+    "dependency": "（补充）日历",
+    "contract_fields": [
+     {
+      "doc": "prereg",
+      "path": "/calendar_policy/align_rule",
+      "value": "longest_common_complete_suffix_after_last_missing_reference_session_all_QQQ_SPY_and_validated_VTI_dates_identical"
+     },
+     {
+      "doc": "prereg",
+      "path": "/calendar_sha256",
+      "value": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb"
+     }
+    ],
+    "contract_level": "存在日期依赖：VTI 日期列参与共同日历；但分红缺件不涉日期列，日历 de08ca89… 已冻结不变",
+    "implementation_level": "已证（文件层）：日历文件 SHA 与冻结一致"
+   }
+  ],
+  "engineering_code": {
+   "commit": "4d13a69c3708d2b01cf3c6429a19b45f4c223c02",
+   "branch": "origin/evo-884-dynamic-gates",
+   "static_fact": "git grep -i 'VTI|B2' over qlab/qlab/dynamic_factor/*.py: only conventions.py:279 (align_rule string) and v1_harness.py (synthetic case data.VTI_missing_evidence_no_SPY_fallback -> B2=null); no code path loads a VTI data file",
+   "role_generic_inputs": "reference_inputs.py ROLES panel/benchmark/profile; validation.py iterates manifest['benchmarks']; which file binds the 'benchmark' role is decided by a runtime manifest that does not exist yet",
+   "files": {
+    "conventions.py": "d70340d4eccdfe635b5604b7da5ebf4ee59ebece6be329147f81610d76fa4663",
+    "v1_harness.py": "ad1d5885353e51ecb4b11ab36813dcfde56b0565f15c7eb7f427d4f19e108339",
+    "reference_inputs.py": "61456de83ed02066952f79cf2231c3b428619c52dfb6e767ce68222aa86234b3",
+    "validation.py": "b1ae19a0e750aae82710b692e4b7fbadc1febdeb8d38ef0869eb9b0476ec882e",
+    "execution.py": "784bfa6e23f9d2a19c874f3fc1c8df02b43e4457133ee357fe8855abe79a838d",
+    "valuation.py": "90c8d26f48583fe12b09fae616f2ed2fe50f02d2466faeab09acfca44cafc4e4"
+   }
+  },
+  "summary": "合同层：7 项依赖均未引用 VTI 数据（日历日期依赖已闭合）。实现层：7 项均『未证明』，需工程运行 manifest/依赖图回执。不写成『数据全部通过』。"
+ },
+ "R3_sources": [
+  {
+   "source": "SEC EDGAR Vanguard Index Funds N-CSR/N-CSRS ×19",
+   "url": "https://www.sec.gov/Archives/edgar/data/36405/…（逐份见 r2 EVO891-VTI-ncsr-filings-r2.json）",
+   "result": "只有年度/半年每股合计；无逐笔字段",
+   "stopped_at": null,
+   "sha256": "71845f473a086b664b82b768279721f93c6dc5a641708ea16aa3aea7f1a856da"
+  },
+  {
+   "source": "SEC EDGAR 其他 Vanguard 披露",
+   "url": "https://data.sec.gov/submissions/CIK0000036405.json",
+   "result": "已列出全部表单类型（见 sec_forms 字段）；按表单性质，N-PORT 为持仓、485BPOS/497 为说明书、N-CEN 为年度普查、24F-2NT 为注册费，均不载逐笔分配；本轮未逐份打开",
+   "stopped_at": null,
+   "sha256": "de2db680372e9ca6efceec4996cb4cd80ac6ddaa27ba89f997e7ddbbe7c71415"
+  },
+  {
+   "source": "Nasdaq 分红历史 API",
+   "url": "https://api.nasdaq.com/api/quote/VTI/dividends?assetclass=etf",
+   "result": "返回 'Dividend History for Non-Nasdaq symbols is not available'：VTI 在 NYSE Arca 上市，Nasdaq 只给本所上市证券（QQQ 为 Nasdaq 上市，故有 53 笔）",
+   "stopped_at": "API 正常 200 返回空集与上述消息",
+   "sha256": "b89695b4db2c5ddd1a7ff40f2e2872a52096a694174195396b0fcc9097d47071",
+   "retrieved_utc": "2026-10-30T05:03:36+00:00"
+  },
+  {
+   "source": "Vanguard investor 产品页（嵌入 JSON）",
+   "url": "https://investor.vanguard.com/investment-products/etfs/profile/vti",
+   "result": "只嵌最近 6 笔（2025-06-30..2026-09-28）",
+   "stopped_at": null,
+   "sha256": "e4196a482f93dbc4da728d12c64aecc039d5e5d0b6921752829c959d2c2294e0",
+   "retrieved_utc": "2026-10-30T05:03:22+00:00"
+  },
+  {
+   "source": "Vanguard investor api/VTI/distribution",
+   "url": "https://investor.vanguard.com/investment-products/etfs/profile/api/VTI/distribution",
+   "result": "HTTP 404",
+   "stopped_at": "404",
+   "sha256": "0d1a59f6298582c9690c15f2d06f3737974c1653a1cd16af3cff372830a7461c"
+  },
+  {
+   "source": "api.vanguard.com rs/ire/01/pe/fund/0970/distribution.json",
+   "url": "https://api.vanguard.com/rs/ire/01/pe/fund/0970/distribution.json",
+   "result": "HTTP 400",
+   "stopped_at": "400",
+   "sha256": "e8c37feb139530763654954d61f960717c6332770f0666d92f4ec2dc029009fb"
+  },
+  {
+   "source": "Vanguard advisors 产品页",
+   "url": "https://advisors.vanguard.com/investments/products/vti/vanguard-total-stock-market-etf",
+   "result": "只有表头文案，数据未嵌入页面",
+   "stopped_at": null,
+   "sha256": "9c5bd36e301c86f50f19925a8811986aeefffd4860694e33bcea0e670d48bda1"
+  },
+  {
+   "source": "Vanguard workplace/institutional 产品页 + 其公开 JS 调用的分配 API",
+   "url": "https://workplace.vanguard.com/investments/product-details/fund/api/price-distribution/distribution/0970?startDate=2013-01-01&endDate=2026-07-31",
+   "result": "成功：免登录 HTTP 200，返回逐笔 recordDate/exDividendDate/payableDate/金额/再投价，54 笔 2013-03-22..2026-06-26；与另一时间窗查询重叠部分一致=True",
+   "stopped_at": null,
+   "sha256": "5ae861c4342d1d45d38c949f7cc1add01876dc24e26464c37303afedf25826a7",
+   "retrieved_utc": "2026-10-30T05:05:05+00:00",
+   "how_found": "workplace 页 main-VBALHOZA.js 中 getDistributionData → /api/price-distribution/distribution/{portId}?startDate&endDate，portId 0970 来自页面 fundDetails"
+  },
+  {
+   "source": "Yahoo chart（第三方）",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/VTI",
+   "result": "HTTP 429 Too Many Requests（A v1）",
+   "stopped_at": "429，未重试绕过",
+   "sha256": null
+  },
+  {
+   "source": "Stooq CSV（第三方）",
+   "url": "https://stooq.com/q/d/l/?s=…",
+   "result": "JS 工作量证明挑战页（A v1）",
+   "stopped_at": "浏览器验证挑战，未绕过",
+   "sha256": null
+  }
+ ],
+ "sec_forms_recent": {
+  "40-17G": 9,
+  "497": 65,
+  "NPORT-P": 337,
+  "N-CSRS": 12,
+  "N-PX": 108,
+  "497J": 8,
+  "497K": 363,
+  "485BPOS": 11,
+  "24F-2NT": 8,
+  "N-CEN": 8,
+  "N-CSR": 10,
+  "40-APP/A": 1,
+  "40-33": 2,
+  "40-APP": 1,
+  "DEFA14A": 7,
+  "DEF 14A": 1,
+  "SC 13G/A": 14,
+  "SC 13G": 15,
+  "425": 3,
+  "CORRESP": 1,
+  "N-14": 1,
+  "24F-2NT/A": 1,
+  "N-CEN/A": 1,
+  "NPORT-EX": 12,
+  "N-Q": 1
+ },
+ "determinations_left_to_hanlin": [
+  "whether B2 formal reading may now be produced via benchmarks.post_freeze_VTI with issuer amounts",
+  "whether R1 isolation is accepted given implementation-level 未证明",
+  "whether this constitutes 无合法免费输入 (now likely moot)"
+ ]
+}

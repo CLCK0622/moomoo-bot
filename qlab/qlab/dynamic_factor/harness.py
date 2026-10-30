@@ -444,7 +444,9 @@ def run(workdir):
         revisions.extend(review_cases(workdir, policy))
         from .invariance_harness import probe as invariance_probe
 
-        revisions.append(invariance_probe(workdir, policy))
+        invariance = invariance_probe(workdir, policy)
+        revisions.append(invariance)
+        revisions.append(invariance["snapshot_switch_receipt"])
     specified = json.loads((FIXTURES / "harness_cases.json").read_bytes())
     require(
         [c["case_id"] for c in cases]
