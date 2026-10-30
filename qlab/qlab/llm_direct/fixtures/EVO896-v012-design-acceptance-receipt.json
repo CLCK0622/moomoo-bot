@@ -1,0 +1,41 @@
+{
+  "schema": "EVO896.design_acceptance_receipt.v1",
+  "arm_version": "LLMCLI-v0.1.2",
+  "reviewer_agent_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+  "accepted_at_utc": "2026-10-30T07:59:29.740766+00:00",
+  "source_comment_id": "01a18bca-d050-7b9b-ac04-17fe1a440832",
+  "chief_authority": {
+    "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+    "comment_id": "01a18bb2-6a21-7033-9775-7186ef6526e4",
+    "revision": 1,
+    "content_sha256": "7e032c12efc78916df6a0a361f64965019f4c6eaf4bf1723455abf619a2d5277"
+  },
+  "bindings": {
+    "prereg_sha256": "e9e089b17e15b86d7bd96e0e8f69cced47759c181b1d2e3bb220743225c71b2c",
+    "profile_sha256": "1736b460538b2b18142877e1729ed839ba83a4f99282c2461de07f2711277e8d",
+    "source_archive_sha256": "ac9565743c1b3c5449d014995df48e5442fda5184a3ba43d53ab28b21f2b780d"
+  },
+  "design_accepted": true,
+  "author_review_received": true,
+  "A1_A2_A3_effective": true,
+  "N1_N5_design_contract_accepted": true,
+  "E0": {
+    "ready_for_libu_dispatch": true,
+    "actually_dispatched_by_this_receipt": false,
+    "existing_dependency": "after F3/T1 review per chief handoff 01a18bb3-6b04-786c-b16c-57a9061a6b73",
+    "factor_N_wiring_verified": false
+  },
+  "permissions": {
+    "P0_authorized_here": false,
+    "S0_authorized_here": false,
+    "L0_authorized_here": false,
+    "runtime_consumable": false,
+    "common_gate_passed": false,
+    "certifiable": false,
+    "clock_started": false
+  },
+  "source_pending_flags": "historical pre-review state retained byte-for-byte; this external receipt satisfies effective_condition without rewriting source artifacts",
+  "verified_scope": "32 author artifact checks rerun +26 independent artifact/limited-contract checks, not model/stability/business/statistical validation",
+  "independent_results_sha256": "912161c96b825c5d3938c449b6c6195e47a6a80d78f44b1c4aa99746732dfdb7",
+  "ruling_sha256": "c05b8419d8c2d10f6e911e847dd9548af62624171cadde36dd20ba12a53c79de"
+}

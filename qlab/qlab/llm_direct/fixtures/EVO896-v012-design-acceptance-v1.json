@@ -1,0 +1,115 @@
+{
+  "artifact_bindings": [
+    {
+      "file": "EVO896-prereg-LLMCLI-v0.1.2.json",
+      "sha256": "e9e089b17e15b86d7bd96e0e8f69cced47759c181b1d2e3bb220743225c71b2c"
+    },
+    {
+      "file": "EVO896-common-profile-v0.1.2.json",
+      "sha256": "1736b460538b2b18142877e1729ed839ba83a4f99282c2461de07f2711277e8d"
+    },
+    {
+      "file": "EVO896-prompt-v0.1.2.txt",
+      "sha256": "ba05b6b4b7e8d48f33334704eee555ca910b82129ca72bbee0ff6157551dae18"
+    },
+    {
+      "file": "EVO896-output-schema-v0.1.2.json",
+      "sha256": "497e93c39cdace7dfd2b696240cb57404930352ff4c8994fbfac2804abbd6e3e"
+    },
+    {
+      "file": "EVO896-v011-to-v012-diff.json",
+      "sha256": "3b245f456559b8b76c92588e5f05b57b950b5500223206b14d14c429de26adb1"
+    },
+    {
+      "file": "EVO896-input-bindings-v0.1.2.json",
+      "sha256": "2e2bd9a014e88fb951bec092498e3392d2cfe1abce7c38d56084a919ebd9cd03"
+    }
+  ],
+  "artifact_byte_mutation_required": false,
+  "authority_comment_id": "01a18bb2-6a21-7033-9775-7186ef6526e4",
+  "created_at_utc": "2026-10-30T07:56:01.763855+00:00",
+  "current_runtime_state": {
+    "N_completeness_certified": false,
+    "certifiable": false,
+    "common_gate_passed": false,
+    "day63_clock_started": false,
+    "forward_sampling_authorized": false,
+    "model_stability_verified": false,
+    "runtime_consumable": false
+  },
+  "decision": "ACCEPT_LLMCLI_V012_DESIGN_A1_A2_A3_EFFECTIVE_UNDER_EXISTING_CHIEF_RULING",
+  "external_acceptance_receipt": true,
+  "handoff": {
+    "L0": "separate chief authorization required; Kevin notified at actual launch",
+    "P0": "separate authorization required",
+    "S0": "separate authorization required",
+    "next_step": "Dispatch E0 under existing authority without another chief referral; include EVO884 own-arm N wiring and three specified negative cases",
+    "recipient_agent_id": "b0469dec-48ce-497e-b3f3-57c493f01bc2"
+  },
+  "issue_id": "01a18b6c-3ccf-74af-a515-15f2ce1355aa",
+  "not_performed": [
+    "model invocation",
+    "market acquisition",
+    "strategy or shadow execution",
+    "return/V/DSR computation",
+    "authoritative ledger mutation",
+    "engineering implementation",
+    "frozen factor artifact mutation"
+  ],
+  "original_v011_packet_sha256": "3c0f1959cfdb6500a43e85be9eeb8e76321abdbfe9e31067aa5d4a76f4042441",
+  "parent_issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+  "review_evidence": {
+    "JSON_diff_exact_reconstruction": {
+      "EVO896-common-profile-v0.1.2.json": 91,
+      "EVO896-gate-map-stage-table-v0.1.2.json": 31,
+      "EVO896-output-schema-v0.1.2.json": 2,
+      "EVO896-prereg-LLMCLI-v0.1.2.json": 99
+    },
+    "author_offline_artifact_checks_replayed": 32,
+    "checksum_entries_verified": 19,
+    "embedded_v011_zip_equals_separately_downloaded_original": true,
+    "manifest_verified": 18,
+    "new_zip_CRC": "PASS",
+    "new_zip_members": 20,
+    "old_termination_clause_locators": [
+      {
+        "file": "EVO896-prereg-LLMCLI-v0.1.1.json",
+        "json_pointer": "/stability/invalid_output",
+        "line": 1122,
+        "sha256": "840941a7852bc22d4eaafcb2aa349002a9603a7cdda7b8a0f15a76afc990d902",
+        "value": "preserve all raw outputs, failed attempt and index1; no optional P executed on any group failure; M remains independent; latch version new risk, no choosing another repetition or automatic rerun"
+      },
+      {
+        "file": "EVO896-prereg-LLMCLI-v0.1.1.json",
+        "json_pointer": "/model_binding/fallback_allowed",
+        "line": 850,
+        "sha256": "840941a7852bc22d4eaafcb2aa349002a9603a7cdda7b8a0f15a76afc990d902",
+        "value": false
+      },
+      {
+        "file": "EVO896-prereg-LLMCLI-v0.1.1.json",
+        "json_pointer": "/statistical_contract/shadow_falsification/day63_U_le0",
+        "line": 1207,
+        "sha256": "840941a7852bc22d4eaafcb2aa349002a9603a7cdda7b8a0f15a76afc990d902",
+        "value": "STOP_VERSION"
+      }
+    ],
+    "replay_result_sha256": "9c7e86a751e29eafda11772535bcf0a51fae80629aea09013afbe0d1ccb84cbe",
+    "replayed_result_equals_delivered_bytes": true,
+    "semantic_review": [
+      "A1 fixed references and same pool/cost/integer/$20 rules; no backfill or membership changes",
+      "A2 forward falsification only and no historical LLM invocation authorization",
+      "A3 QQQ U<=0 stops first; L<=0<U extends automatically once to126 independent of day63 DSR, subject to unchanged independent stops",
+      "DSR day63 diagnostic and day126 certification input only",
+      "A3.RT1 terminates version on unavailable pinned snapshot or failed final-decision zero-disagreement gate; no silent switch",
+      "N1-N5 one authoritative arm-tagged chain, own-arm outcome-evaluated configurations as primary N and requests as paired sensitivity; complete evidence still required",
+      "No implementation grant for independent arm comparison; register statistic and correction before viewing comparison outcomes",
+      "Prompt/schema only required arm-version identifiers changed; model/algorithms/economic safeguards and frozen factor bytes preserved"
+    ]
+  },
+  "review_packet_sha256": "ac9565743c1b3c5449d014995df48e5442fda5184a3ba43d53ab28b21f2b780d",
+  "reviewer_agent_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+  "schema": "EVO896.design_acceptance.v1",
+  "scope": "Leader design acceptance of A1-A3 and N1-N5 limited revisions, not implementation/statistical calibration/real-model stability or runtime approval",
+  "source_comment_id": "01a18bca-d050-7b9b-ac04-17fe1a440832"
+}
