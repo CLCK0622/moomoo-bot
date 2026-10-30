@@ -4,6 +4,14 @@ Deterministic contracts, data guards, ledgers and arithmetic for EVO-881. No
 broker/account writer or scheduler. Harness inputs are labelled synthetic units,
 not strategy backtests. EVO-885's `shadow15k` files are separate.
 
+The v10 quarantine consumer normalizes `dependency_nodes` and `panel_inputs`
+from the request, fold rows, and input/output states into one dependency graph.
+It consumes the entire graph before declaring the 77-row receipt grid complete
+or publishing any fold NAV. Ancestors remain visible to later folds; duplicate
+identities, missing parents, cycles, and unknown lineage containers refuse.
+Raw ordered declarations and the independent frozen grid remain in the report.
+All 42 affected formal fields have null projections and unavailable reasons.
+
 ## Frozen identity and unavailable runtime
 
 | Artifact | SHA256 |

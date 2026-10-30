@@ -1,7 +1,8 @@
 # qlab harness runtime deps (paper/dry_run + offline suite need only these).
 pandas>=2.0,<2.2
 numpy>=1.25,<2.0
-pyarrow>=14.0.0
+# Arrow 25 supports NumPy 1.x; Arrow 26 requires NumPy >=2 at build time.
+pyarrow>=14.0.0,<26
 pytest>=7.4.0
 requests>=2.31            # qlab.events.datafetch: SEC EDGAR + free price fetchers
 

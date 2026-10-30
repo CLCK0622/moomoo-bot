@@ -199,6 +199,27 @@ def _wf_manifest_check_unbound(manifest, *, conventions=None):
     return conventions.bind(report) if conventions else report
 
 
+def quarantined_manifest(manifest, rows, conventions):
+    from .input_disposition import panel_input_check
+
+    return panel_input_check(
+        {
+            "inputs": manifest.get("panel_inputs", [])
+            + [item for row in rows for item in row.get("panel_inputs", [])],
+            "dependency_nodes": manifest.get("dependency_nodes", [])
+            + [node for row in rows for node in row.get("dependency_nodes", [])],
+            "replacement_symbols": manifest.get("replacement_symbols"),
+            "truncate_sample": manifest.get("truncate_sample"),
+            **(
+                {"panel_symbols": manifest["panel_symbols"]}
+                if "panel_symbols" in manifest
+                else {}
+            ),
+        },
+        conventions=conventions,
+    )
+
+
 def wf_manifest_check(manifest, *, conventions=None):
     from .conventions import load_conventions
 
@@ -226,6 +247,12 @@ def wf_manifest_check(manifest, *, conventions=None):
                     "inputs": manifest.get("panel_inputs", []),
                     "replacement_symbols": manifest.get("replacement_symbols"),
                     "truncate_sample": manifest.get("truncate_sample"),
+                    "dependency_nodes": manifest.get("dependency_nodes", []),
+                    **(
+                        {"panel_symbols": manifest["panel_symbols"]}
+                        if "panel_symbols" in manifest
+                        else {}
+                    ),
                 },
                 conventions=conventions,
             )

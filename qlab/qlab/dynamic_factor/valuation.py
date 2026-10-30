@@ -143,6 +143,8 @@ def benchmark_valuation(request, *, conventions=None):
 
 
 def integer_cash_valuation(request, *, conventions=None):
+    from .input_disposition import quarantine_check
+
     policy = conventions or load_conventions()
     metrics = {
         "nav": None,
@@ -157,11 +159,13 @@ def integer_cash_valuation(request, *, conventions=None):
         "account_verified": False,
     }
     reasons = []
+    quarantine = None
     try:
         reject_b2_inputs(request, "holdings_cash")
         cash = request["known_cash"]
         as_of = iso_date(request["as_of"])
         inventory = request["inventory"]
+        quarantine = quarantine_check(request)
         if (
             not finite(cash)
             or cash < 0
@@ -341,6 +345,15 @@ def integer_cash_valuation(request, *, conventions=None):
             if isinstance(exc, ValueError)
             else "valuation.input_invalid_or_missing"
         )
+    if quarantine is not None and not quarantine["ok"]:
+        # Retain source inventory/cash evidence, but never publish them as a
+        # verified state or infer recovery from an empty submitted cash table.
+        metrics["declared_inventory"] = request.get("inventory")
+        metrics.update(
+            inventory=None, nav=None, available_cash=None, receivable_amount=None
+        )
+        reasons.extend(quarantine["reasons"])
+    metrics["event_quarantine"] = quarantine
     return policy.bind(
         result(
             "integer_cash_valuation",
@@ -358,9 +371,14 @@ def integer_cash_valuation(request, *, conventions=None):
                 "All cash, receivable and legacy cash_credited_* fields are simulated pre-tax inventory cash. Exchange paydate is not account receipt; account amount/time remain null.",
             ],
             availability={
+                **{
+                    field: unavailable(quarantine["reasons"][0])
+                    for field in ("inventory", "available_cash", "receivable_amount")
+                    if quarantine is not None and not quarantine["ok"]
+                },
                 "nav": unavailable(reasons[0] if reasons else "valuation.incomplete")
                 if metrics["nav"] is None
-                else {"available": True, "reason": None}
+                else {"available": True, "reason": None},
             },
         )
     )

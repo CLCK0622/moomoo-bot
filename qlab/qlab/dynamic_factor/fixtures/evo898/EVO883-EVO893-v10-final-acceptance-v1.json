@@ -1,0 +1,96 @@
+{
+  "accepted_bindings": [
+    {
+      "file": "EVO883-v10-engineering-disposition-draft-v1.json",
+      "sha256": "0f9811006c529051f2941bdc69fc916be8209e5e822acbd23464abd2109fbdd1"
+    },
+    {
+      "file": "EVO883-v10-event-evidence-v1.csv",
+      "sha256": "98e593e277f55da27292a2b459a5abffe10e28bf54e19b9bf745bbe26105ce21"
+    },
+    {
+      "file": "EVO883-v10-missing-match-relations-v1.csv",
+      "sha256": "c169804fca6d34159564c735fecaeb62f945afa617b53a5c33d7f10f9eee20a1"
+    },
+    {
+      "file": "EVO883-v10-frozen-clause-map-v1.json",
+      "sha256": "a3dc1e13529274695dd4bc6439fbb6f437ba90e363f408902f01c39da60b0abd"
+    },
+    {
+      "file": "EVO883-v10-S1-field-verification-v1.json",
+      "sha256": "cca01a62b4ad8583d90afa76203ba3f1e24113355901a3c3491b603726192232"
+    },
+    {
+      "file": "EVO883-v10-input-binding-v1.json",
+      "sha256": "006c0740e48ba37d8274f90a1d921593b3ca53d95e0401029f273bc22ec916ca"
+    }
+  ],
+  "adopted_scope": {
+    "Barnes_correspondence_11": "quarter amount match supports risk/correspondence, not complete vendor security identity; quarantine and no retag",
+    "S1": "Accept same-vendor SDK NONE raw_open receipt only for BRK.B 2013-10-29..2026-07-09 (3191rows); not independent-source/volume-unit/cash/TR/full-path certification",
+    "SDK_capture_surface": "returned DataFrame CSV, not HTTP/protobuf wire bytes",
+    "actions": "Accept the bound action_dictionary and five propagation_rules for engineering implementation; no automatic source-row retagging, ratio repair, zero fill, date shift, or deletion",
+    "amount_and_derived_date_match_9": "declaration facts only; actual ex-date/entitlement not certified",
+    "amount_conflict_14": "quarantine adopted D/receivable/cash until exact event/security/date/unit binding; no inferred multiplier correction",
+    "amount_match_date_unproved_3": "amount fact only; actual ex-date/entitlement/pay availability unresolved",
+    "capital_return_2": "approximate0.14 distinct from exact vendor0.1405 and regular0.09; do not sum guesses or replace event type",
+    "date_conflict_1": "2019-11-28 source row preserved; economic equivalence to11-27 unproved; no deduplication/date shift or double cash booking",
+    "event_candidates": 40,
+    "followup_scope": "v11/v11.1 N reconciliation, K3/K5 necessity and S4-v11 disposition are separate review objects; no current full-chain anchor certification in this v10 receipt",
+    "formal_cash_event_certifications": 0,
+    "inherited_constraints": "prior COR/CoreSite33, B/Barnes33 and B/Randgold6 restrictions remain; Randgold attribution remains unverified",
+    "missing_match_relations_15": "13 overlap amount conflicts and2 overlap capital-return dates with separate regular-dividend declarations; not15 additional proved missing payments",
+    "new_same_definition_input_receipt": "eligible for versioned v1 input receipt after applicable engineering adoption; changes to definition/panel/calendar/policy require separate review",
+    "propagation": "Follow actual factor/anchor ancestry to inverse prices, C/r, lookbacks, eligibility/ADV, full label intervals, rankings/calibration, integer cash/holdings/fees and cross-fold state. Unknown ancestry is not event-day-only; no unproved resumption or resetting capital"
+  },
+  "created_at_utc": "2026-10-30T09:12:17.151869+00:00",
+  "decision": "ACCEPT_SCOPED_EVIDENCE_AND_ENGINEERING_DISPOSITION_NO_RUNTIME_RELEASE",
+  "external_review_receipt": true,
+  "not_performed": [
+    "new market or external requests",
+    "model calls",
+    "strategy/probe/TR/ADV/eligibility reconstruction",
+    "return/V/DSR computation",
+    "authoritative ledger writes",
+    "frozen artifact changes",
+    "production or runtime launch"
+  ],
+  "required_engineering_validation": "Implement the seven bound negative examples and actual dependency propagation under Libu dispatch; none was executed against business code in this research review",
+  "review_packet_sha256": "be9da427bb2d24d2e393a06194608862f9045ddfd5e88b8b52be0df3225bd5f7",
+  "reviewer": "翰林学士",
+  "reviewer_agent_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+  "rewrite_draft_or_frozen_bytes_required": false,
+  "runtime_state": {
+    "DSR": null,
+    "EVO886_release": false,
+    "R3_proven": false,
+    "V": null,
+    "certifiable": false,
+    "complete_N": null,
+    "day63_clock_started": false,
+    "n_complete": false,
+    "runtime_consumable": false,
+    "strict_eligible_count": null
+  },
+  "schema": "EVO883.EVO893.v10.final_acceptance.v1",
+  "source_comment_id": "01a18c0f-ec2a-77fb-939f-1750378e618e",
+  "trigger_comment_id": "01a18c10-6b6f-7520-b3a4-d239e68b0ac2",
+  "verification": {
+    "S1_pages": 4,
+    "S1_rows": 3191,
+    "actual_archive_members": 91,
+    "all13_output_files_byte_identical": true,
+    "author_static_checks_replayed": 350,
+    "checksum_entries_verified": 86,
+    "declared_quote_amount_date_literal_checks": 31,
+    "existing_SEC_raw_bytes": 503532318,
+    "existing_SEC_raw_files_rehashed": 39,
+    "frozen_clause_values_matched": 17,
+    "manifest_entries_verified": 85,
+    "nonblocking_metadata_erratum": "source comment says87files; archive actually has91members, including4 nested checksum files outside the top checksum enumeration",
+    "replay_summary_sha256": "816a1f88aad5dc2991e7a14bbef8e9d1a69632dd7f618d202c34625cf1fde10d",
+    "source_code_sha256": "4d56088e32775d22b7c3a0b52e934df195c8e06b128519c01bdc3395d5f6fa5b",
+    "verification_scope": "Static artifact, original-cache hash, quoted declaration inclusion and field dependency review; not exhaustive document fact review, strategy/market reconstruction, actual adapter tests or statistical certification",
+    "zip_CRC": "PASS"
+  }
+}

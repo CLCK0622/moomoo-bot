@@ -53,6 +53,7 @@ def continuous_path_check(request, *, conventions=None):
     seen_results, attempts = set(), set()
     retained_inventory, retained_exit_intents = None, None
     declarations = []
+    quarantine = None
     try:
         # Capture every declaration in input order, before shape, membership or
         # grid validation. This list is raw pending evidence, never acceptance.
@@ -116,6 +117,13 @@ def continuous_path_check(request, *, conventions=None):
         if type(n_previous) is not int or n_previous < published["n_high_water"]:
             raise ValueError("ledger.N_receipt_below_published_anchor")
         reject_b2_inputs(request, "qqq_labels")
+        from .input_disposition import quarantine_check
+
+        # Consume all row/state ancestry before accepting the frozen grid or
+        # copying any numeric NAV. Unknown containers and identities refuse.
+        quarantine = quarantine_check(request)
+        if not quarantine["ok"]:
+            raise ValueError(quarantine["reasons"][0])
         ids = [r["fold_id"] for r in rows]
         if ids != [r["fold_id"] for r in expected["folds"]]:
             raise ValueError("wf.all_original_folds_required")
@@ -268,6 +276,7 @@ def continuous_path_check(request, *, conventions=None):
                 "B2": None,
                 "complete_N": None,
                 "dsr": None,
+                "event_quarantine": quarantine,
             },
             assumptions=[
                 "Full original fold/date vectors and state links are mandatory; no fragment statistics, capital restart, budget refund or automatic recovery is authorized.",

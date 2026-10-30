@@ -95,6 +95,7 @@ def initial_state():
         "fees": "0",
         "postings": [],
         "dividends": {},
+        "dependency_nodes": [],
     }
 
 
@@ -263,14 +264,6 @@ class ShadowLedger:
                 p["as_of"] > request["decision_ts"] for p in state["dividends"].values()
             ):
                 raise ValueError("intent.decision_precedes_dividend_receipt")
-            if (
-                state["dividends"]
-                and cash_view(state, request["decision_ts"], {})["metrics"][
-                    "available_cash"
-                ]
-                is None
-            ):
-                raise ValueError("dividend.cash_reconciliation_required")
             if not is_sha(request["input_hash"]):
                 raise ValueError("input_hash_required")
             if not isinstance(request["orders"], list) or not request["orders"]:
@@ -458,6 +451,20 @@ class ShadowLedger:
                 - sign * (notional - money(order["notional"]))
             )
             state["fees"] = str(Decimal(state["fees"]) + fee_delta)
+            if qty > order["qty"]:
+                # Reconstructed from the append-only receipt stream on every
+                # reopen; a sale never clears the ancestry of its cash.
+                state["dependency_nodes"].append(
+                    dict(
+                        id="shadow/trade/" + digest([receipt["receipt_id"], oid]),
+                        field="cash_holdings",
+                        parents=[],
+                        symbol=symbol,
+                        date=spec["trade_date"],
+                        receipt_id=receipt["receipt_id"],
+                        order_id=oid,
+                    )
+                )
             order.update(
                 qty=qty,
                 notional=str(notional),
@@ -470,12 +477,11 @@ class ShadowLedger:
         if any(q < 0 for q in state["inventory"].values()):
             raise ValueError("short_inventory_forbidden")
         known_cash = Decimal(state["cash_gross"]) - Decimal(state["fees"])
-        if state["dividends"]:
-            value = cash_view(state, receipt["receipt_ts"], {})["metrics"][
-                "known_available_cash"
-            ]
-            if value is not None:
-                known_cash = Decimal(str(value))
+        value = cash_view(state, receipt["receipt_ts"], {})["metrics"][
+            "known_available_cash"
+        ]
+        if value is not None:
+            known_cash = Decimal(str(value))
         if known_cash < ZERO:
             raise ValueError("cash_insufficient_including_fees")
         intent["last_receipt_ts"] = receipt["receipt_ts"]
@@ -502,6 +508,14 @@ class ShadowLedger:
                         raise ValueError("intent_or_receipt_id_conflict")
                     added = False
                 else:
+                    # Replaying old facts must preserve their evidence. Gate
+                    # new cash consumption here, inside the write transaction.
+                    if kind == "intent":
+                        view = cash_view(state, body["decision_ts"], {})
+                        if view["metrics"]["available_cash"] is None and any(
+                            order["side"] != "SELL" for order in body["orders"]
+                        ):
+                            raise ValueError("dividend.cash_reconciliation_required")
                     self._apply(state, kind, body)
                     chain_next = digest(
                         dict(
@@ -532,10 +546,7 @@ class ShadowLedger:
                     else body["as_of"]
                 )
                 cash_unknown = bool(
-                    state["dividends"]
-                    and cash_view(state, operation_time, {})["metrics"][
-                        "available_cash"
-                    ]
+                    cash_view(state, operation_time, {})["metrics"]["available_cash"]
                     is None
                 )
                 metrics = dict(
@@ -631,38 +642,45 @@ class ShadowLedger:
         dividend_readout = None
         receivable = ZERO
         known_available = str(gross_cash - charged)
-        if state["dividends"]:
-            try:
-                dividend_readout = cash_view(state, marks["as_of"], prices)
-                dm = dividend_readout["metrics"]
-                if dm["known_available_cash"] is not None:
-                    known_available = str(dm["known_available_cash"])
-                reasons.extend(dividend_readout["reasons"])
-                cash = (
-                    None
-                    if not cash_known or dm["available_cash"] is None
-                    else money(dm["available_cash"])
-                )
-                receivable = (
-                    None
-                    if dm["receivable_amount"] is None
-                    else money(dm["receivable_amount"])
-                )
-                cash_known = cash_known and cash is not None
-                valuation_complete = (
-                    valuation_complete
-                    and cash_known
-                    and receivable is not None
-                    and dm["nav"] is not None
-                )
-                nav = cash + value + receivable if valuation_complete else None
-                gross_pnl = nav + charged - 15000 if nav is not None else None
-                reconcile = reconcile or not cash_known or receivable is None
-            except (ValueError, TypeError, KeyError):
-                reasons.append("dividend.cash_valuation_invalid")
-                cash = nav = gross_pnl = receivable = None
-                cash_known = valuation_complete = False
-                reconcile = True
+        try:
+            dividend_readout = cash_view(state, marks["as_of"], prices)
+            dm = dividend_readout["metrics"]
+            if dm["known_available_cash"] is not None:
+                known_available = str(dm["known_available_cash"])
+            reasons.extend(dividend_readout["reasons"])
+            cash = (
+                None
+                if not cash_known or dm["available_cash"] is None
+                else money(dm["available_cash"])
+            )
+            receivable = (
+                None
+                if dm["receivable_amount"] is None
+                else ZERO
+                if dm["receivable_amount"] == 0
+                else money(dm["receivable_amount"])
+            )
+            cash_known = cash_known and cash is not None
+            valuation_complete = (
+                valuation_complete
+                and cash_known
+                and receivable is not None
+                and dm["nav"] is not None
+            )
+            nav = cash + value + receivable if valuation_complete else None
+            gross_pnl = nav + charged - 15000 if nav is not None else None
+            reconcile = reconcile or not cash_known or receivable is None
+        except (ValueError, TypeError, KeyError):
+            reasons.append("dividend.cash_valuation_invalid")
+            cash = nav = gross_pnl = receivable = None
+            cash_known = valuation_complete = False
+            reconcile = True
+        quarantine = (
+            dividend_readout["metrics"].get("event_quarantine")
+            if dividend_readout is not None
+            else None
+        )
+        quarantined = quarantine is not None and not quarantine["ok"]
         execution_complete = bool(orders) and all(
             o["quantity_known"]
             and o["fee_known"]
@@ -747,7 +765,9 @@ class ShadowLedger:
             account_cash_credited_at=None,
             last_known_cash=known_available,
             known_available_cash=known_available,
-            inventory=state["inventory"],
+            inventory=None if quarantined else state["inventory"],
+            declared_inventory=state["inventory"],
+            event_quarantine=quarantine,
             inventory_value=str(value) if valuation_complete else None,
             nav=None if nav is None else str(nav),
             valuation_complete=valuation_complete,
@@ -788,4 +808,18 @@ class ShadowLedger:
                 else "valuation_or_accounting_incomplete",
             },
         }
+        if quarantined:
+            value["metric_availability"].update(quarantine["metric_availability"])
+            value["metric_availability"].update(
+                {
+                    field: {"available": False, "reason": quarantine["reasons"][0]}
+                    for field in (
+                        "nav",
+                        "cash",
+                        "available_cash",
+                        "inventory",
+                        "receivable_amount",
+                    )
+                }
+            )
         return value

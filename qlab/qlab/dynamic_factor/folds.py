@@ -406,6 +406,23 @@ def run_walk_forward(
                 "n_ledger_hash": None,
             },
         )
+    from .validation import quarantined_manifest
+
+    quarantine = quarantined_manifest(manifest, rows, conventions)
+    if not quarantine["ok"]:
+        return conventions.bind(
+            result(
+                "walk_forward",
+                {"manifest": manifest, "rows": rows},
+                reasons=quarantine["reasons"],
+                metrics={
+                    "folds": fold_records(manifest, run_id, quarantine["reasons"][0]),
+                    "event_quarantine": quarantine,
+                    "A": None,
+                    "IR": None,
+                },
+            )
+        )
     if not conventions.document.get("runtime_consumable", False):
         return conventions.bind(
             result(
