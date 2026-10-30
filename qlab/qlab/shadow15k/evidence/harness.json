@@ -1,0 +1,241 @@
+{
+  "assumptions": [
+    "Offline synthetic receipts only; no broker, OpenD, REAL or forward sampling.",
+    "Execution is never verified by this module, including cash_bid_ask fixtures.",
+    "No frozen meta-strategy is installed; all strategy interfaces refuse.",
+    "Fees policy pending EVO-883 next version; accounting arithmetic is provisional.",
+    "A per-order gate floor is diagnostic, never an extra cash charge.",
+    "Each order is confined to one explicit trading date; cross-day orders require separate IDs.",
+    "Unknown fees/quantities block new intents; no marks are carried forward.",
+    "No authoritative N ledger or return series is supplied; N and Sharpe remain null.",
+    "Prices and marks use caller-supplied consistent units; dividends, corporate actions and total returns are not modeled.",
+    "Failed protective orders freeze this offline version; no automatic override or strategy repair is installed.",
+    "actual $0-commission eligibility of the future account (T&C page link resolved to a promotions index, not the T&C)",
+    "per-invoice rounding of each fee line",
+    "actual spread / slippage (no fills observed)",
+    "whether GST is charged on pass-through regulatory fees (two notes on F1 disagree; x1 takes the wider reading)",
+    "FY2027 Section 31 rate (F5: changes 60 days after FY2027 appropriation; none published as of fetch)",
+    "historical TAF/SEC rates before 2026 (fold back-test applies 2026 schedule to all years; assumption, not history)",
+    "SEC/TAF minima and caps applied per order; actual broker invoice mapping unverified.",
+    "Frozen Section 31 rate and open-ended future schedule are provisional, not live fee validation.",
+    "TAF effective_date basis only, not the research_restored budget convention.",
+    "No cent rounding; amounts retain Decimal precision until a rounding contract is frozen."
+  ],
+  "cases": [
+    {
+      "case_id": "paper.partial_is_incomplete",
+      "input_sha256": "e450ca11e44b6b0961aafeadeb53154bc4f171a61ed023ce1c2a9250bbe76957",
+      "observed": {
+        "cash": "11998.724503800",
+        "execution_complete": false,
+        "execution_verified": false,
+        "inventory": {
+          "X": 60
+        },
+        "ledger_sha256": "d948380f63d615b8d468544f513997c0bd930c237acc2c79e9149d5ac86b5c79",
+        "postings": [
+          {
+            "cumulative_fee": "1.275496200",
+            "fee_delta": "1.275496200",
+            "intent_id": "case-intent",
+            "notional_delta": "3000",
+            "order_id": "buy",
+            "qty_delta": 60,
+            "receipt_id": "partial"
+          }
+        ],
+        "reconciliation_required": true,
+        "residual_qty": {
+          "case-intent": {
+            "buy": 40
+          }
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "paper.failed_hedge_retains_risk",
+      "input_sha256": "2e044efbfed210c55cbd93e96ff6bdc8a1377d9f64eb01eb49e279aba0052353",
+      "observed": {
+        "hedge_verified": false,
+        "inventory": {
+          "H": 0,
+          "X": 100
+        },
+        "ledger_sha256": "140a55b1d356a27fc028db4512a1f14ee2662892314967ecca674855b57b3005",
+        "postings": [
+          {
+            "cumulative_fee": "1.406427000",
+            "fee_delta": "1.406427000",
+            "intent_id": "case-intent",
+            "notional_delta": "5000",
+            "order_id": "risk",
+            "qty_delta": 100,
+            "receipt_id": "failed-hedge"
+          },
+          {
+            "cumulative_fee": "0",
+            "fee_delta": "0",
+            "intent_id": "case-intent",
+            "notional_delta": "0",
+            "order_id": "protection",
+            "qty_delta": 0,
+            "receipt_id": "failed-hedge"
+          }
+        ],
+        "reconciliation_required": true,
+        "residual_qty": {
+          "case-intent": {
+            "protection": 100,
+            "risk": 0
+          }
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "nav.missing_mark_is_unknown",
+      "input_sha256": "4b0365134577d2d2378828eeddfbda1f6a93abe2ec53f6d100a5995c79f1adb6",
+      "observed": {
+        "ledger_sha256": "a1088fd7944d4bb1b0f68cb40985a9f1de9c574445dbab14781f4ca9d2151295",
+        "metric_unavailable_reason": "missing_marks",
+        "missing_marks": [
+          "X"
+        ],
+        "nav": null,
+        "postings": [
+          {
+            "cumulative_fee": "1.406427000",
+            "fee_delta": "1.406427000",
+            "intent_id": "case-intent",
+            "notional_delta": "5000",
+            "order_id": "buy",
+            "qty_delta": 100,
+            "receipt_id": "fill"
+          }
+        ],
+        "sharpe": null,
+        "sharpe_available": false,
+        "valuation_complete": false
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "intent.retry_requires_reconcile",
+      "input_sha256": "edc3c60acbf7138658544c35dc13a1ec208d8ef979b90b4712f7e45d7779f77a",
+      "observed": {
+        "cash": null,
+        "fees": null,
+        "inventory_value": null,
+        "ledger_sha256": "ec74c5314d403436f4c1faee3d659b172ad8db18d4ef5dfcbb36e807eba003fb",
+        "new_intent_blocked": true,
+        "postings": [],
+        "quantity_complete": false,
+        "reconciliation_required": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "cost.cash_vs_reference_no_double",
+      "input_sha256": "3a20a2b8341246dbecf9e26ae4d62a18e9b294b4a3faab80466005c2c4718153",
+      "observed": {
+        "x1_cash_friction": "0.00",
+        "x1_reference_friction": "1.00",
+        "x2_cash_friction": "1.00"
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "cost.partial_cumulative_not_per_fill",
+      "input_sha256": "2aa8450c7ce95ccc7d4c11266ed2bc4b42285857c49c4aae101348e2c7691156",
+      "observed": {
+        "first_fee": "1.275496200",
+        "increment": "0.130930800",
+        "total_fee": "1.406427000"
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "cost.taf_effective_date",
+      "input_sha256": "f59f00d7483694a0641d437c037de8d36b1e06b9cafe4ef6fdf373ce3431c7bb",
+      "observed": {
+        "after_explicit": "1.5399520000",
+        "after_taf": "0.0195000",
+        "before_taf": "0.0"
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "policy.all_interfaces_refuse",
+      "input_sha256": "12fb1f05efdd5457f2d4aebf1b10d669bf87826afb7a3a1fb750a003b501e860",
+      "observed": {
+        "reason": "prereg_pending_v0.2",
+        "refused": [
+          "pool_admission_check",
+          "tilt_weights",
+          "initial_build_turnover_check",
+          "turnover_check",
+          "voluntary_trade_gate",
+          "rebalance_plan",
+          "retirement_check"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "namespace.isolated_restart",
+      "input_sha256": "6f58f993160614c95c81db41262cc0dc5bba5ffbb07be234bb7d1f890b880695",
+      "observed": {
+        "cash": "15000",
+        "cumulative_n": null,
+        "event_count": 0,
+        "n_ledger_hash": null,
+        "namespace": "evo881.shadow15k.offline",
+        "nav": "15000"
+      },
+      "status": "PASS"
+    }
+  ],
+  "cases_passed": 9,
+  "certifiable": false,
+  "dependencies": {
+    "external": [],
+    "python": "3.9.6",
+    "sqlite": "3.51.0"
+  },
+  "fixture_sha256": {
+    "cases.json": "d1051263846f189a9b62ee6e86bcfe43b8376f80e6109c5b27bf3eb52394941a",
+    "schedule": "c400412f361a659290289517adf640e1fc2610560e203dc79bf76975e87c7fd9",
+    "x1": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "x2": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044"
+  },
+  "forward_samples": 0,
+  "input_sha256": "10a15b15e65bab5c357d638b9c0621ec327ae5848f9a993b650628b94ad158c3",
+  "meta_strategy_status": "prereg_pending_v0.2",
+  "network_attempts": 0,
+  "schema": "shadow15k.harness/v1",
+  "source_files": {
+    "__init__.py": "06af6993da8dcb49ff75936b7b5e327424b753802687d92dda74033c15efd797",
+    "__main__.py": "dceb94daf61949f8b2ea9265c4f76a629b64dc98dcbd56e9bcaaa19f35281842",
+    "contract.py": "8946dd0ce619949f2c0bba743e4123e03a65f669805d743778c281224d9ad23e",
+    "conventions.py": "a40d750350d9bf05f1aa91f16be4eb8f9bca9a57ded38300be55476d8737a1a6",
+    "dsr_v0.py": "e4e3fb1bd42333a5d9c8b9c508ca421172c1d83de0d7e5e2a5c12f276f49425b",
+    "fees.py": "6a8e1d3cb83806bc37b32e1741c16ca8237d5e6980822fb661e162f47d356e31",
+    "folds.py": "b5a2a53f831281f3d3426622dcbf76b7ae3377b879fc18506200b47bb773ce41",
+    "harness.py": "bd3a35e8abc9ef6321f09694d241a906cf1fa1b6d0a0ea7acafa32212da4e6ef",
+    "ledger.py": "8d6163c81ed55a77edbe8cc016c27d221bce137170af101709db467eda04e62c",
+    "pending.py": "8a078927d7d7c977a235108f5001cf33fd6b993ef35526fcdb3f0678d125b3a3",
+    "receipts.py": "4647fafba46f5d5ae39401f1129c73eebb8dd5e6de6c91d82f23aea403803e8d",
+    "shadow15k/__init__.py": "0007e498101775baa450895c22c486ad0de5b882b6d6fd1ed64bdaa48efe2dbc",
+    "shadow15k/contract.py": "916846b8926bde97f05c1361438d1f3db380497b1455335b8f7ebdbb5ce10482",
+    "shadow15k/fees.py": "52968e085ca1ccf0d51804c2c22b6d59e344254083f12be7a1034a2cb3a66484",
+    "shadow15k/harness.py": "4cc73c3c863fd812adc46808b7abd7bd31f583ca014ebe131cbf15ac1ae0d9e8",
+    "shadow15k/ledger.py": "371ae850c1ca849ff4bf2b3f823199372c453117134fcf91f87fc0d0df9a2a5c",
+    "shadow15k/policy.py": "8081cdb91e7259cbdce5b08041f687342d982ab5c385e212131134884cd1ab00",
+    "statistics.py": "9079a803df2d290aaeb84532c459225185560c8ba59b2d316186d4a353b6cbdc",
+    "validation.py": "fa3e9608b29c2328d9a36c1121e6a286183d2ffa24a1960d9e99116bbf08c7f8"
+  },
+  "source_sha256": "f2fe3008b7124c826624dfb5fe3ae636abbaf4dec988c8f3c0d7ea67bdd2e78f",
+  "status": "PASS",
+  "strategy_backtests": 0
+}

@@ -1,0 +1,282 @@
+{
+  "schema": "shadow15k.synthetic_cases/v1",
+  "genesis": {
+    "namespace": "evo881.shadow15k.offline",
+    "mode": "offline_synthetic",
+    "initial_cash": "15000",
+    "candidate_id": "SYNTHETIC_NOT_A_STRATEGY",
+    "version": "fixture-v1",
+    "price_basis": "cash_bid_ask"
+  },
+  "decision_ts": "2026-12-30T21:00:00Z",
+  "cases": [
+    {
+      "case_id": "paper.partial_is_incomplete",
+      "orders": [
+        {
+          "order_id": "buy",
+          "symbol": "X",
+          "side": "BUY",
+          "planned_qty": 100,
+          "trade_date": "2026-12-31",
+          "protective": false
+        }
+      ],
+      "receipts": [
+        {
+          "receipt_id": "partial",
+          "receipt_ts": "2026-12-31T15:00:00Z",
+          "orders": [
+            {
+              "order_id": "buy",
+              "confirmed_qty": 60,
+              "gross_usd": "3000",
+              "fee_known": true,
+              "status": "partial"
+            }
+          ]
+        }
+      ],
+      "marks": {
+        "as_of": "2026-12-31T21:00:00Z",
+        "price_basis": "cash_bid_ask",
+        "prices": {
+          "X": "50"
+        }
+      },
+      "expected": {
+        "inventory": {
+          "X": 60
+        },
+        "residual_qty": {
+          "case-intent": {
+            "buy": 40
+          }
+        },
+        "execution_verified": false,
+        "execution_complete": false,
+        "reconciliation_required": true,
+        "cash": "11998.72450380"
+      }
+    },
+    {
+      "case_id": "paper.failed_hedge_retains_risk",
+      "orders": [
+        {
+          "order_id": "risk",
+          "symbol": "X",
+          "side": "BUY",
+          "planned_qty": 100,
+          "trade_date": "2026-12-31",
+          "protective": false
+        },
+        {
+          "order_id": "protection",
+          "symbol": "H",
+          "side": "BUY",
+          "planned_qty": 100,
+          "trade_date": "2026-12-31",
+          "protective": true
+        }
+      ],
+      "receipts": [
+        {
+          "receipt_id": "failed-hedge",
+          "receipt_ts": "2026-12-31T15:00:00Z",
+          "orders": [
+            {
+              "order_id": "risk",
+              "confirmed_qty": 100,
+              "gross_usd": "5000",
+              "fee_known": true,
+              "status": "filled"
+            },
+            {
+              "order_id": "protection",
+              "confirmed_qty": 0,
+              "gross_usd": "0",
+              "fee_known": true,
+              "status": "failed"
+            }
+          ]
+        }
+      ],
+      "marks": {
+        "as_of": "2026-12-31T21:00:00Z",
+        "price_basis": "cash_bid_ask",
+        "prices": {
+          "X": "50"
+        }
+      },
+      "expected": {
+        "inventory": {
+          "X": 100,
+          "H": 0
+        },
+        "hedge_verified": false,
+        "reconciliation_required": true,
+        "residual_qty": {
+          "case-intent": {
+            "risk": 0,
+            "protection": 100
+          }
+        }
+      }
+    },
+    {
+      "case_id": "nav.missing_mark_is_unknown",
+      "orders": [
+        {
+          "order_id": "buy",
+          "symbol": "X",
+          "side": "BUY",
+          "planned_qty": 100,
+          "trade_date": "2026-12-31",
+          "protective": false
+        }
+      ],
+      "receipts": [
+        {
+          "receipt_id": "fill",
+          "receipt_ts": "2026-12-31T15:00:00Z",
+          "orders": [
+            {
+              "order_id": "buy",
+              "confirmed_qty": 100,
+              "gross_usd": "5000",
+              "fee_known": true,
+              "status": "filled"
+            }
+          ]
+        }
+      ],
+      "marks": {
+        "as_of": "2026-12-31T21:00:00Z",
+        "price_basis": "cash_bid_ask",
+        "prices": {}
+      },
+      "expected": {
+        "valuation_complete": false,
+        "missing_marks": [
+          "X"
+        ],
+        "nav": null,
+        "sharpe": null,
+        "sharpe_available": false,
+        "metric_unavailable_reason": "missing_marks"
+      }
+    },
+    {
+      "case_id": "intent.retry_requires_reconcile",
+      "orders": [
+        {
+          "order_id": "buy",
+          "symbol": "X",
+          "side": "BUY",
+          "planned_qty": 100,
+          "trade_date": "2026-12-31",
+          "protective": false
+        }
+      ],
+      "receipts": [
+        {
+          "receipt_id": "unknown",
+          "receipt_ts": "2026-12-31T15:00:00Z",
+          "orders": [
+            {
+              "order_id": "buy",
+              "confirmed_qty": null,
+              "gross_usd": null,
+              "fee_known": false,
+              "status": "unknown"
+            }
+          ]
+        }
+      ],
+      "marks": {
+        "as_of": "2026-12-31T21:00:00Z",
+        "price_basis": "cash_bid_ask",
+        "prices": {
+          "X": "50"
+        }
+      },
+      "expected": {
+        "cash": null,
+        "fees": null,
+        "inventory_value": null,
+        "reconciliation_required": true,
+        "quantity_complete": false
+      }
+    },
+    {
+      "case_id": "cost.cash_vs_reference_no_double",
+      "qty": 100,
+      "notional": "5000",
+      "side": "BUY",
+      "trade_date": "2027-01-01",
+      "expected": {
+        "x1_cash_friction": "0",
+        "x1_reference_friction": "1",
+        "x2_cash_friction": "1"
+      }
+    },
+    {
+      "case_id": "cost.partial_cumulative_not_per_fill",
+      "partials": [
+        {
+          "qty": 60,
+          "notional": "3000"
+        },
+        {
+          "qty": 100,
+          "notional": "5000"
+        }
+      ],
+      "expected": {
+        "first_fee": "1.27549620",
+        "total_fee": "1.40642700",
+        "increment": "0.13093080"
+      }
+    },
+    {
+      "case_id": "cost.taf_effective_date",
+      "qty": 100,
+      "notional": "5000",
+      "side": "SELL",
+      "dates": [
+        "2026-12-31",
+        "2027-01-01"
+      ],
+      "expected": {
+        "before_taf": "0",
+        "after_taf": "0.019500",
+        "after_explicit": "1.539952000"
+      }
+    },
+    {
+      "case_id": "policy.all_interfaces_refuse",
+      "request": {
+        "candidate_id": "synthetic",
+        "version": "fixture-only",
+        "weights": {
+          "QQQ": 1
+        },
+        "cash": "15000"
+      },
+      "expected": {
+        "reason": "prereg_pending_v0.2"
+      }
+    },
+    {
+      "case_id": "namespace.isolated_restart",
+      "expected": {
+        "namespace": "evo881.shadow15k.offline",
+        "cash": "15000",
+        "nav": "15000",
+        "event_count": 0,
+        "cumulative_n": null,
+        "n_ledger_hash": null
+      }
+    }
+  ]
+}
