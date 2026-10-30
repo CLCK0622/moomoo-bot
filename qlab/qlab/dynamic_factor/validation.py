@@ -228,8 +228,6 @@ def quarantined_manifest(manifest, rows, conventions):
 
 
 def wf_manifest_check(manifest, *, conventions=None):
-    from .conventions import load_conventions
-
     reasons = ["wf.conventions_required"] if conventions is None else []
     if conventions is not None and not authoritative(conventions):
         reasons.append("wf.conventions_mismatch")

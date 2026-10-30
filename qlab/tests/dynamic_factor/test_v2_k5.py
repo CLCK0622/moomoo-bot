@@ -1,5 +1,4 @@
 import csv
-from copy import deepcopy
 from decimal import Decimal
 
 import pytest
@@ -8,7 +7,6 @@ from qlab.dynamic_factor.conventions import (
     load_conventions as load_historical_conventions,
     FIXTURES,
 )
-from qlab.dynamic_factor.contract import digest
 from qlab.dynamic_factor.isolation import seal_manifest
 from qlab.dynamic_factor.k5 import k5_dependency_check, vsnt_quote
 from qlab.dynamic_factor.valuation import integer_cash_valuation

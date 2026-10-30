@@ -5,7 +5,7 @@ import sys
 import pytest
 
 from qlab.dynamic_factor.contract import digest, sha256
-from qlab.dynamic_factor.conventions import load_conventions, FIXTURES
+from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.fees import FIXTURES, fee_frontier
 from qlab.dynamic_factor.harness_helpers import fixture_ledger
 from qlab.dynamic_factor.reference_check import (

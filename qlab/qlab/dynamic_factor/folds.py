@@ -379,8 +379,6 @@ def _run_walk_forward_unbound(
 def run_walk_forward(
     manifest, rows, *, miner_factory, fitter_factory, ledger, run_id, conventions=None
 ):
-    from .conventions import load_conventions
-
     try:
         reject_b2_inputs({"manifest": manifest, "rows": rows}, "qqq_labels")
     except ValueError as exc:

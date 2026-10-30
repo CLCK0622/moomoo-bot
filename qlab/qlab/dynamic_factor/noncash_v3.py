@@ -10,7 +10,6 @@ from datetime import datetime
 
 from .contract import code_sha, digest, is_sha, result
 from .conventions import load_conventions
-from .fees import finite
 from .state_v2 import necessary_state_known
 from .catalog_members import members
 

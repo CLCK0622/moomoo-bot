@@ -17,7 +17,6 @@ from qlab.dynamic_factor.noncash_v3 import (
     acquisition_check,
     actor_ids,
     checked_guard,
-    economic_values,
     economic_read_receipt,
     forward_event,
     guarded_value,

@@ -5,7 +5,7 @@ from decimal import Decimal
 import io
 import json
 
-from .contract import digest, result, sha256
+from .contract import result, sha256
 from .conventions import FIXTURES, load_conventions
 from .fees import iso_date
 from .input_scope import reject_b2_inputs
