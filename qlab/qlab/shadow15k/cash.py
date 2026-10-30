@@ -49,12 +49,14 @@ def cash_view(state, as_of, prices):
             inventory=state["inventory"],
             marks={s: float(money(v)) for s, v in prices.items()},
             events=events,
+            dependency_nodes=state["dependency_nodes"],
         )
     )
     m = dict(r["metrics"])
     for k in ("known_available_cash", "available_cash", "nav"):
         if m.get(k) is not None:
-            m[k] = str(Decimal(str(m[k])) + trade_cash)
+            credit = Decimal(str(m[k]))
+            m[k] = str(trade_cash if credit == 0 else credit + trade_cash)
     m["source_mapping_sha256"] = MAPPING_SHA
     return report(
         "shadow_integer_cash_adapter",

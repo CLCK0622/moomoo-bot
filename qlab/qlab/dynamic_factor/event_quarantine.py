@@ -133,6 +133,85 @@ def event_receipts(doc):
     ]
 
 
+def normalize_dependencies(request):
+    """Flatten supported consumer scopes before evaluating any formal value.
+
+    Node identities remain global across folds/states, so duplicate or
+    conflicting declarations cannot silently replace earlier ancestry. Unknown
+    lineage containers fail closed instead of looking like an empty graph.
+    """
+    graph, panels = [], []
+    lineage_keys = {"dependency_nodes", "panel_inputs", "parents", "event_keys"}
+
+    def reject_hidden(value):
+        pending = [value]
+        while pending:
+            item = pending.pop()
+            if isinstance(item, dict):
+                if any(
+                    key in lineage_keys
+                    or "lineage" in key.lower()
+                    or (
+                        "dependency" in key.lower()
+                        and isinstance(item[key], (dict, list))
+                    )
+                    for key in item
+                ):
+                    raise ValueError("data.v10_unknown_lineage_structure")
+                pending.extend(item.values())
+            elif isinstance(item, list):
+                pending.extend(item)
+
+    pending = [request]
+    while pending:
+        scope = pending.pop()
+        if not isinstance(scope, dict):
+            raise ValueError("data.v10_lineage_scope_invalid")
+        for key, value in scope.items():
+            if key in {"dependency_nodes", "panel_inputs", "inputs"}:
+                if not isinstance(value, list) or any(
+                    not isinstance(item, dict) for item in value
+                ):
+                    raise ValueError("data.v10_lineage_list_required")
+                for item in value:
+                    reject_hidden(
+                        {
+                            k: v
+                            for k, v in item.items()
+                            if k not in {"parents", "event_keys"}
+                        }
+                    )
+                (graph if key == "dependency_nodes" else panels).extend(deepcopy(value))
+            elif key in {"folds", "events"}:
+                if not isinstance(value, list):
+                    raise ValueError("data.v10_lineage_list_required")
+                pending.extend(reversed(value))
+            elif key in {"input_state", "output_state", "event"}:
+                if value is not None:
+                    pending.append(value)
+            elif key == "inventory":
+                if not isinstance(value, dict):
+                    raise ValueError("data.v10_inventory_lineage_invalid")
+                reject_hidden(value)
+                panels.extend(
+                    dict(symbol=symbol, field="inventory", parents=[])
+                    for symbol, quantity in value.items()
+                    if quantity and symbol in INHERITED
+                )
+            else:
+                if (
+                    key in lineage_keys
+                    or "lineage" in key.lower()
+                    or ("dependency" in key.lower() and isinstance(value, (dict, list)))
+                ):
+                    raise ValueError("data.v10_unknown_lineage_structure")
+                reject_hidden(value)
+        # An event is evidence even when the current inventory has been sold.
+        if scope.get("symbol") in INHERITED:
+            panels.append(dict(symbol=scope["symbol"], field="event", parents=[]))
+    return dict(dependency_nodes=graph, inputs=panels)
+
+
 def _project(request, doc):
     """Resolve an explicit dependency DAG, independent of node/calendar order.
 
@@ -144,7 +223,9 @@ def _project(request, doc):
     """
     rows = deepcopy(request.get("dependency_nodes", []))
     for i, item in enumerate(request.get("inputs", [])):
-        rows.append(dict(item, id=f"panel/{i}", parents=item.get("parents", [])))
+        rows.append(
+            dict(item, id=item.get("id", f"panel/{i}"), parents=item.get("parents", []))
+        )
     by_id, visiting, done = {}, set(), {}
     for row in rows:
         if not isinstance(row, dict) or not isinstance(row.get("id"), str):
@@ -225,7 +306,7 @@ def quarantine_check(request):
     reasons, projected, doc = [], None, None
     try:
         doc, _ = sources()
-        projected = _project(request, doc)
+        projected = _project(normalize_dependencies(request), doc)
         if any(row["reasons"] for row in projected):
             reasons.append("data.v10_quarantined_dependency")
         if request.get("skip_invalid_folds") or request.get("valid_only"):

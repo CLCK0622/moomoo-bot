@@ -117,6 +117,13 @@ def continuous_path_check(request, *, conventions=None):
         if type(n_previous) is not int or n_previous < published["n_high_water"]:
             raise ValueError("ledger.N_receipt_below_published_anchor")
         reject_b2_inputs(request, "qqq_labels")
+        from .input_disposition import quarantine_check
+
+        # Consume all row/state ancestry before accepting the frozen grid or
+        # copying any numeric NAV. Unknown containers and identities refuse.
+        quarantine = quarantine_check(request)
+        if not quarantine["ok"]:
+            raise ValueError(quarantine["reasons"][0])
         ids = [r["fold_id"] for r in rows]
         if ids != [r["fold_id"] for r in expected["folds"]]:
             raise ValueError("wf.all_original_folds_required")
@@ -124,32 +131,6 @@ def continuous_path_check(request, *, conventions=None):
             raise ValueError("wf.invalid_fold_may_not_be_skipped")
         if request.get("restart_capital"):
             raise ValueError("wf.capital_restart_forbidden")
-        from .input_disposition import quarantine_check
-
-        quarantine = quarantine_check(
-            {
-                "dependency_nodes": request.get("dependency_nodes", []),
-                "inputs": request.get("panel_inputs", [])
-                + [
-                    {"symbol": symbol, "date": fold["test_start"], "field": "inventory"}
-                    for row, fold in zip(rows, expected["folds"])
-                    for state in (
-                        row,
-                        row.get("input_state") or {},
-                        row.get("output_state") or {},
-                    )
-                    for symbol, quantity in (state.get("inventory") or {}).items()
-                    if quantity and symbol in ("B", "COR")
-                ],
-                **(
-                    {"panel_symbols": request["panel_symbols"]}
-                    if "panel_symbols" in request
-                    else {}
-                ),
-            }
-        )
-        if not quarantine["ok"]:
-            raise ValueError(quarantine["reasons"][0])
         for i, (row, fold, out) in enumerate(zip(rows, expected["folds"], outputs)):
             out["reasons"] = list(row.get("reasons", []))
             budget = row.get("budget_state") or {}

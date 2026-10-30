@@ -165,25 +165,7 @@ def integer_cash_valuation(request, *, conventions=None):
         cash = request["known_cash"]
         as_of = iso_date(request["as_of"])
         inventory = request["inventory"]
-        quarantine = quarantine_check(
-            {
-                "dependency_nodes": request.get("dependency_nodes", []),
-                "inputs": [
-                    {"symbol": s, "date": as_of, "field": "inventory"}
-                    for s, q in inventory.items()
-                    if q and s in ("B", "COR")
-                ]
-                + [
-                    {
-                        "symbol": e.get("symbol"),
-                        "date": e.get("ex_date"),
-                        "field": "receivable",
-                    }
-                    for e in request.get("events", [])
-                    if e.get("symbol") in ("B", "COR")
-                ],
-            }
-        )
+        quarantine = quarantine_check(request)
         if (
             not finite(cash)
             or cash < 0
