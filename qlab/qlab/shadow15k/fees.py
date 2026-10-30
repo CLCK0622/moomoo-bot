@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import date
 from decimal import Context, Decimal, InvalidOperation, localcontext
 from functools import wraps
 from pathlib import Path
 
 from qlab.dynamic_factor.contract import sha256
+from qlab.dynamic_factor.conventions import load_conventions
+from qlab.dynamic_factor.fee_model import order_cost
 
 from .contract import whole
 
@@ -56,6 +59,8 @@ class FeeBook:
         self.binding = {
             "params_sha256": params_sha256,
             "schedule_sha256": schedule_sha256,
+            **load_conventions().binding,
+            "cost_policy": "v1_restored_per_order_floor",
         }
         p = self.params
         self.scenario = p["name"]
@@ -65,6 +70,12 @@ class FeeBook:
             != {"x1": Decimal(1), "x2": Decimal(2)}[self.scenario]
         ):
             raise ValueError("unsupported_cost_scenario")
+        policy = load_conventions()
+        if (
+            params_sha256 != policy.document["cost_mapping"][self.scenario + "_sha256"]
+            or self.schedule.get("research_rate_field") != "taf_per_share_sell_restored"
+        ):
+            raise ValueError("fee_params_not_bound_to_v1")
         for key in (
             "commission_per_order",
             "platform_per_order",
@@ -94,21 +105,13 @@ class FeeBook:
         self.assumptions = list(p["unverified"]) + [
             "SEC/TAF minima and caps applied per order; actual broker invoice mapping unverified.",
             "Frozen Section 31 rate and open-ended future schedule are provisional, not live fee validation.",
-            "TAF effective_date basis only, not the research_restored budget convention.",
+            "All dates use frozen restored research TAF; no actual effective-date billing claim.",
             "No cent rounding; amounts retain Decimal precision until a rounding contract is frozen.",
         ]
 
     def rate_field(self, trade_date):
-        trade_date = day(trade_date)
-        periods = [
-            p
-            for p in self.schedule["taf_periods"]
-            if p["start"] <= trade_date
-            and (p["end_exclusive"] is None or trade_date < p["end_exclusive"])
-        ]
-        if len(periods) != 1:
-            raise ValueError("fee_effective_date_uncovered_or_ambiguous")
-        return periods[0]["rate_field"]
+        day(trade_date)
+        return self.schedule["research_rate_field"]
 
     @decimal_arithmetic
     def cumulative(self, *, qty, notional, side, trade_date, price_basis):
@@ -140,6 +143,7 @@ class FeeBook:
                         "friction",
                         "charged",
                         "gate_floor_diagnostic",
+                        "floor_topup",
                     )
                 },
             )
@@ -201,9 +205,24 @@ class FeeBook:
                 explicit=explicit,
             ).items()
         }
+        # Reuse the frozen PR #10 policy, including the per-net-order floor
+        # before stress and subtraction of already-paid baseline bid/ask.
+        policy = load_conventions()
+        floor = Decimal(
+            re.search(
+                r",([0-9.]+)\*filled_notional\)",
+                policy.document["cost_mapping"]["floor_policy"]["x1"],
+            )[1]
+        )
+        budget = money(
+            order_cost(p, side.lower(), qty, float(value), float(floor), price_basis)[
+                "research_cost_usd"
+            ]
+        )
         lines.update(
             friction=friction,
-            charged=explicit * mult + friction,
+            charged=budget,
+            floor_topup=budget - explicit * mult - friction,
             gate_floor_diagnostic=diagnostic,
         )
         return {"taf_rate_field": field, **{k: str(v) for k, v in lines.items()}}

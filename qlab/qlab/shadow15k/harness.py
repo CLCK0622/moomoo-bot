@@ -14,6 +14,8 @@ from unittest.mock import patch
 
 from qlab.dynamic_factor.contract import digest, sha256
 from qlab.dynamic_factor.fees import FIXTURES as TOOL_FIXTURES
+from qlab.dynamic_factor.input_disposition import MAPPING_SHA
+from qlab.dynamic_factor.conventions import load_conventions
 
 from . import policy
 from .contract import ASSUMPTIONS, source_binding
@@ -181,7 +183,7 @@ def run(workdir):
                     ),
                     str(observed),
                 )
-            elif cid == "cost.taf_effective_date":
+            elif cid == "cost.taf_restored_all_dates":
                 a, b = [
                     fees["x1"].cumulative(
                         qty=case["qty"],
@@ -238,12 +240,26 @@ def run(workdir):
                     observed=observed,
                 )
             )
+        from .cash_harness import cases as cash_cases
+
+        revisions = cash_cases(workdir / "cash-revisions", data["genesis"], fees["x1"])
     return dict(
         schema="shadow15k.harness/v1",
         status="PASS",
         cases_passed=len(results),
         cases=results,
-        input_sha256=digest({"cases_sha256": sha256(raw), "fees": FEE_SHAS}),
+        input_sha256=digest(
+            {
+                "cases_sha256": sha256(raw),
+                "fees": FEE_SHAS,
+                "QQQ_mapping": MAPPING_SHA,
+                **load_conventions().binding,
+            }
+        ),
+        **load_conventions().binding,
+        QQQ_source_mapping_sha256=MAPPING_SHA,
+        revision_cases=revisions,
+        revision_cases_passed=len(revisions),
         fixture_sha256={"cases.json": sha256(raw), **FEE_SHAS},
         **source_binding(),
         assumptions=ASSUMPTIONS + fees["x1"].assumptions,

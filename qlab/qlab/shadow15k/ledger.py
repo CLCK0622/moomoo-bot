@@ -18,6 +18,7 @@ from qlab.dynamic_factor.contract import canonical, digest, is_sha
 
 from .contract import report, text_id, whole
 from .fees import ZERO, day, decimal_arithmetic, money
+from .cash import cash_view, entitlement, payment_verified
 
 NAMESPACE = "evo881.shadow15k.offline"
 TERMINAL = {"filled", "failed", "cancelled"}
@@ -78,6 +79,7 @@ def initial_state():
         "cash_gross": "15000",
         "fees": "0",
         "postings": [],
+        "dividends": {},
     }
 
 
@@ -192,6 +194,40 @@ class ShadowLedger:
 
     @decimal_arithmetic
     def _apply(self, state, kind, body):
+        if kind == "dividend":
+            if not isinstance(body, dict) or set(body) != {
+                "receipt_id",
+                "as_of",
+                "event",
+            }:
+                raise ValueError("dividend.explicit_receipt_fields_required")
+            text_id(body["receipt_id"])
+            timestamp(body["as_of"])
+            if any(
+                i["last_receipt_ts"] and i["last_receipt_ts"] > body["as_of"]
+                for i in state["intents"].values()
+            ):
+                raise ValueError("dividend.receipt_precedes_trade_receipt")
+            event = body["event"]
+            if not isinstance(event, dict) or event.get("symbol") != "QQQ":
+                raise ValueError("dividend.QQQ_source_mapping_required")
+            ex = day(event["ex_date"])
+            if body["as_of"][:10] < ex:
+                raise ValueError("dividend.receipt_precedes_ex_date")
+            if (
+                event.get("entitled_integer_shares") is not None
+                and type(event.get("entitled_integer_shares")) is not int
+            ) or event.get("entitled_integer_shares") != entitlement(state, ex):
+                raise ValueError("dividend.entitlement_mismatch")
+            previous = state["dividends"].get(ex)
+            if previous:
+                if body["as_of"] < previous["as_of"]:
+                    raise ValueError("dividend.receipt_timestamp_out_of_order")
+                prior = previous["event"]
+                if payment_verified(prior, previous["as_of"]) and event != prior:
+                    raise ValueError("dividend.paid_event_rewrite_forbidden")
+            state["dividends"][ex] = body
+            return
         if kind == "intent":
             request = body
             if not isinstance(request, dict) or set(request) != {
@@ -207,6 +243,18 @@ class ShadowLedger:
             ):
                 raise ValueError("intent.reconciliation_required")
             timestamp(request["decision_ts"])
+            if any(
+                p["as_of"] > request["decision_ts"] for p in state["dividends"].values()
+            ):
+                raise ValueError("intent.decision_precedes_dividend_receipt")
+            if (
+                state["dividends"]
+                and cash_view(state, request["decision_ts"], {})["metrics"][
+                    "available_cash"
+                ]
+                is None
+            ):
+                raise ValueError("dividend.cash_reconciliation_required")
             if not is_sha(request["input_hash"]):
                 raise ValueError("input_hash_required")
             if not isinstance(request["orders"], list) or not request["orders"]:
@@ -262,6 +310,8 @@ class ShadowLedger:
             raise ValueError("explicit_receipt_header_required")
         text_id(receipt["receipt_id"])
         at = timestamp(receipt["receipt_ts"])
+        if any(p["as_of"] > receipt["receipt_ts"] for p in state["dividends"].values()):
+            raise ValueError("receipt.precedes_dividend_receipt")
         if at < timestamp(intent["request"]["decision_ts"]) or (
             intent["last_receipt_ts"] and at < timestamp(intent["last_receipt_ts"])
         ):
@@ -391,7 +441,14 @@ class ShadowLedger:
             )
         if any(q < 0 for q in state["inventory"].values()):
             raise ValueError("short_inventory_forbidden")
-        if Decimal(state["cash_gross"]) - Decimal(state["fees"]) < ZERO:
+        known_cash = Decimal(state["cash_gross"]) - Decimal(state["fees"])
+        if state["dividends"]:
+            value = cash_view(state, receipt["receipt_ts"], {})["metrics"][
+                "known_available_cash"
+            ]
+            if value is not None:
+                known_cash = Decimal(str(value))
+        if known_cash < ZERO:
             raise ValueError("cash_insufficient_including_fees")
         intent["last_receipt_ts"] = receipt["receipt_ts"]
 
@@ -439,13 +496,26 @@ class ShadowLedger:
                         ),
                     )
                     chain, count, added = chain_next, count + 1, True
+                operation_time = (
+                    body["decision_ts"]
+                    if kind == "intent"
+                    else body["receipt"]["receipt_ts"]
+                    if kind == "receipt"
+                    else body["as_of"]
+                )
+                cash_unknown = bool(
+                    state["dividends"]
+                    and cash_view(state, operation_time, {})["metrics"][
+                        "available_cash"
+                    ]
+                    is None
+                )
                 metrics = dict(
                     registered=added,
                     event_count=count,
                     ledger_sha256=chain,
-                    reconciliation_required=any(
-                        unresolved(i) for i in state["intents"].values()
-                    ),
+                    reconciliation_required=cash_unknown
+                    or any(unresolved(i) for i in state["intents"].values()),
                 )
             return report(
                 "shadow_" + kind,
@@ -475,6 +545,10 @@ class ShadowLedger:
             {"intent_id": intent_id, "receipt": receipt},
         )
 
+    def record_dividend(self, request):
+        rid = request.get("receipt_id") if isinstance(request, dict) else None
+        return self._append("dividend:" + str(rid), "dividend", request)
+
     @decimal_arithmetic
     def readout(self, marks):
         """Value known inventory at one explicit synthetic timestamp, with no price fallback."""
@@ -486,6 +560,8 @@ class ShadowLedger:
         reasons, missing, prices = [], [], {}
         try:
             as_of = timestamp(marks["as_of"])
+            if any(timestamp(p["as_of"]) > as_of for p in state["dividends"].values()):
+                raise ValueError("mark_precedes_dividend_receipt")
             if marks["price_basis"] != self.genesis["price_basis"]:
                 raise ValueError("mark_price_basis_mismatch")
             if any(
@@ -524,6 +600,41 @@ class ShadowLedger:
         cash = gross_cash - charged if cash_known else None
         gross_pnl = gross_cash + value - 15000 if valuation_complete else None
         nav = cash + value if cash_known and valuation_complete else None
+        dividend_readout = None
+        receivable = ZERO
+        known_available = str(gross_cash - charged)
+        if state["dividends"]:
+            try:
+                dividend_readout = cash_view(state, marks["as_of"], prices)
+                dm = dividend_readout["metrics"]
+                if dm["known_available_cash"] is not None:
+                    known_available = str(dm["known_available_cash"])
+                reasons.extend(dividend_readout["reasons"])
+                cash = (
+                    None
+                    if not cash_known or dm["available_cash"] is None
+                    else money(dm["available_cash"])
+                )
+                receivable = (
+                    None
+                    if dm["receivable_amount"] is None
+                    else money(dm["receivable_amount"])
+                )
+                cash_known = cash_known and cash is not None
+                valuation_complete = (
+                    valuation_complete
+                    and cash_known
+                    and receivable is not None
+                    and dm["nav"] is not None
+                )
+                nav = cash + value + receivable if valuation_complete else None
+                gross_pnl = nav + charged - 15000 if nav is not None else None
+                reconcile = reconcile or not cash_known or receivable is None
+            except (ValueError, TypeError, KeyError):
+                reasons.append("dividend.cash_valuation_invalid")
+                cash = nav = gross_pnl = receivable = None
+                cash_known = valuation_complete = False
+                reconcile = True
         execution_complete = bool(orders) and all(
             o["quantity_known"]
             and o["fee_known"]
@@ -600,7 +711,14 @@ class ShadowLedger:
             known_fees=state["fees"],
             net_pnl=None if nav is None else str(nav - 15000),
             cash=None if cash is None else str(cash),
-            last_known_cash=str(gross_cash - charged),
+            available_cash=None if cash is None else str(cash),
+            receivable_amount=None if receivable is None else str(receivable),
+            cash_ledger_kind="simulation_pre_tax_integer",
+            dividend_readout=dividend_readout,
+            account_cash_credited_amount=None,
+            account_cash_credited_at=None,
+            last_known_cash=known_available,
+            known_available_cash=known_available,
             inventory=state["inventory"],
             inventory_value=str(value) if valuation_complete else None,
             nav=None if nav is None else str(nav),

@@ -56,7 +56,7 @@
         "execution_verified": false,
         "execution_complete": false,
         "reconciliation_required": true,
-        "cash": "11998.72450380"
+        "cash": "11997.6"
       }
     },
     {
@@ -233,13 +233,13 @@
         }
       ],
       "expected": {
-        "first_fee": "1.27549620",
-        "total_fee": "1.40642700",
-        "increment": "0.13093080"
+        "first_fee": "2.4",
+        "total_fee": "4",
+        "increment": "1.6"
       }
     },
     {
-      "case_id": "cost.taf_effective_date",
+      "case_id": "cost.taf_restored_all_dates",
       "qty": 100,
       "notional": "5000",
       "side": "SELL",
@@ -248,7 +248,7 @@
         "2027-01-01"
       ],
       "expected": {
-        "before_taf": "0",
+        "before_taf": "0.0195",
         "after_taf": "0.019500",
         "after_explicit": "1.539952000"
       }
@@ -264,7 +264,7 @@
         "cash": "15000"
       },
       "expected": {
-        "reason": "prereg_pending_v0.2"
+        "reason": "runtime_evidence_unavailable_v1"
       }
     },
     {

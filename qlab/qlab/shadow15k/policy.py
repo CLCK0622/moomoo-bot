@@ -1,16 +1,19 @@
-"""Local refusals stay independent of PR #10's draft strategy wiring."""
+"""Frozen definition identity does not supply runtime N/V or forward permission."""
 
 from .contract import report
+from qlab.dynamic_factor.conventions import load_conventions
 
-PENDING = "prereg_pending_v0.2"
+PENDING = "runtime_evidence_unavailable_v1"
 
 
 def _refuse(name, request):
     value = report(
         name, request, reasons=[PENDING], metrics={"allowed": False, "parameters": None}
     )
-    value["missing_inputs"] = ["frozen_meta_strategy_and_hanlin_verification"]
-    return value
+    value["missing_inputs"] = [
+        "complete_N_reference_runtime_evidence_and_forward_authorization"
+    ]
+    return load_conventions().bind(value)
 
 
 def pool_admission_check(request):

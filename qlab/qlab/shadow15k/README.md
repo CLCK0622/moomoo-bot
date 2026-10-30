@@ -2,7 +2,7 @@
 
 本模块只处理显式合成意图、累计收据和盯市输入；不生成策略信号，不连接 OpenD、SIMULATE 交易上下文或 REAL。`execution_verified` 与 `certifiable` 始终为 `false`。固定本金是 USD 15,000，与旧 `llm_paper` 的目录、数据库、库存和调度分离。
 
-基于 PR #10 的 `4e076c87af50e3388229b5edc9a44a888addabb5`，只新增本目录和 `qlab/tests/shadow15k/`。只 import PR #10 的契约/夹具；没有修改其接口、费用工具或正在进行的 v0.2 接线。
+基于 PR #10 已复核的 `6c63505f72135063162c1f55ecfaa03514f1fa32`，只新增本目录和 `qlab/tests/shadow15k/`。原提交 `2a0aad4` 重放为 `1fab8c4`，无文本冲突；后续独立提交处理费用与现金的语义衔接。只 import PR #10 的现有接口，未修改其源码或封存回执。
 
 ## 运行和复现
 
@@ -17,9 +17,9 @@ python3 -m ruff check qlab/qlab/shadow15k qlab/tests/shadow15k
 python3 -m ruff format --check qlab/qlab/shadow15k qlab/tests/shadow15k
 ```
 
-Harness 禁用 socket、DNS 和连接入口，记录网络尝试数；无当前时间、随机值或外部 Python 包。`fixtures/cases.json` 是完整固定输入，9 个用例包括报告第 7 页的五项：`paper.partial_is_incomplete`、`paper.failed_hedge_retains_risk`、`nav.missing_mark_is_unknown`、`intent.retry_requires_reconcile`、`cost.cash_vs_reference_no_double`，另含部分成交累计费、TAF 日期切换、策略拒绝和命名空间初始状态。正例只证明账务机制，不能解释为策略盈利或成交验证。
+Harness 禁用 socket、DNS 和连接入口，记录网络尝试数；无当前时间、随机值或外部 Python 包。`fixtures/cases.json` 的9个固定用例保留报告第7页的五项：`paper.partial_is_incomplete`、`paper.failed_hedge_retains_risk`、`nav.missing_mark_is_unknown`、`intent.retry_requires_reconcile`、`cost.cash_vs_reference_no_double`；TAF补充用例现验证所有日期restored。另有8项QQQ现金衔接探针，覆盖金额冲突、缺映射、未证到账、除息日新买、应收不可花和付款重试/回滚。正例只证明账务机制，不能解释为策略盈利或成交验证。
 
-报告携带原字节夹具 SHA、逐 case 输入 SHA、包含本模块和所 import 工具源码的 SHA 清单及汇总、依赖版本、assumptions。工程自检输出保存在 `evidence/harness.json`。重跑时不要把已存在的证据文件当新的输入。
+报告携带原字节夹具SHA、QQQ映射SHA、v1身份、逐case输入SHA、源码清单及依赖版本。当前工程回执见`evidence/rebase-6c63505/`；根目录的旧`harness.json`/`verification.json`只保留原交件历史，不能作当前输出。重跑不读取任何旧证据文件。
 
 ## API 和状态
 
@@ -48,10 +48,13 @@ Harness 禁用 socket、DNS 和连接入口，记录网络尝试数；无当前�
 
 - `register_intent(request)`：要求 `intent_id`、UTC `decision_ts`、`input_hash`、非空 `orders`。每单明确 `order_id/symbol/side/planned_qty/trade_date/protective`，股数只允许正整数。意图不产生库存；这是纯合成夹具入口，不接策略的下单链。
 - `record_receipt(intent_id, receipt)`：要求全量累计快照 `receipt_id/receipt_ts/orders`。每单明确 `order_id/confirmed_qty/gross_usd/fee_known/status`。收据时间不得早于决策/先前收据。股数与金额不得倒退、超计划或凭空增加。终态已知收据不能修改。`fills` 是这些合成累计快照，不代表券商逐笔成交。
+- `record_dividend({receipt_id, as_of, event})`：把版本化QQQ现金输入写入同一本独立事件账。事件按除息日唯一汇总，资格由账中更早交易日的已知整股持仓计算，除息日新买不享分红；除息日卖出不抹掉先前资格。事件中的资格必须与账内一致。金额/来源/支付证据复用`dynamic_factor.integer_cash_valuation`校验，2022-12-19每股0.65541绑定`71953b09…`映射。错误金额/缺映射可作为未知记录保存，但读数为null并阻塞新意图；写入成功不代表现金可用。经验证的模拟付款不能被改写，未证付款可由后续追加补证。
 - `pending/partial/unknown` 或数量/费用未知会阻塞新意图；同 ID 同内容跨进程/重启重试不重复记账。不同内容拒绝。新收据 ID 下的累计快照可补齐先前未知项；不能删掉已知库存和费用。普通单明确 `cancelled` 可保留已知残量后解除对账阻塞，但不会声称完整执行。保护单失败/不足额持续冻结，不提供自动覆盖或修复权限。
 - `readout(marks)`：输入同一 UTC `as_of` 的完整 `prices` 与明确 `price_basis`。缺价/非正价/未知价不使用旧值；当前持仓缺一价则 `valuation_complete=false`、NAV/P&L=`null`。数量未知时保留 `last_known_qty`/库存但不报完整估值；费用未知时 `cash/fees/nav/net_pnl=null`，已知部分另列。`last_known_cash`/`known_fees` 不是完整净值。
 
-金额通过固定 50 位上下文的 Decimal 运算并以字符串输出，不受调用方修改 Decimal 精度影响；不做未经冻结的发票分项分币舍入。禁止最终空头库存或计费后现金透支。逐单费用在累计数量和金额上重算，仅记累计差额；`postings` 留每次已知数量/金额/费用增量，`fee_ledger` 留逐单累计费用和组成。一个订单固定在一个交易日，跨日必须另给订单 ID，不能用收据到达日改费率。跨日收费的最终业务政策仍待冻结。
+`cash`是`available_cash`的兼容别名，`receivable_amount`单列。交易现金不含分红，事件按唯一除息日派生累计模拟入账，重复回执/重启不重复加现金。应收只进入可完整估值的NAV，不可用于买入；交易所支付日不等于模拟到账，需显式金额/日期/证据SHA。真实账户金额/到账时间始终null，不做分红再投或整数股变化。分析TR输入不能代替现金分红。收据/决策/读数不得回溯到已观察付款证据之前。
+
+账内金额通过固定50位上下文Decimal运算并以字符串输出；导入工具提供冻结v1数值读数，不自拟额外舍入。禁止最终空头或可用现金透支。逐单费用在累计数量/金额上重算，仅记差额；`postings`留每次增量，`fee_ledger`留累计费用/组成。订单限定DAY及一个交易日，跨日另给ID。费用身份增加冻结合同/profile和政策版本；旧费率/旧政策SQLite库身份不匹配即拒绝，不自动重解释历史事件或迁移实盘数据。
 
 ## 报告字段
 
@@ -61,14 +64,14 @@ Harness 禁用 socket、DNS 和连接入口，记录网络尝试数；无当前�
 
 ## 策略停止门与前提假设
 
-`policy.py` 的选池、倾斜权重、首日建仓、换手、`voluntary_trade_gate`、再平衡和退役接口始终拒绝，原因均为 `prereg_pending_v0.2`，参数均为 `null`。即使请求自称 frozen/verified 也不放行。本单不会随着 PR #10 接 draft v0.2 而自动解锁；须 EVO-883 最终冻结、翰林核验及后续授权后另行实现。
+本轮是rebase和账务接线。定义身份已绑定v1.0.1，运行N/V、参考证据和前向授权未到，`policy.py`的策略入口继续拒绝，原因改为`runtime_evidence_unavailable_v1`，参数null；不再谎报冻结草案缺失，也不把S2不可算变成空池/全持QQQ。实际策略及前向采样不由机械账务入口解锁。
 
 费用仅是带前提的机械算术，保留以下未闭合项并在产物逐项列出：
 
 1. 使用 EVO-882 eligible-client/SG 税务场景，真实零佣资格、GST 计税基、SEC/TAF 每单 min/max 映射与发票舍入未核实。
-2. TAF 按显式 `trade_date` 生效日切换：2026-10-01 至 2026-12-31 暂停、2027-01-01 起恢复；日期不在费表内直接拒绝。这里不采用 research_restored 的历史预算口径。未来 Section 31 和新费率到件空档均未获得实时验证，开放末期只作冻结费表假设，不作生产有效性证明。
-3. ×2 同步放大所有显式费项、GST、摩擦与诊断地板。`reference` 扣全份摩擦；`cash_bid_ask` 已含 ×1 摩擦，×1 不重扣、×2 只扣增量。10bp 单边地板仅作诊断，不在现金账再扣一遍，也不构成策略准入。
-4. 全部价格和收据由合成输入提供；没有真实 bid/ask、深度、成交、总回报、分红和公司行动证明，也不处理复权价换算。
-5. 费用政策仍待 EVO-883 后续版本；未接冻结元策略、权威 N/V、基准/IR 或历史 walk-forward。没有运行新策略回测、前向采样、生产调度、旧纸面轨或任何账户/凭据操作。
+2. 所有日期采用restored TAF研究政策，含2026Q4；日期只作订单交易日键。原费参/日程字节不变，不将研究费用当真实发票或实时费率核验。
+3. 费用直接复用PR #10 `fee_model.order_cost`：逐个净订单先取模型费与10bp地板较大值，再整体×2；cash_bid_ask扣除已经包含的×1摩擦，避免重复。单边地板已进研究费用，不再额外扣一次；原显式分项仍单列，不冒称已核发票。
+4. 价格与执行收据只用合成输入；QQQ复用已交来源映射，未取市场数据或证明真实账户分红到账。不做复权价替代现金。
+5. 费用政策待EVO-883后续版本，真实资格/发票与运行证据仍缺。没有运行策略回测、前向采样、生产调度、旧纸面轨或账户/凭据操作。
 
 这次交付范围是隔离账本、拒绝桩和离线合成验证；策略集成与前向采样继续停止。D10 独立复核及首辅另行授权是后续阶段。

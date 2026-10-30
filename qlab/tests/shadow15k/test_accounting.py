@@ -125,11 +125,11 @@ def test_partial_fills_charge_once_then_increment_and_restart(ledger):
     b = read(reopened)
     assert b["execution_complete"] and not b["execution_verified"]
     assert b["reconciliation_required"] is False
-    assert Decimal(b["fees"]) == Decimal("1.406427")
-    assert Decimal(b["postings"][1]["fee_delta"]) == Decimal("0.1309308")
+    assert Decimal(b["fees"]) == Decimal("4")
+    assert Decimal(b["postings"][1]["fee_delta"]) == Decimal("1.6")
     assert sum(Decimal(p["fee_delta"]) for p in b["postings"]) == Decimal(b["fees"])
     assert Decimal(b["gross_pnl"]) - Decimal(b["fees"]) == Decimal(b["net_pnl"])
-    assert Decimal(b["nav"]) == Decimal("15000") - Decimal("1.406427")
+    assert Decimal(b["nav"]) == Decimal("15000") - Decimal("4")
     assert b == read(ShadowLedger(ledger.root, DATA["genesis"], fixture_fees("x1")))
 
 
@@ -153,7 +153,7 @@ def test_unknown_quantity_or_fees_freeze_then_explicit_cumulative_receipt_resolv
     assert ledger.record_receipt("i", receipt("resolved"))["ok"]
     after = read(ledger)
     assert after["inventory"] == {"X": 100}
-    assert Decimal(after["fees"]) == Decimal("1.406427")
+    assert Decimal(after["fees"]) == Decimal("4")
     assert not after["reconciliation_required"]
     assert ledger.register_intent(intent("new", oid="o2"))["ok"]
 
@@ -173,7 +173,7 @@ def test_uncertain_update_retains_prior_confirmed_risk_and_charges(ledger):
     assert r["known_fees"] == known["fees"] and r["cash"] is None
     assert ledger.record_receipt("i", receipt("recover"))["ok"]
     assert read(ledger)["inventory"] == {"X": 100}
-    assert Decimal(read(ledger)["fees"]) == Decimal("1.406427")
+    assert Decimal(read(ledger)["fees"]) == Decimal("4")
 
 
 def test_cancelled_partial_preserves_residual_and_does_not_claim_complete_execution(
@@ -200,7 +200,7 @@ def test_duplicate_intent_and_receipt_across_threads_are_exactly_once(ledger):
     assert sum(r["metrics"]["registered"] for r in receipts) == 1
     r = read(ledger)
     assert r["inventory"] == {"X": 100} and r["event_count"] == 2
-    assert Decimal(r["cash"]) == Decimal("9998.593573")
+    assert Decimal(r["cash"]) == Decimal("9996")
 
 
 def test_competing_new_intents_are_serialized_by_reconciliation(ledger):
@@ -332,7 +332,7 @@ def test_every_meta_strategy_interface_refuses_even_if_request_claims_frozen(too
     ):
         r = tool(request)
         assert not r["ok"] and not r["certifiable"]
-        assert r["reasons"] == ["prereg_pending_v0.2"]
+        assert r["reasons"] == ["runtime_evidence_unavailable_v1"]
         assert r["metrics"] == {"allowed": False, "parameters": None}
 
 
@@ -419,16 +419,18 @@ def test_fee_binding_checks_raw_bytes(tmp_path):
         )
 
 
-def test_fee_dates_must_be_explicit_and_covered():
+def test_fee_dates_are_explicit_and_all_use_restored_research_TAF():
     fees = fixture_fees("x1")
-    with pytest.raises(ValueError, match="uncovered"):
+    rows = [
         fees.cumulative(
-            qty=1,
-            notional="50",
-            side="SELL",
-            trade_date="2026-09-30",
-            price_basis="reference",
+            qty=100, notional="5000", side="SELL", trade_date=d, price_basis="reference"
         )
+        for d in ["2022-12-16", "2026-09-30", "2026-12-31", "2027-01-01"]
+    ]
+    assert all(row == rows[0] for row in rows)
+    assert Decimal(rows[0]["taf"]) == Decimal("0.0195")
+    with pytest.raises(ValueError):
+        fees.rate_field("2026-9-30")
 
 
 def test_fee_line_min_caps_and_x2_stress():
@@ -491,11 +493,11 @@ def test_roundtrip_crosscheck_with_pr10_fee_frontier(scenario, basis):
     )["metrics"]
     charged = sum(Decimal(s["charged"]) for s in sides)
     assert float(charged) == pytest.approx(frontier["cost_bps"] * 5000 / 10000)
-    # Gate floor is not charged to cash.
-    assert sum(Decimal(s["gate_floor_diagnostic"]) for s in sides) > charged
+    # Research floor is charged once, less baseline friction already in cash.
+    assert sum(Decimal(s["gate_floor_diagnostic"]) for s in sides) >= charged
 
 
-def test_sell_partial_cumulative_fees_and_date_switch_in_real_ledger(ledger):
+def test_sell_partial_cumulative_fees_and_restored_policy_in_offline_ledger(ledger):
     ledger.register_intent(intent())
     ledger.record_receipt("i", receipt())
     ledger.register_intent(intent("sell", side="SELL", oid="s", date="2027-01-01"))
@@ -517,9 +519,7 @@ def test_sell_partial_cumulative_fees_and_date_switch_in_real_ledger(ledger):
     r = read(ledger, prices={})
     assert r["inventory"] == {"X": 0}
     assert r["valuation_complete"] and not r["reconciliation_required"]
-    assert Decimal(r["cash"]) == Decimal("15000") - Decimal("1.406427") - Decimal(
-        "1.539952"
-    )
+    assert Decimal(r["cash"]) == Decimal("15000") - Decimal("4") - Decimal("4")
     assert sum(Decimal(p["fee_delta"]) for p in r["postings"]) == Decimal(r["fees"])
     assert (
         r["fee_ledger"][-1]["lines"]["taf_rate_field"] == "taf_per_share_sell_restored"
