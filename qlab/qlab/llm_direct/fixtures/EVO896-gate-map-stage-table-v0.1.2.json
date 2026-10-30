@@ -1,0 +1,352 @@
+{
+  "gate_mappings": [
+    {
+      "approval": "design_review_required",
+      "evaluation_stage": "D0/A0",
+      "factor_json_pointers": [
+        "/freeze_state",
+        "/variance_layers/common_profile_hash_recipe"
+      ],
+      "gate_id": "G00_FREEZE",
+      "mapping": "PRESERVE_IDENTITY_RULE_NEW_PROFILE",
+      "passed_now": false,
+      "proposed_rule": "new complete profile SHA + source/schema/prompt SHA; no factor profile identity reuse"
+    },
+    {
+      "approval": "source_authority_and_receipts_required",
+      "evaluation_stage": "S0/L0/F0/H0",
+      "factor_json_pointers": [
+        "/universe",
+        "/signal_params/eligibility_history_days",
+        "/price_basis_gate"
+      ],
+      "gate_id": "G01_DATA",
+      "mapping": "PRESERVE",
+      "passed_now": false,
+      "proposed_rule": "same64 identities, causal252 inputs, eligibility>=50 verified, UNKNOWN refusal; no second-source full coverage invention"
+    },
+    {
+      "approval": "implementation_review_required",
+      "evaluation_stage": "E0/L0/F0/H0",
+      "factor_json_pointers": [
+        "/cost_model",
+        "/corporate_action_policy",
+        "/portfolio",
+        "/rebalance",
+        "/initialization"
+      ],
+      "gate_id": "G02_CASH_COST",
+      "mapping": "PRESERVE",
+      "passed_now": false,
+      "proposed_rule": "same costs/raw integer cash/actions/startup/age/caps; explicit nextopen<20 cancels satellite share increases before P/G/K"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "F0/H0/T0/X0",
+      "factor_json_pointers": [
+        "/train_test_split/train_days",
+        "/train_test_split/fold_count",
+        "/train_test_split/per_fold_remine_and_refit"
+      ],
+      "gate_id": "G03_FOLDS",
+      "mapping": "PROPOSED_REPLACEMENT",
+      "passed_now": false,
+      "proposed_rule": "no1260-history training or77 folds; one authorized prospective W63, conditionalW126 and second63; no refit"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "A0/L0",
+      "factor_json_pointers": [
+        "/variance_layers/family_definitions",
+        "/variance_layers/steps/0"
+      ],
+      "gate_id": "G04_FAMILY_S0",
+      "mapping": "PROPOSED_REPLACEMENT",
+      "passed_now": false,
+      "proposed_rule": "fixed3 roles C0/MOM20/REV20 and unchanged algorithms before actualD0; same eligible pool/cost/integer/$20 as C0; daily reference books sealed no backfill; no period additions/deletions/replacements; changes require new version+N"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "F0/H0",
+      "factor_json_pointers": [
+        "/variance_layers/steps/1",
+        "/variance_layers/candidate_V"
+      ],
+      "gate_id": "G05_S1",
+      "mapping": "PROPOSED_REPLACEMENT",
+      "passed_now": false,
+      "proposed_rule": "no16 historical probes; F0 separately generates/seals2 forward mechanical reference paths; H0 generates C0 on same dates"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "A0",
+      "factor_json_pointers": [
+        "/variance_layers/steps/2",
+        "/signal_params/train_dsr_min",
+        "/variance_layers/S2_missing_prerequisite"
+      ],
+      "gate_id": "G06_S2",
+      "mapping": "PROPOSED_ROLE_NOT_APPLICABLE_NO_PASS",
+      "passed_now": false,
+      "proposed_rule": "fixed C0 has no16-member admission/pool selection; never treat missing S2 as legitimate empty pool; explicit A1 consent required"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "H0/T0",
+      "factor_json_pointers": [
+        "/variance_layers/steps/3",
+        "/variance_layers/N_snapshots"
+      ],
+      "gate_id": "G07_S3",
+      "mapping": "PROPOSED_FIXED_ROLE_MAPPING",
+      "passed_now": false,
+      "proposed_rule": "C0 unique candidate/meta policy, no performance selection; log all source/readout executions; primary N counts evaluated configurations once, own-arm view of single authority chain"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "T0/T1",
+      "factor_json_pointers": [
+        "/variance_layers/steps/4",
+        "/variance_layers/meta_V",
+        "/variance_layers/independent_reference"
+      ],
+      "gate_id": "G08_S4_V",
+      "mapping": "PROPOSED_REPLACEMENT_WITH_PRESERVED_PROVENANCE",
+      "passed_now": false,
+      "proposed_rule": "Veff=max(var_ddof1(SR_C0,SR_R1,SR_R2),var_ddof1(SR_R1,SR_R2)); all same W/profile/cost; independent R producers exclude C copies; source/reliability 推断·未验证; day63 diagnostic"
+    },
+    {
+      "approval": "authority_chain_and_complete_N_required",
+      "evaluation_stage": "P0/S0/L0/T0/T1",
+      "factor_json_pointers": [
+        "/gate_thresholds/N",
+        "/gate_thresholds/append_only_attempts",
+        "/gate_thresholds/N_complete_reconciliation"
+      ],
+      "gate_id": "G09_N",
+      "mapping": "ONE_CHAIN_OWN_ARM_CONFIGURATION_N_REQUEST_SENSITIVITY",
+      "passed_now": false,
+      "proposed_rule": "EVO891 single arm-tagged authority chain; own-arm evaluated-configuration N is DSR gate input; generation-request N paired sensitivity; replicas conditional on all preopen hashes and frozen aggregation; E0 factor projection verified in EVO884"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "T0/T1",
+      "factor_json_pointers": [
+        "/gate_thresholds/DSR_min",
+        "/gate_thresholds/scale",
+        "/gate_thresholds/moments",
+        "/variance_layers/independent_reference/sample_window"
+      ],
+      "gate_id": "G10_DSR",
+      "mapping": "PRESERVE_FORMULA_THRESHOLD_PROPOSE_TIMING_WINDOW",
+      "passed_now": false,
+      "proposed_rule": "preserve DSR formula/daily scale/threshold.95 and invalid-null rules; day63 diagnostic only, never extension gate; day126 certification input with own-arm configuration N, not automatic certification"
+    },
+    {
+      "approval": "separate_chief_forward_authorization_required",
+      "evaluation_stage": "L0/F0/H0",
+      "factor_json_pointers": [
+        "/gate_thresholds/OOS_budget",
+        "/train_test_split/phase_history_runs_allowed"
+      ],
+      "gate_id": "G11_BUDGET",
+      "mapping": "PROPOSE_FORWARD_TOKEN_NO_HISTORY_REUSE",
+      "passed_now": false,
+      "proposed_rule": "no EVO886 consumption/reset; new one-shot source tokens per role/window with ledger evidence; exact retry evidence, no refund"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "T0/T1",
+      "factor_json_pointers": [
+        "/shadow_falsification",
+        "/metrics",
+        "/interval"
+      ],
+      "gate_id": "G12_STOP",
+      "mapping": "PRESERVE_QQQ_RULE_REMOVE_DAY63_DSR_EXTENSION_DEPENDENCY",
+      "passed_now": false,
+      "proposed_rule": "QQQ x2 active-return interval U<=0 first STOP_VERSION; if L<=0<U mechanically extend once from63 to126 under the preregistration, regardless of day63 DSR being null or <.95; no prompt/model snapshot/parameter/aggregation change; retain independent runtime/data/risk stops; day63 DSR diagnostic only, day126 DSR certification input only; positive interval is not certification"
+    },
+    {
+      "approval": "data_and_isolation_receipts_required",
+      "evaluation_stage": "L0/T0/T1",
+      "factor_json_pointers": [
+        "/benchmarks",
+        "/benchmarks/B2_freeze_rule"
+      ],
+      "gate_id": "G13_BASELINES",
+      "mapping": "PRESERVE",
+      "passed_now": false,
+      "proposed_rule": "B1QQQ B2VTI fixed B3QQQ>SMA200; B2 null only isolated proof, noSPY swap; prospective authorized sources"
+    },
+    {
+      "approval": "separate_diagnostic_authorization_required",
+      "evaluation_stage": "S0/F0/H0",
+      "factor_json_pointers": [
+        "/signal_params/next_open_below_20"
+      ],
+      "gate_id": "G14_STABILITY",
+      "mapping": "NEW_EXPLICIT_ENTRY_AND_MONITORING",
+      "passed_now": false,
+      "proposed_rule": "30/5 raw outputs replay same actual open; zero approval/holdings/orders mismatches after price/cost/constraints; no index1 substitution"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "A0/L0/T0",
+      "factor_json_pointers": [
+        "/train_test_split/gap_days",
+        "/train_test_split/purge",
+        "/train_test_split/minimum_complete_folds",
+        "/signal_params/diagnostic_horizon_days"
+      ],
+      "gate_id": "G15_TRAIN_LABEL_PURGE",
+      "mapping": "PROPOSED_NOT_APPLICABLE_TO_NONEXISTENT_TRAIN_SPLIT",
+      "passed_now": false,
+      "proposed_rule": "A2 conditional approval of no historical fitting/folds; preserve causal cutoff/no refit;63/126 only falsifies; no historical LLM calls preapproved; separate request with lookahead isolation if needed"
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "A0/T0/T1",
+      "factor_json_pointers": [
+        "/signal_params/train_mean_active_x2_min_exclusive",
+        "/signal_params/train_dsr_min",
+        "/signal_params/pool_size_max",
+        "/variance_layers/meta_results_feedback_to_candidate_admission"
+      ],
+      "gate_id": "G16_TRAIN_POSITIVE_CANDIDATE_FILTER",
+      "mapping": "PROPOSED_FIXED_POLICY_NO_TRAIN_POOL_SELECTION",
+      "passed_now": false,
+      "proposed_rule": "C0 is not chosen from fitted candidates: no historical train-positive-alpha proof or pool<=4 admission. Model G>K forecasts remain unverified. Positive-evidence claim not implied; day63 stop plus proposed DSR evaluation applies after prospectively fixed policy, with no feedback to change C0 or reference members."
+    },
+    {
+      "approval": "chief_01a18bb2-6a21-7033-9775-7186ef6526e4_conditional_on_v012_author_review",
+      "evaluation_stage": "A0/H0/T0/T1",
+      "factor_json_pointers": [
+        "/lifecycle/monitor_basis",
+        "/lifecycle/active_to_half",
+        "/lifecycle/half_to_retired",
+        "/lifecycle/nav_drawdown_disable_additions"
+      ],
+      "gate_id": "G17_FACTOR_POOL_LIFECYCLE",
+      "mapping": "PROPOSED_SINGLE_FIXED_ARM_LIFECYCLE_WITH_PRESERVED_NAV_LATCH",
+      "passed_now": false,
+      "proposed_rule": "no factor-cluster active/half pool for a fixedC0; preserve10pct warning/15pct new-risk permanent latch and required satellite exits, no same-version reenable; original63/126falsification and final-decision version-failure latch still apply. No discretionary factor retirement or reweighting from forward returns."
+    }
+  ],
+  "profile_sha256": "1736b460538b2b18142877e1729ed839ba83a4f99282c2461de07f2711277e8d",
+  "proposal_id": "P-FWD63",
+  "stage_dependencies": [
+    {
+      "authorized_now": true,
+      "depends_on": [],
+      "id": "D0",
+      "produces_returns": false,
+      "work": "design/profile/diff/synthetic protocol only"
+    },
+    {
+      "authorized_now": false,
+      "depends_on": [
+        "D0"
+      ],
+      "id": "A0",
+      "produces_returns": false,
+      "work": "chief A1-A3/N ruling 01a18bb2-6a21-7033-9775-7186ef6526e4 implemented in v012; author-review acceptance activates design; no additional chief referral for E0"
+    },
+    {
+      "authorized_now": false,
+      "depends_on": [
+        "A0"
+      ],
+      "id": "E0",
+      "produces_returns": false,
+      "work": "after acceptance 吏部 directly dispatches offline engineering/independent harness; verify factor full-chain vs own-arm N in EVO884, wire own-arm if needed and paired request sensitivity; no EVO883 frozen-byte edits by this author"
+    },
+    {
+      "authorized_now": false,
+      "depends_on": [
+        "E0"
+      ],
+      "id": "P0",
+      "produces_returns": false,
+      "work": "separate subscription preflight grant,1 synthetic dispatch; map every internal request and configuration; requests sensitivity, no market outcomes"
+    },
+    {
+      "authorized_now": false,
+      "depends_on": [
+        "P0"
+      ],
+      "id": "S0",
+      "produces_returns": false,
+      "work": "separate sampling grant;10x30 all preopen sealed and fixed aggregation; single-frame diagnostic no calculated/displayed returns; same-config measurement replicas not new trials under N conditions"
+    },
+    {
+      "authorized_now": false,
+      "depends_on": [
+        "S0",
+        "A0",
+        "E0"
+      ],
+      "id": "L0",
+      "produces_returns": false,
+      "work": "chief actual D0 forward authority + pinned producer SHA/registry + fullN/data/cost/calendar/isolation receipts"
+    },
+    {
+      "authorized_now": false,
+      "concurrent_with": "H0",
+      "depends_on": [
+        "L0"
+      ],
+      "id": "F0",
+      "produces_returns": true,
+      "work": "R1/R2 independent source runs W63; no dependence on C0 or future DSR, first produce and seal actual forward reference returns"
+    },
+    {
+      "authorized_now": false,
+      "concurrent_with": "F0",
+      "depends_on": [
+        "L0"
+      ],
+      "id": "H0",
+      "produces_returns": true,
+      "work": "C0 first actual forward shadow same D0, starts63 clock; under explicit A3 pending-evaluation diagnostic permission"
+    },
+    {
+      "authorized_now": false,
+      "depends_on": [
+        "F0",
+        "H0"
+      ],
+      "id": "T0",
+      "produces_returns": false,
+      "work": "seal same W63 three-role returns, register evaluation events then own-arm configuration N and request sensitivity/tip; evaluate V/DSR as day63 diagnostics, QQQ interval stop first"
+    },
+    {
+      "authorized_now": false,
+      "depends_on": [
+        "T0"
+      ],
+      "id": "X0",
+      "produces_returns": true,
+      "work": "if valid QQQ L<=0<U automatically extend exactly once to126 under preregistration, not gated by day63 DSR; independent runtime/data/risk stops still apply; all3 books and prompt/model/params/aggregation unchanged"
+    },
+    {
+      "authorized_now": false,
+      "depends_on": [
+        "X0"
+      ],
+      "id": "T1",
+      "produces_returns": false,
+      "work": "sealed W126 and second63 full3 roles, own-arm N and paired request sensitivity; DSR day126 certification input only; no more extension, independent handoff"
+    },
+    {
+      "authorized_now": false,
+      "depends_on": [
+        "T1"
+      ],
+      "id": "CERTIFICATION",
+      "produces_returns": false,
+      "work": "separate independent decision, never automatic; requires day126 DSR as certification input, neither63 nor126 proves strategy"
+    }
+  ],
+  "state": "CHIEF_CONDITIONS_IMPLEMENTED_AUTHOR_REVIEW_PENDING"
+}

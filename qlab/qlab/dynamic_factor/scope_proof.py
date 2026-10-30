@@ -19,6 +19,7 @@ GATES = {
 }
 
 IMPORTS = {
+    "arm_n": {"__future__", "json", "contract"},
     "execution": {
         "__future__",
         "contract",
@@ -45,6 +46,7 @@ IMPORTS = {
         "validation",
     },
     "pipeline": {
+        "arm_n",
         "__future__",
         "contract",
         "conventions",

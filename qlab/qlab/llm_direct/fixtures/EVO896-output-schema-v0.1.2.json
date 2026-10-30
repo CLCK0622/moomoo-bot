@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:evo896:output:LLMCLI-v0.1.2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "arm_version",
+    "snapshot_id",
+    "input_sha256",
+    "decision_session",
+    "status",
+    "reason_code",
+    "ranked_symbols",
+    "targets",
+    "forecasts_h10_bps",
+    "profile_sha256"
+  ],
+  "properties": {
+    "arm_version": {
+      "const": "LLMCLI-v0.1.2"
+    },
+    "snapshot_id": {
+      "type": "string",
+      "pattern": "^snapshot:[0-9a-f]{64}$"
+    },
+    "input_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "decision_session": {
+      "type": "string",
+      "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$"
+    },
+    "status": {
+      "enum": [
+        "READY",
+        "ABSTAIN"
+      ]
+    },
+    "reason_code": {
+      "enum": [
+        "OK",
+        "INPUT_UNAVAILABLE",
+        "PLAN_INFEASIBLE",
+        "RISK_LATCH"
+      ]
+    },
+    "ranked_symbols": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 64,
+      "items": {
+        "type": "string",
+        "enum": [
+          "AAPL",
+          "ABBV",
+          "ABNB",
+          "ABT",
+          "ACN",
+          "ADBE",
+          "ADI",
+          "ADP",
+          "ADSK",
+          "AEP",
+          "AJG",
+          "ALL",
+          "AMAT",
+          "AMD",
+          "AMGN",
+          "AMZN",
+          "ANET",
+          "AON",
+          "APD",
+          "APH",
+          "APO",
+          "APP",
+          "AVGO",
+          "AXP",
+          "B",
+          "BA",
+          "BAC",
+          "BE",
+          "BKNG",
+          "BKR",
+          "BLK",
+          "BMY",
+          "BNY",
+          "BRK.B",
+          "BSX",
+          "C",
+          "CAH",
+          "CARR",
+          "CAT",
+          "CB",
+          "CDNS",
+          "CEG",
+          "CI",
+          "CIEN",
+          "CL",
+          "CMCSA",
+          "CME",
+          "CMG",
+          "CMI",
+          "COF",
+          "COHR",
+          "COIN",
+          "COP",
+          "COR",
+          "COST",
+          "CRDO",
+          "CRH",
+          "CRM",
+          "CRWD",
+          "CSCO",
+          "CSX",
+          "CTAS",
+          "CVNA",
+          "CVS"
+        ]
+      }
+    },
+    "targets": {
+      "type": "array",
+      "maxItems": 65,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "symbol",
+          "target_qty"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "enum": [
+              "AAPL",
+              "ABBV",
+              "ABNB",
+              "ABT",
+              "ACN",
+              "ADBE",
+              "ADI",
+              "ADP",
+              "ADSK",
+              "AEP",
+              "AJG",
+              "ALL",
+              "AMAT",
+              "AMD",
+              "AMGN",
+              "AMZN",
+              "ANET",
+              "AON",
+              "APD",
+              "APH",
+              "APO",
+              "APP",
+              "AVGO",
+              "AXP",
+              "B",
+              "BA",
+              "BAC",
+              "BE",
+              "BKNG",
+              "BKR",
+              "BLK",
+              "BMY",
+              "BNY",
+              "BRK.B",
+              "BSX",
+              "C",
+              "CAH",
+              "CARR",
+              "CAT",
+              "CB",
+              "CDNS",
+              "CEG",
+              "CI",
+              "CIEN",
+              "CL",
+              "CMCSA",
+              "CME",
+              "CMG",
+              "CMI",
+              "COF",
+              "COHR",
+              "COIN",
+              "COP",
+              "COR",
+              "COST",
+              "CRDO",
+              "CRH",
+              "CRM",
+              "CRWD",
+              "CSCO",
+              "CSX",
+              "CTAS",
+              "CVNA",
+              "CVS",
+              "QQQ"
+            ]
+          },
+          "target_qty": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          }
+        }
+      }
+    },
+    "forecasts_h10_bps": {
+      "type": "array",
+      "maxItems": 65,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "symbol",
+          "gross_return_bps"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "enum": [
+              "AAPL",
+              "ABBV",
+              "ABNB",
+              "ABT",
+              "ACN",
+              "ADBE",
+              "ADI",
+              "ADP",
+              "ADSK",
+              "AEP",
+              "AJG",
+              "ALL",
+              "AMAT",
+              "AMD",
+              "AMGN",
+              "AMZN",
+              "ANET",
+              "AON",
+              "APD",
+              "APH",
+              "APO",
+              "APP",
+              "AVGO",
+              "AXP",
+              "B",
+              "BA",
+              "BAC",
+              "BE",
+              "BKNG",
+              "BKR",
+              "BLK",
+              "BMY",
+              "BNY",
+              "BRK.B",
+              "BSX",
+              "C",
+              "CAH",
+              "CARR",
+              "CAT",
+              "CB",
+              "CDNS",
+              "CEG",
+              "CI",
+              "CIEN",
+              "CL",
+              "CMCSA",
+              "CME",
+              "CMG",
+              "CMI",
+              "COF",
+              "COHR",
+              "COIN",
+              "COP",
+              "COR",
+              "COST",
+              "CRDO",
+              "CRH",
+              "CRM",
+              "CRWD",
+              "CSCO",
+              "CSX",
+              "CTAS",
+              "CVNA",
+              "CVS",
+              "QQQ"
+            ]
+          },
+          "gross_return_bps": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -10000,
+                "maximum": 10000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "profile_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "READY"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reason_code": {
+            "const": "OK"
+          },
+          "ranked_symbols": {
+            "minItems": 50
+          },
+          "targets": {
+            "minItems": 65
+          },
+          "forecasts_h10_bps": {
+            "minItems": 65
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "reason_code": {
+            "enum": [
+              "INPUT_UNAVAILABLE",
+              "PLAN_INFEASIBLE",
+              "RISK_LATCH"
+            ]
+          },
+          "ranked_symbols": {
+            "maxItems": 0
+          },
+          "targets": {
+            "maxItems": 0
+          },
+          "forecasts_h10_bps": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}

@@ -340,3 +340,56 @@ Synthetic byte-replacement and snapshot-off probes compare actual owned interfac
 output SHA across all seven roles. Runtime DAG/source acceptance and formal B2
 return qualification remain separate; no real reference/strategy run, account
 arrival, suffix or SPY fallback is created by these diagnostics.
+
+
+## Explicit arm N readout (EVO-897 item 2)
+
+`dsr_eval(request, ledger)` requires `request["arm_tag"]` to be
+`EVO883_FACTOR` or `EVO896_LLMCLI`. The CLI forwards an explicitly supplied
+outer `arm_tag` or `metrics.arm_tag`; conflicting labels refuse. No factor label
+is inferred from the tool, run ID or conventions. `pipeline.evaluate()` and the
+legacy `dsr_v0.evaluate()` use this same gate. `run_train_pipeline()` checks
+`context.arm_tag` before any record/begin or callback, and still refuses the
+pending runtime contract even with a valid tag. Candidate and meta N reads pass
+through the context's explicit label. `_n_snapshot()` retains the positional
+self-report argument for compatibility but never writes or uses its number.
+
+`AttemptLedger.arm_readout()` and `AuthorityLedger.arm_readout()` read one
+verified snapshot and expose two parallel `N_rows`: primary observed distinct
+configurations evaluated by market outcomes, and sensitivity actual generation
+requests. A configuration is prompt version × model snapshot × parameters ×
+ruleset, reserved before its first outcome. Repeated outcomes count it once;
+unevaluated reservations add no primary N; repair/retry/failure requests remain
+in sensitivity. Other-arm events do not contribute to either row. Unknown
+internal request counts leave sensitivity null. Missing/malformed event labels,
+legacy mappings, configuration identities or request evidence refuse projection.
+There is no automatic historical retagging.
+
+Both rows' `complete_N`, formal `cumulative_n` and `cumulative_n_lower_bound`
+remain null until separate history acceptance. Runtime DSR/V, admission and
+certification stay unavailable. Legacy `ledger.readout()` is an audit of global
+history and retains its existing counts; the new projection retains these under
+`arm_n.global_history`, never as gate N. Readout never changes chain, witness,
+recorded N or high water. The project authority path/writer is unchanged.
+
+Integration negatives are `tests/dynamic_factor/test_arm_n.py` and the four
+`N.*` cases in `llm_direct.harness`, which invoke actual DSR, ledger readout and
+pipeline N entries. They use local fixture chains and read-only copies of the
+pinned v2/v4 archives, never an authoritative writer.
+
+Compatibility impact on existing registered fixtures:
+
+| Existing caller / fixture | New behavior |
+| --- | --- |
+| Fixed `dsr.scale_and_v_required`, seed 47 | Still refuses DSR/V. Formal own-arm lower bound changes 47 → null; global historical seed remains 47. |
+| `test_conventions` failed/NaN fixture, seed 47 + one attempt | Still refuses. Raw ledger lower bound remains 48; DSR own-arm N is null with missing-label/mapping reasons. |
+| Registered candidate/meta references (`test_v1_increment`), four reserved attempts | Reference registry validation still passes; DSR still refuses. Raw 51 remains 51; no arm tag is fabricated. |
+| Published v2/N75 and v4/N280 archives | Global recorded N, high water, sequence and tip stay unchanged; own-arm projection refuses legacy untagged rows. |
+| Legacy plugin/scale/scalar-V negatives and missing-policy fixtures | Still refuse; additionally diagnose absent arm tags. Plugins remain uncalled. |
+| `scope.S2_unavailable_not_empty_QQQ` train pipeline, empty context | Still returns no candidate/meta and invokes no callbacks. First reason is now missing arm tag rather than pending runtime binding. |
+| Historical `dsr_v0.evaluate` compatibility route | Now shares public runtime refusal, produces no numerical SR and performs no self-report write. No registered test/harness calls this old evaluator; pure `formula`/`daily_sr` tests are unchanged. |
+
+No previously accepted DSR fixture becomes rejected: none was certified. The
+reference-registry and pure-arithmetic positives remain accepted at their
+original limited scope. Frozen inputs and historical evidence reports keep their
+original bytes/source seals; this revision's outputs are delivered separately.
