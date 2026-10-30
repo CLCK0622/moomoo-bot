@@ -1,0 +1,55 @@
+{
+  "B2_receipt_input_sha256": [
+    "258b8b40aa18a3138fe1ed56bf59b4ead00cfcb65a92bbd6ae3963890dcb5702",
+    "f0bdbab6d502f97c5e2c34acac5a756fa12b78cd79563a7dd601c97084b36137"
+  ],
+  "VTI_source_sha256": [
+    "2936718797ff276496224102d6ae938262cf06b84ab0d1c1523958820d63fc43",
+    "0d67cce8e1efe7428f9894e1eb9a3653487fe467aa3ae775870b25a4cc597a7f"
+  ],
+  "actual_reference_returns": null,
+  "actual_reference_run_id": null,
+  "case_id": "scope.VTI_file_replacement_output_SHA_invariant",
+  "evidence_scope": "Owned fixed interfaces and synthetic caller inputs; actual runtime DAG and market-source acceptance remain separate.",
+  "main_market_file_bindings": {
+    "QQQ": {
+      "file": "QQQ.json",
+      "sha256": "2b0166361629b0311ed90e11e456472fd224d23c14ff9c2458439db8616d6d29",
+      "symbol": "QQQ"
+    }
+  },
+  "output_sha256_after": {
+    "admission": "5bdaa0e6ae393017997b44c9da1ebf8ea4cc5b2a8180113348e82b344a85c684",
+    "calibration": "20396ae9a635e8145b3d9280cfb2c0a650f92a9b24760a156a3275281f6f2ad4",
+    "features": "a8a7df8b437400b9fb4bf4eee9c8cd859123276703873ca6ff1b8ecaad741236",
+    "holdings_cash": "d7ee4dc843ebdda98cb127b3a7b0470b22470c3e08991eff0da28e229587d5d5",
+    "orders": "79581bb92c12876d228b412afca20bcc3785284f4240af9a289d39bcb7e50724",
+    "qqq_labels": "e84cfe7553c40c7ab8f54ca449261e0624fef224c9683d7d8cbb2b0619f94073",
+    "reference": "3fe896694547cff24d85a43d7515210645c151f991211aa3ad3c23929980669f"
+  },
+  "output_sha256_before": {
+    "admission": "5bdaa0e6ae393017997b44c9da1ebf8ea4cc5b2a8180113348e82b344a85c684",
+    "calibration": "20396ae9a635e8145b3d9280cfb2c0a650f92a9b24760a156a3275281f6f2ad4",
+    "features": "a8a7df8b437400b9fb4bf4eee9c8cd859123276703873ca6ff1b8ecaad741236",
+    "holdings_cash": "d7ee4dc843ebdda98cb127b3a7b0470b22470c3e08991eff0da28e229587d5d5",
+    "orders": "79581bb92c12876d228b412afca20bcc3785284f4240af9a289d39bcb7e50724",
+    "qqq_labels": "e84cfe7553c40c7ab8f54ca449261e0624fef224c9683d7d8cbb2b0619f94073",
+    "reference": "3fe896694547cff24d85a43d7515210645c151f991211aa3ad3c23929980669f"
+  },
+  "reference_file_bindings": {
+    "benchmark": {
+      "file": "benchmark.json",
+      "sha256": "b7ac9d6927e78af4b33bd17ea65fb3e8e9e2b9cfe3bc98497ea984cbb48821d7"
+    },
+    "panel": {
+      "file": "panel.json",
+      "sha256": "16270cf9d590ad13229c8b2dece594903416b316d17563d0514daf154d1c85a6"
+    },
+    "profile": {
+      "file": "profile.json",
+      "sha256": "7ff779fcc35427dc63ae73810775dd8589827c43dbfe4440fed73b7bd1123f49"
+    }
+  },
+  "scope": "SYNTHETIC_UNIT_INTERFACES_NOT_ACTUAL_PERFORMANCE",
+  "status": "PASS"
+}

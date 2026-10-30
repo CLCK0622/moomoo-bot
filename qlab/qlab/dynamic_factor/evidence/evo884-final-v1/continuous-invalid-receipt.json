@@ -1,0 +1,2616 @@
+{
+  "actual_run_id": null,
+  "receipt": {
+    "artifacts": {},
+    "assumptions": [
+      "Full original fold/date vectors and state links are mandatory; no fragment statistics, capital restart, budget refund or automatic recovery is authorized.",
+      "Attempt/budget receipts are consistency checks, not independent authority acceptance or permission to recompute.",
+      "all_numeric_strategy_choices_are_unvalidated_design_values",
+      "EVO882_conditional_cost_files_received_but_applicability_and_complete_total_return_accounting_not_closed",
+      "historical_survivorship_and_LLM_knowledge_contamination_not_fixed_by_walk_forward",
+      "reference_open_close_prices_do_not_verify_executability",
+      "20_day_blocks_are_an_approximation_not_exact_coverage_or_sequential_error_control",
+      "raw_attempt_N_is_a_conservative_floor_not_a_proof_of_DSR_model_assumptions",
+      "quality_and_low_price_filters_and_64_panel_are_frozen_design_choices_with_selection_bias_not_empirical_success",
+      "AAPL_reference_calendar_not_exchange_verified",
+      "candidate_and_meta_V_are_separate_ordered_reference_families_not_validated_error_control",
+      "independent_reference_manifests_for_v03_profiles_not_yet_provided",
+      "train_meta_with_whole_train_calibration_is_in_sample_not_inner_OOS",
+      "staged_startup_cash_drag_and_fees_count_from_first_evaluation_day",
+      "post_history_max_fold_V_rule_is_predeclared_design_choice_not_a_proven_coverage_guarantee",
+      "EVO888_and_EVO889_market_results_are_upstream_evidence_not_replayed_here",
+      "QQQ_period_closure_does_not_prove_exact_event_amounts_or_exdates_paydates",
+      "VTI_44_older_amounts_and_two_suspected_events_unverified",
+      "cross_anchor_acceptance_only_bound_files_not_arbitrary_future_anchors",
+      "restored_TAF_budget_not_actual_fee_schedule_SEC_TAF_trade_unit_unresolved",
+      "analytical_fractional_exdate_TR_not_integer_cash_execution",
+      "panel64_data_completeness_runtime_gate_not_design_freeze_blocker"
+    ],
+    "certifiable": false,
+    "common_profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+    "conventions_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+    "conventions_status": "FROZEN_DESIGN_INTERFACE_EXECUTION_GATES_UNMET",
+    "conventions_version": "v1.0.1",
+    "input_sha256": "4d6938f9794841c9c26dcc49aa78ea6bf03ea576822c880d67564e188b5dd130",
+    "metric_availability": {
+      "A": {
+        "available": false,
+        "reason": "wf.strategy_state_or_nav_unknown"
+      },
+      "B2": {
+        "available": false,
+        "reason": "scope.separate_B2_readout_required"
+      },
+      "IR": {
+        "available": false,
+        "reason": "wf.strategy_state_or_nav_unknown"
+      },
+      "complete_N": {
+        "available": false,
+        "reason": "ledger_history_incomplete"
+      },
+      "dsr": {
+        "available": false,
+        "reason": "dsr.runtime_bindings_pending"
+      },
+      "interval": {
+        "available": false,
+        "reason": "wf.strategy_state_or_nav_unknown"
+      },
+      "strategy_path_complete": {
+        "available": false,
+        "reason": "pool.S2_unavailable_not_empty"
+      }
+    },
+    "metrics": {
+      "A": null,
+      "B2": null,
+      "IR": null,
+      "S2_admission_accepted": null,
+      "complete_N": null,
+      "dsr": null,
+      "folds": [
+        {
+          "N_receipt": {
+            "N_after": 281,
+            "N_before": 280,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/0",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/0",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [],
+          "fold_id": "0",
+          "inventory": {},
+          "nav": [
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000,
+            15000
+          ],
+          "predictions": null,
+          "reasons": [],
+          "returns": null,
+          "status": "success",
+          "test_end": "2019-12-31",
+          "test_start": "2019-12-02"
+        },
+        {
+          "N_receipt": {
+            "N_after": 282,
+            "N_before": 281,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/1",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/1",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "1",
+          "inventory": {
+            "QQQ": 2
+          },
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "UNIT_NAV_UNKNOWN",
+            "wf.strategy_state_or_nav_unknown"
+          ],
+          "returns": null,
+          "status": "invalid",
+          "test_end": "2020-01-31",
+          "test_start": "2020-01-02"
+        },
+        {
+          "N_receipt": {
+            "N_after": 283,
+            "N_before": 282,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/2",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/2",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "2",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-03-03",
+          "test_start": "2020-02-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 284,
+            "N_before": 283,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/3",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/3",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "3",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-04-01",
+          "test_start": "2020-03-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 285,
+            "N_before": 284,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/4",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/4",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "4",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-05-01",
+          "test_start": "2020-04-02"
+        },
+        {
+          "N_receipt": {
+            "N_after": 286,
+            "N_before": 285,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/5",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/5",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "5",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-06-02",
+          "test_start": "2020-05-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 287,
+            "N_before": 286,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/6",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/6",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "6",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-07-01",
+          "test_start": "2020-06-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 288,
+            "N_before": 287,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/7",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/7",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "7",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-07-31",
+          "test_start": "2020-07-02"
+        },
+        {
+          "N_receipt": {
+            "N_after": 289,
+            "N_before": 288,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/8",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/8",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "8",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-08-31",
+          "test_start": "2020-08-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 290,
+            "N_before": 289,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/9",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/9",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "9",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-09-30",
+          "test_start": "2020-09-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 291,
+            "N_before": 290,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/10",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/10",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "10",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-10-29",
+          "test_start": "2020-10-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 292,
+            "N_before": 291,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/11",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/11",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "11",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-11-30",
+          "test_start": "2020-10-30"
+        },
+        {
+          "N_receipt": {
+            "N_after": 293,
+            "N_before": 292,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/12",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/12",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "12",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2020-12-30",
+          "test_start": "2020-12-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 294,
+            "N_before": 293,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/13",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/13",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "13",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-02-01",
+          "test_start": "2020-12-31"
+        },
+        {
+          "N_receipt": {
+            "N_after": 295,
+            "N_before": 294,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/14",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/14",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "14",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-03-03",
+          "test_start": "2021-02-02"
+        },
+        {
+          "N_receipt": {
+            "N_after": 296,
+            "N_before": 295,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/15",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/15",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "15",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-04-01",
+          "test_start": "2021-03-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 297,
+            "N_before": 296,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/16",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/16",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "16",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-05-03",
+          "test_start": "2021-04-05"
+        },
+        {
+          "N_receipt": {
+            "N_after": 298,
+            "N_before": 297,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/17",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/17",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "17",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-06-02",
+          "test_start": "2021-05-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 299,
+            "N_before": 298,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/18",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/18",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "18",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-07-01",
+          "test_start": "2021-06-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 300,
+            "N_before": 299,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/19",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/19",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "19",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-08-02",
+          "test_start": "2021-07-02"
+        },
+        {
+          "N_receipt": {
+            "N_after": 301,
+            "N_before": 300,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/20",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/20",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "20",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-08-31",
+          "test_start": "2021-08-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 302,
+            "N_before": 301,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/21",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/21",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "21",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-09-30",
+          "test_start": "2021-09-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 303,
+            "N_before": 302,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/22",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/22",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "22",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-10-29",
+          "test_start": "2021-10-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 304,
+            "N_before": 303,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/23",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/23",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "23",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-11-30",
+          "test_start": "2021-11-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 305,
+            "N_before": 304,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/24",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/24",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "24",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2021-12-30",
+          "test_start": "2021-12-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 306,
+            "N_before": 305,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/25",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/25",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "25",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-01-31",
+          "test_start": "2021-12-31"
+        },
+        {
+          "N_receipt": {
+            "N_after": 307,
+            "N_before": 306,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/26",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/26",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "26",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-03-02",
+          "test_start": "2022-02-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 308,
+            "N_before": 307,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/27",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/27",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "27",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-03-31",
+          "test_start": "2022-03-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 309,
+            "N_before": 308,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/28",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/28",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "28",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-05-02",
+          "test_start": "2022-04-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 310,
+            "N_before": 309,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/29",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/29",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "29",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-06-01",
+          "test_start": "2022-05-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 311,
+            "N_before": 310,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/30",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/30",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "30",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-07-01",
+          "test_start": "2022-06-02"
+        },
+        {
+          "N_receipt": {
+            "N_after": 312,
+            "N_before": 311,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/31",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/31",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "31",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-08-02",
+          "test_start": "2022-07-05"
+        },
+        {
+          "N_receipt": {
+            "N_after": 313,
+            "N_before": 312,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/32",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/32",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "32",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-08-31",
+          "test_start": "2022-08-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 314,
+            "N_before": 313,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/33",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/33",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "33",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-09-30",
+          "test_start": "2022-09-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 315,
+            "N_before": 314,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/34",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/34",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "34",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-10-31",
+          "test_start": "2022-10-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 316,
+            "N_before": 315,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/35",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/35",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "35",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-11-30",
+          "test_start": "2022-11-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 317,
+            "N_before": 316,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/36",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/36",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "36",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2022-12-30",
+          "test_start": "2022-12-01"
+        },
+        {
+          "N_receipt": {
+            "N_after": 318,
+            "N_before": 317,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/37",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/37",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "37",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-02-01",
+          "test_start": "2023-01-03"
+        },
+        {
+          "N_receipt": {
+            "N_after": 319,
+            "N_before": 318,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/38",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/38",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "38",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-03-03",
+          "test_start": "2023-02-02"
+        },
+        {
+          "N_receipt": {
+            "N_after": 320,
+            "N_before": 319,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/39",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/39",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "39",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-04-03",
+          "test_start": "2023-03-06"
+        },
+        {
+          "N_receipt": {
+            "N_after": 321,
+            "N_before": 320,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/40",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/40",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "40",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-05-03",
+          "test_start": "2023-04-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 322,
+            "N_before": 321,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/41",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/41",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "41",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-06-02",
+          "test_start": "2023-05-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 323,
+            "N_before": 322,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/42",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/42",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "42",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-07-05",
+          "test_start": "2023-06-05"
+        },
+        {
+          "N_receipt": {
+            "N_after": 324,
+            "N_before": 323,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/43",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/43",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "43",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-08-03",
+          "test_start": "2023-07-06"
+        },
+        {
+          "N_receipt": {
+            "N_after": 325,
+            "N_before": 324,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/44",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/44",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "44",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-09-01",
+          "test_start": "2023-08-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 326,
+            "N_before": 325,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/45",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/45",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "45",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-10-03",
+          "test_start": "2023-09-05"
+        },
+        {
+          "N_receipt": {
+            "N_after": 327,
+            "N_before": 326,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/46",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/46",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "46",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-11-01",
+          "test_start": "2023-10-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 328,
+            "N_before": 327,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/47",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/47",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "47",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2023-12-01",
+          "test_start": "2023-11-02"
+        },
+        {
+          "N_receipt": {
+            "N_after": 329,
+            "N_before": 328,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/48",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/48",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "48",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-01-03",
+          "test_start": "2023-12-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 330,
+            "N_before": 329,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/49",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/49",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "49",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-02-02",
+          "test_start": "2024-01-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 331,
+            "N_before": 330,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/50",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/50",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "50",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-03-05",
+          "test_start": "2024-02-05"
+        },
+        {
+          "N_receipt": {
+            "N_after": 332,
+            "N_before": 331,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/51",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/51",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "51",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-04-04",
+          "test_start": "2024-03-06"
+        },
+        {
+          "N_receipt": {
+            "N_after": 333,
+            "N_before": 332,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/52",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/52",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "52",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-05-03",
+          "test_start": "2024-04-05"
+        },
+        {
+          "N_receipt": {
+            "N_after": 334,
+            "N_before": 333,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/53",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/53",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "53",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-06-04",
+          "test_start": "2024-05-06"
+        },
+        {
+          "N_receipt": {
+            "N_after": 335,
+            "N_before": 334,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/54",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/54",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "54",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-07-05",
+          "test_start": "2024-06-05"
+        },
+        {
+          "N_receipt": {
+            "N_after": 336,
+            "N_before": 335,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/55",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/55",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "55",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-08-05",
+          "test_start": "2024-07-08"
+        },
+        {
+          "N_receipt": {
+            "N_after": 337,
+            "N_before": 336,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/56",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/56",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "56",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-09-04",
+          "test_start": "2024-08-06"
+        },
+        {
+          "N_receipt": {
+            "N_after": 338,
+            "N_before": 337,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/57",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/57",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "57",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-10-03",
+          "test_start": "2024-09-05"
+        },
+        {
+          "N_receipt": {
+            "N_after": 339,
+            "N_before": 338,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/58",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/58",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "58",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-11-01",
+          "test_start": "2024-10-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 340,
+            "N_before": 339,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/59",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/59",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "59",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2024-12-03",
+          "test_start": "2024-11-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 341,
+            "N_before": 340,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/60",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/60",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "60",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-01-03",
+          "test_start": "2024-12-04"
+        },
+        {
+          "N_receipt": {
+            "N_after": 342,
+            "N_before": 341,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/61",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/61",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "61",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-02-05",
+          "test_start": "2025-01-06"
+        },
+        {
+          "N_receipt": {
+            "N_after": 343,
+            "N_before": 342,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/62",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/62",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "62",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-03-07",
+          "test_start": "2025-02-06"
+        },
+        {
+          "N_receipt": {
+            "N_after": 344,
+            "N_before": 343,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/63",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/63",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "63",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-04-07",
+          "test_start": "2025-03-10"
+        },
+        {
+          "N_receipt": {
+            "N_after": 345,
+            "N_before": 344,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/64",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/64",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "64",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-05-07",
+          "test_start": "2025-04-08"
+        },
+        {
+          "N_receipt": {
+            "N_after": 346,
+            "N_before": 345,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/65",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/65",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "65",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-06-06",
+          "test_start": "2025-05-08"
+        },
+        {
+          "N_receipt": {
+            "N_after": 347,
+            "N_before": 346,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/66",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/66",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "66",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-07-09",
+          "test_start": "2025-06-09"
+        },
+        {
+          "N_receipt": {
+            "N_after": 348,
+            "N_before": 347,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/67",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/67",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "67",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-08-07",
+          "test_start": "2025-07-10"
+        },
+        {
+          "N_receipt": {
+            "N_after": 349,
+            "N_before": 348,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/68",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/68",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "68",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-09-08",
+          "test_start": "2025-08-08"
+        },
+        {
+          "N_receipt": {
+            "N_after": 350,
+            "N_before": 349,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/69",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/69",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "69",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-10-07",
+          "test_start": "2025-09-09"
+        },
+        {
+          "N_receipt": {
+            "N_after": 351,
+            "N_before": 350,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/70",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/70",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "70",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-11-05",
+          "test_start": "2025-10-08"
+        },
+        {
+          "N_receipt": {
+            "N_after": 352,
+            "N_before": 351,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/71",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/71",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "71",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2025-12-05",
+          "test_start": "2025-11-06"
+        },
+        {
+          "N_receipt": {
+            "N_after": 353,
+            "N_before": 352,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/72",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/72",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "72",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2026-01-07",
+          "test_start": "2025-12-08"
+        },
+        {
+          "N_receipt": {
+            "N_after": 354,
+            "N_before": 353,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/73",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/73",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "73",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2026-02-06",
+          "test_start": "2026-01-08"
+        },
+        {
+          "N_receipt": {
+            "N_after": 355,
+            "N_before": 354,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/74",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/74",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "74",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2026-03-10",
+          "test_start": "2026-02-09"
+        },
+        {
+          "N_receipt": {
+            "N_after": 356,
+            "N_before": 355,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/75",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/75",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "75",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2026-04-09",
+          "test_start": "2026-03-11"
+        },
+        {
+          "N_receipt": {
+            "N_after": 357,
+            "N_before": 356,
+            "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/76",
+            "contribution": 1
+          },
+          "attempt_id": "SYNTHETIC_UNIT_NO_PERFORMANCE/76",
+          "attempted": true,
+          "budget_state": {
+            "authorization_sha256": "15a97781d6d5182573f154aeca16f2e3caba55b0e275b7564787582998a4abc3",
+            "consumed": true,
+            "seen_result": true
+          },
+          "exit_intents": [
+            "UNIT_EXIT_RETAINED"
+          ],
+          "fold_id": "76",
+          "inventory": {
+            "QQQ": 2
+          },
+          "inventory_status": "last_known_before_halt",
+          "nav": null,
+          "predictions": null,
+          "reasons": [
+            "wf.prior_strategy_state_unknown"
+          ],
+          "returns": null,
+          "status": "blocked",
+          "test_end": "2026-05-08",
+          "test_start": "2026-04-10"
+        }
+      ],
+      "interval": null,
+      "receipt_consistency_only": true,
+      "state_receipt_grid_complete": false,
+      "strategy_path_complete": null
+    },
+    "missing_inputs": [],
+    "ok": false,
+    "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "prereg_version": "v1",
+    "profile_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "reasons": [
+      "wf.strategy_state_or_nav_unknown",
+      "wf.continuation_after_invalid_state_forbidden"
+    ],
+    "runtime_consumable": false,
+    "schema": "dynamic_factor.tool/v1",
+    "source_files": {
+      "__init__.py": "06af6993da8dcb49ff75936b7b5e327424b753802687d92dda74033c15efd797",
+      "__main__.py": "bb4fa17c59c94fd7781ae8e4f52094e101f028e2a02909b8983ec49b68dc0a6e",
+      "authority_harness.py": "0365490e6cba4ba8e9421d9f7650059beb701f6a334d55acdf2a346f00e2423c",
+      "authority_ledger.py": "6242d48002e30b740fe423b250af18bc1abbe3f4657b0337404e2033f2cb7858",
+      "continuity.py": "ec076aff10d0b04fb02793f49ac29a9e29891a71dd54a96155e87f6af2f10482",
+      "contract.py": "ff198c8d9ad05e7f2664af8120a9f6e3d21a242e3ef19e9f0b5cbb65a5beacbb",
+      "conventions.py": "d70340d4eccdfe635b5604b7da5ebf4ee59ebece6be329147f81610d76fa4663",
+      "disposition_harness.py": "2008b39696cdb5edf6cbf4e1dc9180863286fe86aab8b12b00de05a692daa283",
+      "dsr_v0.py": "e4e3fb1bd42333a5d9c8b9c508ca421172c1d83de0d7e5e2a5c12f276f49425b",
+      "execution.py": "39f9b1870607ee9d31eebacfd75e717c3443ba4281c38120ebd89bbd0c0caf39",
+      "f1f2_harness.py": "7d81163a28ee68b7b9e854cc1107df6dddecfae1ca7349d58a6b50ab5cc69aeb",
+      "fee_model.py": "6f24d69501e7f9f10a8d685d54670fec8288ad23d1926f613fd4610287f24d2c",
+      "fees.py": "144ee2bb1b9ca8bd24e480afcd0968e0fa711444ca520c6c6a72d8cf6d628e9a",
+      "fixture_inventory.py": "1b8c164c69faf068d194501a06bbae448f6840abeec741bacd15d56e5a50943a",
+      "fold_split.py": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+      "folds.py": "8ece40df5ae7d1f910f365dd76c9f8e029673d060a0e8a91af22f4a0661e5cad",
+      "harness.py": "424fde7c9720b8fdf99be4b694c66288a4a327675bea6c0a9dd75343350ad5df",
+      "harness_helpers.py": "3bb5677bef3365b5ea57f48bf3635b6fee7158aacf699d771cf18c9e0d7ea971",
+      "input_disposition.py": "88ee68778de6285fabb3a6bc2d3e554be5e195fa664b4240663b78d94b0a65d1",
+      "input_scope.py": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+      "invariance_harness.py": "f462f9b6648505e5d0539f9c0afe9a6888307269970e1a1590a1e397357fa690",
+      "ledger.py": "40ad5bc8422b8063c6d8f955e699070248e0fe7da1459db1214646068e6a3c88",
+      "ledger_anchor.py": "0c26b1a34cdf42b337404a06ad4f633c1fd5651d909008f6923fb20925ea9b57",
+      "pending.py": "2987ba4abe7406c555faad834ee938c12239c9863999bd9d713d15b5acf03a1a",
+      "pipeline.py": "11e0373800a1d86910bb06fc84b7509d9baf2717113f2ea9335ec7b270139eab",
+      "receipts.py": "4647fafba46f5d5ae39401f1129c73eebb8dd5e6de6c91d82f23aea403803e8d",
+      "reference_boundary.py": "acd6d347f59da1d9df8b127f31d3b5f97f17039a35705fb7d94606ec90065551",
+      "reference_check.py": "395cea7bf3fbd621383739ae0a8a2dab5c996b228b459ee19626064e703f0c27",
+      "reference_evidence.py": "0ec475c9ee5256486c908c9293231e47a4265f59d9459721543f54caa60efe8b",
+      "reference_guard.py": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+      "reference_harness.py": "336144afa15539e4dad4aea5a339005beb27bb87cd6573d6620701cebd6dc823",
+      "reference_inputs.py": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+      "reference_producer.py": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+      "reference_registry.py": "689ced79a2df37ffa857f14451dfaa66d0df412f31dadc39cbb7ba5f2afb45b8",
+      "scope_harness.py": "cc18ce264281a8b72c1c3f63ebd0dfc30160b24e45d8b427c46ea39eca49936e",
+      "scope_proof.py": "6fa768ef49fc1d31da8c576872bd9025a938da580c4cd5e63385af18f0b0b62b",
+      "scope_reader.py": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38",
+      "statistics.py": "2a926e6456a25e50319dc60cffe4652477f281180d51f440b8e3714a69e386e1",
+      "v1_harness.py": "7c27d3f80082b43600a9de1734cb0bfdba9ee6e20f1f0cca42abf919fe633ae5",
+      "validation.py": "f47a4b2ad4f44d152b525b54a9043ffcafda993c346abe35081d1bea60e4efa4",
+      "valuation.py": "7e11e974600d1712f25d8f09d6077e4f3263363bf2aee737fc376b2612dabeb2"
+    },
+    "source_sha256": "3b69699b6647496e3db763cc6871cd89ad25072852a53b7c968fadedbe9530b4",
+    "tool": "continuous_path_check"
+  },
+  "scope": "SYNTHETIC_UNIT_RECEIPTS_NOT_ACTUAL_RUN"
+}
