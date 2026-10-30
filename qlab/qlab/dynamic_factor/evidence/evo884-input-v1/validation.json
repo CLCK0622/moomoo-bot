@@ -1,0 +1,62 @@
+{
+  "DSR": null,
+  "R1_commit_preserved": "6eb0a3a",
+  "R1_formal_anchor_entrypoints_AST_unchanged": true,
+  "V": null,
+  "account_or_market_queries": 0,
+  "actual_reference_outputs": null,
+  "actual_reference_run_id": null,
+  "baseline_commit": "4d13a69c3708d2b01cf3c6429a19b45f4c223c02",
+  "canonical_recipe": "remove entire root dependencies key; UTF8 sorted keys ensure_ascii=False compact separators; no trailing newline",
+  "canonical_without_dependencies_sha256": "d114779f4eb4e084653f0a6988069a7811e18e5f6ba8f4c8c8abd232511fc429",
+  "certifiable": false,
+  "complete_N": null,
+  "cross_interpreter_only_difference": "dependencies.python",
+  "evo886_status_before_seal": "backlog",
+  "fee_frontier_source_unchanged": true,
+  "harness_cases": {
+    "fixed": 10,
+    "input_disposition": 5,
+    "minimum_scope": 4,
+    "new_required_negatives": 9,
+    "revision": 39
+  },
+  "harness_sha256": {
+    "python312": "dd9ab7b052b30c4d255c082f60b1a94fbc2a1dfe4e71153fd4b871af3cf2fed3",
+    "python39": "ad98baef452145b889923df548e436d4a5bc36665e7d3c8fd5d89a94f7c50986"
+  },
+  "migration_scope": "Reader policy and source-mapped QQQ input adoption, same JSONL chain; no project installation or SQLite conversion accepted.",
+  "n_complete": false,
+  "private_unit_ledger_writes": true,
+  "producer_access_boundary_changed": true,
+  "project_ledger_mutations": 0,
+  "recorded_N": 75,
+  "review_batch": "third; second batch remains pinned to 4d13a69",
+  "ruff": "0.14.3 lint and format --check passed",
+  "ruling_sha256": {
+    "EVO883-EVO886-minimum-scope-ruling-v1.json": "730931cdd7b9c2f62db9841438235e0aa4887f27ef4a842844d63b6570fd7ede",
+    "EVO883-EVO886-minimum-scope-ruling-v1.md": "56d97ab77b8389abcd8fcc7c9df2d7094cfc38b3da39954f3b92439d061b05da",
+    "EVO883-EVO891-disposition-draft-v1.json": "75685ab429e05a74fb5f1c9187c5da144b98b6932795569516f9137f8f608f87",
+    "EVO883-EVO891-ruling-v1.md": "641c03afea7ff86bfab99d5392e3185606e1241669f110a315fa8379b5e7684c",
+    "QQQ-source-row-bindings-v1.json": "71953b090c92ca6fc02cb1a2a5e493a02b991ff35e43e3bf4c07136da8441260"
+  },
+  "runtime_consumable": false,
+  "sealed_at": "2026-10-30T05:16:00Z",
+  "shadow15k_untouched": true,
+  "strategy_backtests": 0,
+  "tests": {
+    "3.12.13": {
+      "passed": 209,
+      "skipped_modules": 0
+    },
+    "3.9.6": {
+      "passed": 201,
+      "reason": "qlib unavailable; module contains 8 optional tests",
+      "skipped_modules": 1
+    },
+    "command": "PYTHONPATH=qlab:. python -m pytest qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q --tb=short -rs",
+    "dynamic_factor": 201,
+    "optional_qlib": 8
+  },
+  "two_processes_per_interpreter_byte_identical": true
+}

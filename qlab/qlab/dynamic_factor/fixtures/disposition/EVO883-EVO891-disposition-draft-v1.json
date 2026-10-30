@@ -1,0 +1,633 @@
+{
+  "QQQ_disposition": {
+    "actual_account_cash_verified": false,
+    "derive_simulated_inventory_credits_from_frozen_contract_not_real_account_probe": true,
+    "future_events_verified": false,
+    "inventory_dependent_credit_fields_null_in_input_packet_is_not_proof_of_missing_historical_payment_dates": true,
+    "keep_old_inputs_and_frozen_bytes": true,
+    "matched_Nasdaq_records": 53,
+    "source_sha256": "fc6abbcc2f957daa4570607ea1f1eeb0e2b2b123474ceec05164eb11b6c24776",
+    "upgrade_as_new_versioned_input_only": [
+      "known_historical_amount_exdate_paydate",
+      "2022_12_19_0.65541_from_inferred_to_exchange_record",
+      "2026_06_22_0.81349_pay2026_07_10"
+    ]
+  },
+  "VTI_disposition": {
+    "SPY_proxy_allowed": false,
+    "changing_common_calendar_folds_windows_or_benchmark_requires_version": true,
+    "formal_readout_current": "unavailable_full_frozen_history_report",
+    "freeze_paths": [
+      "benchmarks.B2_freeze_rule",
+      "benchmarks.post_freeze_VTI",
+      "calendar_policy.aligned_range",
+      "train_test_split",
+      "price_basis_gate.no_evidence"
+    ],
+    "impossibility_stop_confirmed": false,
+    "normalization_only_may_be_input_receipt": "only_if_identical_frozen_metric_dates_and_all_required_local_returns_inputs_proven_equivalent_no_dependency_or_fold_change",
+    "observed_full_index_non_null_dates": {
+      "count": 37,
+      "first": "2013-10-29",
+      "last": "2013-12-19"
+    },
+    "observed_suffix_dates": {
+      "count": 3153,
+      "first": "2013-12-23",
+      "last": "2026-07-09"
+    },
+    "reason": "upstream_legal_free_sources_not_exhausted_missing_evidence_not_proven_absence",
+    "remaining_evidence": [
+      "2013_12_amount_null_and_existence_date_inferred",
+      "2014_03_date_inferred_amount_jointly_constrained_with_unverified_2014_06_amount",
+      "44_historical_amounts_halfyear_not_individual_proof",
+      "historical_exdates_and_paydates_unverified",
+      "NAV_explanation_inferred_not_verified",
+      "19_original_NCSR_HTML_not_bundled_this_review_did_not_refetch"
+    ],
+    "use_suffix_for_formal_readout_now": false
+  },
+  "certifiable": false,
+  "design_bytes_modified": false,
+  "freeze_binding": {
+    "interface_v1_0_1_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+    "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3"
+  },
+  "handoff": "Hanlin_scholar_review_then_reports_to_Libu_no_direct_history_launch",
+  "inputs": [
+    {
+      "bytes": 38533,
+      "file": "EVO883-prereg-v1.json",
+      "sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f"
+    },
+    {
+      "bytes": 37985,
+      "file": "EVO883-executable-conventions-v1.0.1.json",
+      "sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b"
+    },
+    {
+      "bytes": 3804433,
+      "file": "EVO883-design-freeze-v1.zip",
+      "sha256": "cc6b75b1a2e8f58cfd2c49114daf026f5fec27717ecf3f2fcb84cce986890f56"
+    },
+    {
+      "bytes": 18865,
+      "file": "EVO891-receipt-v1.md",
+      "sha256": "c75842524ff36f860e734a4f6822c5f15d5c9070c48507b42efa553e7c29738d"
+    },
+    {
+      "bytes": 8477829,
+      "file": "EVO891-A-v1.zip",
+      "sha256": "a47594a5b850d148fc06fea0ea78adc4ebf2ed767791c50308f104a0ed178dc8"
+    },
+    {
+      "bytes": 17365,
+      "file": "EVO891-A-status-matrix-v1.csv",
+      "sha256": "b0f0306af6458caf82b85c49cd80bdc24a49f89104bb87add95d61931332d6f4"
+    },
+    {
+      "bytes": 25111,
+      "file": "EVO891-B-ledger-v2.zip",
+      "sha256": "87c07a4bd202e1ae125861c5904060660ce04d1acf6f0700c6abacb2f7d01c99"
+    }
+  ],
+  "ledger_disposition": {
+    "P02": {
+      "draft_status": "unproven_idempotence_not_a_new_ledger_gap_record",
+      "observed_contribution": 0,
+      "observed_same_cells_as": "P01",
+      "required": "distinguish_same_attempt_continuation_or_byte_delivery_from_new_performance_execution_append_if_new_no_author_invented_count"
+    },
+    "active_gap_ids": [
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5"
+    ],
+    "chain_integrity_matches_external_anchor": true,
+    "complete_N": null,
+    "do_not_reduce_N_to_universe_subset": true,
+    "external_anchor": {
+      "N": 75,
+      "genesis_sha256": "b86ed0e55afabd8d2873db317cf93e35cb23d2a43905eda6e9961fcb921d44ab",
+      "ledger_file": "EVO891-B-ledger-v2.jsonl",
+      "ledger_file_sha256": "a8f50e02644ec4a86460f8038b89edcbc1811352e5bf320dca592cef6abcb87e",
+      "ledger_id": "37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc",
+      "n_high_water": 75,
+      "self_report_n": 0,
+      "sequence": 20,
+      "snapshot_sha256": "c4cd7f09cc888a541317cffcb5b90366d6c2c82377ba97b40ed72e627a63bcbc",
+      "tip": "9e3220aa6aa6dcc7f2a03c4f1f917b2da40af78c90173156f6ca4e9efd8e9c0d"
+    },
+    "freeze_paths": [
+      "gate_thresholds.N",
+      "gate_thresholds.N_complete_reconciliation",
+      "gate_thresholds.failed_nan_duplicate_attempts_preserved",
+      "variance_layers.N_snapshots"
+    ],
+    "future_reference_planned_N_not_added_as_executed": 308,
+    "gap_dispositions": [
+      {
+        "closure_or_evidenced_exclusion_required_before_complete_N_history_path": true,
+        "gap_id": "G1",
+        "observed_record": {
+          "effect_on_N": "closing this gap can only add attempt records; N can only go up",
+          "event": "open_gap",
+          "gap_id": "G1",
+          "item": "llm_paper later recomputations (EVO-496 / EVO-605)",
+          "previous_hash": "a2e232e97f5829eb1394f6a6470d70f0445c42d6594d10cdefc8039ec981021b",
+          "reason": "no workdir or repo object; EVO-605 text says real v2 rounds = 0",
+          "seq": 14,
+          "status": "open"
+        },
+        "observed_status": "open",
+        "proposed_minimum_closure": "trace_actual_later_recomputations_retries_failed_attempts_or_prove_no_execution"
+      },
+      {
+        "closure_or_evidenced_exclusion_required_before_complete_N_history_path": true,
+        "gap_id": "G2",
+        "observed_record": {
+          "effect_on_N": "closing this gap can only add attempt records; N can only go up",
+          "event": "open_gap",
+          "gap_id": "G2",
+          "item": "EVO-422 QuantMind minimal isolated PoC (2026-08-31)",
+          "previous_hash": "7ab9fa8dd8e037d679ddae3886649e4223d718fb8272e700dcc7d442369ac714",
+          "reason": "no workdir; unknown whether performance was computed or on which universe",
+          "seq": 15,
+          "status": "open"
+        },
+        "observed_status": "open",
+        "proposed_minimum_closure": "establish_PoC_performance_scope_universe_attempts_or_evidence_based_exclusion"
+      },
+      {
+        "closure_or_evidenced_exclusion_required_before_complete_N_history_path": true,
+        "gap_id": "G3",
+        "observed_record": {
+          "effect_on_N": "closing this gap can only add attempt records; N can only go up",
+          "event": "open_gap",
+          "gap_id": "G3",
+          "item": "EVO-577 synthetic signal-correlation PoC",
+          "previous_hash": "3f2ddeb2848c2dd9177e3cb28a9adc9e6c009e734f71864171ecd6f9448d66e6",
+          "reason": "described as synthetic; no workdir",
+          "seq": 16,
+          "status": "open"
+        },
+        "observed_status": "open",
+        "proposed_minimum_closure": "establish_pure_synthetic_out_of_selection_scope_before_exclusion_no_automatic_count_of_synthetic_samples"
+      },
+      {
+        "closure_or_evidenced_exclusion_required_before_complete_N_history_path": true,
+        "gap_id": "G4",
+        "observed_record": {
+          "effect_on_N": "closing this gap can only add attempt records; N can only go up",
+          "event": "open_gap",
+          "gap_id": "G4",
+          "item": "seed hist/* rows vs pre-ledger branches (evo-13/23/24/25, EVO-65, EVO-162 C1); human-screened 9 vs 7",
+          "previous_hash": "d0088d4302a5cf9bcfcd010bd5ec731478bd7a26f26431f57755504c99a8a78d",
+          "reason": "pre-seed per-cell mapping not redone",
+          "seq": 17,
+          "status": "open"
+        },
+        "observed_status": "open",
+        "proposed_minimum_closure": "map_seed_hist_rows_to_preseed_branches_explain_9_vs7_keep_prior_contributions"
+      },
+      {
+        "closure_or_evidenced_exclusion_required_before_complete_N_history_path": true,
+        "gap_id": "G5",
+        "observed_record": {
+          "effect_on_N": "closing this gap can only add attempt records; N can only go up",
+          "event": "open_gap",
+          "gap_id": "G5",
+          "item": "agent transcripts (~/.claude etc.) and comment attachments outside workdirs",
+          "previous_hash": "c180952428efe6cdb53cbdcd8a964389a8f39454703eb30bb2c02f6cd81fcf3e",
+          "reason": "not searched",
+          "seq": 18,
+          "status": "open"
+        },
+        "observed_status": "open",
+        "proposed_minimum_closure": "bounded_authorized_inventory_and_coverage_of_existing_research_attachments_and_attempt_metadata_no_private_transcript_dump"
+      },
+      {
+        "closure_or_evidenced_exclusion_required_before_complete_N_history_path": false,
+        "gap_id": "G6",
+        "observed_record": {
+          "effect_on_N": "none",
+          "event": "open_gap",
+          "gap_id": "G6",
+          "item": "EVO-775 separate trial_registry.json (XSP options)",
+          "previous_hash": "e5306fdcf04f365c2e115ec056f3b335a4c5864e1e83493c87dc7c5294c991e1",
+          "reason": "2 specs registered, alpha_experiments_executed=0, returns null",
+          "seq": 19,
+          "status": "checked_not_counted"
+        },
+        "observed_status": "checked_not_counted",
+        "proposed_minimum_closure": "retain_checked_not_counted_upstream_record_not_an_active_gap"
+      }
+    ],
+    "n_complete": false,
+    "recorded_N": 75
+  },
+  "ledger_mutations": 0,
+  "memo_file": "EVO883-EVO891-disposition-draft-v1.md",
+  "memo_sha256": "961b1250c1f781233df1b5fba9caa24c053e45176233c4d3c401d8224c32295e",
+  "new_backtests": 0,
+  "new_market_queries": 0,
+  "panel_disposition": {
+    "additional_non_cash_spinoff_contracts": [
+      "ADP_2014_10_01",
+      "CMCSA_2026_01_05"
+    ],
+    "certified_usable_count": null,
+    "contract_paths": [
+      "corporate_action_policy.analytical_index",
+      "corporate_action_policy.integer_cash_ledger",
+      "price_basis_gate"
+    ],
+    "frozen_count": 64,
+    "frozen_panel_replaced": false,
+    "frozen_sha256": "ae9332ff345dae69866a6a78fcbb07201ef7ac14b4ff82d714a1282330103ee4",
+    "per_date_252_session_and_min50_eligibility_required": true,
+    "quarantine_eight": [
+      "APD",
+      "B",
+      "BA",
+      "BRK.B",
+      "COHR",
+      "COP",
+      "COR",
+      "CRH"
+    ],
+    "quarantine_sha256": "407711eba7f8023a061d9dfd2feaffa884a1282bbd7a5bf33295302a58d0fb18",
+    "stock_dispositions": [
+      {
+        "freeze_json_paths": [
+          "universe",
+          "universe_sha256",
+          "universe_policy.same_panel_in_history_and_forward",
+          "price_basis_gate.no_evidence",
+          "corporate_action_policy.integer_cash_ledger"
+        ],
+        "known_first_unresolved_event": "2013-11-25",
+        "permanent_drop_replace_or_new_sample_requires_version_review": true,
+        "proposed_action": "retain_frozen_membership_quarantine_affected_inputs_null_affected_metrics_no_silent_truncation_or_replacement",
+        "reason": "wrong_issuer_cash_actions_79_unresolved",
+        "source_matrix_row": {
+          "A_cash_inconsistent_beyond_rounding": "45",
+          "A_price_source_mismatch_events": "44",
+          "additive_B_events": "1",
+          "cash_amount_status": "未核实",
+          "cash_events": "79",
+          "events_in_window": "79",
+          "ex_date_status": "未核实",
+          "first_bar": "2006-06-26",
+          "internal_gap_days": "0",
+          "pay_date_status": "未核实",
+          "pre_listing_days": "0",
+          "raw_close_missing_on_calendar": "0",
+          "raw_price_status": "已核实（抽样）",
+          "raw_sample_max_abs_bp": "4.085",
+          "raw_sample_med_abs_bp": "2.511",
+          "raw_sample_n": "27.000",
+          "series_file": "EVO891-A-B-raw-tr-v1.csv",
+          "series_sha256": "e5083f6a0c0e94d6b0242a49919cfcb010973c017107947f3c239e4b09386e14",
+          "spin_offs": "",
+          "split_evidence": "",
+          "split_status": "区间内无",
+          "splits": "",
+          "symbol": "B",
+          "tr_index_status": "自 2013-11-25 起 null",
+          "unresolved_events": "79"
+        },
+        "source_series_sha256": "e5083f6a0c0e94d6b0242a49919cfcb010973c017107947f3c239e4b09386e14",
+        "symbol": "B"
+      },
+      {
+        "freeze_json_paths": [
+          "universe",
+          "universe_sha256",
+          "universe_policy.same_panel_in_history_and_forward",
+          "price_basis_gate.no_evidence",
+          "corporate_action_policy.integer_cash_ledger"
+        ],
+        "known_first_unresolved_event": "2013-12-27",
+        "permanent_drop_replace_or_new_sample_requires_version_review": true,
+        "proposed_action": "retain_frozen_membership_quarantine_affected_inputs_null_affected_metrics_no_silent_truncation_or_replacement",
+        "reason": "wrong_issuer_cash_actions_33_unresolved",
+        "source_matrix_row": {
+          "A_cash_inconsistent_beyond_rounding": "31",
+          "A_price_source_mismatch_events": "18",
+          "additive_B_events": "0",
+          "cash_amount_status": "部分（51/84已核实）",
+          "cash_events": "84",
+          "events_in_window": "84",
+          "ex_date_status": "未核实",
+          "first_bar": "2006-06-26",
+          "internal_gap_days": "0",
+          "pay_date_status": "未核实",
+          "pre_listing_days": "0",
+          "raw_close_missing_on_calendar": "0",
+          "raw_price_status": "已核实（抽样）",
+          "raw_sample_max_abs_bp": "3.956",
+          "raw_sample_med_abs_bp": "1.995",
+          "raw_sample_n": "20.000",
+          "series_file": "EVO891-A-COR-raw-tr-v1.csv",
+          "series_sha256": "7d8370d3dea0560ef32dfa37e31f289757f8b4a7b980c0464f66ea9fdb4cae87",
+          "spin_offs": "",
+          "split_evidence": "",
+          "split_status": "区间内无",
+          "splits": "",
+          "symbol": "COR",
+          "tr_index_status": "自 2013-12-27 起 null",
+          "unresolved_events": "33"
+        },
+        "source_series_sha256": "7d8370d3dea0560ef32dfa37e31f289757f8b4a7b980c0464f66ea9fdb4cae87",
+        "symbol": "COR"
+      },
+      {
+        "freeze_json_paths": [
+          "universe",
+          "universe_sha256",
+          "universe_policy.same_panel_in_history_and_forward",
+          "price_basis_gate.no_evidence",
+          "corporate_action_policy.integer_cash_ledger"
+        ],
+        "known_first_unresolved_event": "2016-10-03",
+        "permanent_drop_replace_or_new_sample_requires_version_review": true,
+        "proposed_action": "retain_frozen_membership_quarantine_affected_inputs_null_affected_metrics_no_silent_truncation_or_replacement",
+        "reason": "missing_non_cash_spinoff_value_and_entitlement",
+        "source_matrix_row": {
+          "A_cash_inconsistent_beyond_rounding": "2",
+          "A_price_source_mismatch_events": "0",
+          "additive_B_events": "2",
+          "cash_amount_status": "已核实",
+          "cash_events": "51",
+          "events_in_window": "52",
+          "ex_date_status": "未核实",
+          "first_bar": "2006-06-26",
+          "internal_gap_days": "0",
+          "pay_date_status": "未核实",
+          "pre_listing_days": "0",
+          "raw_close_missing_on_calendar": "0",
+          "raw_price_status": "不一致（见备注）",
+          "raw_sample_max_abs_bp": "753.202",
+          "raw_sample_med_abs_bp": "1.053",
+          "raw_sample_n": "36.000",
+          "series_file": "EVO891-A-APD-raw-tr-v1.csv",
+          "series_sha256": "08ad651b51b775265abee072ba2340fafd5c9a49341b619e225e35bcd3abd000",
+          "spin_offs": "",
+          "split_evidence": "",
+          "split_status": "区间内无",
+          "splits": "",
+          "symbol": "APD",
+          "tr_index_status": "自 2016-10-03 起 null",
+          "unresolved_events": "1"
+        },
+        "source_series_sha256": "08ad651b51b775265abee072ba2340fafd5c9a49341b619e225e35bcd3abd000",
+        "symbol": "APD"
+      },
+      {
+        "freeze_json_paths": [
+          "universe",
+          "universe_sha256",
+          "universe_policy.same_panel_in_history_and_forward",
+          "price_basis_gate.no_evidence",
+          "corporate_action_policy.integer_cash_ledger"
+        ],
+        "known_first_unresolved_event": "2019-08-08",
+        "permanent_drop_replace_or_new_sample_requires_version_review": true,
+        "proposed_action": "retain_frozen_membership_quarantine_affected_inputs_null_affected_metrics_no_silent_truncation_or_replacement",
+        "reason": "unknown_event_cash_amount",
+        "source_matrix_row": {
+          "A_cash_inconsistent_beyond_rounding": "1",
+          "A_price_source_mismatch_events": "1",
+          "additive_B_events": "0",
+          "cash_amount_status": "部分（22/26已核实）",
+          "cash_events": "26",
+          "events_in_window": "26",
+          "ex_date_status": "未核实",
+          "first_bar": "2006-06-26",
+          "internal_gap_days": "0",
+          "pay_date_status": "未核实",
+          "pre_listing_days": "0",
+          "raw_close_missing_on_calendar": "0",
+          "raw_price_status": "已核实（抽样）",
+          "raw_sample_max_abs_bp": "1.109",
+          "raw_sample_med_abs_bp": "0.210",
+          "raw_sample_n": "22.000",
+          "series_file": "EVO891-A-BA-raw-tr-v1.csv",
+          "series_sha256": "0fdcfab6fb63410156ca887e2ef3106dba41d30dbffef142a6a13bb71604a49c",
+          "spin_offs": "",
+          "split_evidence": "",
+          "split_status": "区间内无",
+          "splits": "",
+          "symbol": "BA",
+          "tr_index_status": "自 2019-08-08 起 null",
+          "unresolved_events": "1"
+        },
+        "source_series_sha256": "0fdcfab6fb63410156ca887e2ef3106dba41d30dbffef142a6a13bb71604a49c",
+        "symbol": "BA"
+      },
+      {
+        "freeze_json_paths": [
+          "universe",
+          "universe_sha256",
+          "universe_policy.same_panel_in_history_and_forward",
+          "price_basis_gate.no_evidence",
+          "corporate_action_policy.integer_cash_ledger"
+        ],
+        "known_first_unresolved_event": "2023-09-27",
+        "permanent_drop_replace_or_new_sample_requires_version_review": true,
+        "proposed_action": "retain_frozen_membership_quarantine_affected_inputs_null_affected_metrics_no_silent_truncation_or_replacement",
+        "reason": "unknown_special_cash_amount",
+        "source_matrix_row": {
+          "A_cash_inconsistent_beyond_rounding": "2",
+          "A_price_source_mismatch_events": "1",
+          "additive_B_events": "1",
+          "cash_amount_status": "部分（36/58已核实）",
+          "cash_events": "58",
+          "events_in_window": "58",
+          "ex_date_status": "未核实",
+          "first_bar": "2006-06-26",
+          "internal_gap_days": "0",
+          "pay_date_status": "未核实",
+          "pre_listing_days": "0",
+          "raw_close_missing_on_calendar": "0",
+          "raw_price_status": "已核实（抽样）",
+          "raw_sample_max_abs_bp": "2.887",
+          "raw_sample_med_abs_bp": "0.945",
+          "raw_sample_n": "30.000",
+          "series_file": "EVO891-A-COP-raw-tr-v1.csv",
+          "series_sha256": "ddeccc9305fc88f573de62787de78b1c937a49d50dedbe7117aed9957fb40052",
+          "spin_offs": "",
+          "split_evidence": "",
+          "split_status": "区间内无",
+          "splits": "",
+          "symbol": "COP",
+          "tr_index_status": "自 2023-09-27 起 null",
+          "unresolved_events": "1"
+        },
+        "source_series_sha256": "ddeccc9305fc88f573de62787de78b1c937a49d50dedbe7117aed9957fb40052",
+        "symbol": "COP"
+      },
+      {
+        "freeze_json_paths": [
+          "universe",
+          "universe_sha256",
+          "universe_policy.same_panel_in_history_and_forward",
+          "price_basis_gate.no_evidence",
+          "corporate_action_policy.integer_cash_ledger"
+        ],
+        "known_first_unresolved_event": null,
+        "permanent_drop_replace_or_new_sample_requires_version_review": true,
+        "proposed_action": "retain_frozen_membership_quarantine_affected_inputs_null_affected_metrics_no_silent_truncation_or_replacement",
+        "reason": "unverified_pre2023_security_listing_price_identity",
+        "source_matrix_row": {
+          "A_cash_inconsistent_beyond_rounding": "5",
+          "A_price_source_mismatch_events": "0",
+          "additive_B_events": "5",
+          "cash_amount_status": "部分（11/31已核实）",
+          "cash_events": "31",
+          "events_in_window": "31",
+          "ex_date_status": "未核实",
+          "first_bar": "2006-06-26",
+          "internal_gap_days": "0",
+          "pay_date_status": "未核实",
+          "pre_listing_days": "0",
+          "raw_close_missing_on_calendar": "0",
+          "raw_price_status": "不一致（见备注）",
+          "raw_sample_max_abs_bp": "1317.209",
+          "raw_sample_med_abs_bp": "138.254",
+          "raw_sample_n": "57.000",
+          "series_file": "EVO891-A-CRH-raw-tr-v1.csv",
+          "series_sha256": "c443ef992b4a69c68164f5d6e89169847237cad31a950b461b47436f32c1e8f4",
+          "spin_offs": "",
+          "split_evidence": "",
+          "split_status": "区间内无",
+          "splits": "",
+          "symbol": "CRH",
+          "tr_index_status": "可用（条件）",
+          "unresolved_events": "0"
+        },
+        "source_series_sha256": "c443ef992b4a69c68164f5d6e89169847237cad31a950b461b47436f32c1e8f4",
+        "symbol": "CRH"
+      },
+      {
+        "freeze_json_paths": [
+          "universe",
+          "universe_sha256",
+          "universe_policy.same_panel_in_history_and_forward",
+          "price_basis_gate.no_evidence",
+          "corporate_action_policy.integer_cash_ledger"
+        ],
+        "known_first_unresolved_event": null,
+        "permanent_drop_replace_or_new_sample_requires_version_review": true,
+        "proposed_action": "retain_frozen_membership_quarantine_affected_inputs_null_affected_metrics_no_silent_truncation_or_replacement",
+        "reason": "unverified_raw_execution_prices",
+        "source_matrix_row": {
+          "A_cash_inconsistent_beyond_rounding": "0",
+          "A_price_source_mismatch_events": "0",
+          "additive_B_events": "0",
+          "cash_amount_status": "无事件",
+          "cash_events": "0",
+          "events_in_window": "0",
+          "ex_date_status": "无事件",
+          "first_bar": "2006-06-26",
+          "internal_gap_days": "0",
+          "pay_date_status": "无事件",
+          "pre_listing_days": "0",
+          "raw_close_missing_on_calendar": "0",
+          "raw_price_status": "未核实",
+          "raw_sample_max_abs_bp": "",
+          "raw_sample_med_abs_bp": "",
+          "raw_sample_n": "",
+          "series_file": "EVO891-A-BRK_B-raw-tr-v1.csv",
+          "series_sha256": "16039a679da9d0d34821334aac47e2a52390f68b908e3b7116ef0d701ad743f3",
+          "spin_offs": "",
+          "split_evidence": "",
+          "split_status": "区间内无",
+          "splits": "",
+          "symbol": "BRK.B",
+          "tr_index_status": "可用（条件）",
+          "unresolved_events": "0"
+        },
+        "source_series_sha256": "16039a679da9d0d34821334aac47e2a52390f68b908e3b7116ef0d701ad743f3",
+        "symbol": "BRK.B"
+      },
+      {
+        "freeze_json_paths": [
+          "universe",
+          "universe_sha256",
+          "universe_policy.same_panel_in_history_and_forward",
+          "price_basis_gate.no_evidence",
+          "corporate_action_policy.integer_cash_ledger"
+        ],
+        "known_first_unresolved_event": null,
+        "permanent_drop_replace_or_new_sample_requires_version_review": true,
+        "proposed_action": "retain_frozen_membership_quarantine_affected_inputs_null_affected_metrics_no_silent_truncation_or_replacement",
+        "reason": "unverified_raw_execution_prices_and_identity_scope",
+        "source_matrix_row": {
+          "A_cash_inconsistent_beyond_rounding": "0",
+          "A_price_source_mismatch_events": "0",
+          "additive_B_events": "0",
+          "cash_amount_status": "无事件",
+          "cash_events": "0",
+          "events_in_window": "0",
+          "ex_date_status": "无事件",
+          "first_bar": "2006-06-26",
+          "internal_gap_days": "0",
+          "pay_date_status": "无事件",
+          "pre_listing_days": "0",
+          "raw_close_missing_on_calendar": "0",
+          "raw_price_status": "未核实",
+          "raw_sample_max_abs_bp": "",
+          "raw_sample_med_abs_bp": "",
+          "raw_sample_n": "",
+          "series_file": "EVO891-A-COHR-raw-tr-v1.csv",
+          "series_sha256": "29925de28a8fbf2aeef8cc502ebca79158c3b02c7e8c71d70a1666e7d8769562",
+          "spin_offs": "",
+          "split_evidence": "",
+          "split_status": "区间内无",
+          "splits": "",
+          "symbol": "COHR",
+          "tr_index_status": "可用（条件）",
+          "unresolved_events": "0"
+        },
+        "source_series_sha256": "29925de28a8fbf2aeef8cc502ebca79158c3b02c7e8c71d70a1666e7d8769562",
+        "symbol": "COHR"
+      }
+    ],
+    "unflagged_56_is_not_approved_universe": true,
+    "unflagged_by_these_eight_count": 56,
+    "unflagged_list_sha256": "271ddab74e780cff3c23c895b37c39697cd9f4420bfe9eb1176c6f24b42dbc40"
+  },
+  "role": "author_evidence_receipt_and_proposals_for_Hanlin_review_not_independent_acceptance",
+  "runtime_consumable": false,
+  "schema": "EVO883.EVO891.disposition-draft.v1.0.0",
+  "start_EVO886_authorized": false,
+  "status": "DRAFT_REQUIRES_REVIEW",
+  "verification_file": "EVO891-local-verification-v1.json",
+  "verification_sha256": "c4af0982492bd4716539a495549b381d201dccffa80a6d9c950b875e6051ca09",
+  "version": "1.0.0",
+  "version_impact": {
+    "bindings_affected_if_changed": [
+      "panel_sha256",
+      "common_profile_sha256",
+      "calendar_sha256",
+      "fold_manifest_sha256",
+      "reference_registry_compatibility",
+      "reference_V_manifests"
+    ],
+    "default": "v1_evidence_receipt_and_existing_rejection_branches_only",
+    "new_attempts_and_discoveries_must_append": true,
+    "new_version_required_for": [
+      "permanent_membership_drop_replace_replenish",
+      "new_first64_quality_rules",
+      "sample_start_or_fold_or_training_change",
+      "new_non_cash_valuation_or_execution_policy",
+      "reference_source_qualification_change"
+    ],
+    "same_attempt_file_delivery_does_not_invent_performance_N": true
+  }
+}

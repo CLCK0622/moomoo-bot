@@ -110,7 +110,7 @@ allowed DAG edges, input/policy/source SHA, exact train dates, finite full-famil
 observations, scale, generation/sealing before S0 and after the static seal, and
 independent anchor-review receipts. The P7 checker verifies supplied EVO-891 tail,
 complete-history receipt, attempt/retry map and candidate/meta N order. It never
-writes the unique ledger or turns the newly delivered N=75 draft/open gaps into
+writes the unique ledger or turns the accepted N=75 continuation anchor/open gaps into
 an accepted complete N. Receipt consistency does not authenticate self-issued
 claims; acceptance of authority and history remains external.
 
@@ -127,7 +127,9 @@ claims; acceptance of authority and history remains external.
 `seal_static(sealed_at)` records current source hashes and an explicit UTC time.
 The runtime checker requires that seal to precede every reference start, and
 sidecars to precede current S0. `lineage_proof` enumerates P1–P7 and leaves actual
-run/output fields null. The final seal/proof artifacts are in `evidence/evo892/`.
+run/output fields null. The earlier registration/R1 seal and proof remain archived in `evidence/evo892/`.
+The current input/scope increment is resealed in `evidence/evo884-input-v1/`;
+old source seals cannot authenticate changed code.
 There are no fabricated actual run IDs or real return artifacts. Harness runtime
 sentinels are explicitly SYNTHETIC_UNIT values, never authority/research inputs.
 
@@ -150,14 +152,76 @@ QQQ analytical TR uses EVO-889 `D_used_for_TR`, event table SHA
 `1ab413d1a1c4118ae58d21e476454502d613f1c88914a9076b90de8fa6247c87`.
 Raw closes and exdate-close fractional reinvestment give conditional pre-tax,
 zero-fee arithmetic; event qualifications remain visible. No qfq ratio is used.
-VTI is fixed B2: unresolved dividend/paydate/price evidence yields null. SPY
-never substitutes; it remains an archived/QA reference.
+VTI is fixed B2: the EVO-883 disposition refuses the entire frozen formal
+interval pending an accepted closure/equivalence receipt. Self-asserted verified
+flags cannot enable a suffix. SPY never substitutes; it remains archived/QA only.
 
-`integer_cash_valuation` separately reads integer inventory, known cash,
-entitlements and payment availability. Unknown amount gives null receivable/NAV;
-unknown paydate gives null credit amount/time. Known receivables are not spendable.
-Ex-open entrants do not receive that dividend. No free fractional DRIP, automatic
-purchase or account write occurs. Outputs remain non-consumable.
+`integer_cash_valuation` accepts explicitly versioned QQQ cash events from
+`qqq_cash_input(ex_date, entitled_integer_shares)`, bound to mapping
+`71953b09…1260` and ruling `641c03af…7c5e`. All 53 exchange-source amounts/paydates
+are pinned; old analytical CSV bytes stay unchanged. For 2022-12-19 the corrected
+input declares 0.65541 and archives vendor 1.31082 with distinct source hashes.
+A caller retaining the wrong declared amount, wrong source or missing mapping
+receives null receivable/NAV, never a silently repaired event. Entitlements are
+explicit simulated inventory-writer inputs; ex-open entry receives no dividend.
+
+All cash fields (including legacy `cash_credited_*`) are labelled
+`simulation_pre_tax_integer`. Before supported payment availability, receivables
+are not spendable. On/after the exchange paydate, credit additionally needs explicit
+`simulated_payment_available`, amount/time and source SHA from the simulation
+writer. Exchange paydate alone leaves availability unknown. Actual account
+amount/time stay null; no probe, fractional DRIP or inventory change occurs.
+
+`panel_input_check` binds the adopted eight-row disposition and records affected
+symbol/date/dependency and null value. The formal manifest guard calls it for
+`panel_inputs`; it neither replaces members nor certifies a 56-name universe.
+The existing 252-session/min50 qualification still needs its original evidence.
+
+New authoritative attempts must count recomputations/retries. Same parameter cells
+alone refuse zero contribution. Exact same-attempt payload delivery is idempotent;
+continuations additionally need the linked attempt/run and an already recorded
+artifact/log SHA, no evaluated/new trials. Published P02 and open gaps are preserved,
+never silently reclassified. The reader enforces the stricter rule after seq20.
+
+`input_migration_check` validates a versioned input receipt against the retained
+current witness, old tip/sequence/N, identical full JSONL chain, original frozen
+QQQ CSV and new mapping identities. It rejects N rollback and old-snapshot replay.
+It does not install/retire a project ledger or accept JSONL-to-SQLite conversion;
+operational path changes/contribution mappings need separately accepted evidence.
+
+`scope_proof.b2_isolation_proof` binds the minimum-scope ruling (`56d97ab7…` /
+`730931cd…`) and source hashes. Its import whitelist, consumer-dominating guards,
+reader sites and symbol/file/header whitelists exclude VTI/B2 from features,
+QQQ labels, calibration, admission, reference inputs, holdings/cash and orders.
+`scope_reader.read_strategy_inputs` permits the frozen 64 members plus QQQ,
+explicit symbol headers, exact bound dates and byte SHA, no path/link aliases.
+The isolated reference reader now requires a QQQ benchmark header and uses the
+same pure B2 guard. This proves owned trusted interfaces and declared source
+identities; it does not certify market-source truth or hostile external adapters.
+
+An unavailable VTI entry is still required in `wf_manifest_check.b2_manifest`:
+all 3191 dates, reason/missing fields, source SHA, affected scope exactly B2,
+empty dependencies for all seven strategy roles and the current static proof
+SHA. With that receipt, the independent B2 value stays null without blocking
+primary data precheck. Main QQQ inputs must cover the original dates; no SPY,
+suffix or complete-case deletion. `data_bindings_complete` and
+`all_readouts_available` are separate. This never releases S2 or runtime gates.
+
+`continuous_path_check` checks every original fold/date vector, causal input/output
+state SHA, attempt/count receipts and monotone consumed/seen-result budget state.
+It preserves all 77 records and known inventory/exit intentions. Invalid NAV/state
+makes dependent future NAV, A/IR/interval null; skipped folds, capital restart,
+state-link changes or budget refunds refuse. This is receipt consistency only,
+not independent N/budget authority or permission to recover/recompute.
+
+The actual fold mechanism stops adapter calls at its first failure, writes all
+fold statuses to the ledger, and retains unexecuted blocked folds and budget
+unknowns. New failures/retries retain their N entries; exact existing attempt-byte
+delivery alone is idempotent. Formal pending paths also return all original folds.
+S2 missing SR/N/V or legal admission is explicitly refused with pool and fallback
+holdings null; it cannot become an empty pool holding QQQ. All V/DSR/runtime
+certification stays unavailable. The nine new refusal cases are recorded in
+`disposition_harness.py` (five) and `scope_harness.py` (four).
 
 Data guards flag rather than repair missing/nontrading/duplicate bars, nonpositive
 prices, calendar misalignment and parameterized jump/reversal pairs. Fixed SPY

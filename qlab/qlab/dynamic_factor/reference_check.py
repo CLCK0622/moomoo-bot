@@ -23,7 +23,8 @@ MODULES = {
         "reference_inputs",
         "reference_guard",
     },
-    "reference_inputs": {"hashlib", "json", "pathlib"},
+    "reference_inputs": {"hashlib", "json", "pathlib", "input_scope"},
+    "input_scope": set(),
     "fold_split": {"dataclasses"},
     "reference_guard": {"os", "sys", "pathlib"},
 }

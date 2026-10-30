@@ -10,9 +10,16 @@ import csv
 import io
 import math
 
-from .contract import digest, is_sha, result, sha256, unavailable
+from .contract import is_sha, result, sha256, unavailable
 from .conventions import FIXTURES, load_conventions
 from .fees import finite, iso_date
+from .input_disposition import (
+    MAPPING_SHA,
+    RULING_SHA,
+    cash_source_reason,
+    panel_input_check,
+)
+from .input_scope import reject_b2_inputs
 
 
 VTI_REQUIREMENTS = (
@@ -31,6 +38,9 @@ def vti_evidence_check(evidence, policy):
         or not all(evidence.get(k) is True for k in VTI_REQUIREMENTS)
     ):
         raise ValueError("data.vti_evidence_missing")
+    # The adopted disposition has no accepted closure/equivalence receipt for
+    # the full frozen interval. Self-asserted booleans cannot enable a suffix.
+    raise ValueError("data.VTI_formal_full_period_unavailable")
 
 
 def qqq_events(policy):
@@ -103,15 +113,6 @@ def benchmark_valuation(request, *, conventions=None):
             )
         elif symbol == "VTI":
             vti_evidence_check(request.get("evidence"), policy)
-            events = request["verified_distributions"]
-            if not is_sha(request["evidence"].get("distributions_sha256")) or request[
-                "evidence"
-            ]["distributions_sha256"] != digest(events):
-                raise ValueError("valuation.VTI_distribution_identity_missing")
-            metrics.update(
-                analytical_index=analytical_index(request["prices"], events),
-                conditional_analysis=True,
-            )
         else:
             raise ValueError("valuation.primary_benchmark_must_be_QQQ_or_VTI")
     except (KeyError, TypeError, ValueError, OverflowError) as exc:
@@ -149,9 +150,15 @@ def integer_cash_valuation(request, *, conventions=None):
         "known_available_cash": None,
         "receivable_amount": None,
         "dividends": None,
+        "cash_ledger_kind": "simulation_pre_tax_integer",
+        "source_mapping_sha256": MAPPING_SHA,
+        "account_cash_credited_amount": None,
+        "account_cash_credited_at": None,
+        "account_verified": False,
     }
     reasons = []
     try:
+        reject_b2_inputs(request, "holdings_cash")
         cash = request["known_cash"]
         as_of = iso_date(request["as_of"])
         inventory = request["inventory"]
@@ -161,18 +168,62 @@ def integer_cash_valuation(request, *, conventions=None):
             or any(type(q) is not int or q < 0 for q in inventory.values())
         ):
             raise ValueError("valuation.integer_inventory_or_cash_invalid")
+        holdings_check = panel_input_check(
+            {
+                "inputs": [
+                    {"symbol": s, "date": as_of, "field": "valuation"}
+                    for s, q in inventory.items()
+                    if q
+                ]
+            },
+            conventions=policy,
+        )
+        metrics.update(
+            known_available_cash=cash,
+            inventory=inventory,
+            data_invalid_holdings=holdings_check["metrics"]["affected_inputs"],
+        )
+        reasons.extend(holdings_check["reasons"])
         received, receivables, credits = [], [], []
+        seen = set()
         for event in request["events"]:
-            # analytical_D_used is trace metadata only; cash always uses exact declared amount.
+            # Analytical distributions never become cash through this path.
             fields = policy.document["corporate_action_policy"]["integer_cash_ledger"][
                 "required_event_fields"
             ]
             row = {k: event.get(k) for k in fields}
+            row.update(
+                symbol=event.get("symbol"),
+                ex_date=event.get("ex_date"),
+                source_mapping_sha256=MAPPING_SHA,
+                cash_ledger_kind="simulation_pre_tax_integer",
+                account_cash_credited_amount=None,
+                account_cash_credited_at=None,
+            )
+            row.update(
+                {
+                    k: event.get(k)
+                    for k in (
+                        "input_version",
+                        "event_table_sha256",
+                        "archived_vendor_amount",
+                        "original_event_source_sha256",
+                        "simulated_payment_source_sha256",
+                    )
+                }
+            )
             ex = iso_date(event["ex_date"])
+            key = (event.get("symbol"), ex)
+            if key in seen:
+                raise ValueError("valuation.duplicate_dividend_event")
+            seen.add(key)
             entitlement = event["entitled_integer_shares"]
             amount = event.get("declared_cash_amount")
+            source_reason = cash_source_reason(event)
             amount_known = (
-                finite(amount)
+                source_reason is None
+                and event.get("symbol") in inventory
+                and finite(amount)
                 and amount >= 0
                 and event.get("exact_amount_status") == "verified_exact"
                 and event.get("ex_date_status") == "verified"
@@ -190,7 +241,9 @@ def integer_cash_valuation(request, *, conventions=None):
                     cash_credited_amount=None,
                     cash_credited_at=None,
                 )
-                reasons.append("valuation.dividend_amount_or_entitlement_unknown")
+                reasons.append(
+                    source_reason or "valuation.dividend_amount_or_entitlement_unknown"
+                )
                 receivables.append(None)
                 credits.append(None)
             else:
@@ -209,14 +262,15 @@ def integer_cash_valuation(request, *, conventions=None):
                     reasons.append("valuation.dividend_paydate_unknown")
                 elif (
                     iso_date(paydate) <= as_of
-                    and event.get("payment_available") is True
+                    and event.get("simulated_payment_available") is True
                 ):
-                    credited = event.get("cash_credited_amount")
-                    when = event.get("cash_credited_at")
+                    credited = event.get("simulated_cash_credited_amount")
+                    when = event.get("simulated_cash_credited_at")
                     if (
                         not finite(credited)
                         or credited != payable
                         or when is None
+                        or not is_sha(event.get("simulated_payment_source_sha256"))
                         or not paydate <= iso_date(when) <= as_of
                     ):
                         raise ValueError(
@@ -229,6 +283,18 @@ def integer_cash_valuation(request, *, conventions=None):
                     )
                     receivables.append(0)
                     credits.append(credited)
+                elif (
+                    iso_date(paydate) <= as_of
+                    and event.get("simulated_payment_available") is not False
+                ):
+                    row.update(
+                        receivable_amount=payable,
+                        cash_credited_amount=None,
+                        cash_credited_at=None,
+                    )
+                    receivables.append(payable)
+                    credits.append(None)
+                    reasons.append("valuation.simulated_payment_availability_unknown")
                 else:
                     row.update(
                         receivable_amount=payable,
@@ -238,6 +304,10 @@ def integer_cash_valuation(request, *, conventions=None):
                     receivables.append(payable)
                     credits.append(0)
             received.append(row)
+        for row in received:
+            row["simulated_cash_credited_amount"] = row["cash_credited_amount"]
+            row["simulated_cash_credited_at"] = row["cash_credited_at"]
+            row["exchange_pay_date"] = row["pay_date"]
         known_credits = math.fsum(v for v in credits if v is not None)
         available = cash + known_credits
         metrics.update(
@@ -256,7 +326,7 @@ def integer_cash_valuation(request, *, conventions=None):
             if q
         ):
             reasons.append("valuation.mark_unknown")
-        elif (
+        elif holdings_check["ok"] and (
             metrics["available_cash"] is not None
             and metrics["receivable_amount"] is not None
         ):
@@ -274,12 +344,18 @@ def integer_cash_valuation(request, *, conventions=None):
     return policy.bind(
         result(
             "integer_cash_valuation",
-            {"request": request, **policy.binding},
+            {
+                "request": request,
+                "source_mapping_sha256": MAPPING_SHA,
+                "ruling_sha256": RULING_SHA,
+                **policy.binding,
+            },
             metrics=metrics,
             reasons=reasons,
             assumptions=[
                 "Known cash after other transactions is reported separately from total verified cash; unknown dividends are not zero or spendable.",
                 "No free fractional DRIP, inventory change or account write occurs; this is a versioned readout for an independent integer writer.",
+                "All cash, receivable and legacy cash_credited_* fields are simulated pre-tax inventory cash. Exchange paydate is not account receipt; account amount/time remain null.",
             ],
             availability={
                 "nav": unavailable(reasons[0] if reasons else "valuation.incomplete")

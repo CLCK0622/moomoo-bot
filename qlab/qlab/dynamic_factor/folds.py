@@ -14,6 +14,8 @@ from .fees import finite
 from .fold_split import train_dates as shared_train_dates
 from .fold_split import shared_views, reference_view
 from .validation import calendar_index, convention_manifest_reasons, fold_reasons
+from .input_scope import reject_b2_inputs
+from .continuity import fold_records
 
 
 @dataclass(frozen=True)
@@ -49,6 +51,7 @@ class FitReceipt:
 
 
 def _features(row):
+    reject_b2_inputs(row, "features")
     features = row["features"]
     if not features or not all(
         isinstance(k, str) and finite(v) for k, v in features.items()
@@ -68,12 +71,14 @@ def _run_walk_forward_unbound(
     Invocation begins also count locally, conservatively, until EVO-883 defines N.
     A consumed run/fold ID cannot execute again, even after an interrupted call.
     """
+    reject_b2_inputs({"manifest": manifest, "rows": rows}, "qqq_labels")
     reasons = fold_reasons(manifest)
     if conventions is not None:
         reasons.extend(convention_manifest_reasons(manifest, conventions))
-    outputs, instances = [], []
+    outputs, instances = fold_records(manifest, run_id, "wf.not_run"), []
     inputs = {"manifest": manifest, "rows": rows, "run_id": run_id}
     active = []
+    current = None
     adapter_sources = {}
     try:
         if "ledger_unreadable_or_corrupt" in ledger.safe_snapshot()["reasons"]:
@@ -91,7 +96,8 @@ def _run_walk_forward_unbound(
         if dates != sorted(set(dates)) or any(d not in index for d in dates):
             raise ValueError("wf.input_dates_invalid")
         by_date = {r["date"]: r for r in rows}
-        for fold in manifest["folds"]:
+        for number, fold in enumerate(manifest["folds"]):
+            current = outputs[number]
             active = []
             calendar = manifest["calendar"]
             train_dates = calendar[
@@ -150,6 +156,7 @@ def _run_walk_forward_unbound(
                 replay=False,
             )
             active.append(invocation)
+            current.update(attempted=True, status="running")
             miner, fitter = miner_factory(ctx), fitter_factory(ctx)
             if any(miner is x or fitter is x for x in instances) or miner is fitter:
                 raise ValueError("wf.reused_fold_instance")
@@ -297,9 +304,11 @@ def _run_walk_forward_unbound(
                     },
                 )
                 active.remove(attempt)
-            outputs.append(
+            current.update(
                 {
                     "fold_id": ctx.fold_id,
+                    "status": "success",
+                    "reasons": [],
                     "train_sha256": train_hash,
                     "fit_dates": train_dates,
                     "prediction_dates": test_dates,
@@ -313,11 +322,29 @@ def _run_walk_forward_unbound(
             else f"wf.adapter_error:{type(exc).__name__}"
         )
         reasons.append(reason)
+        for out in outputs:
+            if out["status"] != "success":
+                out.update(
+                    status="invalid" if out is current else "blocked",
+                    predictions=None,
+                    reasons=[
+                        reason
+                        if current is None or out is current
+                        else "wf.prior_strategy_state_unknown"
+                    ],
+                )
         for attempt in active:
             try:
                 ledger.finish(attempt, "failed", reason=reason)
             except Exception:
                 reasons.append("wf.ledger_outcome_write_failed")
+    for out in outputs:
+        key = f"walk-forward-status/{run_id}/{out['fold_id']}"
+        try:
+            if ledger.recorded(key) is None:
+                ledger.record(key, out)
+        except (ValueError, OSError):
+            reasons.append("wf.fold_status_persistence_unavailable")
     snapshot = ledger.safe_snapshot()
     inputs["ledger"] = snapshot
     reasons.extend(snapshot["reasons"])
@@ -328,6 +355,10 @@ def _run_walk_forward_unbound(
             "folds": outputs,
             "cumulative_n": snapshot["cumulative_n"],
             "n_ledger_hash": snapshot["n_ledger_hash"],
+            "A": None,
+            "IR": None,
+            "interval": None,
+            "strategy_path_complete": False,
         },
         reasons=reasons,
         artifacts={"ledger": snapshot},
@@ -346,6 +377,19 @@ def run_walk_forward(
 ):
     from .conventions import load_conventions
 
+    try:
+        reject_b2_inputs({"manifest": manifest, "rows": rows}, "qqq_labels")
+    except ValueError as exc:
+        return result(
+            "walk_forward",
+            {"manifest": manifest},
+            reasons=[str(exc)],
+            metrics={
+                "folds": fold_records(manifest, run_id, str(exc)),
+                "A": None,
+                "IR": None,
+            },
+        )
     reasons = ["wf.conventions_required"] if conventions is None else []
     if conventions is not None and conventions != load_conventions():
         reasons.append("wf.conventions_mismatch")
@@ -356,7 +400,11 @@ def run_walk_forward(
             "walk_forward",
             {"manifest": manifest, "rows": rows},
             reasons=reasons,
-            metrics={"folds": [], "cumulative_n": None, "n_ledger_hash": None},
+            metrics={
+                "folds": fold_records(manifest, run_id, reasons[0]),
+                "cumulative_n": None,
+                "n_ledger_hash": None,
+            },
         )
     if not conventions.document.get("runtime_consumable", False):
         return conventions.bind(
@@ -364,7 +412,15 @@ def run_walk_forward(
                 "walk_forward",
                 {"manifest": manifest},
                 reasons=["wf.runtime_bindings_pending"],
-                metrics={"folds": [], "cumulative_n": None, "n_ledger_hash": None},
+                metrics={
+                    "folds": fold_records(
+                        manifest, run_id, "wf.runtime_bindings_pending"
+                    ),
+                    "cumulative_n": None,
+                    "n_ledger_hash": None,
+                    "A": None,
+                    "IR": None,
+                },
             )
         )
     return _run_walk_forward_unbound(

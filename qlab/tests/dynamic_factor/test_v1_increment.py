@@ -105,6 +105,7 @@ def test_reference_uses_shared_splitter_and_pinned_three_reader_graph(tmp_path):
         "reference_inputs",
         "fold_split",
         "reference_guard",
+        "input_scope",
     }
     assert proof["reader_sites"][0]["module"] == "reference_inputs"
     assert len(proof["reader_sites"]) == 1
@@ -262,23 +263,15 @@ def test_formal_calendar_check_requires_VTI_evidence():
 
 
 def dividend(**kwargs):
-    event = dict(
-        ex_date="2026-01-05",
-        declared_cash_amount=1,
-        analytical_D_used=0.65541,
-        exact_amount_status="verified_exact",
-        ex_date_status="verified",
-        pay_date="2026-01-10",
-        pay_date_status="verified",
-        entitled_integer_shares=2,
-        source_sha256=digest("unit"),
-        payment_available=False,
-    )
+    from qlab.dynamic_factor.input_disposition import qqq_cash_input
+
+    event = qqq_cash_input("2022-12-19", 2)
+    event["simulated_payment_available"] = False
     event.update(kwargs)
     return event
 
 
-def cash_read(event, day="2026-01-06"):
+def cash_read(event, day="2022-12-20"):
     return integer_cash_valuation(
         dict(
             known_cash=100,
@@ -294,22 +287,27 @@ def test_supported_receivable_moves_to_cash_only_with_payment_receipt_no_DRIP():
     before = cash_read(dividend())
     assert (
         before["metrics"]["available_cash"] == 100
-        and before["metrics"]["receivable_amount"] == 2
+        and before["metrics"]["receivable_amount"] == 1.31082
     )
-    assert before["metrics"]["nav"] == 302
+    assert before["metrics"]["nav"] == pytest.approx(301.31082)
     paid = cash_read(
         dividend(
-            payment_available=True,
-            cash_credited_amount=2,
-            cash_credited_at="2026-01-10",
+            simulated_payment_available=True,
+            simulated_cash_credited_amount=1.31082,
+            simulated_cash_credited_at="2022-12-30",
+            simulated_payment_source_sha256=digest(
+                "synthetic_inventory_writer_receipt"
+            ),
         ),
-        day="2026-01-10",
+        day="2022-12-30",
     )
     assert (
-        paid["metrics"]["available_cash"] == 102
+        paid["metrics"]["available_cash"] == pytest.approx(101.31082)
         and paid["metrics"]["receivable_amount"] == 0
     )
-    assert paid["metrics"]["inventory"] == {"QQQ": 2} and paid["metrics"]["nav"] == 302
+    assert paid["metrics"]["inventory"] == {"QQQ": 2} and paid["metrics"][
+        "nav"
+    ] == pytest.approx(301.31082)
 
 
 @pytest.mark.parametrize(
@@ -329,7 +327,7 @@ def test_unknown_dividends_do_not_become_zero_cash(change):
 
 
 def test_ex_open_entry_has_no_dividend_entitlement():
-    r = cash_read(dividend(entry_date="2026-01-05"))
+    r = cash_read(dividend(entry_date="2022-12-19"))
     assert r["reasons"] == ["valuation.ex_open_entry_not_dividend_entitled"]
 
 

@@ -41,6 +41,9 @@ def main():
             "reference_manifest_check",
             "reference_runtime_check",
             "authority_ledger_check",
+            "panel_input_check",
+            "input_migration_check",
+            "continuous_path_check",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -76,12 +79,26 @@ def main():
             raise ConventionConflict("wf.conventions_required")
         if args.genesis is not None and policy is not None:
             raise ConventionConflict("ledger.custom_genesis_forbidden")
-        if args.tool == "authority_ledger_check":
+        if args.tool in ("authority_ledger_check", "input_migration_check"):
             from .authority_ledger import AuthorityLedger
 
             if args.ledger is None or args.ledger_anchor is None:
                 raise ValueError("ledger.file_and_witness_required")
-            report = AuthorityLedger(args.ledger, args.ledger_anchor).readout()
+            ledger = AuthorityLedger(args.ledger, args.ledger_anchor)
+            if args.tool == "input_migration_check":
+                from .input_disposition import input_migration_check
+
+                report = input_migration_check(request, ledger, conventions=policy)
+            else:
+                report = ledger.readout()
+        elif args.tool == "continuous_path_check":
+            from .continuity import continuous_path_check
+
+            report = continuous_path_check(request, conventions=policy)
+        elif args.tool == "panel_input_check":
+            from .input_disposition import panel_input_check
+
+            report = panel_input_check(request, conventions=policy)
         elif args.tool == "fee_frontier":
             if args.params is None:
                 raise ValueError("--params required")

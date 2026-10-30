@@ -30,6 +30,16 @@ def lineage_sources():
         "fold_split",
         "folds",
         "authority_ledger",
+        "input_scope",
+        "scope_reader",
+        "scope_proof",
+        "continuity",
+        "pipeline",
+        "execution",
+        "valuation",
+        "pending",
+        "input_disposition",
+        "validation",
     )
     return {
         n + ".py": sha256((Path(__file__).parent / (n + ".py")).read_bytes())

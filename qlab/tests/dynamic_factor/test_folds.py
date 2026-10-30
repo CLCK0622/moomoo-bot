@@ -186,7 +186,12 @@ def test_prefit_receipt_and_reused_factory_rejected(tmp_path):
         ledger=ledger,
         run_id="shared",
     )
-    assert len(r["metrics"]["folds"]) == 1
+    assert len(r["metrics"]["folds"]) == 3
+    assert [f["status"] for f in r["metrics"]["folds"]] == [
+        "success",
+        "invalid",
+        "blocked",
+    ]
     assert "wf.reused_fold_instance" in r["reasons"]
 
 
@@ -209,4 +214,7 @@ def test_failed_discovery_attempt_survives_restart(tmp_path):
     assert "wf.adapter_error:RuntimeError" in r["reasons"]
     restarted = AttemptLedger(path).snapshot()
     assert restarted["local_attempts_n"] == 1
-    assert restarted["events"][-1]["status"] == "failed"
+    assert any(e.get("status") == "failed" for e in restarted["events"])
+    ledger_readout = AttemptLedger(path).recorded("walk-forward-status/failed/0")
+    assert ledger_readout
+    assert ledger_readout["attempted"] and ledger_readout["status"] == "invalid"

@@ -3,6 +3,7 @@
 import hashlib
 import json
 from pathlib import Path
+from .input_scope import reject_b2_inputs
 
 ROLES = {
     "panel": "panel.json",
@@ -17,6 +18,7 @@ SCHEMAS = {
 
 
 def read_inputs(root, manifest, dates):
+    reject_b2_inputs(manifest, "reference")
     if set(manifest) != set(ROLES):
         raise ValueError("reference.read_role_not_whitelisted")
     root = Path(root).resolve()
@@ -49,10 +51,18 @@ def read_inputs(root, manifest, dates):
                 "fold_bindings_raw",
             }
             if role == "profile"
-            else {"schema", "rows"}
+            else (
+                {"schema", "rows", "symbol"}
+                if role == "benchmark"
+                else {"schema", "rows"}
+            )
         )
         if set(data) != allowed:
             raise ValueError("reference.input_schema_forbidden")
+        if role != "profile":
+            reject_b2_inputs(data, "reference")
+        if role == "benchmark" and data["symbol"] != "QQQ":
+            raise ValueError("reference.primary_benchmark_must_be_QQQ")
         if role != "profile" and [r["date"] for r in data["rows"]] != list(dates):
             raise ValueError("reference.only_complete_train_visible")
         if role != "profile":

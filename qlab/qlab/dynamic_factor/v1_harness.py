@@ -91,6 +91,7 @@ def producer_fixture(root, policy):
         },
         "benchmark": {
             "schema": "reference.train_benchmark/v1",
+            "symbol": "QQQ",
             "rows": [{"date": d, "close": 100} for d in dates],
         },
         "profile": {

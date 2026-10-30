@@ -10,6 +10,7 @@ from .contract import digest, is_sha, result, sha256, unavailable
 from .conventions import FIXTURES
 from .fees import finite, iso_date
 from .pipeline import price_basis_check
+from .input_scope import reject_b2_inputs
 
 FEE_PENDING = "Frozen v1 fee policy; actual billing and order-versus-fill minima remain unverified."
 
@@ -60,6 +61,7 @@ class OrderCosts:
         self.taf_rate = self.params[field]
 
     def quote(self, orders, prices):
+        reject_b2_inputs({"orders": orders, "prices": prices}, "orders")
         from .fee_model import order_cost
 
         floor = float(
@@ -90,6 +92,7 @@ class OrderCosts:
 
 def startup_intent(position, previous_nav, inventory, previous_close, policy):
     """Lock the budget at the prior close; the next open only rounds/checks cash."""
+    reject_b2_inputs(inventory, "orders")
     init = policy.document["initialization"]
     if (
         type(position) is not int
@@ -157,6 +160,7 @@ def _tool(tool, request, policy, names, calculate):
     metrics = dict.fromkeys(names)
     reasons = []
     try:
+        reject_b2_inputs(request, "orders")
         if policy.document["version"] != "v1.0.1":
             raise ValueError("prereg_pending_v0.2")
         metrics.update(calculate())
@@ -314,6 +318,7 @@ def initial_build_turnover_check(request, *, conventions, ledger=None):
 
 def calibrate_gain(rows, matured_dates, *, conventions, context):
     """Equal-date means of within-date bucket means, on common mature labels."""
+    reject_b2_inputs({"rows": rows, "context": context}, "calibration")
     price_basis_check(context)
     p = conventions.profile["signal_params"]
     ids = conventions.document["variance_layers"]["family_definitions"][

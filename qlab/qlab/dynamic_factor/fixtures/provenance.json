@@ -29,6 +29,26 @@
     "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
     "source_member": "EVO883-executable-conventions-v1.0.1.json"
   },
+  "disposition/EVO883-EVO886-minimum-scope-ruling-v1.json": {
+    "sha256": "730931cdd7b9c2f62db9841438235e0aa4887f27ef4a842844d63b6570fd7ede",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
+  "disposition/EVO883-EVO886-minimum-scope-ruling-v1.md": {
+    "sha256": "56d97ab77b8389abcd8fcc7c9df2d7094cfc38b3da39954f3b92439d061b05da",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
+  "disposition/EVO883-EVO891-disposition-draft-v1.json": {
+    "sha256": "75685ab429e05a74fb5f1c9187c5da144b98b6932795569516f9137f8f608f87",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
+  "disposition/EVO883-EVO891-ruling-v1.md": {
+    "sha256": "641c03afea7ff86bfab99d5392e3185606e1241669f110a315fa8379b5e7684c",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
+  "disposition/QQQ-source-row-bindings-v1.json": {
+    "sha256": "71953b090c92ca6fc02cb1a2a5e493a02b991ff35e43e3bf4c07136da8441260",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
   "evo891/EVO891-B-ledger-v2.jsonl": {
     "sha256": "a8f50e02644ec4a86460f8038b89edcbc1811352e5bf320dca592cef6abcb87e",
     "source": "EVO891 B v2 via authenticated CLI; unchanged source, external continuation anchor seq20/N75; not complete N"

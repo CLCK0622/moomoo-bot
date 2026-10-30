@@ -216,10 +216,50 @@ def wf_manifest_check(manifest, *, conventions=None):
         )
     if conventions.document["version"] == "v1.0.1":
         from .valuation import vti_evidence_check
+        from .input_disposition import panel_input_check
+        from .scope_proof import b2_manifest_check
+        from .contract import digest
 
         try:
+            panel = panel_input_check(
+                {
+                    "inputs": manifest.get("panel_inputs", []),
+                    "replacement_symbols": manifest.get("replacement_symbols"),
+                    "truncate_sample": manifest.get("truncate_sample"),
+                },
+                conventions=conventions,
+            )
+            if not panel["ok"]:
+                raise ValueError(panel["reasons"][0])
             if "VTI" not in manifest.get("benchmarks", []):
                 raise ValueError("data.VTI_fixed_B2_required")
+            if "QQQ" not in manifest["benchmarks"]:
+                raise ValueError("data.QQQ_fixed_B1_required")
+            if "b2_manifest" in manifest:
+                b2 = b2_manifest_check(manifest["b2_manifest"], conventions)
+                if [
+                    r["date"] for r in manifest.get("series", {}).get("QQQ", [])
+                ] != list(conventions.calendar):
+                    raise ValueError("data.QQQ_full_frozen_calendar_required")
+                if "VTI" in manifest.get("series", {}):
+                    raise ValueError("scope.B2_series_must_stay_in_separate_readout")
+                primary = dict(
+                    manifest,
+                    benchmarks=[b for b in manifest["benchmarks"] if b != "VTI"],
+                )
+                primary.pop("b2_manifest")
+                primary.pop("benchmark_evidence", None)
+                report = _wf_manifest_check_unbound(primary, conventions=conventions)
+                report["input_sha256"] = digest(
+                    {"manifest": manifest, **conventions.binding}
+                )
+                report["metrics"].update(
+                    B2=b2, data_bindings_complete=True, all_readouts_available=False
+                )
+                report["assumptions"].append(
+                    "B2 metadata is present but unavailable; only primary calendar/data precheck can pass. Runtime gates remain independent."
+                )
+                return report
             vti_evidence_check(
                 manifest.get("benchmark_evidence", {}).get("VTI"), conventions
             )
@@ -233,6 +273,7 @@ def wf_manifest_check(manifest, *, conventions=None):
                         "beta": None,
                         "information_ratio": None,
                         "series_checks": {},
+                        "B2": None,
                     },
                 )
             )

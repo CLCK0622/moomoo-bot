@@ -16,9 +16,22 @@ from .contract import digest, is_sha, sha256
 from .conventions import arithmetic
 from .dsr_v0 import formula, variance
 from .fees import finite
+from .input_scope import reject_b2_inputs
 
 
 def read_pinned(path, expected_sha256):
+    from .reference_registry import HASHES
+
+    if (
+        Path(path).name
+        not in (
+            "predeclared_reference_registry.json",
+            "candidate_reference_manifest.json",
+            "meta_reference_manifest.json",
+        )
+        or expected_sha256 != HASHES[Path(path).name]
+    ):
+        raise ValueError("pipeline.only_registered_definition_files_allowed")
     raw = Path(path).read_bytes()
     if not is_sha(expected_sha256) or sha256(raw) != expected_sha256:
         raise ValueError("pipeline.input_hash_mismatch")
@@ -197,6 +210,19 @@ def _n_snapshot(ledger, self_report_n):
 
 def select_pool(evaluations, scores, policy, retired_ids):
     """Unique greedy pool. Unusable correlations isolate a recipe, retaining N/V."""
+    reject_b2_inputs({"evaluations": evaluations, "scores": scores}, "admission")
+    if policy.document["version"] == "v1.0.1" and not policy.document.get(
+        "runtime_consumable"
+    ):
+        raise ValueError("pool.S2_unavailable_not_empty")
+    expected = policy.document["variance_layers"]["family_definitions"][
+        "candidate_members"
+    ]
+    if set(evaluations) != set(expected) or any(
+        any(not finite(m.get(k)) for k in ("mean", "sharpe", "dsr"))
+        for m in evaluations.values()
+    ):
+        raise ValueError("pool.S2_unavailable_not_empty")
     import re
 
     p = policy.profile["signal_params"]
@@ -489,6 +515,12 @@ def evaluate(request, ledger, policy):
 
 def oos_dsr(returns, fold_receipts, expected_fold_ids, n_snapshot, policy):
     """No OOS-generated controls: V is max of ALL frozen train meta V values."""
+    if expected_fold_ids != [f["fold_id"] for f in policy.fold_manifest()["folds"]]:
+        raise ValueError("wf.all_original_folds_required")
+    if policy.document["version"] == "v1.0.1" and not policy.document.get(
+        "runtime_consumable"
+    ):
+        raise ValueError("dsr.runtime_bindings_pending")
     if (
         set(fold_receipts) != set(expected_fold_ids)
         or not fold_receipts

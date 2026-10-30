@@ -27,6 +27,19 @@ def pool_admission_check(request, *, conventions=None, ledger=None):
     """Pool admission needs DSR>=threshold, whose V family needs post-admission members."""
     if conventions is not None and conventions.document["version"] == "v1.0.1":
         from .pipeline import evaluate
+        from .input_scope import reject_b2_inputs
+
+        try:
+            reject_b2_inputs(request, "admission")
+        except ValueError as exc:
+            return conventions.bind(
+                result(
+                    "pool_admission_check",
+                    request,
+                    metrics={"admitted": None, "dsr": None, "pool": None},
+                    reasons=[str(exc)],
+                )
+            )
 
         if ledger is None:
             return conventions.bind(
@@ -39,7 +52,12 @@ def pool_admission_check(request, *, conventions=None, ledger=None):
             )
         report = evaluate(dict(request, layer="candidate"), ledger, conventions)
         report["tool"] = "pool_admission_check"
-        pool = report["metrics"]["pool"]
+        pool = report["metrics"].get("pool")
+        report["metrics"]["pool"] = pool
+        if pool is None:
+            report["reasons"].append("pool.S2_unavailable_not_empty")
+            report["ok"] = False
+            report["metrics"]["fallback_holdings"] = None
         report["metrics"]["admitted"] = (
             (request["candidate_id"] in pool)
             if pool is not None and request.get("candidate_id") is not None

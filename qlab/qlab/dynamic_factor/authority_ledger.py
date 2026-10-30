@@ -10,7 +10,7 @@ import json
 import os
 from pathlib import Path
 
-from .contract import canonical, digest, sha256, result
+from .contract import canonical, digest, sha256, result, is_sha
 
 FIXTURES = Path(__file__).parent / "fixtures" / "evo891"
 PROJECT_ROOT = (
@@ -45,6 +45,64 @@ ATTEMPT_FIELDS = (
     "scope_labels",
     "evidence",
 )
+
+
+def validate_new_attempt(row, previous):
+    """Only recorded delivery/continuation identity can exempt a new entry.
+
+    Historical P02 stays untouched. Equal parameter cells alone never suffice.
+    Evidence must bind the linked run and an already recorded artifact/log SHA.
+    """
+    if (
+        any(k not in row for k in ATTEMPT_FIELDS)
+        or not isinstance(row["attempt_id"], str)
+        or not row["attempt_id"]
+        or not isinstance(row["run_id"], str)
+        or not row["run_id"]
+        or any(
+            type(row[k]) is not int or row[k] < 0
+            for k in ("n_trials_total", "n_evaluated")
+        )
+        or not isinstance(row["evidence"], list)
+        or not row["evidence"]
+        or any(
+            not isinstance(e, dict) or not is_sha(e.get("sha256"))
+            for e in row["evidence"]
+        )
+    ):
+        raise ValueError("ledger.attempt_field_missing_or_invalid")
+    if row.get("n_contribution") != 0:
+        if type(row.get("n_contribution")) is not int or row["n_contribution"] < 1:
+            raise ValueError("ledger.contribution_or_attempt_id_invalid")
+        if row["n_contribution"] < max(
+            row.get("n_trials_total", 1), row.get("n_evaluated", 0), 1
+        ):
+            raise ValueError("ledger.recomputation_or_retry_must_count")
+        return
+    linked = next(
+        (
+            r
+            for r in previous
+            if r.get("event") == "attempt"
+            and r.get("attempt_id") == row.get("same_cells_as")
+        ),
+        None,
+    )
+    proof = row.get("continuation_evidence") or {}
+    if not isinstance(proof, dict):
+        raise ValueError("ledger.same_parameter_cells_not_exempt")
+    if (
+        linked is None
+        or proof.get("attempt_id") != linked["attempt_id"]
+        or proof.get("run_id") != linked["run_id"]
+        or row.get("run_id") != linked["run_id"]
+        or proof.get("kind") not in ("same_attempt_delivery", "continuous_trial")
+        or proof.get("artifact_or_log_sha256")
+        not in {e["sha256"] for e in linked["evidence"]}
+        or row.get("n_evaluated") != 0
+        or row.get("n_trials_total") != 0
+    ):
+        raise ValueError("ledger.same_parameter_cells_not_exempt")
 
 
 def records(raw):
@@ -83,6 +141,8 @@ def state(rows):
             if type(c) is not int or c < 0 or row["attempt_id"] in ids:
                 raise ValueError("ledger.contribution_or_attempt_id_invalid")
             ids.add(row["attempt_id"])
+            if k > PUBLISHED["sequence"]:
+                validate_new_attempt(row, rows[:k])
             # Preserve the published historical exception; new writes have a
             # stricter continuation rule checked separately, never rewrite P02.
             if c == 0 and not row.get("same_cells_as"):
@@ -203,6 +263,26 @@ class AuthorityLedger:
                 raise ValueError("ledger.append_event_not_allowed")
             for k in ("seq", "previous_hash", "n_after"):
                 r.pop(k, None)
+            if r["event"] == "attempt":
+                existing = next(
+                    (
+                        e
+                        for e in rows
+                        if e.get("event") == "attempt"
+                        and e["attempt_id"] == r.get("attempt_id")
+                    ),
+                    None,
+                )
+                if existing is not None:
+                    body = {
+                        k: v
+                        for k, v in existing.items()
+                        if k not in ("seq", "previous_hash", "n_after")
+                    }
+                    if body != r:
+                        raise ValueError("ledger.attempt_identity_payload_conflict")
+                    return before  # Transport retry: identical bytes, no new trial.
+                validate_new_attempt(r, rows)
             r.update(seq=len(rows), previous_hash=digest(rows[-1]))
             if r["event"] == "attempt":
                 r["n_after"] = before["N"] + r.get("n_contribution", -1)
@@ -253,7 +333,7 @@ class AuthorityLedger:
             "local_attempts_n": None,
             "local_counted_n": None,
             "cumulative_n": None,
-            "cumulative_n_lower_bound": cur["N"],
+            "cumulative_n_lower_bound": cur["n_high_water"],
             "n_complete": False,
             "complete_N": None,
             "n_ledger_hash": cur["snapshot_sha256"],
@@ -281,7 +361,14 @@ class AuthorityLedger:
         return result(
             "authority_ledger_readout",
             cur,
-            metrics={**cur, "recorded_N": cur["N"], "complete_N": None, "dsr": None},
+            metrics={
+                **cur,
+                "recorded_N": cur["N"],
+                "n_complete": False,
+                "cumulative_n": None,
+                "complete_N": None,
+                "dsr": None,
+            },
             missing=["complete_history_acceptance"],
             assumptions=[
                 "Published recorded N is not complete N; G1-G5 and P02 require separate evidence acceptance."
