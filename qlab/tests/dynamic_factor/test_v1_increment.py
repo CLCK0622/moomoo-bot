@@ -7,7 +7,6 @@ import pytest
 from qlab.dynamic_factor.contract import digest, sha256
 from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.fees import FIXTURES, fee_frontier
-from qlab.dynamic_factor.fold_split import train_dates
 from qlab.dynamic_factor.harness_helpers import fixture_ledger
 from qlab.dynamic_factor.reference_check import (
     reference_manifest_check,
@@ -44,14 +43,11 @@ def test_registry_manifest_guards_always_leave_DSR_V_null(role, failure):
         request["manifests"][role]["sha256"] = "0" * 64
     elif failure == "member":
         doc = json.loads(request["manifests"][role]["raw"])
-        doc["members"].append("NOT_REGISTERED")
+        doc["members"].append(dict(doc["members"][0], member_id="NOT_REGISTERED"))
         request["manifests"][role] = wrapped(doc)
-        registry = request["registry"]["document"]
-        registry["manifests"][role]["sha256"] = request["manifests"][role]["sha256"]
-        request["registry"] = wrapped(registry)
     elif failure == "old_profile":
         registry = request["registry"]["document"]
-        registry["profile_sha256"] = (
+        registry["bindings"]["common_profile_sha256"] = (
             "e2ed67fc4ec9ed709c4a77ac5a72165da7dc3843e8030e5fa57aee0164058d30"
         )
         request["registry"] = wrapped(registry)
@@ -101,15 +97,14 @@ def test_reference_uses_shared_splitter_and_pinned_three_reader_graph(tmp_path):
     p = load_conventions()
     request = producer_fixture(tmp_path / "inputs", p)
     result = prepare(tmp_path / "inputs", request)
-    assert result["train_dates"] == list(
-        train_dates(request["calendar"], request["train_fold"])
-    )
+    assert result["train_dates"] == list(request["view"]["train"])
     assert len(result["train_dates"]) == 1260 and result["returns"] is None
     proof = static_proof()
     assert set(proof["import_graph"]) == {
         "reference_producer",
         "reference_inputs",
         "fold_split",
+        "reference_guard",
     }
     assert proof["reader_sites"][0]["module"] == "reference_inputs"
     assert len(proof["reader_sites"]) == 1

@@ -426,6 +426,9 @@ def run(workdir):
 
     with offline():
         revisions = revision_cases(workdir, policy)
+        from .reference_harness import runtime_negative_cases
+
+        revisions.extend(runtime_negative_cases(policy, workdir))
     specified = json.loads((FIXTURES / "harness_cases.json").read_bytes())
     require(
         [c["case_id"] for c in cases]
@@ -441,8 +444,8 @@ def run(workdir):
         "source_sha256": digest(source_manifest()),
         "source_files": source_manifest(),
         "fixture_sha256": {
-            p.name: sha256(p.read_bytes())
-            for p in sorted(FIXTURES.iterdir())
+            str(p.relative_to(FIXTURES)): sha256(p.read_bytes())
+            for p in sorted(FIXTURES.rglob("*"))
             if p.is_file()
         },
         "cases": cases,

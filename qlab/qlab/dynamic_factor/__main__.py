@@ -39,6 +39,7 @@ def main():
             "benchmark_valuation",
             "integer_cash_valuation",
             "reference_manifest_check",
+            "reference_runtime_check",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -106,14 +107,17 @@ def main():
             "benchmark_valuation",
             "integer_cash_valuation",
             "reference_manifest_check",
+            "reference_runtime_check",
         ):
             from .valuation import benchmark_valuation, integer_cash_valuation
             from .reference_check import reference_manifest_check
+            from .reference_evidence import reference_runtime_check
 
             report = {
                 "benchmark_valuation": benchmark_valuation,
                 "integer_cash_valuation": integer_cash_valuation,
                 "reference_manifest_check": reference_manifest_check,
+                "reference_runtime_check": reference_runtime_check,
             }[args.tool](request, conventions=policy)
         elif args.tool == "startup_intent":
             from .execution import lock_startup_intent

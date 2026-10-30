@@ -46,6 +46,7 @@ def read_inputs(root, manifest, dates):
                 "conventions_version",
                 "conventions_sha256",
                 "prereg_sha256",
+                "fold_bindings_raw",
             }
             if role == "profile"
             else {"schema", "rows"}

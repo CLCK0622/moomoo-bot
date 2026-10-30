@@ -55,41 +55,35 @@ def wrapped(document):
 
 
 def registry_fixture(policy):
-    manifests = {}
-    declared = {}
-    for role in ("candidate", "meta"):
-        members = [f"SYNTHETIC_ONLY_{role}_{i}" for i in range(2)]
-        manifests[role] = wrapped(
-            {
-                "role": role,
-                "profile_sha256": policy.binding["common_profile_sha256"],
-                "members": members,
-            }
-        )
-        declared[role] = {"sha256": manifests[role]["sha256"], "members": members}
-    registry = wrapped(
-        {
-            "registry_id": "SYNTHETIC_UNIT_REGISTRY_NOT_EVO892",
-            "interface_sha256": policy.raw_sha256,
-            "prereg_sha256": policy.binding["prereg_sha256"],
-            "profile_sha256": policy.binding["common_profile_sha256"],
-            "manifests": declared,
-            "platform_anchor_sha256": digest("synthetic_platform_anchor"),
-            "non_author_review_sha256": digest("synthetic_review"),
-            "created_at": "2026-01-01T00:00:00Z",
-            "synthetic_only": True,
-        }
-    )
-    return {
-        "registry": registry,
-        "manifests": manifests,
-        "first_performance_at": "2026-01-02T00:00:00Z",
-    }
+    from .reference_registry import registered_request
+
+    return registered_request()
 
 
 def producer_fixture(root, policy):
+    from .fold_split import shared_views
+    from .reference_boundary import prepare_request
+    from .reference_registry import artifact
+
     root.mkdir(parents=True)
-    dates = list(policy.calendar[252:1512])
+    fold = policy.fold_manifest()["folds"][0]
+    contract = policy.document["folds"]
+    view = shared_views(
+        policy.calendar,
+        fold,
+        train_days=contract["train_days"],
+        warmup_days=contract["warmup_days"],
+    )
+    dates = view.warmup + view.train
+    binding = {
+        k: policy.binding[k]
+        for k in (
+            "conventions_version",
+            "conventions_sha256",
+            "prereg_sha256",
+            "common_profile_sha256",
+        )
+    }
     data = {
         "panel": {
             "schema": "reference.train_panel/v1",
@@ -101,15 +95,8 @@ def producer_fixture(root, policy):
         },
         "profile": {
             "schema": "reference.profile/v1",
-            "common_profile_sha256": policy.binding["common_profile_sha256"],
-            **{
-                key: policy.binding[key]
-                for key in (
-                    "conventions_version",
-                    "conventions_sha256",
-                    "prereg_sha256",
-                )
-            },
+            **binding,
+            "fold_bindings_raw": artifact("fold-bindings.json")["raw"],
         },
     }
     bindings = {}
@@ -117,12 +104,7 @@ def producer_fixture(root, policy):
         raw = canonical(payload)
         (root / (role + ".json")).write_bytes(raw)
         bindings[role] = {"file": role + ".json", "sha256": sha256(raw)}
-    return {
-        "calendar": dates,
-        "train_fold": {"train_start": dates[0], "history_end": dates[-1]},
-        "inputs": bindings,
-        "common_profile_sha256": policy.binding["common_profile_sha256"],
-    }
+    return prepare_request(policy, fold, view, bindings)
 
 
 def revision_cases(workdir, policy):
@@ -261,13 +243,8 @@ def revision_cases(workdir, policy):
             request["manifests"]["candidate"]["sha256"] = "0" * 64
         else:
             doc = json.loads(request["manifests"]["candidate"]["raw"])
-            doc["members"].append("UNREGISTERED")
+            doc["members"].append(dict(doc["members"][0], member_id="UNREGISTERED"))
             request["manifests"]["candidate"] = wrapped(doc)
-            registry = request["registry"]["document"]
-            registry["manifests"]["candidate"]["sha256"] = request["manifests"][
-                "candidate"
-            ]["sha256"]
-            request["registry"] = wrapped(registry)
         r = reference_manifest_check(request, conventions=policy)
         assert (
             not r["ok"]

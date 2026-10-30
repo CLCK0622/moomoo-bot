@@ -11,7 +11,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from .contract import digest, is_sha, result, sha256, unavailable
+from .contract import digest, result, sha256, unavailable
 from .conventions import load_conventions
 
 MODULES = {
@@ -21,9 +21,11 @@ MODULES = {
         "json",
         "fold_split",
         "reference_inputs",
+        "reference_guard",
     },
     "reference_inputs": {"hashlib", "json", "pathlib"},
-    "fold_split": set(),
+    "fold_split": {"dataclasses"},
+    "reference_guard": {"os", "sys", "pathlib"},
 }
 
 
@@ -32,6 +34,30 @@ def static_proof():
     for name, allowed in MODULES.items():
         raw = (Path(__file__).parent / (name + ".py")).read_bytes()
         tree = ast.parse(raw)
+        for statement in tree.body:
+            if isinstance(
+                statement, (ast.Import, ast.ImportFrom, ast.FunctionDef, ast.ClassDef)
+            ):
+                continue
+            if (
+                isinstance(statement, ast.Expr)
+                and isinstance(statement.value, ast.Constant)
+                and isinstance(statement.value.value, str)
+            ):
+                continue
+            if isinstance(statement, ast.Assign):
+                try:
+                    ast.literal_eval(statement.value)
+                    continue
+                except (ValueError, TypeError):
+                    pass
+            if (
+                name == "reference_producer"
+                and isinstance(statement, ast.If)
+                and ast.unparse(statement.test) == "__name__ == '__main__'"
+            ):
+                continue
+            raise ValueError("reference.static_import_time_effect_forbidden")
         imports = set()
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
@@ -72,6 +98,19 @@ def static_proof():
             raise ValueError("reference.static_dependency_forbidden")
         graph[name] = sorted(imports)
         sources[name + ".py"] = sha256(raw)
+        if name == "reference_producer":
+            main = next(
+                n
+                for n in tree.body
+                if isinstance(n, ast.FunctionDef) and n.name == "main"
+            )
+            calls = {
+                n.func.id: n.lineno
+                for n in ast.walk(main)
+                if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+            }
+            if calls.get("install", 10**9) >= calls.get("prepare", -1):
+                raise ValueError("reference.audit_hook_must_precede_data_reads")
     return {
         "import_graph": graph,
         "source_files": sources,
@@ -95,59 +134,61 @@ def static_proof():
 
 
 def verify_registry(registry, manifests, policy, first_performance_at):
+    from .reference_registry import artifact, HASHES, DISPATCH
+
     if registry is None:
         raise ValueError("reference.registry_missing")
     if manifests is None or set(manifests) != {"candidate", "meta"}:
         raise ValueError("reference.manifest_missing")
-    doc = registry["document"]
-    if registry["sha256"] != sha256(registry["raw"].encode()) or digest(doc) != digest(
-        json.loads(registry["raw"])
-    ):
-        raise ValueError("reference.registry_sha_mismatch")
+
+    def checked(wrapper, name, reason):
+        if (
+            not isinstance(wrapper, dict)
+            or wrapper.get("sha256") != sha256(wrapper["raw"].encode())
+            or wrapper["sha256"] != HASHES[name]
+            or wrapper["raw"] != artifact(name)["raw"]
+            or wrapper.get("document") != json.loads(wrapper["raw"])
+        ):
+            raise ValueError(reason)
+        return wrapper["document"]
+
+    doc = checked(
+        registry,
+        "predeclared_reference_registry.json",
+        "reference.registry_sha_mismatch",
+    )
+    anchor = registry.get("platform_anchor")
+    if anchor != artifact("platform-anchor.json")["document"]:
+        raise ValueError("reference.platform_anchor_missing_or_mismatch")
+    if first_performance_at is not None:
+        if datetime.fromisoformat(
+            anchor["created_at"].replace("Z", "+00:00")
+        ) >= datetime.fromisoformat(first_performance_at.replace("Z", "+00:00")):
+            raise ValueError("reference.registration_not_preperformance")
+    bindings = doc["bindings"]
     if (
-        doc["interface_sha256"] != policy.raw_sha256
-        or doc["prereg_sha256"] != policy.binding["prereg_sha256"]
-        or doc["profile_sha256"] != policy.binding["common_profile_sha256"]
+        bindings["interface_to_consume_sha256"] != policy.raw_sha256
+        or bindings["prereg_sha256"] != policy.binding["prereg_sha256"]
+        or bindings["common_profile_sha256"] != policy.binding["common_profile_sha256"]
     ):
         raise ValueError("reference.profile_or_version_mismatch")
-    if not is_sha(doc["platform_anchor_sha256"]) or not is_sha(
-        doc["non_author_review_sha256"]
-    ):
-        raise ValueError("reference.authority_receipt_missing")
-    if not isinstance(first_performance_at, str):
-        raise ValueError("reference.performance_time_anchor_missing")
-    if datetime.fromisoformat(
-        doc["created_at"].replace("Z", "+00:00")
-    ) >= datetime.fromisoformat(first_performance_at.replace("Z", "+00:00")):
-        raise ValueError("reference.registration_not_preperformance")
-    for layer in ("candidate", "meta"):
-        manifest = manifests[layer]
-        expected = doc["manifests"][layer]
+    for role in ("candidate", "meta"):
+        wrapper = manifests[role]
+        payload = json.loads(wrapper["raw"])
+        expected_members = {m for m, (r, _) in DISPATCH.items() if r == role}
         if (
-            manifest["sha256"] != sha256(manifest["raw"].encode())
-            or manifest["sha256"] != expected["sha256"]
-        ):
-            raise ValueError("reference.manifest_sha_mismatch")
-        payload = json.loads(manifest["raw"])
-        if (
-            payload["profile_sha256"] != doc["profile_sha256"]
-            or payload["role"] != layer
-        ):
-            raise ValueError("reference.profile_or_role_mismatch")
-        members = payload["members"]
-        minimum = policy.document["variance_layers"]["independent_reference"][
-            "minimum_finite_SR_per_complete_reference_family"
-        ]
-        if (
-            not isinstance(members, list)
-            or len(members) < minimum
-            or not all(isinstance(m, str) and m for m in members)
-        ):
-            raise ValueError("reference.complete_membership_required")
-        if len(members) != len(set(members)) or set(members) != set(
-            expected["members"]
+            {m["member_id"] for m in payload["members"]} != expected_members
+            or len(payload["members"]) != len(expected_members)
+            or payload["manifest_role"] != role + "_reference_manifest"
         ):
             raise ValueError("reference.member_not_registered_or_incomplete")
+        checked(
+            wrapper,
+            role + "_reference_manifest.json",
+            "reference.manifest_sha_mismatch",
+        )
+        if payload["common_contract"]["bindings"] != bindings:
+            raise ValueError("reference.profile_or_version_mismatch")
     return doc
 
 
@@ -161,7 +202,7 @@ def reference_manifest_check(request, *, conventions=None):
             policy,
             request.get("first_performance_at"),
         )
-    except (ValueError, TypeError, KeyError) as exc:
+    except (ValueError, TypeError, KeyError, AttributeError, StopIteration) as exc:
         reasons.append(
             str(exc)
             if isinstance(exc, ValueError)
@@ -193,7 +234,7 @@ def register_reference_attempts(
 ):
     doc = verify_registry(registry, manifests, policy, first_performance_at)
     members = sorted(
-        {m for layer in doc["manifests"].values() for m in layer["members"]}
+        m for layer in doc["definition_manifests"] for m in layer["member_ids"]
     )
     run = f"reference/{registry['sha256']}/{fold_id}"
     attempts = [run + "/" + m for m in members]
@@ -202,7 +243,7 @@ def register_reference_attempts(
         attempts,
         basis=policy.document["N"]["DSR_SR_basis"],
         authority_source={
-            "reference": doc["registry_id"],
+            "reference": doc["issue_id"],
             "sha256": registry["sha256"],
         },
     )

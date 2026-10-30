@@ -1,0 +1,32 @@
+{
+  "N_writer_invoked": false,
+  "actual_reference_returns_generated": false,
+  "actual_reference_run_id": null,
+  "canonical_recipe": "remove entire root dependencies key; UTF8 sorted keys ensure_ascii=False compact separators; no trailing newline",
+  "canonical_without_dependencies_sha256": "4dc8b0a6de3981909b4976dc4b6ea27c1c8e118f5268aa1de1d1817f9003da29",
+  "certifiable": false,
+  "cross_interpreter_only_difference": "dependencies.python (3.12.13 vs 3.9.6)",
+  "evo886_status_before_seal": "backlog",
+  "harness_cases": {
+    "fixed": 10,
+    "required_EVO892_negatives": 7,
+    "revision": 26
+  },
+  "harness_sha256": "53aa3519d0744fad51fa5aed9db2e865d8aec23705fda80b3f228a268f1ce59e",
+  "lineage_proof_sha256": "4c82ae5499a53908693363dfdbd1d9394b390b43fbe5f97819ce4a99c572f8f8",
+  "network_requests": 0,
+  "python": "3.12.13",
+  "python39_harness_sha256": "52018bb4e0b9dd126f27cb1192440e1fcc6e504313214c3b8c9e49c35fbf8430",
+  "ruff": "check and format --check pass; 0.14.3",
+  "runtime_consumable": false,
+  "sealed_at": "2026-10-30T04:10:11Z",
+  "static_seal_sha256": "0f854eeac44cfc8a73be2c2cbe3f2fe1f1da6ce6de88a52de3dbafb6e5ade336",
+  "strategy_backtests": 0,
+  "tests": {
+    "command": "PYTHONPATH=qlab:. python -m pytest qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q --tb=short",
+    "dynamic_factor": 141,
+    "passed": 149,
+    "qlib": 8
+  },
+  "two_same_interpreter_processes_byte_identical": true
+}

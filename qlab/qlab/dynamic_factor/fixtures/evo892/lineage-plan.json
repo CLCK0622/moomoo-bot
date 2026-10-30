@@ -1,0 +1,141 @@
+{
+  "actual_run_or_source_code_exists_by_this_plan": false,
+  "authority_comments": [
+    "01a18ac0-580c-7466-85f7-229958c83b4f",
+    "01a18ac6-0875-7a8a-bb45-b4c2156455f5",
+    "01a18ac8-6824-72f1-9eb7-f02199d3338b"
+  ],
+  "before_first_performance_required": [
+    "real_entrypoint_source_mapping_with_SHA",
+    "static_proof_receipt_and_independent_review",
+    "complete_N_and_market_input_gates",
+    "platform_registration_anchor_verified"
+  ],
+  "engineering_proof_owner": "EVO884",
+  "entrypoint_names_are_logical_contracts_not_existing_paths": true,
+  "graph_edges_allowed": [
+    "SEALED_RAW_INPUTS -> REFERENCE_PRODUCER",
+    "SEALED_PROTOCOL_PROFILE -> REFERENCE_PRODUCER",
+    "SHARED_SPLITTER_TRAIN_WARMUP_VIEWS -> REFERENCE_PRODUCER",
+    "REFERENCE_PRODUCER -> IMMUTABLE_REFERENCE_SIDECARS -> CURRENT_S0",
+    "CURRENT_S1 -> CURRENT_S2 -> CURRENT_S3 -> CURRENT_S4",
+    "CURRENT_S1_ORIGINAL_ATTEMPTS -> CURRENT_S4"
+  ],
+  "graph_edges_forbidden": [
+    "CURRENT_S1_S2_S3_S4 -> REFERENCE_PRODUCER",
+    "CURRENT_OUTPUT_CACHE -> REFERENCE_PRODUCER",
+    "CURRENT_FOLD_TEST_MARKET_OR_PERFORMANCE -> REFERENCE_PRODUCER",
+    "REFERENCE_RESULT -> CHANGE_PREDECLARED_MEMBERSHIP",
+    "CURRENT_META_RESULT -> CURRENT_S2_RESELECTION"
+  ],
+  "independence_claim_scope": "auditable_source_provenance_only_not_statistical_IID",
+  "run_roles": [
+    {
+      "actual_entrypoint_source_path": null,
+      "actual_run_id": null,
+      "actual_source_sha256": null,
+      "artifact_directory_template": "EVO886/{batch_uuid}/external-reference/fold-{k}/",
+      "forbidden_reads": [
+        "CURRENT_CANDIDATE.*",
+        "CURRENT_META.*",
+        "current_strategy_result_cache.*",
+        "current_fold_gap_test_future_market_data.*"
+      ],
+      "inputs": [
+        "sealed_registry_and_two_definition_manifests",
+        "sealed_profile_costs_and_64_panel",
+        "same_candidate_splitter.train_view_and_warmup_view",
+        "sealed_raw_market_corporate_actions_QQQ_TR_inputs"
+      ],
+      "logical_entrypoint": "generate_predeclared_reference_train_artifacts",
+      "outputs": [
+        "four_reference_daily_active_series",
+        "four_reference_attempt_receipts",
+        "candidate_reference_V_manifest",
+        "meta_reference_V_manifest"
+      ],
+      "role": "external_reference_producer",
+      "run_id_template": "EVO886/{batch_uuid}/REFERENCE_PRODUCER/fold-{k}/attempt-{producer_ordinal}"
+    },
+    {
+      "actual_entrypoint_source_path": null,
+      "actual_run_id": null,
+      "actual_source_sha256": null,
+      "artifact_directory_template": "EVO886/{batch_uuid}/current-candidate/fold-{k}/",
+      "inputs": [
+        "same_candidate_splitter",
+        "sealed_raw_inputs_profile_and_frozen_policy",
+        "verified_external_reference_sidecars_at_S0",
+        "authoritative_N_candidate_snapshot_before_S2"
+      ],
+      "logical_entrypoint": "frozen_current_fold_S0_S1_S2",
+      "outputs": [
+        "current_16_probe_attempts_and_returns",
+        "current_calibration_table",
+        "current_S2_candidate_DSR_and_unique_pool"
+      ],
+      "role": "current_candidate",
+      "run_id_template": "EVO886/{batch_uuid}/CURRENT_CANDIDATE/fold-{k}/attempt-{ordinal}"
+    },
+    {
+      "actual_entrypoint_source_path": null,
+      "actual_run_id": null,
+      "actual_source_sha256": null,
+      "artifact_directory_template": "EVO886/{batch_uuid}/current-meta/fold-{k}/",
+      "inputs": [
+        "current_S2_unique_pool_and_current_calibration_table",
+        "current_S1_existing_attempt_references",
+        "verified_external_meta_reference_sidecar",
+        "authoritative_N_meta_snapshot_after_actual_meta_registration"
+      ],
+      "logical_entrypoint": "frozen_current_fold_S3_S4",
+      "outputs": [
+        "single_current_META_POLICY_V03_attempt",
+        "train_meta_diagnostic_DSR_no_feedback"
+      ],
+      "role": "current_meta",
+      "run_id_template": "EVO886/{batch_uuid}/CURRENT_META/fold-{k}/attempt-{ordinal}"
+    }
+  ],
+  "runtime_root": "new_offline_EVO886_owned_root_only_not_existing_paper_REAL_or_protected_production_paths",
+  "schema": "EVO892.lineage-plan.v1",
+  "state": "proposed_not_engineering_proven",
+  "static_propositions_to_prove": [
+    {
+      "claim": "all_four_reference_rules_and_member_ids_are_closed_before_any_fold_performance",
+      "evidence": "entrypoint_source_mapping_and_fixed_dispatch_table_bound_to_definition_SHA_no_search_or_callbacks",
+      "id": "P1"
+    },
+    {
+      "claim": "reference_inputs_are_only_sealed_raw_inputs_and_same_splitter_train_warmup_views",
+      "evidence": "function_call_graph_argument_shapes_file_and_store_allowlists_no_gap_test_market_rows",
+      "id": "P2"
+    },
+    {
+      "claim": "reference_producer_cannot_read_current_candidate_meta_outputs_or_result_caches",
+      "evidence": "process_or_capability_boundary_mount_or_object_store_policy_and_static_no_forbidden_dependency_edges_not_just_name_tags",
+      "id": "P3"
+    },
+    {
+      "claim": "actual_output_series_are_produced_by_external_reference_entrypoint_before_current_S0",
+      "evidence": "producer_code_SHA_actual_run_and_input_output_manifests_DAG_and_generation_timestamps",
+      "id": "P4"
+    },
+    {
+      "claim": "candidate_and_meta_reference_profile_roles_match_original_frozen_probe_roles",
+      "evidence": "static_execution_profile_mapping_meta_probe_components_keep_probe_overrides_no_new_meta_policy",
+      "id": "P5"
+    },
+    {
+      "claim": "same_candidate_splitter_is_reused_and_1260_day_complete_calendar_preserved",
+      "evidence": "single_callable_source_SHA_same_fold_object_identity_receipt_exact_fold_calendar_hashes",
+      "id": "P6"
+    },
+    {
+      "claim": "every_real_reference_attempt_and_retry_is_counted_before_admission",
+      "evidence": "EVO891_unique_ledger_writer_append_receipts_tail_hash_N_snapshot_order_and_no_dedup_of_real_computations",
+      "id": "P7"
+    }
+  ],
+  "unproven_or_unmatched_behavior": "V_DSR_null_no_source_exclusion_relaxation"
+}

@@ -12,6 +12,7 @@ from dataclasses import asdict, dataclass
 from .contract import code_sha, digest, result
 from .fees import finite
 from .fold_split import train_dates as shared_train_dates
+from .fold_split import shared_views, reference_view
 from .validation import calendar_index, convention_manifest_reasons, fold_reasons
 
 
@@ -175,7 +176,19 @@ def _run_walk_forward_unbound(
                     ctx.fold_id, {}
                 )
                 context = dict(context, fold_id=ctx.fold_id)
-                history_dates = list(shared_train_dates(calendar, fold))
+                if conventions.document["version"] == "v1.0.1":
+                    sizes = conventions.document["folds"]
+                    views = shared_views(
+                        calendar,
+                        fold,
+                        train_days=sizes["train_days"],
+                        warmup_days=sizes["warmup_days"],
+                    )
+                    history_dates = list(
+                        reference_view(views, fold, shared_train_dates)[0]
+                    )
+                else:
+                    history_dates = list(shared_train_dates(calendar, fold))
                 history = tuple(
                     FeatureRow(d, _features(by_date[d])) for d in history_dates
                 )

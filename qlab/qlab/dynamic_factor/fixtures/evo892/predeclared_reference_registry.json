@@ -1,0 +1,100 @@
+{
+  "N": {
+    "authoritative_N": null,
+    "byte_delivery_retry_same_existing_attempt": "idempotent",
+    "candidate_snapshot": "after_all_four_reference_attempts_and_current_candidate_attempts_before_S2",
+    "complete_history_owner": "EVO891",
+    "cross_manifest_attempt_sharing": false,
+    "historical_47_is_lower_bound_not_complete": true,
+    "meta_snapshot": "after_register_actual_meta_attempt_N_meta_ge_N_candidate",
+    "planned_for_77_folds": 308,
+    "real_performance_attempts_this_issue": 0,
+    "real_retries_failures_NaN_and_duplicate_computations": "new_attempt_id_add_N_never_delete",
+    "unique_per_fold": 4
+  },
+  "author_agent_id": "6aab6e70-8fa0-497b-8b5e-06f6ae3ac835",
+  "authority_comments": [
+    "01a18ac0-580c-7466-85f7-229958c83b4f",
+    "01a18ac3-96c1-7149-849d-f40a88b381b2",
+    "01a18ac6-0875-7a8a-bb45-b4c2156455f5",
+    "01a18ac8-6824-72f1-9eb7-f02199d3338b"
+  ],
+  "bindings": {
+    "common_calendar_sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "common_profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+    "cost_x1_sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "cost_x2_sha256": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "fold_manifest_sha256": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "frozen_interface_sha256": "6ae28a70ddc11204047c691a855bbd55727fd0605f5984d00fedfbd2f44a1a26",
+    "interface_to_consume_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+    "panel64_sha256": "ae9332ff345dae69866a6a78fcbb07201ef7ac14b4ff82d714a1282330103ee4",
+    "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "prereg_version": "v1"
+  },
+  "certifiable": false,
+  "closed_family_total_members": 4,
+  "definition_manifests": [
+    {
+      "file": "candidate_reference_manifest.json",
+      "member_count": 2,
+      "member_ids": [
+        "CREF-F1-L020",
+        "CREF-F3-L020"
+      ],
+      "planned_unique_attempts_per_fold": 2,
+      "profile_id": "CANDIDATE_PROBE_V03",
+      "role": "candidate",
+      "sha256": "17c0080003bc984029dc8954486798d9b821eff79a369307e2fa8e8e39eabfc4"
+    },
+    {
+      "file": "meta_reference_manifest.json",
+      "member_count": 2,
+      "member_ids": [
+        "MREF-F2-L020",
+        "MREF-F4-L020"
+      ],
+      "planned_unique_attempts_per_fold": 2,
+      "profile_id": "META_EVAL_V03",
+      "role": "meta",
+      "sha256": "c6fa724aa501d346de2f6ace28afe971eabd4777cc8a0f3850bb849e37bba4f4"
+    }
+  ],
+  "fold_binding": {
+    "count": 77,
+    "file": "fold-bindings.json",
+    "sha256": "8c40536cf6cc1780a61081548c5935256e2080e50e82c7c2953b051901ea0514"
+  },
+  "historical_or_shadow_run_authorized_by_this_registry": false,
+  "issue_id": "01a18ac1-263c-755d-a3ac-008a535cd6b6",
+  "lineage_plan": {
+    "engineering_proof_owner": "EVO884",
+    "file": "lineage-plan.json",
+    "sha256": "20247efaa46ae945dd0dc7a94fb29683c5fa404e5039e79f92a223dc39e9182b"
+  },
+  "post_registration_new_member": "requires_new_version_v2_and_N_no_result_based_replacement",
+  "registration_anchor": {
+    "anchor": "created_at_of_first_comment_attaching_this_exact_registry_and_definition_manifest_bytes",
+    "comment_id": null,
+    "created_at": null,
+    "independent_non_author_verification_required": true,
+    "local_generation_time_is_not_anchor": true,
+    "must_precede": "every_reference_or_current_fold_performance_artifact_generation",
+    "platform": "multica",
+    "resolution": "resolve_from_platform_attachment_comment_metadata_after_upload_no_rewrite_to_registered_file"
+  },
+  "runtime_consumable": false,
+  "runtime_results_sidecars": "runtime-evidence-contract.json",
+  "schema": "EVO892.predeclared_reference_registry.v1",
+  "starts_63_day_clock": false,
+  "state": "registration_only_pending_hanlin_and_independent_time_anchor_review",
+  "stop_conditions": {
+    "actual_plus_total_expected_increment_exceeds_agent_days": 2,
+    "fallback_does_not_authorize_run_by_this_author": true,
+    "needs_fold_performance_to_choose_family": "fallback_b_DSR_V_null"
+  },
+  "strategy_policy_changes": 0,
+  "threshold_changes": 0,
+  "version": "1.0.0",
+  "version_decision": "post_freeze_versioned_input_receipt_prereg_v1_unchanged",
+  "version_decision_authority": "hanlin_contract_ruling_already_determined_input_form_specific_scheme_compatibility_pending"
+}

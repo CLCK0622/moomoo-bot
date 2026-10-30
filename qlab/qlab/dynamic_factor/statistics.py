@@ -102,6 +102,12 @@ def dsr_eval(
         else:
             references = reference_manifest_check(request, conventions=conventions)
             reasons.extend(references["reasons"])
+            if "sidecars" in request:
+                from .reference_evidence import reference_runtime_check
+
+                reasons.extend(
+                    reference_runtime_check(request, conventions=conventions)["reasons"]
+                )
     metrics = {
         "dsr": None,
         "trials_variance": None,

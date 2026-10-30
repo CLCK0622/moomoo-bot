@@ -1,0 +1,121 @@
+{
+  "actual_sidecar_SHA_at_registration": null,
+  "binding_map": {
+    "candidate_reference_V_manifest": "candidate_results_sidecar_binds_candidate_reference_manifest_definition_sha256",
+    "meta_reference_V_manifest": "meta_results_sidecar_binds_meta_reference_manifest_definition_sha256"
+  },
+  "checks_before_DSR": [
+    "platform_registration_anchor_precedes_every_fold_performance",
+    "registry_and_definition_full_byte_SHA_equal_anchored_artifacts",
+    "exact_predeclared_member_set_count_and_role",
+    "meta_reference_roles_are_original_meta17_probe_components_not_new_meta_policies",
+    "same_candidate_splitter_instance_and_same_fold_object",
+    "exact1260_train_dates_plus_only_legal252_warmup_no_gap_test_input",
+    "all_policy_profile_panel_cost_and_valuation_bindings_equal_v1",
+    "actual_producer_is_not_current_candidate_meta_or_output_derived_copy",
+    "auditable_access_boundary_and_source_input_DAG_no_result_cache",
+    "all_predeclared_attempts_in_authoritative_complete_N_no_reset",
+    "all_reference_attempts_before_current_S0_N_candidate_snapshot_before_S2",
+    "all1260_returns_finite_each_SR_finite_family_count2_no_drop",
+    "daily_SR_and_V_scale_conversion_at_most_once",
+    "result_sidecars_sealed_before_current_S0_no_result_driven_replacement"
+  ],
+  "definition_manifests": [
+    {
+      "file": "candidate_reference_manifest.json",
+      "member_count": 2,
+      "member_ids": [
+        "CREF-F1-L020",
+        "CREF-F3-L020"
+      ],
+      "planned_unique_attempts_per_fold": 2,
+      "profile_id": "CANDIDATE_PROBE_V03",
+      "role": "candidate",
+      "sha256": "17c0080003bc984029dc8954486798d9b821eff79a369307e2fa8e8e39eabfc4"
+    },
+    {
+      "file": "meta_reference_manifest.json",
+      "member_count": 2,
+      "member_ids": [
+        "MREF-F2-L020",
+        "MREF-F4-L020"
+      ],
+      "planned_unique_attempts_per_fold": 2,
+      "profile_id": "META_EVAL_V03",
+      "role": "meta",
+      "sha256": "c6fa724aa501d346de2f6ace28afe971eabd4777cc8a0f3850bb849e37bba4f4"
+    }
+  ],
+  "hash_domains": {
+    "definition": "whole_registered_definition_file_bytes_fixed_before_any_fold_performance",
+    "do_not_compare_dynamic_result_sidecar_SHA_to_definition_SHA": true,
+    "returns": "actual_complete_daily_active_series_file_bytes",
+    "runtime_sidecar": "whole_result_receipt_file_bytes_fixed_after_reference_generation_before_current_S0"
+  },
+  "lineage_plan_sha256": "20247efaa46ae945dd0dc7a94fb29683c5fa404e5039e79f92a223dc39e9182b",
+  "negative_cases_required": [
+    "missing_registry_or_platform_anchor",
+    "definition_SHA_mismatch",
+    "member_added_removed_or_wrong_role",
+    "current_output_copy_or_result_cache_read",
+    "different_splitter_or_short_train_or_visible_test",
+    "failed_trial_or_NaN_SR",
+    "complete_N_missing_or_retry_not_counted"
+  ],
+  "not_a_generated_result_manifest": true,
+  "on_failure": {
+    "DSR": null,
+    "candidate_V": null,
+    "certifiable": false,
+    "failure_entries_retained": true,
+    "meta_V": null,
+    "no_reselection": true,
+    "specific_reasons_required": true
+  },
+  "registry_file": "predeclared_reference_registry.json",
+  "registry_sha256": "83c9d47f375235faf0021342ff2e0a36b8cdc46a58975da8b31c50bd73aea3b2",
+  "required_per_fold_trial": [
+    "trial_id",
+    "member_id",
+    "return_role",
+    "profile_id",
+    "execution_profile_id",
+    "common_profile_sha256",
+    "panel64_sha256",
+    "source_run_id",
+    "source_returns_sha256",
+    "raw_market_and_corporate_actions_manifest_sha256",
+    "valuation_contract_sha256",
+    "cost_policy_sha256",
+    "cost_x1_sha256",
+    "cost_x2_sha256",
+    "train_calendar_sha256",
+    "warmup_calendar_sha256",
+    "splitter_source_and_shared_object_receipt_sha256",
+    "1260_dates_no_omission",
+    "n_observations",
+    "SR_daily_or_failure_reason",
+    "scale_daily",
+    "generation_started_at",
+    "generation_completed_at",
+    "authoritative_attempt_id_and_N_contribution"
+  ],
+  "required_runtime_envelope": [
+    "registry_sha256",
+    "definition_manifest_sha256",
+    "platform_anchor_comment_id",
+    "platform_anchor_created_at",
+    "independent_anchor_verification_receipt_sha256",
+    "orchestration_batch_id",
+    "actual_reference_producer_run_id",
+    "actual_current_candidate_run_id",
+    "actual_current_meta_run_id_or_precreated_task_id",
+    "producer_code_sha256",
+    "isolation_and_access_allowlist_receipt_sha256",
+    "DAG_and_input_lineage_sha256",
+    "exact_membership_and_attempt_map",
+    "authoritative_complete_N_tail_anchor"
+  ],
+  "schema": "EVO892.runtime-evidence-contract.v1",
+  "version": "1.0.0"
+}

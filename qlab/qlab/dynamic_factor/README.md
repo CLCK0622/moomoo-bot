@@ -58,26 +58,66 @@ recovery. Rewriting both DB and witness is outside this local integrity boundary
 
 ## Reference producer and registry
 
-`reference_manifest_check` requires a platform anchor and non-author review,
-registration before first performance, exact raw manifest SHA agreement, current
-profile and complete membership. Candidate/meta manifests are checked separately.
-No real members are invented; positive examples use synthetic fixture members.
-The EVO-892 registry delivered during this revision is not wired here; its real
-bindings, seven lineage propositions and runtime-evidence checks are a separately
-scheduled follow-up. This revision's static proof covers only the fixture entry.
+The real EVO-892 v1.0.0 definitions are pinned under `fixtures/evo892/`:
+registry `83c9d47f…a3b2`, candidate `17c00800…fabc4`, meta `c6fa724a…bba4f4`.
+Raw registered bytes remain unchanged. Platform comment `01a18ad3-1902-7e98-9148-ef585c05ce82`
+created at `2026-10-30T03:20:52Z` is recorded separately; local sealing time does
+not replace it. Non-author ordering review remains an external EVO-887 gate.
 
-```bash
-PYTHONPATH=qlab:. python -m qlab.dynamic_factor.reference_producer --inputs-root DIR
-```
+`reference_manifest_check` checks both raw definition SHA domains, exact platform
+anchor, role and full membership. Candidate members are CREF-F1-L020/F3-L020;
+meta-reference members are MREF-F2-L020/F4-L020. Their frozen definitions use the
+existing H10 solo-probe rules and CANDIDATE_PROBE_V03 execution overrides. META_EVAL_V03
+is an evaluation role for existing meta17 probe components, not a new meta policy.
+The dispatch cannot accept another member, altered parameters or an evaluator callback.
 
-The independent entry reads one JSON request from stdin. Only `panel.json`,
-`benchmark.json`, `profile.json` under the root are readable, with pinned hashes,
-strict schemas and complete train dates. Candidate/meta output paths, copied
-output schemas, extra roles, symlinks/hardlinks and test rows refuse. No real
-member rules or returns are generated. `static_proof()` supplies source hashes,
-AST import graph, read whitelist and shared splitter SHA. This proves pinned
-trusted source, not arbitrary Python isolation or statistical IID. Changing run
-IDs, directories or seeds alone does not prove independent provenance.
+`prepare_request(policy, fold, candidate_view, input_bindings)` checks the same
+fold object and shared splitter callable before creating a restricted train/warmup
+packet. Candidate folds use that same helper. All 77 train1260/warmup252 calendar
+hashes match the registered projection. A copied fold object or another callable
+refuses. The worker sees only those tuples, never a whole market/test view.
+
+`run_isolated(root, packet)` launches the pinned entry with `-I -S`, no inherited
+environment/extra FDs and no user site. Imports finish before the worker installs
+an audit hook, then data reads begin. Only readonly `panel.json`, `benchmark.json`
+and `profile.json` are allowed. Schemas/hashes are strict; profile includes the
+exact registered fold projection for validation, not another runtime splitter.
+Candidate/meta files, copied output schemas, caches, symlinks/hardlinks, writes,
+network/process operations, dynamic imports and gap/test rows refuse. Static AST
+proof checks the import graph, import-time effects and hook-before-read ordering.
+This capability protects pinned trusted Python code; it is not an OS sandbox for
+hostile native extensions or an operator rewriting code and receipts.
+
+The entry emits four preparation jobs and access/view receipts, **no returns**.
+It does not launch reference computation. Actual output evidence belongs to
+EVO-886; adding/changing execution code requires source resealing and review.
+
+`reference_runtime_check` validates separately hashed result sidecars, binding them
+to fixed definition hashes. It checks actual producer/current-run separation,
+allowed DAG edges, input/policy/source SHA, exact train dates, finite full-family
+observations, scale, generation/sealing before S0 and after the static seal, and
+independent anchor-review receipts. The P7 checker verifies supplied EVO-891 tail,
+complete-history receipt, attempt/retry map and candidate/meta N order. It never
+writes the unique ledger or turns the newly delivered N=75 draft/open gaps into
+an accepted complete N. Receipt consistency does not authenticate self-issued
+claims; acceptance of authority and history remains external.
+
+| Proposition | Current delivery | Remaining dependency |
+| --- | --- | --- |
+| P1 closed rules/dispatch | Proven for pinned entry | Actual output evidence at P4 |
+| P2 input views | Proven statically and by unit receipts | Actual runtime receipts |
+| P3 access boundary | Proven for pinned preparation worker | Source changes require reseal |
+| P4 output lineage/timing | Validator only | EVO-886 actual outputs/DAG/time |
+| P5 role mapping | Proven against registered definitions | Actual runtime roles checked again |
+| P6 shared splitter | Proven; 77 calendars and object identity checked | Actual runtime identity receipt |
+| P7 N/retries/order | Validator only | EVO-891 accepted complete tail/attempt receipts |
+
+`seal_static(sealed_at)` records current source hashes and an explicit UTC time.
+The runtime checker requires that seal to precede every reference start, and
+sidecars to precede current S0. `lineage_proof` enumerates P1–P7 and leaves actual
+run/output fields null. The final seal/proof artifacts are in `evidence/evo892/`.
+There are no fabricated actual run IDs or real return artifacts. Harness runtime
+sentinels are explicitly SYNTHETIC_UNIT values, never authority/research inputs.
 
 ## Fees and valuation
 
@@ -134,5 +174,6 @@ fee, valuation and integrity regressions.
 `python -m qlab.dynamic_factor --help` lists JSON tools. Formal DSR/fold calls
 require `--conventions`; persistent bound calls need a retained witness and
 `--ledger`. `--ledger-bootstrap` reads an explicit first-creation receipt. CLI
-exits 2 on refusal and never imports code named in JSON. Reports carry input and
+exits 2 on refusal and never imports code named in JSON. `reference_runtime_check`
+accepts a hash-keyed UTF-8 evidence map; it does not chase arbitrary file paths. Reports carry input and
 source SHA/assumptions. `--out-dir` writes immutable content-addressed readouts.
