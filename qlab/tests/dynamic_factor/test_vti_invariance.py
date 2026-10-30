@@ -1,11 +1,11 @@
 from qlab.dynamic_factor.invariance_harness import probe
-from qlab.dynamic_factor.conventions import load_conventions
+from qlab.dynamic_factor.conventions import load_conventions, FIXTURES
 
 
 def test_replacing_only_VTI_bytes_changes_B2_binding_but_not_seven_role_outputs(
     tmp_path,
 ):
-    r = probe(tmp_path, load_conventions())
+    r = probe(tmp_path, load_conventions(FIXTURES / "conventions-v1.0.1.json"))
     assert r["output_sha256_before"] == r["output_sha256_after"]
     assert len(r["output_sha256_before"]) == 7
     assert r["VTI_source_sha256"][0] != r["VTI_source_sha256"][1]

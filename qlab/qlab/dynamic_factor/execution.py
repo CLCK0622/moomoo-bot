@@ -36,7 +36,7 @@ class OrderCosts:
             "date": sell_date,
             "rate_basis": rate_basis,
         }
-        if policy.document["version"] != "v1.0.1":
+        if policy.document["version"] not in ("v1.0.1", "v2.0.0"):
             raise ValueError("fee.legacy_date_policy_disabled")
         if rate_basis not in ("effective_date", "research_restored"):
             raise ValueError("rate_basis_unknown")
@@ -146,7 +146,7 @@ def _tool(tool, request, policy, names, calculate):
     reasons = []
     try:
         reject_b2_inputs(request, "orders")
-        if policy.document["version"] != "v1.0.1":
+        if policy.document["version"] not in ("v1.0.1", "v2.0.0"):
             raise ValueError("prereg_pending_v0.2")
         metrics.update(calculate())
     except (ValueError, KeyError, TypeError, OverflowError, ZeroDivisionError) as exc:

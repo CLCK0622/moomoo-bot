@@ -1,0 +1,32 @@
+{
+  "common-profile-v2.json": {
+    "comment_id": "01a18c40-6792-76e4-be5e-4127b54f7aa5",
+    "sha256": "98ed5a2bfb5163efae872020861ef630ce4746094af06f89e3e8056b6f56a05c",
+    "source_member": "EVO883-common-profile-v2.json",
+    "source_zip_sha256": "6d498b8eeec884fbd8d65d185c4b5a62d2ba215d8fb1794a6deab08310b9eeaa"
+  },
+  "conventions-v2.0.0.json": {
+    "comment_id": "01a18c40-6792-76e4-be5e-4127b54f7aa5",
+    "sha256": "ea914ee6bb617a2a07dbadc1b02364b6f165b08d70af055f416e68d6b00510f4",
+    "source_member": "EVO883-executable-conventions-v2.0.0.json",
+    "source_zip_sha256": "6d498b8eeec884fbd8d65d185c4b5a62d2ba215d8fb1794a6deab08310b9eeaa"
+  },
+  "prereg-v2.json": {
+    "comment_id": "01a18c40-6792-76e4-be5e-4127b54f7aa5",
+    "sha256": "9bb933c21aea20270b792d3e77720c459fe80a3074f59884657a58d330e0088d",
+    "source_member": "EVO883-prereg-v2.json",
+    "source_zip_sha256": "6d498b8eeec884fbd8d65d185c4b5a62d2ba215d8fb1794a6deab08310b9eeaa"
+  },
+  "v1-to-v2-diff.json": {
+    "comment_id": "01a18c40-6792-76e4-be5e-4127b54f7aa5",
+    "sha256": "a3e872dca63e104753c12eeec2c3bfb9aff5325223c5f0781c13eab9010f7a49",
+    "source_member": "EVO883-v1-to-v2-diff.json",
+    "source_zip_sha256": "6d498b8eeec884fbd8d65d185c4b5a62d2ba215d8fb1794a6deab08310b9eeaa"
+  },
+  "v2-final-receipt.json": {
+    "comment_id": "01a18c40-6792-76e4-be5e-4127b54f7aa5",
+    "sha256": "1df425a328539f4cddfe3d574feabc1b753fc0abe2ff15d318634aee7dff3836",
+    "source_member": "EVO883-S3-v12-final-receipt.json",
+    "source_zip_sha256": "6d498b8eeec884fbd8d65d185c4b5a62d2ba215d8fb1794a6deab08310b9eeaa"
+  }
+}

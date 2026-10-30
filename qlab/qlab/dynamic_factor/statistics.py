@@ -98,7 +98,10 @@ def dsr_eval(
         ]
     else:
         reasons += ["dsr.runtime_bindings_pending"]
-    if conventions is not None and conventions.document["version"] == "v1.0.1":
+    if conventions is not None and conventions.document["version"] in (
+        "v1.0.1",
+        "v2.0.0",
+    ):
         from .reference_check import reference_manifest_check
 
         if not isinstance(request, dict):
@@ -113,6 +116,8 @@ def dsr_eval(
                     reference_runtime_check(request, conventions=conventions)["reasons"]
                 )
     metrics = {
+        "gate_N": None,
+        "factor_arm_N_complete": False,
         "dsr": None,
         "trials_variance": None,
         "family_variance": None,

@@ -14,7 +14,7 @@ from qlab.dynamic_factor.statistics import dsr_eval, prereg_check
 
 
 def test_exact_v1_identity_profile_and_incomplete_seed(tmp_path):
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     assert (
         p.raw_sha256
         == "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b"

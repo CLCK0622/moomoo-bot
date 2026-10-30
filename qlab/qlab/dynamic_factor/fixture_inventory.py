@@ -6,7 +6,7 @@ from pathlib import Path, PurePosixPath
 from .contract import sha256
 from .conventions import FIXTURES
 
-MANIFEST = "frozen-fixtures.json"
+MANIFEST = "frozen-fixtures-v2.json"
 
 
 def frozen_fixture_hashes(root=FIXTURES):

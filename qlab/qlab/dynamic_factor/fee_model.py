@@ -286,7 +286,7 @@ def evaluate(request, params_path, schedule_path, policy):
         schedule = Path(schedule_path).read_bytes()
         inputs.update(params_sha256=sha256(raw), schedule_sha256=sha256(schedule))
         json.loads(schedule)
-        if policy.document["version"] != "v1.0.1":
+        if policy.document["version"] not in ("v1.0.1", "v2.0.0"):
             raise ValueError("fee.conventions_version_obsolete")
         p = json.loads(raw)
         if sha256(raw) not in (
