@@ -1,0 +1,372 @@
+{
+  "B2_only_readout_entry": "valuation.benchmark_valuation(symbol=VTI)",
+  "B2_series_capability_for_strategy_roles": false,
+  "certifiable": false,
+  "common_profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+  "conventions_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+  "conventions_status": "FROZEN_DESIGN_INTERFACE_EXECUTION_GATES_UNMET",
+  "conventions_version": "v1.0.1",
+  "guarded_consumers": {
+    "admission": {
+      "function": "select_pool",
+      "guard_line": 213,
+      "module": "pipeline"
+    },
+    "calibration": {
+      "function": "calibrate_gain",
+      "guard_line": 306,
+      "module": "execution"
+    },
+    "features": {
+      "function": "_features",
+      "guard_line": 54,
+      "module": "folds"
+    },
+    "holdings_cash": {
+      "function": "integer_cash_valuation",
+      "guard_line": 161,
+      "module": "valuation"
+    },
+    "orders": {
+      "function": "_tool",
+      "guard_line": 148,
+      "module": "execution"
+    },
+    "qqq_labels": {
+      "function": "_run_walk_forward_unbound",
+      "guard_line": 74,
+      "module": "folds"
+    },
+    "reference": {
+      "function": "read_inputs",
+      "guard_line": 21,
+      "module": "reference_inputs"
+    }
+  },
+  "import_graph": {
+    "continuity": [
+      "authority_ledger",
+      "contract",
+      "conventions",
+      "copy",
+      "fees",
+      "input_disposition",
+      "input_scope"
+    ],
+    "execution": [
+      "__future__",
+      "contract",
+      "conventions",
+      "fee_model",
+      "fees",
+      "input_scope",
+      "json",
+      "math",
+      "pipeline",
+      "re"
+    ],
+    "folds": [
+      "__future__",
+      "continuity",
+      "contract",
+      "conventions",
+      "dataclasses",
+      "fees",
+      "fold_split",
+      "input_scope",
+      "json",
+      "pipeline",
+      "validation"
+    ],
+    "input_scope": [],
+    "pending": [
+      "__future__",
+      "contract",
+      "execution",
+      "input_scope",
+      "pipeline"
+    ],
+    "pipeline": [
+      "__future__",
+      "contract",
+      "conventions",
+      "copy",
+      "dsr_v0",
+      "execution",
+      "fees",
+      "input_scope",
+      "json",
+      "math",
+      "pathlib",
+      "re",
+      "reference_registry",
+      "statistics"
+    ],
+    "reference_inputs": [
+      "hashlib",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "scope_proof": [
+      "ast",
+      "contract",
+      "input_disposition",
+      "input_scope",
+      "json",
+      "pathlib",
+      "reference_check"
+    ],
+    "scope_reader": [
+      "contract",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "validation": [
+      "__future__",
+      "contract",
+      "conventions",
+      "datetime",
+      "fees",
+      "input_disposition",
+      "scope_proof",
+      "valuation"
+    ],
+    "valuation": [
+      "__future__",
+      "contract",
+      "conventions",
+      "csv",
+      "fees",
+      "input_disposition",
+      "input_scope",
+      "io",
+      "math"
+    ]
+  },
+  "import_whitelist": {
+    "continuity": [
+      "authority_ledger",
+      "contract",
+      "conventions",
+      "copy",
+      "fees",
+      "input_disposition",
+      "input_scope"
+    ],
+    "execution": [
+      "__future__",
+      "contract",
+      "conventions",
+      "fee_model",
+      "fees",
+      "input_scope",
+      "json",
+      "math",
+      "pipeline",
+      "re"
+    ],
+    "folds": [
+      "__future__",
+      "continuity",
+      "contract",
+      "conventions",
+      "dataclasses",
+      "fees",
+      "fold_split",
+      "input_scope",
+      "json",
+      "pipeline",
+      "validation"
+    ],
+    "input_scope": [],
+    "pending": [
+      "__future__",
+      "contract",
+      "execution",
+      "input_scope",
+      "pipeline"
+    ],
+    "pipeline": [
+      "__future__",
+      "contract",
+      "conventions",
+      "copy",
+      "dsr_v0",
+      "execution",
+      "fees",
+      "input_scope",
+      "json",
+      "math",
+      "pathlib",
+      "re",
+      "reference_registry",
+      "statistics"
+    ],
+    "reference_inputs": [
+      "hashlib",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "scope_proof": [
+      "ast",
+      "contract",
+      "input_disposition",
+      "input_scope",
+      "json",
+      "pathlib",
+      "reference_check"
+    ],
+    "scope_reader": [
+      "contract",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "validation": [
+      "__future__",
+      "contract",
+      "conventions",
+      "datetime",
+      "fees",
+      "input_disposition",
+      "scope_proof",
+      "valuation"
+    ],
+    "valuation": [
+      "__future__",
+      "contract",
+      "conventions",
+      "csv",
+      "fees",
+      "input_disposition",
+      "input_scope",
+      "io",
+      "math"
+    ]
+  },
+  "market_reader_sites": [
+    {
+      "line": 38,
+      "module": "reference_inputs"
+    },
+    {
+      "line": 29,
+      "module": "scope_reader"
+    }
+  ],
+  "non_market_read_whitelist": {
+    "execution": [
+      "fee_params_x2.json",
+      "fee_schedule.json"
+    ],
+    "pipeline": [
+      "predeclared_reference_registry.json",
+      "candidate_reference_manifest.json",
+      "meta_reference_manifest.json"
+    ],
+    "scope_proof": [
+      "current pinned Python sources"
+    ],
+    "valuation": [
+      "qqq-events-v1.csv"
+    ]
+  },
+  "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+  "prereg_version": "v1",
+  "profile_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+  "reference_benchmark_symbol": "QQQ",
+  "reference_file_whitelist": {
+    "benchmark": "benchmark.json",
+    "panel": "panel.json",
+    "profile": "profile.json"
+  },
+  "runtime_consumable": false,
+  "schema": "EVO884.B2-isolation-proof/v1",
+  "scope": "Pinned owned Python entrypoints and declared source/header identities; caller adapters and independent market-source correctness require separate acceptance. No arbitrary native-code sandbox claim.",
+  "scope_ruling_sha256": "730931cdd7b9c2f62db9841438235e0aa4887f27ef4a842844d63b6570fd7ede",
+  "source_files": {
+    "continuity.py": "6281484f04caf8f6e4c436354de1351d1ddd29d3f01232f0a541c3704947dbf3",
+    "execution.py": "39f9b1870607ee9d31eebacfd75e717c3443ba4281c38120ebd89bbd0c0caf39",
+    "folds.py": "8ece40df5ae7d1f910f365dd76c9f8e029673d060a0e8a91af22f4a0661e5cad",
+    "input_scope.py": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+    "pending.py": "2987ba4abe7406c555faad834ee938c12239c9863999bd9d713d15b5acf03a1a",
+    "pipeline.py": "11e0373800a1d86910bb06fc84b7509d9baf2717113f2ea9335ec7b270139eab",
+    "reference_inputs.py": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+    "scope_proof.py": "6fa768ef49fc1d31da8c576872bd9025a938da580c4cd5e63385af18f0b0b62b",
+    "scope_reader.py": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38",
+    "validation.py": "f47a4b2ad4f44d152b525b54a9043ffcafda993c346abe35081d1bea60e4efa4",
+    "valuation.py": "7e11e974600d1712f25d8f09d6077e4f3263363bf2aee737fc376b2612dabeb2"
+  },
+  "source_sha256": "8d3b53fdf3474940f88563b71754ff022e117e056292d6d866cde90c146932d4",
+  "strategy_market_file_whitelist": "<frozen_symbol>.json, matching symbol header and SHA, exact supplied frozen date vector; no link/alias/path expansion",
+  "strategy_market_symbol_whitelist": [
+    "AAPL",
+    "ABBV",
+    "ABNB",
+    "ABT",
+    "ACN",
+    "ADBE",
+    "ADI",
+    "ADP",
+    "ADSK",
+    "AEP",
+    "AJG",
+    "ALL",
+    "AMAT",
+    "AMD",
+    "AMGN",
+    "AMZN",
+    "ANET",
+    "AON",
+    "APD",
+    "APH",
+    "APO",
+    "APP",
+    "AVGO",
+    "AXP",
+    "B",
+    "BA",
+    "BAC",
+    "BE",
+    "BKNG",
+    "BKR",
+    "BLK",
+    "BMY",
+    "BNY",
+    "BRK.B",
+    "BSX",
+    "C",
+    "CAH",
+    "CARR",
+    "CAT",
+    "CB",
+    "CDNS",
+    "CEG",
+    "CI",
+    "CIEN",
+    "CL",
+    "CMCSA",
+    "CME",
+    "CMG",
+    "CMI",
+    "COF",
+    "COHR",
+    "COIN",
+    "COP",
+    "COR",
+    "COST",
+    "CRDO",
+    "CRH",
+    "CRM",
+    "CRWD",
+    "CSCO",
+    "CSX",
+    "CTAS",
+    "CVNA",
+    "CVS",
+    "QQQ"
+  ]
+}

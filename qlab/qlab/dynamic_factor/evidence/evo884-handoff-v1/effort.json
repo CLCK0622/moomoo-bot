@@ -1,0 +1,14 @@
+{
+  "accounting": "Initial increment follows upstream EVO892 exclusion; subsequent engineering/audit itemized separately for upstream attribution, no new project budget total inferred",
+  "actual_reference_performance_attempts": 0,
+  "agent_day_hours": 8,
+  "as_of": "2026-10-30T06:06:52.557564+00:00",
+  "initial_input_increment_elapsed_seconds": 1820,
+  "later_anchor_F1_F2_invariance_and_handoff_seconds_as_of": 3023,
+  "prior_preparation_not_recharged": true,
+  "prior_producer_upper_bound_agent_days": 0.203681,
+  "project_ledger_mutations": 0,
+  "started_at": "2026-10-30T04:46:09+00:00",
+  "total_agent_days_as_of": 0.16815972222222222,
+  "total_elapsed_seconds_as_of": 4843
+}

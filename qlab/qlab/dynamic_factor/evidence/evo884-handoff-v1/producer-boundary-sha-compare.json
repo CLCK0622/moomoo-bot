@@ -1,0 +1,40 @@
+{
+  "access_boundary_changed": true,
+  "after_binding": "source SHA in the single containing delivery commit; exact HEAD recorded in issue/PR and final bundle",
+  "before_commit": "4d13a69c3708d2b01cf3c6429a19b45f4c223c02",
+  "entry_files_unchanged": true,
+  "files": {
+    "input_scope.py": {
+      "after_sha256": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+      "before_sha256": null,
+      "unchanged": false
+    },
+    "reference_boundary.py": {
+      "after_sha256": "acd6d347f59da1d9df8b127f31d3b5f97f17039a35705fb7d94606ec90065551",
+      "before_sha256": "acd6d347f59da1d9df8b127f31d3b5f97f17039a35705fb7d94606ec90065551",
+      "unchanged": true
+    },
+    "reference_check.py": {
+      "after_sha256": "395cea7bf3fbd621383739ae0a8a2dab5c996b228b459ee19626064e703f0c27",
+      "before_sha256": "794d4ff3ae36a9664a0deefb0435f36bab827dcefc56477a5782915a6c332c7c",
+      "unchanged": false
+    },
+    "reference_guard.py": {
+      "after_sha256": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+      "before_sha256": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+      "unchanged": true
+    },
+    "reference_inputs.py": {
+      "after_sha256": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+      "before_sha256": "61456de83ed02066952f79cf2231c3b428619c52dfb6e767ce68222aa86234b3",
+      "unchanged": false
+    },
+    "reference_producer.py": {
+      "after_sha256": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+      "before_sha256": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+      "unchanged": true
+    }
+  },
+  "first_reference_performance_at": null,
+  "resealed_at": "2026-10-30T06:05:55Z"
+}

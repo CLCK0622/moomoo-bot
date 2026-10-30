@@ -1,0 +1,115 @@
+{
+  "access_boundary_untouched": false,
+  "before_commit": "3c958a035f031a6b2eb4818069ae431cc5491e68",
+  "entry_guard_producer_three_files_unchanged": true,
+  "files": {
+    "authority_ledger.py": {
+      "after_sha256": "0ae0e2840f6c47e2e9460d5b6b59fc9c946f38a6f62e21e28d15ddcce7a31947",
+      "before_sha256": "6242d48002e30b740fe423b250af18bc1abbe3f4657b0337404e2033f2cb7858",
+      "unchanged": false
+    },
+    "continuity.py": {
+      "after_sha256": "6281484f04caf8f6e4c436354de1351d1ddd29d3f01232f0a541c3704947dbf3",
+      "before_sha256": "ec076aff10d0b04fb02793f49ac29a9e29891a71dd54a96155e87f6af2f10482",
+      "unchanged": false
+    },
+    "execution.py": {
+      "after_sha256": "39f9b1870607ee9d31eebacfd75e717c3443ba4281c38120ebd89bbd0c0caf39",
+      "before_sha256": "39f9b1870607ee9d31eebacfd75e717c3443ba4281c38120ebd89bbd0c0caf39",
+      "unchanged": true
+    },
+    "fees.py": {
+      "after_sha256": "144ee2bb1b9ca8bd24e480afcd0968e0fa711444ca520c6c6a72d8cf6d628e9a",
+      "before_sha256": "144ee2bb1b9ca8bd24e480afcd0968e0fa711444ca520c6c6a72d8cf6d628e9a",
+      "unchanged": true
+    },
+    "fold_split.py": {
+      "after_sha256": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+      "before_sha256": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+      "unchanged": true
+    },
+    "folds.py": {
+      "after_sha256": "8ece40df5ae7d1f910f365dd76c9f8e029673d060a0e8a91af22f4a0661e5cad",
+      "before_sha256": "8ece40df5ae7d1f910f365dd76c9f8e029673d060a0e8a91af22f4a0661e5cad",
+      "unchanged": true
+    },
+    "input_disposition.py": {
+      "after_sha256": "5b006afb7ba767a65b4f77f5fd48eaf4b43aa022e8a846f7309015b6a00e2254",
+      "before_sha256": "88ee68778de6285fabb3a6bc2d3e554be5e195fa664b4240663b78d94b0a65d1",
+      "unchanged": false
+    },
+    "input_scope.py": {
+      "after_sha256": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+      "before_sha256": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+      "unchanged": true
+    },
+    "pending.py": {
+      "after_sha256": "2987ba4abe7406c555faad834ee938c12239c9863999bd9d713d15b5acf03a1a",
+      "before_sha256": "2987ba4abe7406c555faad834ee938c12239c9863999bd9d713d15b5acf03a1a",
+      "unchanged": true
+    },
+    "pipeline.py": {
+      "after_sha256": "11e0373800a1d86910bb06fc84b7509d9baf2717113f2ea9335ec7b270139eab",
+      "before_sha256": "11e0373800a1d86910bb06fc84b7509d9baf2717113f2ea9335ec7b270139eab",
+      "unchanged": true
+    },
+    "reference_boundary.py": {
+      "after_sha256": "acd6d347f59da1d9df8b127f31d3b5f97f17039a35705fb7d94606ec90065551",
+      "before_sha256": "acd6d347f59da1d9df8b127f31d3b5f97f17039a35705fb7d94606ec90065551",
+      "unchanged": true
+    },
+    "reference_check.py": {
+      "after_sha256": "395cea7bf3fbd621383739ae0a8a2dab5c996b228b459ee19626064e703f0c27",
+      "before_sha256": "395cea7bf3fbd621383739ae0a8a2dab5c996b228b459ee19626064e703f0c27",
+      "unchanged": true
+    },
+    "reference_evidence.py": {
+      "after_sha256": "8413e5127b7a362b1bbe0f08a5a719743884c8e2078a0a99d85663ae15bbba02",
+      "before_sha256": "0ec475c9ee5256486c908c9293231e47a4265f59d9459721543f54caa60efe8b",
+      "unchanged": false
+    },
+    "reference_guard.py": {
+      "after_sha256": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+      "before_sha256": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+      "unchanged": true
+    },
+    "reference_inputs.py": {
+      "after_sha256": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+      "before_sha256": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+      "unchanged": true
+    },
+    "reference_producer.py": {
+      "after_sha256": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+      "before_sha256": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+      "unchanged": true
+    },
+    "reference_registry.py": {
+      "after_sha256": "689ced79a2df37ffa857f14451dfaa66d0df412f31dadc39cbb7ba5f2afb45b8",
+      "before_sha256": "689ced79a2df37ffa857f14451dfaa66d0df412f31dadc39cbb7ba5f2afb45b8",
+      "unchanged": true
+    },
+    "scope_proof.py": {
+      "after_sha256": "6fa768ef49fc1d31da8c576872bd9025a938da580c4cd5e63385af18f0b0b62b",
+      "before_sha256": "6fa768ef49fc1d31da8c576872bd9025a938da580c4cd5e63385af18f0b0b62b",
+      "unchanged": true
+    },
+    "scope_reader.py": {
+      "after_sha256": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38",
+      "before_sha256": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38",
+      "unchanged": true
+    },
+    "validation.py": {
+      "after_sha256": "f47a4b2ad4f44d152b525b54a9043ffcafda993c346abe35081d1bea60e4efa4",
+      "before_sha256": "f47a4b2ad4f44d152b525b54a9043ffcafda993c346abe35081d1bea60e4efa4",
+      "unchanged": true
+    },
+    "valuation.py": {
+      "after_sha256": "7e11e974600d1712f25d8f09d6077e4f3263363bf2aee737fc376b2612dabeb2",
+      "before_sha256": "7e11e974600d1712f25d8f09d6077e4f3263363bf2aee737fc376b2612dabeb2",
+      "unchanged": true
+    }
+  },
+  "implementation_commit": "0d4afcad6155a2d6eccd0e5edeb6a2f06e79b2c9",
+  "local_timestamp_is_independent_platform_evidence": false,
+  "resealed_at": "2026-10-30T06:05:55Z"
+}

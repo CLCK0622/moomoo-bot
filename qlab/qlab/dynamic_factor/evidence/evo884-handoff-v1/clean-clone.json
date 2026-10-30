@@ -1,0 +1,9 @@
+{
+  "branch": "evo-884-dynamic-gates",
+  "bytecode_disabled": true,
+  "git_status_porcelain": "",
+  "implementation_commit": "0d4afcad6155a2d6eccd0e5edeb6a2f06e79b2c9",
+  "pytest_cache_disabled": true,
+  "ruff_cache_disabled": true,
+  "source": "https://github.com/CLCK0622/moomoo-bot.git"
+}
