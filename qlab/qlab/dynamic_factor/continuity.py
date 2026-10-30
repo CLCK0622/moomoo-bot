@@ -230,6 +230,19 @@ def continuous_path_check(request, *, conventions=None):
                 if not step["ok"]:
                     bad = True
                     reasons.extend(step["reasons"])
+                from .k5 import k5_dependency_check
+
+                k5_checks = [
+                    k5_dependency_check(
+                        dict(dep, fold_id=fold["fold_id"]), conventions=policy
+                    )
+                    for dep in row.get("k5_dependencies", [])
+                ]
+                out["k5_dependencies"] = k5_checks
+                for check in k5_checks:
+                    if not check["ok"]:
+                        bad = True
+                        reasons.extend(check["reasons"])
             if bad:
                 stopped = True
                 retained_state = deepcopy(inp)

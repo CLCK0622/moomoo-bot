@@ -47,6 +47,7 @@ def main():
             "b2_input_readout",
             "pre_score_isolation",
             "state_transition_check",
+            "k5_dependency_check",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -94,6 +95,10 @@ def main():
                 report = input_migration_check(request, ledger, conventions=policy)
             else:
                 report = ledger.readout()
+        elif args.tool == "k5_dependency_check":
+            from .k5 import k5_dependency_check
+
+            report = k5_dependency_check(request, conventions=policy)
         elif args.tool == "state_transition_check":
             from .state_v2 import state_transition_check
 

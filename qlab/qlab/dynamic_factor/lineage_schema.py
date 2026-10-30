@@ -154,8 +154,20 @@ def consumer_schema_v3():
         unknown_components=STRINGS,
     )
     fold = dict(FOLD, input_state=state, output_state=state)
+    k5 = dict.fromkeys(
+        (
+            "account_role",
+            "dependency_role",
+            "event_date",
+            "fold_id",
+            "parent",
+            "quote_date",
+        ),
+        "string",
+    )
     return dict(
         CONSUMER,
+        k5_dependencies=("list", k5),
         folds=("list", fold),
         input_state=state,
         output_state=state,
@@ -173,6 +185,7 @@ def validate_consumer(request, *, schema=CONSUMER):
         "VTI",
         "X",
         "H",
+        "VSNT",
     }
     pending = [(request, schema)]
     while pending:
