@@ -1,0 +1,89 @@
+{
+  "issue": "EVO-162",
+  "candidate": "C1 cross-sectional residual reversal (large-cap, weekly, market-neutral stat-arb)",
+  "role": "户部 data/statistics foundation — frozen before any backtest result",
+  "freeze_date": "2026-07-10",
+  "source": {
+    "provider": "moomoo OpenD",
+    "ktype": "K_DAY",
+    "autype": "qfq",
+    "mode": "quote-only, TrdEnv.SIMULATE hard-lock, no live credential",
+    "external_sources": "none (Fama-French/CRSP/Compustat, borrow feeds, PIT membership all OUT OF SCOPE this round)"
+  },
+  "depth_probe": {
+    "reference": "reports/opend_kline_depth/report.json (EVO-159 verified)",
+    "daily_floor": "2006-06-26",
+    "latest": "2026-07-09",
+    "bars_per_symbol_approx": 5040,
+    "years_approx": 20,
+    "weekly_resample": "last OpenD trading day of each ISO week (no separate weekly feed)",
+    "stress_coverage": ["2007-08", "2008", "2018Q4", "2020-03", "2022", "2025-26"]
+  },
+  "quota": {
+    "historical_k": "300 symbols / 30-day rolling window (per-account); re-pull of a counted code costs 0",
+    "rate_req_per_s_approx": 3.6,
+    "binding_constraint": "300-symbol quota (drives the universe<=300 hard constraint)"
+  },
+  "frozen_universe": {
+    "n_stocks": 250,
+    "selection_rule": "SUPERSEDED by addendum_A (concrete two-stage口径). Original intent: US common stocks, >=156wk OpenD history, rank by 60-day dollar volume, top 250, borrowable.",
+    "addendum_A_selection": {
+      "doc": "RESIDUAL_REVERSAL_PREREG_ADDENDUM_A_universe.md (frozen before any resolved-list / real-result commit)",
+      "reason": "under OpenD <=300 historical-K quota, bars for the full multi-thousand candidate pool cannot be pulled to rank by dollar volume; a zero-quota pre-screen is forced, and its key is a survivorship/selection judgment (户部口径). US TURNOVER not a get_stock_filter field (都水 verified).",
+      "stage0_zero_quota_prescreen": "get_stock_filter US market: (1) security type = US-domiciled common stock (exclude ADR/foreign, ETF/ETN/CEF, preferred, warrant, unit, pre-merger SPAC; REITs kept); (2) market cap >= $10B (large-cap floor, operationalizes prereg 'large-cap'); (3) rank survivors by dollar-volume proxy, priority (i) snapshot dollar-volume = close x zero-quota filterable share-volume field if exposed, else (ii) MARKET_VAL fallback; take top 296.",
+      "stage1_quota_fetch_and_rank": "fetch top-296 + 4 factor ETFs (<=300, quote-only SIMULATE); rank the 296 by prereg-literal 60-trading-day mean(close*volume); apply dedup + borrow substitution; take top 250.",
+      "dedup_and_borrow": "per issuer keep only the single class with higher 60d dollar volume (tie<5% -> alphabetical first); walk-down borrow substitution (skip non-borrowable, take next-ranked, log each); if <250 clean survivors, universe is that smaller count labelled honestly, never padded.",
+      "selection_effect_record": "resolved commit MUST log: pre-screen key used, superset size 296, 296th-name cut value (both keys), and per-step exclusion counts. Names outside stage-0 top-296 that would enter the 60d top-250 are unobservable under quota — bounded, disclosed, cannot turn a fail into a pass.",
+      "engineering_path": "(b) deterministic code pre-screen: 营缮 encodes into resolve_universe; 都水 runs once on OpenD host; resolved list committed BEFORE results.",
+      "adr_exclusion_口径": {
+        "problem": "moomoo classes US-listed ADRs as SecurityType.STOCK, stock_child_type=N/A (营缮/都水 verified on live gateway 2026-07-11); NO field flags an ADR/foreign issuer, so §A2 ADR exclusion cannot be automated — needs a curated list.",
+        "户部_decision": "belt-and-suspenders: curate out KNOWN large foreign-primary names + disclose residual unidentified foreign issuers in stage-0 top-296 as a bounded, per-run-disclosed compromise that cannot turn a fail into a pass. Truer to §A2 'exclude ADR' than pure acceptance.",
+        "criterion": "EXCLUDE issuers whose price-forming primary listing is a non-US market (true ADR / foreign ordinary from Asia/Europe/LatAm/Israel/Canada) — US-factor residual contaminated by un-modeled foreign factors; KEEP US-primary ordinary common even if tax-domiciled abroad (ACN/MDT/LIN/ETN/CB/AER/FERG/CRH/FLUT/YUMC/MELI).",
+        "artifact": "RESIDUAL_ADR_EXCLUDE.txt (145 sponsored/exchange ADRs + 87 -Y unsponsored-OTC-ADR tail appended in addendum C, frozen before results; fed to resolve_universe stage-0 via --exclude-file). Residual-disclosure mandatory in resolve/run log.",
+        "non_blocking_point1": "RESOLVED on host: operative pre-screen key = MARKET_VAL (US TURNOVER/VOLUME/AVG_VOLUME all 'filter field not supported' — addendum A (ii) fallback). Superset market-cap-pre-screened; final 250 60d-dollar-volume-ranked; selection effect disclosed in RESIDUAL_UNIVERSE_SUPERSET_296.json.",
+        "addendum_C_adr_rule": {
+          "doc": "RESIDUAL_REVERSAL_PREREG_ADDENDUM_C_adr_rule.md (frozen before any resolved-list / real result)",
+          "trigger": "MARKET_VAL fallback pulls mega-cap foreign OTC ADRs into stage-0 top-296; the 145-list caught sponsored ADRs but missed the 5-letter -Y unsponsored-OTC tail (87/296 = 29%, only 209 clean <250). 都水 stopped, froze nothing, gave evidence; §A2 author must be 户部.",
+          "户部_decision": "path (b) 户部-endorsed DETERMINISTIC rule (auditable/reproducible/auto-refill) over manual per-wave fold. 都水 = deterministic executor + full trace; rule + reviewed 87-list = 户部口径; 都察院 audits rule + classification log.",
+          "rule": "EXCLUDE if R0(on RESIDUAL_ADR_EXCLUDE.txt) OR R1(name contains ADR/ADS/DEPOSITARY/UNSPON/SPON ADR) OR R2(5-letter ticker ending Y=ADR or F=foreign-ordinary) OR R3(dotted foreign preferred e.g. PBR.A); EVERY hit verified via get_stock_basicinfo; a US-domiciled/US-primary name is KEPT (carve-out). KEEP carve-out: CB/AON/SLB/CRH/LIN/MELI/BRK.A/BRK.B/ACN/MDT/ETN/JCI/AER/FERG/FLUT/YUMC.",
+          "户部_review": "reviewed + ENDORSED 都水's 87 hits (all foreign, get_stock_basicinfo-verified; discriminating: IDEXY=IDEX-ASA-Norway excluded vs US IDEX Corp=IEX kept; WFAFY=Wesfarmers excluded vs Wells Fargo=WFC kept). 87 appended to exclude file.",
+          "process": "都水 applies rule + per-name verify + iterate-refill from rank 297+ until 296 clean; commit RESIDUAL_UNIVERSE_ADR_CLASSIFICATION.json + refill trace alongside resolved universe BEFORE results. Clean<250 -> 数据不足, never padded."
+        }
+      }
+    },
+    "factor_etfs": ["SPY", "IWM", "IVE", "IVW"],
+    "total_fetched_symbols_max": 300,
+    "candidate_superset": 296,
+    "hard_cap": 300,
+    "resolved_list_artifact": "RESIDUAL_UNIVERSE_RESOLVED.txt (committed to branch BEFORE results; no mid-evaluation swap)",
+    "survivorship_caveat": "large-and-liquid-as-of-2026 over a 2006-> window is survivorship-biased; a weekly dollar-neutral long-short on residuals is far less sensitive than a long-only level bet, but the bias is disclosed and cannot turn a fail into a pass; a point-in-time universe (external, out of scope) would be needed for a clean verdict. The stage-0 zero-quota pre-screen (addendum_A) adds a bounded, disclosed selection effect on top."
+  },
+  "availability_at_freeze": {
+    "present_in_workspace": ["SPY", "QQQ", "IWM", "AAPL", "AMZN", "BAC", "CSCO", "CVX", "GOOGL", "GS", "HD", "INTC", "JNJ", "JPM", "KO", "META", "MSFT", "NVDA", "ORCL", "PFE", "PG", "WMT"],
+    "n_present": 22,
+    "missing": "the remaining >=248 frozen-universe stocks + value/growth factor ETFs IVE, IVW",
+    "consequence": "19 tradable names cannot form honest deciles for a cross-sectional residual regression (need N >> K). Engine is reproducible; any run on the present subset is labelled 数据不足 and is NEVER达标. Full fetch runs on a host with OpenD reachable (<=300 symbols within quota).",
+    "data_dir": "data/daily_full/ (schema: date, open, high, low, close, volume)"
+  },
+  "factor_model": {
+    "frequency": "weekly",
+    "factors": {"MKT": "SPY weekly return", "SMB": "IWM - SPY weekly", "HML": "IVE - IVW weekly"},
+    "beta_estimation": "rolling OLS on trailing 156 weeks (min 104 valid) of {1, MKT, SMB, HML}; re-estimated each rebalance; strictly past data (genuine OOS by construction)",
+    "residual": "eps_i = r_i - (alpha_i + beta_i . f), 3-factor",
+    "signal": "formation F=1 week; signal = -eps of most recent week (short-term residual reversal); cross-sectional winsorize 1/99 pct then rank",
+    "sources": ["Blitz/Huij/Lansdorp/Verbeek Short-Term Residual Reversal SSRN 1911449", "de Groot/Huij/Zhou SSRN 1605049", "Blitz/Huij/Martens 2011 residual momentum"]
+  },
+  "shortleg_risk_口径": {
+    "doc": "RESIDUAL_REVERSAL_PREREG_ADDENDUM_B_shortleg_risk.md (frozen before any real result)",
+    "锦衣卫_verdict": "EVO-10 conditional PASS on b0b80a6 — short leg is dollar+beta-neutral, diversified, borrowable-cash, non-naked, book-level max loss bounded/quantifiable; may run in SIMULATE backtest; 3 prerequisites reconciled by 户部 in addendum B",
+    "B1_single_sector_net_cap": "MONITOR-ONLY (was 'enforced hard cap'): compute+disclose realized max single-sector net exposure per run, flag >10% gross, never silently drop. Rationale: 3f primary intentionally NOT sector-neutral (that is the §12 4f family cell); risk already bounded by single-name<=2.5% gross + >=20 names/leg + dollar/beta-neutral + 2.0x cap + 10% vol target + breaker; hard cap would inject a post-hoc optimizer distorting the frozen equal-weight decile. Sector labels = static-GICS reference metadata for the diagnostic ONLY, never signal/verdict; if unavailable, disclose 'unmeasured OpenD-only'.",
+    "B2_plus25_short_stop": "reclassified as LIVE-EXECUTION OVERLAY, NOT active in SIMULATE weekly-hold backtest (conservative: no stop = full adverse move, no risk underestimate). Every result MUST disclose this; cannot be claimed as an active tail limit.",
+    "B3_gap_risk": "filed as live-transition requirement (out of scope this SIMULATE round): if leaving SIMULATE, model stop as next-open fill (not guaranteed +25% exit) + fresh 锦衣卫 review. Bounded now (single-name <=2.5% gross).",
+    "scope_guard": "review covers SIMULATE/quote-only only; any live credential/order path voids it and requires fresh 锦衣卫 review."
+  },
+  "handoff": {
+    "engineering": "工部 (squad 385f536d-07bd-42d5-b64a-5565c7ac0faf) — writes swing/residual_signals.py + residual_evaluate.py + run_residual.py following THIS frozen spec; no parameter tuning in parallel",
+    "risk_review": "锦衣卫 (squad dbc54c9b-0aad-47bf-a5de-85af6bda7eef) — EVO-10 short-leg red-line review BEFORE the short leg runs (不过不跑)",
+    "prereg_doc": "RESIDUAL_REVERSAL_EVAL_PREREGISTRATION.md (this commit, git timestamp precedes any results commit)"
+  }
+}

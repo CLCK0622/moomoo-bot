@@ -1,0 +1,1067 @@
+{
+  "issue": "EVO-25",
+  "candidate": "candidate-8 VIX term-structure carry (long-only ETP/cash)",
+  "preregistration_commit": "f2b5ce9",
+  "signal_source": "CBOE VIX_History.csv / VIX3M_History.csv (cash indices)",
+  "execution_source": "moomoo OpenD qfq daily bars (quote-only, TrdEnv.SIMULATE); open(T+1) execution",
+  "instrument": "SVIX",
+  "decision_cost_multiple": "x2",
+  "params": {
+    "tau": 1.0,
+    "target_vol": 0.15,
+    "vol_lookback": 20,
+    "exposure_cap": 0.5,
+    "dd_stop": 0.15,
+    "cooldown": 10,
+    "vix_cap": 35.0,
+    "side_frac_base": 0.001
+  },
+  "tau_family": [
+    0.95,
+    1.0,
+    1.05
+  ],
+  "primary_tau": 1.0,
+  "overall_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+  "verdict_reason": "gate1 CAGR=4.79% vs hurdle 50%, MDD=34.14% vs cap 20%; OOS not significantly above hurdle",
+  "primary_gate1": {
+    "cagr": 0.047922224259115964,
+    "mdd": 0.34135800740708533,
+    "passed": false
+  },
+  "tail_windows_failing_mdd": [],
+  "multiple_testing": {
+    "method": "preregistered_primary + bonferroni + benjamini_hochberg + deflated_sharpe",
+    "alpha": 0.05,
+    "family_size": 3,
+    "primary_spec": {
+      "mode": "carry_vixts",
+      "hold": 100,
+      "quantile": 0.0,
+      "max_concurrent": 1
+    },
+    "primary_found": true,
+    "primary_cell": {
+      "mode": "carry_vixts",
+      "hold": 100,
+      "is_primary": true,
+      "p_value_raw": 1.0,
+      "p_value_bonferroni": 1.0,
+      "p_value_bh": 1.0,
+      "gates_passed_point": false,
+      "survives_bonferroni": false,
+      "survives_bh": false
+    },
+    "deflated_sharpe": {
+      "dsr": 0.7190431797553621,
+      "sr0_annual": 0.07562289518418426,
+      "n_trials": 3,
+      "expected_max_z": 0.8528044961494174,
+      "significant": false
+    },
+    "per_cell": [
+      {
+        "mode": "carry_vixts",
+        "hold": 95,
+        "is_primary": false,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "carry_vixts",
+        "hold": 100,
+        "is_primary": true,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      },
+      {
+        "mode": "carry_vixts",
+        "hold": 105,
+        "is_primary": false,
+        "p_value_raw": 1.0,
+        "p_value_bonferroni": 1.0,
+        "p_value_bh": 1.0,
+        "gates_passed_point": false,
+        "survives_bonferroni": false,
+        "survives_bh": false
+      }
+    ],
+    "verdict_basis": "primary_only",
+    "primary_survives_haircut": false,
+    "note": "PASS is decided ONLY by the pre-registered primary cell surviving the Bonferroni haircut; all other cells are robustness evidence. any_full_pass (best-of-grid) is deliberately NOT used."
+  },
+  "runs": [
+    {
+      "mode": "carry_vixts",
+      "hold": 95,
+      "tau": 0.95,
+      "cost_variants": {
+        "x1": {
+          "metrics": {
+            "cagr": 0.03188928526755941,
+            "max_drawdown": 0.2699629828290785,
+            "sharpe": 0.2913028072055347,
+            "sortino": 0.37435994377868276,
+            "annualized_turnover": 6.3299371989954425,
+            "n_bars": 1070,
+            "n_years": 4.246031746031746,
+            "max_underwater_bars": 497,
+            "median_underwater_bars": 3.0,
+            "unrecovered": true,
+            "num_trades": 42,
+            "win_rate": 0.38095238095238093,
+            "profit_factor": 1.3332085364796171,
+            "avg_winner": 0.047066015180390594,
+            "avg_loser": 0.02172480962802022,
+            "expectancy": 0.004481218870421992
+          },
+          "gate1": {
+            "cagr": 0.03188928526755941,
+            "mdd": 0.2699629828290785,
+            "passed": false
+          },
+          "gate2": {
+            "years": [
+              {
+                "year": 2022,
+                "cagr": 0.08354495307269438,
+                "mdd": 0.07585229252471248,
+                "n_bars": 189,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.22252741581568958,
+                "mdd": 0.12641698991310957,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": -0.13751824609124907,
+                "mdd": 0.22148542646937353,
+                "n_bars": 252,
+                "full_year": true
+              },
+              {
+                "year": 2025,
+                "cagr": 0.06428387539966818,
+                "mdd": 0.09212868766501481,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2026,
+                "cagr": -0.07009803718557195,
+                "mdd": 0.13381205852458455,
+                "n_bars": 129,
+                "full_year": false
+              }
+            ],
+            "worst_year_cagr": -0.13751824609124907,
+            "combined_cagr": 0.03188928526755941,
+            "passed": false
+          },
+          "gate3": {
+            "n_windows": 40,
+            "cagr_min": -0.22750628388736016,
+            "cagr_p25": -0.07493171954312516,
+            "cagr_median": 0.04367905087947643,
+            "cagr_p75": 0.16125140646474379,
+            "cagr_max": 0.3367843472924479,
+            "hit_frac": 0.0,
+            "neg_frac": 0.4,
+            "rolling_mdd_max": 0.2667647246174688,
+            "passed": false
+          },
+          "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+          "gates_1_3_passed": false,
+          "significance": {
+            "n": 1070,
+            "n_boot": 2000,
+            "block_len": 10,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.03188928526755941,
+            "cagr_ci_low": -0.09630886765998482,
+            "cagr_ci_high": 0.1753918935273583,
+            "sharpe_point": 0.2913028072055347,
+            "sharpe_ci_low": -0.6004165247153739,
+            "sharpe_ci_high": 1.2364885226753526,
+            "skew": -1.2197551252889984,
+            "kurtosis": 7.716844214199043,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.2813593203398301,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "diagnostics": {
+            "instrument": null,
+            "cost_mult": 1.0,
+            "n_periods": 1070,
+            "first_date": "2022-04-01",
+            "last_date": "2026-07-09",
+            "frac_days_deployed": 0.7654205607476635,
+            "mean_exposure_when_on": 0.32408867936759933,
+            "max_exposure": 0.5,
+            "breaker_trips": 1,
+            "n_trades": 42,
+            "return_convention": "open-to-open; exposure decided at close(T), executed open(T+1)"
+          },
+          "stress": {
+            "2018-02_volmageddon": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2020-03_covid": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2022_ratehike_vol": {
+              "n_days": 189,
+              "window_return": 0.06202612509795391,
+              "annualized_cagr": 0.08354495307269438,
+              "mdd": 0.07585229252471248,
+              "worst_single_day": -0.03348582052638309,
+              "worst_losing_streak": -0.0502178943682311,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "2025-2026_recent": {
+              "n_days": 379,
+              "window_return": 0.02872474563889149,
+              "annualized_cagr": 0.019256659216052352,
+              "mdd": 0.14035164723734306,
+              "worst_single_day": -0.045272206303724916,
+              "worst_losing_streak": -0.05170689552396368,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "single_day_extreme_shock": {
+              "hypothesis": "apply a -80% SVXY open-to-open gap at max realized exposure",
+              "max_exposure": 0.5,
+              "principal_loss_estimate": -0.4,
+              "worst_realized_single_day": -0.06141299979272001
+            }
+          }
+        },
+        "x2": {
+          "metrics": {
+            "cagr": 0.024546421431308696,
+            "max_drawdown": 0.27896210150598266,
+            "sharpe": 0.2414096354883563,
+            "sortino": 0.3097587280452333,
+            "annualized_turnover": 6.424666897323846,
+            "n_bars": 1070,
+            "n_years": 4.246031746031746,
+            "max_underwater_bars": 497,
+            "median_underwater_bars": 3.0,
+            "unrecovered": true,
+            "num_trades": 42,
+            "win_rate": 0.38095238095238093,
+            "profit_factor": 1.295232188266121,
+            "avg_winner": 0.04631991660456994,
+            "avg_loser": 0.022007300561692127,
+            "expectancy": 0.004022115501645799
+          },
+          "gate1": {
+            "cagr": 0.024546421431308696,
+            "mdd": 0.27896210150598266,
+            "passed": false
+          },
+          "gate2": {
+            "years": [
+              {
+                "year": 2022,
+                "cagr": 0.07500407548787646,
+                "mdd": 0.07722603546024798,
+                "n_bars": 189,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.2140918734926356,
+                "mdd": 0.12843278974107475,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": -0.14404399345594843,
+                "mdd": 0.22528836334782376,
+                "n_bars": 252,
+                "full_year": true
+              },
+              {
+                "year": 2025,
+                "cagr": 0.05823597489106347,
+                "mdd": 0.09321911588115284,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2026,
+                "cagr": -0.0777891633510065,
+                "mdd": 0.13541343590611576,
+                "n_bars": 129,
+                "full_year": false
+              }
+            ],
+            "worst_year_cagr": -0.14404399345594843,
+            "combined_cagr": 0.024546421431308696,
+            "passed": false
+          },
+          "gate3": {
+            "n_windows": 40,
+            "cagr_min": -0.23414027764630374,
+            "cagr_p25": -0.08090455199865879,
+            "cagr_median": 0.037427910740383874,
+            "cagr_p75": 0.15327140443288956,
+            "cagr_max": 0.3275191605159453,
+            "hit_frac": 0.0,
+            "neg_frac": 0.4,
+            "rolling_mdd_max": 0.27198712067008635,
+            "passed": false
+          },
+          "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+          "gates_1_3_passed": false,
+          "significance": {
+            "n": 1070,
+            "n_boot": 2000,
+            "block_len": 10,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.024546421431308696,
+            "cagr_ci_low": -0.10322784086333439,
+            "cagr_ci_high": 0.1671258766008114,
+            "sharpe_point": 0.2414096354883563,
+            "sharpe_ci_low": -0.6506614302494104,
+            "sharpe_ci_high": 1.1873244425551062,
+            "skew": -1.2192505003560012,
+            "kurtosis": 7.709328885772072,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.3183408295852074,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "diagnostics": {
+            "instrument": null,
+            "cost_mult": 2.0,
+            "n_periods": 1070,
+            "first_date": "2022-04-01",
+            "last_date": "2026-07-09",
+            "frac_days_deployed": 0.7654205607476635,
+            "mean_exposure_when_on": 0.32408867936759933,
+            "max_exposure": 0.5,
+            "breaker_trips": 1,
+            "n_trades": 42,
+            "return_convention": "open-to-open; exposure decided at close(T), executed open(T+1)"
+          },
+          "stress": {
+            "2018-02_volmageddon": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2020-03_covid": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2022_ratehike_vol": {
+              "n_days": 189,
+              "window_return": 0.0557414745481124,
+              "annualized_cagr": 0.07500407548787646,
+              "mdd": 0.07722603546024798,
+              "worst_single_day": -0.03349692248012101,
+              "worst_losing_streak": -0.0504647905849227,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "2025-2026_recent": {
+              "n_days": 379,
+              "window_return": 0.018585227307765795,
+              "annualized_cagr": 0.012565915884716228,
+              "mdd": 0.14342564330912344,
+              "worst_single_day": -0.045272206303724916,
+              "worst_losing_streak": -0.05191057990763248,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "single_day_extreme_shock": {
+              "hypothesis": "apply a -80% SVXY open-to-open gap at max realized exposure",
+              "max_exposure": 0.5,
+              "principal_loss_estimate": -0.4,
+              "worst_realized_single_day": -0.06142885630680402
+            }
+          }
+        }
+      }
+    },
+    {
+      "mode": "carry_vixts",
+      "hold": 100,
+      "tau": 1.0,
+      "cost_variants": {
+        "x1": {
+          "metrics": {
+            "cagr": 0.04486660455258762,
+            "max_drawdown": 0.35579740936851667,
+            "sharpe": 0.3466903452559604,
+            "sortino": 0.4354411208840729,
+            "annualized_turnover": 4.232438347880096,
+            "n_bars": 1070,
+            "n_years": 4.246031746031746,
+            "max_underwater_bars": 497,
+            "median_underwater_bars": 3.0,
+            "unrecovered": true,
+            "num_trades": 22,
+            "win_rate": 0.3181818181818182,
+            "profit_factor": 1.7708949067906887,
+            "avg_winner": 0.07982122512497505,
+            "avg_loser": 0.021034509114845206,
+            "expectancy": 0.011055951779643056
+          },
+          "gate1": {
+            "cagr": 0.04486660455258762,
+            "mdd": 0.35579740936851667,
+            "passed": false
+          },
+          "gate2": {
+            "years": [
+              {
+                "year": 2022,
+                "cagr": 0.17531896414558434,
+                "mdd": 0.09358418574258709,
+                "n_bars": 189,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.30660125228783097,
+                "mdd": 0.09778874327499121,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": -0.1748244831220368,
+                "mdd": 0.2890253181945722,
+                "n_bars": 252,
+                "full_year": true
+              },
+              {
+                "year": 2025,
+                "cagr": -0.006442635976616318,
+                "mdd": 0.13425903287433716,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2026,
+                "cagr": 0.0026280024048594974,
+                "mdd": 0.13025963713002098,
+                "n_bars": 129,
+                "full_year": false
+              }
+            ],
+            "worst_year_cagr": -0.1748244831220368,
+            "combined_cagr": 0.04486660455258762,
+            "passed": false
+          },
+          "gate3": {
+            "n_windows": 40,
+            "cagr_min": -0.3089987798613767,
+            "cagr_p25": -0.09493193384407808,
+            "cagr_median": 0.002736165721041184,
+            "cagr_p75": 0.2411623690466042,
+            "cagr_max": 0.41539261089154444,
+            "hit_frac": 0.0,
+            "neg_frac": 0.5,
+            "rolling_mdd_max": 0.3523143713117657,
+            "passed": false
+          },
+          "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+          "gates_1_3_passed": false,
+          "significance": {
+            "n": 1070,
+            "n_boot": 2000,
+            "block_len": 10,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.04486660455258762,
+            "cagr_ci_low": -0.10442231748910745,
+            "cagr_ci_high": 0.21635674940354863,
+            "sharpe_point": 0.3466903452559604,
+            "sharpe_ci_low": -0.5207237771805894,
+            "sharpe_ci_high": 1.37036301093496,
+            "skew": -1.978984510750393,
+            "kurtosis": 16.37032612392645,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.24437781109445278,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "diagnostics": {
+            "instrument": null,
+            "cost_mult": 1.0,
+            "n_periods": 1070,
+            "first_date": "2022-04-01",
+            "last_date": "2026-07-09",
+            "frac_days_deployed": 0.9112149532710281,
+            "mean_exposure_when_on": 0.31389388470953833,
+            "max_exposure": 0.5,
+            "breaker_trips": 3,
+            "n_trades": 22,
+            "return_convention": "open-to-open; exposure decided at close(T), executed open(T+1)"
+          },
+          "stress": {
+            "2018-02_volmageddon": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2020-03_covid": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2022_ratehike_vol": {
+              "n_days": 189,
+              "window_return": 0.12879949841488436,
+              "annualized_cagr": 0.17531896414558434,
+              "mdd": 0.09358418574258709,
+              "worst_single_day": -0.03348582052638309,
+              "worst_losing_streak": -0.05001833875682726,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "2025-2026_recent": {
+              "n_days": 379,
+              "window_return": -0.001352265059897162,
+              "annualized_cagr": -0.0006560626621860965,
+              "mdd": 0.15393245399629085,
+              "worst_single_day": -0.045885643715942,
+              "worst_losing_streak": -0.05170689552396368,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "single_day_extreme_shock": {
+              "hypothesis": "apply a -80% SVXY open-to-open gap at max realized exposure",
+              "max_exposure": 0.5,
+              "principal_loss_estimate": -0.4,
+              "worst_realized_single_day": -0.10973574352859457
+            }
+          }
+        },
+        "x2": {
+          "metrics": {
+            "cagr": 0.047922224259115964,
+            "max_drawdown": 0.34135800740708533,
+            "sharpe": 0.36381049941781973,
+            "sortino": 0.4572019395706293,
+            "annualized_turnover": 4.20689561568854,
+            "n_bars": 1070,
+            "n_years": 4.246031746031746,
+            "max_underwater_bars": 497,
+            "median_underwater_bars": 3.0,
+            "unrecovered": true,
+            "num_trades": 21,
+            "win_rate": 0.3333333333333333,
+            "profit_factor": 1.8214818070290582,
+            "avg_winner": 0.0826211574122117,
+            "avg_loser": 0.022679654853915772,
+            "expectancy": 0.012420615901460048
+          },
+          "gate1": {
+            "cagr": 0.047922224259115964,
+            "mdd": 0.34135800740708533,
+            "passed": false
+          },
+          "gate2": {
+            "years": [
+              {
+                "year": 2022,
+                "cagr": 0.16899930260864626,
+                "mdd": 0.09513512538841717,
+                "n_bars": 189,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.30250043533091064,
+                "mdd": 0.09810123872870202,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": -0.17896413993354554,
+                "mdd": 0.2913862741964902,
+                "n_bars": 252,
+                "full_year": true
+              },
+              {
+                "year": 2025,
+                "cagr": 0.02172020538839292,
+                "mdd": 0.12415241682021683,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2026,
+                "cagr": -0.0034655933810737727,
+                "mdd": 0.131981749554275,
+                "n_bars": 129,
+                "full_year": false
+              }
+            ],
+            "worst_year_cagr": -0.17896413993354554,
+            "combined_cagr": 0.047922224259115964,
+            "passed": false
+          },
+          "gate3": {
+            "n_windows": 40,
+            "cagr_min": -0.28977285229984395,
+            "cagr_p25": -0.08715721583301342,
+            "cagr_median": 0.02944457306993986,
+            "cagr_p75": 0.2349788961856279,
+            "cagr_max": 0.40854802408906155,
+            "hit_frac": 0.0,
+            "neg_frac": 0.45,
+            "rolling_mdd_max": 0.33419959365013896,
+            "passed": false
+          },
+          "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+          "gates_1_3_passed": false,
+          "significance": {
+            "n": 1070,
+            "n_boot": 2000,
+            "block_len": 10,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.047922224259115964,
+            "cagr_ci_low": -0.10218030264316375,
+            "cagr_ci_high": 0.22041542052222074,
+            "sharpe_point": 0.36381049941781973,
+            "sharpe_ci_low": -0.5025094534967744,
+            "sharpe_ci_high": 1.3831415946846937,
+            "skew": -1.9760689547353578,
+            "kurtosis": 16.300024421763005,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.2368815592203898,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "diagnostics": {
+            "instrument": null,
+            "cost_mult": 2.0,
+            "n_periods": 1070,
+            "first_date": "2022-04-01",
+            "last_date": "2026-07-09",
+            "frac_days_deployed": 0.9205607476635514,
+            "mean_exposure_when_on": 0.3118814054454036,
+            "max_exposure": 0.5,
+            "breaker_trips": 3,
+            "n_trades": 21,
+            "return_convention": "open-to-open; exposure decided at close(T), executed open(T+1)"
+          },
+          "stress": {
+            "2018-02_volmageddon": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2020-03_covid": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2022_ratehike_vol": {
+              "n_days": 189,
+              "window_return": 0.12424428631797957,
+              "annualized_cagr": 0.16899930260864626,
+              "mdd": 0.09513512538841717,
+              "worst_single_day": -0.03349692248012101,
+              "worst_losing_streak": -0.05006569925945514,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "2025-2026_recent": {
+              "n_days": 379,
+              "window_return": 0.0235278100461096,
+              "annualized_cagr": 0.015830205967404476,
+              "mdd": 0.15766391010217107,
+              "worst_single_day": -0.0458924613432455,
+              "worst_losing_streak": -0.05191057990763248,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "single_day_extreme_shock": {
+              "hypothesis": "apply a -80% SVXY open-to-open gap at max realized exposure",
+              "max_exposure": 0.5,
+              "principal_loss_estimate": -0.4,
+              "worst_realized_single_day": -0.10975925220812012
+            }
+          }
+        }
+      }
+    },
+    {
+      "mode": "carry_vixts",
+      "hold": 105,
+      "tau": 1.05,
+      "cost_variants": {
+        "x1": {
+          "metrics": {
+            "cagr": 0.06117354581365153,
+            "max_drawdown": 0.3134088775572663,
+            "sharpe": 0.4342827084028779,
+            "sortino": 0.5523077365816964,
+            "annualized_turnover": 2.8211844972861027,
+            "n_bars": 1070,
+            "n_years": 4.246031746031746,
+            "max_underwater_bars": 497,
+            "median_underwater_bars": 3.0,
+            "unrecovered": true,
+            "num_trades": 9,
+            "win_rate": 0.3333333333333333,
+            "profit_factor": 2.7583889367674206,
+            "avg_winner": 0.15956034877575576,
+            "avg_loser": 0.028922743027447368,
+            "expectancy": 0.033904954240287
+          },
+          "gate1": {
+            "cagr": 0.06117354581365153,
+            "mdd": 0.3134088775572663,
+            "passed": false
+          },
+          "gate2": {
+            "years": [
+              {
+                "year": 2022,
+                "cagr": 0.19859582330626835,
+                "mdd": 0.099474860952112,
+                "n_bars": 189,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.30660125228783097,
+                "mdd": 0.09778874327499121,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": -0.1327387072860723,
+                "mdd": 0.2527640374470307,
+                "n_bars": 252,
+                "full_year": true
+              },
+              {
+                "year": 2025,
+                "cagr": 0.06370780895345396,
+                "mdd": 0.12679088126864468,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2026,
+                "cagr": -0.11930941181518728,
+                "mdd": 0.15784745352927332,
+                "n_bars": 129,
+                "full_year": false
+              }
+            ],
+            "worst_year_cagr": -0.1327387072860723,
+            "combined_cagr": 0.06117354581365153,
+            "passed": false
+          },
+          "gate3": {
+            "n_windows": 40,
+            "cagr_min": -0.26568572347243014,
+            "cagr_p25": -0.07330146948079355,
+            "cagr_median": 0.05569044860453343,
+            "cagr_p75": 0.2584864004282572,
+            "cagr_max": 0.43133346582831145,
+            "hit_frac": 0.0,
+            "neg_frac": 0.35,
+            "rolling_mdd_max": 0.3134088775572672,
+            "passed": false
+          },
+          "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+          "gates_1_3_passed": false,
+          "significance": {
+            "n": 1070,
+            "n_boot": 2000,
+            "block_len": 10,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.06117354581365153,
+            "cagr_ci_low": -0.09035511398987583,
+            "cagr_ci_high": 0.239728915624491,
+            "sharpe_point": 0.4342827084028779,
+            "sharpe_ci_low": -0.43581057872567186,
+            "sharpe_ci_high": 1.4624429089678206,
+            "skew": -1.8226484437381958,
+            "kurtosis": 15.548701875005788,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.1924037981009495,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "diagnostics": {
+            "instrument": null,
+            "cost_mult": 1.0,
+            "n_periods": 1070,
+            "first_date": "2022-04-01",
+            "last_date": "2026-07-09",
+            "frac_days_deployed": 0.9467289719626168,
+            "mean_exposure_when_on": 0.3097820113368346,
+            "max_exposure": 0.5,
+            "breaker_trips": 3,
+            "n_trades": 9,
+            "return_convention": "open-to-open; exposure decided at close(T), executed open(T+1)"
+          },
+          "stress": {
+            "2018-02_volmageddon": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2020-03_covid": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2022_ratehike_vol": {
+              "n_days": 189,
+              "window_return": 0.1455249955212583,
+              "annualized_cagr": 0.19859582330626835,
+              "mdd": 0.099474860952112,
+              "worst_single_day": -0.03348582052638309,
+              "worst_losing_streak": -0.05001833875682726,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "2025-2026_recent": {
+              "n_days": 379,
+              "window_return": -5.0893506459148696e-05,
+              "annualized_cagr": 0.00020964352972874245,
+              "mdd": 0.15784745352927343,
+              "worst_single_day": -0.045885643715942,
+              "worst_losing_streak": -0.056394511182314866,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "single_day_extreme_shock": {
+              "hypothesis": "apply a -80% SVXY open-to-open gap at max realized exposure",
+              "max_exposure": 0.5,
+              "principal_loss_estimate": -0.4,
+              "worst_realized_single_day": -0.10973574352859457
+            }
+          }
+        },
+        "x2": {
+          "metrics": {
+            "cagr": 0.0574581784891004,
+            "max_drawdown": 0.3159745101218506,
+            "sharpe": 0.4137566960700437,
+            "sortino": 0.5258241088155341,
+            "annualized_turnover": 2.8418703042815947,
+            "n_bars": 1070,
+            "n_years": 4.246031746031746,
+            "max_underwater_bars": 497,
+            "median_underwater_bars": 3.0,
+            "unrecovered": true,
+            "num_trades": 9,
+            "win_rate": 0.3333333333333333,
+            "profit_factor": 2.646693715899402,
+            "avg_winner": 0.15522632369833222,
+            "avg_loser": 0.02932457253475268,
+            "expectancy": 0.032192392876275615
+          },
+          "gate1": {
+            "cagr": 0.0574581784891004,
+            "mdd": 0.3159745101218506,
+            "passed": false
+          },
+          "gate2": {
+            "years": [
+              {
+                "year": 2022,
+                "cagr": 0.19510615696615075,
+                "mdd": 0.09991083744047335,
+                "n_bars": 189,
+                "full_year": true
+              },
+              {
+                "year": 2023,
+                "cagr": 0.30250043533091064,
+                "mdd": 0.09810123872870202,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2024,
+                "cagr": -0.13582727490563717,
+                "mdd": 0.2541560189376818,
+                "n_bars": 252,
+                "full_year": true
+              },
+              {
+                "year": 2025,
+                "cagr": 0.05963600445072448,
+                "mdd": 0.12793054805937965,
+                "n_bars": 250,
+                "full_year": true
+              },
+              {
+                "year": 2026,
+                "cagr": -0.12307980305718014,
+                "mdd": 0.1592030141761711,
+                "n_bars": 129,
+                "full_year": false
+              }
+            ],
+            "worst_year_cagr": -0.13582727490563717,
+            "combined_cagr": 0.0574581784891004,
+            "passed": false
+          },
+          "gate3": {
+            "n_windows": 40,
+            "cagr_min": -0.26882586277526144,
+            "cagr_p25": -0.07594600763328749,
+            "cagr_median": 0.05160875149831223,
+            "cagr_p75": 0.254443438055263,
+            "cagr_max": 0.4265807581915082,
+            "hit_frac": 0.0,
+            "neg_frac": 0.35,
+            "rolling_mdd_max": 0.3159745101218502,
+            "passed": false
+          },
+          "three_gate_verdict": "\u57fa\u7ebf\u672a\u8fbe\u6807",
+          "gates_1_3_passed": false,
+          "significance": {
+            "n": 1070,
+            "n_boot": 2000,
+            "block_len": 10,
+            "alpha": 0.05,
+            "hurdle": 0.5,
+            "cagr_point": 0.0574581784891004,
+            "cagr_ci_low": -0.09377251115577827,
+            "cagr_ci_high": 0.2358436352588608,
+            "sharpe_point": 0.4137566960700437,
+            "sharpe_ci_low": -0.45730435769143923,
+            "sharpe_ci_high": 1.4429855586081592,
+            "skew": -1.8236749125236096,
+            "kurtosis": 15.554015148250034,
+            "p_cagr_below_hurdle": 1.0,
+            "p_sharpe_le_0": 0.2028985507246377,
+            "significant_beats_hurdle": false,
+            "significant_positive": false,
+            "degenerate": false
+          },
+          "diagnostics": {
+            "instrument": null,
+            "cost_mult": 2.0,
+            "n_periods": 1070,
+            "first_date": "2022-04-01",
+            "last_date": "2026-07-09",
+            "frac_days_deployed": 0.9467289719626168,
+            "mean_exposure_when_on": 0.3097820113368346,
+            "max_exposure": 0.5,
+            "breaker_trips": 3,
+            "n_trades": 9,
+            "return_convention": "open-to-open; exposure decided at close(T), executed open(T+1)"
+          },
+          "stress": {
+            "2018-02_volmageddon": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2020-03_covid": {
+              "n_days": 0,
+              "insufficient": true
+            },
+            "2022_ratehike_vol": {
+              "n_days": 189,
+              "window_return": 0.14302271961023094,
+              "annualized_cagr": 0.19510615696615075,
+              "mdd": 0.09991083744047335,
+              "worst_single_day": -0.03349692248012101,
+              "worst_losing_streak": -0.05006569925945514,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "2025-2026_recent": {
+              "n_days": 379,
+              "window_return": -0.0060339104708755364,
+              "annualized_cagr": -0.0037734188670356383,
+              "mdd": 0.15920301417617178,
+              "worst_single_day": -0.0458924613432455,
+              "worst_losing_streak": -0.05684223453578274,
+              "mdd_breach_20pct": false,
+              "passed": true
+            },
+            "single_day_extreme_shock": {
+              "hypothesis": "apply a -80% SVXY open-to-open gap at max realized exposure",
+              "max_exposure": 0.5,
+              "principal_loss_estimate": -0.4,
+              "worst_realized_single_day": -0.10975925220812012
+            }
+          }
+        }
+      }
+    }
+  ],
+  "notes": [
+    "NO-FIT (guardrail #4): the entry/exit signal has ZERO parameters fitted on returns \u2014 \u03c4=1.00 is the natural VIX/VIX3M=1 term-structure boundary; the {0.95,1.05} band is robustness only, primary is pre-fixed at 1.00. Risk-overlay constants (target_vol, exposure_cap, dd_stop, cooldown, vix_cap, vol_lookback) are pre-registered conventions, not optimized on P&L. Full-sample curve therefore IS the OOS curve; gate3 rolling is the stability proxy; no walk-forward refit is owed.",
+    "Long-only ETP/cash switch: contango \u21d2 long SVXY (\u22120.5x), else cash. Never shorts a vol product (hard constraint).",
+    "Anti-look-ahead (guardrail #2): VIX settles 16:15 ET > ETP 16:00 ET close, so returns are open-to-open with exposure decided at close(T) and executed at open(T+1).",
+    "MDD\u226420% is a hard gate for a vol product (\u9996\u8f85 clause #5); tail windows are part of the verdict, not an appendix."
+  ],
+  "risk_frontier_reference": {
+    "label": "full-exposure contango sleeve (no risk overlay) \u2014 reference only, NOT a verdict cell",
+    "cagr": 0.10659000687224252,
+    "mdd": 0.7701353922234018,
+    "worst_single_day": -0.48911268372346217,
+    "stress": {
+      "2018-02_volmageddon": {
+        "n_days": 0,
+        "insufficient": true
+      },
+      "2020-03_covid": {
+        "n_days": 0,
+        "insufficient": true
+      },
+      "2022_ratehike_vol": {
+        "n_days": 189,
+        "window_return": 0.18117062571247788,
+        "annualized_cagr": 0.2485813704775124,
+        "mdd": 0.28554747505511036,
+        "worst_single_day": -0.16984258492129256,
+        "worst_losing_streak": -0.20995607119670157,
+        "mdd_breach_20pct": true,
+        "passed": false
+      },
+      "2025-2026_recent": {
+        "n_days": 379,
+        "window_return": -0.030228260182944555,
+        "annualized_cagr": -0.01869181728728353,
+        "mdd": 0.5087416937588671,
+        "worst_single_day": -0.127442996742671,
+        "worst_losing_streak": -0.17825132242931918,
+        "mdd_breach_20pct": true,
+        "passed": false
+      }
+    },
+    "interpretation": "chasing the 50% CAGR hurdle by lifting exposure drives MDD far past the 20% cap \u2014 the two mandate constraints are jointly unreachable for a short-vol sleeve."
+  }
+}
