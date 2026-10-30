@@ -1,0 +1,22 @@
+{
+  "calendar_gap_scan.json": {
+    "sha256": "bc5423d7412618dcac3ddef095b668d787407b5b9a854fb0c022daf3656c75e8",
+    "source_member": "calendar_gap_scan.json",
+    "source_zip_sha256": "7a961b6052639d557858ef99093964cd36da39109ad1fbde803416318556503d"
+  },
+  "fee_params_x1.json": {
+    "sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "source_member": "evo882/fee/fee_params_x1.json",
+    "source_zip_sha256": "d2e562d4df5ae046c24678a3abb91d0ec300b147cc5880378c266660d67cabca"
+  },
+  "fee_params_x2.json": {
+    "sha256": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "source_member": "evo882/fee/fee_params_x2.json",
+    "source_zip_sha256": "d2e562d4df5ae046c24678a3abb91d0ec300b147cc5880378c266660d67cabca"
+  },
+  "harness_cases.json": {
+    "sha256": "dfde628ee0c5f7759488636281eda76ea44c763109ad92f20a06dd6e7cfadca0",
+    "source_member": "harness_cases.json",
+    "source_zip_sha256": "c2d4922aad8b2006c07fd875fb4c26bc87b1fff43b21f2717e87c78dba4f8676"
+  }
+}

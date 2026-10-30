@@ -1,0 +1,41 @@
+{
+  "status": "design_only_not_implemented_not_run",
+  "cases": [
+    {
+      "case_id": "fee.positive_gross_negative_net",
+      "required_behavior": "给10bp毛边际、20bp费用，净=-10bp；不得报可交易。"
+    },
+    {
+      "case_id": "trial.failed_attempts_persist",
+      "required_behavior": "失败/NaN/重复尝试重启后仍在；仅报赢家N触发拒绝。"
+    },
+    {
+      "case_id": "wf.future_label_rejected",
+      "required_behavior": "train末端标签跨test边界时拒绝；全历史拟合的伪fold拒绝。"
+    },
+    {
+      "case_id": "dsr.scale_and_v_required",
+      "required_behavior": "每期/年化混用、缺N或V时不可认证，不以0补齐。"
+    },
+    {
+      "case_id": "paper.partial_is_incomplete",
+      "required_behavior": "计划100股只确认60股：剩余40股单列；不算完整调仓。"
+    },
+    {
+      "case_id": "paper.failed_hedge_retains_risk",
+      "required_behavior": "保护/对冲失败时保存实际残余与不确定状态，不声称已对冲。"
+    },
+    {
+      "case_id": "nav.missing_mark_is_unknown",
+      "required_behavior": "缺一个持仓价格：valuation_complete=false；Sharpe=null，不填0。"
+    },
+    {
+      "case_id": "intent.retry_requires_reconcile",
+      "required_behavior": "同intent_id重试不重复记账；费用/数量不明时阻塞新意图。"
+    },
+    {
+      "case_id": "cost.cash_vs_reference_no_double",
+      "required_behavior": "已按bid/ask计P&L时，不再扣同一摩擦；压力只加增量。"
+    }
+  ]
+}

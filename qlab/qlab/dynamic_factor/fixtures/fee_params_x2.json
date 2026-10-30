@@ -1,0 +1,91 @@
+{
+  "name": "x2",
+  "as_of_utc": "2026-10-30T01:21Z",
+  "scope": "moomoo SG (Moomoo Financial Singapore), US stocks/ETFs, >=1 share orders, eligible-client schedule, SG tax resident",
+  "commission_per_order": 0.0,
+  "platform_per_order": 0.99,
+  "settlement_per_share": 0.003,
+  "settlement_cap_fraction_of_value": 0.01,
+  "sec_fraction_of_sell_value": 2.06e-05,
+  "sec_min_per_sell": 0.01,
+  "cat_per_share_each_side": 3e-06,
+  "taf_per_share_sell_current": 0.0,
+  "taf_per_share_sell_restored": 0.000195,
+  "taf_min_per_sell": 0.01,
+  "taf_max_per_sell": 9.79,
+  "taf_mode_for_research": "restored",
+  "gst_rate": 0.09,
+  "gst_base": "all_fees",
+  "algo_fee_fraction_each_side": 0.0005,
+  "algo_orders_allowed": false,
+  "spread_roundtrip_bps": 2.0,
+  "extra_slippage_roundtrip_bps": 2.0,
+  "gate_floor_roundtrip_bps": 20.0,
+  "cost_multiplier": 2.0,
+  "turnover_definition": "one_way_daily_turnover tau = (buy_value + sell_value) / (2 * equity), per trading day",
+  "annual_cost_identity": "annual_cost_fraction = days_per_year * tau * roundtrip_cost_bps / 1e4  (whole-ticket round trips)",
+  "cohort_identity": "gross_exposure_over_equity = holding_days * tau  (H-day cohorts, equal tickets)",
+  "ticket_identity": "ticket_usd = equity * holding_days * tau / names_in_flight",
+  "days_per_year": 252,
+  "integer_shares": true,
+  "unverified": [
+    "actual $0-commission eligibility of the future account (T&C page link resolved to a promotions index, not the T&C)",
+    "per-invoice rounding of each fee line",
+    "actual spread / slippage (no fills observed)",
+    "whether GST is charged on pass-through regulatory fees (two notes on F1 disagree; x1 takes the wider reading)",
+    "FY2027 Section 31 rate (F5: changes 60 days after FY2027 appropriation; none published as of fetch)",
+    "historical TAF/SEC rates before 2026 (fold back-test applies 2026 schedule to all years; assumption, not history)"
+  ],
+  "definition": "x2 = 2 * (x1 explicit fees incl. GST + x1 spread + x1 slippage) per round trip; gate floor also doubled (40 bps RT). Same convention as EVO-879 cost_arithmetic.py (stress_gate_breakeven_bps = 2 * gate_breakeven_bps; return_scenarios mult 2).",
+  "sources": {
+    "F1": {
+      "url": "https://www.moomoo.com/sg/support/topic5_76",
+      "file": "www.moomoo.com_sg_support_topic5_76",
+      "fetched_utc": "2026-10-30T01:19:31Z",
+      "what": "eligible-client US stock/ETF schedule: commission $0*, platform $0.99/order, settlement $0.003/sh cap 1%, SEC sells 0.0000206 min $0.01, TAF 0 (note: 0.000195/sh min 0.01 max 9.79 from 2026-02-07), CAT 0.000003/sh, algo +0.05%/side, GST 9% (1.1/1.2/1.4 notes: commission+platform; closing clause: all relevant domestic and foreign fees incl. exchange-related, SG tax residents)",
+      "sha256": "2d9daf6672988965a9a8d70fdd35444afd59cf5cfcaba41c2461e32cfd6b1219"
+    },
+    "F1b": {
+      "url": "https://www.moomooapp.com/sg/support/topic5_76",
+      "file": "www.moomooapp.com_sg_support_topic5_76",
+      "fetched_utc": "2026-10-30T01:19:33Z",
+      "what": "mirror of F1; fee body text identical (diff only in market-widget area)",
+      "sha256": "f6a8f0e611c48badd293ae300dead69e14553c87a9b942b0191c265119bdc3bb"
+    },
+    "F2": {
+      "url": "https://support.futusg.com/topic370/?lang=en-us",
+      "file": "support.futusg.com_topic370__lang_en-us",
+      "fetched_utc": "2026-10-30T01:20:07Z",
+      "what": "non-eligible schedule (link 'If you are not eligible' on F1): commission $0.0049/sh min $0.99, platform $0.005/sh min $1, each capped at 0.5% of trade value; settlement $0.003/sh; TAF 0.000195 min 0.01 max 9.79",
+      "sha256": "a22e631ee900a1943aeb00283958d3204644d2cc932a1b3134359e4196bc5773"
+    },
+    "F3": {
+      "url": "https://www.finra.org/sites/default/files/2026-09/SR-FINRA-2026-021.pdf",
+      "file": "SR-FINRA-2026-021.pdf",
+      "fetched_utc": "2026-10-30T01:21:12Z",
+      "what": "TAF paused for transactions 2026-10-01..2026-12-31; resumes 2027-01-01 at $0.000195/sh, max $9.79/trade",
+      "sha256": "57f7cf542abfec11399640d30ca8dcfea423f6d752936369109553c69c9cfe6e"
+    },
+    "F4": {
+      "url": "https://www.sec.gov/files/rules/sro/finra/2026/34-106409.pdf",
+      "file": "www.sec.gov_files_rules_sro_finra_2026_34-106409.pdf",
+      "fetched_utc": "2026-10-30T01:20:02Z",
+      "what": "SEC notice of SR-FINRA-2026-021 (same window, resumption 2027-01-01)",
+      "sha256": "b45080f51ebf9208784588bed02da224ae76f64675deec6cc1ad005ad9393aae"
+    },
+    "F5": {
+      "url": "https://www.sec.gov/rules-regulations/fee-rate-advisories/2026-2",
+      "file": "www.sec.gov_rules-regulations_fee-rate-advisories_2026-2",
+      "fetched_utc": "2026-10-30T01:20:03Z",
+      "what": "Section 31 $20.60/million from 2026-04-04, in effect until 60 days after FY2027 appropriation is enacted",
+      "sha256": "3f0d9af7038d415ba3c00d285d399d6e6247948ac35f193fb0cb9d46975b3be4"
+    },
+    "F6": {
+      "url": "https://www.sec.gov/rules-regulations/fee-rate-advisories",
+      "file": "www.sec.gov_rules-regulations_fee-rate-advisories",
+      "fetched_utc": "2026-10-30T01:20:03Z",
+      "what": "index: latest Section 31 advisory is still FY2026 (2026-02-27); FY2027 entry listed is a Section 6(b) filing-fee advisory only",
+      "sha256": "1a301d42b8769406dca2d5a47f642eb0b7b6a21761a94c377e9beb2542c3c654"
+    }
+  }
+}
