@@ -338,3 +338,65 @@ def test_final_D_ruling_raw_bytes_remain_bound():
         / "qlab/llm_direct/rulings/EVO897-armtag-supplement-v1.0.0.json"
     )
     assert sha256(p.read_bytes()) == arm_n.RULING_SHA256
+
+
+def alias_call(entry, ledger, tag, tmp_path):
+    import io
+    import json
+    import sys
+    from contextlib import redirect_stdout
+    from unittest.mock import patch
+
+    from qlab.dynamic_factor import __main__ as cli
+    from qlab.dynamic_factor.dsr_v0 import evaluate as legacy_evaluate
+
+    request = {} if tag is arm_n.MISSING else {"arm_tag": tag}
+    policy = SimpleNamespace(
+        document=dict(runtime_consumable=True), binding={}, bind=lambda value: value
+    )
+    if entry == "legacy_evaluate":
+        return legacy_evaluate(request, ledger, policy)
+    source = tmp_path / "synthetic-request.json"
+    source.write_text(json.dumps({"metrics": request}))
+    argv = [
+        "dynamic_factor",
+        "dsr_eval",
+        "--input",
+        str(source),
+        "--ledger",
+        str(tmp_path / "never-created.sqlite"),
+        "--conventions",
+        str(tmp_path / "synthetic-policy.json"),
+    ]
+    stdout = io.StringIO()
+    with (
+        patch.object(sys, "argv", argv),
+        patch.object(cli, "load_conventions", return_value=policy),
+        patch.object(cli.AttemptLedger, "from_conventions", return_value=ledger),
+        redirect_stdout(stdout),
+    ):
+        assert cli.main() == 2
+    assert not (tmp_path / "never-created.sqlite").exists()
+    return json.loads(stdout.getvalue())
+
+
+@pytest.mark.parametrize("entry", ["CLI", "legacy_evaluate"])
+@pytest.mark.parametrize("tag", [arm_n.MISSING, None, "", "UNKNOWN", [], {}])
+def test_formal_aliases_with_complete_N_refuse_without_consumer_or_write(
+    ready_consumers, entry, tag, tmp_path
+):
+    ledger = ReadyLedger()
+    value = alias_call(entry, ledger, tag, tmp_path)
+    assert "arm_n.arm_tag_missing_or_invalid" in value["reasons"]
+    assert not ledger.formal_reads and not ledger.writes and not ledger.callbacks
+
+
+@pytest.mark.parametrize("entry", ["CLI", "legacy_evaluate"])
+@pytest.mark.parametrize("tag", ["EVO883_FACTOR", "EVO896_LLMCLI"])
+def test_same_ready_alias_conditions_only_valid_label_reaches_sentinel(
+    ready_consumers, entry, tag, tmp_path
+):
+    ledger = ReadyLedger()
+    with pytest.raises(ConsumerSentinel):
+        alias_call(entry, ledger, tag, tmp_path)
+    assert not ledger.writes and not ledger.callbacks
