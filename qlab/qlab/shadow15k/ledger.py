@@ -7,12 +7,14 @@ resolve unknowns, but never erase known fills or revise a terminal order.
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 import stat
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from qlab.dynamic_factor.contract import canonical, digest, is_sha
 
@@ -21,6 +23,13 @@ from .fees import ZERO, day, decimal_arithmetic, money
 from .cash import cash_view, entitlement, payment_verified
 
 NAMESPACE = "evo881.shadow15k.offline"
+# Host-owned physical container, never taken from an intent/genesis/path request.
+# The offline harness binds its own private sandbox before constructing ledgers.
+PHYSICAL_ROOT = (Path(__file__).resolve().parents[3] / ".shadow15k-offline").resolve()
+FORBIDDEN_LINE = re.compile(
+    r"(?:^|[^a-z0-9])evo[-_]?0*(353|774|844|851)(?![0-9])", re.I
+)
+EXCHANGE_ZONE = ZoneInfo("America/New_York")
 TERMINAL = {"filled", "failed", "cancelled"}
 STATUSES = TERMINAL | {"partial", "pending", "unknown"}
 FORBIDDEN = {
@@ -45,14 +54,20 @@ def timestamp(value):
     return parsed.astimezone(timezone.utc)
 
 
-def isolated_root(root):
-    path = Path(root).absolute()
-    # Resolve only after checking all existing path components for symlinks.
-    if any(p.is_symlink() for p in [path, *path.parents]):
+def isolated_root(root, *, anchor=None):
+    raw = Path(root).absolute()
+    path = raw.resolve()
+    anchor = PHYSICAL_ROOT if anchor is None else anchor
+    # Resolve the caller path first, then compare to the independently pinned
+    # physical container. A path prefix or a shadow15k basename is insufficient.
+    if anchor.resolve() != anchor or anchor not in path.parents:
+        raise ValueError("namespace_outside_physical_root")
+    if any(p.is_symlink() for p in [raw, *raw.parents]):
         raise ValueError("namespace_symlink_forbidden")
-    path = path.resolve()
-    if path.name != "shadow15k" or FORBIDDEN.intersection(
-        p.lower() for p in path.parts
+    if (
+        path.name != "shadow15k"
+        or FORBIDDEN.intersection(p.lower() for p in path.parts)
+        or any(FORBIDDEN_LINE.search(p) for p in path.parts)
     ):
         raise ValueError("dedicated_shadow15k_directory_required")
     if path.exists():
@@ -97,7 +112,8 @@ class ShadowLedger:
     """Mechanical accounting API only, not a signal-to-order or live execution path."""
 
     def __init__(self, root, genesis, fee_book):
-        self.root = isolated_root(root)
+        self._physical_root = PHYSICAL_ROOT
+        self.root = isolated_root(root, anchor=self._physical_root)
         self.fees = fee_book
         # Explicit metadata, no defaults for strategy identity or prices.
         required = {
@@ -150,7 +166,7 @@ class ShadowLedger:
     @contextmanager
     def _connection(self, *, write):
         # Recheck namespace on every operation, not just construction.
-        isolated_root(self.root)
+        isolated_root(self.root, anchor=self._physical_root)
         db = sqlite3.connect(str(self.path), timeout=30, isolation_level=None)
         try:
             db.execute("PRAGMA synchronous=FULL")
@@ -242,7 +258,7 @@ class ShadowLedger:
                 unresolved(i) for i in state["intents"].values()
             ):
                 raise ValueError("intent.reconciliation_required")
-            timestamp(request["decision_ts"])
+            decision = timestamp(request["decision_ts"])
             if any(
                 p["as_of"] > request["decision_ts"] for p in state["dividends"].values()
             ):
@@ -283,6 +299,11 @@ class ShadowLedger:
                 if whole(spec["planned_qty"]) == 0:
                     raise ValueError("positive_planned_quantity_required")
                 day(spec["trade_date"])
+                if (
+                    spec["trade_date"]
+                    < decision.astimezone(EXCHANGE_ZONE).date().isoformat()
+                ):
+                    raise ValueError("intent.trade_date_precedes_decision")
                 self.fees.rate_field(spec["trade_date"])
                 orders[oid] = dict(
                     spec=spec,
@@ -373,6 +394,13 @@ class ShadowLedger:
                 order.update(quantity_known=False, fee_known=False, status="unknown")
                 continue
             whole(qty)
+            if qty > order["qty"] and (
+                at.astimezone(EXCHANGE_ZONE).date().isoformat() != spec["trade_date"]
+            ):
+                # This receipt schema has no independent actual-execution
+                # timestamp/provenance. A late confirmation cannot prove a
+                # pre-ex-date fill, nor can it confirm a future DAY order.
+                raise ValueError("receipt.trade_date_confirmation_mismatch")
             notional = money(value)
             if (
                 qty > spec["planned_qty"]

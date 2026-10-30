@@ -79,7 +79,10 @@ def run(workdir):
     data = json.loads(raw)
     fees = {s: fixture_fees(s) for s in ("x1", "x2")}
     results = []
-    with offline() as attempts:
+    with (
+        offline() as attempts,
+        patch("qlab.shadow15k.ledger.PHYSICAL_ROOT", workdir.resolve()),
+    ):
         for case in data["cases"]:
             cid, expected = case["case_id"], case["expected"]
             if "orders" in case:
@@ -243,6 +246,11 @@ def run(workdir):
         from .cash_harness import cases as cash_cases
 
         revisions = cash_cases(workdir / "cash-revisions", data["genesis"], fees["x1"])
+        from .b4_harness import cases as b4_cases
+
+        revisions.extend(
+            b4_cases(workdir / "b4-revisions", data["genesis"], fees["x1"])
+        )
     return dict(
         schema="shadow15k.harness/v1",
         status="PASS",

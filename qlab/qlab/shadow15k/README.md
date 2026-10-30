@@ -2,24 +2,24 @@
 
 本模块只处理显式合成意图、累计收据和盯市输入；不生成策略信号，不连接 OpenD、SIMULATE 交易上下文或 REAL。`execution_verified` 与 `certifiable` 始终为 `false`。固定本金是 USD 15,000，与旧 `llm_paper` 的目录、数据库、库存和调度分离。
 
-基于 PR #10 已复核的 `6c63505f72135063162c1f55ecfaa03514f1fa32`，只新增本目录和 `qlab/tests/shadow15k/`。原提交 `2a0aad4` 重放为 `1fab8c4`，无文本冲突；后续独立提交处理费用与现金的语义衔接。只 import PR #10 的现有接口，未修改其源码或封存回执。
+本次 base 为 PR #10 的 `08c9d87ab4bef9abae6b5edabaf07c0adcb40052`。原 `6c63505..703e27c` 三笔原样重放至 `cf1a5b753a11246c3235c041711f547c46f9b4a4`，无冲突，range-diff 全为等号；之后一个独立 commit 修 B4-R1/R2。只改本模块和对应测试/说明，不修改 PR #10 源码、接口或封存件。重放记录在 `evidence/b4-rework-v1/`，旧回执保留历史身份。
 
 ## 运行和复现
 
 在仓库根目录、Python >=3.9（仅标准库）运行，两个 workdir 必须为空或不存在：
 
 ```sh
-PYTHONPATH=qlab:. python3 -m qlab.shadow15k.harness --workdir ./repro-a > harness-a.json
-PYTHONPATH=qlab:. python3 -m qlab.shadow15k.harness --workdir ./repro-b > harness-b.json
+PYTHONPATH=qlab:. PYTHONDONTWRITEBYTECODE=1 python3 -B -m qlab.shadow15k.harness --workdir ./repro-a > harness-a.json
+PYTHONPATH=qlab:. PYTHONDONTWRITEBYTECODE=1 python3 -B -m qlab.shadow15k.harness --workdir ./repro-b > harness-b.json
 cmp harness-a.json harness-b.json
-PYTHONPATH=qlab:. python3 -m pytest qlab/tests/shadow15k qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q
-python3 -m ruff check qlab/qlab/shadow15k qlab/tests/shadow15k
-python3 -m ruff format --check qlab/qlab/shadow15k qlab/tests/shadow15k
+PYTHONPATH=qlab:. PYTHONDONTWRITEBYTECODE=1 python3 -B -m pytest qlab/tests/shadow15k qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q -p no:cacheprovider
+python3 -m ruff check --no-cache qlab/qlab/shadow15k qlab/tests/shadow15k
+python3 -m ruff format --no-cache --check qlab/qlab/shadow15k qlab/tests/shadow15k
 ```
 
 Harness 禁用 socket、DNS 和连接入口，记录网络尝试数；无当前时间、随机值或外部 Python 包。`fixtures/cases.json` 的9个固定用例保留报告第7页的五项：`paper.partial_is_incomplete`、`paper.failed_hedge_retains_risk`、`nav.missing_mark_is_unknown`、`intent.retry_requires_reconcile`、`cost.cash_vs_reference_no_double`；TAF补充用例现验证所有日期restored。另有8项QQQ现金衔接探针，覆盖金额冲突、缺映射、未证到账、除息日新买、应收不可花和付款重试/回滚。正例只证明账务机制，不能解释为策略盈利或成交验证。
 
-报告携带原字节夹具SHA、QQQ映射SHA、v1身份、逐case输入SHA、源码清单及依赖版本。当前工程回执见`evidence/rebase-6c63505/`；根目录的旧`harness.json`/`verification.json`只保留原交件历史，不能作当前输出。重跑不读取任何旧证据文件。
+报告携带原字节夹具SHA、QQQ映射SHA、v1身份、逐case输入SHA、源码清单及依赖版本。本轮另有12项B4负例（8种禁线路径、物理根逃逸、3种交易时序），当前交件在EVO-885顶层评论及PR #11说明，含新GitHub干净clone的双版本测试、影子/工具链完整及canonical SHA。`evidence/rebase-6c63505/`和根目录旧`harness.json`/`verification.json`均为历史件，不作本轮HEAD的输出。重跑不读取旧证据文件。
 
 ## API 和状态
 
@@ -31,7 +31,9 @@ Harness 禁用 socket、DNS 和连接入口，记录网络尝试数；无当前�
 | `fee_params_x2.json` | `a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044` |
 | `fee_schedule.json`（PR #10） | `c400412f361a659290289517adf640e1fc2610560e203dc79bf76975e87c7fd9` |
 
-`ShadowLedger(root, genesis, fee_book)` 要求 `root` 名为 `shadow15k`，独占该目录与 `ledger.sqlite3`。拒绝旧轨/受控目录、符号链接、硬链接及外来文件/数据库。`genesis` 必须显式提供以下全部字段：
+`ShadowLedger(root, genesis, fee_book)` 先跟随链接解析真实路径，再判断是否在宿主独立锚定的 `PHYSICAL_ROOT` 内；默认根为当前代码仓库的 `.shadow15k-offline/`，不从构造路径、意图或genesis反推，也没有请求字段或环境变量覆盖。每本账捕获该物理锚，所有操作再次检查，根外在mkdir/建DB前拒绝。离线harness只在其显式空workdir内绑定私有锚；pytest由宿主fixture独立绑定每项tmp_path。这些合成宿主绑定不来自业务输入。
+
+第二道防线识别EVO-353/774/844/851的规范ID，覆盖连字符、下划线、大小写和工作区前缀。`root` 仍须名为 `shadow15k`，独占目录与 `ledger.sqlite3`；原有旧轨/受控目录、符号链接、硬链接和外来文件/数据库防护保留。`genesis` 必须显式提供以下全部字段：
 
 ```json
 {
@@ -48,6 +50,7 @@ Harness 禁用 socket、DNS 和连接入口，记录网络尝试数；无当前�
 
 - `register_intent(request)`：要求 `intent_id`、UTC `decision_ts`、`input_hash`、非空 `orders`。每单明确 `order_id/symbol/side/planned_qty/trade_date/protective`，股数只允许正整数。意图不产生库存；这是纯合成夹具入口，不接策略的下单链。
 - `record_receipt(intent_id, receipt)`：要求全量累计快照 `receipt_id/receipt_ts/orders`。每单明确 `order_id/confirmed_qty/gross_usd/fee_known/status`。收据时间不得早于决策/先前收据。股数与金额不得倒退、超计划或凭空增加。终态已知收据不能修改。`fills` 是这些合成累计快照，不代表券商逐笔成交。
+- **B4-R2 时序门**：持久化及重放时，将UTC决策/确认时间转为America/New_York日期。计划DAY交易日不得早于决策日期；允许事前计划下一交易日，但新增确认股数只能在该计划交易日的确认回执中入账。当前schema没有独立实际成交时间/来源，跨日迟到的新增成交证据不足即拒绝，不以回执日期替代实际成交日，也不把计划日当已证成交日。已有终态的原数量复交可在稍后确认，不能增加持仓。倒填、超前和跨除息日负例均没有新增库存/应收；除息日前决策、除息日才成交也不能领本次分红。旧账含不合时序事件时重放拒绝，不改写旧事件。
 - `record_dividend({receipt_id, as_of, event})`：把版本化QQQ现金输入写入同一本独立事件账。事件按除息日唯一汇总，资格由账中更早交易日的已知整股持仓计算，除息日新买不享分红；除息日卖出不抹掉先前资格。事件中的资格必须与账内一致。金额/来源/支付证据复用`dynamic_factor.integer_cash_valuation`校验，2022-12-19每股0.65541绑定`71953b09…`映射。错误金额/缺映射可作为未知记录保存，但读数为null并阻塞新意图；写入成功不代表现金可用。经验证的模拟付款不能被改写，未证付款可由后续追加补证。
 - `pending/partial/unknown` 或数量/费用未知会阻塞新意图；同 ID 同内容跨进程/重启重试不重复记账。不同内容拒绝。新收据 ID 下的累计快照可补齐先前未知项；不能删掉已知库存和费用。普通单明确 `cancelled` 可保留已知残量后解除对账阻塞，但不会声称完整执行。保护单失败/不足额持续冻结，不提供自动覆盖或修复权限。
 - `readout(marks)`：输入同一 UTC `as_of` 的完整 `prices` 与明确 `price_basis`。缺价/非正价/未知价不使用旧值；当前持仓缺一价则 `valuation_complete=false`、NAV/P&L=`null`。数量未知时保留 `last_known_qty`/库存但不报完整估值；费用未知时 `cash/fees/nav/net_pnl=null`，已知部分另列。`last_known_cash`/`known_fees` 不是完整净值。
