@@ -54,6 +54,7 @@ def continuous_path_check(request, *, conventions=None):
     retained_inventory, retained_exit_intents = None, None
     declarations = []
     quarantine = None
+    retained_state = None
     try:
         # Capture every declaration in input order, before shape, membership or
         # grid validation. This list is raw pending evidence, never acceptance.
@@ -198,6 +199,7 @@ def continuous_path_check(request, *, conventions=None):
                     inventory=deepcopy(retained_inventory),
                     exit_intents=deepcopy(retained_exit_intents),
                     inventory_status="last_known_before_halt",
+                    last_known_state=deepcopy(retained_state),
                     reasons=list(
                         dict.fromkeys(
                             out["reasons"] + ["wf.prior_strategy_state_unknown"]
@@ -232,8 +234,24 @@ def continuous_path_check(request, *, conventions=None):
             )
             if i and row.get("input_state_sha256") != previous:
                 raise ValueError("wf.continuous_state_link_mismatch")
+            if policy.document["version"] == "v2.0.0":
+                from .state_v2 import state_transition_check
+
+                step = state_transition_check(
+                    {
+                        "before": inp,
+                        "after": final,
+                        "transition_receipts": row.get("transition_receipts", []),
+                    },
+                    conventions=policy,
+                )
+                out["state_transition"] = step["metrics"]
+                if not step["ok"]:
+                    bad = True
+                    reasons.extend(step["reasons"])
             if bad:
                 stopped = True
+                retained_state = deepcopy(inp)
                 retained_inventory = deepcopy(row.get("inventory"))
                 retained_exit_intents = deepcopy(row.get("exit_intents"))
                 out.update(

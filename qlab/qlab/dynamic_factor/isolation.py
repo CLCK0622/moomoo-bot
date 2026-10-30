@@ -11,6 +11,7 @@ import math
 from .contract import digest, is_sha, result
 from .conventions import load_conventions
 from .fees import finite, iso_date
+from .input_scope import reject_b2_inputs
 
 ROLES = {
     "train_solo_probes",
@@ -53,6 +54,7 @@ def timestamp(s):
 
 def seal_manifest(request, policy=None):
     """Close the input schema before scoring; no outcome-dependent selectors."""
+    reject_b2_inputs(request, "features")
     p = policy or load_conventions()
     if p.document["version"] != "v2.0.0":
         raise ValueError("isolation.v2_required")
