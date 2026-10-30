@@ -1,5 +1,14 @@
 ## Default offline suite
 
+Install the runtime and development tools from `qlab/` before going offline:
+
+```bash
+python -m pip install -r requirements-dev.txt
+```
+
+This pins Ruff to `0.15.17` for reproducible lint checks. The existing runtime
+lock file remains available for environments that only need the test suite.
+
 From `qlab/`, with the existing dependencies installed:
 
 ```bash
