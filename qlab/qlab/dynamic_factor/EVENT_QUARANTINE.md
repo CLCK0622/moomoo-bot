@@ -56,6 +56,25 @@ Continuous receipts retain all 77 folds and every submitted declaration,
 attempt/budget/N identity; no skipped fold, capital reset or automatic resumption.
 The walk-forward boundary refuses before any adapter or ledger execution.
 
+The B8 boundary uses `lineage_schema.py` as an exact, case-sensitive closed
+schema: `CONSUMER`, `FOLD`, `STATE`, `NODE`, `EVENT`, budget and N records,
+and reconciliation checkpoints enumerate every supported field. The lineage
+aliases are only `dependency_nodes`, `panel_inputs`, and consumer `inputs`;
+`parents` and `event_keys` belong only to nodes. Unknown keys are refused even
+when their value is null, boolean, number, string, empty list or empty object.
+No substring or value-container heuristic is used. Known record/list fields
+also validate their structure. Null remains raw missing evidence for the
+owning business validator; it cannot carry concealed keys or establish recovery.
+
+Submitted `value` evidence permits scalar/list values and recursively closed
+records with only `value`, `nav`, `NAV`, `cash`, `alias`, `nested_numeric` and
+`formal_alias` (the B7/B8 evidence vocabulary). It never supplies graph edges.
+Checkpoint records contain only `verified` and `sha256`, and still cannot clear
+quarantine. Inventory, marks and age are scalar maps over the frozen universe
+plus the explicit legacy accounting symbols B, COR, QQQ, VTI, X and H; these map
+keys are security identities, not extensible metadata fields. Validation is
+iterative at every depth. Original nested evidence is preserved without repair.
+
 `s1_input_receipt()` adopts only the accepted same-vendor NONE `raw_open` scope
 for BRK.B, 2013-10-29 through 2026-07-09. `read_s1_raw_open()` additionally
 requires original CSV bytes with SHA256

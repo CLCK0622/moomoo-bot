@@ -141,26 +141,9 @@ def normalize_dependencies(request):
     lineage containers fail closed instead of looking like an empty graph.
     """
     graph, panels = [], []
-    lineage_keys = {"dependency_nodes", "panel_inputs", "parents", "event_keys"}
+    from .lineage_schema import validate_consumer
 
-    def reject_hidden(value):
-        pending = [value]
-        while pending:
-            item = pending.pop()
-            if isinstance(item, dict):
-                if any(
-                    key in lineage_keys
-                    or "lineage" in key.lower()
-                    or (
-                        "dependency" in key.lower()
-                        and isinstance(item[key], (dict, list))
-                    )
-                    for key in item
-                ):
-                    raise ValueError("data.v10_unknown_lineage_structure")
-                pending.extend(item.values())
-            elif isinstance(item, list):
-                pending.extend(item)
+    validate_consumer(request)
 
     pending = [request]
     while pending:
@@ -173,14 +156,6 @@ def normalize_dependencies(request):
                     not isinstance(item, dict) for item in value
                 ):
                     raise ValueError("data.v10_lineage_list_required")
-                for item in value:
-                    reject_hidden(
-                        {
-                            k: v
-                            for k, v in item.items()
-                            if k not in {"parents", "event_keys"}
-                        }
-                    )
                 (graph if key == "dependency_nodes" else panels).extend(deepcopy(value))
             elif key in {"folds", "events"}:
                 if not isinstance(value, list):
@@ -192,20 +167,11 @@ def normalize_dependencies(request):
             elif key == "inventory":
                 if not isinstance(value, dict):
                     raise ValueError("data.v10_inventory_lineage_invalid")
-                reject_hidden(value)
                 panels.extend(
                     dict(symbol=symbol, field="inventory", parents=[])
                     for symbol, quantity in value.items()
                     if quantity and symbol in INHERITED
                 )
-            else:
-                if (
-                    key in lineage_keys
-                    or "lineage" in key.lower()
-                    or ("dependency" in key.lower() and isinstance(value, (dict, list)))
-                ):
-                    raise ValueError("data.v10_unknown_lineage_structure")
-                reject_hidden(value)
         # An event is evidence even when the current inventory has been sold.
         if scope.get("symbol") in INHERITED:
             panels.append(dict(symbol=scope["symbol"], field="event", parents=[]))
