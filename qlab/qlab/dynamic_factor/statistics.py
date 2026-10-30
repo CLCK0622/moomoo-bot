@@ -84,7 +84,11 @@ def dsr_eval(
     if conventions is not None:
         from .ledger import bound_genesis
 
-        if snapshot["genesis"] != bound_genesis(conventions):
+        from .authority_ledger import AuthorityLedger
+
+        if not isinstance(ledger, AuthorityLedger) and snapshot[
+            "genesis"
+        ] != bound_genesis(conventions):
             reasons.append("ledger.genesis_binding_mismatch")
             snapshot = dict(snapshot, cumulative_n=None, cumulative_n_lower_bound=None)
 
@@ -119,6 +123,10 @@ def dsr_eval(
         "cumulative_n": snapshot["cumulative_n"],
         "cumulative_n_lower_bound": snapshot["cumulative_n_lower_bound"],
         "n_ledger_hash": snapshot["n_ledger_hash"],
+        "recorded_N": snapshot.get("recorded_N"),
+        "n_high_water": snapshot.get("n_high_water"),
+        "authority_tip": snapshot.get("authority_tip"),
+        "authority_sequence": snapshot.get("authority_sequence"),
     }
     report = result(
         "dsr_eval",

@@ -29,6 +29,7 @@ def lineage_sources():
         "reference_evidence",
         "fold_split",
         "folds",
+        "authority_ledger",
     )
     return {
         n + ".py": sha256((Path(__file__).parent / (n + ".py")).read_bytes())
@@ -197,6 +198,13 @@ def verify_N(
         or tail.get("n_high_water", -1) < tail["N"]
     ):
         raise ValueError("reference.complete_N_missing_or_retry_not_counted")
+    from .authority_ledger import verify_bytes, state as authority_state
+
+    raw_ledger = files.get(tail["ledger_file_sha256"])
+    try:
+        _, authority_rows = verify_bytes(raw_ledger.encode(), tail)
+    except (ValueError, AttributeError, TypeError, KeyError):
+        raise ValueError("reference.complete_N_missing_or_retry_not_counted") from None
     review = blob(files, tail.get("complete_history_acceptance_receipt_sha256"))
     if (
         review.get("owner") != "EVO891"
@@ -209,6 +217,19 @@ def verify_N(
     if len(ids) != len(set(ids)):
         raise ValueError("reference.complete_N_missing_or_retry_not_counted")
     by_id = {a["attempt_id"]: a for a in attempts}
+    runs = {candidate_run, meta_run} | {t["source_run_id"] for t in all_trials}
+    actual = {
+        r["attempt_id"]: r
+        for r in authority_rows[21:]
+        if r["event"] == "attempt" and r["run_id"] in runs
+    }
+    if set(actual) != set(by_id) or any(
+        actual[a["attempt_id"]]["seq"] != a["sequence"]
+        or actual[a["attempt_id"]]["n_contribution"] != a["n_contribution"]
+        for a in attempts
+    ):
+        raise ValueError("reference.complete_N_missing_or_retry_not_counted")
+
     current = [
         a for a in attempts if a["kind"] == "candidate" and a["run_id"] == candidate_run
     ]
@@ -269,6 +290,11 @@ def verify_N(
             or not is_sha(snap["tip"])
             or snap["sequence"] > tail["sequence"]
             or snap["N"] > tail["N"]
+        ):
+            raise ValueError("reference.N_snapshot_order_invalid")
+        actual_snapshot = authority_state(authority_rows[: snap["sequence"] + 1])
+        if any(
+            snap[k] != actual_snapshot[k] for k in ("ledger_id", "N", "sequence", "tip")
         ):
             raise ValueError("reference.N_snapshot_order_invalid")
     ref_seq = max(by_id[a]["sequence"] for a in seen)

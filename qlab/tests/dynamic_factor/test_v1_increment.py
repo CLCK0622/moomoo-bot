@@ -372,7 +372,7 @@ def test_CLI_genesis_override_and_missing_conventions_refuse_before_DB_creation(
     assert not (tmp_path / "forged.sqlite").exists()
 
 
-def test_CLI_startup_intent_is_persisted_with_v1_binding(tmp_path):
+def test_CLI_startup_refuses_synthetic_unit_ledger(tmp_path):
     policy = load_conventions()
     ledger = fixture_ledger(tmp_path / "ledger.sqlite", policy)
     source = tmp_path / "intent.json"
@@ -407,7 +407,7 @@ def test_CLI_startup_intent_is_persisted_with_v1_binding(tmp_path):
         text=True,
     )
     report = json.loads(r.stdout)
-    assert r.returncode == 0 and report["ok"]
+    assert r.returncode == 2 and not report["ok"]
     assert report["common_profile_sha256"] == policy.binding["common_profile_sha256"]
     assert report["runtime_consumable"] is False
-    assert ledger.recorded("startup/unit/intent/0") == report["metrics"]["intent"]
+    assert ledger.recorded("startup/unit/intent/0") is None

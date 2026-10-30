@@ -429,6 +429,9 @@ def run(workdir):
         from .reference_harness import runtime_negative_cases
 
         revisions.extend(runtime_negative_cases(policy, workdir))
+        from .authority_harness import cases as authority_cases
+
+        revisions.extend(authority_cases(workdir, policy))
     specified = json.loads((FIXTURES / "harness_cases.json").read_bytes())
     require(
         [c["case_id"] for c in cases]

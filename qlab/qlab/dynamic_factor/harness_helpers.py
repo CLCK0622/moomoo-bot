@@ -17,7 +17,7 @@ def fixture_ledger(path, policy):
             "sha256": digest("synthetic_bootstrap"),
         },
     }
-    return AttemptLedger.from_conventions(
+    return AttemptLedger._from_fixture_conventions(
         path,
         policy,
         anchor_path=path.with_name(path.name + ".unit-tip.json"),

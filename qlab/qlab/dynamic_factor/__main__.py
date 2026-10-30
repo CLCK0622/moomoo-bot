@@ -40,6 +40,7 @@ def main():
             "integer_cash_valuation",
             "reference_manifest_check",
             "reference_runtime_check",
+            "authority_ledger_check",
         ],
     )
     parser.add_argument("--input", required=True, type=Path)
@@ -75,7 +76,13 @@ def main():
             raise ConventionConflict("wf.conventions_required")
         if args.genesis is not None and policy is not None:
             raise ConventionConflict("ledger.custom_genesis_forbidden")
-        if args.tool == "fee_frontier":
+        if args.tool == "authority_ledger_check":
+            from .authority_ledger import AuthorityLedger
+
+            if args.ledger is None or args.ledger_anchor is None:
+                raise ValueError("ledger.file_and_witness_required")
+            report = AuthorityLedger(args.ledger, args.ledger_anchor).readout()
+        elif args.tool == "fee_frontier":
             if args.params is None:
                 raise ValueError("--params required")
             kwargs = {"schedule_path": args.schedule} if args.schedule else {}
@@ -212,6 +219,7 @@ def main():
             reasons=[
                 str(exc)
                 if isinstance(exc, ConventionConflict)
+                or (isinstance(exc, ValueError) and str(exc).startswith("ledger."))
                 else f"input_invalid_or_missing:{type(exc).__name__}"
             ],
             missing=["valid tool inputs"],

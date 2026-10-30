@@ -23,6 +23,7 @@ DEFAULT_GENESIS = {
     "prior_n": None,
     "authority_source": None,
 }
+_FIXTURE_CAPABILITY = object()
 
 
 class AttemptLedger:
@@ -30,12 +31,25 @@ class AttemptLedger:
     def from_conventions(
         cls, path, conventions, *, anchor_path=None, bootstrap_receipt=None
     ):
+        bound_genesis(conventions)  # Revalidate actual convention/seed bytes.
+        from .authority_ledger import AuthorityLedger
+
+        return AuthorityLedger.open_project(
+            path, anchor_path=anchor_path, bootstrap_receipt=bootstrap_receipt
+        )
+
+    @classmethod
+    def _from_fixture_conventions(
+        cls, path, conventions, *, anchor_path=None, bootstrap_receipt=None
+    ):
+        """Offline unit seam, never selected by CLI or formal evaluation."""
         return cls(
             path,
             bound_genesis(conventions),
             anchor_path=anchor_path,
             bootstrap_receipt=bootstrap_receipt,
             _bound=True,
+            _fixture_capability=_FIXTURE_CAPABILITY,
         )
 
     def __init__(
@@ -46,7 +60,10 @@ class AttemptLedger:
         anchor_path=None,
         bootstrap_receipt=None,
         _bound=False,
+        _fixture_capability=None,
     ):
+        if _bound and _fixture_capability is not _FIXTURE_CAPABILITY:
+            raise ValueError("ledger.bound_constructor_forbidden_formal_entry")
         self.path = Path(path)
         if str(path) == ":memory:":
             raise ValueError("persistent ledger path required")

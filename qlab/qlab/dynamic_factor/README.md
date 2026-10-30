@@ -28,33 +28,45 @@ pending. Private `_..._unbound` engines are offline mechanics test seams. Train
 slicing is shared with the reference producer; train-only fitting, label maturity
 and embargo guards remain. The 77-fold calendar and 21-session gap come from JSON.
 
-## Ledger integrity
+## Ledger integrity and fixed project authority
 
-The bound constructor validates actual seed bytes: eight rows / 47 observed
-attempts, SHA `76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b`.
-They remain an incomplete lower bound: `cumulative_n=null`, `n_complete=false`.
-Failed/NaN/rejected attempts persist. Real retries use new IDs; transport retries
-are idempotent. All declared references count in the same N before performance.
+Formal `AttemptLedger.from_conventions` checks immutable convention/seed identity,
+then opens only the fixed project JSONL/witness under
+`research/dynamic_factor/authority/`. Caller `--ledger-anchor` or bootstrap input
+cannot select another formal project witness. Missing project state is never
+created by evaluation requests. First installation is a controlled copy of the
+published authority and witness; a new path requires a reviewed migration and
+project mapping change, not a retargeted bootstrap. No project state is installed
+or appended by this PR's tests.
 
-Each transaction checks a separately retained witness: ledger ID, DB path,
-genesis SHA, sequence, tip, logical snapshot SHA, local count and N high-water
-marks. Truncation, old snapshots and replacement refuse before reads or appends.
-Bound constructors reject caller-written genesis; bound CLI rejects `--genesis`
-before creating a database.
+`AuthorityLedger` independently reads the exact EVO-891 B v2 canonical JSONL,
+source SHA `a8f50e02644ec4a86460f8038b89edcbc1811352e5bf320dca592cef6abcb87e`.
+It validates the separately retained witness and the published ancestor:
+ledger ID `37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc`,
+sequence 20, tip `9e3220aa6aa6dcc7f2a03c4f1f917b2da40af78c90173156f6ca4e9efd8e9c0d`,
+N high-water 75. Read and append recompute the full chain, retain the exact first
+21 published rows and verify any supplied later external anchor as an ancestor.
+The fixed published anchor cannot be overridden with a weaker one. Append is an
+explicit writer API; normal evaluation is readonly. Appends preserve the prefix,
+N/high-water never decrease, and stale/corrupt anchors refuse before mutation.
+A crash between append/fsync and witness update fails closed for reviewed recovery.
 
-First creation needs an operator-reviewed bootstrap receipt: `action`, exact
-`target`, `genesis_sha256`, `ledger_id`, `authority_source.sha256`. Default bound
-witness: `.evo881-project-tip.json` beside the DB; `--ledger-anchor` explicitly
-locates it. Retain/back up the witness separately and share it across processes.
-The tool checks receipt identity, not the authenticity of operator approval.
-`harness_helpers.fixture_ledger` provides synthetic unit authority only.
+`authority_ledger_check` reads a versioned JSONL/witness pair without installing
+it. Its recorded N=75, sequence, tip and all computed state fields match the
+unchanged upstream verifier byte for byte. The raw upstream Python tool is kept
+as a SHA-pinned fixture and excluded from automatic lint/format changes.
+Recorded N is not complete N: G1–G5/P02 remain external acceptance issues;
+`complete_N=null`, `n_complete=false`, DSR/V remain null. P7 sidecar validation
+also verifies actual JSONL descent and exact N snapshots, not just caller SHA text.
 
-`ledger.migrate(target, target_anchor=..., receipt=...)` needs fresh targets and
-a receipt binding current witness state, source witness SHA, ledger ID, target
-paths and authority SHA. It copies/fsyncs history and retires the old writer
-without deleting evidence. Stale receipts refuse. Crashes between DB commit and
-witness fsync, or during migration, fail closed and need independently reviewed
-recovery. Rewriting both DB and witness is outside this local integrity boundary.
+The old SQLite mechanism is an **offline unit seam**. Its historical seed remains
+exact eight rows / 47 attempts, SHA
+`76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b`.
+Only `_from_fixture_conventions`/`fixture_ledger` opt into synthetic bootstrap;
+CLI cannot select that capability. Synthetic source high-water 500 cannot be
+reset by editing a receipt target or giving a new witness path. Native SQLite
+migration tests retain old evidence and never constitute project JSONL-to-SQLite
+migration approval. No automatic history/schema conversion is performed.
 
 ## Reference producer and registry
 
@@ -173,7 +185,7 @@ fee, valuation and integrity regressions.
 
 `python -m qlab.dynamic_factor --help` lists JSON tools. Formal DSR/fold calls
 require `--conventions`; persistent bound calls need a retained witness and
-`--ledger`. `--ledger-bootstrap` reads an explicit first-creation receipt. CLI
+`--ledger`. `--ledger-bootstrap` is rejected by formal project evaluation; synthetic unit receipts are not accepted. CLI
 exits 2 on refusal and never imports code named in JSON. `reference_runtime_check`
 accepts a hash-keyed UTF-8 evidence map; it does not chase arbitrary file paths. Reports carry input and
 source SHA/assumptions. `--out-dir` writes immutable content-addressed readouts.

@@ -63,10 +63,10 @@ def test_new_bound_database_needs_explicit_bootstrap_or_migration_receipt(tmp_pa
     p = load_conventions()
     ledger = fixture_ledger(tmp_path / "old.sqlite", p)
     ledger.begin("seen", {})
-    with pytest.raises(ValueError, match="bootstrap_receipt_required"):
+    with pytest.raises(ValueError, match="project_path_migration_receipt_required"):
         AttemptLedger.from_conventions(tmp_path / "new.sqlite", p)
     assert not (tmp_path / "new.sqlite").exists()
-    with pytest.raises(ValueError, match="migration_receipt"):
+    with pytest.raises(ValueError, match="formal_bootstrap_or_anchor_override"):
         AttemptLedger.from_conventions(
             tmp_path / "new.sqlite", p, anchor_path=ledger.anchor_path
         )
@@ -149,7 +149,7 @@ def test_receipted_migration_preserves_identity_and_retires_original(tmp_path):
     target, anchor = tmp_path / "target.sqlite", tmp_path / "target.tip.json"
     receipt = migration_receipt(ledger, target, anchor)
     migrated = ledger.migrate(target, target_anchor=anchor, receipt=receipt)
-    moved = AttemptLedger.from_conventions(target, p, anchor_path=anchor)
+    moved = AttemptLedger._from_fixture_conventions(target, p, anchor_path=anchor)
     assert moved.snapshot() == before
     assert migrated["n_ledger_hash"] == before["n_ledger_hash"]
     assert ledger.path.exists() and ledger.anchor_path.exists()

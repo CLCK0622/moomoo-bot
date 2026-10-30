@@ -141,20 +141,48 @@ def runtime_fixture(policy):
             "kind": "meta",
         }
     )
-    lid = digest("SYNTHETIC_UNIT_LEDGER_NOT_AUTHORITY")
-    tail = {
-        "owner": "EVO891",
-        "complete": True,
-        "ledger_id": lid,
-        "sequence": 21,
-        "N": 21,
-        "n_high_water": 21,
-        "genesis_sha256": digest("unit-genesis"),
-        "tip": digest("unit-tail"),
-        "snapshot_sha256": digest("unit-snapshot"),
-        "ledger_file_sha256": digest("unit-ledger"),
-        "attempt_map_sha256": add(attempts),
-        "complete_history_acceptance_receipt_sha256": add(
+    from .authority_ledger import FIXTURES as AUTHORITY_FIXTURES, records, state
+
+    rows = records((AUTHORITY_FIXTURES / "EVO891-B-ledger-v2.jsonl").read_bytes())
+    n = state(rows)["N"]
+    for attempt in attempts:
+        attempt["sequence"] = len(rows)
+        n += attempt["n_contribution"]
+        row = dict(
+            attempt,
+            event="attempt",
+            seq=len(rows),
+            previous_hash=digest(rows[-1]),
+            n_after=n,
+            n_trials_total=1,
+            n_evaluated=0,
+            scope_labels=["SYNTHETIC_UNIT_ONLY"],
+            evidence=[{"sha256": digest("unit")}],
+        )
+        rows.append(row)
+        rows.append(
+            dict(
+                event="checkpoint",
+                seq=len(rows),
+                previous_hash=digest(row),
+                N=n,
+                n_high_water=n,
+                note="SYNTHETIC_UNIT_ONLY",
+            )
+        )
+    cur = state(rows)
+    candidate_state = state(rows[:-2])
+    ledger_raw = b"".join(canonical(r) + b"\n" for r in rows).decode()
+    ledger_sha = sha256(ledger_raw.encode())
+    files[ledger_sha] = ledger_raw
+    lid = cur["ledger_id"]
+    tail = dict(
+        cur,
+        owner="EVO891",
+        complete=True,
+        ledger_file_sha256=ledger_sha,
+        attempt_map_sha256=add(attempts),
+        complete_history_acceptance_receipt_sha256=add(
             {
                 "owner": "EVO891",
                 "complete": True,
@@ -162,7 +190,7 @@ def runtime_fixture(policy):
                 "SYNTHETIC_UNIT_NOT_AUTHORITY": True,
             }
         ),
-    }
+    )
     tail_sha = add(tail)
     for role in ("candidate", "meta"):
         trials = []
@@ -240,17 +268,17 @@ def runtime_fixture(policy):
             current_S4_at="2026-10-30T03:50:00Z",
             N_candidate={
                 "ledger_id": lid,
-                "sequence": 20,
-                "N": 20,
-                "tip": digest("unit-candidate-tip"),
+                "sequence": candidate_state["sequence"],
+                "N": candidate_state["N"],
+                "tip": candidate_state["tip"],
                 "at": "2026-10-30T03:46:00Z",
             },
             N_meta={
                 "actual_meta_attempt_id": "SYNTHETIC_META_ATTEMPT",
                 "ledger_id": lid,
-                "sequence": 21,
-                "N": 21,
-                "tip": digest("unit-meta-tip"),
+                "sequence": cur["sequence"],
+                "N": cur["N"],
+                "tip": cur["tip"],
                 "at": "2026-10-30T03:49:00Z",
             },
         )

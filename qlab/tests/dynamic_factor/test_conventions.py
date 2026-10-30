@@ -51,7 +51,7 @@ def test_exact_v1_identity_profile_and_incomplete_seed(tmp_path):
 
 
 def test_bound_bootstrap_cannot_be_silently_created(tmp_path):
-    with pytest.raises(ValueError, match="bootstrap_receipt"):
+    with pytest.raises(ValueError, match="project_path_migration_receipt_required"):
         AttemptLedger.from_conventions(tmp_path / "fresh.sqlite", load_conventions())
     assert not (tmp_path / "fresh.sqlite").exists()
 

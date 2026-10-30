@@ -238,7 +238,7 @@ def test_N_map_and_snapshot_order_refuse_missing_real_computations(tamper):
     refused(
         r,
         "reference.complete_N_missing_or_retry_not_counted"
-        if tamper in ("missing_retry", "zero_retry")
+        if tamper != "meta_not_registered"
         else "reference.N_snapshot_order_invalid",
     )
 
