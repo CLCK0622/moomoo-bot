@@ -1,5 +1,5 @@
 import pytest
-from qlab.dynamic_factor.conventions import load_conventions
+from qlab.dynamic_factor.conventions import load_conventions, FIXTURES
 from qlab.dynamic_factor.execution import (
     OrderCosts,
     calibrate_gain,
@@ -145,7 +145,7 @@ def calibration_fixture(p, context):
 
 
 def test_calibration_full_buckets_and_mature_labels_no_interpolation():
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     context = synthetic_context(p)
     rows, cal = calibration_fixture(p, context)
     assert cal["mu_Q"] == 0.01
@@ -160,7 +160,7 @@ def test_calibration_full_buckets_and_mature_labels_no_interpolation():
 
 
 def test_calibration_rejects_mismatched_H10_interval():
-    p = load_conventions()
+    p = load_conventions(FIXTURES / "conventions-v1.0.1.json")
     context = synthetic_context(p)
     rows, _ = calibration_fixture(p, context)
     rows[0]["label_end"] = context["train_calendar"][10]
