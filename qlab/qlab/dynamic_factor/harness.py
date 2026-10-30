@@ -11,6 +11,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from .contract import digest, sha256, source_manifest
+from .fixture_inventory import frozen_fixture_hashes
 from .conventions import load_conventions
 from .fees import FIXTURES, fee_frontier
 from .folds import _run_walk_forward_unbound as run_walk_forward
@@ -438,6 +439,9 @@ def run(workdir):
         from .scope_harness import cases as scope_cases
 
         revisions.extend(scope_cases(workdir, policy))
+        from .f1f2_harness import cases as review_cases
+
+        revisions.extend(review_cases(workdir, policy))
     specified = json.loads((FIXTURES / "harness_cases.json").read_bytes())
     require(
         [c["case_id"] for c in cases]
@@ -452,11 +456,7 @@ def run(workdir):
         "dependencies": {"python": sys.version.split()[0], "external": []},
         "source_sha256": digest(source_manifest()),
         "source_files": source_manifest(),
-        "fixture_sha256": {
-            str(p.relative_to(FIXTURES)): sha256(p.read_bytes())
-            for p in sorted(FIXTURES.rglob("*"))
-            if p.is_file()
-        },
+        "fixture_sha256": frozen_fixture_hashes(),
         "cases": cases,
         "revision_cases": revisions,
         "revision_cases_passed": len(revisions),

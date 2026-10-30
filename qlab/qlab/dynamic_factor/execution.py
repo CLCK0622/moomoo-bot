@@ -36,28 +36,13 @@ class OrderCosts:
             "date": sell_date,
             "rate_basis": rate_basis,
         }
-        schedule = json.loads(raw_schedule)
+        if policy.document["version"] != "v1.0.1":
+            raise ValueError("fee.legacy_date_policy_disabled")
         if rate_basis not in ("effective_date", "research_restored"):
             raise ValueError("rate_basis_unknown")
-        if policy.document["version"] == "v1.0.1":
-            rate_basis = "research_restored"
-        if rate_basis == "research_restored":
-            field = schedule["research_rate_field"]
-        elif rate_basis == "effective_date":
-            periods = [
-                p
-                for p in schedule["taf_periods"]
-                if p["start"] <= sell_date
-                and (p["end_exclusive"] is None or sell_date < p["end_exclusive"])
-            ]
-            if len(periods) != 1:
-                raise ValueError("fee_effective_date_uncovered_or_ambiguous")
-            field = periods[0]["rate_field"]
-        else:
-            raise ValueError("rate_basis_unknown")
-        if policy.document["version"] == "v1.0.1":
-            field = "taf_per_share_sell_restored"
-            self.binding["rate_basis"] = "research_restored"
+        # Input spelling compatibility only; all research dates use restored TAF.
+        field = "taf_per_share_sell_restored"
+        self.binding["rate_basis"] = "research_restored"
         self.taf_rate = self.params[field]
 
     def quote(self, orders, prices):

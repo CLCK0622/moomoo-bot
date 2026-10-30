@@ -40,6 +40,7 @@ def lineage_sources():
         "pending",
         "input_disposition",
         "validation",
+        "fees",
     )
     return {
         n + ".py": sha256((Path(__file__).parent / (n + ".py")).read_bytes())
@@ -187,8 +188,8 @@ def verify_N(
 ):
     """EVO-891 witness field names; complete-history acceptance is a separate receipt.
 
-    No migration to the historical N=75 draft, no interpretation of its open
-    gaps, and no synthetic replacement for the unique writer is performed here.
+    The seq20/N75 ancestor remains historical. Current receipts must descend from
+    the latest published seq182/N280 witness; complete N remains unaccepted.
     """
     fields = (
         "ledger_id",

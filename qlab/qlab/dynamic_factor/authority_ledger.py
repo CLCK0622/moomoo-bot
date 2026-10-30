@@ -1,7 +1,7 @@
 """EVO-891 JSONL reader/writer with a fixed externally published ancestor.
 
-No contribution or historical byte is migrated/reinterpreted. N=75 is recorded
-N, never complete N. Formal evaluation cannot select another project witness or
+No contribution or historical byte is migrated/reinterpreted. Published counts
+are recorded N, never complete N. The formal witness advances monotonically. Formal evaluation cannot select another project witness or
 bootstrap a ledger through request fields. Unit SQLite bootstrap is separate.
 """
 

@@ -74,3 +74,25 @@ def test_missing_or_invalid_fee_file_is_refusal(tmp_path):
     assert fee_frontier({}, path)["reasons"] == ["fee_file_missing"]
     path.write_text("invalid JSON")
     assert fee_frontier({}, path)["reasons"] == ["fee_file_invalid"]
+
+
+@pytest.mark.parametrize("name", ["fee_params_x1.json", "fee_params_x2.json"])
+@pytest.mark.parametrize(
+    "day", ["2026-09-30", "2026-10-01", "2026-12-31", "2027-01-01"]
+)
+def test_legacy_private_date_numeric_path_is_disabled(name, day):
+    from qlab.dynamic_factor.fees import _legacy_fee_frontier
+
+    r = _legacy_fee_frontier(
+        dict(
+            price=50,
+            ticket_usd=5000,
+            gross_edge_bps=10,
+            sell_date=day,
+            rate_basis="effective_date",
+            pnl_basis="reference",
+        ),
+        FIXTURES / name,
+    )
+    assert r["reasons"] == ["fee.legacy_frontier_disabled"]
+    assert r["metrics"]["taf_usd"] is r["metrics"]["net_edge_bps"] is None
