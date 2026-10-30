@@ -15,7 +15,7 @@ from .reference_guard import install
 from .reference_v3_scope import validate_scope, check_panel, check_reference_packets
 
 
-def prepare(root, request):
+def prepare(root, request, mechanisms=None):
     if set(request) != {
         "view",
         "inputs",
@@ -55,7 +55,7 @@ def prepare(root, request):
         if hashlib.sha256(raw).hexdigest() != receipt[role + "_calendar_sha256"]:
             raise ValueError("reference.view_hash_mismatch")
     scope = validate_scope(request["sealed_scope"], view, request["profile_binding"])
-    check_reference_packets(request["reference_proofs"], scope)
+    check_reference_packets(request["reference_proofs"], scope, mechanisms)
     inputs = read_inputs(root, request["inputs"], dates)
     check_panel(scope, inputs["panel"]["rows"], dates)
     projection_raw = inputs["profile"]["fold_bindings_raw"]
@@ -129,7 +129,7 @@ def prepare(root, request):
     }
 
 
-def main():
+def main(mechanisms=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inputs-root", required=True)
     args = parser.parse_args()
@@ -137,7 +137,7 @@ def main():
     try:
         request = json.loads(input())
         reads = install(args.inputs_root)
-        report = prepare(args.inputs_root, request)
+        report = prepare(args.inputs_root, request, mechanisms)
         report["accessed_roles"] = reads
     except (
         ValueError,

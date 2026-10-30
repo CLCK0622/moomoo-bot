@@ -87,7 +87,7 @@ def prepare_request(
         ):
             raise ValueError("reference.separate_three_proofs_required")
         for actor, packet in reference_proofs.items():
-            validate_packet(expected["guard"], actor, packet, policy)
+            validate_packet(expected["guard"], actor, packet, policy, scope=expected)
         request["reference_proofs"] = reference_proofs
     return request
 
@@ -107,8 +107,21 @@ def run_isolated(root, request):
         if request.get("profile_binding", {}).get("conventions_version") == "v3.0.0"
         else "reference_producer"
     )
+    mechanisms = None
+    if module == "reference_producer_v3":
+        from .reference_noncash import mechanism_bindings
+
+        mechanisms = mechanism_bindings()
     bootstrap = (
         "import sys;sys.dont_write_bytecode=True;sys.path.insert(0,"
+        + repr(package)
+        + ");from qlab.dynamic_factor."
+        + module
+        + " import main;raise SystemExit(main("
+        + repr(mechanisms)
+        + "))"
+        if mechanisms is not None
+        else "import sys;sys.dont_write_bytecode=True;sys.path.insert(0,"
         + repr(package)
         + ");from qlab.dynamic_factor."
         + module

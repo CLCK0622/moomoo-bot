@@ -104,6 +104,7 @@ def test_reference_uses_shared_splitter_and_pinned_three_reader_graph(tmp_path):
         "reference_producer",
         "reference_producer_v3",
         "reference_v3_scope",
+        "reference_validation",
         "catalog_members",
         "reference_inputs",
         "fold_split",

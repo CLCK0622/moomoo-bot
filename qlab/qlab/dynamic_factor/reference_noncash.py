@@ -6,6 +6,7 @@ from .contract import code_sha, digest, is_sha
 from .conventions import load_conventions
 from .noncash_v3 import (
     checked_guard,
+    guarded_value,
     zero_exposure,
     economic_read_receipt,
     assert_consumer_symbols,
@@ -13,6 +14,7 @@ from .noncash_v3 import (
     ROUTES,
 )
 from .reference_registry_v3 import DISPATCH, HASHES
+from .reference_validation import validate_packet_document, validate_timing
 
 
 def actors():
@@ -123,8 +125,16 @@ def numeric_read(guard, actor, consumer, symbols, reader, policy=None, *, initia
     values, inner = economic_read_receipt(
         guard, consumer, symbols, reader, actor=actor, origin=initial, policy=p
     )
+    inner["registry_sha256"] = HASHES["predeclared_reference_registry.json"]
+    inner["numeric_read_receipt_sha256"] = digest(
+        {k: v for k, v in inner.items() if k != "numeric_read_receipt_sha256"}
+    )
     payload = dict(
         actor=actor,
+        zero_origin_receipt_sha256=initial["zero_origin_receipt_sha256"],
+        source_sha256=initial["source_sha256"],
+        reader_source_sha256=inner["reader_source_sha256"],
+        numeric_values_sha256=inner["numeric_values_sha256"],
         producer_kind="reference",
         consumer=consumer,
         numeric_receipt=inner,
@@ -150,68 +160,6 @@ def packet(guard, actor, initial, routes, reads, policy=None):
         raise ValueError("reference.separate_zero_origin_required")
     if set(routes) != ROUTES or set(reads) != CONSUMERS:
         raise ValueError("reference.all_routes_and_numeric_consumers_required")
-    for route, receipt in routes.items():
-        if (
-            not isinstance(receipt, dict)
-            or not {"before", "after", "actor"}.issubset(receipt)
-            or receipt["actor"] != actor
-        ):
-            raise ValueError("reference.acquisition_induction_receipt_mismatch")
-        if (
-            acquisition(
-                guard, actor, initial, receipt["before"], receipt["after"], route, p
-            )
-            != receipt
-        ):
-            raise ValueError("reference.acquisition_induction_receipt_mismatch")
-    for consumer, receipt in reads.items():
-        if (
-            not isinstance(receipt, dict)
-            or set(receipt)
-            != {
-                "actor",
-                "producer_kind",
-                "consumer",
-                "numeric_receipt",
-                "mechanism_sha256",
-                "registry_sha256",
-                "noncash_guard_manifest_sha256",
-                "runtime_consumable",
-                "reference_numeric_receipt_sha256",
-            }
-            or receipt.get("actor") != actor
-            or receipt.get("producer_kind") != "reference"
-            or receipt.get("consumer") != consumer
-            or receipt.get("mechanism_sha256") != code_sha(numeric_read)
-            or receipt.get("registry_sha256")
-            != HASHES["predeclared_reference_registry.json"]
-            or receipt.get("noncash_guard_manifest_sha256")
-            != guard["noncash_guard_manifest_sha256"]
-            or receipt.get("reference_numeric_receipt_sha256")
-            != digest(
-                {
-                    k: v
-                    for k, v in receipt.items()
-                    if k != "reference_numeric_receipt_sha256"
-                }
-            )
-        ):
-            raise ValueError("reference.separate_numeric_boundary_receipt_required")
-        inner = receipt["numeric_receipt"]
-        if (
-            not inner.get("symbols")
-            or inner.get("input_kind") != "numeric_values"
-            or inner.get("read_boundary_exercised") is not True
-            or inner.get("consumer") != consumer
-            or inner.get("noncash_guard_manifest_sha256")
-            != guard["noncash_guard_manifest_sha256"]
-            or inner.get("numeric_read_receipt_sha256")
-            != digest(
-                {k: v for k, v in inner.items() if k != "numeric_read_receipt_sha256"}
-            )
-        ):
-            raise ValueError("reference.metadata_hash_is_not_numeric_no_read_proof")
-        assert_consumer_symbols(guard, consumer, inner["symbols"], p)
     no_acquisition = dict(
         actor=actor,
         routes=deepcopy(routes),
@@ -245,21 +193,28 @@ def packet(guard, actor, initial, routes, reads, policy=None):
         runtime_consumable=False,
         certifiable=False,
     )
-    return dict(payload, reference_proof_packet_sha256=digest(payload))
+    out = dict(payload, reference_proof_packet_sha256=digest(payload))
+    validate_packet_document(guard, actor, out, mechanism_bindings())
+    return out
 
 
-def validate_packet(guard, actor, supplied, policy=None):
-    expected = packet(
-        guard,
-        actor,
-        supplied["zero_origin"],
-        supplied["no_acquisition"]["routes"],
-        supplied["economic_no_read"]["reads"],
-        policy,
-    )
-    if expected != supplied:
-        raise ValueError("reference.proof_packet_identity_mismatch")
-    return expected
+def mechanism_bindings():
+    """Trusted source identities, supplied by the host outside the input wire."""
+    return {
+        "origin": code_sha(origin),
+        "acquisition": code_sha(acquisition),
+        "numeric_read": code_sha(numeric_read),
+        "guarded_value": code_sha(guarded_value),
+    }
+
+
+def validate_packet(guard, actor, supplied, policy=None, *, scope=None):
+    checked_guard(guard, policy or load_conventions())
+    if scope is not None:
+        validate_timing(scope, guard["request"])
+        if scope["guard"] != guard:
+            raise ValueError("reference.same_B_catalog_required")
+    return validate_packet_document(guard, actor, supplied, mechanism_bindings())
 
 
 def static_proof():

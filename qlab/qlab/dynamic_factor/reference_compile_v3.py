@@ -61,7 +61,7 @@ def seal_scope(sealed, train, warmup, policy=None):
     return dict(payload, scope_sha256=digest(payload))
 
 
-def compile_panel(scope, reader, policy=None):
+def compile_panel(scope, reader, policy=None, *, reference_proofs=None):
     """The numeric callback sees E(t) only; UNKNOWN never becomes a QQQ plan."""
     from .reference_v3_scope import validate_scope
 
@@ -80,6 +80,15 @@ def compile_panel(scope, reader, policy=None):
         },
     )
     guard = checked_guard(scope["guard"], p)
+    if reference_proofs is not None:
+        from .reference_noncash import actors, validate_packet
+
+        if not isinstance(reference_proofs, dict) or set(reference_proofs) != set(
+            actors()
+        ):
+            raise ValueError("reference.separate_three_proofs_required")
+        for actor, packet in reference_proofs.items():
+            validate_packet(guard, actor, packet, p, scope=scope)
     rows = []
     for date in scope["warmup"] + scope["train"]:
         symbols = scope["numeric_symbols"][date]

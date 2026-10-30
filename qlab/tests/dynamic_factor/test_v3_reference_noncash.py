@@ -11,6 +11,7 @@ from qlab.dynamic_factor.reference_noncash import (
     numeric_read,
     packet,
     validate_packet,
+    mechanism_bindings,
 )
 from qlab.dynamic_factor.reference_v3_scope import check_reference_packets
 from v3_reference_helpers import unit_scope, reference_proofs, synthetic_numeric_reader
@@ -151,11 +152,11 @@ def test_directory_hashes_empty_reads_or_missing_paths_cannot_close_reference_pr
 
 def test_worker_requires_all_four_separate_packets(source):
     scope, proofs = source
-    check_reference_packets(proofs, scope)
+    check_reference_packets(proofs, scope, mechanism_bindings())
     other = deepcopy(proofs)
     other[ACTORS[0]] = proofs[ACTORS[1]]
     with pytest.raises(ValueError):
-        check_reference_packets(other, scope)
+        check_reference_packets(other, scope, mechanism_bindings())
 
 
 def test_resigned_origin_with_old_rights_still_R2_and_preserves_the_raw_state(source):
@@ -172,13 +173,13 @@ def test_resigned_origin_with_old_rights_still_R2_and_preserves_the_raw_state(so
     )
     raw = deepcopy(altered)
     with pytest.raises(ValueError, match="R2_zero_exposure_state_unknown"):
-        check_reference_packets(altered, scope)
+        check_reference_packets(altered, scope, mechanism_bindings())
     assert altered == raw
 
     other = deepcopy(proofs)
     other.pop(ACTORS[0])
     with pytest.raises(ValueError):
-        check_reference_packets(other, scope)
+        check_reference_packets(other, scope, mechanism_bindings())
 
 
 def test_reference_static_proof_checks_the_numeric_boundary_not_just_catalog_hashes(

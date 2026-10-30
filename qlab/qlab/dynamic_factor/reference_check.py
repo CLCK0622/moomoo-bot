@@ -31,7 +31,7 @@ MODULES = {
         "catalog_members",
         "reference_validation",
     },
-    "reference_validation": {"datetime"},
+    "reference_validation": {"datetime", "hashlib", "json", "math"},
     "catalog_members": set(),
     "reference_producer": {
         "argparse",
