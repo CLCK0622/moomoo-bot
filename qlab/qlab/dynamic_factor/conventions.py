@@ -30,6 +30,7 @@ def arithmetic(expression, variables):
         ast.Pow: operator.pow,
     }
     functions = {
+        "max": max,
         "sqrt": math.sqrt,
         "exp": math.exp,
         "norm_ppf": NormalDist().inv_cdf,
@@ -65,10 +66,10 @@ def arithmetic(expression, variables):
             isinstance(node, ast.Call)
             and isinstance(node.func, ast.Name)
             and node.func.id in functions
-            and len(node.args) == 1
+            and len(node.args) == (2 if node.func.id == "max" else 1)
             and not node.keywords
         ):
-            return functions[node.func.id](visit(node.args[0]))
+            return functions[node.func.id](*(visit(arg) for arg in node.args))
         raise ConventionConflict("conventions.unsupported_numeric_expression")
 
     if len(expression) > 1000:
@@ -223,6 +224,24 @@ def load_conventions(path=FIXTURES / "conventions-v0.1.json", *, expected_sha256
     }
     if any(actual != supported for actual, supported in policy_strings.items()):
         raise ConventionConflict("conventions.rule_unsupported")
+    n_effective = (
+        n["V_effective"]
+        .replace("full_family_daily_SR_sample_variance", "family_variance")
+        .replace(
+            "independent_authoritative_daily_SR_sample_variance", "independent_floor"
+        )
+    )
+    if ast.dump(ast.parse(n_effective, mode="eval")) != ast.dump(
+        ast.parse(v["effective"], mode="eval")
+    ):
+        raise ConventionConflict("conventions.V_aggregation_conflict")
+    sample_ddof = re.fullmatch(r"ddof(\d+)", p["DSR"]["sample_sd"])
+    if (
+        not sample_ddof
+        or sample_ddof[1]
+        != re.search(r"sample_variance_ddof(\d+)", v["family_variance"])[1]
+    ):
+        raise ConventionConflict("conventions.variance_ddof_conflict")
     date_raw = (FIXTURES / "calendar-folds-v0.1.json").read_bytes()
     calendar_raw = (FIXTURES / "common-calendar-v0.1.txt").read_bytes()
     seed_raw = (FIXTURES / "historical-seed-e51f8023.jsonl").read_bytes()

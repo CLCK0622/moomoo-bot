@@ -186,7 +186,10 @@ def evaluate(request, ledger, policy):
             raise ValueError("dsr.independent_variance_unavailable")
         floor = variance(independent, ddof)
         metrics["independent_variance"] = floor
-        effective = max(metrics["family_variance"], floor)
+        effective = arithmetic(
+            p["V"]["effective"],
+            {"family_variance": metrics["family_variance"], "independent_floor": floor},
+        )
         metrics["trials_variance"] = effective
         sr0, dsr = formula(
             policy,

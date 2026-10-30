@@ -92,6 +92,11 @@ def test_unusable_jump_configuration_does_not_silently_disable_detection():
     "mutate,reason",
     [
         (lambda p: p["DSR"].update(threshold=0), "internal_conflict"),
+        (lambda p: p["DSR"].update(sample_sd="ddof0"), "variance_ddof_conflict"),
+        (
+            lambda p: p["V"].update(effective="family_variance"),
+            "V_aggregation_conflict",
+        ),
         (lambda p: p["N"].update(N_seed_min=0), "internal_conflict"),
         (
             lambda p: p["N"].update(supersedes_deletes_prior_attempt=True),
