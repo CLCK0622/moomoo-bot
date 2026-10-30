@@ -1,0 +1,2485 @@
+{
+  "bindings": {
+    "common_calendar_sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "common_profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+    "cost_x1_sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "cost_x2_sha256": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "fold_manifest_sha256": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "frozen_interface_sha256": "6ae28a70ddc11204047c691a855bbd55727fd0605f5984d00fedfbd2f44a1a26",
+    "interface_to_consume_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+    "panel64_sha256": "ae9332ff345dae69866a6a78fcbb07201ef7ac14b4ff82d714a1282330103ee4",
+    "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "prereg_version": "v1"
+  },
+  "calendar_hash_serialization": "UTF8_each_ISO_date_plus_LF_including_final_LF",
+  "fold_count": 77,
+  "folds": [
+    {
+      "fold_id": 0,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2019-12-02",
+        "2019-12-31"
+      ],
+      "test_index_inclusive": [
+        1533,
+        1553
+      ],
+      "train_calendar_sha256": "2dd554a798dbbf2167eb129af2ea978813243bd8e6ab40101180091500bf7c21",
+      "train_dates_inclusive": [
+        "2014-10-29",
+        "2019-10-30"
+      ],
+      "train_index_inclusive": [
+        252,
+        1511
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "644ab77eb5d8497b3bce8410a539feafc67c98da09ea78e4f79b89972501b881",
+      "warmup_dates_inclusive": [
+        "2013-10-29",
+        "2014-10-28"
+      ],
+      "warmup_index_inclusive": [
+        0,
+        251
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 1,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-01-02",
+        "2020-01-31"
+      ],
+      "test_index_inclusive": [
+        1554,
+        1574
+      ],
+      "train_calendar_sha256": "31742d68bdac5cd8d059c49fb0fd4a485aacecffc216084c9841360c77271368",
+      "train_dates_inclusive": [
+        "2014-11-28",
+        "2019-11-29"
+      ],
+      "train_index_inclusive": [
+        273,
+        1532
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "f80977e67e84cb8af9e3173290e3c50aa765b2d13dbbb856ca35fb5476d4d5a1",
+      "warmup_dates_inclusive": [
+        "2013-11-27",
+        "2014-11-26"
+      ],
+      "warmup_index_inclusive": [
+        21,
+        272
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 2,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-02-03",
+        "2020-03-03"
+      ],
+      "test_index_inclusive": [
+        1575,
+        1595
+      ],
+      "train_calendar_sha256": "6d3c5d7c9e30d55ac926265b4835a2b58cda3d26e76b94262b8da5b6f7e97a22",
+      "train_dates_inclusive": [
+        "2014-12-30",
+        "2019-12-31"
+      ],
+      "train_index_inclusive": [
+        294,
+        1553
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "0aa1187396e534025fbdb4886cc165f45416613ca676968dc2dd1a129e1d9077",
+      "warmup_dates_inclusive": [
+        "2013-12-30",
+        "2014-12-29"
+      ],
+      "warmup_index_inclusive": [
+        42,
+        293
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 3,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-03-04",
+        "2020-04-01"
+      ],
+      "test_index_inclusive": [
+        1596,
+        1616
+      ],
+      "train_calendar_sha256": "e591ff4c7f10e148ae982fa33ace0179e451c3c0da5cf3cefbcef6fccadb788a",
+      "train_dates_inclusive": [
+        "2015-01-30",
+        "2020-01-31"
+      ],
+      "train_index_inclusive": [
+        315,
+        1574
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "00a8c7647f3aaaf406793a9067a7d1318b1f59357e88d7b2790b65c13eccaaad",
+      "warmup_dates_inclusive": [
+        "2014-01-30",
+        "2015-01-29"
+      ],
+      "warmup_index_inclusive": [
+        63,
+        314
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 4,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-04-02",
+        "2020-05-01"
+      ],
+      "test_index_inclusive": [
+        1617,
+        1637
+      ],
+      "train_calendar_sha256": "452b41407e98d5b0892c54b7c9a3561de24873d6ea63f17a56309e1b5cf467ce",
+      "train_dates_inclusive": [
+        "2015-03-03",
+        "2020-03-03"
+      ],
+      "train_index_inclusive": [
+        336,
+        1595
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "db6366e9d1e5d967f2a0b19511b7121d02e7e7a263de606042572fb72f340955",
+      "warmup_dates_inclusive": [
+        "2014-03-03",
+        "2015-03-02"
+      ],
+      "warmup_index_inclusive": [
+        84,
+        335
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 5,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-05-04",
+        "2020-06-02"
+      ],
+      "test_index_inclusive": [
+        1638,
+        1658
+      ],
+      "train_calendar_sha256": "e36f6fdf46d2984150f7b78156da255d6dd9825b319a865a14fc5a0ebd967d90",
+      "train_dates_inclusive": [
+        "2015-04-01",
+        "2020-04-01"
+      ],
+      "train_index_inclusive": [
+        357,
+        1616
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "ebfee4a357e9718dd6e5a55b2478acf82ab30fa4972ba0d1779ff16770e3fbe2",
+      "warmup_dates_inclusive": [
+        "2014-04-01",
+        "2015-03-31"
+      ],
+      "warmup_index_inclusive": [
+        105,
+        356
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 6,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-06-03",
+        "2020-07-01"
+      ],
+      "test_index_inclusive": [
+        1659,
+        1679
+      ],
+      "train_calendar_sha256": "c6176ee94652e17749c0a08256cc16c57bd62785adae4ba7d563ebc3dcb62992",
+      "train_dates_inclusive": [
+        "2015-05-01",
+        "2020-05-01"
+      ],
+      "train_index_inclusive": [
+        378,
+        1637
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "38012f35f87520cac5ee217aee85b203173a670e626da64efbd6370fdd0b217f",
+      "warmup_dates_inclusive": [
+        "2014-05-01",
+        "2015-04-30"
+      ],
+      "warmup_index_inclusive": [
+        126,
+        377
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 7,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-07-02",
+        "2020-07-31"
+      ],
+      "test_index_inclusive": [
+        1680,
+        1700
+      ],
+      "train_calendar_sha256": "3cbeab5493ece360743d2bdb3c7991dc1eed0bcd30cd38f104e72078ae3d7dfd",
+      "train_dates_inclusive": [
+        "2015-06-02",
+        "2020-06-02"
+      ],
+      "train_index_inclusive": [
+        399,
+        1658
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "e91271beb30b41b7b98b2e01c095f3fc14da923d64f18a770f339038ebbef990",
+      "warmup_dates_inclusive": [
+        "2014-06-02",
+        "2015-06-01"
+      ],
+      "warmup_index_inclusive": [
+        147,
+        398
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 8,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-08-03",
+        "2020-08-31"
+      ],
+      "test_index_inclusive": [
+        1701,
+        1721
+      ],
+      "train_calendar_sha256": "5cc4a165d25af9ddd1a1d1a105237fd76020470ea8771967efd384d3099aa816",
+      "train_dates_inclusive": [
+        "2015-07-01",
+        "2020-07-01"
+      ],
+      "train_index_inclusive": [
+        420,
+        1679
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "3eef00edbda1623bf516f563983d1845c3646084e1e336df2ec94df3e46b406e",
+      "warmup_dates_inclusive": [
+        "2014-07-01",
+        "2015-06-30"
+      ],
+      "warmup_index_inclusive": [
+        168,
+        419
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 9,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-09-01",
+        "2020-09-30"
+      ],
+      "test_index_inclusive": [
+        1722,
+        1742
+      ],
+      "train_calendar_sha256": "6a52709b330abbed825e38c86e2e5351e0628972c08e439ffc3772639f48ce0e",
+      "train_dates_inclusive": [
+        "2015-07-31",
+        "2020-07-31"
+      ],
+      "train_index_inclusive": [
+        441,
+        1700
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "51b11c3a57118722ddf6fcb1e1cc4742256b2059d48cd1430acc21000a640b98",
+      "warmup_dates_inclusive": [
+        "2014-07-31",
+        "2015-07-30"
+      ],
+      "warmup_index_inclusive": [
+        189,
+        440
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 10,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-10-01",
+        "2020-10-29"
+      ],
+      "test_index_inclusive": [
+        1743,
+        1763
+      ],
+      "train_calendar_sha256": "807221f2080c7c54ba6c68fbd9ebeaa69b21099bb17e388042a90e3e1ac21254",
+      "train_dates_inclusive": [
+        "2015-08-31",
+        "2020-08-31"
+      ],
+      "train_index_inclusive": [
+        462,
+        1721
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "058eb02538494008b1b41c7edc472d0703044f15d9fe19437732d2058c46c26c",
+      "warmup_dates_inclusive": [
+        "2014-08-29",
+        "2015-08-28"
+      ],
+      "warmup_index_inclusive": [
+        210,
+        461
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 11,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-10-30",
+        "2020-11-30"
+      ],
+      "test_index_inclusive": [
+        1764,
+        1784
+      ],
+      "train_calendar_sha256": "10703717f6709b80a7caf7995e5eb91158f9f3af6a081fa455bdef19393b01df",
+      "train_dates_inclusive": [
+        "2015-09-30",
+        "2020-09-30"
+      ],
+      "train_index_inclusive": [
+        483,
+        1742
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "3b4c453d41f00f4e6285f7ac4941a25ceec9c5fccf33b66af5d73f14833ab587",
+      "warmup_dates_inclusive": [
+        "2014-09-30",
+        "2015-09-29"
+      ],
+      "warmup_index_inclusive": [
+        231,
+        482
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 12,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-12-01",
+        "2020-12-30"
+      ],
+      "test_index_inclusive": [
+        1785,
+        1805
+      ],
+      "train_calendar_sha256": "fffb0165bd0a0bc91811606e5219b8bd2ade8731c59d2fc5e309ef1bb9720386",
+      "train_dates_inclusive": [
+        "2015-10-29",
+        "2020-10-29"
+      ],
+      "train_index_inclusive": [
+        504,
+        1763
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "45634c141ec9793e5bb80d9b950d4ca36d2f7e17dd7f63e863d2e7fbaf9b2e6e",
+      "warmup_dates_inclusive": [
+        "2014-10-29",
+        "2015-10-28"
+      ],
+      "warmup_index_inclusive": [
+        252,
+        503
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 13,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2020-12-31",
+        "2021-02-01"
+      ],
+      "test_index_inclusive": [
+        1806,
+        1826
+      ],
+      "train_calendar_sha256": "17083d2bccf1de711c607f865693dfe016642d471525e3a4ffdd85c91bb40bca",
+      "train_dates_inclusive": [
+        "2015-11-30",
+        "2020-11-30"
+      ],
+      "train_index_inclusive": [
+        525,
+        1784
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "33fec75bc2dcb682437a18d986ad2059c66b47deb5224b418b4bfa0358ffe4ca",
+      "warmup_dates_inclusive": [
+        "2014-11-28",
+        "2015-11-27"
+      ],
+      "warmup_index_inclusive": [
+        273,
+        524
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 14,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-02-02",
+        "2021-03-03"
+      ],
+      "test_index_inclusive": [
+        1827,
+        1847
+      ],
+      "train_calendar_sha256": "13a77e1b974071d4e66804c49cb52f06bd44187c92f085c24949731645b6af97",
+      "train_dates_inclusive": [
+        "2015-12-30",
+        "2020-12-30"
+      ],
+      "train_index_inclusive": [
+        546,
+        1805
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "d3c950e03d886cd40629ccacb777441e545ab771c7322919593d5b7e1ebd33bd",
+      "warmup_dates_inclusive": [
+        "2014-12-30",
+        "2015-12-29"
+      ],
+      "warmup_index_inclusive": [
+        294,
+        545
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 15,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-03-04",
+        "2021-04-01"
+      ],
+      "test_index_inclusive": [
+        1848,
+        1868
+      ],
+      "train_calendar_sha256": "32a8c01b0feaf2cac03e0f33b2bd2da8e0faf606ca15f3703a64785ccab5c7b8",
+      "train_dates_inclusive": [
+        "2016-02-01",
+        "2021-02-01"
+      ],
+      "train_index_inclusive": [
+        567,
+        1826
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "7da02f833c35cb4f46be7bf40d7aac2ed3e946ac487b6822224ced66e627a5cc",
+      "warmup_dates_inclusive": [
+        "2015-01-30",
+        "2016-01-29"
+      ],
+      "warmup_index_inclusive": [
+        315,
+        566
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 16,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-04-05",
+        "2021-05-03"
+      ],
+      "test_index_inclusive": [
+        1869,
+        1889
+      ],
+      "train_calendar_sha256": "01d2a86bba77fd18b3289644e9ef08a50a320afb6dbf76ee1d6774368d1e5375",
+      "train_dates_inclusive": [
+        "2016-03-02",
+        "2021-03-03"
+      ],
+      "train_index_inclusive": [
+        588,
+        1847
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "378f32cc5c12836d9dfd56bf451a5159101ee3107f60135001c615f9f8168e84",
+      "warmup_dates_inclusive": [
+        "2015-03-03",
+        "2016-03-01"
+      ],
+      "warmup_index_inclusive": [
+        336,
+        587
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 17,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-05-04",
+        "2021-06-02"
+      ],
+      "test_index_inclusive": [
+        1890,
+        1910
+      ],
+      "train_calendar_sha256": "46e0bbb7c3077b83286660e0721809cd94d4798557539115fb383efa3444768a",
+      "train_dates_inclusive": [
+        "2016-04-01",
+        "2021-04-01"
+      ],
+      "train_index_inclusive": [
+        609,
+        1868
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "030af11452a4c6fdbd0e3459a5170ce3aa4fc3d1b9ebbe150dc533b6f8855f8b",
+      "warmup_dates_inclusive": [
+        "2015-04-01",
+        "2016-03-31"
+      ],
+      "warmup_index_inclusive": [
+        357,
+        608
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 18,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-06-03",
+        "2021-07-01"
+      ],
+      "test_index_inclusive": [
+        1911,
+        1931
+      ],
+      "train_calendar_sha256": "d4daca81256dd8ed5ad9a9dba88c5a76596b7a6c33d09a51fb2e0fa622b8ccb1",
+      "train_dates_inclusive": [
+        "2016-05-02",
+        "2021-05-03"
+      ],
+      "train_index_inclusive": [
+        630,
+        1889
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "cd993f17dfb445ef5727832197426485c790df096aa274429b5dd1a4b864c320",
+      "warmup_dates_inclusive": [
+        "2015-05-01",
+        "2016-04-29"
+      ],
+      "warmup_index_inclusive": [
+        378,
+        629
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 19,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-07-02",
+        "2021-08-02"
+      ],
+      "test_index_inclusive": [
+        1932,
+        1952
+      ],
+      "train_calendar_sha256": "46620611d642357be54abb4fee051e12ea0a2f98bb8143ab7f79dc272b7678ea",
+      "train_dates_inclusive": [
+        "2016-06-01",
+        "2021-06-02"
+      ],
+      "train_index_inclusive": [
+        651,
+        1910
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "3b3246b50c79db677532569b20a42f152b06c68f3a5b79ac0015b72f0b485fc9",
+      "warmup_dates_inclusive": [
+        "2015-06-02",
+        "2016-05-31"
+      ],
+      "warmup_index_inclusive": [
+        399,
+        650
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 20,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-08-03",
+        "2021-08-31"
+      ],
+      "test_index_inclusive": [
+        1953,
+        1973
+      ],
+      "train_calendar_sha256": "c9179bd9fc457ee1203b2c93173bf04070c2d02e605439d7c9014a8b17bd8e72",
+      "train_dates_inclusive": [
+        "2016-06-30",
+        "2021-07-01"
+      ],
+      "train_index_inclusive": [
+        672,
+        1931
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "486de8b2f024cca33dada0383efde2e11d7e20b9255f0ddcee31779f2111b491",
+      "warmup_dates_inclusive": [
+        "2015-07-01",
+        "2016-06-29"
+      ],
+      "warmup_index_inclusive": [
+        420,
+        671
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 21,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-09-01",
+        "2021-09-30"
+      ],
+      "test_index_inclusive": [
+        1974,
+        1994
+      ],
+      "train_calendar_sha256": "a616fae02bc8ab2191add95064739dd13c2a9e01cebe609f20934ed1cc29c9f1",
+      "train_dates_inclusive": [
+        "2016-08-01",
+        "2021-08-02"
+      ],
+      "train_index_inclusive": [
+        693,
+        1952
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "c63a4ba5d9cd5199ddbec2a4d56ce7b081795faf6d22b212abe1578b30618686",
+      "warmup_dates_inclusive": [
+        "2015-07-31",
+        "2016-07-29"
+      ],
+      "warmup_index_inclusive": [
+        441,
+        692
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 22,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-10-01",
+        "2021-10-29"
+      ],
+      "test_index_inclusive": [
+        1995,
+        2015
+      ],
+      "train_calendar_sha256": "26b7482f2000de8d92ad5eb720ea9322f5eaf5949361c839f10f93ce44cf7703",
+      "train_dates_inclusive": [
+        "2016-08-30",
+        "2021-08-31"
+      ],
+      "train_index_inclusive": [
+        714,
+        1973
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "25ecb9585ab46b270f3318f79197b69d4e35d80d8312fadfc0e82a262ec24839",
+      "warmup_dates_inclusive": [
+        "2015-08-31",
+        "2016-08-29"
+      ],
+      "warmup_index_inclusive": [
+        462,
+        713
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 23,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-11-01",
+        "2021-11-30"
+      ],
+      "test_index_inclusive": [
+        2016,
+        2036
+      ],
+      "train_calendar_sha256": "fa59e66e8fa74a27b20f87e77425b2e9e9b7841a6a7c9baf71f60c7da24fd3c6",
+      "train_dates_inclusive": [
+        "2016-09-29",
+        "2021-09-30"
+      ],
+      "train_index_inclusive": [
+        735,
+        1994
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "934e57733b986b8bc79f3f6e586ce192fcffdbe8beb25e6ff2edb49ab23749f2",
+      "warmup_dates_inclusive": [
+        "2015-09-30",
+        "2016-09-28"
+      ],
+      "warmup_index_inclusive": [
+        483,
+        734
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 24,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-12-01",
+        "2021-12-30"
+      ],
+      "test_index_inclusive": [
+        2037,
+        2057
+      ],
+      "train_calendar_sha256": "d273ea2e52c8d3c831c3819c31c558b09a51e8ff1025fa8d54452f1cf95296eb",
+      "train_dates_inclusive": [
+        "2016-10-28",
+        "2021-10-29"
+      ],
+      "train_index_inclusive": [
+        756,
+        2015
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "9411e431403a811aa959d8ea6c7cb8ecac850fe60e1c3e8d9b6821ec5894ff4f",
+      "warmup_dates_inclusive": [
+        "2015-10-29",
+        "2016-10-27"
+      ],
+      "warmup_index_inclusive": [
+        504,
+        755
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 25,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2021-12-31",
+        "2022-01-31"
+      ],
+      "test_index_inclusive": [
+        2058,
+        2078
+      ],
+      "train_calendar_sha256": "c3eea7f7cf00cef257816fade9f3a8893ff8f86b75b84c365e0c50b264419025",
+      "train_dates_inclusive": [
+        "2016-11-29",
+        "2021-11-30"
+      ],
+      "train_index_inclusive": [
+        777,
+        2036
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "dfb1c98d778cc317960e82c1e9ff33bc43f58442c094fe2be03b2bc1b7c8e7a4",
+      "warmup_dates_inclusive": [
+        "2015-11-30",
+        "2016-11-28"
+      ],
+      "warmup_index_inclusive": [
+        525,
+        776
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 26,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-02-01",
+        "2022-03-02"
+      ],
+      "test_index_inclusive": [
+        2079,
+        2099
+      ],
+      "train_calendar_sha256": "b1f289125d408bb4df3d98c285d020fd4742a190969d302e5f3c62d3d73fcd90",
+      "train_dates_inclusive": [
+        "2016-12-29",
+        "2021-12-30"
+      ],
+      "train_index_inclusive": [
+        798,
+        2057
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "8fcfed71e57dd8a9eeb8947972b651fa77dd23d807171a561dc13f5e8b1eaec7",
+      "warmup_dates_inclusive": [
+        "2015-12-30",
+        "2016-12-28"
+      ],
+      "warmup_index_inclusive": [
+        546,
+        797
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 27,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-03-03",
+        "2022-03-31"
+      ],
+      "test_index_inclusive": [
+        2100,
+        2120
+      ],
+      "train_calendar_sha256": "ae8b870e5b7b83018ec762bd86283301986c018b46dd49f049d9d053a28b6d3c",
+      "train_dates_inclusive": [
+        "2017-01-31",
+        "2022-01-31"
+      ],
+      "train_index_inclusive": [
+        819,
+        2078
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "d8181d2dabbc6a331b1827f710a6470a5b9fe12ebb77789a7faa0d52db6b8df5",
+      "warmup_dates_inclusive": [
+        "2016-02-01",
+        "2017-01-30"
+      ],
+      "warmup_index_inclusive": [
+        567,
+        818
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 28,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-04-01",
+        "2022-05-02"
+      ],
+      "test_index_inclusive": [
+        2121,
+        2141
+      ],
+      "train_calendar_sha256": "96f69e1dcabf83e2ec01e2776d89cfb0a542e319ffea60542581cf74f17b5136",
+      "train_dates_inclusive": [
+        "2017-03-02",
+        "2022-03-02"
+      ],
+      "train_index_inclusive": [
+        840,
+        2099
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "88e70c57d99ea8839c46b5832a5d12dba7dd515adbf9b05fba9a98a8d5410af7",
+      "warmup_dates_inclusive": [
+        "2016-03-02",
+        "2017-03-01"
+      ],
+      "warmup_index_inclusive": [
+        588,
+        839
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 29,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-05-03",
+        "2022-06-01"
+      ],
+      "test_index_inclusive": [
+        2142,
+        2162
+      ],
+      "train_calendar_sha256": "7fcee6f842dc192204ca5a172a4258e9f23576e14bb63e6fc2c7c59ebe4b956a",
+      "train_dates_inclusive": [
+        "2017-03-31",
+        "2022-03-31"
+      ],
+      "train_index_inclusive": [
+        861,
+        2120
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "fd9b6ff1d51c53c8ec09dafc78c32093e88e717db1090995d850138a175e6f00",
+      "warmup_dates_inclusive": [
+        "2016-04-01",
+        "2017-03-30"
+      ],
+      "warmup_index_inclusive": [
+        609,
+        860
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 30,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-06-02",
+        "2022-07-01"
+      ],
+      "test_index_inclusive": [
+        2163,
+        2183
+      ],
+      "train_calendar_sha256": "b1d0640d1831a1752ac90aec2169cb4b42722eff3b9f32f5565020f94ef0186b",
+      "train_dates_inclusive": [
+        "2017-05-02",
+        "2022-05-02"
+      ],
+      "train_index_inclusive": [
+        882,
+        2141
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "7f79fd16e5c382839af40dcdd7dffa72a300ddd5476e31421e3033947a54d3cf",
+      "warmup_dates_inclusive": [
+        "2016-05-02",
+        "2017-05-01"
+      ],
+      "warmup_index_inclusive": [
+        630,
+        881
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 31,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-07-05",
+        "2022-08-02"
+      ],
+      "test_index_inclusive": [
+        2184,
+        2204
+      ],
+      "train_calendar_sha256": "212e2594494aaf96be2bf90e170147a32bd7dd8928aaf2141cff263ae7b43da8",
+      "train_dates_inclusive": [
+        "2017-06-01",
+        "2022-06-01"
+      ],
+      "train_index_inclusive": [
+        903,
+        2162
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "77c31ae4ca63eaa9ed284d42fdf344ec249c94fba76eb30da8a728f272207971",
+      "warmup_dates_inclusive": [
+        "2016-06-01",
+        "2017-05-31"
+      ],
+      "warmup_index_inclusive": [
+        651,
+        902
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 32,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-08-03",
+        "2022-08-31"
+      ],
+      "test_index_inclusive": [
+        2205,
+        2225
+      ],
+      "train_calendar_sha256": "cfac36fa3eb77850fb7b5919cb970d26a9636df4ffdfb85dce58a49c36e711b0",
+      "train_dates_inclusive": [
+        "2017-06-30",
+        "2022-07-01"
+      ],
+      "train_index_inclusive": [
+        924,
+        2183
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "6ff379589e54c3f09633e7c81e912dad75d3552b841330802ecaa0d291418cb0",
+      "warmup_dates_inclusive": [
+        "2016-06-30",
+        "2017-06-29"
+      ],
+      "warmup_index_inclusive": [
+        672,
+        923
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 33,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-09-01",
+        "2022-09-30"
+      ],
+      "test_index_inclusive": [
+        2226,
+        2246
+      ],
+      "train_calendar_sha256": "c1815df79de1b332b262b21e51b0cfdc5be2c4aa6bd61d30aed9fd6bff80054e",
+      "train_dates_inclusive": [
+        "2017-08-01",
+        "2022-08-02"
+      ],
+      "train_index_inclusive": [
+        945,
+        2204
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "9f080c5fc96e8394028964ec2d5fa5c130cbc40a509e1024487b0279039f5ef6",
+      "warmup_dates_inclusive": [
+        "2016-08-01",
+        "2017-07-31"
+      ],
+      "warmup_index_inclusive": [
+        693,
+        944
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 34,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-10-03",
+        "2022-10-31"
+      ],
+      "test_index_inclusive": [
+        2247,
+        2267
+      ],
+      "train_calendar_sha256": "660e7b63c342f01de099cf1042d1afd4301e86a034c631d3dff309eb70628eb6",
+      "train_dates_inclusive": [
+        "2017-08-30",
+        "2022-08-31"
+      ],
+      "train_index_inclusive": [
+        966,
+        2225
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "549d649b82ac78203d100a4bc9a5c9335b678236a64536ded956cdda1e04157d",
+      "warmup_dates_inclusive": [
+        "2016-08-30",
+        "2017-08-29"
+      ],
+      "warmup_index_inclusive": [
+        714,
+        965
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 35,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-11-01",
+        "2022-11-30"
+      ],
+      "test_index_inclusive": [
+        2268,
+        2288
+      ],
+      "train_calendar_sha256": "bd3799674967116102dbe03ecc6bb5a871b438c343854b777f19417b5a397748",
+      "train_dates_inclusive": [
+        "2017-09-29",
+        "2022-09-30"
+      ],
+      "train_index_inclusive": [
+        987,
+        2246
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "e3d622d595042426bbb8bcc31c713289b0ed1ce6e43ee1b2fb8f14d78bd14215",
+      "warmup_dates_inclusive": [
+        "2016-09-29",
+        "2017-09-28"
+      ],
+      "warmup_index_inclusive": [
+        735,
+        986
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 36,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2022-12-01",
+        "2022-12-30"
+      ],
+      "test_index_inclusive": [
+        2289,
+        2309
+      ],
+      "train_calendar_sha256": "de83cd4398e48f7fc23639844320f3a67bae68921f5f478b0739f6644de5707a",
+      "train_dates_inclusive": [
+        "2017-10-30",
+        "2022-10-31"
+      ],
+      "train_index_inclusive": [
+        1008,
+        2267
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "107070e685d69fe07b9f969f3ed532a20638ff1d12661f115df6806b239371ba",
+      "warmup_dates_inclusive": [
+        "2016-10-28",
+        "2017-10-27"
+      ],
+      "warmup_index_inclusive": [
+        756,
+        1007
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 37,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-01-03",
+        "2023-02-01"
+      ],
+      "test_index_inclusive": [
+        2310,
+        2330
+      ],
+      "train_calendar_sha256": "4ce8851fa6e846384f3fbcd51042f16ebd1a947270f48278dde13e8ff325328a",
+      "train_dates_inclusive": [
+        "2017-11-29",
+        "2022-11-30"
+      ],
+      "train_index_inclusive": [
+        1029,
+        2288
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "89eabe9eb1afd6616fe21b44990eeb6df3eb0ff1c22b23ae52123e968c4a59b1",
+      "warmup_dates_inclusive": [
+        "2016-11-29",
+        "2017-11-28"
+      ],
+      "warmup_index_inclusive": [
+        777,
+        1028
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 38,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-02-02",
+        "2023-03-03"
+      ],
+      "test_index_inclusive": [
+        2331,
+        2351
+      ],
+      "train_calendar_sha256": "5093596a05d5dacced06996b32873658b7ef48ee1ac5f94bb4e4d0adda783897",
+      "train_dates_inclusive": [
+        "2017-12-29",
+        "2022-12-30"
+      ],
+      "train_index_inclusive": [
+        1050,
+        2309
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "78304f94fd8010f39ba3dbb135ed60d2d75850f677fc0f7bcae41655681b65c0",
+      "warmup_dates_inclusive": [
+        "2016-12-29",
+        "2017-12-28"
+      ],
+      "warmup_index_inclusive": [
+        798,
+        1049
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 39,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-03-06",
+        "2023-04-03"
+      ],
+      "test_index_inclusive": [
+        2352,
+        2372
+      ],
+      "train_calendar_sha256": "eef88acb3c6b749351056ddcb68b474a5fb89b9ec33bacf9a33d54f8e88e32d8",
+      "train_dates_inclusive": [
+        "2018-01-31",
+        "2023-02-01"
+      ],
+      "train_index_inclusive": [
+        1071,
+        2330
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "044ef3e1b16016e08cc8d9c7469eae0acb22e5c8c55061452158d67a030b8ae2",
+      "warmup_dates_inclusive": [
+        "2017-01-31",
+        "2018-01-30"
+      ],
+      "warmup_index_inclusive": [
+        819,
+        1070
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 40,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-04-04",
+        "2023-05-03"
+      ],
+      "test_index_inclusive": [
+        2373,
+        2393
+      ],
+      "train_calendar_sha256": "fd6494e811cea0f0f1fc392804dd901994efc405a925f7d42b85f4030e6192c8",
+      "train_dates_inclusive": [
+        "2018-03-02",
+        "2023-03-03"
+      ],
+      "train_index_inclusive": [
+        1092,
+        2351
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "8722f87a6a1cdd2d32f719b4c5bedae5bd4be0abfc7d73f7095f86ce8b4c0671",
+      "warmup_dates_inclusive": [
+        "2017-03-02",
+        "2018-03-01"
+      ],
+      "warmup_index_inclusive": [
+        840,
+        1091
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 41,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-05-04",
+        "2023-06-02"
+      ],
+      "test_index_inclusive": [
+        2394,
+        2414
+      ],
+      "train_calendar_sha256": "c77a27dc384160692a5501ab4001c79e5c2b2a0e4c9460b3f63bf0fbab9a0e38",
+      "train_dates_inclusive": [
+        "2018-04-03",
+        "2023-04-03"
+      ],
+      "train_index_inclusive": [
+        1113,
+        2372
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "ed14e2276dc9ce1b797bf20607e357f47f9619650cce201ed9525b5bae1309bf",
+      "warmup_dates_inclusive": [
+        "2017-03-31",
+        "2018-04-02"
+      ],
+      "warmup_index_inclusive": [
+        861,
+        1112
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 42,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-06-05",
+        "2023-07-05"
+      ],
+      "test_index_inclusive": [
+        2415,
+        2435
+      ],
+      "train_calendar_sha256": "bc643ca71e5a3a2cc7b009b1978b889642fd33bec9e91be7de3255a9406d7730",
+      "train_dates_inclusive": [
+        "2018-05-02",
+        "2023-05-03"
+      ],
+      "train_index_inclusive": [
+        1134,
+        2393
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "1b3268dec054906a40c638cd33626b9b7287f80832dfd8771fc86253668f54bf",
+      "warmup_dates_inclusive": [
+        "2017-05-02",
+        "2018-05-01"
+      ],
+      "warmup_index_inclusive": [
+        882,
+        1133
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 43,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-07-06",
+        "2023-08-03"
+      ],
+      "test_index_inclusive": [
+        2436,
+        2456
+      ],
+      "train_calendar_sha256": "806f1895b6a0c03a41b64d95c76f660df5fbe7178068bcbff0edfc2d5016c7f8",
+      "train_dates_inclusive": [
+        "2018-06-01",
+        "2023-06-02"
+      ],
+      "train_index_inclusive": [
+        1155,
+        2414
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "8865c16195232b2c6274632633fb390ea3dde6f1c118d68da419ec7c9021b575",
+      "warmup_dates_inclusive": [
+        "2017-06-01",
+        "2018-05-31"
+      ],
+      "warmup_index_inclusive": [
+        903,
+        1154
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 44,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-08-04",
+        "2023-09-01"
+      ],
+      "test_index_inclusive": [
+        2457,
+        2477
+      ],
+      "train_calendar_sha256": "d32dee0336c7be1af16b1cfda2c2f3c849d74c936a6d40104208c50d6e107d06",
+      "train_dates_inclusive": [
+        "2018-07-02",
+        "2023-07-05"
+      ],
+      "train_index_inclusive": [
+        1176,
+        2435
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "53605022863176c3d76cf3f5d09630faefa0976fe567fff023580c058a11681c",
+      "warmup_dates_inclusive": [
+        "2017-06-30",
+        "2018-06-29"
+      ],
+      "warmup_index_inclusive": [
+        924,
+        1175
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 45,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-09-05",
+        "2023-10-03"
+      ],
+      "test_index_inclusive": [
+        2478,
+        2498
+      ],
+      "train_calendar_sha256": "6119097f68b6cad82cc1906297511c2310c103648e42f77828c4d31f97120c71",
+      "train_dates_inclusive": [
+        "2018-08-01",
+        "2023-08-03"
+      ],
+      "train_index_inclusive": [
+        1197,
+        2456
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "748b57782685f090f71f4571b8d575737588c3d5128c5e8083ab59be14437ef3",
+      "warmup_dates_inclusive": [
+        "2017-08-01",
+        "2018-07-31"
+      ],
+      "warmup_index_inclusive": [
+        945,
+        1196
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 46,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-10-04",
+        "2023-11-01"
+      ],
+      "test_index_inclusive": [
+        2499,
+        2519
+      ],
+      "train_calendar_sha256": "a9e17f1befbb5815ea8c4de1a2420f5c4f0d3b63ce2ff494900446b0a46f27ae",
+      "train_dates_inclusive": [
+        "2018-08-30",
+        "2023-09-01"
+      ],
+      "train_index_inclusive": [
+        1218,
+        2477
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "0f3feedbcb81a0e5954f95bbf400d4da3c868668580061dce8ba56b16bf26f27",
+      "warmup_dates_inclusive": [
+        "2017-08-30",
+        "2018-08-29"
+      ],
+      "warmup_index_inclusive": [
+        966,
+        1217
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 47,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-11-02",
+        "2023-12-01"
+      ],
+      "test_index_inclusive": [
+        2520,
+        2540
+      ],
+      "train_calendar_sha256": "47b44e4fad87db70607a50839aa25d9d603373b8d24f8fa4746f49c0b595a600",
+      "train_dates_inclusive": [
+        "2018-10-01",
+        "2023-10-03"
+      ],
+      "train_index_inclusive": [
+        1239,
+        2498
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "eed32d977405d3143c89445daeb8863d0ab89da09442265ff29c9d2525e92fbe",
+      "warmup_dates_inclusive": [
+        "2017-09-29",
+        "2018-09-28"
+      ],
+      "warmup_index_inclusive": [
+        987,
+        1238
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 48,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2023-12-04",
+        "2024-01-03"
+      ],
+      "test_index_inclusive": [
+        2541,
+        2561
+      ],
+      "train_calendar_sha256": "ec317d577b993b758315be7c0a8a0c8791f6aa69b5d68d5e4a618ae3ceb2b288",
+      "train_dates_inclusive": [
+        "2018-10-30",
+        "2023-11-01"
+      ],
+      "train_index_inclusive": [
+        1260,
+        2519
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "d39997ef28b7d0c9446d48128688ddbe37b72b6da78c036e71642e53f38c4622",
+      "warmup_dates_inclusive": [
+        "2017-10-30",
+        "2018-10-29"
+      ],
+      "warmup_index_inclusive": [
+        1008,
+        1259
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 49,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-01-04",
+        "2024-02-02"
+      ],
+      "test_index_inclusive": [
+        2562,
+        2582
+      ],
+      "train_calendar_sha256": "236ee9863c48579af686194a4e7f95a26dfd82677bf72a802a8fa68fcf047d71",
+      "train_dates_inclusive": [
+        "2018-11-29",
+        "2023-12-01"
+      ],
+      "train_index_inclusive": [
+        1281,
+        2540
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "19de19fa3fe447a614fc347b83a79a8020301ceea54f29bfee0773cdd3c25b1e",
+      "warmup_dates_inclusive": [
+        "2017-11-29",
+        "2018-11-28"
+      ],
+      "warmup_index_inclusive": [
+        1029,
+        1280
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 50,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-02-05",
+        "2024-03-05"
+      ],
+      "test_index_inclusive": [
+        2583,
+        2603
+      ],
+      "train_calendar_sha256": "1b47838f5f0790f86d91db7c255e01f77d1a16b0127055a9ea8dd58b512c1dbb",
+      "train_dates_inclusive": [
+        "2019-01-02",
+        "2024-01-03"
+      ],
+      "train_index_inclusive": [
+        1302,
+        2561
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "6283dc374e5d15e4acafe17b76219121994086af3f842abbacb3a717aa4d97a1",
+      "warmup_dates_inclusive": [
+        "2017-12-29",
+        "2018-12-31"
+      ],
+      "warmup_index_inclusive": [
+        1050,
+        1301
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 51,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-03-06",
+        "2024-04-04"
+      ],
+      "test_index_inclusive": [
+        2604,
+        2624
+      ],
+      "train_calendar_sha256": "22b15a5104ce79c21f32303c875f6c6acbd73a8116b3d24aebfdbe8b5370c6e5",
+      "train_dates_inclusive": [
+        "2019-02-01",
+        "2024-02-02"
+      ],
+      "train_index_inclusive": [
+        1323,
+        2582
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "c772b3970cdcb7208cc206f9a81db165027bdf0e1defe34ad2e8e8ce0edfd9cd",
+      "warmup_dates_inclusive": [
+        "2018-01-31",
+        "2019-01-31"
+      ],
+      "warmup_index_inclusive": [
+        1071,
+        1322
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 52,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-04-05",
+        "2024-05-03"
+      ],
+      "test_index_inclusive": [
+        2625,
+        2645
+      ],
+      "train_calendar_sha256": "a5236ef41b39ad37c03fae2591f010a31d5c6d7774800b386ec079859b6c6422",
+      "train_dates_inclusive": [
+        "2019-03-05",
+        "2024-03-05"
+      ],
+      "train_index_inclusive": [
+        1344,
+        2603
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "8897747855ce4310addb98306e3817a8e8d9addb76a3a027c20723ddc22d51c1",
+      "warmup_dates_inclusive": [
+        "2018-03-02",
+        "2019-03-04"
+      ],
+      "warmup_index_inclusive": [
+        1092,
+        1343
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 53,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-05-06",
+        "2024-06-04"
+      ],
+      "test_index_inclusive": [
+        2646,
+        2666
+      ],
+      "train_calendar_sha256": "e74838fad4c3cb5f8d99e429fec00f3680badf39c9a6c94695992ad7907bca20",
+      "train_dates_inclusive": [
+        "2019-04-03",
+        "2024-04-04"
+      ],
+      "train_index_inclusive": [
+        1365,
+        2624
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "70b80144e0e6fb7cda4e3f0ed861e380e98f5846a54d89f32456b4868d397f0f",
+      "warmup_dates_inclusive": [
+        "2018-04-03",
+        "2019-04-02"
+      ],
+      "warmup_index_inclusive": [
+        1113,
+        1364
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 54,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-06-05",
+        "2024-07-05"
+      ],
+      "test_index_inclusive": [
+        2667,
+        2687
+      ],
+      "train_calendar_sha256": "246aa7a4921a6f7d24e77b1edb8e560801e8d04c0c60f929359fafa0aa6a3b24",
+      "train_dates_inclusive": [
+        "2019-05-03",
+        "2024-05-03"
+      ],
+      "train_index_inclusive": [
+        1386,
+        2645
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "d50007de990f25fa5c34a3123f3a2763a1a624c2ce16a90a6a381b2c38c0ae57",
+      "warmup_dates_inclusive": [
+        "2018-05-02",
+        "2019-05-02"
+      ],
+      "warmup_index_inclusive": [
+        1134,
+        1385
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 55,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-07-08",
+        "2024-08-05"
+      ],
+      "test_index_inclusive": [
+        2688,
+        2708
+      ],
+      "train_calendar_sha256": "bee79652a641ddf9489dbf742044ce04326a007830cce6f9b25989b980a6d297",
+      "train_dates_inclusive": [
+        "2019-06-04",
+        "2024-06-04"
+      ],
+      "train_index_inclusive": [
+        1407,
+        2666
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "cceed23e1bf3f88f64fb102479de6ce3b43f8f054797e7d8b0803edf39005c99",
+      "warmup_dates_inclusive": [
+        "2018-06-01",
+        "2019-06-03"
+      ],
+      "warmup_index_inclusive": [
+        1155,
+        1406
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 56,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-08-06",
+        "2024-09-04"
+      ],
+      "test_index_inclusive": [
+        2709,
+        2729
+      ],
+      "train_calendar_sha256": "bc01900e66d2460bc3681b4e03db98e6ba76788f881265ef3a76de21d10ef2d4",
+      "train_dates_inclusive": [
+        "2019-07-03",
+        "2024-07-05"
+      ],
+      "train_index_inclusive": [
+        1428,
+        2687
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "ca0e9f806b05b10729102b2d29e22932bd65a8ab31fa2b501a9918913d00709b",
+      "warmup_dates_inclusive": [
+        "2018-07-02",
+        "2019-07-02"
+      ],
+      "warmup_index_inclusive": [
+        1176,
+        1427
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 57,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-09-05",
+        "2024-10-03"
+      ],
+      "test_index_inclusive": [
+        2730,
+        2750
+      ],
+      "train_calendar_sha256": "55df45d903cf44b73d5d8a13aa7a09b2ea4b4bf52de3c51e0d22133e6324dd79",
+      "train_dates_inclusive": [
+        "2019-08-02",
+        "2024-08-05"
+      ],
+      "train_index_inclusive": [
+        1449,
+        2708
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "a65c3c24a0e42d7c7ee81bd1c92db4a9e0c8525df7baa7acf2062808e9e2867b",
+      "warmup_dates_inclusive": [
+        "2018-08-01",
+        "2019-08-01"
+      ],
+      "warmup_index_inclusive": [
+        1197,
+        1448
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 58,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-10-04",
+        "2024-11-01"
+      ],
+      "test_index_inclusive": [
+        2751,
+        2771
+      ],
+      "train_calendar_sha256": "ee108c33055715616928670ff670ca5004af5db6dae37b7a5eac7a9828aa9ff1",
+      "train_dates_inclusive": [
+        "2019-09-03",
+        "2024-09-04"
+      ],
+      "train_index_inclusive": [
+        1470,
+        2729
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "bac2c1f9f96fb3ce7d549b49607107521dd391ecec4244b2157ea98d8e92a1a1",
+      "warmup_dates_inclusive": [
+        "2018-08-30",
+        "2019-08-30"
+      ],
+      "warmup_index_inclusive": [
+        1218,
+        1469
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 59,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-11-04",
+        "2024-12-03"
+      ],
+      "test_index_inclusive": [
+        2772,
+        2792
+      ],
+      "train_calendar_sha256": "4ce163371c27fdc7e478fe4dae51513fa246f341fa35b41c073065bb73fb99c7",
+      "train_dates_inclusive": [
+        "2019-10-02",
+        "2024-10-03"
+      ],
+      "train_index_inclusive": [
+        1491,
+        2750
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "de6d794b28c15e637c10a5ed27321c68df969f1692ff0ddc4195735380677d6a",
+      "warmup_dates_inclusive": [
+        "2018-10-01",
+        "2019-10-01"
+      ],
+      "warmup_index_inclusive": [
+        1239,
+        1490
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 60,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2024-12-04",
+        "2025-01-03"
+      ],
+      "test_index_inclusive": [
+        2793,
+        2813
+      ],
+      "train_calendar_sha256": "6f58e079797a378ce8714938e3b04026231e5244e19d8ffa596d4a48e8bf20fd",
+      "train_dates_inclusive": [
+        "2019-10-31",
+        "2024-11-01"
+      ],
+      "train_index_inclusive": [
+        1512,
+        2771
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "a9b35203bf178f0a0d8e64bd00da4a88a648aa503b98295ccdcaf62ade1dfd44",
+      "warmup_dates_inclusive": [
+        "2018-10-30",
+        "2019-10-30"
+      ],
+      "warmup_index_inclusive": [
+        1260,
+        1511
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 61,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-01-06",
+        "2025-02-05"
+      ],
+      "test_index_inclusive": [
+        2814,
+        2834
+      ],
+      "train_calendar_sha256": "3a61adc9776f5de7a08480a4a3c2d7348faa8b8105f3ed47adbd645105ba4532",
+      "train_dates_inclusive": [
+        "2019-12-02",
+        "2024-12-03"
+      ],
+      "train_index_inclusive": [
+        1533,
+        2792
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "7c3354b216175d029504ba801bc7546191c9ff4acbcf364c057efe4fe8f0e178",
+      "warmup_dates_inclusive": [
+        "2018-11-29",
+        "2019-11-29"
+      ],
+      "warmup_index_inclusive": [
+        1281,
+        1532
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 62,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-02-06",
+        "2025-03-07"
+      ],
+      "test_index_inclusive": [
+        2835,
+        2855
+      ],
+      "train_calendar_sha256": "3ba337bd1ba42acc080930b1ba335d50511a90380f7d9d21603f618db330865f",
+      "train_dates_inclusive": [
+        "2020-01-02",
+        "2025-01-03"
+      ],
+      "train_index_inclusive": [
+        1554,
+        2813
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "5720734ddaaf63a68763cf8c7e4c305d2d80c11d519c72c574d1ea4d45a92a24",
+      "warmup_dates_inclusive": [
+        "2019-01-02",
+        "2019-12-31"
+      ],
+      "warmup_index_inclusive": [
+        1302,
+        1553
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 63,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-03-10",
+        "2025-04-07"
+      ],
+      "test_index_inclusive": [
+        2856,
+        2876
+      ],
+      "train_calendar_sha256": "558393f9219a304c984e1575e0af3077c43a9e53478b1537d03f7b1e2a79b943",
+      "train_dates_inclusive": [
+        "2020-02-03",
+        "2025-02-05"
+      ],
+      "train_index_inclusive": [
+        1575,
+        2834
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "b3dad609a2f787d055f972a64e6a09d7a488b62c90e3723e32a9d148b71952af",
+      "warmup_dates_inclusive": [
+        "2019-02-01",
+        "2020-01-31"
+      ],
+      "warmup_index_inclusive": [
+        1323,
+        1574
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 64,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-04-08",
+        "2025-05-07"
+      ],
+      "test_index_inclusive": [
+        2877,
+        2897
+      ],
+      "train_calendar_sha256": "dc76e61c0ea6248766c3819551b78892edef73fd33b84ef42c8a333b9ce7ae9f",
+      "train_dates_inclusive": [
+        "2020-03-04",
+        "2025-03-07"
+      ],
+      "train_index_inclusive": [
+        1596,
+        2855
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "8693da6af1eef515da39ee6c73ea6c0f8bcf8baa317273251b67ec13b910f281",
+      "warmup_dates_inclusive": [
+        "2019-03-05",
+        "2020-03-03"
+      ],
+      "warmup_index_inclusive": [
+        1344,
+        1595
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 65,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-05-08",
+        "2025-06-06"
+      ],
+      "test_index_inclusive": [
+        2898,
+        2918
+      ],
+      "train_calendar_sha256": "f619ad6ae14eab0e6e919551243255b44e2f125221fa08fe91b2a4b1c18320dd",
+      "train_dates_inclusive": [
+        "2020-04-02",
+        "2025-04-07"
+      ],
+      "train_index_inclusive": [
+        1617,
+        2876
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "86b8c5e117c8b0dca8614e923d5a972f1a89a9a198c8a5df42352e061f4194aa",
+      "warmup_dates_inclusive": [
+        "2019-04-03",
+        "2020-04-01"
+      ],
+      "warmup_index_inclusive": [
+        1365,
+        1616
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 66,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-06-09",
+        "2025-07-09"
+      ],
+      "test_index_inclusive": [
+        2919,
+        2939
+      ],
+      "train_calendar_sha256": "392a910d3ec761c719a46cd8d2d156a343f0e4379080d83958dcf5f366fbca32",
+      "train_dates_inclusive": [
+        "2020-05-04",
+        "2025-05-07"
+      ],
+      "train_index_inclusive": [
+        1638,
+        2897
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "165b8095a0fde769086613187444206a759cb063fc3a8f1fbd95df7ed9742c21",
+      "warmup_dates_inclusive": [
+        "2019-05-03",
+        "2020-05-01"
+      ],
+      "warmup_index_inclusive": [
+        1386,
+        1637
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 67,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-07-10",
+        "2025-08-07"
+      ],
+      "test_index_inclusive": [
+        2940,
+        2960
+      ],
+      "train_calendar_sha256": "a835f33cc578b042e0021e66cd11fa16e7aea64ead85461b09d95bed9274d922",
+      "train_dates_inclusive": [
+        "2020-06-03",
+        "2025-06-06"
+      ],
+      "train_index_inclusive": [
+        1659,
+        2918
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "12318e2f9cea4ae456ce04fd8d49b265d231fc43b087e0bbb5e939d1446a1ef6",
+      "warmup_dates_inclusive": [
+        "2019-06-04",
+        "2020-06-02"
+      ],
+      "warmup_index_inclusive": [
+        1407,
+        1658
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 68,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-08-08",
+        "2025-09-08"
+      ],
+      "test_index_inclusive": [
+        2961,
+        2981
+      ],
+      "train_calendar_sha256": "86a75bc02f223c5b825bc9d77a971b3e7c452e934175f5df32ff4ea1a35f27a9",
+      "train_dates_inclusive": [
+        "2020-07-02",
+        "2025-07-09"
+      ],
+      "train_index_inclusive": [
+        1680,
+        2939
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "ff0e3686614873a80a2797ad5871927b86c0fe8d619f69537e86f69d23e833e3",
+      "warmup_dates_inclusive": [
+        "2019-07-03",
+        "2020-07-01"
+      ],
+      "warmup_index_inclusive": [
+        1428,
+        1679
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 69,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-09-09",
+        "2025-10-07"
+      ],
+      "test_index_inclusive": [
+        2982,
+        3002
+      ],
+      "train_calendar_sha256": "d3c47ac288fa724320b212f67c6fd9bbde4b2fbd49ea4cba23deded802c4e673",
+      "train_dates_inclusive": [
+        "2020-08-03",
+        "2025-08-07"
+      ],
+      "train_index_inclusive": [
+        1701,
+        2960
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "5a1df816594e066e11f7b4e8645b85a38cda9a2512a283a7cf766332f70496fc",
+      "warmup_dates_inclusive": [
+        "2019-08-02",
+        "2020-07-31"
+      ],
+      "warmup_index_inclusive": [
+        1449,
+        1700
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 70,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-10-08",
+        "2025-11-05"
+      ],
+      "test_index_inclusive": [
+        3003,
+        3023
+      ],
+      "train_calendar_sha256": "698bf88cedb6c6240e2e53df2d650864742ff8219849658c514de88e816a5815",
+      "train_dates_inclusive": [
+        "2020-09-01",
+        "2025-09-08"
+      ],
+      "train_index_inclusive": [
+        1722,
+        2981
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "77053f4094e96e860750ce98931f192cb0b7950756b56dba35de9dd347595ca1",
+      "warmup_dates_inclusive": [
+        "2019-09-03",
+        "2020-08-31"
+      ],
+      "warmup_index_inclusive": [
+        1470,
+        1721
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 71,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-11-06",
+        "2025-12-05"
+      ],
+      "test_index_inclusive": [
+        3024,
+        3044
+      ],
+      "train_calendar_sha256": "bb50f3ac5ebe893316da432ccc784d5dc659d1dc511a631d95daf7963a6733a8",
+      "train_dates_inclusive": [
+        "2020-10-01",
+        "2025-10-07"
+      ],
+      "train_index_inclusive": [
+        1743,
+        3002
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "9d2aaa965aef78f3f898dfa7acd1d0dc97c2fc052e7547ef4a9a635a02eebc63",
+      "warmup_dates_inclusive": [
+        "2019-10-02",
+        "2020-09-30"
+      ],
+      "warmup_index_inclusive": [
+        1491,
+        1742
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 72,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2025-12-08",
+        "2026-01-07"
+      ],
+      "test_index_inclusive": [
+        3045,
+        3065
+      ],
+      "train_calendar_sha256": "82bd6900e8cff7a373b146f2792a8ef9375d9597ba2a6176282a05ed7b1b1cf4",
+      "train_dates_inclusive": [
+        "2020-10-30",
+        "2025-11-05"
+      ],
+      "train_index_inclusive": [
+        1764,
+        3023
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "3d21f8d5ceb14c42020d3d3bb6124bb304ec6442b25180699065034cd6381164",
+      "warmup_dates_inclusive": [
+        "2019-10-31",
+        "2020-10-29"
+      ],
+      "warmup_index_inclusive": [
+        1512,
+        1763
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 73,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2026-01-08",
+        "2026-02-06"
+      ],
+      "test_index_inclusive": [
+        3066,
+        3086
+      ],
+      "train_calendar_sha256": "311d07f1612a2d4c1c2ba5fc8ec6fded7ecf8ef1fc5ae0de4d3a644bdcb13643",
+      "train_dates_inclusive": [
+        "2020-12-01",
+        "2025-12-05"
+      ],
+      "train_index_inclusive": [
+        1785,
+        3044
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "4987624e441634f768563952f450d4caa032158d5c0d375d8f9bb50097f198c0",
+      "warmup_dates_inclusive": [
+        "2019-12-02",
+        "2020-11-30"
+      ],
+      "warmup_index_inclusive": [
+        1533,
+        1784
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 74,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2026-02-09",
+        "2026-03-10"
+      ],
+      "test_index_inclusive": [
+        3087,
+        3107
+      ],
+      "train_calendar_sha256": "0ed03358a1045fa0bf8cf4a26edc95731bb63e8f3cead25b668c11a74e479153",
+      "train_dates_inclusive": [
+        "2020-12-31",
+        "2026-01-07"
+      ],
+      "train_index_inclusive": [
+        1806,
+        3065
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "9f9accbb1ff5cbf09cc99b56c6f11ca3b8889520f46f74cdd97c1332e69e23c0",
+      "warmup_dates_inclusive": [
+        "2020-01-02",
+        "2020-12-30"
+      ],
+      "warmup_index_inclusive": [
+        1554,
+        1805
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 75,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2026-03-11",
+        "2026-04-09"
+      ],
+      "test_index_inclusive": [
+        3108,
+        3128
+      ],
+      "train_calendar_sha256": "fc2b7f5b8efbd01883c54a1626e3bbfb0c471d6915ed51b18fcbc920dfc23883",
+      "train_dates_inclusive": [
+        "2021-02-02",
+        "2026-02-06"
+      ],
+      "train_index_inclusive": [
+        1827,
+        3086
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "c213e77ceadd58719bc310153f76c0346b3ce0244793140abfc3e678108197d2",
+      "warmup_dates_inclusive": [
+        "2020-02-03",
+        "2021-02-01"
+      ],
+      "warmup_index_inclusive": [
+        1575,
+        1826
+      ],
+      "warmup_sessions": 252
+    },
+    {
+      "fold_id": 76,
+      "reference_test_visible": false,
+      "test_dates_inclusive": [
+        "2026-04-10",
+        "2026-05-08"
+      ],
+      "test_index_inclusive": [
+        3129,
+        3149
+      ],
+      "train_calendar_sha256": "30fff1d183e09a4ec9cc874994e6921848315562d21d7068d03a394161c55e8e",
+      "train_dates_inclusive": [
+        "2021-03-04",
+        "2026-03-10"
+      ],
+      "train_index_inclusive": [
+        1848,
+        3107
+      ],
+      "train_session_count": 1260,
+      "warmup_calendar_sha256": "84fd65de509cc311381e14486ef19d14e70545cb476627e4690e49b0ede0538f",
+      "warmup_dates_inclusive": [
+        "2020-03-04",
+        "2021-03-03"
+      ],
+      "warmup_index_inclusive": [
+        1596,
+        1847
+      ],
+      "warmup_sessions": 252
+    }
+  ],
+  "purpose": "date-only-projection-and-cross-check-not-an-executable-splitter",
+  "runtime_splitter": "exact_same_candidate_splitter_callable_instance_and_fold_object",
+  "schema": "EVO892.fold-bindings.v1"
+}

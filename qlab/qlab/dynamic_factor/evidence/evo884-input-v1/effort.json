@@ -1,0 +1,16 @@
+{
+  "scope": "11-03 independent input/minimum-scope engineering increment; prior preparation already accounted in R1 and not charged again",
+  "started_at": "2026-10-30T04:46:09Z",
+  "as_of": "2026-10-30T05:16:29Z",
+  "elapsed_seconds_as_of": 1820,
+  "agent_day_hours": 8,
+  "actual_increment_agent_days_as_of": 0.063194,
+  "current_turn_upper_bound_minutes": 45,
+  "prior_producer_upper_bound_agent_days": 0.203681,
+  "prior_producer_budget_agent_days": 0.5,
+  "EVO892_two_day_budget_current_increment_charge_agent_days": 0,
+  "accounting_authority_comment": "01a18b23-c5c8-7da5-9c5c-22c10dc0889a",
+  "accounting": "R1/external-anchor/11-03 increments are outside the EVO892 two-day cap per upstream; report current engineering elapsed separately, retain producer 0.204 upper bound.",
+  "actual_reference_performance_attempts": 0,
+  "project_ledger_mutations": 0
+}

@@ -1,0 +1,311 @@
+{
+ "generated_utc": "2026-10-30T01:34:41.908240Z",
+ "reference_calendar": "AAPL_1d.parquet (5041 bars, 2006-06-26..2026-07-10)",
+ "script_sha256": "7cc2739d4efc9d6fbc830ef1cf0f5a18deafc5466fa7e4b7e78169e269f7a2d6",
+ "files": {
+  "ARGX": {
+   "sha256": "209be75409d9c4738c0106471678124ad8d9847262e33227abbad2bb43af6946",
+   "missing_in_span": 1,
+   "runs": 1,
+   "longest_runs": [
+    [
+     "2017-09-19",
+     "2017-09-19",
+     1
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "AXON": {
+   "sha256": "4f75a1a7b81d92762ce0891f6fb006d25d811ac66ab15b75befeb2e6719b3cf6",
+   "missing_in_span": 374,
+   "runs": 1,
+   "longest_runs": [
+    [
+     "2015-10-12",
+     "2017-04-05",
+     374
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "CCZ": {
+   "sha256": "3c8a26e5876d2a6b038b3f72ace8bbbcbac914d204c20969a9f51ec26930b534",
+   "missing_in_span": 1744,
+   "runs": 557,
+   "longest_runs": [
+    [
+     "2017-04-20",
+     "2017-06-01",
+     30
+    ],
+    [
+     "2013-07-31",
+     "2013-09-06",
+     27
+    ],
+    [
+     "2015-06-24",
+     "2015-07-23",
+     21
+    ],
+    [
+     "2013-05-29",
+     "2013-06-25",
+     20
+    ],
+    [
+     "2012-06-11",
+     "2012-07-05",
+     18
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "HWM": {
+   "sha256": "c8ab25d43026e22ccc0237e7a541b840ddf6ba13b5471e2a8af175ea128b822c",
+   "missing_in_span": 267,
+   "runs": 1,
+   "longest_runs": [
+    [
+     "2015-10-12",
+     "2016-10-31",
+     267
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "IVE": {
+   "sha256": "ae3fd8082aa90e8a4a3a62014162a7f64e314c45e91fd96744ae834f0b93784b",
+   "missing_in_span": 3,
+   "runs": 3,
+   "longest_runs": [
+    [
+     "2012-01-13",
+     "2012-01-13",
+     1
+    ],
+    [
+     "2012-02-02",
+     "2012-02-02",
+     1
+    ],
+    [
+     "2013-10-28",
+     "2013-10-28",
+     1
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "IVW": {
+   "sha256": "3905ad73ce8e36a395651ee7a0392c8d4959b15661be5a5d6aa8df5c4c43a0c9",
+   "missing_in_span": 3,
+   "runs": 3,
+   "longest_runs": [
+    [
+     "2012-01-13",
+     "2012-01-13",
+     1
+    ],
+    [
+     "2012-02-02",
+     "2012-02-02",
+     1
+    ],
+    [
+     "2013-10-28",
+     "2013-10-28",
+     1
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "IWM": {
+   "sha256": "cf57d9bfc13f367e68fcd59cfc5855ee207ab570be42be317c5114c064aaaa9e",
+   "missing_in_span": 4,
+   "runs": 4,
+   "longest_runs": [
+    [
+     "2009-08-11",
+     "2009-08-11",
+     1
+    ],
+    [
+     "2012-01-13",
+     "2012-01-13",
+     1
+    ],
+    [
+     "2012-02-02",
+     "2012-02-02",
+     1
+    ],
+    [
+     "2013-10-28",
+     "2013-10-28",
+     1
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "KKR": {
+   "sha256": "18e1e625a0d71553b262c7f4a28f02f17b10d9bd4b36b8798e334a5d09472cd7",
+   "missing_in_span": 180,
+   "runs": 123,
+   "longest_runs": [
+    [
+     "2009-02-12",
+     "2009-02-18",
+     4
+    ],
+    [
+     "2009-04-08",
+     "2009-04-14",
+     4
+    ],
+    [
+     "2009-07-08",
+     "2009-07-13",
+     4
+    ],
+    [
+     "2007-03-27",
+     "2007-03-29",
+     3
+    ],
+    [
+     "2007-04-09",
+     "2007-04-11",
+     3
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "LITE": {
+   "sha256": "8a8a7e0adf8bc29f7f10047ab7024429b3ba7a8acc7864ef90b5c87fb5a32839",
+   "missing_in_span": 1,
+   "runs": 1,
+   "longest_runs": [
+    [
+     "2015-07-24",
+     "2015-07-24",
+     1
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "NBIS": {
+   "sha256": "1217ed4d1ba473fb1429b0091cdc41ba28a23ff9d5b73514fe6fbe1cf3e2bb51",
+   "missing_in_span": 664,
+   "runs": 2,
+   "longest_runs": [
+    [
+     "2023-03-30",
+     "2024-10-18",
+     392
+    ],
+    [
+     "2022-02-28",
+     "2023-03-28",
+     272
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "NWG": {
+   "sha256": "6a65b5122368107ea0d7d028b2a20b416131ea43f23a296a4c81931d659b3c1d",
+   "missing_in_span": 2,
+   "runs": 1,
+   "longest_runs": [
+    [
+     "2022-08-30",
+     "2022-08-31",
+     2
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "REGN": {
+   "sha256": "a808d2f129542170b6fe91468960c6a26aedbf3a56c501e80bd6e54a2db382c5",
+   "missing_in_span": 1,
+   "runs": 1,
+   "longest_runs": [
+    [
+     "2015-06-09",
+     "2015-06-09",
+     1
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "SPGI": {
+   "sha256": "1654eaabe2d15b6a02e838076d1373fd8b89d8ad5793b5f25ffbb33a631fb98d",
+   "missing_in_span": 18,
+   "runs": 1,
+   "longest_runs": [
+    [
+     "2016-04-28",
+     "2016-05-23",
+     18
+    ]
+   ],
+   "dates_not_in_reference": []
+  },
+  "SPY": {
+   "sha256": "259f74e1b23f85098b64c003072d5e183857bf3863900431d828882b7288068b",
+   "missing_in_span": 26,
+   "runs": 19,
+   "longest_runs": [
+    [
+     "2011-07-18",
+     "2011-07-27",
+     8
+    ],
+    [
+     "2009-08-11",
+     "2009-08-11",
+     1
+    ],
+    [
+     "2009-12-31",
+     "2009-12-31",
+     1
+    ],
+    [
+     "2010-01-15",
+     "2010-01-15",
+     1
+    ],
+    [
+     "2010-02-12",
+     "2010-02-12",
+     1
+    ]
+   ],
+   "dates_not_in_reference": [
+    "2011-07-04",
+    "2012-04-06",
+    "2012-05-28"
+   ]
+  },
+  "VRTX": {
+   "sha256": "e23b6c91b68e84f9e6b2232ca1b493a2017cf7b6793aa8b921034ff032f63c98",
+   "missing_in_span": 2,
+   "runs": 2,
+   "longest_runs": [
+    [
+     "2011-04-28",
+     "2011-04-28",
+     1
+    ],
+    [
+     "2015-05-12",
+     "2015-05-12",
+     1
+    ]
+   ],
+   "dates_not_in_reference": []
+  }
+ }
+}

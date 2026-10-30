@@ -1,0 +1,133 @@
+{
+  "receipt": {
+    "artifacts": {},
+    "assumptions": [
+      "Caller supplies a frozen unified exchange calendar with provenance.",
+      "Missingness is checked within each series' own range; benchmarks must match portfolio dates.",
+      "No price repair, calendar alignment, or forward-fill is performed.",
+      "all_numeric_strategy_choices_are_unvalidated_design_values",
+      "EVO882_conditional_cost_files_received_but_applicability_and_complete_total_return_accounting_not_closed",
+      "historical_survivorship_and_LLM_knowledge_contamination_not_fixed_by_walk_forward",
+      "reference_open_close_prices_do_not_verify_executability",
+      "20_day_blocks_are_an_approximation_not_exact_coverage_or_sequential_error_control",
+      "raw_attempt_N_is_a_conservative_floor_not_a_proof_of_DSR_model_assumptions",
+      "quality_and_low_price_filters_and_64_panel_are_frozen_design_choices_with_selection_bias_not_empirical_success",
+      "AAPL_reference_calendar_not_exchange_verified",
+      "candidate_and_meta_V_are_separate_ordered_reference_families_not_validated_error_control",
+      "independent_reference_manifests_for_v03_profiles_not_yet_provided",
+      "train_meta_with_whole_train_calibration_is_in_sample_not_inner_OOS",
+      "staged_startup_cash_drag_and_fees_count_from_first_evaluation_day",
+      "post_history_max_fold_V_rule_is_predeclared_design_choice_not_a_proven_coverage_guarantee",
+      "EVO888_and_EVO889_market_results_are_upstream_evidence_not_replayed_here",
+      "QQQ_period_closure_does_not_prove_exact_event_amounts_or_exdates_paydates",
+      "VTI_44_older_amounts_and_two_suspected_events_unverified",
+      "cross_anchor_acceptance_only_bound_files_not_arbitrary_future_anchors",
+      "restored_TAF_budget_not_actual_fee_schedule_SEC_TAF_trade_unit_unresolved",
+      "analytical_fractional_exdate_TR_not_integer_cash_execution",
+      "panel64_data_completeness_runtime_gate_not_design_freeze_blocker",
+      "B2 metadata is present but unavailable; only primary calendar/data precheck can pass. Runtime gates remain independent."
+    ],
+    "certifiable": false,
+    "common_profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+    "conventions_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+    "conventions_status": "FROZEN_DESIGN_INTERFACE_EXECUTION_GATES_UNMET",
+    "conventions_version": "v1.0.1",
+    "input_sha256": "9e99f9693750ecc369ca01ea31575ffa31761bd989e47ca77fdbc29cc4fd77ec",
+    "metric_availability": {
+      "beta": {
+        "available": false,
+        "reason": "estimator_not_connected"
+      },
+      "information_ratio": {
+        "available": false,
+        "reason": "estimator_not_connected"
+      }
+    },
+    "metrics": {
+      "B2": {
+        "all_dates_retained": true,
+        "available": false,
+        "input_binding_present": true,
+        "isolation_source_sha256": "ea465af4aa21bdc12cea9491aa79e7c61c2e1d3b5820d2b0f94ce63a559847b8",
+        "reason": "SYNTHETIC_UNIT_EVENT_EVIDENCE_MISSING",
+        "source_sha256": "989280d99a19b88789f45e81ce611ab5eb933e33eff023a77fb3dc37f43b6746",
+        "value": null
+      },
+      "all_readouts_available": false,
+      "beta": null,
+      "data_bindings_complete": true,
+      "information_ratio": null,
+      "series_checks": {
+        "QQQ": {
+          "calendar_coverage_incomplete": false,
+          "date_reasons": {},
+          "jump_reversals": [],
+          "missing_dates": [],
+          "nonpositive_or_unknown_prices": [],
+          "nontrading_dates": []
+        },
+        "portfolio": {
+          "calendar_coverage_incomplete": false,
+          "date_reasons": {},
+          "jump_reversals": [],
+          "missing_dates": [],
+          "nonpositive_or_unknown_prices": [],
+          "nontrading_dates": []
+        }
+      }
+    },
+    "missing_inputs": [],
+    "ok": true,
+    "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "prereg_version": "v1",
+    "profile_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "reasons": [],
+    "runtime_consumable": false,
+    "schema": "dynamic_factor.tool/v1",
+    "source_files": {
+      "__init__.py": "06af6993da8dcb49ff75936b7b5e327424b753802687d92dda74033c15efd797",
+      "__main__.py": "bb4fa17c59c94fd7781ae8e4f52094e101f028e2a02909b8983ec49b68dc0a6e",
+      "authority_harness.py": "0365490e6cba4ba8e9421d9f7650059beb701f6a334d55acdf2a346f00e2423c",
+      "authority_ledger.py": "6242d48002e30b740fe423b250af18bc1abbe3f4657b0337404e2033f2cb7858",
+      "continuity.py": "ec076aff10d0b04fb02793f49ac29a9e29891a71dd54a96155e87f6af2f10482",
+      "contract.py": "ff198c8d9ad05e7f2664af8120a9f6e3d21a242e3ef19e9f0b5cbb65a5beacbb",
+      "conventions.py": "d70340d4eccdfe635b5604b7da5ebf4ee59ebece6be329147f81610d76fa4663",
+      "disposition_harness.py": "2008b39696cdb5edf6cbf4e1dc9180863286fe86aab8b12b00de05a692daa283",
+      "dsr_v0.py": "e4e3fb1bd42333a5d9c8b9c508ca421172c1d83de0d7e5e2a5c12f276f49425b",
+      "execution.py": "39f9b1870607ee9d31eebacfd75e717c3443ba4281c38120ebd89bbd0c0caf39",
+      "f1f2_harness.py": "7d81163a28ee68b7b9e854cc1107df6dddecfae1ca7349d58a6b50ab5cc69aeb",
+      "fee_model.py": "6f24d69501e7f9f10a8d685d54670fec8288ad23d1926f613fd4610287f24d2c",
+      "fees.py": "144ee2bb1b9ca8bd24e480afcd0968e0fa711444ca520c6c6a72d8cf6d628e9a",
+      "fixture_inventory.py": "1b8c164c69faf068d194501a06bbae448f6840abeec741bacd15d56e5a50943a",
+      "fold_split.py": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+      "folds.py": "8ece40df5ae7d1f910f365dd76c9f8e029673d060a0e8a91af22f4a0661e5cad",
+      "harness.py": "c63aa59ddee0b444a6932ea7165abc7c400c2dad09b1dea15f3e3f81a1c2e391",
+      "harness_helpers.py": "3bb5677bef3365b5ea57f48bf3635b6fee7158aacf699d771cf18c9e0d7ea971",
+      "input_disposition.py": "88ee68778de6285fabb3a6bc2d3e554be5e195fa664b4240663b78d94b0a65d1",
+      "input_scope.py": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+      "ledger.py": "40ad5bc8422b8063c6d8f955e699070248e0fe7da1459db1214646068e6a3c88",
+      "ledger_anchor.py": "0c26b1a34cdf42b337404a06ad4f633c1fd5651d909008f6923fb20925ea9b57",
+      "pending.py": "2987ba4abe7406c555faad834ee938c12239c9863999bd9d713d15b5acf03a1a",
+      "pipeline.py": "11e0373800a1d86910bb06fc84b7509d9baf2717113f2ea9335ec7b270139eab",
+      "receipts.py": "4647fafba46f5d5ae39401f1129c73eebb8dd5e6de6c91d82f23aea403803e8d",
+      "reference_boundary.py": "acd6d347f59da1d9df8b127f31d3b5f97f17039a35705fb7d94606ec90065551",
+      "reference_check.py": "395cea7bf3fbd621383739ae0a8a2dab5c996b228b459ee19626064e703f0c27",
+      "reference_evidence.py": "0ec475c9ee5256486c908c9293231e47a4265f59d9459721543f54caa60efe8b",
+      "reference_guard.py": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+      "reference_harness.py": "336144afa15539e4dad4aea5a339005beb27bb87cd6573d6620701cebd6dc823",
+      "reference_inputs.py": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+      "reference_producer.py": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+      "reference_registry.py": "689ced79a2df37ffa857f14451dfaa66d0df412f31dadc39cbb7ba5f2afb45b8",
+      "scope_harness.py": "cc18ce264281a8b72c1c3f63ebd0dfc30160b24e45d8b427c46ea39eca49936e",
+      "scope_proof.py": "6fa768ef49fc1d31da8c576872bd9025a938da580c4cd5e63385af18f0b0b62b",
+      "scope_reader.py": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38",
+      "statistics.py": "2a926e6456a25e50319dc60cffe4652477f281180d51f440b8e3714a69e386e1",
+      "v1_harness.py": "7c27d3f80082b43600a9de1734cb0bfdba9ee6e20f1f0cca42abf919fe633ae5",
+      "validation.py": "f47a4b2ad4f44d152b525b54a9043ffcafda993c346abe35081d1bea60e4efa4",
+      "valuation.py": "7e11e974600d1712f25d8f09d6077e4f3263363bf2aee737fc376b2612dabeb2"
+    },
+    "source_sha256": "85820fcd8e2d97de990ff6ff53db4a1755669cd38a08b5bb21f8e532c41813e0",
+    "tool": "wf_manifest_check"
+  },
+  "scope": "SYNTHETIC_UNIT_DATA_QA_NOT_MARKET_EVIDENCE"
+}

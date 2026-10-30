@@ -1,0 +1,26 @@
+{
+  "access_boundary": "isolated_python_worker_audit_hook_exact_three_readonly_files_no_network_or_process",
+  "definition_sha256": {
+    "candidate": "17c0080003bc984029dc8954486798d9b821eff79a369307e2fa8e8e39eabfc4",
+    "meta": "c6fa724aa501d346de2f6ace28afe971eabd4777cc8a0f3850bb849e37bba4f4"
+  },
+  "first_reference_performance_at": null,
+  "registry_sha256": "83c9d47f375235faf0021342ff2e0a36b8cdc46a58975da8b31c50bd73aea3b2",
+  "requires_independent_preperformance_review": "EVO887",
+  "runtime_consumable": false,
+  "schema": "EVO884.reference-static-seal/v1",
+  "sealed_at": "2026-10-30T04:40:56Z",
+  "sources": {
+    "authority_ledger.py": "7bfae64bf1fdc967894857066286bec63acc859e762c2f49d4bfe5a7022aacd9",
+    "fold_split.py": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+    "folds.py": "40525e0fbfd36898913b89aa51d9f7ab99c215ea6d791a65478af65e5bb278c6",
+    "reference_boundary.py": "acd6d347f59da1d9df8b127f31d3b5f97f17039a35705fb7d94606ec90065551",
+    "reference_check.py": "794d4ff3ae36a9664a0deefb0435f36bab827dcefc56477a5782915a6c332c7c",
+    "reference_evidence.py": "8e1948875f679ed60b0fb3f2c975892a88de74c068b99afc25745929dc0b9307",
+    "reference_guard.py": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+    "reference_inputs.py": "61456de83ed02066952f79cf2231c3b428619c52dfb6e767ce68222aa86234b3",
+    "reference_producer.py": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+    "reference_registry.py": "689ced79a2df37ffa857f14451dfaa66d0df412f31dadc39cbb7ba5f2afb45b8"
+  },
+  "static_proof_sha256": "5487f61aac36ef4dae0dd09e65fb28fc67f27407a0c34adc721338ba60083085"
+}

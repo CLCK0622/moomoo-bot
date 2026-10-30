@@ -1,0 +1,10 @@
+{
+  "schema": "dynamic_factor.fee_schedule/v1",
+  "source": "EVO-882 parameters sources.F3; EVO-884 effective-date requirement",
+  "taf_periods": [
+    {"start": "2026-10-01", "end_exclusive": "2027-01-01", "rate_field": "taf_per_share_sell_current"},
+    {"start": "2027-01-01", "end_exclusive": null, "rate_field": "taf_per_share_sell_restored"}
+  ],
+  "research_rate_field": "taf_per_share_sell_restored",
+  "historical_assumption": "research_restored explicitly applies the frozen restored schedule to history; it is not historical billing truth"
+}

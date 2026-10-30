@@ -1,0 +1,2 @@
+# Raw third-party authority tool: preserve its published SHA, never reformat it.
+extend-exclude = ["EVO891-B-ledger-v2.py"]

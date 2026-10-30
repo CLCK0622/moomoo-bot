@@ -1,0 +1,20 @@
+[
+  {
+    "key": "python39",
+    "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=qlab:. /usr/bin/python3 -m pytest qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q --tb=short -rs -p no:cacheprovider",
+    "exit_code": 0,
+    "output": "........................................................................ [ 32%]\n........................................................................ [ 64%]\n........................................................................ [ 96%]\n.......                                                                  [100%]\n=========================== short test summary info ============================\nSKIPPED [1] qlab/tests/test_qlib_gen.py:21: qlib not in this venv (lean runtime) \u2014 skip\n223 passed, 1 skipped in 13.38s\n"
+  },
+  {
+    "key": "python312",
+    "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=qlab:. /Users/clck/.venvs/qlab-py312/bin/python -m pytest qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q --tb=short -rs -p no:cacheprovider",
+    "exit_code": 0,
+    "output": "........................................................................ [ 31%]\n........................................................................ [ 62%]\n........................................................................ [ 93%]\n...............                                                          [100%]\n231 passed in 11.43s\n"
+  },
+  {
+    "key": "ruff",
+    "command": "PYTHONPATH=../lint-tools /usr/bin/python3 -m ruff check --no-cache qlab/qlab/dynamic_factor qlab/tests/dynamic_factor; ruff format --check --no-cache same paths",
+    "exit_code": 0,
+    "output": "All checks passed!\n58 files already formatted\n"
+  }
+]

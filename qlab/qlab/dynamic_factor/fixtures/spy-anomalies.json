@@ -1,0 +1,112 @@
+{
+  "calendar_status": "AAPL_reference_not_exchange_verified",
+  "inputs_sha256": {
+    "AAPL_1d.parquet": "211b650901f68c7383b0a5b1bdc48c3a7ae98bf9a77cbfac8a319067362e868f",
+    "SPY_1d.parquet": "259f74e1b23f85098b64c003072d5e183857bf3863900431d828882b7288068b",
+    "VTI_1d.parquet": "b016c7de796e6d5a806ff26e45dfa2f041b52696d4bf58b69806f426c8d7d943"
+  },
+  "jump_reversal_policy": {
+    "max_abs_roundtrip": 0.03,
+    "max_observation_gap_calendar_days": 5,
+    "min_abs_jump": 0.15,
+    "source": "EVO884 manifest-only QA parameters, not an EVO883 strategy threshold"
+  },
+  "schema": "dynamic_factor.spy-anomalies/v1",
+  "source_commit": "e51f8023bd0c0b6cf45c5badbc9db2c45a3a14e9",
+  "vti_check_sha256": "9414e8c2a2405f1a7752c6c334f4ad70af821daa5a8933620d6ba0754db95007",
+  "windows": [
+    {
+      "SPY": [
+        {
+          "close": 107.949783717,
+          "date": "2011-06-30"
+        },
+        {
+          "close": 89.626868241,
+          "date": "2011-07-04"
+        },
+        {
+          "close": 109.454880345,
+          "date": "2011-07-05"
+        },
+        {
+          "close": 109.585758313,
+          "date": "2011-07-06"
+        }
+      ],
+      "calendar": [
+        "2011-06-30",
+        "2011-07-01",
+        "2011-07-05",
+        "2011-07-06"
+      ],
+      "end": "2011-07-06",
+      "start": "2011-06-30"
+    },
+    {
+      "SPY": [
+        {
+          "close": 114.387343752,
+          "date": "2012-04-04"
+        },
+        {
+          "close": 114.338264514,
+          "date": "2012-04-05"
+        },
+        {
+          "close": 114.346444387,
+          "date": "2012-04-06"
+        },
+        {
+          "close": 113.062204329,
+          "date": "2012-04-09"
+        },
+        {
+          "close": 111.164473798,
+          "date": "2012-04-10"
+        }
+      ],
+      "calendar": [
+        "2012-04-04",
+        "2012-04-05",
+        "2012-04-09",
+        "2012-04-10"
+      ],
+      "end": "2012-04-10",
+      "start": "2012-04-04"
+    },
+    {
+      "SPY": [
+        {
+          "close": 108.407856603,
+          "date": "2012-05-24"
+        },
+        {
+          "close": 108.056122065,
+          "date": "2012-05-25"
+        },
+        {
+          "close": 108.056122065,
+          "date": "2012-05-28"
+        },
+        {
+          "close": 107.778006384,
+          "date": "2012-05-30"
+        },
+        {
+          "close": 107.540790068,
+          "date": "2012-05-31"
+        }
+      ],
+      "calendar": [
+        "2012-05-24",
+        "2012-05-25",
+        "2012-05-29",
+        "2012-05-30",
+        "2012-05-31"
+      ],
+      "end": "2012-05-31",
+      "start": "2012-05-24"
+    }
+  ]
+}

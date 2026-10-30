@@ -1,0 +1,157 @@
+{
+  "calendar-folds-v0.1.json": {
+    "sha256": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "source_member": "EVO883-calendar-and-folds-draft.json",
+    "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
+  },
+  "calendar_gap_scan.json": {
+    "sha256": "bc5423d7412618dcac3ddef095b668d787407b5b9a854fb0c022daf3656c75e8",
+    "source_member": "calendar_gap_scan.json",
+    "source_zip_sha256": "7a961b6052639d557858ef99093964cd36da39109ad1fbde803416318556503d"
+  },
+  "common-calendar-v0.1.txt": {
+    "sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "source_member": "EVO883-common-calendar-draft.txt",
+    "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
+  },
+  "conventions-v0.1.json": {
+    "sha256": "2e65c77849b936d44c864b056be134e030ddf7f27e746072b70fffe631acf69b",
+    "source_member": "EVO883-executable-conventions-v0.1.json",
+    "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
+  },
+  "conventions-v0.2.json": {
+    "sha256": "b873b30b754695bef82ff37b95fc7628b0cc45ad7eb76e9cb091f9164cfc0a17",
+    "source_member": "EVO883-executable-conventions-v0.2.json",
+    "source_zip_sha256": "6f7bba19db12639621e000b4f72d797f7c43f04a4737d9e4d58fec724b9053d2"
+  },
+  "conventions-v1.0.1.json": {
+    "sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+    "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
+    "source_member": "EVO883-executable-conventions-v1.0.1.json"
+  },
+  "disposition/EVO883-EVO886-minimum-scope-ruling-v1.json": {
+    "sha256": "730931cdd7b9c2f62db9841438235e0aa4887f27ef4a842844d63b6570fd7ede",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
+  "disposition/EVO883-EVO886-minimum-scope-ruling-v1.md": {
+    "sha256": "56d97ab77b8389abcd8fcc7c9df2d7094cfc38b3da39954f3b92439d061b05da",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
+  "disposition/EVO883-EVO891-disposition-draft-v1.json": {
+    "sha256": "75685ab429e05a74fb5f1c9187c5da144b98b6932795569516f9137f8f608f87",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
+  "disposition/EVO883-EVO891-ruling-v1.md": {
+    "sha256": "641c03afea7ff86bfab99d5392e3185606e1241669f110a315fa8379b5e7684c",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
+  "disposition/QQQ-source-row-bindings-v1.json": {
+    "sha256": "71953b090c92ca6fc02cb1a2a5e493a02b991ff35e43e3bf4c07136da8441260",
+    "source": "EVO883 formal input disposition 01a18b02-a45f and minimum-scope ruling 01a18b12-9f33, authenticated Multica CLI; original bytes unchanged"
+  },
+  "evo891/EVO891-B-ledger-v2.jsonl": {
+    "sha256": "a8f50e02644ec4a86460f8038b89edcbc1811352e5bf320dca592cef6abcb87e",
+    "source": "EVO891 B v2 via authenticated CLI; unchanged source, external continuation anchor seq20/N75; not complete N"
+  },
+  "evo891/EVO891-B-ledger-v2.py": {
+    "sha256": "36ab3dd0cfc7d9c68a0e9ab2f0cc5774f0f7ccb260a2db61b36abbe040181969",
+    "source": "EVO891 B v2 via authenticated CLI; unchanged source, external continuation anchor seq20/N75; not complete N"
+  },
+  "evo891/EVO891-B-ledger-v2.tip.json": {
+    "sha256": "0112ac10c6f3499fbde276e60779b675be4c6c3dd4bad12581736add4c2960f2",
+    "source": "EVO891 B v2 via authenticated CLI; unchanged source, external continuation anchor seq20/N75; not complete N"
+  },
+  "evo892/candidate_reference_manifest.json": {
+    "sha256": "17c0080003bc984029dc8954486798d9b821eff79a369307e2fa8e8e39eabfc4",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/fold-bindings.json": {
+    "sha256": "8c40536cf6cc1780a61081548c5935256e2080e50e82c7c2953b051901ea0514",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/lineage-plan.json": {
+    "sha256": "20247efaa46ae945dd0dc7a94fb29683c5fa404e5039e79f92a223dc39e9182b",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/meta_reference_manifest.json": {
+    "sha256": "c6fa724aa501d346de2f6ace28afe971eabd4777cc8a0f3850bb849e37bba4f4",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/platform-anchor.json": {
+    "sha256": "7d09b4916178a7f9bb223133e778fdcbf830988c2c9990b7497d58fff6b4b3f8",
+    "source": "Authenticated Multica CLI comment metadata snapshot; not an independent review"
+  },
+  "evo892/predeclared_reference_registry.json": {
+    "sha256": "83c9d47f375235faf0021342ff2e0a36b8cdc46a58975da8b31c50bd73aea3b2",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/runtime-evidence-contract.json": {
+    "sha256": "98d1a2d49a054c1167e6744758d1dcdbfa65d3ca2474033b5102c0f2c812fec6",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo893/EVO891-B-ledger-v4.jsonl": {
+    "sha256": "8169337c4c8095cc93c1771d67ff6448de9628ca44c97ca9f8fd5711e7a99cf6",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
+  "evo893/EVO891-B-ledger-v4.tip.json": {
+    "sha256": "c739c88d983a3f51540d54ec175f1ca416cd01ec72c8fc29f24dc8d308a92457",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
+  "evo893/EVO893-receipt-v1.md": {
+    "sha256": "6fe8290cbb806f28c72bb02a969ffb0a1027c70eceb7e9a87877e2afc62cf921",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
+  "evo893/EVO893-review-ruling-v1.json": {
+    "sha256": "f55d563f7123c98b9b3b8be61dbc3e720de133bc34ba53e0b3f11293926b1a22",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
+  "evo893/EVO893-review-ruling-v1.md": {
+    "sha256": "9301feb3d2e6096494c4dbee11bc9346eff841bb505c6af8fa475bbbc9e68bd1",
+    "source": "EVO893 ledger v4 plus EVO883 01a18b37-b873 ruling, authenticated CLI; latest recorded N280 not complete N"
+  },
+  "fee_params_x1.json": {
+    "sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "source_member": "evo882/fee/fee_params_x1.json",
+    "source_zip_sha256": "d2e562d4df5ae046c24678a3abb91d0ec300b147cc5880378c266660d67cabca"
+  },
+  "fee_params_x2.json": {
+    "sha256": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "source_member": "evo882/fee/fee_params_x2.json",
+    "source_zip_sha256": "d2e562d4df5ae046c24678a3abb91d0ec300b147cc5880378c266660d67cabca"
+  },
+  "harness_cases.json": {
+    "sha256": "dfde628ee0c5f7759488636281eda76ea44c763109ad92f20a06dd6e7cfadca0",
+    "source_member": "harness_cases.json",
+    "source_zip_sha256": "c2d4922aad8b2006c07fd875fb4c26bc87b1fff43b21f2717e87c78dba4f8676"
+  },
+  "historical-seed-e51f8023.jsonl": {
+    "sha256": "76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b",
+    "source_member": "input-snapshots/historical-trial-ledger-e51f8023.jsonl",
+    "source_zip_sha256": "08891ba7341bff3d4f3b4ff9d1fcd7b932e94414086b6e835d5b5de4803d1de5"
+  },
+  "prereg-v1-draft2.json": {
+    "sha256": "39dac21665e980831f27a154b845341178100028a2ab0ff0741ca982d73e55b8",
+    "source_member": "EVO883-prereg-v1-draft2.json",
+    "source_zip_sha256": "6f7bba19db12639621e000b4f72d797f7c43f04a4737d9e4d58fec724b9053d2"
+  },
+  "prereg-v1.json": {
+    "sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
+    "source_member": "EVO883-prereg-v1.json"
+  },
+  "qqq-events-v1.csv": {
+    "sha256": "1ab413d1a1c4118ae58d21e476454502d613f1c88914a9076b90de8fa6247c87",
+    "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
+    "source_member": "EVO889-qqq-events.csv"
+  },
+  "spy-anomalies.json": {
+    "parameters": "jump thresholds are explicit manifest QA inputs, not frozen strategy choices",
+    "sha256": "39c3ebee74ff68fc04227dd870a60bfa1e69f61e1988dcb8e7f6902246587ed9",
+    "source": "selected rows from git e51f8023 SPY/AAPL parquet; vti_pull calendar QA cross-check"
+  },
+  "supplement-disposition-v1.json": {
+    "sha256": "2fe8eede3b04328dc468eb6fdce7d60686b5e807aa57e8869e8eea24e91a1cc6",
+    "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
+    "source_member": "EVO883-supplement-disposition-v03.json"
+  }
+}

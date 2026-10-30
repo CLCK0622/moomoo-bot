@@ -1,0 +1,77 @@
+{
+  "schema": "EVO883.EVO886.minimum_scope_ruling.v1",
+  "receipt_type": "v1_contract_scope_interpretation_not_actual_launch_clearance",
+  "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+  "interface_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+  "profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+  "author_consultation_sha256": "2fad4b3d311b54903dba54ab0e297287ea303f1ffd7c469a0e61c6d93de2771d",
+  "author_evidence_index_sha256": "465c43ce7d382756178282eabd5564ff2db54a6310c4ec34c85683301bab5b0d",
+  "R1": {
+    "version_classification": "v1_scope_input_receipt_if_all_isolation_conditions_proven",
+    "all_fields_of_all_67_instruments_required_to_be_verified": false,
+    "isolated_B2_unavailable_can_coexist_with_complete_QQQ_path": true,
+    "conditions": [
+      "original_64_members_3191_calendar_dates_and_77_folds_unchanged",
+      "all_required_manifests_present_including_explicit_unavailable_B2_entries_and_reasons",
+      "no_B2_dependency_in_features_labels_calibration_admission_reference_returns_cash_NAV_orders_or_other_QQQ_state",
+      "engineering_lineage_and_access_scope_evidence_support_isolation",
+      "all_other_required_runtime_gates_passed_at_their_required_stage",
+      "QQQ_formal_readouts_use_complete_original_evaluation_vector_and_causal_continuous_strategy_state",
+      "B2_columns_remain_null_no_SPY_switch_no_suffix_sample_change_no_complete_case_date_deletion"
+    ],
+    "complete_three_benchmark_acceptance_or_VTI_outperformance_claim": false,
+    "candidate_N_or_V_waiver": false,
+    "meta_V_runtime_gate_waiver": false,
+    "new_stock_or_spinoff_policy": false
+  },
+  "R2": {
+    "keep_all_original_fold_records": true,
+    "strategy_invalid_fold_may_be_skipped_for_complete_primary_statistics": false,
+    "unknown_continuous_state": "stop_affected_strategy_path_and_dependent_future_performance_preserve_inventory_and_intents",
+    "automatic_restart_or_OOS_refund": false,
+    "new_trials_failures_retries_retained_in_N": true,
+    "same_attempt_original_byte_redelivery_is_idempotent": true,
+    "resume_or_recompute": "requires_original_consumption_and_seen_result_inventory_state_and_dependency_evidence_and_upstream_single_use_budget_disposition",
+    "changed_state_sample_or_strategy_policy_requires_new_version": true
+  },
+  "R3": {
+    "nineteen_NCSR_files_without_event_fields_prove_no_legal_free_source": false,
+    "unbounded_search_required": false,
+    "isolated_B2_failure_alone_forces_QQQ_path_to_wait_for_all_B2_values": false,
+    "paid_login_KYC_new_permission_acquisition": "stop_acquisition_and_report_never_expand_authority",
+    "unreplaceable_main_path_input_cannot_close_under_legal_free_authorized_scope": "stop_version_empirical_main_path_and_report",
+    "economic_stop_condition_confirmed_this_review": false
+  },
+  "minimum_receipt_groups": [
+    "frozen_identity_permission_source_manifests_and_single_use_budget",
+    "complete_historical_N_gap_and_P02_evidence_unique_writer_and_migration",
+    "reference_registry_static_provenance_before_generation_actual_reference_receipts_before_current_S0",
+    "per_date_eligibility_and_missingness_propagation_covering_train_warmup_labels_and_test",
+    "QQQ_raw_TR_corporate_actions_integer_cash_and_order_fee_contract",
+    "engineering_independent_review_and_continuous_state_integrity",
+    "separate_nonprimary_readout_isolation_receipt_if_B2_remains_unavailable"
+  ],
+  "actual_acceptance_state": {
+    "EVO891_second_round_received": false,
+    "EVO893_received": false,
+    "complete_N": null,
+    "certified_usable_count": null,
+    "all_minimum_runtime_groups_accepted": false,
+    "EVO886_status_observed": "backlog",
+    "EVO883_status": "in_review",
+    "EVO886_launch_authorized_by_this_receipt": false,
+    "V": null,
+    "DSR": null,
+    "runtime_consumable": false,
+    "certifiable": false,
+    "shadow_clock_started": false
+  },
+  "activity": {
+    "frozen_bytes_modified": false,
+    "parameters_or_profile_changed": false,
+    "new_performance_attempts": 0,
+    "ledger_mutations": 0,
+    "new_market_or_account_queries": 0,
+    "upstream_strategy_market_or_fee_programs_executed": false
+  }
+}

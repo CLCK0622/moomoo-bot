@@ -1,0 +1,15 @@
+{
+  "authority_publication_authenticity": "Trusted versioned installation boundary; candidate JSON cannot select witness input",
+  "controlled_input_file": "fixtures/evo893/EVO891-B-ledger-v4.tip.json",
+  "current_values_hardcoded_in_source": false,
+  "formal_reads_and_appends_reload_input": true,
+  "input_sha256": "c739c88d983a3f51540d54ec175f1ca416cd01ec72c8fc29f24dc8d308a92457",
+  "loaded_anchor": {
+    "ledger_id": "37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc",
+    "n_high_water": 280,
+    "sequence": 182,
+    "tip": "c9082ec0f045796754e12506cc468a09ac88a36873aee8cacbe5cf5d0769f851"
+  },
+  "mutable_project_tip_is_separate": true,
+  "request_anchor_override_forbidden": true
+}
