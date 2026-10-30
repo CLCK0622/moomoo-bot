@@ -10,7 +10,7 @@ from qlab.dynamic_factor.conventions import (
     load_conventions as _load_conventions,
 )
 from qlab.dynamic_factor.dsr_v0 import V_PENDING, daily_sr, formula
-from qlab.dynamic_factor.folds import run_walk_forward
+from qlab.dynamic_factor.folds import _run_walk_forward_unbound as run_walk_forward
 from qlab.dynamic_factor.fees import FIXTURES, fee_frontier
 from qlab.dynamic_factor.harness import _wf, numerical_fixture
 from qlab.dynamic_factor.ledger import AttemptLedger
@@ -20,7 +20,9 @@ from qlab.dynamic_factor.pending import (
     voluntary_trade_gate,
 )
 from qlab.dynamic_factor.statistics import dsr_eval, prereg_check
-from qlab.dynamic_factor.validation import wf_manifest_check
+from qlab.dynamic_factor.validation import (
+    _wf_manifest_check_unbound as wf_manifest_check,
+)
 
 
 def load_conventions(*args, **kwargs):

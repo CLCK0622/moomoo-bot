@@ -55,7 +55,7 @@ def _features(row):
     return tuple(sorted(features.items()))
 
 
-def run_walk_forward(
+def _run_walk_forward_unbound(
     manifest, rows, *, miner_factory, fitter_factory, ledger, run_id, conventions=None
 ):
     """Create a new miner, fitter and model per fold. No strategy is bundled.
@@ -326,3 +326,31 @@ def run_walk_forward(
         ],
     )
     return conventions.bind(report) if conventions else report
+
+
+def run_walk_forward(
+    manifest, rows, *, miner_factory, fitter_factory, ledger, run_id, conventions=None
+):
+    from .conventions import load_conventions
+
+    reasons = ["wf.conventions_required"] if conventions is None else []
+    if conventions is not None and conventions != load_conventions():
+        reasons.append("wf.conventions_mismatch")
+    if conventions is not None:
+        reasons.extend(convention_manifest_reasons(manifest, conventions))
+    if reasons:
+        return result(
+            "walk_forward",
+            {"manifest": manifest, "rows": rows},
+            reasons=reasons,
+            metrics={"folds": [], "cumulative_n": None, "n_ledger_hash": None},
+        )
+    return _run_walk_forward_unbound(
+        manifest,
+        rows,
+        miner_factory=miner_factory,
+        fitter_factory=fitter_factory,
+        ledger=ledger,
+        run_id=run_id,
+        conventions=conventions,
+    )

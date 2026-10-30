@@ -81,6 +81,7 @@ def result(
             "tool": tool,
             "ok": not reasons,
             "certifiable": bool(certifiable and not reasons),
+            "runtime_consumable": False,
             "input_sha256": digest(inputs),
             "source_sha256": digest(sources),
             "source_files": sources,

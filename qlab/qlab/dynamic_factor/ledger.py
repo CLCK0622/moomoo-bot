@@ -11,10 +11,12 @@ from __future__ import annotations
 import json
 import math
 import sqlite3
+import fcntl
+from . import ledger_anchor as witness
 from contextlib import contextmanager
 from pathlib import Path
 
-from .contract import canonical, clean, digest, is_sha, result, unavailable
+from .contract import canonical, clean, digest, is_sha, result, unavailable, sha256
 
 DEFAULT_GENESIS = {
     "namespace": "evo881.dynamic_factor",
@@ -25,36 +27,61 @@ DEFAULT_GENESIS = {
 
 class AttemptLedger:
     @classmethod
-    def from_conventions(cls, path, conventions):
-        """Import the exact eight historical records as an incomplete N lower bound."""
-        p = conventions.document
+    def from_conventions(
+        cls, path, conventions, *, anchor_path=None, bootstrap_receipt=None
+    ):
         return cls(
             path,
-            dict(
-                DEFAULT_GENESIS,
-                prior_n=p["genesis"]["seed_min_N"],
-                count_complete=p["genesis"]["complete_current_N_verified"],
-                authority_source={
-                    "reference": p["genesis"]["commit"]
-                    + ":"
-                    + p["genesis"]["repo_path"],
-                    "sha256": p["genesis"]["sha256"],
-                },
-                historical_seed_rows=list(conventions.seed_rows),
-                attempt_counting_policy=p["N_counting"],
-                historical_sharpes_usable_as_active_V=p["N"][
-                    "N_seed_historical_sharpes_usable_as_active_V"
-                ],
-                **conventions.binding,
-            ),
+            bound_genesis(conventions),
+            anchor_path=anchor_path,
+            bootstrap_receipt=bootstrap_receipt,
+            _bound=True,
         )
 
-    def __init__(self, path, genesis=None):
+    def __init__(
+        self,
+        path,
+        genesis=None,
+        *,
+        anchor_path=None,
+        bootstrap_receipt=None,
+        _bound=False,
+    ):
         self.path = Path(path)
         if str(path) == ":memory:":
             raise ValueError("persistent ledger path required")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.genesis = clean(DEFAULT_GENESIS if genesis is None else genesis)
+        self.anchor_path = (
+            Path(anchor_path)
+            if anchor_path
+            else (
+                self.path.parent / ".evo881-project-tip.json"
+                if _bound
+                else self.path.with_name(self.path.name + ".tip.json")
+            )
+        )
+        if (
+            self.anchor_path.resolve() == self.path.resolve()
+            or self.anchor_path.is_symlink()
+            or self.path.is_symlink()
+        ):
+            raise ValueError("ledger.anchor_must_be_independent_regular_file")
+        self.anchor_path.parent.mkdir(parents=True, exist_ok=True)
+        self._bootstrap_receipt = bootstrap_receipt
+        self._bound = _bound
+        self._initializing = True
+        if _bound:
+            from .conventions import FIXTURES, load_conventions
+
+            version = self.genesis.get("conventions_version")
+            if version is None or self.genesis != bound_genesis(
+                load_conventions(FIXTURES / ("conventions-" + version + ".json"))
+            ):
+                raise ValueError("ledger.bound_genesis_invalid")
+
+        if self.genesis.get("conventions_sha256") and not _bound:
+            raise ValueError("ledger.bound_genesis_constructor_forbidden")
         if self.genesis.get("namespace") != DEFAULT_GENESIS["namespace"]:
             raise ValueError("isolated namespace must be evo881.dynamic_factor")
         prior = self.genesis.get("prior_n")
@@ -91,20 +118,76 @@ class AttemptLedger:
                     "genesis_mismatch: no silent history reset or rebasing"
                 )
 
+        self._initializing = False
+
     @contextmanager
     def _transaction(self):
-        db = sqlite3.connect(str(self.path), timeout=30, isolation_level=None)
-        try:
-            db.execute("PRAGMA synchronous=FULL")
-            db.execute("BEGIN IMMEDIATE")
-            yield db
-            db.execute("COMMIT")
-        except BaseException:
-            if db.in_transaction:
-                db.execute("ROLLBACK")
-            raise
-        finally:
-            db.close()
+        lock_path = self.anchor_path.with_name(self.anchor_path.name + ".lock")
+        with lock_path.open("a+b") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            anchor = (
+                witness.read(self.anchor_path) if self.anchor_path.exists() else None
+            )
+            exists = self.path.exists()
+            if anchor is not None and not exists:
+                raise ValueError("ledger.database_missing_migration_receipt_required")
+            if anchor is None and (exists or self._bound):
+                ledger_id = witness.validate_bootstrap(
+                    self._bootstrap_receipt, self.path, self.genesis
+                )
+                if exists:
+                    raise ValueError(
+                        "ledger.existing_database_requires_migration_receipt"
+                    )
+            else:
+                ledger_id = (
+                    anchor["ledger_id"]
+                    if anchor
+                    else digest({"unbound_local": self.path.name})
+                )
+            db = sqlite3.connect(str(self.path), timeout=30, isolation_level=None)
+            try:
+                db.execute("PRAGMA synchronous=FULL")
+                db.execute("BEGIN IMMEDIATE")
+                if anchor is not None:
+                    saved = json.loads(
+                        db.execute(
+                            "SELECT value FROM meta WHERE key='genesis'"
+                        ).fetchone()[0]
+                    )
+                    if saved != self.genesis:
+                        raise ValueError(
+                            "genesis_mismatch: no silent history reset or rebasing"
+                        )
+                    witness.verify(anchor, self.path, saved, witness.state(db, saved))
+                yield db
+                current = witness.state(db, self.genesis)
+                if anchor is not None and (
+                    current["sequence"] < anchor["sequence"]
+                    or current["n_high_water"] < anchor["n_high_water"]
+                    or current["local_n"] < anchor["local_n"]
+                    or current["self_report_n"] < anchor["self_report_n"]
+                ):
+                    raise ValueError("ledger.high_water_decrease")
+                db.execute("COMMIT")
+                if anchor is None or any(
+                    anchor.get(k) != v for k, v in current.items()
+                ):
+                    witness.write(
+                        self.anchor_path,
+                        dict(
+                            current,
+                            ledger_id=ledger_id,
+                            database=str(self.path.resolve()),
+                            genesis_sha256=digest(self.genesis),
+                        ),
+                    )
+            except BaseException:
+                if db.in_transaction:
+                    db.execute("ROLLBACK")
+                raise
+            finally:
+                db.close()
 
     def _events(self, db):
         return [
@@ -264,6 +347,75 @@ class AttemptLedger:
             None,
         )
 
+    def migrate(self, target, *, target_anchor, receipt):
+        """Move one identity with an operator-verified external migration receipt.
+
+        Both original DB and source witness remain. The old path is retired;
+        failures after a migration intent stop both-path continuation until a
+        separately reviewed recovery. This method never issues authorization.
+        """
+        import os
+        import shutil
+
+        target, target_anchor = Path(target), Path(target_anchor)
+        if (
+            target.exists()
+            or target_anchor.exists()
+            or target.resolve() == self.path.resolve()
+            or target.resolve() == target_anchor.resolve()
+        ):
+            raise ValueError("ledger.migration_target_not_fresh")
+        with self._transaction() as db:
+            anchor_raw = self.anchor_path.read_bytes()
+            anchor = witness.read(self.anchor_path)
+            current = witness.state(db, self.genesis)
+            expected = {
+                "action": "migrate",
+                "source_anchor_sha256": sha256(anchor_raw),
+                "ledger_id": anchor["ledger_id"],
+                "target": str(target.resolve()),
+                "target_anchor": str(target_anchor.resolve()),
+                **current,
+            }
+            if (
+                not isinstance(receipt, dict)
+                or any(receipt.get(k) != v for k, v in expected.items())
+                or not is_sha((receipt.get("authority_source") or {}).get("sha256"))
+            ):
+                raise ValueError("ledger.migration_receipt_required_or_stale")
+            receipt_sha = digest(receipt)
+            witness.write(self.anchor_path, dict(anchor, migration_pending=receipt_sha))
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target_anchor.parent.mkdir(parents=True, exist_ok=True)
+            with self.path.open("rb") as source, target.open("xb") as destination:
+                shutil.copyfileobj(source, destination)
+                destination.flush()
+                os.fsync(destination.fileno())
+            with sqlite3.connect(target) as copied:
+                if witness.state(copied, self.genesis) != current:
+                    raise ValueError("ledger.migration_copy_identity_mismatch")
+            witness.write(
+                target_anchor,
+                dict(
+                    anchor,
+                    database=str(target.resolve()),
+                    migration_receipt_sha256=receipt_sha,
+                ),
+            )
+            witness.write(
+                self.anchor_path,
+                dict(
+                    anchor,
+                    migrated_to=str(target.resolve()),
+                    migration_receipt_sha256=receipt_sha,
+                ),
+            )
+        return {
+            "ledger_id": anchor["ledger_id"],
+            "migration_receipt_sha256": receipt_sha,
+            "n_ledger_hash": current["snapshot_sha256"],
+        }
+
     def snapshot(self):
         with self._transaction() as db:
             events = self._events(db)
@@ -381,3 +533,35 @@ class AttemptLedger:
                 "certifiable": False,
                 "reasons": ["ledger_unreadable_or_corrupt"],
             }
+
+
+def bound_genesis(conventions):
+    """Revalidate actual seed bytes and the loader object, not its self-reported SHA."""
+    from .conventions import FIXTURES, load_conventions
+
+    version = conventions.document["version"]
+    known = load_conventions(FIXTURES / ("conventions-" + version + ".json"))
+    if known != conventions:
+        raise ValueError("ledger.conventions_or_seed_bytes_mismatch")
+    p = known.document
+    rows = list(known.seed_rows)
+    if (
+        sha256(known.seed_raw) != p["genesis"]["sha256"]
+        or len(rows) != 8
+        or sum(r["n_trials_total"] for r in rows) != 47
+        or p["genesis"]["complete_current_N_verified"] is not False
+    ):
+        raise ValueError("ledger.seed_identity_or_completeness_invalid")
+    return dict(
+        DEFAULT_GENESIS,
+        prior_n=p["genesis"]["seed_min_N"],
+        count_complete=False,
+        authority_source={
+            "reference": p["genesis"]["commit"] + ":" + p["genesis"]["repo_path"],
+            "sha256": p["genesis"]["sha256"],
+        },
+        historical_seed_rows=rows,
+        attempt_counting_policy=p["N_counting"],
+        historical_sharpes_usable_as_active_V=False,
+        **known.binding,
+    )

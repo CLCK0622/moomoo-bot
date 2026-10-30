@@ -3,7 +3,9 @@ from copy import deepcopy
 import pytest
 
 from qlab.dynamic_factor.harness import _wf
-from qlab.dynamic_factor.validation import wf_manifest_check
+from qlab.dynamic_factor.validation import (
+    _wf_manifest_check_unbound as wf_manifest_check,
+)
 
 
 def test_valid_manifest_is_validation_only():

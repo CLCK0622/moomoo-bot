@@ -12,7 +12,7 @@ import math
 from copy import deepcopy
 from pathlib import Path
 
-from .contract import digest, is_sha, result, sha256, unavailable
+from .contract import digest, is_sha, sha256
 from .conventions import arithmetic
 from .dsr_v0 import formula, variance
 from .fees import finite
@@ -285,6 +285,12 @@ def run_train_pipeline(
     build_meta(pool, frozen_calibration) -> {returns}.
     Errors retain every proposal and stop downstream work; no rescue/reselection.
     """
+    if policy.document.get("runtime_consumable", False) is False:
+        return {
+            "candidate": None,
+            "meta": None,
+            "reason": "dsr.runtime_bindings_pending",
+        }
     context, proposals, registry = deepcopy((context, proposals, registry))
     proposal_hash = digest(proposals)
     key = f"v02/{run_id}/{context.get('fold_id')}"
@@ -476,110 +482,9 @@ def run_train_pipeline(
 
 
 def evaluate(request, ledger, policy):
-    """Read sealed layer results only; supplied V/SR cannot rescore a pool."""
-    metrics = {"dsr": None, "trials_variance": None, "pool": None, "passed": False}
-    s = ledger.safe_snapshot()
-    metrics.update(
-        cumulative_n=s["cumulative_n"],
-        cumulative_n_lower_bound=s["cumulative_n_lower_bound"],
-        n_ledger_hash=s["n_ledger_hash"],
-    )
-    reasons = list(s["reasons"])
-    try:
-        if s["events"] is None:
-            raise ValueError("ledger_unreadable_or_corrupt")
-        if not isinstance(request, dict):
-            raise ValueError("dsr.request_invalid")
-        if any(k in request for k in ("v", "trials_variance", "sharpe")):
-            raise ValueError("dsr.scalar_v_or_sr_forbidden")
-        if request.get("layer") == "oos":
-            if (
-                request.get("return_basis") != policy.document["N"]["DSR_SR_basis"]
-                or request.get("return_scale") != "daily"
-            ):
-                raise ValueError("dsr.scale_or_basis_mismatch")
-            expected = [str(f["fold_id"]) for f in policy.date_manifest["folds"]]
-            idx = {d: i for i, d in enumerate(policy.calendar)}
-            dates = [
-                d
-                for f in policy.date_manifest["folds"]
-                for d in policy.calendar[
-                    idx[f["test_dates_inclusive"][0]] : idx[
-                        f["test_dates_inclusive"][1]
-                    ]
-                    + 1
-                ]
-            ]
-            if request.get("return_dates") != dates or len(request["returns"]) != len(
-                dates
-            ):
-                raise ValueError("dsr.oos_return_calendar_mismatch")
-            if set(request["fold_runs"]) != set(expected):
-                raise ValueError("dsr.oos_fold_v_or_complete_n_missing")
-            receipts = {}
-            for fid in expected:
-                key = f"v02/{request['fold_runs'][fid]}/{fid}"
-                pin = ledger.recorded(key + "/S0")
-                if pin is None or pin["conventions_sha256"] != policy.raw_sha256:
-                    raise ValueError("dsr.v02_stage_receipt_missing")
-                price_basis_check(pin["context"])
-                receipts[fid] = ledger.recorded(key + "/S4")
-                if receipts[fid] is None:
-                    raise ValueError("dsr.oos_fold_v_or_complete_n_missing")
-            n = _n_snapshot(ledger, request["self_report_n"])
-            metrics.update(oos_dsr(request["returns"], receipts, expected, n, policy))
-            metrics["passed"] = False
-            return policy.bind(
-                result(
-                    "dsr_eval",
-                    {"request": request, "ledger": ledger.snapshot()},
-                    metrics=metrics,
-                    reasons=reasons,
-                    assumptions=[
-                        "V_report is the max of every frozen fold train meta V; no OOS controls or reselection."
-                    ],
-                )
-            )
-        key = f"v02/{request['run_id']}/{request['fold_id']}"
-        pin = ledger.recorded(key + "/S0")
-        if pin is None or pin["conventions_sha256"] != policy.raw_sha256:
-            raise ValueError("dsr.v02_stage_receipt_missing")
-        layer = request["layer"]
-        if layer not in ("candidate", "meta"):
-            raise ValueError("dsr.layer_invalid")
-        data = ledger.recorded(key + ("/S2" if layer == "candidate" else "/S4"))
-        if data is None:
-            failure = ledger.recorded(key + "/failure")
-            raise ValueError(failure["reason"] if failure else "dsr.layer_unavailable")
-        metrics.update(data)
-        metrics.update(
-            gate_n_ledger_hash=data["n_ledger_hash"],
-            n_ledger_hash=s["n_ledger_hash"],
-            cumulative_n=s["cumulative_n"],
-        )
-        if layer == "candidate" and request.get("candidate_id") is not None:
-            metrics.update(data["evaluations"][request["candidate_id"]])
-        metrics["passed"] = False
-    except (ValueError, KeyError, TypeError) as exc:
-        reasons.append(str(exc) if isinstance(exc, ValueError) else "dsr.input_invalid")
-    return policy.bind(
-        result(
-            "dsr_eval",
-            {"request": request, "ledger": s},
-            metrics=metrics,
-            reasons=reasons,
-            missing=[r for r in reasons if "missing" in r or "unverified" in r],
-            availability={
-                k: unavailable(reasons[0] if reasons else "dsr.layer_unavailable")
-                if metrics[k] is None
-                else {"available": True, "reason": None}
-                for k in ("dsr", "trials_variance", "pool")
-            },
-            assumptions=[
-                "Sealed train diagnostics only; meta never feeds candidate selection. Full N and verified price basis are required before admission."
-            ],
-        )
-    )
+    from .statistics import dsr_eval
+
+    return dsr_eval(request, ledger, conventions=policy)
 
 
 def oos_dsr(returns, fold_receipts, expected_fold_ids, n_snapshot, policy):

@@ -14,11 +14,11 @@ from unittest.mock import patch
 from .contract import digest, sha256, source_manifest
 from .conventions import load_conventions
 from .fees import FIXTURES, fee_frontier
-from .folds import run_walk_forward
+from .folds import _run_walk_forward_unbound as run_walk_forward
 from .ledger import AttemptLedger
 from .receipts import IntentJournal, shadow_readout
 from .statistics import dsr_eval
-from .validation import wf_manifest_check
+from .validation import _wf_manifest_check_unbound as wf_manifest_check
 
 
 def require(condition, message):

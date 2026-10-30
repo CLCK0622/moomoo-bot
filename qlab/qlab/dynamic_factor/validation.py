@@ -102,7 +102,7 @@ def jump_reversals(rows, config, index):
     return found
 
 
-def wf_manifest_check(manifest, *, conventions=None):
+def _wf_manifest_check_unbound(manifest, *, conventions=None):
     reasons, issues = [], {}
     try:
         index = calendar_index(manifest["calendar"])
@@ -197,3 +197,21 @@ def wf_manifest_check(manifest, *, conventions=None):
         ],
     )
     return conventions.bind(report) if conventions else report
+
+
+def wf_manifest_check(manifest, *, conventions=None):
+    from .conventions import load_conventions
+
+    reasons = ["wf.conventions_required"] if conventions is None else []
+    if conventions is not None and conventions != load_conventions():
+        reasons.append("wf.conventions_mismatch")
+    if conventions is not None:
+        reasons.extend(convention_manifest_reasons(manifest, conventions))
+    if reasons:
+        return result(
+            "wf_manifest_check",
+            {"manifest": manifest},
+            reasons=reasons,
+            metrics={"beta": None, "information_ratio": None, "series_checks": {}},
+        )
+    return _wf_manifest_check_unbound(manifest, conventions=conventions)

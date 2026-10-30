@@ -42,6 +42,8 @@ def main():
     parser.add_argument("--schedule", type=Path)
     parser.add_argument("--ledger", type=Path)
     parser.add_argument("--genesis", type=Path)
+    parser.add_argument("--ledger-anchor", type=Path)
+    parser.add_argument("--ledger-bootstrap", type=Path)
     parser.add_argument(
         "--conventions",
         type=Path,
@@ -63,6 +65,10 @@ def main():
             if args.conventions
             else None
         )
+        if args.tool in ("dsr_eval", "wf_manifest_check") and policy is None:
+            raise ConventionConflict("wf.conventions_required")
+        if args.genesis is not None and policy is not None:
+            raise ConventionConflict("ledger.custom_genesis_forbidden")
         if args.tool == "fee_frontier":
             if args.params is None:
                 raise ValueError("--params required")
@@ -75,7 +81,14 @@ def main():
             ledger = (
                 AttemptLedger(args.ledger, genesis)
                 if genesis is not None or policy is None
-                else AttemptLedger.from_conventions(args.ledger, policy)
+                else AttemptLedger.from_conventions(
+                    args.ledger,
+                    policy,
+                    anchor_path=args.ledger_anchor,
+                    bootstrap_receipt=json.loads(args.ledger_bootstrap.read_bytes())
+                    if args.ledger_bootstrap
+                    else None,
+                )
             )
             report = dsr_eval(
                 request.get("metrics", {}),
@@ -89,7 +102,14 @@ def main():
 
             if policy is None or args.ledger is None:
                 raise ValueError("--conventions and --ledger required")
-            ledger = AttemptLedger.from_conventions(args.ledger, policy)
+            ledger = AttemptLedger.from_conventions(
+                args.ledger,
+                policy,
+                anchor_path=args.ledger_anchor,
+                bootstrap_receipt=json.loads(args.ledger_bootstrap.read_bytes())
+                if args.ledger_bootstrap
+                else None,
+            )
             intent = lock_startup_intent(
                 request["position"],
                 request["previous_nav"],
@@ -123,14 +143,28 @@ def main():
             if args.tool == "voluntary_trade_gate":
                 if args.ledger is None:
                     raise ValueError("--ledger required")
-                ledger = AttemptLedger.from_conventions(args.ledger, policy)
+                ledger = AttemptLedger.from_conventions(
+                    args.ledger,
+                    policy,
+                    anchor_path=args.ledger_anchor,
+                    bootstrap_receipt=json.loads(args.ledger_bootstrap.read_bytes())
+                    if args.ledger_bootstrap
+                    else None,
+                )
                 report = voluntary_trade_gate(
                     request, conventions=policy, ledger=ledger
                 )
             else:
                 if args.ledger is None:
                     raise ValueError("--ledger required")
-                ledger = AttemptLedger.from_conventions(args.ledger, policy)
+                ledger = AttemptLedger.from_conventions(
+                    args.ledger,
+                    policy,
+                    anchor_path=args.ledger_anchor,
+                    bootstrap_receipt=json.loads(args.ledger_bootstrap.read_bytes())
+                    if args.ledger_bootstrap
+                    else None,
+                )
                 report = {
                     "pool_admission_check": pool_admission_check,
                     "initial_build_turnover_check": initial_build_turnover_check,
