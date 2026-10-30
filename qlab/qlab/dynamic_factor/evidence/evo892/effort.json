@@ -1,0 +1,16 @@
+{
+  "scope": "Current run: R1 and P3 delivery; prepared input increment parked per upstream sequencing. Entire run charged as conservative producer upper bound.",
+  "started_at": "2026-10-30T04:13:59Z",
+  "as_of": "2026-10-30T04:42:30Z",
+  "elapsed_seconds_as_of": 1711,
+  "agent_day_hours": 8,
+  "actual_agent_days_as_of": 0.05941,
+  "current_turn_upper_bound_minutes": 35,
+  "prior_producer_upper_bound_agent_days": 0.130764,
+  "producer_cumulative_upper_bound_agent_days": 0.203681,
+  "producer_budget_agent_days": 0.5,
+  "budget_exceeded": false,
+  "accounting": "Includes prepared increment time already incurred; do not charge that preparation again on resumption. Handoff overhead bounded by the remaining portion of the 35-minute envelope.",
+  "actual_reference_performance_attempts": 0,
+  "project_ledger_mutations": 0
+}

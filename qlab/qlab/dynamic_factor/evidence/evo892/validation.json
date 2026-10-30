@@ -1,32 +1,57 @@
 {
-  "N_writer_invoked": false,
   "actual_reference_returns_generated": false,
   "actual_reference_run_id": null,
+  "authority_vendor_parity": "all state fields equal, including ledger_id, seq20, tip, N75 and high-water75",
   "canonical_recipe": "remove entire root dependencies key; UTF8 sorted keys ensure_ascii=False compact separators; no trailing newline",
-  "canonical_without_dependencies_sha256": "4dc8b0a6de3981909b4976dc4b6ea27c1c8e118f5268aa1de1d1817f9003da29",
+  "canonical_without_dependencies_sha256": "03a6e6d9bbc7394cedc2966346b6ea5518d91e80eb9f34a4002a4c9d1466b1ea",
   "certifiable": false,
-  "cross_interpreter_only_difference": "dependencies.python (3.12.13 vs 3.9.6)",
+  "complete_N": null,
+  "cross_interpreter_only_difference": "dependencies.python (3.9.6 vs 3.12.13)",
   "evo886_status_before_seal": "backlog",
+  "fees": "research budget applies restored TAF to all dates; effective-date switching is not the research policy",
   "harness_cases": {
+    "R1_and_authority_cases": 4,
     "fixed": 10,
     "required_EVO892_negatives": 7,
-    "revision": 26
+    "revision": 30
   },
-  "harness_sha256": "53aa3519d0744fad51fa5aed9db2e865d8aec23705fda80b3f228a268f1ce59e",
-  "lineage_proof_sha256": "4c82ae5499a53908693363dfdbd1d9394b390b43fbe5f97819ce4a99c572f8f8",
+  "harness_sha256": {
+    "python312": "d3a72eeaab5cd5c81cad53288d21628717bd79ddae94cc0eadd5d5ab0e2372c3",
+    "python39": "e1f4699ea81255edfa802a57c1bb07c1a884d7e79b65a57048b9d386657ceca3"
+  },
+  "historical_ff5f35d_SHA_correction": {
+    "3.12.13": "9889dc06…306c",
+    "3.9.6": "c3c4dd86…7cc7"
+  },
+  "implementation_commits": {
+    "P3": "39306a5",
+    "R1": "6eb0a3a"
+  },
+  "lineage_proof_sha256": "86eb0d75b694451e0917fdc25fa8c4a649b5e15ee35dd109bb4c3d3c25ef2931",
+  "n_complete": false,
   "network_requests": 0,
-  "python": "3.12.13",
-  "python39_harness_sha256": "52018bb4e0b9dd126f27cb1192440e1fcc6e504313214c3b8c9e49c35fbf8430",
-  "ruff": "check and format --check pass; 0.14.3",
+  "project_N_writer_invoked": false,
+  "recorded_N": 75,
+  "ruff": "0.14.3 check and format --check pass",
   "runtime_consumable": false,
-  "sealed_at": "2026-10-30T04:10:11Z",
-  "static_seal_sha256": "0f854eeac44cfc8a73be2c2cbe3f2fe1f1da6ce6de88a52de3dbafb6e5ade336",
+  "scope": "R1/P3/external-anchor only; new input disposition remains deferred for upstream dispatch",
+  "sealed_at": "2026-10-30T04:40:56Z",
+  "static_seal_sha256": "7dc1423ba153a93ff0661228504016fd8eb238d415d03263e5cbdd967a2783f4",
   "strategy_backtests": 0,
   "tests": {
-    "command": "PYTHONPATH=qlab:. python -m pytest qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q --tb=short",
-    "dynamic_factor": 141,
-    "passed": 149,
-    "qlib": 8
+    "3.12.13": {
+      "passed": 158,
+      "skipped_modules": 0
+    },
+    "3.9.6": {
+      "passed": 150,
+      "reason": "qlib unavailable; optional module contains 8 cases",
+      "skipped_modules": 1
+    },
+    "command": "PYTHONPATH=qlab:. python -m pytest qlab/tests/dynamic_factor qlab/tests/test_qlib_gen.py -q --tb=short -rs",
+    "dynamic_factor": 150,
+    "optional_qlib": 8
   },
-  "two_same_interpreter_processes_byte_identical": true
+  "two_same_interpreter_processes_byte_identical": true,
+  "unit_writers_on_private_copies": true
 }

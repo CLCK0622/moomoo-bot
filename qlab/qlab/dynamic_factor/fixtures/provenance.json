@@ -29,6 +29,46 @@
     "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
     "source_member": "EVO883-executable-conventions-v1.0.1.json"
   },
+  "evo891/EVO891-B-ledger-v2.jsonl": {
+    "sha256": "a8f50e02644ec4a86460f8038b89edcbc1811352e5bf320dca592cef6abcb87e",
+    "source": "EVO891 B v2 via authenticated CLI; unchanged source, external continuation anchor seq20/N75; not complete N"
+  },
+  "evo891/EVO891-B-ledger-v2.py": {
+    "sha256": "36ab3dd0cfc7d9c68a0e9ab2f0cc5774f0f7ccb260a2db61b36abbe040181969",
+    "source": "EVO891 B v2 via authenticated CLI; unchanged source, external continuation anchor seq20/N75; not complete N"
+  },
+  "evo891/EVO891-B-ledger-v2.tip.json": {
+    "sha256": "0112ac10c6f3499fbde276e60779b675be4c6c3dd4bad12581736add4c2960f2",
+    "source": "EVO891 B v2 via authenticated CLI; unchanged source, external continuation anchor seq20/N75; not complete N"
+  },
+  "evo892/candidate_reference_manifest.json": {
+    "sha256": "17c0080003bc984029dc8954486798d9b821eff79a369307e2fa8e8e39eabfc4",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/fold-bindings.json": {
+    "sha256": "8c40536cf6cc1780a61081548c5935256e2080e50e82c7c2953b051901ea0514",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/lineage-plan.json": {
+    "sha256": "20247efaa46ae945dd0dc7a94fb29683c5fa404e5039e79f92a223dc39e9182b",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/meta_reference_manifest.json": {
+    "sha256": "c6fa724aa501d346de2f6ace28afe971eabd4777cc8a0f3850bb849e37bba4f4",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/platform-anchor.json": {
+    "sha256": "7d09b4916178a7f9bb223133e778fdcbf830988c2c9990b7497d58fff6b4b3f8",
+    "source": "Authenticated Multica CLI comment metadata snapshot; not an independent review"
+  },
+  "evo892/predeclared_reference_registry.json": {
+    "sha256": "83c9d47f375235faf0021342ff2e0a36b8cdc46a58975da8b31c50bd73aea3b2",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
+  "evo892/runtime-evidence-contract.json": {
+    "sha256": "98d1a2d49a054c1167e6744758d1dcdbfa65d3ca2474033b5102c0f2c812fec6",
+    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
+  },
   "fee_params_x1.json": {
     "sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
     "source_member": "evo882/fee/fee_params_x1.json",
@@ -73,33 +113,5 @@
     "sha256": "2fe8eede3b04328dc468eb6fdce7d60686b5e807aa57e8869e8eea24e91a1cc6",
     "source": "EVO883 v1 freeze / v1.0.1 correction via authenticated CLI",
     "source_member": "EVO883-supplement-disposition-v03.json"
-  },
-  "evo892/candidate_reference_manifest.json": {
-    "sha256": "17c0080003bc984029dc8954486798d9b821eff79a369307e2fa8e8e39eabfc4",
-    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
-  },
-  "evo892/fold-bindings.json": {
-    "sha256": "8c40536cf6cc1780a61081548c5935256e2080e50e82c7c2953b051901ea0514",
-    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
-  },
-  "evo892/lineage-plan.json": {
-    "sha256": "20247efaa46ae945dd0dc7a94fb29683c5fa404e5039e79f92a223dc39e9182b",
-    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
-  },
-  "evo892/meta_reference_manifest.json": {
-    "sha256": "c6fa724aa501d346de2f6ace28afe971eabd4777cc8a0f3850bb849e37bba4f4",
-    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
-  },
-  "evo892/platform-anchor.json": {
-    "sha256": "7d09b4916178a7f9bb223133e778fdcbf830988c2c9990b7497d58fff6b4b3f8",
-    "source": "Authenticated Multica CLI comment metadata snapshot; not an independent review"
-  },
-  "evo892/predeclared_reference_registry.json": {
-    "sha256": "83c9d47f375235faf0021342ff2e0a36b8cdc46a58975da8b31c50bd73aea3b2",
-    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
-  },
-  "evo892/runtime-evidence-contract.json": {
-    "sha256": "98d1a2d49a054c1167e6744758d1dcdbfa65d3ca2474033b5102c0f2c812fec6",
-    "source": "EVO892 comment 01a18ad3-1902-7e98-9148-ef585c05ce82; exact ZIP bytes"
   }
 }

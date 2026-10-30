@@ -1,0 +1,575 @@
+{
+  "cases": [
+    {
+      "case_id": "fee.positive_gross_negative_net",
+      "input_sha256": "09527cf9b3582b4a2d84d2fc15aca08acc4b515504cda1036fcb03ea1178b852",
+      "observed": {
+        "net_edge_bps": -10
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "trial.failed_attempts_persist",
+      "input_sha256": "32ad7a206755050913ac9e310b4ca2109ba320538996e155384c1994cbbabed3",
+      "observed": {
+        "cumulative_n": null,
+        "local_attempts_n": 5,
+        "n_ledger_hash": "f0366aea35c66384f80e4c9273b50a4dfc5068ca7b3ac3c04c0545a8fe140c9a",
+        "restart_equal": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "wf.future_label_rejected",
+      "input_sha256": "f415097911eeee7ed7e154f1afdf61675491c176b2d30d493ab95f3e7d121287",
+      "observed": {
+        "full_history_rejected": true,
+        "label_rejected": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "dsr.scale_and_v_required",
+      "input_sha256": "38ae730e6aa3625c8855cfa14fa371989f84a25b74905ef4254ee32df7d936df",
+      "observed": {
+        "cumulative_n": null,
+        "dsr": null,
+        "reason": "dsr.runtime_bindings_pending",
+        "scalar_V_rejected": true,
+        "seed_lower_bound": 47,
+        "trials_variance": null
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "paper.partial_is_incomplete",
+      "input_sha256": "47df682686e1510a0399d29f1e029bfb1873acf157a498b5223d4fd17411d078",
+      "observed": {
+        "confirmed_qty": 60,
+        "residual_qty": 40
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "paper.failed_hedge_retains_risk",
+      "input_sha256": "1a3146de6736fabd5a3968a382a7a2fb0d863bd7ba0c357225f827d491fb19d3",
+      "observed": {
+        "actual_exposure": 100,
+        "hedge_verified": false
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "nav.missing_mark_is_unknown",
+      "input_sha256": "a42a9eff5c4216a184e3d5b2dc515db8e5d46b946b5a0e66f6437ec4ff1c0c98",
+      "observed": {
+        "sharpe": null,
+        "valuation_complete": false
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "intent.retry_requires_reconcile",
+      "input_sha256": "bc598a975697ba8acc92384101414d41e64a9c58ea1f8dd611fc43d0a5f6db65",
+      "observed": {
+        "retry_registered": false,
+        "unknown_blocks_next": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "cost.cash_vs_reference_no_double",
+      "input_sha256": "d8eaa7d7a91508d405b71a929e3c8bc1c994c9541cfb80f4287cfb02cb2e3259",
+      "observed": {
+        "cash_x1_friction_deducted_bps": 0,
+        "cash_x2_increment_bps": 4
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "data.benchmark_calendar_gap",
+      "input_sha256": "3cdb0fd4af540c2c639d0a9fd32a3de0bfb3d0a2e8b5fdda7527bac3416c9a94",
+      "observed": {
+        "beta": null,
+        "date_reasons": {
+          "2011-07-01": [
+            "data.calendar_gap"
+          ],
+          "2011-07-04": [
+            "data.nontrading_bar",
+            "data.jump_reversal"
+          ],
+          "2012-04-06": [
+            "data.nontrading_bar"
+          ],
+          "2012-05-28": [
+            "data.nontrading_bar"
+          ],
+          "2012-05-29": [
+            "data.calendar_gap"
+          ]
+        },
+        "information_ratio": null,
+        "spy_anomalies_sha256": "39c3ebee74ff68fc04227dd870a60bfa1e69f61e1988dcb8e7f6902246587ed9",
+        "trading_day_reversal_rejected": true
+      },
+      "status": "PASS"
+    }
+  ],
+  "cases_passed": 10,
+  "certifiable": false,
+  "certification": false,
+  "common_profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+  "conventions_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+  "conventions_status": "FROZEN_DESIGN_INTERFACE_EXECUTION_GATES_UNMET",
+  "conventions_version": "v1.0.1",
+  "dependencies": {
+    "external": [],
+    "python": "3.9.6"
+  },
+  "fixture_sha256": {
+    "calendar-folds-v0.1.json": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+    "calendar_gap_scan.json": "bc5423d7412618dcac3ddef095b668d787407b5b9a854fb0c022daf3656c75e8",
+    "common-calendar-v0.1.txt": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "conventions-v0.1.json": "2e65c77849b936d44c864b056be134e030ddf7f27e746072b70fffe631acf69b",
+    "conventions-v0.2.json": "b873b30b754695bef82ff37b95fc7628b0cc45ad7eb76e9cb091f9164cfc0a17",
+    "conventions-v1.0.1.json": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+    "evo891/.ruff_cache/.gitignore": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316",
+    "evo891/.ruff_cache/CACHEDIR.TAG": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae",
+    "evo891/EVO891-B-ledger-v2.jsonl": "a8f50e02644ec4a86460f8038b89edcbc1811352e5bf320dca592cef6abcb87e",
+    "evo891/EVO891-B-ledger-v2.py": "36ab3dd0cfc7d9c68a0e9ab2f0cc5774f0f7ccb260a2db61b36abbe040181969",
+    "evo891/EVO891-B-ledger-v2.tip.json": "0112ac10c6f3499fbde276e60779b675be4c6c3dd4bad12581736add4c2960f2",
+    "evo891/ruff.toml": "9b258d8960a4710b08bf4603ac6994a0ecca4a30b87c37d9d0e0910316f01eca",
+    "evo892/candidate_reference_manifest.json": "17c0080003bc984029dc8954486798d9b821eff79a369307e2fa8e8e39eabfc4",
+    "evo892/fold-bindings.json": "8c40536cf6cc1780a61081548c5935256e2080e50e82c7c2953b051901ea0514",
+    "evo892/lineage-plan.json": "20247efaa46ae945dd0dc7a94fb29683c5fa404e5039e79f92a223dc39e9182b",
+    "evo892/meta_reference_manifest.json": "c6fa724aa501d346de2f6ace28afe971eabd4777cc8a0f3850bb849e37bba4f4",
+    "evo892/platform-anchor.json": "7d09b4916178a7f9bb223133e778fdcbf830988c2c9990b7497d58fff6b4b3f8",
+    "evo892/predeclared_reference_registry.json": "83c9d47f375235faf0021342ff2e0a36b8cdc46a58975da8b31c50bd73aea3b2",
+    "evo892/runtime-evidence-contract.json": "98d1a2d49a054c1167e6744758d1dcdbfa65d3ca2474033b5102c0f2c812fec6",
+    "fee_params_x1.json": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    "fee_params_x2.json": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+    "fee_schedule.json": "c400412f361a659290289517adf640e1fc2610560e203dc79bf76975e87c7fd9",
+    "harness_cases.json": "dfde628ee0c5f7759488636281eda76ea44c763109ad92f20a06dd6e7cfadca0",
+    "historical-seed-e51f8023.jsonl": "76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b",
+    "prereg-v1-draft2.json": "39dac21665e980831f27a154b845341178100028a2ab0ff0741ca982d73e55b8",
+    "prereg-v1.json": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "provenance.json": "b58dadee3656e700342d9bb206f2e51be085810ca4bc5473f69495fa58c3e04a",
+    "qqq-events-v1.csv": "1ab413d1a1c4118ae58d21e476454502d613f1c88914a9076b90de8fa6247c87",
+    "spy-anomalies.json": "39c3ebee74ff68fc04227dd870a60bfa1e69f61e1988dcb8e7f6902246587ed9",
+    "supplement-disposition-v1.json": "2fe8eede3b04328dc468eb6fdce7d60686b5e807aa57e8869e8eea24e91a1cc6"
+  },
+  "network_attempts": 0,
+  "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+  "prereg_version": "v1",
+  "profile_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+  "revision_cases": [
+    {
+      "case_id": "audit.fold_unbound_short_embargo",
+      "observed": {
+        "adapter_calls": 0,
+        "refused": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "audit.ledger_tail",
+      "observed": {
+        "n": null,
+        "read_and_append_refused": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "audit.ledger_all",
+      "observed": {
+        "n": null,
+        "read_and_append_refused": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "audit.ledger_old_snapshot",
+      "observed": {
+        "n": null,
+        "read_and_append_refused": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "audit.ledger_new_db_requires_receipt",
+      "observed": {
+        "refused": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "audit.seed_actual_bytes_required",
+      "observed": {
+        "refused": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "audit.CLI_bound_genesis_override",
+      "observed": {
+        "refused_before_DB_creation": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "audit.pending_legacy_certification_bypass",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "plugin_calls": 0
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.registry_missing",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.registry_missing"
+        ]
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.registry_sha",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.manifest_sha_mismatch"
+        ]
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.registry_member",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.member_not_registered_or_incomplete"
+        ]
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.all_trials_count_N",
+      "observed": {
+        "complete_N": null,
+        "reference_attempts": 4
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.producer_candidate_read_refused",
+      "observed": {
+        "proof": {
+          "forbidden_inputs": [
+            "candidate_returns",
+            "candidate_SR",
+            "pool",
+            "meta_returns",
+            "meta_SR"
+          ],
+          "import_graph": {
+            "fold_split": [
+              "dataclasses"
+            ],
+            "reference_guard": [
+              "os",
+              "pathlib",
+              "sys"
+            ],
+            "reference_inputs": [
+              "hashlib",
+              "json",
+              "pathlib"
+            ],
+            "reference_producer": [
+              "argparse",
+              "fold_split",
+              "hashlib",
+              "json",
+              "reference_guard",
+              "reference_inputs"
+            ]
+          },
+          "read_whitelist": {
+            "benchmark": "benchmark.json",
+            "panel": "panel.json",
+            "profile": "profile.json"
+          },
+          "reader_sites": [
+            {
+              "line": 36,
+              "module": "reference_inputs",
+              "roles": [
+                "panel",
+                "benchmark",
+                "profile"
+              ]
+            }
+          ],
+          "scope": "static proof for pinned trusted source, not an arbitrary Python OS sandbox",
+          "shared_splitter_sha256": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+          "source_files": {
+            "fold_split.py": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+            "reference_guard.py": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+            "reference_inputs.py": "61456de83ed02066952f79cf2231c3b428619c52dfb6e767ce68222aa86234b3",
+            "reference_producer.py": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c"
+          },
+          "source_sha256": "8f7b72cacfe2431453e9f0888bcb1a9c92dc62026b55e8fea716f512c7c81e0b"
+        },
+        "refused": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "data.VTI_missing_evidence_no_SPY_fallback",
+      "observed": {
+        "B2": null,
+        "reason": "data.vti_evidence_missing"
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "fee.partial_cumulative_increment",
+      "observed": {
+        "actual_fee": null,
+        "research_cost": 20.0
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "fee.new_rate_receipt_gap",
+      "observed": {
+        "cost": null,
+        "new_risk_refused": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "valuation.analytical_D_not_spendable_cash",
+      "observed": {
+        "known_cash": 100,
+        "nav": null,
+        "receivable": null
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "gain.NAV_units_math_only",
+      "observed": {
+        "G": 0.002,
+        "K": 0.003,
+        "allowed": false
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "dsr.formula_external_V_math_only",
+      "observed": {
+        "pure_formula_DSR": 0.6265006201845557,
+        "runtime_DSR": null
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.runtime.missing_registry_or_platform_anchor",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.platform_anchor_missing_or_mismatch"
+        ]
+      },
+      "required_case": "missing_registry_or_platform_anchor",
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.runtime.definition_SHA_mismatch",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.manifest_sha_mismatch"
+        ]
+      },
+      "required_case": "definition_SHA_mismatch",
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.runtime.member_added_removed_or_wrong_role",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.member_not_registered_or_incomplete"
+        ]
+      },
+      "required_case": "member_added_removed_or_wrong_role",
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.runtime.current_output_copy_or_result_cache_read",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.current_output_copy_or_result_cache_read"
+        ]
+      },
+      "required_case": "current_output_copy_or_result_cache_read",
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.runtime.different_splitter_or_short_train_or_visible_test",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.different_splitter_or_short_train_or_visible_test"
+        ]
+      },
+      "required_case": "different_splitter_or_short_train_or_visible_test",
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.runtime.failed_trial_or_NaN_SR",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.failed_trial_or_NaN_SR"
+        ]
+      },
+      "required_case": "failed_trial_or_NaN_SR",
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "reference.runtime.complete_N_missing_or_retry_not_counted",
+      "observed": {
+        "V": null,
+        "dsr": null,
+        "reasons": [
+          "reference.complete_N_missing_or_retry_not_counted"
+        ]
+      },
+      "required_case": "complete_N_missing_or_retry_not_counted",
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "ledger.authority_vendor_parity",
+      "observed": {
+        "N": 75,
+        "genesis_sha256": "b86ed0e55afabd8d2873db317cf93e35cb23d2a43905eda6e9961fcb921d44ab",
+        "last_checkpoint_seq": 20,
+        "ledger_id": "37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc",
+        "n_high_water": 75,
+        "self_report_n": 0,
+        "sequence": 20,
+        "snapshot_sha256": "c4cd7f09cc888a541317cffcb5b90366d6c2c82377ba97b40ed72e627a63bcbc",
+        "tip": "9e3220aa6aa6dcc7f2a03c4f1f917b2da40af78c90173156f6ca4e9efd8e9c0d"
+      },
+      "status": "PASS",
+      "strategy_performance_read": false
+    },
+    {
+      "case_id": "ledger.external_anchor_mismatch_append",
+      "observed": {
+        "rejected_before_mutation": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case_id": "audit.new_reset_retargeted_bootstrap",
+      "observed": {
+        "old_high_water": 500,
+        "refused": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    },
+    {
+      "case_id": "audit.CLI_retargeted_bootstrap",
+      "observed": {
+        "refused_before_creation": true,
+        "source_witness_unchanged": true
+      },
+      "status": "PASS",
+      "synthetic_only": true
+    }
+  ],
+  "revision_cases_passed": 30,
+  "runtime_consumable": false,
+  "schema": "dynamic_factor.harness/v1",
+  "source_files": {
+    "__init__.py": "06af6993da8dcb49ff75936b7b5e327424b753802687d92dda74033c15efd797",
+    "__main__.py": "00a2a1a64f5ca1f783098d248061e025b4215300d69af2d0427f046b42165299",
+    "authority_harness.py": "0365490e6cba4ba8e9421d9f7650059beb701f6a334d55acdf2a346f00e2423c",
+    "authority_ledger.py": "7bfae64bf1fdc967894857066286bec63acc859e762c2f49d4bfe5a7022aacd9",
+    "contract.py": "ff198c8d9ad05e7f2664af8120a9f6e3d21a242e3ef19e9f0b5cbb65a5beacbb",
+    "conventions.py": "d70340d4eccdfe635b5604b7da5ebf4ee59ebece6be329147f81610d76fa4663",
+    "dsr_v0.py": "e4e3fb1bd42333a5d9c8b9c508ca421172c1d83de0d7e5e2a5c12f276f49425b",
+    "execution.py": "784bfa6e23f9d2a19c874f3fc1c8df02b43e4457133ee357fe8855abe79a838d",
+    "fee_model.py": "6f24d69501e7f9f10a8d685d54670fec8288ad23d1926f613fd4610287f24d2c",
+    "fees.py": "51621cb715d375ba6227a0d3a18ed19640d74e9bd654afb34635a9106b29a3ce",
+    "fold_split.py": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+    "folds.py": "40525e0fbfd36898913b89aa51d9f7ab99c215ea6d791a65478af65e5bb278c6",
+    "harness.py": "daba4632f3994908728bd7c6d8616c36b224b2f7ca726e9cadf03f0ce8fda734",
+    "harness_helpers.py": "3bb5677bef3365b5ea57f48bf3635b6fee7158aacf699d771cf18c9e0d7ea971",
+    "ledger.py": "40ad5bc8422b8063c6d8f955e699070248e0fe7da1459db1214646068e6a3c88",
+    "ledger_anchor.py": "0c26b1a34cdf42b337404a06ad4f633c1fd5651d909008f6923fb20925ea9b57",
+    "pending.py": "9d50ede92d8c6eabd3674886be20f53c35c67add2ae2f7d3dc028973bbd86b66",
+    "pipeline.py": "de48824dc51bc64270efb0a086db8e2e41ea4b97111d1a3ade305eabce7f23c2",
+    "receipts.py": "4647fafba46f5d5ae39401f1129c73eebb8dd5e6de6c91d82f23aea403803e8d",
+    "reference_boundary.py": "acd6d347f59da1d9df8b127f31d3b5f97f17039a35705fb7d94606ec90065551",
+    "reference_check.py": "794d4ff3ae36a9664a0deefb0435f36bab827dcefc56477a5782915a6c332c7c",
+    "reference_evidence.py": "8e1948875f679ed60b0fb3f2c975892a88de74c068b99afc25745929dc0b9307",
+    "reference_guard.py": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+    "reference_harness.py": "862eebd8ca0a856a2799e0873d9d2e71898a11ab4d21c59c50ee993560fc7814",
+    "reference_inputs.py": "61456de83ed02066952f79cf2231c3b428619c52dfb6e767ce68222aa86234b3",
+    "reference_producer.py": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+    "reference_registry.py": "689ced79a2df37ffa857f14451dfaa66d0df412f31dadc39cbb7ba5f2afb45b8",
+    "statistics.py": "2a926e6456a25e50319dc60cffe4652477f281180d51f440b8e3714a69e386e1",
+    "v1_harness.py": "ad1d5885353e51ecb4b11ab36813dcfde56b0565f15c7eb7f427d4f19e108339",
+    "validation.py": "b1ae19a0e750aae82710b692e4b7fbadc1febdeb8d38ef0869eb9b0476ec882e",
+    "valuation.py": "90c8d26f48583fe12b09fae616f2ed2fe50f02d2466faeab09acfca44cafc4e4"
+  },
+  "source_sha256": "e62cc8f10ad16e02ef5a3c6f363d19d5147732304868191cafb34c35363d5ac0",
+  "status": "PASS",
+  "strategy_backtests": 0
+}
