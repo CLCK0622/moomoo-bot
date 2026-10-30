@@ -140,7 +140,7 @@ EVIDENCE_KEYS = {
 }
 
 
-def validate_consumer(request):
+def validate_consumer(request, *, schema=CONSUMER):
     """Iteratively validate every depth, without a recursion-limit loophole."""
     securities = set(load_conventions().profile["universe"]) | {
         "B",
@@ -150,7 +150,7 @@ def validate_consumer(request):
         "X",
         "H",
     }
-    pending = [(request, CONSUMER)]
+    pending = [(request, schema)]
     while pending:
         value, schema = pending.pop()
         # Null is retained raw missing evidence; the owning business validator

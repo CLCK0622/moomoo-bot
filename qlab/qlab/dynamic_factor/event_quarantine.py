@@ -143,7 +143,199 @@ def normalize_dependencies(request):
     graph, panels = [], []
     from .lineage_schema import validate_consumer
 
-    validate_consumer(request)
+    def isolation_scope(value):
+        # Consumer extension for frozen v3 only. These are real graph nodes,
+        # not opaque hashes or a metadata exemption from ancestry inspection.
+        from datetime import datetime
+
+        from .contract import digest, is_sha
+        from .conventions import load_conventions
+
+        policy = load_conventions()
+        binding = policy.binding
+        if (
+            not isinstance(value, dict)
+            or set(value) != set(binding) | {"request", "quarantine_manifest_sha256"}
+            or any(value.get(k) != v for k, v in binding.items())
+            or binding["conventions_version"] != "v3.0.0"
+            or not isinstance(value["request"], dict)
+        ):
+            raise ValueError("data.v3_isolation_schema_invalid")
+        declaration = value["request"]
+        required = {"role", "records", "mode", "sealed_at", "first_performance_at"}
+        if (
+            not required.issubset(declaration)
+            or set(declaration) - required - {"signal_close"}
+            or declaration["role"]
+            not in {
+                "train_solo_probes",
+                "train_calibration",
+                "train_meta",
+                "external_reference_roles",
+                "test_meta",
+                "authorized_forward",
+            }
+            or declaration["mode"] not in {"history", "forward"}
+            or not isinstance(declaration["records"], list)
+        ):
+            raise ValueError("data.v3_isolation_schema_invalid")
+
+        def instant(raw):
+            if not isinstance(raw, str):
+                raise ValueError("data.v3_isolation_schema_invalid")
+            parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+            if parsed.tzinfo is None:
+                raise ValueError("data.v3_isolation_schema_invalid")
+            return parsed
+
+        sealed = instant(declaration["sealed_at"])
+        if sealed >= instant(declaration["first_performance_at"]):
+            raise ValueError("data.v3_isolation_not_preperformance")
+        if "signal_close" in declaration:
+            instant(declaration["signal_close"])
+        if declaration["mode"] == "forward" and "signal_close" not in declaration:
+            raise ValueError("data.v3_isolation_schema_invalid")
+        fields = {
+            "symbol",
+            "field_role",
+            "from_date",
+            "to_date_or_null_with_reason",
+            "reason",
+            "source_sha256",
+            "dependency_lineage",
+            "evidence_version",
+            "state",
+            "gates_by_date",
+            "received_at",
+        }
+        gate_fields = {
+            "history_dates",
+            "raw_price",
+            "dollar_adv",
+            "units_verified",
+            "security_line_verified",
+            "recipe_inputs_verified",
+        }
+        nodes = []
+        for row in declaration["records"]:
+            if (
+                not isinstance(row, dict)
+                or set(row) != fields
+                or row["symbol"] not in policy.profile["universe"]
+                or row["field_role"] != "selection"
+                or row["state"]
+                not in {
+                    "VERIFIED_USABLE",
+                    "VERIFIED_INELIGIBLE",
+                    "QUARANTINED",
+                    "UNKNOWN",
+                }
+                or any(
+                    not isinstance(row[k], str) or not row[k]
+                    for k in ("reason", "evidence_version")
+                )
+                or not is_sha(row["source_sha256"])
+                or not isinstance(row["dependency_lineage"], list)
+                or not row["dependency_lineage"]
+                or not isinstance(row["gates_by_date"], dict)
+            ):
+                raise ValueError("data.v3_isolation_schema_invalid")
+            start = iso_date(row["from_date"])
+            end = row["to_date_or_null_with_reason"]
+            if end is not None and iso_date(end) < start:
+                raise ValueError("data.v3_isolation_schema_invalid")
+            received = instant(row["received_at"])
+            if received > sealed or (
+                declaration["mode"] == "forward"
+                and received > instant(declaration["signal_close"])
+            ):
+                raise ValueError("data.v3_isolation_information_cutoff")
+            for date, gates in row["gates_by_date"].items():
+                if (
+                    not isinstance(gates, dict)
+                    or set(gates) != gate_fields
+                    or not start <= iso_date(date)
+                    or (end is not None and date > end)
+                    or not isinstance(gates["history_dates"], list)
+                    or any(not isinstance(d, str) for d in gates["history_dates"])
+                    or any(
+                        gates[k] is not None and not finite(gates[k])
+                        for k in ("raw_price", "dollar_adv")
+                    )
+                    or any(
+                        gates[k] is not None and type(gates[k]) is not bool
+                        for k in (
+                            "units_verified",
+                            "security_line_verified",
+                            "recipe_inputs_verified",
+                        )
+                    )
+                ):
+                    raise ValueError("data.v3_isolation_schema_invalid")
+                for date_value in gates["history_dates"]:
+                    iso_date(date_value)
+            for node in row["dependency_lineage"]:
+                if (
+                    not isinstance(node, dict)
+                    or not {"id", "field", "parents"}.issubset(node)
+                    or set(node)
+                    - {
+                        "id",
+                        "field",
+                        "parents",
+                        "symbol",
+                        "date",
+                        "event_keys",
+                        "value",
+                        "source_sha256",
+                        "reconciliation_checkpoint",
+                    }
+                    or any(
+                        not isinstance(node[k], str) or not node[k]
+                        for k in ("id", "field")
+                    )
+                    or not isinstance(node["parents"], list)
+                    or any(not isinstance(k, str) or not k for k in node["parents"])
+                    or ("symbol" in node and not isinstance(node["symbol"], str))
+                    or (
+                        "event_keys" in node
+                        and (
+                            not isinstance(node["event_keys"], list)
+                            or any(not isinstance(k, str) for k in node["event_keys"])
+                        )
+                    )
+                    or (
+                        "value" in node
+                        and node["value"] is not None
+                        and not finite(node["value"])
+                    )
+                    or ("source_sha256" in node and not is_sha(node["source_sha256"]))
+                    or (
+                        "reconciliation_checkpoint" in node
+                        and not isinstance(node["reconciliation_checkpoint"], dict)
+                    )
+                ):
+                    raise ValueError("data.v3_isolation_schema_invalid")
+                if "date" in node:
+                    iso_date(node["date"])
+                from .lineage_schema import NODE
+
+                validate_consumer(
+                    {"dependency_nodes": [node]},
+                    schema={
+                        "dependency_nodes": ("list", dict(NODE, source_sha256="string"))
+                    },
+                )
+                nodes.append(deepcopy(node))
+        if value["quarantine_manifest_sha256"] != digest(
+            {"request": declaration, **binding}
+        ):
+            raise ValueError("data.v3_isolation_identity_mismatch")
+        # _project below checks these together with all original declarations:
+        # duplicate IDs, missing parents, cycles and inherited B/COR ancestry.
+        return nodes
+
+    validate_consumer({k: v for k, v in request.items() if k != "isolation_manifest"})
 
     pending = [request]
     while pending:
@@ -151,7 +343,11 @@ def normalize_dependencies(request):
         if not isinstance(scope, dict):
             raise ValueError("data.v10_lineage_scope_invalid")
         for key, value in scope.items():
-            if key in {"dependency_nodes", "panel_inputs", "inputs"}:
+            if key == "isolation_manifest":
+                if scope is not request:
+                    raise ValueError("data.v3_isolation_location_invalid")
+                graph.extend(isolation_scope(value))
+            elif key in {"dependency_nodes", "panel_inputs", "inputs"}:
                 if not isinstance(value, list) or any(
                     not isinstance(item, dict) for item in value
                 ):
