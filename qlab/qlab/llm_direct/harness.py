@@ -207,19 +207,29 @@ def run(workdir):
 
         def add_existing():
             p = payload(fees)
-            p["x2_control_state"]["inventory_qty"]["AAPL"] = 3
-            p["x2_control_state"]["available_cash_usd"] = "2700"
+            p["raw_prices_close"]["AAPL"] = "40"
+            for bar in p["bars252"]["AAPL"]:
+                for field in (
+                    "raw_open_usd",
+                    "raw_high_usd",
+                    "raw_low_usd",
+                    "raw_close_usd",
+                ):
+                    bar[field] = "40"
+            p["x2_control_state"]["inventory_qty"]["AAPL"] = 10
+            p["x2_control_state"]["available_cash_usd"] = "2600"
             p["x2_control_state"]["holding_age_sessions"]["AAPL"] = 5
-            p["required_action_plan_M"]["AAPL"] = 3
+            p["required_action_plan_M"]["AAPL"] = 10
             own = build_decision(p)
             ox = execution(own, fees)
             ox["raw_open_usd"]["AAPL"] = "19"
             r = adapt(canonical(output(own)), own, ox, fees)
-            assert r["P"]["AAPL"] == 3 and r["M"]["AAPL"] == 3
+            assert r["P"]["AAPL"] == 10 and r["M"]["AAPL"] == 10
             assert not any(
                 q["symbol"] == "AAPL" and q["side"] == "SELL" for q in r["orders"]
             )
-            return dict(existing=3, proposed=6, after_cancel=r["P"]["AAPL"])
+            assert output(own)["targets"][0]["target_qty"] == 15
+            return dict(existing=10, proposed=15, after_cancel=r["P"]["AAPL"])
 
         case("R3.existing_position_add_no_forced_sale", add_existing)
         bad = deepcopy(x)
@@ -231,14 +241,36 @@ def run(workdir):
             "R3.missing_price",
             lambda: refused(lambda: adapt(raw, d, missing, fees), "prices_missing"),
         )
-        lowq = deepcopy(x)
-        lowq["raw_open_usd"]["QQQ"] = "19"
+
+        def qqq_buy_exempt():
+            p = payload(fees)
+            p["x2_control_state"]["inventory_qty"]["QQQ"] = 0
+            p["x2_control_state"]["available_cash_usd"] = "15000"
+            p["required_action_plan_M"]["QQQ"] = 0
+            own = build_decision(p)
+            lowq = execution(own, fees)
+            lowq["raw_open_usd"]["QQQ"] = "19"
+            r = adapt(canonical(output(own)), own, lowq, fees)
+            assert "QQQ" not in r["cancelled_buy_symbols"] and r["P"]["QQQ"] > 0
+            assert any(q["symbol"] == "QQQ" and q["side"] == "BUY" for q in r["orders"])
+            return dict(exempt=True, QQQ_buy_qty=r["P"]["QQQ"])
+
+        case("R3.QQQ_exempt", qqq_buy_exempt)
+        no_fee = deepcopy(x)
+        del no_fee["fee_binding"]
         case(
-            "R3.QQQ_exempt",
-            lambda: {
-                "exempt": "QQQ"
-                not in adapt(raw, d, lowq, fees)["cancelled_buy_symbols"]
-            },
+            "cost.missing_fee_binding_refused",
+            lambda: refused(
+                lambda: adapt(raw, d, no_fee, fees), "required_fields_missing"
+            ),
+        )
+        wrong_state = deepcopy(x)
+        wrong_state["x2_control_state"]["inventory_qty"]["QQQ"] += 1
+        case(
+            "R1.execution_inventory_mismatch_refused",
+            lambda: refused(
+                lambda: adapt(raw, d, wrong_state, fees), "state_or_x2_binding_mismatch"
+            ),
         )
         case(
             "cost.x1_cannot_control_x2",
