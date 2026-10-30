@@ -53,6 +53,7 @@ def continuous_path_check(request, *, conventions=None):
     seen_results, attempts = set(), set()
     retained_inventory, retained_exit_intents = None, None
     declarations = []
+    quarantine = None
     try:
         # Capture every declaration in input order, before shape, membership or
         # grid validation. This list is raw pending evidence, never acceptance.
@@ -123,6 +124,32 @@ def continuous_path_check(request, *, conventions=None):
             raise ValueError("wf.invalid_fold_may_not_be_skipped")
         if request.get("restart_capital"):
             raise ValueError("wf.capital_restart_forbidden")
+        from .input_disposition import quarantine_check
+
+        quarantine = quarantine_check(
+            {
+                "dependency_nodes": request.get("dependency_nodes", []),
+                "inputs": request.get("panel_inputs", [])
+                + [
+                    {"symbol": symbol, "date": fold["test_start"], "field": "inventory"}
+                    for row, fold in zip(rows, expected["folds"])
+                    for state in (
+                        row,
+                        row.get("input_state") or {},
+                        row.get("output_state") or {},
+                    )
+                    for symbol, quantity in (state.get("inventory") or {}).items()
+                    if quantity and symbol in ("B", "COR")
+                ],
+                **(
+                    {"panel_symbols": request["panel_symbols"]}
+                    if "panel_symbols" in request
+                    else {}
+                ),
+            }
+        )
+        if not quarantine["ok"]:
+            raise ValueError(quarantine["reasons"][0])
         for i, (row, fold, out) in enumerate(zip(rows, expected["folds"], outputs)):
             out["reasons"] = list(row.get("reasons", []))
             budget = row.get("budget_state") or {}
@@ -268,6 +295,7 @@ def continuous_path_check(request, *, conventions=None):
                 "B2": None,
                 "complete_N": None,
                 "dsr": None,
+                "event_quarantine": quarantine,
             },
             assumptions=[
                 "Full original fold/date vectors and state links are mandatory; no fragment statistics, capital restart, budget refund or automatic recovery is authorized.",

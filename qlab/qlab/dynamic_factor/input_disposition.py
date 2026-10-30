@@ -6,6 +6,12 @@ from decimal import Decimal, InvalidOperation
 from .contract import result, sha256
 from .conventions import FIXTURES, load_conventions
 from .fees import iso_date
+from .event_quarantine import (
+    quarantine_check,
+    s1_scope,
+    field_rules,
+    sources as v10_sources,
+)
 
 HASHES = {
     "EVO883-EVO886-minimum-scope-ruling-v1.md": "56d97ab77b8389abcd8fcc7c9df2d7094cfc38b3da39954f3b92439d061b05da",
@@ -89,16 +95,37 @@ def _panel_input_check(request, *, conventions=None):
     policy = conventions or load_conventions()
     doc = json.loads(sources()["EVO883-EVO891-disposition-draft-v1.json"])
     panel = doc["panel_disposition"]
+    overlay = quarantine_check(request)
     affected, reasons = [], []
+    v10_fields = field_rules(v10_sources()[0])
+    for node in overlay["metrics"]["projected_nodes"] or []:
+        if node["reasons"]:
+            affected.append(
+                dict(
+                    node["submitted"],
+                    value=None,
+                    source_reason="data.v10_quarantined_dependency",
+                    reasons=node["reasons"],
+                    event_keys=node["event_keys"],
+                )
+            )
+    if affected:
+        reasons.append("data.panel_quarantined_input")
+    elif not overlay["ok"]:
+        reasons.extend(overlay["reasons"])
     by_symbol = {r["symbol"]: r for r in panel["stock_dispositions"]}
     for item in request.get("inputs", []):
+        # The v10 receipt adopts only S1 raw_open metadata. Values supplied by a
+        # caller are not authenticated by repeating its CSV hash here.
+        if s1_scope(item):
+            continue
         row = by_symbol.get(item["symbol"])
         if row is None:
             continue  # Absence from this list does not certify eligibility.
         date = iso_date(item["date"])
         first = row["known_first_unresolved_event"]
         field = item["field"]
-        if field not in (
+        if field not in v10_fields and field not in (
             "raw_close",
             "total_return",
             "feature",
@@ -108,6 +135,8 @@ def _panel_input_check(request, *, conventions=None):
             "nav",
         ):
             raise ValueError("data.panel_dependency_invalid")
+        if item["symbol"] in ("B", "COR"):
+            continue  # Full-span unknown anchor ancestry already projected.
         raw_status = row["source_matrix_row"]["raw_price_status"]
         raw_unverified = "未核实" in raw_status or "不一致" in raw_status
         derived = field in (
@@ -163,6 +192,7 @@ def _panel_input_check(request, *, conventions=None):
                 "frozen_count": panel["frozen_count"],
                 "replacements": [],
                 "dsr": None,
+                "event_quarantine": overlay,
             },
             assumptions=[
                 "Retain frozen membership; only the source-specified affected date/dependency is quarantined. Passing this receipt is not 252-session/min50 eligibility acceptance."

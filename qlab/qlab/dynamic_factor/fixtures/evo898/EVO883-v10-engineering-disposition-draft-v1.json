@@ -1,0 +1,2422 @@
+{
+  "S1_field_update": {
+    "K7_update": {
+      "csv_data_row_1based": 188,
+      "csv_sha256": "ca058bd8f866b85db073820718e43082a6812c9134261b239d6e58797b8662e7",
+      "formal_runtime_adoption_passed": false,
+      "new_field_status": "same-vendor NONE raw_open receipt verified only",
+      "old_status": "未验证"
+    },
+    "complete_execution_path_certified": false,
+    "csv_sha256": "68ade2686e49d444a973c4533048531223c88b158fff56a32e676c6888557842",
+    "field": "raw_open",
+    "from_date": "2013-10-29",
+    "inversion_equality_scope": "static comparison of already-stored raw_open columns,3191/3191 equal; no price reconstruction or strategy run",
+    "no_upgrade_fields": [
+      "volume_as_traded_units",
+      "cash",
+      "TR",
+      "other_symbols_open",
+      "complete_eligibility",
+      "N",
+      "V",
+      "DSR"
+    ],
+    "page_SHA": [
+      "6191727a66ee331e3cae5651b405a8d731a9769e4ed734846f572b684f2e4f59",
+      "04f33be11303988820c1438f0c29fdd78a734696f63dbd9fd057f5128f68abfd",
+      "70a4606dca8422f23896275b77373483bc19c4abec0d8f9688a76ebed5d46d83",
+      "4f63701bad4d95833788504fd7394b49cacc4156b0033bd97023453791094b3d"
+    ],
+    "page_sizes": [
+      1000,
+      1000,
+      1000,
+      191
+    ],
+    "quota_observation": {
+      "after": {
+        "remain": 235,
+        "total": 300,
+        "used": 65,
+        "utc": "2026-10-30T08:41:42.590+00:00"
+      },
+      "before": {
+        "remain": 235,
+        "total": 300,
+        "used": 65,
+        "utc": "2026-10-30T08:41:39.941+00:00"
+      },
+      "changed_code": "US.BRK.B",
+      "consumed": 0,
+      "new_request_time": "2026-10-30 16:41:42",
+      "old_request_time": "2026-10-30 14:23:40",
+      "release_time_extension": "推断·未验证; no extra request made to test release time"
+    },
+    "raw_capture_surface": "SDK_RETURNED_DATAFRAME_CSV_NOT_PROTOBUF_OR_HTTP_WIRE_BYTES",
+    "rows": 3191,
+    "source_field_candidate_for_v1_after_review": true,
+    "source_independence": false,
+    "source_status": "SDK_NONE_OPEN_DIRECT_RECEIPT_VERIFIED_SAME_VENDOR_NOT_INDEPENDENT",
+    "symbol": "BRK.B",
+    "to_date": "2026-07-09"
+  },
+  "S2_S3_S4": {
+    "S2": "12-row source plan contains9 S2 candidates; all availability pending. No off-panel OpenD dispatch by author.",
+    "S3": "3 candidates; OpenD same provider does not satisfy independently sourced CRH price proof; others pending.",
+    "S4": "CEG10 rows2022-01-19..02-01 have no cached-line identity proof; market WI announcement and volume ratios cannot certify mapping or authorize deletion. New documents remain on original 户部 line.",
+    "no_R3_proven": "unverified candidate sources do not establish indispensable legal-free input impossibility"
+  },
+  "S2_S3_source_plan": {
+    "items": [
+      {
+        "can_prove": "季度价格区间约束",
+        "cannot_prove": "首日 open/close 与逐日价格（定期报告不给日线）",
+        "est_requests": "2（submissions 1 + 文档 1）",
+        "field": "季度最高/最低价（若披露）",
+        "item": "S2",
+        "need": "首个常规交易日 open/close，及持有期至处置日的 open/close",
+        "note": "CDK Global 已于 2022 年被收购退市，CIK 待核",
+        "order": "1",
+        "parent": "ADP",
+        "quota": "不适用",
+        "range": "2014-10-01 起至处置日（最少：2014-10-01 当日 open）",
+        "source": "SEC EDGAR：子公司 10-K/10-Q 第 5 项（普通股市场）及分拆后首份定期报告",
+        "status": "待核：是否披露以及期别",
+        "symbol": "CDK",
+        "terms": "已核（SEC 公开件，沿用本线 fair access 声明）"
+      },
+      {
+        "can_prove": "若返回，则得到同一供应商的不复权逐日价",
+        "cannot_prove": "退市代码覆盖未证；代码复用风险；不是独立来源",
+        "est_requests": "先 get_stock_basicinfo 1 次（不吃历史 K 额度，待核）；K 线 1 次",
+        "field": "time_key, open, close（volume 可选）",
+        "item": "S2",
+        "need": "首个常规交易日 open/close，及持有期至处置日的 open/close",
+        "note": "WI 线：CDKVV 自 2014-09-22，不在常规代码内",
+        "order": "2",
+        "parent": "ADP",
+        "quota": "历史 K 额度 1（新计名、面板外 → 须首辅授权）",
+        "range": "2014-10-01 起至处置日（最少：2014-10-01 当日 open）",
+        "source": "OpenD request_history_kline US.CDK，K_DAY，AuType.NONE",
+        "status": "待核：退市代码覆盖与代码映射",
+        "symbol": "CDK",
+        "terms": "不适用（账户已授权数据源）"
+      },
+      {
+        "can_prove": "单日一个价值口径，可作首日估值佐证",
+        "cannot_prove": "不是 open；不覆盖持有期",
+        "est_requests": "1（URL 待核）",
+        "field": "分配计税用的子股公允价值（通常为首日均价或收盘，口径以原文为准）",
+        "item": "S2",
+        "need": "首个常规交易日 open/close，及持有期至处置日的 open/close",
+        "note": "",
+        "order": "3",
+        "parent": "ADP",
+        "quota": "不适用",
+        "range": "2014-10-01 起至处置日（最少：2014-10-01 当日 open）",
+        "source": "ADP 投资者关系页 Form 8937（分拆计税基础说明），单次下载",
+        "status": "待核：文件是否存在、口径与 URL",
+        "symbol": "CDK",
+        "terms": "未核（发行方网站条款）"
+      },
+      {
+        "can_prove": "季度价格区间约束",
+        "cannot_prove": "首日 open/close 与逐日价格（定期报告不给日线）",
+        "est_requests": "2（submissions 1 + 文档 1）",
+        "field": "季度最高/最低价（若披露）",
+        "item": "S2",
+        "need": "首个常规交易日 open/close，及持有期至处置日的 open/close",
+        "note": "Versum Materials 已于 2019 年被收购退市，CIK 待核",
+        "order": "1",
+        "parent": "APD",
+        "quota": "不适用",
+        "range": "2016-10-03 起至处置日（最少：2016-10-03 当日 open）",
+        "source": "SEC EDGAR：子公司 10-K/10-Q 第 5 项（普通股市场）及分拆后首份定期报告",
+        "status": "待核：是否披露以及期别",
+        "symbol": "VSM",
+        "terms": "已核（SEC 公开件，沿用本线 fair access 声明）"
+      },
+      {
+        "can_prove": "若返回，则得到同一供应商的不复权逐日价",
+        "cannot_prove": "退市代码覆盖未证；代码复用风险；不是独立来源",
+        "est_requests": "先 get_stock_basicinfo 1 次（不吃历史 K 额度，待核）；K 线 1 次",
+        "field": "time_key, open, close（volume 可选）",
+        "item": "S2",
+        "need": "首个常规交易日 open/close，及持有期至处置日的 open/close",
+        "note": "WI 线：所取原件未见 WI，不在常规代码内",
+        "order": "2",
+        "parent": "APD",
+        "quota": "历史 K 额度 1（新计名、面板外 → 须首辅授权）",
+        "range": "2016-10-03 起至处置日（最少：2016-10-03 当日 open）",
+        "source": "OpenD request_history_kline US.VSM，K_DAY，AuType.NONE",
+        "status": "待核：退市代码覆盖与代码映射",
+        "symbol": "VSM",
+        "terms": "不适用（账户已授权数据源）"
+      },
+      {
+        "can_prove": "单日一个价值口径，可作首日估值佐证",
+        "cannot_prove": "不是 open；不覆盖持有期",
+        "est_requests": "1（URL 待核）",
+        "field": "分配计税用的子股公允价值（通常为首日均价或收盘，口径以原文为准）",
+        "item": "S2",
+        "need": "首个常规交易日 open/close，及持有期至处置日的 open/close",
+        "note": "",
+        "order": "3",
+        "parent": "APD",
+        "quota": "不适用",
+        "range": "2016-10-03 起至处置日（最少：2016-10-03 当日 open）",
+        "source": "APD 投资者关系页 Form 8937（分拆计税基础说明），单次下载",
+        "status": "待核：文件是否存在、口径与 URL",
+        "symbol": "VSM",
+        "terms": "未核（发行方网站条款）"
+      },
+      {
+        "can_prove": "季度价格区间约束",
+        "cannot_prove": "首日 open/close 与逐日价格（定期报告不给日线）",
+        "est_requests": "2（submissions 1 + 文档 1）",
+        "field": "季度最高/最低价（若披露）",
+        "item": "S2",
+        "need": "首个常规交易日 open/close，及持有期至处置日的 open/close",
+        "note": "Versant Media Group 在市，CIK 待核",
+        "order": "1",
+        "parent": "CMCSA",
+        "quota": "不适用",
+        "range": "2026-01-05 起至处置日（最少：2026-01-05 当日 open）",
+        "source": "SEC EDGAR：子公司 10-K/10-Q 第 5 项（普通股市场）及分拆后首份定期报告",
+        "status": "待核：是否披露以及期别",
+        "symbol": "VSNT",
+        "terms": "已核（SEC 公开件，沿用本线 fair access 声明）"
+      },
+      {
+        "can_prove": "若返回，则得到同一供应商的不复权逐日价",
+        "cannot_prove": "退市代码覆盖未证；代码复用风险；不是独立来源",
+        "est_requests": "先 get_stock_basicinfo 1 次（不吃历史 K 额度，待核）；K 线 1 次",
+        "field": "time_key, open, close（volume 可选）",
+        "item": "S2",
+        "need": "首个常规交易日 open/close，及持有期至处置日的 open/close",
+        "note": "WI 线：VSNTV 约自 2025-12-15，不在常规代码内",
+        "order": "2",
+        "parent": "CMCSA",
+        "quota": "历史 K 额度 1（新计名、面板外 → 须首辅授权）",
+        "range": "2026-01-05 起至处置日（最少：2026-01-05 当日 open）",
+        "source": "OpenD request_history_kline US.VSNT，K_DAY，AuType.NONE",
+        "status": "待核：在市代码，覆盖可能性较高但未证",
+        "symbol": "VSNT",
+        "terms": "不适用（账户已授权数据源）"
+      },
+      {
+        "can_prove": "单日一个价值口径，可作首日估值佐证",
+        "cannot_prove": "不是 open；不覆盖持有期",
+        "est_requests": "1（URL 待核）",
+        "field": "分配计税用的子股公允价值（通常为首日均价或收盘，口径以原文为准）",
+        "item": "S2",
+        "need": "首个常规交易日 open/close，及持有期至处置日的 open/close",
+        "note": "",
+        "order": "3",
+        "parent": "CMCSA",
+        "quota": "不适用",
+        "range": "2026-01-05 起至处置日（最少：2026-01-05 当日 open）",
+        "source": "CMCSA 投资者关系页 Form 8937（分拆计税基础说明），单次下载",
+        "status": "待核：文件是否存在、口径与 URL",
+        "symbol": "VSNT",
+        "terms": "未核（发行方网站条款）"
+      },
+      {
+        "can_prove": "区间约束与证券线变更原件",
+        "cannot_prove": "逐日 OHLC",
+        "est_requests": "submissions 1 + 20-F 约 10 + 变更原件 1–2，合计约 12–13",
+        "field": "NYSE ADR 月度/季度最高最低价（若披露）；证券线变更日期与原件",
+        "item": "S3",
+        "need": "ADR 期独立原始 OHLC",
+        "note": "",
+        "order": "1",
+        "parent": "",
+        "quota": "不适用",
+        "range": "2013-10-29..2023-09-25",
+        "source": "SEC EDGAR：CRH 20-F（FY2013–FY2022）第 9 项（报价与上市）及 2023 年主上市变更相关 6-K / 8-K / Form 25",
+        "status": "待核：各年是否披露 ADR 价格区间",
+        "symbol": "CRH",
+        "terms": "已核（SEC 公开件）"
+      },
+      {
+        "can_prove": "供应商自身的不复权线",
+        "cannot_prove": "与冻结件同一供应商，不能作为独立来源（K3：同供应商复取解决不了线不一致）",
+        "est_requests": "1",
+        "field": "open/high/low/close",
+        "item": "S3",
+        "need": "ADR 期独立原始 OHLC",
+        "note": "",
+        "order": "2",
+        "parent": "",
+        "quota": "历史 K 额度 0–1（CRH 在面板内；是否在当前窗口已计名单待核读数）",
+        "range": "2013-10-29..2023-09-25",
+        "source": "OpenD request_history_kline US.CRH，AuType.NONE",
+        "status": "不满足独立性要求",
+        "symbol": "CRH",
+        "terms": "不适用"
+      },
+      {
+        "can_prove": "若覆盖 ADR 期则为独立日线",
+        "cannot_prove": "覆盖范围、是否含 open、是否为 ADR 线均未知",
+        "est_requests": "1（URL 待核）",
+        "field": "NYSE ADR 日线（若提供）",
+        "item": "S3",
+        "need": "ADR 期独立原始 OHLC",
+        "note": "Nasdaq 网页/接口按 v4 批复不批（未公开文档接口、条款未核），不列为候选",
+        "order": "3",
+        "parent": "",
+        "quota": "不适用",
+        "range": "2013-10-29..2023-09-25",
+        "source": "CRH 投资者关系页股价历史工具 / 可下载历史价，单次下载",
+        "status": "待核",
+        "symbol": "CRH",
+        "terms": "未核（发行方网站条款）"
+      }
+    ],
+    "rows": 12,
+    "sha256": "17d4d076605e3d938017a75e2436f2342349687f15136be8f099b789b751580c"
+  },
+  "action_dictionary": {
+    "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION": "Record exact primary declared amount/record/pay facts if present; author pass only matches a derived date. Do not treat as fully tradable event,complete cash schedule,or actual ex-date certification.",
+    "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT": "No matching amount within author±3-day search is not proof of15 independent missing payments. Link to overlapping candidate; keep alternative amounts and type distinct. No imputed zero,guessed missing dividend insertion or narrowed completeness claim.",
+    "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR": "Do not divide or multiply vendor amount to force agreement. Keep vendor and primary declaration fields separately; adopted D/receivable/cash null until exact event/security/date/unit binding is proved.",
+    "QUARANTINE_EXDATE_CONFLICT_DO_NOT_DEDUPE_OR_SHIFT": "Keep 2019-11-28 distinct from2019-11-27. Record amount match and derived-date conflict; no automatic date shift,deletion,orduplicate exemption. Actual ex-date requires its own supported determination.",
+    "QUARANTINE_RETURN_OF_CAPITAL_APPROX_KEEP_DISTINCT_REGULAR_DIVIDEND": "Primary kind is return of capital and approx0.14 is not exact vendor0.1405. Keep separate regular0.09 declaration; neither zero it nor sum guessed amounts. If new valuation/tax policy is needed return to author/reviewer for version decision.",
+    "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG": "Block candidate from Barrick consumers. Quarter amount equality is evidence correspondence,not a complete supplier security ID mapping. Do not relabel to Barnes or transfer money to another security automatically."
+  },
+  "engineering_negative_examples": [
+    "vendor0.19984/2=0.09992 must not auto-adopt issuer0.10 or tolerance-round into exact cash",
+    "2019-11-28 must not dedupe or shift into2019-11-27 simply because amount equals0.05",
+    "2021 capital-return0.1405 must not stand in for distinct regular0.09 or produce guessed0.2305 cash",
+    "event quarantine must reach a dependent prior-anchor inverse price and a later carried cash/holding state",
+    "entry-on-ex-open grants no old entitlement but does not clear invalid252history or H10 label dependencies",
+    "S1 valid BRKB opens do not validate true volume units or other security opens",
+    "missing event/amount must remain null with reasons; zero-filled formal NAV and DSR rejected"
+  ],
+  "event_decisions": [
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：供应商金额 0.11 = Barnes Group 同季宣告 0.11，Barrick 同季为 0.05",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.05",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2013-11-25",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [
+        "BARRICK_DECL_01"
+      ],
+      "primary_sha256": "bd3deee19cec0c80032c2a9c8eea621b95bd7f41e17d2b9b7d8033757bd14a92",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 1,
+      "v9_K4_csv_data_row_1based": 60,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        270
+      ],
+      "vendor_amount": "0.11",
+      "vendor_date": "2013-11-25",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：金额等于 Barnes Group 同季宣告；Barrick 该季原文未取到",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": null,
+      "declared_amount_status": "NO_BARRICK_QUARTER_SOURCE",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2014-11-24",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [],
+      "primary_sha256": null,
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 2,
+      "v9_K4_csv_data_row_1based": 65,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        275
+      ],
+      "vendor_amount": "0.12",
+      "vendor_date": "2014-11-24",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：金额等于 Barnes Group 同季宣告；Barrick 该季原文未取到",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": null,
+      "declared_amount_status": "NO_BARRICK_QUARTER_SOURCE",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2015-11-23",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [],
+      "primary_sha256": null,
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 3,
+      "v9_K4_csv_data_row_1based": 70,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        280
+      ],
+      "vendor_amount": "0.12",
+      "vendor_date": "2015-11-23",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：金额等于 Barnes Group 同季宣告；Barrick 该季原文未取到",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": null,
+      "declared_amount_status": "NO_BARRICK_QUARTER_SOURCE",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2016-11-21",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [],
+      "primary_sha256": null,
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 4,
+      "v9_K4_csv_data_row_1based": 75,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        285
+      ],
+      "vendor_amount": "0.13",
+      "vendor_date": "2016-11-21",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：金额等于 Barnes Group 同季宣告；Barrick 该季原文未取到",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": null,
+      "declared_amount_status": "NO_BARRICK_QUARTER_SOURCE",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2017-11-21",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [],
+      "primary_sha256": null,
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 5,
+      "v9_K4_csv_data_row_1based": 80,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        290
+      ],
+      "vendor_amount": "0.14",
+      "vendor_date": "2017-11-21",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：金额等于 Barnes Group 同季宣告；Barrick 该季原文未取到",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": null,
+      "declared_amount_status": "NO_BARRICK_QUARTER_SOURCE",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2018-11-26",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [],
+      "primary_sha256": null,
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 6,
+      "v9_K4_csv_data_row_1based": 85,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        295
+      ],
+      "vendor_amount": "0.16",
+      "vendor_date": "2018-11-26",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额一致，日期未证（原文无登记/支付日）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.04",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2019-05-30",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_MATCH_DATE_UNPROVED_3",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [
+        "BARRICK_DECL_02"
+      ],
+      "primary_sha256": "4636dd10c433b3c0bd5839461b89314695da8ac6734eaab909b844de6ada2662",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 7,
+      "v9_K4_csv_data_row_1based": 89,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        299
+      ],
+      "vendor_amount": "0.04",
+      "vendor_date": "2019-05-30",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额一致，日期未证（原文无登记/支付日）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.04",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2019-08-29",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_MATCH_DATE_UNPROVED_3",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [
+        "BARRICK_DECL_03"
+      ],
+      "primary_sha256": "9672a7efaf2d02ea35697acca855728e0cf63257888f8a31539dc6a79d350f65",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 8,
+      "v9_K4_csv_data_row_1based": 91,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        301
+      ],
+      "vendor_amount": "0.04",
+      "vendor_date": "2019-08-29",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：供应商金额 0.16 = Barnes Group 同季宣告 0.16，Barrick 同季为 0.05",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.05",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2019-11-25",
+      "ex_candidate_derived": "2019-11-27",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": "2019-12-16",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_04"
+      ],
+      "primary_sha256": "1668e9d79aecf27c4b5ea218a99bd6b55f9b1661543d3c9064e77a120e38134d",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2019-11-29",
+      "source_candidate_csv_data_row_1based": 9,
+      "v9_K4_csv_data_row_1based": 92,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        302
+      ],
+      "vendor_amount": "0.16",
+      "vendor_date": "2019-11-25",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "通过（金额与由登记日推出的除息日均一致）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.05",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2019-11-27",
+      "ex_candidate_derived": "2019-11-27",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_AND_DERIVED_DATE_MATCH_9",
+      "pay_date_fact": "2019-12-16",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_04"
+      ],
+      "primary_sha256": "1668e9d79aecf27c4b5ea218a99bd6b55f9b1661543d3c9064e77a120e38134d",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2019-11-29",
+      "source_candidate_csv_data_row_1based": 10,
+      "v9_K4_csv_data_row_1based": 93,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        303
+      ],
+      "vendor_amount": "0.05",
+      "vendor_date": "2019-11-27",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_EXDATE_CONFLICT_DO_NOT_DEDUPE_OR_SHIFT",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额一致，除息日不一致（Barrick 推出 2019-11-27）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.05",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2019-11-28",
+      "ex_candidate_derived": "2019-11-27",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_AND_SCHEDULE_NOT_ACTUAL_EXDATE_PROOF",
+      "inventory_group": "EXDATE_CONFLICT_1",
+      "pay_date_fact": "2019-12-16",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_04"
+      ],
+      "primary_sha256": "1668e9d79aecf27c4b5ea218a99bd6b55f9b1661543d3c9064e77a120e38134d",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2019-11-29",
+      "source_candidate_csv_data_row_1based": 11,
+      "v9_K4_csv_data_row_1based": 94,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        304
+      ],
+      "vendor_amount": "0.05",
+      "vendor_date": "2019-11-28",
+      "vendor_date_in_frozen_calendar": false,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "通过（金额与由登记日推出的除息日均一致）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.07",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2020-02-27",
+      "ex_candidate_derived": "2020-02-27",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_AND_DERIVED_DATE_MATCH_9",
+      "pay_date_fact": "2020-03-16",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_05"
+      ],
+      "primary_sha256": "d326cd295e841dc8164a83ea66e5af2fb56924e8587218697fbe9cb6ad5e15bd",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2020-02-28",
+      "source_candidate_csv_data_row_1based": 12,
+      "v9_K4_csv_data_row_1based": 96,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        306
+      ],
+      "vendor_amount": "0.07",
+      "vendor_date": "2020-02-27",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额一致，日期未证（原文无登记/支付日）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.07",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2020-05-28",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_MATCH_DATE_UNPROVED_3",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [
+        "BARRICK_DECL_06"
+      ],
+      "primary_sha256": "7ff8fe581260d92c7ae5c188471d385732920cea4faae6db22c562a9a1e9e1fb",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 13,
+      "v9_K4_csv_data_row_1based": 98,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        308
+      ],
+      "vendor_amount": "0.07",
+      "vendor_date": "2020-05-28",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "通过（金额与由登记日推出的除息日均一致）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.08",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2020-08-28",
+      "ex_candidate_derived": "2020-08-28",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_AND_DERIVED_DATE_MATCH_9",
+      "pay_date_fact": "2020-09-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_07"
+      ],
+      "primary_sha256": "25f8b1a217b806f718610627c5975be79811b67d08c9e7fcd31206004419b0b4",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2020-08-31",
+      "source_candidate_csv_data_row_1based": 14,
+      "v9_K4_csv_data_row_1based": 100,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        310
+      ],
+      "vendor_amount": "0.08",
+      "vendor_date": "2020-08-28",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：供应商金额 0.16 = Barnes Group 同季宣告 0.16，Barrick 同季为 0.09",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.09",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2020-11-23",
+      "ex_candidate_derived": "2020-11-27",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": "2020-12-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_08"
+      ],
+      "primary_sha256": "668688af10c455bfbda8bce29cd155fb18f049422d4ac2e3fa737cee40bfcb8b",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2020-11-30",
+      "source_candidate_csv_data_row_1based": 15,
+      "v9_K4_csv_data_row_1based": 101,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        311
+      ],
+      "vendor_amount": "0.16",
+      "vendor_date": "2020-11-23",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "通过（金额与由登记日推出的除息日均一致）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.09",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2020-11-27",
+      "ex_candidate_derived": "2020-11-27",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_AND_DERIVED_DATE_MATCH_9",
+      "pay_date_fact": "2020-12-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_08"
+      ],
+      "primary_sha256": "668688af10c455bfbda8bce29cd155fb18f049422d4ac2e3fa737cee40bfcb8b",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2020-11-30",
+      "source_candidate_csv_data_row_1based": 16,
+      "v9_K4_csv_data_row_1based": 102,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        312
+      ],
+      "vendor_amount": "0.09",
+      "vendor_date": "2020-11-27",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "通过（金额与由登记日推出的除息日均一致）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.09",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2021-02-26",
+      "ex_candidate_derived": "2021-02-26",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_AND_DERIVED_DATE_MATCH_9",
+      "pay_date_fact": "2021-03-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_09"
+      ],
+      "primary_sha256": "242f8b4d3de1a12b68f534cc59770c47bf2e19c39a5531cb1b1918e5245da749",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2021-03-01",
+      "source_candidate_csv_data_row_1based": 17,
+      "v9_K4_csv_data_row_1based": 104,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        314
+      ],
+      "vendor_amount": "0.09",
+      "vendor_date": "2021-02-26",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_RETURN_OF_CAPITAL_APPROX_KEEP_DISTINCT_REGULAR_DIVIDEND",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额近似一致：对应 Barrick 资本返还第 2/3 期（原文 approximately $0.14 per share），不是常规股息；同登记日另有 $0.09 常规股息，除息日一致",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.14",
+      "declared_amount_status": "APPROXIMATE_ONLY",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2021-08-30",
+      "ex_candidate_derived": "2021-08-30",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_DECLARATION_KIND_CONFIRMED_VENDOR_EVENT_BINDING_UNPROVED",
+      "inventory_group": "CAPITAL_RETURN_APPROX_2",
+      "pay_date_fact": "2021-09-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_10"
+      ],
+      "primary_sha256": "ae9d794ba0b4ca9dba30dc33512e60b1942558055e6a660c91ab04bd9631dde7",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "approximately0.14 is not exact0.1405; regular0.09 is distinct"
+      ],
+      "record_date_fact": "2021-08-31",
+      "source_candidate_csv_data_row_1based": 18,
+      "v9_K4_csv_data_row_1based": 107,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        317
+      ],
+      "vendor_amount": "0.1405",
+      "vendor_date": "2021-08-30",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：供应商金额 0.16 = Barnes Group 同季宣告 0.16，Barrick 同季为 0.14",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.14",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2021-11-22",
+      "ex_candidate_derived": "2021-11-29",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": "2021-12-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_12"
+      ],
+      "primary_sha256": "7a1a1a12c4265e04648306d463be7720a075629ac07eb2a6a2d62f3ae010a254",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2021-11-30",
+      "source_candidate_csv_data_row_1based": 19,
+      "v9_K4_csv_data_row_1based": 108,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        318
+      ],
+      "vendor_amount": "0.16",
+      "vendor_date": "2021-11-22",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_RETURN_OF_CAPITAL_APPROX_KEEP_DISTINCT_REGULAR_DIVIDEND",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额近似一致：对应 Barrick 资本返还第 2/3 期（原文 approximately $0.14 per share），不是常规股息；同登记日另有 $0.09 常规股息，除息日一致",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.14",
+      "declared_amount_status": "APPROXIMATE_ONLY",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2021-11-29",
+      "ex_candidate_derived": "2021-11-29",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_DECLARATION_KIND_CONFIRMED_VENDOR_EVENT_BINDING_UNPROVED",
+      "inventory_group": "CAPITAL_RETURN_APPROX_2",
+      "pay_date_fact": "2021-12-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_12"
+      ],
+      "primary_sha256": "7a1a1a12c4265e04648306d463be7720a075629ac07eb2a6a2d62f3ae010a254",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "approximately0.14 is not exact0.1405; regular0.09 is distinct"
+      ],
+      "record_date_fact": "2021-11-30",
+      "source_candidate_csv_data_row_1based": 20,
+      "v9_K4_csv_data_row_1based": 109,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        319
+      ],
+      "vendor_amount": "0.1405",
+      "vendor_date": "2021-11-29",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "通过（金额与由登记日推出的除息日均一致）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2022-02-25",
+      "ex_candidate_derived": "2022-02-25",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_AND_DERIVED_DATE_MATCH_9",
+      "pay_date_fact": "2022-03-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_14"
+      ],
+      "primary_sha256": "923c7bd02294fe0d83488c850c74b4167678f29c04453ce236313f6c24eec260",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2022-02-28",
+      "source_candidate_csv_data_row_1based": 21,
+      "v9_K4_csv_data_row_1based": 111,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        321
+      ],
+      "vendor_amount": "0.1",
+      "vendor_date": "2022-02-25",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.1 / Barrick 0.2 = 0.500 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.2",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2022-05-26",
+      "ex_candidate_derived": "2022-05-26",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2022-06-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_15"
+      ],
+      "primary_sha256": "c64adeaa9f4d2112b0517cdf85ab9443a657de95b260f82fa726badb9123ea32",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2022-05-27",
+      "source_candidate_csv_data_row_1based": 22,
+      "v9_K4_csv_data_row_1based": 113,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        323
+      ],
+      "vendor_amount": "0.1",
+      "vendor_date": "2022-05-26",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash;special"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.1 / Barrick 0.2 = 0.500 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.2",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2022-08-30",
+      "ex_candidate_derived": "2022-08-30",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2022-09-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_16"
+      ],
+      "primary_sha256": "8a05a8bc7a27b83f93ebdef70afcf62b14ec3bfcb693e8e922a51c819cd5a168",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2022-08-31",
+      "source_candidate_csv_data_row_1based": 23,
+      "v9_K4_csv_data_row_1based": 115,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        325
+      ],
+      "vendor_amount": "0.1",
+      "vendor_date": "2022-08-30",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：供应商金额 0.16 = Barnes Group 同季宣告 0.16，Barrick 同季为 0.15",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.15",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2022-11-21",
+      "ex_candidate_derived": "2022-11-29",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": "2022-12-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_17"
+      ],
+      "primary_sha256": "90f8bb381435dedbb6a52739b735d9605c30f14646c312476b922fce98a9693f",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2022-11-30",
+      "source_candidate_csv_data_row_1based": 24,
+      "v9_K4_csv_data_row_1based": 116,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        326
+      ],
+      "vendor_amount": "0.16",
+      "vendor_date": "2022-11-21",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.05 / Barrick 0.15 = 0.333 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.15",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2022-11-29",
+      "ex_candidate_derived": "2022-11-29",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2022-12-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_17"
+      ],
+      "primary_sha256": "90f8bb381435dedbb6a52739b735d9605c30f14646c312476b922fce98a9693f",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2022-11-30",
+      "source_candidate_csv_data_row_1based": 25,
+      "v9_K4_csv_data_row_1based": 117,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        327
+      ],
+      "vendor_amount": "0.05",
+      "vendor_date": "2022-11-29",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "通过（金额与由登记日推出的除息日均一致）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2023-02-27",
+      "ex_candidate_derived": "2023-02-27",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_AND_DERIVED_DATE_MATCH_9",
+      "pay_date_fact": "2023-03-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_18"
+      ],
+      "primary_sha256": "c7142e1a5d2b4112abbfa93ab3452451112793d60ae1bae319791dd7e58eb2b4",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2023-02-28",
+      "source_candidate_csv_data_row_1based": 26,
+      "v9_K4_csv_data_row_1based": 119,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        329
+      ],
+      "vendor_amount": "0.1",
+      "vendor_date": "2023-02-27",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "通过（金额与由登记日推出的除息日均一致）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2023-05-30",
+      "ex_candidate_derived": "2023-05-30",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_AND_DERIVED_DATE_MATCH_9",
+      "pay_date_fact": "2023-06-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_19"
+      ],
+      "primary_sha256": "7fb81184590d175df2cd535f9d7fb0c2be73fddb7373df3204c3f5f1f9f6fbbd",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2023-05-31",
+      "source_candidate_csv_data_row_1based": 27,
+      "v9_K4_csv_data_row_1based": 121,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        331
+      ],
+      "vendor_amount": "0.1",
+      "vendor_date": "2023-05-30",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.19984 / Barrick 0.1 = 1.998 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2023-08-30",
+      "ex_candidate_derived": "2023-08-30",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2023-09-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_20"
+      ],
+      "primary_sha256": "f7a1342d02bd5cf41a23679237f9e3057d832afde7761f9177685d47a54ae461",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2023-08-31",
+      "source_candidate_csv_data_row_1based": 28,
+      "v9_K4_csv_data_row_1based": 123,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        333
+      ],
+      "vendor_amount": "0.19984",
+      "vendor_date": "2023-08-30",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_SECURITY_LINE_CONFLICT_NO_RETAG",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "不适用（Barnes）：供应商金额 0.16 = Barnes Group 同季宣告 0.16，Barrick 同季为 0.1",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2023-11-21",
+      "ex_candidate_derived": "2023-11-29",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARNES_QUARTER_AMOUNT_CORRESPONDENCE_IS_NOT_VENDOR_ROW_SECURITY_ID_PROOF",
+      "inventory_group": "BARNES_QUARTER_AMOUNT_MATCH_11",
+      "pay_date_fact": "2023-12-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_21"
+      ],
+      "primary_sha256": "2281844e44fa548ebd19db013df8a9b05188781b0cb1a8baf97b1c6ec2496682",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2023-11-30",
+      "source_candidate_csv_data_row_1based": 29,
+      "v9_K4_csv_data_row_1based": 124,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        334
+      ],
+      "vendor_amount": "0.16",
+      "vendor_date": "2023-11-21",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.20005 / Barrick 0.1 = 2.000 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2023-11-29",
+      "ex_candidate_derived": "2023-11-29",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2023-12-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_21"
+      ],
+      "primary_sha256": "2281844e44fa548ebd19db013df8a9b05188781b0cb1a8baf97b1c6ec2496682",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2023-11-30",
+      "source_candidate_csv_data_row_1based": 30,
+      "v9_K4_csv_data_row_1based": 125,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        335
+      ],
+      "vendor_amount": "0.20005",
+      "vendor_date": "2023-11-29",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "EVIDENCE_FACTS_ONLY_HOLD_FORMAL_EXDATE_ENTITLEMENT_ADOPTION",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "通过（金额与由登记日推出的除息日均一致）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2024-02-28",
+      "ex_candidate_derived": "2024-02-28",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "PRIMARY_AMOUNT_MATCH_IS_NOT_COMPLETE_VENDOR_LINE_OR_ENTITLEMENT_PROOF",
+      "inventory_group": "AMOUNT_AND_DERIVED_DATE_MATCH_9",
+      "pay_date_fact": "2024-03-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_22"
+      ],
+      "primary_sha256": "70bdd968127a227d8b314490c17091eecb546e829b9956c92297950b8df50f7f",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified"
+      ],
+      "record_date_fact": "2024-02-29",
+      "source_candidate_csv_data_row_1based": 31,
+      "v9_K4_csv_data_row_1based": 127,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        337
+      ],
+      "vendor_amount": "0.1",
+      "vendor_date": "2024-02-28",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.19966 / Barrick 0.1 = 1.997 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2024-05-31",
+      "ex_candidate_derived": "2024-05-31",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2024-06-17",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_23"
+      ],
+      "primary_sha256": "502af84fe0c0b799906789c0dac3f2ed08938229678b8908f954e8e6dc9ed6e8",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2024-05-31",
+      "source_candidate_csv_data_row_1based": 32,
+      "v9_K4_csv_data_row_1based": 129,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        339
+      ],
+      "vendor_amount": "0.19966",
+      "vendor_date": "2024-05-31",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.20003 / Barrick 0.1 = 2.000 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2024-08-30",
+      "ex_candidate_derived": "2024-08-30",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2024-09-16",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_24"
+      ],
+      "primary_sha256": "637b734927b5cd05081c5a2327229584193744ae334a373f828b060faa80d110",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2024-08-30",
+      "source_candidate_csv_data_row_1based": 33,
+      "v9_K4_csv_data_row_1based": 131,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        341
+      ],
+      "vendor_amount": "0.20003",
+      "vendor_date": "2024-08-30",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.19996 / Barrick 0.1 = 2.000 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2024-11-29",
+      "ex_candidate_derived": "2024-11-29",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2024-12-16",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_25"
+      ],
+      "primary_sha256": "aa5731196555703923e6e5f6ef6f220ce8ad63013c61561bd500a1859139f1ac",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2024-11-29",
+      "source_candidate_csv_data_row_1based": 34,
+      "v9_K4_csv_data_row_1based": 132,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        342
+      ],
+      "vendor_amount": "0.19996",
+      "vendor_date": "2024-11-29",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.2 / Barrick 0.1 = 2.000 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2025-02-28",
+      "ex_candidate_derived": "2025-02-28",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2025-03-17",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_26"
+      ],
+      "primary_sha256": "ee5e6d4c4dc4383e8c7c72a260eca580527260920ea5294aaf30a34979fe4118",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2025-02-28",
+      "source_candidate_csv_data_row_1based": 35,
+      "v9_K4_csv_data_row_1based": 133,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        343
+      ],
+      "vendor_amount": "0.2",
+      "vendor_date": "2025-02-28",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.19963 / Barrick 0.1 = 1.996 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.1",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2025-05-30",
+      "ex_candidate_derived": "2025-05-30",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2025-06-16",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_27"
+      ],
+      "primary_sha256": "ae039f8546c2e73c86628a4d8fe5f436f76536d13470ee2c6bb6b2e414220bd1",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2025-05-30",
+      "source_candidate_csv_data_row_1based": 36,
+      "v9_K4_csv_data_row_1based": 134,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        344
+      ],
+      "vendor_amount": "0.19963",
+      "vendor_date": "2025-05-30",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.29993 / Barrick 0.15 = 2.000 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.15",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2025-08-29",
+      "ex_candidate_derived": null,
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": null,
+      "primary_declaration_ids": [
+        "BARRICK_DECL_28"
+      ],
+      "primary_sha256": "2db90b6cf5ce2b632b7df17f94a8aa2d083e005208a1e12c273256bb5098c098",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": null,
+      "source_candidate_csv_data_row_1based": 37,
+      "v9_K4_csv_data_row_1based": 135,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        345
+      ],
+      "vendor_amount": "0.29993",
+      "vendor_date": "2025-08-29",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.34937 / Barrick 0.175 = 1.996 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.175",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2025-11-28",
+      "ex_candidate_derived": "2025-11-28",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2025-12-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_29"
+      ],
+      "primary_sha256": "b7cc8afb702fa6ce900ac809749c1f2dee8234bd9449a83c7b8a652db3924ac7",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2025-11-28",
+      "source_candidate_csv_data_row_1based": 38,
+      "v9_K4_csv_data_row_1based": 136,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        346
+      ],
+      "vendor_amount": "0.34937",
+      "vendor_date": "2025-11-28",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.83877 / Barrick 0.42 = 1.997 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.42",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2026-02-27",
+      "ex_candidate_derived": "2026-02-27",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2026-03-16",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_30"
+      ],
+      "primary_sha256": "953aa8337b2243a0da148bc12e7940e662228bb50f72c7d4dd0437d9308d6bca",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2026-02-27",
+      "source_candidate_csv_data_row_1based": 39,
+      "v9_K4_csv_data_row_1based": 137,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        347
+      ],
+      "vendor_amount": "0.83877",
+      "vendor_date": "2026-02-27",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    },
+    {
+      "action": "QUARANTINE_AMOUNT_CONFLICT_NO_RATIO_REPAIR",
+      "actual_ex_date": null,
+      "adopted_analytical_D": null,
+      "adopted_available_cash": null,
+      "adopted_receivable": null,
+      "author_verdict": "金额不一致：供应商 0.35018 / Barrick 0.175 = 2.001 倍（未修补）",
+      "candidate_csv_sha256": "ce8a3fd3435dcb5be52daa94a12f6aba36ad4db4edbedfa9d64b25bb62a57f6c",
+      "declared_Barrick_amount": "0.175",
+      "declared_amount_status": "PRIMARY_FACT_CONFIRMED",
+      "equivalent_exdate_evidence_allowed": "No new requirement for a separate exchange original per event: a properly supported applicable-rule,settlement-calendar and designation/special-branch range proof can also close the field. The v10 shortcut alone did not provide it.",
+      "event_key": "B|2026-05-29",
+      "ex_candidate_derived": "2026-05-29",
+      "ex_rule_limit": "T+2 previous trading session/T+1 record date is an unverified derivation; settlement non-delivery and exchange-designated/special branches not discharged by a price calendar",
+      "formal_runtime_adoption_passed": false,
+      "identity_status": "BARRICK_PRIMARY_DECLARATION_ONLY_VENDOR_EVENT_MAPPING_UNPROVED",
+      "inventory_group": "AMOUNT_CONFLICT_14",
+      "pay_date_fact": "2026-06-15",
+      "primary_declaration_ids": [
+        "BARRICK_DECL_31"
+      ],
+      "primary_sha256": "5a298a51351f3344a7952d0c366cf4b6a12c9237ca4b3b96b60fb1370ce2966d",
+      "propagation_rule_ids": [
+        "P_RAW_ANCHOR",
+        "P_FEATURES_AND_LABELS",
+        "P_INTEGER_CASH",
+        "P_ELIGIBILITY_AND_GAIN",
+        "P_STATE_CONTINUITY"
+      ],
+      "quarantine_reasons": [
+        "complete security-line/event binding absent",
+        "actual ex-date not certified",
+        "vendor amount conflicts with exact declaration; ratio not correction factor"
+      ],
+      "record_date_fact": "2026-05-29",
+      "source_candidate_csv_data_row_1based": 40,
+      "v9_K4_csv_data_row_1based": 138,
+      "v9_K4_csv_sha256": "463ed9eec2e8329ebf0c340f94550d55c6844462040e6083983764d926131a49",
+      "v9_K7_csv_data_rows_1based": [
+        348
+      ],
+      "vendor_amount": "0.35018",
+      "vendor_date": "2026-05-29",
+      "vendor_date_in_frozen_calendar": true,
+      "vendor_kind": "cash"
+    }
+  ],
+  "exdate_proof_policy": "Preserve the frozen evidence requirement; no new per-event second-provider/exchange-original hard gate. Supported equivalent rule/settlement-calendar/designated-date branch proof is admissible. The source shortcut used only stock trading dates.",
+  "frozen_profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+  "inherited_quarantine_note": "Existing COR/CoreSite33,B/Barnes33 and B/Randgold6 constraints remain; Randgold attribution remains inference. Do not treat new40 as replacing prior79 B event records or clearing COR. Do not reopen COST,page-SHA deviation,unit155 or COP actual-exdate decisions.",
+  "inherited_v9_overlay_sha256": "65b66d0dac5800ed6e2412b65bf65866195fb4eeba2be2df9784293702cd08a8",
+  "input_profiles": {
+    "EVO883-EVO893-v9-reviewed.zip": "52f8317ea9ba79ada9dd1cc12f91b3dcd0d3839c6dafd38e40936f5cddfe0fc0",
+    "EVO893-S1-BRKB-v10.zip": "cebb5584c97163e21bc6686bef6fcd73e1b261977e90fd7b97bcaf9f9b5b07ea",
+    "EVO893-v10.zip": "b3d9d28585ad87980a3908b0369a5b296ede307e2b2b63b4f7254f4463dc8f80",
+    "EVO893-v9.zip": "18f835f4572f1acd8ceccc692d88b804418c0ff9126d51780ed29e96f26773fe"
+  },
+  "mutation_authority": false,
+  "negative_examples_executed_against_business_code": false,
+  "propagation_rules": [
+    {
+      "id": "P_RAW_ANCHOR",
+      "outputs": [
+        "raw_open",
+        "raw_close",
+        "raw_high",
+        "raw_low",
+        "dollar_ADV_when_close_dependency_unproved"
+      ],
+      "rule": "For each quarantined event trace every qfq/rehab inverse-price dependency including adjustment anchors outside the event day. If a raw field depends on that event/factor and lacks separately verified range evidence, mark field null with source event lineage. Deleting a cash row alone is not proof raw prices recovered. Unknown ancestry invalidates the declared dependency span; never infer a narrow ex-day-only range."
+    },
+    {
+      "id": "P_FEATURES_AND_LABELS",
+      "outputs": [
+        "C",
+        "r",
+        "factor_score",
+        "eligible_state",
+        "H10_label",
+        "H5_label",
+        "train_buckets",
+        "mu_Q_and_alpha_if_dependent"
+      ],
+      "rule": "Propagate unknown event amount/ex-date/security line through analytical C and daily r, every actual recipe lookback,252-session eligibility,20-session dollar ADV, H10 and H5 entry/exit-open valuation and entire entitlement interval, plus train calibration and cross-sectional rankings. New purchase at ex-open has no retroactive dividend entitlement but does not repair its feature/label/history dependencies."
+    },
+    {
+      "id": "P_INTEGER_CASH",
+      "outputs": [
+        "entitled_shares",
+        "receivable",
+        "NAV",
+        "available_cash",
+        "buying_power",
+        "integer_orders",
+        "fees"
+      ],
+      "rule": "Require separately supported exact amount,type/security identity,actual ex-date and previous-close entitled integer inventory before receivable/NAV adoption. Unknown amount or entitlement=>receivable and NAV null, not zero. Supported receivable with unknown pay availability remains nonspendable; available cash/time null, not written off. No automatic DRIP,free fractional shares,ratio repair,or retyping capital return as ordinary dividend."
+    },
+    {
+      "id": "P_ELIGIBILITY_AND_GAIN",
+      "outputs": [
+        "rank",
+        "S2_candidate_admission",
+        "meta_pool",
+        "G",
+        "K",
+        "optional_order_approval"
+      ],
+      "rule": "Keep VERIFIED_GE50 / VERIFIED_LT50 / UNKNOWN distinct. UNKNOWN freezes optional new risk; it is not a valid empty pool. Missing required labels/calibration or old/new holdings forecast refuses optional P. Do not silently delete B/COR/CEG from frozen64 or manufacture ranks using a convenient remaining subset. Independently required protective actions still require computable data and costs."
+    },
+    {
+      "id": "P_STATE_CONTINUITY",
+      "outputs": [
+        "inventory",
+        "cash",
+        "NAV",
+        "solo_returns",
+        "candidate_meta_SR",
+        "V",
+        "DSR",
+        "A",
+        "IR",
+        "bootstrap",
+        "63_day_QQQ_stop_readout_if_launched"
+      ],
+      "rule": "Follow all actual dependency descendants through carried holdings,cash,fees,age/risk latches and cross-fold state. If main path is indeterminate retain fold/attempt/date/budget/N identities and null formal affected readouts; no skipped folds,reset capital,concatenation of good slices,or automatic later resumption. Readout impact continues until an independently supported reconciliation checkpoint,not automatically event-day or ten direct windows."
+    }
+  ],
+  "reviewer_acceptance_received": false,
+  "runtime_consumable": false,
+  "schema": "EVO883.v10.engineering-disposition.draft.v1",
+  "state": "DRAFT_FOR_HANLIN_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE",
+  "unmatched_declaration_relations": [
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_11",
+      "declared_amount": "0.09",
+      "derived_ex_candidate": "2021-08-30",
+      "missing_match_row_1based": 1,
+      "overlap_groups": "CAPITAL_RETURN_APPROX_2",
+      "record_date": "2021-08-31",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2021-08-30",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "ae9d794ba0b4ca9dba30dc33512e60b1942558055e6a660c91ab04bd9631dde7",
+      "source_filing": "0001193125-21-240554"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_13",
+      "declared_amount": "0.09",
+      "derived_ex_candidate": "2021-11-29",
+      "missing_match_row_1based": 2,
+      "overlap_groups": "CAPITAL_RETURN_APPROX_2",
+      "record_date": "2021-11-30",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2021-11-29",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "7a1a1a12c4265e04648306d463be7720a075629ac07eb2a6a2d62f3ae010a254",
+      "source_filing": "0001193125-21-320495"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_15",
+      "declared_amount": "0.2",
+      "derived_ex_candidate": "2022-05-26",
+      "missing_match_row_1based": 3,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2022-05-27",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2022-05-26",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "c64adeaa9f4d2112b0517cdf85ab9443a657de95b260f82fa726badb9123ea32",
+      "source_filing": "0001193125-22-140987"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_16",
+      "declared_amount": "0.2",
+      "derived_ex_candidate": "2022-08-30",
+      "missing_match_row_1based": 4,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2022-08-31",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2022-08-30",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "8a05a8bc7a27b83f93ebdef70afcf62b14ec3bfcb693e8e922a51c819cd5a168",
+      "source_filing": "0001193125-22-214948"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_17",
+      "declared_amount": "0.15",
+      "derived_ex_candidate": "2022-11-29",
+      "missing_match_row_1based": 5,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2022-11-30",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2022-11-29",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "90f8bb381435dedbb6a52739b735d9605c30f14646c312476b922fce98a9693f",
+      "source_filing": "0001193125-22-277128"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_20",
+      "declared_amount": "0.1",
+      "derived_ex_candidate": "2023-08-30",
+      "missing_match_row_1based": 6,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2023-08-31",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2023-08-30",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "f7a1342d02bd5cf41a23679237f9e3057d832afde7761f9177685d47a54ae461",
+      "source_filing": "0001193125-23-206350"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_21",
+      "declared_amount": "0.1",
+      "derived_ex_candidate": "2023-11-29",
+      "missing_match_row_1based": 7,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2023-11-30",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2023-11-29",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "2281844e44fa548ebd19db013df8a9b05188781b0cb1a8baf97b1c6ec2496682",
+      "source_filing": "0001193125-23-269404"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_23",
+      "declared_amount": "0.1",
+      "derived_ex_candidate": "2024-05-31",
+      "missing_match_row_1based": 8,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2024-05-31",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2024-05-31",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "502af84fe0c0b799906789c0dac3f2ed08938229678b8908f954e8e6dc9ed6e8",
+      "source_filing": "0001193125-24-128219"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_24",
+      "declared_amount": "0.1",
+      "derived_ex_candidate": "2024-08-30",
+      "missing_match_row_1based": 9,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2024-08-30",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2024-08-30",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "637b734927b5cd05081c5a2327229584193744ae334a373f828b060faa80d110",
+      "source_filing": "0001193125-24-198723"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_25",
+      "declared_amount": "0.1",
+      "derived_ex_candidate": "2024-11-29",
+      "missing_match_row_1based": 10,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2024-11-29",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2024-11-29",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "aa5731196555703923e6e5f6ef6f220ce8ad63013c61561bd500a1859139f1ac",
+      "source_filing": "0001193125-24-253060"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_26",
+      "declared_amount": "0.1",
+      "derived_ex_candidate": "2025-02-28",
+      "missing_match_row_1based": 11,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2025-02-28",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2025-02-28",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "ee5e6d4c4dc4383e8c7c72a260eca580527260920ea5294aaf30a34979fe4118",
+      "source_filing": "0001193125-25-025337"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_27",
+      "declared_amount": "0.1",
+      "derived_ex_candidate": "2025-05-30",
+      "missing_match_row_1based": 12,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2025-05-30",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2025-05-30",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "ae039f8546c2e73c86628a4d8fe5f436f76536d13470ee2c6bb6b2e414220bd1",
+      "source_filing": "0001193125-25-114445"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_29",
+      "declared_amount": "0.175",
+      "derived_ex_candidate": "2025-11-28",
+      "missing_match_row_1based": 13,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2025-11-28",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2025-11-28",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "b7cc8afb702fa6ce900ac809749c1f2dee8234bd9449a83c7b8a652db3924ac7",
+      "source_filing": "0001193125-25-274144"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_30",
+      "declared_amount": "0.42",
+      "derived_ex_candidate": "2026-02-27",
+      "missing_match_row_1based": 14,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2026-02-27",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2026-02-27",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "953aa8337b2243a0da148bc12e7940e662228bb50f72c7d4dd0437d9308d6bca",
+      "source_filing": "0001193125-26-039501"
+    },
+    {
+      "action": "LINK_UNMATCHED_DECLARATION_QUARANTINE_DEPENDENT_READOUTS_NO_ZERO_NO_AUTO_INSERT",
+      "actual_missing_payment_certified": false,
+      "declaration_id": "BARRICK_DECL_31",
+      "declared_amount": "0.175",
+      "derived_ex_candidate": "2026-05-29",
+      "missing_match_row_1based": 15,
+      "overlap_groups": "AMOUNT_CONFLICT_14",
+      "record_date": "2026-05-29",
+      "repair_amount": null,
+      "same_derived_date_candidate_event_keys": "B|2026-05-29",
+      "scope": "NO_SAME_AMOUNT_MATCH_IN_AUTHORS_PLUS_MINUS_3_CALENDAR_DAY_SEARCH_ONLY",
+      "source_SHA": "5a298a51351f3344a7952d0c366cf4b6a12c9237ca4b3b96b60fb1370ce2966d",
+      "source_filing": "0001193125-26-216613"
+    }
+  ],
+  "version_impact": {
+    "different_policy": "changing panel,calendar,valuation/type handling,ex-date logic,thresholds,or replacing an unknown with estimate is not a routine input repair; separate version and authority decision required",
+    "recomputation": "any actual source/performance recalculation follows applicable authoritative N and unique historical-run budget; no automatic rerun or reuse of old V/DSR; current static review creates no fictitious trial",
+    "source_receipts": "same frozen definitions may be accepted as versioned v1 inputs after reviewer and engineering adoption; no frozen byte change here"
+  }
+}
