@@ -160,11 +160,25 @@ def integer_cash_valuation(request, *, conventions=None):
     }
     reasons = []
     quarantine = None
+    k5_reports, k5_reasons = [], []
     try:
         reject_b2_inputs(request, "holdings_cash")
         cash = request["known_cash"]
         as_of = iso_date(request["as_of"])
         inventory = request["inventory"]
+        if policy.document["version"] == "v2.0.0":
+            from .k5 import k5_dependency_check, CHILDREN
+
+            k5_reports = [
+                k5_dependency_check(dep, conventions=policy)
+                for dep in request.get("k5_dependencies", [])
+            ]
+            k5_reasons = [r for report in k5_reports for r in report["reasons"]]
+            if any(q and s in CHILDREN.values() for s, q in inventory.items()):
+                k5_reasons.append(
+                    "K5.held_child_entitlement_and_disposal_contract_missing"
+                )
+            reasons.extend(k5_reasons)
         quarantine = quarantine_check(
             {
                 "dependency_nodes": request.get("dependency_nodes", []),
@@ -348,9 +362,13 @@ def integer_cash_valuation(request, *, conventions=None):
             if q
         ):
             reasons.append("valuation.mark_unknown")
-        elif holdings_check["ok"] and (
-            metrics["available_cash"] is not None
-            and metrics["receivable_amount"] is not None
+        elif (
+            holdings_check["ok"]
+            and not k5_reasons
+            and (
+                metrics["available_cash"] is not None
+                and metrics["receivable_amount"] is not None
+            )
         ):
             metrics["nav"] = (
                 available
@@ -372,6 +390,7 @@ def integer_cash_valuation(request, *, conventions=None):
         )
         reasons.extend(quarantine["reasons"])
     metrics["event_quarantine"] = quarantine
+    metrics["k5_dependencies"] = k5_reports
     return policy.bind(
         result(
             "integer_cash_valuation",

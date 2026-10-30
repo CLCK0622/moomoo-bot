@@ -11,6 +11,16 @@
     "source_member": "EVO883-executable-conventions-v2.0.0.json",
     "source_zip_sha256": "6d498b8eeec884fbd8d65d185c4b5a62d2ba215d8fb1794a6deab08310b9eeaa"
   },
+  "k5/S2-field-receipt-v1.json": {
+    "scope": "K5 scoped v1 quote evidence; no entitlement or disposal policy",
+    "sha256": "9b5fd1e87a2cae26df8a0c1a8ee9fbd880c07234e05a9253ff9886d4dcb7711f",
+    "source_comment_id": "01a18c2c-c286-7492-9a60-8b66a1dc26b2"
+  },
+  "k5/VSNT-open-close-none.csv": {
+    "scope": "K5 scoped v1 quote evidence; no entitlement or disposal policy",
+    "sha256": "cde9f7c01f4e68a0c61f8480215a25649843df1780ab8f82a5920c1f83e9d2c3",
+    "source_comment_id": "01a18c2c-c286-7492-9a60-8b66a1dc26b2"
+  },
   "prereg-v2.json": {
     "comment_id": "01a18c40-6792-76e4-be5e-4127b54f7aa5",
     "sha256": "9bb933c21aea20270b792d3e77720c459fe80a3074f59884657a58d330e0088d",

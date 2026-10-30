@@ -74,6 +74,7 @@ IMPORTS = {
         "input_scope",
         "io",
         "math",
+        "k5",
     },
     "scope_reader": {"contract", "input_scope", "json", "pathlib"},
     "input_scope": set(),
@@ -97,6 +98,7 @@ IMPORTS = {
         "input_scope",
         "input_disposition",
         "state_v2",
+        "k5",
     },
     "isolation": {
         "copy",
@@ -108,6 +110,17 @@ IMPORTS = {
         "input_scope",
     },
     "state_v2": {"copy", "contract", "conventions", "fees", "input_scope"},
+    "k5": {
+        "csv",
+        "decimal",
+        "io",
+        "json",
+        "contract",
+        "conventions",
+        "fees",
+        "input_scope",
+        "isolation",
+    },
     "scope_proof": {
         "ast",
         "contract",
@@ -212,6 +225,7 @@ def b2_isolation_proof(policy):
         "scope_proof": 1,
         "scope_reader": 1,
         "valuation": 1,
+        "k5": 2,
     }:
         raise ValueError("scope.file_access_not_whitelisted")
     ref = static_proof()
@@ -229,6 +243,10 @@ def b2_isolation_proof(policy):
         + [policy.profile["portfolio"]["base_ticker"]],
         "strategy_market_file_whitelist": "<frozen_symbol>.json, matching symbol header and SHA, exact supplied frozen date vector; no link/alias/path expansion",
         "reference_file_whitelist": ref["read_whitelist"],
+        "k5_scoped_quote_read_whitelist": [
+            "k5/S2-field-receipt-v1.json",
+            "k5/VSNT-open-close-none.csv",
+        ],
         "reference_benchmark_symbol": "QQQ",
         "non_market_read_whitelist": {
             "execution": ["fee_params_x2.json", "fee_schedule.json"],

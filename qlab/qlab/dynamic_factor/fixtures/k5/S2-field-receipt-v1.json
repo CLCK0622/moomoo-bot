@@ -1,0 +1,168 @@
+{
+  "schema": "EVO883.S2-v14.versioned-v1-field-receipt.v1",
+  "issue_id": "01a18a63-02ca-77bc-a7bf-9f0769ed8bbf",
+  "trigger_comment_id": "01a18c28-58bf-7bce-818c-fa986938c0e5",
+  "reviewer_agent_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+  "decision": "ACCEPT_VSNT_SCOPED_V1_FIELD_EVIDENCE_AND_REQUEST_SCOPED_MISSING_RECEIPTS",
+  "strategy_version": "v1",
+  "frozen_identity": {
+    "prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+    "interface_v101_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+    "profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+    "calendar_sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+    "calendar_sessions": 3191,
+    "folds": 77,
+    "selection_panel_members": 64,
+    "VSNT_added_to_selection_panel": false
+  },
+  "source_bindings": {
+    "package_sha256": "9cd0bf16b01f6be227bcd678c2d71db2f304ca0c30a98182232f176271d99934",
+    "receipt_sha256": "099ee76a0c518a9faedc528f287029b3fc4eed4af36ee8fa497c023d0503b3ee",
+    "log_sha256": "0640c205d334601835fe5650df97ff7d3d4e090135987d8717f701ccbf4a641a",
+    "producer_source_sha256": {
+      "fetch": "e3a0fcc451cf4ad945443dc0f886f0126105854f7d1fa28c87b3d12beb0089c3",
+      "build": "b0a61a77b6e3459233298d26ab525500c9b359dc742cbccaad69aa513abad243"
+    },
+    "own_verification_sha256": "432a4f29e510e74f1845218fc41cfb2bd6ec334749f8c172f46a44fa0f96540d"
+  },
+  "authority": {
+    "chief_comment_id": "01a18c24-7273-7d79-8a09-120f77cf2b7b",
+    "source_issue_id": "01a18b04-828a-7e2f-ba25-be0b6a75624b",
+    "source_issue_snapshot_sha256": "7238b39752fda6386e0c080e682e846ae27fcf8e6e9deb182521ce2494c700c0",
+    "authority_excerpt_sha256": "8eba2ca97c3b8efd67162d9e3564a4e84fa23b0cec0d32713a81c6d3a80e87ab",
+    "limit": 3,
+    "use": "K5_ONLY_VIA_THIS_V1_FIELD_RECEIPT",
+    "if_K5_not_necessary": "DIAGNOSTIC_ARCHIVE_ONLY_NO_OTHER_USE",
+    "remaining_allowance_grants_more_requests": false
+  },
+  "accepted_source_fields": [
+    {
+      "symbol": "VSNT",
+      "source_code": "US.VSNT",
+      "source_name_as_returned": "Versant Media",
+      "target_field": "raw_open",
+      "source_field": "raw_open_none",
+      "from_date": "2026-01-05",
+      "to_date": "2026-07-09",
+      "rows": 128,
+      "ktype": "K_DAY",
+      "autype": "NONE",
+      "source_original_sha256": "99dbbba7e56401e33e27876d4b457cdbb8649e2b61034956fea237b46d4f7707",
+      "source_csv": "EVO893-S2-v14-VSNT-open-close-none.csv",
+      "source_csv_sha256": "cde9f7c01f4e68a0c61f8480215a25649843df1780ab8f82a5920c1f83e9d2c3",
+      "evidence_accepted": true,
+      "mapping": "EXACT_DATE_AND_VALUE_COPY_NO_INTERPOLATION_OR_PRICE_TRANSFORM",
+      "permitted_role": "K5_SUBSIDIARY_PRICE_ONLY_IF_NECESSARY",
+      "engineering_actual_read_accepted_by_this_review": false,
+      "independent_second_source": false,
+      "capture_surface": "SDK_RETURNED_DATAFRAME_SERIALIZED_CSV_NOT_PROTOCOL_WIRE_BYTES"
+    },
+    {
+      "symbol": "VSNT",
+      "source_code": "US.VSNT",
+      "source_name_as_returned": "Versant Media",
+      "target_field": "raw_close",
+      "source_field": "raw_close_none",
+      "from_date": "2026-01-05",
+      "to_date": "2026-07-09",
+      "rows": 128,
+      "ktype": "K_DAY",
+      "autype": "NONE",
+      "source_original_sha256": "99dbbba7e56401e33e27876d4b457cdbb8649e2b61034956fea237b46d4f7707",
+      "source_csv": "EVO893-S2-v14-VSNT-open-close-none.csv",
+      "source_csv_sha256": "cde9f7c01f4e68a0c61f8480215a25649843df1780ab8f82a5920c1f83e9d2c3",
+      "evidence_accepted": true,
+      "mapping": "EXACT_DATE_AND_VALUE_COPY_NO_INTERPOLATION_OR_PRICE_TRANSFORM",
+      "permitted_role": "K5_SUBSIDIARY_PRICE_ONLY_IF_NECESSARY",
+      "engineering_actual_read_accepted_by_this_review": false,
+      "independent_second_source": false,
+      "capture_surface": "SDK_RETURNED_DATAFRAME_SERIALIZED_CSV_NOT_PROTOCOL_WIRE_BYTES"
+    }
+  ],
+  "missing_source_fields": [
+    {
+      "code": "US.CDK",
+      "target_field": "raw_close",
+      "date": "2014-10-01",
+      "value": null,
+      "status": "UNAVAILABLE_IN_THIS_AUTHORIZED_OPEND_REQUEST",
+      "ret": -1,
+      "rows": 0,
+      "error_body_sha256": "96963e33214cee24575047dd79b7a69dd4a614fd0ff79257915bd79f28976174",
+      "error_body_is_nonempty": true,
+      "reason": "SDK returned Unknown stock for this code/window. No data response, retry or alternative source.",
+      "global_free_source_impossibility_proven": false,
+      "zero_price_or_zero_entitlement_inferred": false,
+      "retry_or_new_source_authorized": false
+    },
+    {
+      "code": "US.VSM",
+      "target_field": "raw_close",
+      "date": "2016-10-03",
+      "value": null,
+      "status": "UNAVAILABLE_IN_THIS_AUTHORIZED_OPEND_REQUEST",
+      "ret": -1,
+      "rows": 0,
+      "error_body_sha256": "56a1a3bc00540dffa22d9d48b1a394a2f15eacb1e68f7ff74a5bbd1957750d58",
+      "error_body_is_nonempty": true,
+      "reason": "SDK returned Unknown stock for this code/window. No data response, retry or alternative source.",
+      "global_free_source_impossibility_proven": false,
+      "zero_price_or_zero_entitlement_inferred": false,
+      "retry_or_new_source_authorized": false
+    }
+  ],
+  "quota": {
+    "before": {
+      "utc": "2026-10-30T09:31:34.461+00:00",
+      "used": 65,
+      "remain": 235,
+      "total": 300,
+      "detail_n": 65
+    },
+    "after": {
+      "utc": "2026-10-30T09:31:34.795+00:00",
+      "used": 66,
+      "remain": 234,
+      "total": 300,
+      "detail_n": 66
+    },
+    "consumed": 1,
+    "cap": 3,
+    "codes_added": [
+      "US.VSNT"
+    ],
+    "existing_code_timestamps_unchanged": true,
+    "reserve_sum_from_existing_upstream_ruling": 0,
+    "post_remaining_at_least_reserve": true,
+    "further_quota_probes_or_release_time_certified": false
+  },
+  "adoption_scope": {
+    "VSNT_raw_open_close_source_evidence_gap_closed_for_window": true,
+    "formal_input_field_binding_allowed": "K5_IF_NECESSARY_AND_EXISTING_CONTRACT_AND_ENGINEERING_MATCH",
+    "K5_necessity_redecided_here": false,
+    "existing_v12_independent_review_replaced": false,
+    "complete_K5_execution_or_valuation_accepted": false,
+    "noncash_entitlement_quantity_fractional_interest_availability_or_disposal_rules_created": false,
+    "CMCSA_raw_TR_labels_cash_or_NAV_automatically_restored": false,
+    "CDK_VSM_unknown_entitlements_filled_with_zero": false,
+    "same_vendor_magnitude_comparison_is_independent_price_proof": false,
+    "new_estimation_or_valuation_policy_requires_separate_version_N_OOS_review": true,
+    "same_definition_new_fields_automatically_require_v2": false,
+    "actual_performance_recomputation_or_retry_authorized": false
+  },
+  "runtime_consumable": false,
+  "certifiable": false,
+  "strict_eligible_count": null,
+  "complete_N": null,
+  "V": null,
+  "DSR": null,
+  "EVO886_release": false,
+  "R3_proven_by_this_source_failure": false,
+  "day63_clock_started": false,
+  "new_external_requests_by_review": 0,
+  "new_performance_attempts_by_review": 0,
+  "ledger_or_freeze_mutations_by_review": 0,
+  "issue_status": "in_progress",
+  "remaining_issue_work": "Existing delegated v12 contract/source review continues; no duplicate dispatch.",
+  "handoff": "Record this field increment and quota in the existing upstream lines. Engineering may bind the two VSNT fields within the stated K5 condition; it must not infer a complete corporate-action execution policy or run release."
+}
