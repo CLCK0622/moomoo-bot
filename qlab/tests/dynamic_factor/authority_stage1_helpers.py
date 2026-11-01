@@ -10,6 +10,16 @@ from qlab.dynamic_factor.contract import canonical, digest, sha256
 def archive(unknowns=101):
     rows = records((FIXTURES / "EVO891-B-ledger-v2.jsonl").read_bytes())
     count = state(rows)["N"]
+    while len(rows) < 1149:
+        rows.append(
+            dict(
+                event="gap_update",
+                seq=len(rows),
+                previous_hash=digest(rows[-1]),
+                gap_id="PRIVATE-PADDING",
+                status="open",
+            )
+        )
     for index in range(unknowns):
         contribution = 10 if index < unknowns - 1 else 1238 - 10 * (unknowns - 1)
         count += contribution
@@ -29,15 +39,26 @@ def archive(unknowns=101):
             performance_viewed=True,
         )
         rows.append(row)
-    rows.append(
-        dict(
-            event="checkpoint",
-            seq=len(rows),
-            previous_hash=digest(rows[-1]),
-            N=count,
-            n_high_water=count,
+        rows.append(
+            dict(
+                event="checkpoint",
+                seq=len(rows),
+                previous_hash=digest(rows[-1]),
+                N=count,
+                n_high_water=count,
+            )
         )
-    )
+        if index == 0:
+            for suffix in range(2):
+                rows.append(
+                    dict(
+                        event="gap_update",
+                        seq=len(rows),
+                        previous_hash=digest(rows[-1]),
+                        gap_id="PRIVATE-INTERVAL-" + str(suffix),
+                        status="open",
+                    )
+                )
     raw = b"".join(canonical(row) + b"\n" for row in rows)
     coverage = _issue_coverage(raw, "PRIVATE-SYNTHETIC-ADOPTION", _HOST_TOKEN)
     current = state(rows, trusted_coverage=coverage)

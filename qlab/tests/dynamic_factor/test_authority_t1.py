@@ -38,7 +38,7 @@ def test_101_unknown_rows_preserve_book_and_never_become_formal_bounds():
 @pytest.mark.parametrize("value", [None, -1, 1.0, True, "0"])
 def test_new_writes_never_relax(value):
     raw, _, _ = archive()
-    row = dict(records(raw)[21], n_evaluated=value)
+    row = dict(records(raw)[1149], n_evaluated=value)
     with pytest.raises(ValueError, match="ledger.attempt_field_missing_or_invalid"):
         validate_new_attempt(row, records(raw)[:21])
 
@@ -46,7 +46,7 @@ def test_new_writes_never_relax(value):
 @pytest.mark.parametrize("reason", [None, "", "   "])
 def test_reason_and_coverage_both_required(reason):
     raw, _, coverage = archive()
-    row = dict(records(raw)[21], n_evaluated_null_reason=reason)
+    row = dict(records(raw)[1149], n_evaluated_null_reason=reason)
     with pytest.raises(ValueError):
         validate_attempt_fields(
             row, mode="historical_replay", trusted_coverage=coverage
@@ -59,7 +59,7 @@ def test_caller_coverage_and_rehashed_mutation_cannot_expand_adoption():
         replay_approved_archive(
             raw, trusted_release={"approved": True}, witness=witness
         )
-    changed = rewrite(raw, lambda rows: rows[21].update(n_evaluated=0))
+    changed = rewrite(raw, lambda rows: rows[1149].update(n_evaluated=0))
     with pytest.raises(ValueError, match="approved_archive_bytes_mismatch"):
         replay_approved_archive(changed, trusted_release=coverage, witness=witness)
     with pytest.raises(ValueError, match="attempt_field_missing_or_invalid"):

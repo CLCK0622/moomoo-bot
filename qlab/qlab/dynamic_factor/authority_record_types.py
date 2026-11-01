@@ -48,7 +48,7 @@ def covered_archive(raw, coverage):
     if type(coverage) is not TrustedCoverage or coverage not in _COVERAGES:
         raise ValueError("ledger.trusted_archive_coverage_required")
     identity = _COVERAGES[coverage]
-    if identity[0] != sha256(raw):
+    if type(raw) is not bytes or identity[0] != sha256(raw):
         raise ValueError("ledger.approved_archive_bytes_mismatch")
     return identity
 

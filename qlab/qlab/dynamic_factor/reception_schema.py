@@ -7,6 +7,15 @@ from pathlib import Path
 ROOT = Path(__file__).parent / "reception_contracts"
 
 
+class SchemaMismatch(ValueError):
+    def __init__(self, errors):
+        super().__init__("receipt.schema_version_mismatch")
+        self.paths = [
+            "/" + "/".join(map(str, error.path)) + ":" + str(error.validator)
+            for error in errors
+        ]
+
+
 def strict_json(raw):
     def unique(pairs):
         result = {}
@@ -63,7 +72,7 @@ def validate(document, name):
         )
     errors = list(validator(contract(name), registry=registry).iter_errors(document))
     if errors:
-        raise ValueError("receipt.schema_version_mismatch")
+        raise SchemaMismatch(errors)
     return document
 
 

@@ -17,17 +17,17 @@ from qlab.dynamic_factor.authority_ledger import (
     PUBLISHED,
     SOURCE_SHA,
 )
-from qlab.dynamic_factor.contract import sha256
+from qlab.dynamic_factor.contract import sha256, digest
 from qlab.dynamic_factor.reception_schema import contract
 from authority_stage1_helpers import archive, raw_json
 
 
 def private_host(tmp_path, monkeypatch, *, complete=False, prefix_stub=True):
     raw, witness, coverage = archive()
-    chain = tmp_path / "ledger.jsonl"
-    witness_path = tmp_path / "witness.json"
+    chain = tmp_path / "EVO891-B-ledger-v2.jsonl"
+    witness_path = tmp_path / "project-tip.json"
     chain.write_bytes(raw)
-    witness_path.write_bytes(raw_json(witness))
+    witness_path.write_bytes(raw_json(witness) + b"\n")
     module_path = (
         Path(__file__).resolve().parents[2] / "qlab/dynamic_factor/authority_ledger.py"
     )
@@ -49,7 +49,7 @@ def private_host(tmp_path, monkeypatch, *, complete=False, prefix_stub=True):
         canonical_chain_realpath=str(chain.resolve()),
         canonical_witness_realpath=str(witness_path.resolve()),
         module_realpath=str(module_path),
-        reader_source_sha256=sha256(module_path.read_bytes()),
+        reader_source_sha256=digest(host.reader_manifest()),
     )
     reconciliation = (
         b"PRIVATE_APPROVED_RECONCILIATION_FOR_ALL_101_ROWS" if complete else None
@@ -76,6 +76,7 @@ def private_host(tmp_path, monkeypatch, *, complete=False, prefix_stub=True):
         ],
     )
     source = dict(
+        reader_sources=host.reader_manifest(),
         source_verified=True,
         approval_bytes=raw_json({"approval": "PRIVATE-AUTHORITY"}),
         projection_bytes=raw_json(projection),
@@ -102,6 +103,17 @@ def private_host(tmp_path, monkeypatch, *, complete=False, prefix_stub=True):
             reasons=["ledger_history_incomplete"],
         ),
     )
+    source["identities"]["anchor_sha256"] = sha256(source["published_anchor_bytes"])
+    source["observation"] = dict(
+        ledger_path=source["chain_path"],
+        ledger_sha256=source["chain_sha256"],
+        anchor_raw=source["published_anchor_bytes"],
+        anchor_ref="sha256:" + sha256(source["published_anchor_bytes"]),
+        anchor_payload_sha256=sha256(source["published_anchor_bytes"]),
+        approved_anchor_sha256=sha256(source["published_anchor_bytes"]),
+        approved_release_sha256=source["identities"]["approved_release_sha256"],
+    )
+
     monkeypatch.setattr(host, "_read_approved_deployment", lambda: deepcopy(source))
     if prefix_stub:
         # Unit tests of the N adapter isolate the separately owned V5 function.

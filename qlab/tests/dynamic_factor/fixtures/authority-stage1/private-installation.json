@@ -1,0 +1,506 @@
+{
+  "identity": {
+    "installer_agent_id": "00000000-0000-0000-0000-000000000000",
+    "installer_role": "PRIVATE_SCHEMA_LITERAL",
+    "installed_at_utc": "2026-11-01T16:32:51Z",
+    "trigger_comment_id": "00000000-0000-0000-0000-000000000000",
+    "precondition_evidence": {
+      "P1_complete_arm_N_tip": {
+        "scope": "PRIVATE_SCHEMA_LITERAL",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "acceptance_issue_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_comment_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_revision": 0,
+        "acceptance_raw_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "acceptance_ref": "PRIVATE_SCHEMA_LITERAL"
+      },
+      "P2_plan_reviewed": {
+        "scope": "PRIVATE_SCHEMA_LITERAL",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "acceptance_issue_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_comment_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_revision": 0,
+        "acceptance_raw_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "acceptance_ref": "PRIVATE_SCHEMA_LITERAL"
+      },
+      "P3_first_minister_ruling": {
+        "scope": "PRIVATE_SCHEMA_LITERAL",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "acceptance_issue_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_comment_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_revision": 0,
+        "acceptance_raw_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "acceptance_ref": "PRIVATE_SCHEMA_LITERAL"
+      },
+      "T1_engineering_closed": {
+        "scope": "PRIVATE_SCHEMA_LITERAL",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "acceptance_issue_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_comment_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_revision": 0,
+        "acceptance_raw_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "acceptance_ref": "PRIVATE_SCHEMA_LITERAL"
+      },
+      "T2_D_approved": {
+        "scope": "PRIVATE_SCHEMA_LITERAL",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "acceptance_issue_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_comment_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_revision": 0,
+        "acceptance_raw_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "acceptance_ref": "PRIVATE_SCHEMA_LITERAL"
+      },
+      "T3_L1_L2_reviewed": {
+        "scope": "PRIVATE_SCHEMA_LITERAL",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "acceptance_issue_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_comment_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_revision": 0,
+        "acceptance_raw_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "acceptance_ref": "PRIVATE_SCHEMA_LITERAL"
+      },
+      "T4_git_boundary": {
+        "scope": "PRIVATE_SCHEMA_LITERAL",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "acceptance_issue_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_comment_id": "00000000-0000-0000-0000-000000000000",
+        "acceptance_revision": 0,
+        "acceptance_raw_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "acceptance_ref": "PRIVATE_SCHEMA_LITERAL"
+      }
+    }
+  },
+  "deploy_root": {
+    "deploy_root_realpath": "/PRIVATE_SCHEMA_LITERAL",
+    "deploy_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "deploy_worktree_clean": true,
+    "module_realpath": "/PRIVATE_SCHEMA_LITERAL",
+    "module_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "project_root_realpath": "/PRIVATE_SCHEMA_LITERAL"
+  },
+  "ledger": {
+    "ledger_path": "/PRIVATE_SCHEMA_LITERAL",
+    "ledger_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "ledger_bytes": 0,
+    "source_archive_path": "/PRIVATE_SCHEMA_LITERAL",
+    "source_archive_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "sequence": 0,
+    "tip": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "N": 0,
+    "n_high_water": 0,
+    "snapshot_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "genesis_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "ledger_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "last_row_event": "checkpoint"
+  },
+  "prefix_proofs": {
+    "published_prefix_sha_ok": {
+      "status": "PASS",
+      "scope": "PRIVATE_SCHEMA_LITERAL",
+      "source_identity": "PRIVATE_SCHEMA_LITERAL",
+      "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sequence": 0,
+      "byte_start": 0,
+      "byte_end_exclusive": 0,
+      "prefix_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "equal": true,
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "reasons": []
+    },
+    "fixture_v2_prefix": {
+      "status": "PASS",
+      "scope": "PRIVATE_SCHEMA_LITERAL",
+      "source_identity": "PRIVATE_SCHEMA_LITERAL",
+      "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sequence": 0,
+      "byte_start": 0,
+      "byte_end_exclusive": 0,
+      "prefix_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "equal": true,
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "reasons": []
+    },
+    "fixture_v4_prefix": {
+      "status": "PASS",
+      "scope": "PRIVATE_SCHEMA_LITERAL",
+      "source_identity": "PRIVATE_SCHEMA_LITERAL",
+      "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sequence": 0,
+      "byte_start": 0,
+      "byte_end_exclusive": 0,
+      "prefix_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "equal": true,
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "reasons": []
+    },
+    "prior_archives_prefix": [
+      {
+        "status": "PASS",
+        "scope": "PRIVATE_SCHEMA_LITERAL",
+        "source_identity": "PRIVATE_SCHEMA_LITERAL",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sequence": 0,
+        "byte_start": 0,
+        "byte_end_exclusive": 0,
+        "prefix_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "equal": true,
+        "evidence_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "reasons": []
+      }
+    ]
+  },
+  "witness": {
+    "witness_path": "/PRIVATE_SCHEMA_LITERAL",
+    "witness_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "witness_fields": {
+      "ledger_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "genesis_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sequence": 0,
+      "tip": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "snapshot_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "N": 0,
+      "n_high_water": 0,
+      "self_report_n": 0,
+      "ledger_file_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ledger_file": "EVO891-B-ledger-v2.jsonl"
+    },
+    "witness_equals_state": true
+  },
+  "anchor": {
+    "anchor_L1_comment_id": "00000000-0000-0000-0000-000000000000",
+    "anchor_L1_created_at": "2026-11-01T16:32:51Z",
+    "anchor_L1_revision": 0,
+    "anchor_L1_author_id": "00000000-0000-0000-0000-000000000000",
+    "anchor_bytes_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "anchor_L2_path": "/PRIVATE_SCHEMA_LITERAL",
+    "anchor_L2_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "anchor_L2_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "V1": {
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "L1_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "L2_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approved_L2_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "actual_L2_path": "/PRIVATE_SCHEMA_LITERAL",
+        "approved_release_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "module_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "equal": true,
+        "reasons": []
+      }
+    },
+    "V2": {
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "publication_actor_id": "00000000-0000-0000-0000-000000000000",
+        "publication_role": "PRIVATE_LITERAL",
+        "responsibility_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "platform_original_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "revision": 0,
+        "prior_observation_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "accepted_supersession_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "current_release_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "reasons": [],
+        "L1_updated_at_utc": "2026-11-01T16:32:51Z"
+      }
+    },
+    "V3": {
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "L1_created_at_utc": "2026-11-01T16:32:51Z",
+        "installation_at_utc": "2026-11-01T16:32:51Z",
+        "time_source_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "publication_precedes_installation": true,
+        "reasons": []
+      }
+    },
+    "V4": {
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "ledger_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "anchor_sequence": 0,
+        "observed_prefix_sequence": 0,
+        "tip": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n_high_water": 0,
+        "optional_state_checked": [],
+        "optional_state_evidence_refs": [],
+        "reasons": []
+      }
+    },
+    "V5": {
+      "schema": "EVO884.AnchorPrefixCheck/v1",
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "anchor_ref": "PRIVATE_SCHEMA_LITERAL",
+        "anchor_sequence": 0,
+        "range_end": 0,
+        "expected_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "observed_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ledger_path": "/PRIVATE_SCHEMA_LITERAL",
+        "ledger_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "algorithm": "sha256",
+        "line_count": 0,
+        "byte_start": 0,
+        "ledger_bytes": 0,
+        "anchor_payload_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approved_release_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "equal": true
+      },
+      "reasons": []
+    },
+    "V6": {
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "ledger_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "current_sequence": 0,
+        "anchor_sequence": 0,
+        "current_high_water": 0,
+        "anchor_high_water": 0,
+        "chain_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "witness_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "same_branch": true,
+        "last_row_event": "checkpoint",
+        "current_release_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "reasons": [],
+        "genesis_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "witness_equals_state": true
+      }
+    }
+  },
+  "code_checks": {
+    "open_project_ok": true,
+    "verify_ok": true,
+    "is_current_authority": true,
+    "snapshot_reasons": []
+  },
+  "uniqueness": {
+    "scan_scope": [
+      {
+        "scope": "PRIVATE_SCHEMA_LITERAL",
+        "object_path": "/PRIVATE_SCHEMA_LITERAL",
+        "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "result": "SCANNED",
+        "roots": [],
+        "evidence_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ]
+      }
+    ],
+    "roots_found": 1,
+    "git_tracked": false
+  },
+  "readback": {
+    "nonauthor_readback_agent_id": "00000000-0000-0000-0000-000000000000",
+    "nonauthor_readback_at_utc": "2026-11-01T16:32:51Z",
+    "nonauthor_readback_result": {
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "deploy_root_realpath": "/PRIVATE_SCHEMA_LITERAL",
+        "deploy_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "module_realpath": "/PRIVATE_SCHEMA_LITERAL",
+        "module_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ledger_path": "/PRIVATE_SCHEMA_LITERAL",
+        "ledger_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "witness_path": "/PRIVATE_SCHEMA_LITERAL",
+        "witness_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "anchor_bytes_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "anchor_L2_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approved_release_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "V5_result_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "receipt_body_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "recusal_scope": "PRIVATE_SCHEMA_LITERAL",
+        "recusal_acceptance_refs": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "reasons": []
+      }
+    }
+  },
+  "approved_release": {
+    "L1_anchor_file_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "L1_comment_id": "00000000-0000-0000-0000-000000000000",
+    "L2_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "L2_path": "/PRIVATE_SCHEMA_LITERAL",
+    "L2_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "archive_bytes": 0,
+    "archive_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "deployment_approval_ref": "PRIVATE_SCHEMA_LITERAL",
+    "install_equals_archive": {
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "source_archive_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "installed_ledger_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_bytes": 0,
+        "installed_bytes": 0,
+        "equal": true
+      },
+      "reasons": []
+    },
+    "release_id": "EVO891-B@seq182",
+    "sequence": 0,
+    "supersedes_release_id": "PRIVATE_SCHEMA_LITERAL"
+  },
+  "t1": {
+    "book_N": 1313,
+    "book_N_certified": false,
+    "classification": "controlled_historical_unknown",
+    "complete_N": null,
+    "counted_as_not_evaluated": false,
+    "counted_as_zero": false,
+    "dsr": null,
+    "high_water": 1313,
+    "new_writes_relaxed": false,
+    "null_n_evaluated_rows": 101,
+    "null_rows_list_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "null_rows_seq_range": "1149..1351",
+    "own_arm_formal_bound_from_book": false,
+    "reader_compat_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "reader_compat_preconditions": {
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "archive_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "coverage_ref": "PRIVATE_SCHEMA_LITERAL",
+        "nonempty_reasons": true,
+        "original_integrity": true,
+        "new_write_rules_unchanged": true
+      },
+      "reasons": []
+    },
+    "t1_ruling_ref": "PRIVATE_SCHEMA_LITERAL"
+  },
+  "v5_mandatory_check": {
+    "install": {
+      "schema": "EVO884.AnchorPrefixCheck/v1",
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "anchor_ref": "PRIVATE_SCHEMA_LITERAL",
+        "anchor_sequence": 0,
+        "range_end": 0,
+        "expected_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "observed_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ledger_path": "/PRIVATE_SCHEMA_LITERAL",
+        "ledger_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "algorithm": "sha256",
+        "line_count": 0,
+        "byte_start": 0,
+        "ledger_bytes": 0,
+        "anchor_payload_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approved_release_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "equal": true
+      },
+      "reasons": []
+    },
+    "formal_reception": {
+      "schema": "EVO884.AnchorPrefixCheck/v1",
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "anchor_ref": "PRIVATE_SCHEMA_LITERAL",
+        "anchor_sequence": 0,
+        "range_end": 0,
+        "expected_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "observed_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ledger_path": "/PRIVATE_SCHEMA_LITERAL",
+        "ledger_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "algorithm": "sha256",
+        "line_count": 0,
+        "byte_start": 0,
+        "ledger_bytes": 0,
+        "anchor_payload_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approved_release_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "equal": true
+      },
+      "reasons": []
+    },
+    "readback": {
+      "schema": "EVO884.AnchorPrefixCheck/v1",
+      "status": "PASS",
+      "evidence_refs": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "measured": {
+        "anchor_ref": "PRIVATE_SCHEMA_LITERAL",
+        "anchor_sequence": 0,
+        "range_end": 0,
+        "expected_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "observed_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ledger_path": "/PRIVATE_SCHEMA_LITERAL",
+        "ledger_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "algorithm": "sha256",
+        "line_count": 0,
+        "byte_start": 0,
+        "ledger_bytes": 0,
+        "anchor_payload_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approved_release_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "equal": true
+      },
+      "reasons": []
+    }
+  }
+}

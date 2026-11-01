@@ -8,15 +8,42 @@ that source adapter; they do not install a deployment or enable this adapter.
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
-from weakref import WeakKeyDictionary
+from weakref import WeakKeyDictionary, ref
 
-from .contract import digest, sha256
+from .contract import canonical, digest, sha256
 
 
 _HOSTS = WeakKeyDictionary()
 _SNAPSHOTS = WeakKeyDictionary()
 _PINS = WeakKeyDictionary()
 _VIEWS = WeakKeyDictionary()
+_LATEST_SNAPSHOT = WeakKeyDictionary()
+
+
+def reader_manifest():
+    root = Path(__file__).parent
+    names = (
+        "authority_host.py",
+        "authority_ledger.py",
+        "authority_record_types.py",
+        "authority_prefix.py",
+        "authority_install_receipt.py",
+        "authority_binding.py",
+        "reception_v2.py",
+        "reception_schema.py",
+        "reception_entrypoints_v3.py",
+        "contract.py",
+        "arm_n.py",
+    )
+    paths = [root / name for name in names] + sorted(
+        (root / "reception_contracts").glob("*.json")
+    )
+    return {
+        str(path.relative_to(root)): sha256(path.read_bytes())
+        if path.is_file()
+        else None
+        for path in paths
+    }
 
 
 def fingerprint(value):
@@ -78,6 +105,10 @@ def host_data(context):
 
 def observe(context):
     source = host_data(context)
+    if source.get("reader_sources") != reader_manifest() or source[
+        "module_path"
+    ] != str(Path(__file__).with_name("authority_ledger.py").resolve()):
+        raise ValueError("ledger.observed_object_drift")
     for role in ("module", "chain", "witness"):
         path = Path(source[role + "_path"])
         if (
@@ -89,6 +120,27 @@ def observe(context):
         raw = path.read_bytes()
         if sha256(raw) != source[role + "_sha256"]:
             raise ValueError("ledger.observed_object_drift")
+        if role == "chain" and raw != source["chain_raw"]:
+            raise ValueError("ledger.observed_object_drift")
+        if role == "witness":
+            from .reception_schema import strict_json
+            from .authority_ledger import FIELDS
+
+            measured = strict_json(raw)
+            if (
+                measured != source["witness"]
+                or set(measured) != set(FIELDS) | {"ledger_file", "ledger_file_sha256"}
+                or canonical(measured) + b"\n" != raw
+            ):
+                raise ValueError("ledger.tail_or_high_water_mismatch")
+    expected = dict(
+        chain_sha256=source["chain_sha256"],
+        witness_sha256=source["witness_sha256"],
+        anchor_sha256=sha256(source["published_anchor_bytes"]),
+        reader_source_sha256=digest(source["reader_sources"]),
+    )
+    if any(source["identities"].get(key) != value for key, value in expected.items()):
+        raise ValueError("reception.N_object_or_coverage_mismatch")
     return deepcopy(source)
 
 
@@ -120,12 +172,13 @@ def _retain_snapshot(context, installation_result, replay, coverage):
     # Called only after N03 actual schema, source, byte, prefix and group checks.
     snapshot = object.__new__(InstalledAuthoritySnapshot)
     _SNAPSHOTS[snapshot] = (
-        context,
+        ref(context),
         deepcopy(installation_result),
         deepcopy(replay),
         coverage,
         context_digest(observe(context)),
     )
+    _LATEST_SNAPSHOT[context] = snapshot
     return snapshot
 
 
@@ -134,7 +187,7 @@ def check_snapshot(context, snapshot):
     if type(snapshot) is not InstalledAuthoritySnapshot or snapshot not in _SNAPSHOTS:
         raise ValueError("ledger.trusted_project_installation_required")
     owner, receipt, replay, coverage, identity = _SNAPSHOTS[snapshot]
-    if owner is not context or receipt["accepted"] is not True:
+    if owner() is not context or receipt["accepted"] is not True:
         raise ValueError("ledger.trusted_project_installation_required")
     if identity != context_digest(source):
         raise ValueError("reception.N_stage_pin_changed")
@@ -143,10 +196,10 @@ def check_snapshot(context, snapshot):
 
 def installed_snapshot(context):
     # Serialized receipts never mint capabilities. Return a host-retained object.
-    for snapshot, record in list(_SNAPSHOTS.items()):
-        if record[0] is context:
-            check_snapshot(context, snapshot)
-            return snapshot
+    snapshot = _LATEST_SNAPSHOT.get(context)
+    if snapshot is not None:
+        check_snapshot(context, snapshot)
+        return snapshot
     raise ValueError("ledger.trusted_project_installation_required")
 
 

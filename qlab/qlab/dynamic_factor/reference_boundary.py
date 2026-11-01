@@ -92,7 +92,15 @@ def prepare_request(
     return request
 
 
-def run_isolated(root, request):
+def run_isolated(
+    root,
+    request,
+    *,
+    host_context=None,
+    installed_snapshot=None,
+    run_pin=None,
+    arm_tag=None,
+):
     """No inherited credentials, user site, PYTHONPATH, callback or extra FDs.
 
     Imports finish before the worker installs its audit hook. Pinned static
@@ -100,6 +108,21 @@ def run_isolated(root, request):
     """
     from .reference_check import static_proof
 
+    expected_authority_binding = None
+    if any(
+        value is not None
+        for value in (host_context, installed_snapshot, run_pin, arm_tag)
+    ):
+        from .authority_binding import make_worker_binding
+
+        if "authority_binding" in request:
+            raise ValueError("ledger.worker_authority_unbound")
+        expected_authority_binding = make_worker_binding(
+            host_context, installed_snapshot, run_pin, arm_tag
+        )
+        request = dict(request, authority_binding=expected_authority_binding)
+    elif "authority_binding" in request:
+        raise ValueError("ledger.worker_authority_unbound")
     static_proof()
     package = str(Path(__file__).resolve().parents[2])
     module = (
@@ -127,6 +150,15 @@ def run_isolated(root, request):
         + module
         + " import main;raise SystemExit(main())"
     )
+    if expected_authority_binding is not None:
+        bootstrap = (
+            "import sys;sys.dont_write_bytecode=True;sys.path.insert(0,"
+            + repr(package)
+            + ");from qlab.dynamic_factor.authority_binding import bind_stdin;bind_stdin("
+            + repr(expected_authority_binding)
+            + ");"
+            + bootstrap
+        )
     child = subprocess.run(
         [
             sys.executable,
@@ -148,6 +180,13 @@ def run_isolated(root, request):
     if child.returncode != 2:
         raise ValueError("reference.isolated_worker_failed")
     report = json.loads(child.stdout)
+    if expected_authority_binding is not None:
+        from .authority_host import check_pin
+
+        check_pin(host_context, run_pin, arm_tag)
+        report["authority_binding_sha256"] = expected_authority_binding[
+            "binding_sha256"
+        ]
     if (
         report.get("returns") is not None
         or report.get("runtime_consumable") is not False
