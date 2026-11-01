@@ -6,6 +6,7 @@ current candidate. Stage records are immutable, including failures and empty poo
 
 from __future__ import annotations
 
+
 import json
 import math
 from copy import deepcopy
@@ -237,7 +238,7 @@ def _dsr(m, v, n_snapshot, policy):
     return dict(m, sr0=sr0, dsr=value)
 
 
-def _n_snapshot(ledger, self_report_n, policy=None, *, arm_tag=None):
+def _n_snapshot(ledger, self_report_n, policy=None, *, arm_tag=MISSING):
     """Read the formal arm projection without observing or writing a self-report.
 
     The third positional argument remains the factor policy object.

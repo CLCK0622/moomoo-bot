@@ -3,7 +3,7 @@
 from copy import deepcopy
 
 from .contract import digest
-from .continuity import continuous_path_check
+from .continuity import historical_continuous_path_check as continuous_path_check
 from .f3_harness import METADATA
 from .scope_harness import continuity_fixture
 

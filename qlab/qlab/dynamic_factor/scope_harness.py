@@ -2,8 +2,8 @@
 
 from copy import deepcopy
 
-from .authority_ledger import CURRENT_PUBLISHED as PUBLISHED
-from .continuity import continuous_path_check
+from .historical_authority import HISTORICAL_V4_PUBLISHED as PUBLISHED
+from .continuity import historical_continuous_path_check as continuous_path_check
 from .contract import digest
 from .execution import calibrate_gain, initial_build_turnover_check
 from .folds import _features, run_walk_forward

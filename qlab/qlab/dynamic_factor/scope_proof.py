@@ -48,6 +48,7 @@ IMPORTS = {
         "validation",
     },
     "pipeline": {
+        "arm_n",
         "__future__",
         "contract",
         "conventions",
@@ -105,6 +106,8 @@ IMPORTS = {
         "valuation",
     },
     "continuity": {
+        "authority_host",
+        "historical_authority",
         "authority_ledger",
         "contract",
         "conventions",

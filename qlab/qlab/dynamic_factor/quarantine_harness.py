@@ -8,7 +8,7 @@ from pathlib import Path
 
 from .contract import canonical, digest, sha256
 from .conventions import load_conventions
-from .continuity import continuous_path_check
+from .continuity import historical_continuous_path_check as continuous_path_check
 from .event_quarantine import (
     BINDINGS,
     event_receipts,

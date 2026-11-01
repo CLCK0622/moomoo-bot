@@ -1,3 +1,4 @@
+# Historical continuity regressions; current N03 paths are tested separately.
 import json
 from copy import deepcopy
 from datetime import date, timedelta
@@ -6,7 +7,9 @@ from pathlib import Path
 import pytest
 
 from qlab.dynamic_factor.contract import canonical, digest, sha256
-from qlab.dynamic_factor.continuity import continuous_path_check
+from qlab.dynamic_factor.continuity import (
+    historical_continuous_path_check as continuous_path_check,
+)
 from qlab.dynamic_factor.conventions import FIXTURES, load_conventions
 from qlab.dynamic_factor.folds import run_walk_forward, _run_walk_forward_unbound
 from qlab.dynamic_factor.input_scope import ROLES

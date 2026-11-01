@@ -1,5 +1,7 @@
 """Integration negatives use verified fixture ledgers and public DSR/readout paths."""
 
+from qlab.dynamic_factor import historical_authority
+
 import json
 import shutil
 import sys
@@ -52,27 +54,12 @@ def reports(ledger, tag):
         ledger.anchor_path if isinstance(ledger, AttemptLedger) else ledger.witness
     )
     before = ledger.path.read_bytes(), witness.read_bytes()
-    request = {} if tag is None else {"arm_tag": tag}
-    readout = ledger.arm_readout(tag)
-    dsr = dsr_eval_arm(request, ledger)
-    pipeline = _n_snapshot(ledger, 10**9, arm_tag=tag)
+    # Original fixture projection remains diagnostic, with no formal binding.
+    report = ledger.diagnostic_arm_readout(tag)
     assert before == (ledger.path.read_bytes(), witness.read_bytes())
-    assert readout["metrics"]["arm_n"] == dsr["metrics"]["arm_n"] == pipeline["arm_n"]
-    assert (
-        readout["metrics"]["N_rows"] == dsr["metrics"]["N_rows"] == pipeline["N_rows"]
-    )
-    assert (
-        not readout["certifiable"]
-        and not dsr["certifiable"]
-        and not pipeline["n_complete"]
-    )
-    assert (
-        dsr["metrics"]["dsr"]
-        is dsr["metrics"]["trials_variance"]
-        is pipeline["gate_n"]
-        is None
-    )
-    return dsr["metrics"]["arm_n"]
+    assert not report["certifiable"] and not report["runtime_consumable"]
+    assert report["metrics"]["cumulative_n"] is None
+    return report["metrics"]["arm_n"]
 
 
 def test_other_arm_outcomes_cannot_inflate_factor_N_and_requests_are_separate(tmp_path):
@@ -271,7 +258,7 @@ def test_archived_and_current_authority_readout_retains_global_N_but_refuses_arm
     root = (
         authority_ledger.FIXTURES
         if version == "v2"
-        else authority_ledger.CURRENT_FIXTURES
+        else historical_authority.HISTORICAL_V4_FIXTURES
     )
     ledger = authority_ledger.AuthorityLedger(
         root / ("EVO891-B-ledger-%s.jsonl" % version),
@@ -292,8 +279,8 @@ def test_archived_and_current_authority_readout_retains_global_N_but_refuses_arm
     "outer,inner,reason",
     [
         (None, None, "arm_n.arm_tag_missing_or_invalid"),
-        (FACTOR, None, "arm_n.event_arm_tag_missing_or_invalid"),
-        (None, LLM, "arm_n.event_arm_tag_missing_or_invalid"),
+        (FACTOR, None, "ledger.trusted_project_installation_required"),
+        (None, LLM, "ledger.trusted_project_installation_required"),
         (FACTOR, LLM, "arm_n.request_arm_tag_conflict"),
     ],
 )
@@ -301,7 +288,7 @@ def test_real_CLI_preserves_explicit_tag_and_rejects_conflicts_on_authority_fixt
     tmp_path, monkeypatch, capsys, outer, inner, reason
 ):
     ledger, tip = tmp_path / "fixture.jsonl", tmp_path / "fixture.tip.json"
-    root = authority_ledger.CURRENT_FIXTURES
+    root = historical_authority.HISTORICAL_V4_FIXTURES
     shutil.copyfile(root / "EVO891-B-ledger-v4.jsonl", ledger)
     shutil.copyfile(root / "EVO891-B-ledger-v4.tip.json", tip)
     monkeypatch.setattr(authority_ledger, "PROJECT_LEDGER", ledger)
@@ -332,6 +319,6 @@ def test_real_CLI_preserves_explicit_tag_and_rejects_conflicts_on_authority_fixt
     assert cli.main() == 2
     report = json.loads(capsys.readouterr().out)
     assert reason in report["reasons"]
-    if reason != "arm_n.request_arm_tag_conflict":
+    if reason == "arm_n.arm_tag_missing_or_invalid":
         assert report["metrics"]["arm_n"]["arm_tag"] == (outer or inner)
     assert before == (ledger.read_bytes(), tip.read_bytes()) and request == raw

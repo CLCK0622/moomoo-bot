@@ -276,7 +276,7 @@ def dsr_eval_arm(
     return conventions.bind(report) if conventions else report
 
 
-def arm_snapshot(ledger, self_report_n, policy=None, *, arm_tag=None):
+def arm_snapshot(ledger, self_report_n, policy=None, *, arm_tag=MISSING):
     """Read-only v3 arm projection; a self-report is audit metadata, never gate N."""
     if policy is not None and not hasattr(policy, "document"):
         raise ValueError("dsr.policy_invalid")

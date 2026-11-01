@@ -12,9 +12,11 @@ from authority_host_helpers import private_host
 from authority_stage1_helpers import raw_json
 
 
-def installation_host(tmp_path, monkeypatch, *, source_fail=None, prefix_stub=True):
+def installation_host(
+    tmp_path, monkeypatch, *, source_fail=None, prefix_stub=True, complete=False
+):
     context, snapshot, pin, source = private_host(
-        tmp_path, monkeypatch, prefix_stub=prefix_stub
+        tmp_path, monkeypatch, prefix_stub=prefix_stub, complete=complete
     )
     # Discard the unit N01 assumption: this fixture must mint its snapshot by
     # executing verify_installation_readonly, not by trusting receipt JSON.

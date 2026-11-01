@@ -235,7 +235,7 @@ def panel_input_check(request, *, conventions=None):
         )
 
 
-def input_migration_check(request, ledger, *, conventions=None):
+def _input_migration_check(request, ledger, *, conventions=None, anchor_source=None):
     """Propose/verify a versioned receipt; no installation or SQLite conversion.
 
     A project path change still needs separate acceptance and trusted install.
@@ -263,7 +263,7 @@ def input_migration_check(request, ledger, *, conventions=None):
         cur, _ = verify_bytes(
             request["new_ledger_raw"].encode("utf-8"),
             request["new_witness"],
-            latest_external_witness(),
+            (anchor_source or latest_external_witness)(),
         )
         if cur != new:
             raise ValueError("ledger.migration_new_anchor_mismatch")
@@ -310,3 +310,19 @@ def input_migration_check(request, ledger, *, conventions=None):
             ],
         )
     )
+
+
+def input_migration_check(request, ledger, *, conventions=None):
+    """Current migration metadata; current release is mandatory."""
+    return _input_migration_check(request, ledger, conventions=conventions)
+
+
+def historical_input_migration_check(request, ledger, *, conventions=None):
+    """Explicit legacy fixture diagnostics; never an install or current fallback."""
+    from .historical_authority import historical_v4_witness
+
+    report = _input_migration_check(
+        request, ledger, conventions=conventions, anchor_source=historical_v4_witness
+    )
+    report["artifacts"]["authority_mode"] = "HISTORICAL_V4_DIAGNOSTIC"
+    return report

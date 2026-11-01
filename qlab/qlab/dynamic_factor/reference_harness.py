@@ -11,7 +11,10 @@ from copy import deepcopy
 
 from .contract import canonical, digest, sha256
 from .reference_registry import artifact, registered_request, DISPATCH, member_spec
-from .reference_evidence import seal_static, reference_runtime_check
+from .reference_evidence import (
+    seal_static,
+    historical_reference_runtime_check as reference_runtime_check,
+)
 
 
 def audit_read_probe(root, forbidden):
@@ -141,7 +144,8 @@ def runtime_fixture(policy):
             "kind": "meta",
         }
     )
-    from .authority_ledger import CURRENT_FIXTURES as AUTHORITY_FIXTURES, records, state
+    from .historical_authority import HISTORICAL_V4_FIXTURES as AUTHORITY_FIXTURES
+    from .authority_ledger import records, state
 
     rows = records((AUTHORITY_FIXTURES / "EVO891-B-ledger-v4.jsonl").read_bytes())
     n = state(rows)["N"]

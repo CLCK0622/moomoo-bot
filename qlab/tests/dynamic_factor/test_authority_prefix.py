@@ -362,7 +362,7 @@ def receiver_fixture(tmp_path, monkeypatch, mutation):
                 ledger_file="EVO891-B-ledger-v2.jsonl", ledger_file_sha256=sha256(raw)
             )
             source["witness"] = witness
-            witness_raw = canonical(witness)
+            witness_raw = canonical(witness) + b"\n"
             Path(source["witness_path"]).write_bytes(witness_raw)
             source["witness_sha256"] = sha256(witness_raw)
     source["chain_raw"] = raw
@@ -374,6 +374,7 @@ def receiver_fixture(tmp_path, monkeypatch, mutation):
     ]
     source["published_anchor_bytes"] = source["observation"]["anchor_raw"]
     # Other return identities are synthetic but must describe the same source.
+    source["identities"]["anchor_sha256"] = sha256(source["published_anchor_bytes"])
     source["identities"]["chain_sha256"] = sha256(raw)
     source["identities"]["witness_sha256"] = source["witness_sha256"]
     monkeypatch.setattr(host, "_read_approved_deployment", lambda: deepcopy(source))

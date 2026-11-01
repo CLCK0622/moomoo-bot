@@ -53,10 +53,14 @@ def lineage_sources():
         "noncash_v3",
         "isolation",
     )
-    return {
+    sources = {
         n + ".py": sha256((Path(__file__).parent / (n + ".py")).read_bytes())
         for n in names
     }
+    from .authority_host import reader_manifest
+
+    sources.update(reader_manifest())
+    return sources
 
 
 def seal_static(sealed_at):
@@ -196,11 +200,13 @@ def verify_N(
     policy,
     candidate_run,
     meta_run,
+    *,
+    anchor_source=None,
 ):
     """EVO-891 witness field names; complete-history acceptance is a separate receipt.
 
     The seq20/N75 ancestor remains historical. Current receipts must descend from
-    the latest published seq182/N280 witness; complete N remains unaccepted.
+    the host-approved current release witness; complete N remains unaccepted.
     """
     fields = (
         "ledger_id",
@@ -229,7 +235,7 @@ def verify_N(
     raw_ledger = files.get(tail["ledger_file_sha256"])
     try:
         _, authority_rows = verify_bytes(
-            raw_ledger.encode(), tail, latest_external_witness()
+            raw_ledger.encode(), tail, (anchor_source or latest_external_witness)()
         )
     except (ValueError, AttributeError, TypeError, KeyError):
         raise ValueError("reference.complete_N_missing_or_retry_not_counted") from None
@@ -335,7 +341,7 @@ def verify_N(
         raise ValueError("reference.N_snapshot_order_invalid")
 
 
-def verify_runtime(request, policy):
+def verify_runtime(request, policy, *, anchor_source=None):
     from .reference_check import verify_registry
 
     verify_registry(
@@ -552,10 +558,11 @@ def verify_runtime(request, policy):
         policy,
         shared["actual_current_candidate_run_id"],
         shared["actual_current_meta_run_id_or_precreated_task_id"],
+        anchor_source=anchor_source,
     )
 
 
-def reference_runtime_check(request, *, conventions=None):
+def _reference_runtime_check(request, *, conventions=None, anchor_source=None):
     policy = conventions or load_conventions()
     if policy.document["version"] == "v3.0.0":
         from .reference_v3_evidence import runtime_check
@@ -563,7 +570,7 @@ def reference_runtime_check(request, *, conventions=None):
         return runtime_check(request, policy)
     reasons = []
     try:
-        verify_runtime(request, policy)
+        verify_runtime(request, policy, anchor_source=anchor_source)
     except (ValueError, KeyError, TypeError, StopIteration, AttributeError) as exc:
         reasons.append(
             str(exc)
@@ -592,3 +599,19 @@ def reference_runtime_check(request, *, conventions=None):
             ],
         )
     )
+
+
+def reference_runtime_check(request, *, conventions=None):
+    """Current reception; no historical witness fallback."""
+    return _reference_runtime_check(request, conventions=conventions)
+
+
+def historical_reference_runtime_check(request, *, conventions=None):
+    """Retained pre-v3 fixture validator; never current authority acceptance."""
+    from .historical_authority import historical_v4_witness
+
+    report = _reference_runtime_check(
+        request, conventions=conventions, anchor_source=historical_v4_witness
+    )
+    report["artifacts"]["authority_mode"] = "HISTORICAL_V4_DIAGNOSTIC"
+    return report

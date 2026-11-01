@@ -1,0 +1,1233 @@
+[
+  {
+    "original_case": {
+      "case_id": "T1-01",
+      "mutation_or_control": "trusted unchanged legacy null+nonempty reason",
+      "expected_semantics": "metadata replay may retain UNKNOWN, full book1313, complete_N null; no authority write",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "4a6c458d5d017f5d3f643bae8c351a87376fe947233b7f515ccdcd9a41682974",
+    "case_id": "T1-01",
+    "functions": [
+      "qlab.dynamic_factor.authority_record_types.validate_attempt_fields",
+      "qlab.dynamic_factor.authority_ledger.replay_approved_archive",
+      "qlab.dynamic_factor.reception_v2.receive_arm_n",
+      "qlab.dynamic_factor.reception_v2.bind_formal_n"
+    ],
+    "signatures": [
+      "validate_attempt_fields(row, *, mode, trusted_coverage)",
+      "replay_approved_archive(raw, *, trusted_release, witness)",
+      "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+      "bind_formal_n(*, host_context, run_pin, installed_snapshot, arm_tag)"
+    ],
+    "baseline_seams": [
+      "arm_n.py:184",
+      "arm_n.py:66",
+      "authority_ledger.py:144",
+      "authority_ledger.py:156",
+      "authority_ledger.py:181",
+      "authority_ledger.py:233",
+      "authority_ledger.py:368",
+      "authority_ledger.py:86",
+      "fixtures/evo891/EVO891-B-ledger-v2.py:133",
+      "fixtures/evo891/EVO891-B-ledger-v2.py:48",
+      "pipeline.py:390",
+      "pipeline.py:400",
+      "pipeline.py:417"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "T1-01",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "T1-02",
+      "mutation_or_control": "null with missing/empty/whitespace reason",
+      "expected_semantics": "reject controlled historical acceptance",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "66c44fef372ecb170894f3577bff316d851002618557eab0bf020efbe4a0339b",
+    "case_id": "T1-02",
+    "functions": [
+      "qlab.dynamic_factor.authority_record_types.validate_attempt_fields",
+      "qlab.dynamic_factor.authority_ledger.replay_approved_archive"
+    ],
+    "signatures": [
+      "validate_attempt_fields(row, *, mode, trusted_coverage)",
+      "replay_approved_archive(raw, *, trusted_release, witness)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:144",
+      "authority_ledger.py:156",
+      "authority_ledger.py:181",
+      "authority_ledger.py:233",
+      "authority_ledger.py:86",
+      "fixtures/evo891/EVO891-B-ledger-v2.py:133",
+      "fixtures/evo891/EVO891-B-ledger-v2.py:48"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "T1-02",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "missing_reason",
+      "empty_reason",
+      "whitespace_reason",
+      "missing_count_field"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "T1-03",
+      "mutation_or_control": "negative/float/bool/string count",
+      "expected_semantics": "reject invalid original count type",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "62d3e69a8e8e69b4f4f9ad219d062912bf998f02c6dc8648ca7d3fb18870b11b",
+    "case_id": "T1-03",
+    "functions": [
+      "qlab.dynamic_factor.authority_record_types.validate_attempt_fields"
+    ],
+    "signatures": [
+      "validate_attempt_fields(row, *, mode, trusted_coverage)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:181",
+      "authority_ledger.py:86",
+      "fixtures/evo891/EVO891-B-ledger-v2.py:133",
+      "fixtures/evo891/EVO891-B-ledger-v2.py:48"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "T1-03",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "negative",
+      "float",
+      "bool",
+      "string",
+      "missing_n_trials_total"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "T1-04",
+      "mutation_or_control": "null silently turned into zero or line edited and rehashed",
+      "expected_semantics": "reject source identity/semantic substitution, no full-N success",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "082e120748491a57a4640bcfecfd28988211f3201f35df46c3beb87e3a790c8d",
+    "case_id": "T1-04",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.preflight_authority",
+      "qlab.dynamic_factor.authority_ledger.replay_approved_archive"
+    ],
+    "signatures": [
+      "preflight_authority(host_context)",
+      "replay_approved_archive(raw, *, trusted_release, witness)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:144",
+      "authority_ledger.py:156",
+      "authority_ledger.py:233",
+      "authority_ledger.py:277",
+      "authority_ledger.py:288"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "T1-04",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "null_to_zero",
+      "edit_and_rehash_chain_and_witness"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "T1-05",
+      "mutation_or_control": "archive truncated to seq1148/N756 with locally matching witness",
+      "expected_semantics": "reject below accepted book/coverage/anchor; never install",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "3f58b12aaeae8ba2007ea1daa59906c14ea1d23cce74e38a8e83d7210ea73ba7",
+    "case_id": "T1-05",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.preflight_authority",
+      "qlab.dynamic_factor.authority_ledger.replay_approved_archive"
+    ],
+    "signatures": [
+      "preflight_authority(host_context)",
+      "replay_approved_archive(raw, *, trusted_release, witness)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:144",
+      "authority_ledger.py:156",
+      "authority_ledger.py:233",
+      "authority_ledger.py:277",
+      "authority_ledger.py:288"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "T1-05",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "T1-06",
+      "mutation_or_control": "new append uses historical nullable exception without new authority",
+      "expected_semantics": "reject writer admission; reader exception does not confer write permission",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "56babbd637970b1dee1fee5f37b87b210ea9389ef953048e68e5b51b5f656c6e",
+    "case_id": "T1-06",
+    "functions": [
+      "qlab.dynamic_factor.authority_record_types.validate_attempt_fields"
+    ],
+    "signatures": [
+      "validate_attempt_fields(row, *, mode, trusted_coverage)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:181",
+      "authority_ledger.py:86",
+      "fixtures/evo891/EVO891-B-ledger-v2.py:133",
+      "fixtures/evo891/EVO891-B-ledger-v2.py:48"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "T1-06",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0",
+      "writer_admission_rejects_before_append_or_file_write"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "T1-07",
+      "mutation_or_control": "nonempty reason claimed as proved no evaluation/other arm",
+      "expected_semantics": "retain UNKNOWN absent accepted identity and reach proof",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "a699a3bfd3fa38ad52316f7135536dc2b275a6f6f502b4b199455140e820e116",
+    "case_id": "T1-07",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.receive_arm_n",
+      "qlab.dynamic_factor.reception_v2.bind_formal_n"
+    ],
+    "signatures": [
+      "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+      "bind_formal_n(*, host_context, run_pin, installed_snapshot, arm_tag)"
+    ],
+    "baseline_seams": [
+      "arm_n.py:184",
+      "arm_n.py:66",
+      "authority_ledger.py:368",
+      "pipeline.py:390",
+      "pipeline.py:400",
+      "pipeline.py:417"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "T1-07",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "T1-08",
+      "mutation_or_control": "accepted append-only reconciliation closes relevant unknown but raw original null remains",
+      "expected_semantics": "do not impose permanent raw-null blocker; consume versioned approved mapping only, no automatic certification",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "069b62f32ed92f48af35aaf94b3b6e017d1ea868be4f1071e4fd06d6c97b580f",
+    "case_id": "T1-08",
+    "functions": [
+      "qlab.dynamic_factor.authority_ledger.replay_approved_archive",
+      "qlab.dynamic_factor.reception_v2.receive_arm_n",
+      "qlab.dynamic_factor.reception_v2.bind_formal_n"
+    ],
+    "signatures": [
+      "replay_approved_archive(raw, *, trusted_release, witness)",
+      "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+      "bind_formal_n(*, host_context, run_pin, installed_snapshot, arm_tag)"
+    ],
+    "baseline_seams": [
+      "arm_n.py:184",
+      "arm_n.py:66",
+      "authority_ledger.py:144",
+      "authority_ledger.py:156",
+      "authority_ledger.py:233",
+      "authority_ledger.py:368",
+      "pipeline.py:390",
+      "pipeline.py:400",
+      "pipeline.py:417"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "T1-08",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "approved_reconciliation",
+      "caller_claims_resolved",
+      "approved_other_arm_no_feedback"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0",
+      "raw_nulls_remain_101; accepted_overlay_can_close_relevant_unknowns; no_auto_N_certification"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "T1-09",
+      "mutation_or_control": "book1313 passed to own-arm formal gate or lower bound",
+      "expected_semantics": "refuse substitution; PRIMARY and sensitivity remain separate",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "413450d54cec4bf635035c17720b67ad635fc726519e3eaf424d31075a656856",
+    "case_id": "T1-09",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.receive_arm_n",
+      "qlab.dynamic_factor.reception_v2.bind_formal_n"
+    ],
+    "signatures": [
+      "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+      "bind_formal_n(*, host_context, run_pin, installed_snapshot, arm_tag)"
+    ],
+    "baseline_seams": [
+      "arm_n.py:184",
+      "arm_n.py:66",
+      "authority_ledger.py:368",
+      "pipeline.py:390",
+      "pipeline.py:400",
+      "pipeline.py:417"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "T1-09",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "A-01",
+      "mutation_or_control": "L1 and L2 hashes equal but source self-generated/unapproved",
+      "expected_semantics": "reject independent-publication claim",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "2b942b354f3517d9255c9c51e31bf13601f28eeead8d928f9b961cd8549a0fae",
+    "case_id": "A-01",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.preflight_authority"
+    ],
+    "signatures": [
+      "preflight_authority(host_context)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:277",
+      "authority_ledger.py:288"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "A-01",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "A-02",
+      "mutation_or_control": "L1 revision/source changed without accepted replacement",
+      "expected_semantics": "reject stale release; preserve original publication evidence",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "c6ff6f443c5c1abf1466ada12a195fb1e14939e44b5fb97ca105a70ec598f95f",
+    "case_id": "A-02",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.preflight_authority"
+    ],
+    "signatures": [
+      "preflight_authority(host_context)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:277",
+      "authority_ledger.py:288"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "A-02",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "A-03",
+      "mutation_or_control": "approved L2 replaced with older self-consistent seq182",
+      "expected_semantics": "reject against current trusted release identity, not only seq20 minimum",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "5525e20abcb817f1098eb11c36b2ffea4438d16c841ae55b21d8b3e832735777",
+    "case_id": "A-03",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.preflight_authority"
+    ],
+    "signatures": [
+      "preflight_authority(host_context)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:277",
+      "authority_ledger.py:288"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "A-03",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "A-04",
+      "mutation_or_control": "chain and project-tip changed together",
+      "expected_semantics": "independent current external source and exact prefix hash still required",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "7389934410ee4065aeced49ebebada290a54840959de340a5946a413daf2d931",
+    "case_id": "A-04",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.preflight_authority",
+      "qlab.dynamic_factor.authority_ledger.replay_approved_archive"
+    ],
+    "signatures": [
+      "preflight_authority(host_context)",
+      "replay_approved_archive(raw, *, trusted_release, witness)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:144",
+      "authority_ledger.py:156",
+      "authority_ledger.py:233",
+      "authority_ledger.py:277",
+      "authority_ledger.py:288"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "A-04",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "A-05",
+      "mutation_or_control": "anchor prefix byte hash differs though caller marked V5 pass",
+      "expected_semantics": "reject host acceptance; recompute actual original prefix bytes",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "dd3aadff335f0cab247b16fca37616b233ec8902a9f713c3a68bbec330ed77d8",
+    "case_id": "A-05",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.preflight_authority"
+    ],
+    "signatures": [
+      "preflight_authority(host_context)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:277",
+      "authority_ledger.py:288"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "A-05",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "caller_V5_PASS",
+      "shared_V5_binding_missing"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "A-06",
+      "mutation_or_control": "newer tip/high-water on wrong branch or ledger identity",
+      "expected_semantics": "reject despite >= comparisons",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "faec07e69bb2ebaa5f87c3d8b46626ff1bcc143aad469fbbac465127d60f3e4c",
+    "case_id": "A-06",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.preflight_authority",
+      "qlab.dynamic_factor.authority_ledger.replay_approved_archive"
+    ],
+    "signatures": [
+      "preflight_authority(host_context)",
+      "replay_approved_archive(raw, *, trusted_release, witness)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:144",
+      "authority_ledger.py:156",
+      "authority_ledger.py:233",
+      "authority_ledger.py:277",
+      "authority_ledger.py:288"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "A-06",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "A-07",
+      "mutation_or_control": "worker receives packet for another deployment/object or drifted host state",
+      "expected_semantics": "reject bound-object mismatch; no new worker file capability",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "6b0c35b01b85fef23e86dd3f86aa2fa9e5c7165e596534dea37ad6dd5d66e47d",
+    "case_id": "A-07",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.bind_worker_authority"
+    ],
+    "signatures": [
+      "bind_worker_authority(verified_object, *, host_context, expected_worker_binding)"
+    ],
+    "baseline_seams": [
+      "reference_boundary.py:102",
+      "reference_producer_v3.py:58"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "A-07",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "A-08",
+      "mutation_or_control": "JSON receipt has path as integer, revision as bool or result string true",
+      "expected_semantics": "reject type mismatch; inventory union types are not executable acceptance",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "d3e52c305c1758fbb97ffd86223fae19aab2e9f64d66c9b0eef5db786de6d3cb",
+    "case_id": "A-08",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.validate_installed_snapshot"
+    ],
+    "signatures": [
+      "validate_installed_snapshot(receipt_bytes, *, host_context)"
+    ],
+    "baseline_seams": [
+      "authority_ledger.py:277",
+      "authority_ledger.py:288"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "A-08",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "path_integer",
+      "revision_bool",
+      "result_string_true",
+      "L2_path_alias_mismatch"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      },
+      {
+        "function": "qlab.dynamic_factor.authority_install_receipt.validate_receipt",
+        "schema": "ReceiptValidationResult",
+        "owned_by": "都水主事；reader只消费字段验证结果"
+      }
+    ]
+  },
+  {
+    "original_case": {
+      "case_id": "A-09",
+      "mutation_or_control": "T1 mechanism fixed but complete-N prerequisite missing",
+      "expected_semantics": "do not install, preinstall or call open_project as a repair",
+      "status": "NOT_RUN_DESIGN_SPECIFICATION_ONLY",
+      "economic_callbacks": 0,
+      "authority_append": 0,
+      "budget_mutation": 0,
+      "installation_writes": 0
+    },
+    "original_case_sha256": "81549c24b73273d6d2c408eb63af43fc3c9c62d67ceeea92abad067082d98d64",
+    "case_id": "A-09",
+    "functions": [
+      "qlab.dynamic_factor.reception_v2.preflight_authority",
+      "qlab.dynamic_factor.reception_v2.receive_arm_n"
+    ],
+    "signatures": [
+      "preflight_authority(host_context)",
+      "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)"
+    ],
+    "baseline_seams": [
+      "arm_n.py:184",
+      "arm_n.py:66",
+      "authority_ledger.py:277",
+      "authority_ledger.py:288",
+      "authority_ledger.py:368"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "A-09",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--report-json",
+      "-"
+    ],
+    "return_schema": "EVO884.T1-reception-result/v2.1",
+    "parameterized_variants": [
+      "original_case"
+    ],
+    "observations": [
+      "original_LF_bytes_sha256_before_after",
+      "witness_L1_L2_coverage_run_pin_before_after",
+      "book_N_and_high_water",
+      "retained_unknown_fields_and_reason",
+      "relevant_approved_reconciliation",
+      "formal_N_projection_calls_and_gate_values",
+      "worker_complete_reader_calls_accessed_roles",
+      "authority_append=0",
+      "budget_mutation=0",
+      "installation_writes=0",
+      "economic_callbacks=0"
+    ],
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+    "delegated_shared_contracts": [
+      {
+        "function": "qlab.dynamic_factor.authority_prefix.verify_anchor_prefix",
+        "signature": "authority_prefix.verify_anchor_prefix(chain_raw: bytes, anchor: AcceptedAnchor, observation: HostObjectIdentity) -> AnchorPrefixResult",
+        "schema": "EVO884.AnchorPrefixCheck/v1",
+        "owned_by": "都水主事；reader只调用"
+      }
+    ]
+  }
+]

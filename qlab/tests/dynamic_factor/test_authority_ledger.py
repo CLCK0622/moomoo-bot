@@ -1,3 +1,8 @@
+from qlab.dynamic_factor.historical_authority import (
+    HISTORICAL_V4_FIXTURES,
+    HISTORICAL_V4_PUBLISHED,
+    HISTORICAL_V4_SOURCE_SHA,
+)
 import json
 import shutil
 import subprocess
@@ -8,9 +13,7 @@ import pytest
 
 from qlab.dynamic_factor.authority_ledger import (
     AuthorityLedger,
-    CURRENT_FIXTURES,
-    CURRENT_PUBLISHED,
-    CURRENT_SOURCE_SHA,
+    verify_bytes,
     FIXTURES,
     PUBLISHED,
     SOURCE_SHA,
@@ -26,7 +29,7 @@ from qlab.dynamic_factor.statistics import dsr_eval
 def authority_copy(root, latest=False):
     root.mkdir(parents=True)
     ledger, tip = root / "ledger.jsonl", root / "tip.json"
-    src = CURRENT_FIXTURES if latest else FIXTURES
+    src = HISTORICAL_V4_FIXTURES if latest else FIXTURES
     version = "v4" if latest else "v2"
     shutil.copyfile(src / f"EVO891-B-ledger-{version}.jsonl", ledger)
     shutil.copyfile(src / f"EVO891-B-ledger-{version}.tip.json", tip)
@@ -135,8 +138,8 @@ def test_formal_project_location_is_fixed_and_cannot_select_another_anchor(
     monkeypatch.setattr(module, "PROJECT_LEDGER", ledger)
     monkeypatch.setattr(module, "PROJECT_WITNESS", tip)
     p = load_conventions()
-    formal = AttemptLedger.from_conventions(ledger, p)
-    assert formal.snapshot()["recorded_N"] == 280
+    with pytest.raises(ValueError, match="trusted_project_installation_required"):
+        AttemptLedger.from_conventions(ledger, p)
     with pytest.raises(ValueError, match="project_path_migration"):
         AttemptLedger.from_conventions(tmp_path / "reset.sqlite", p)
     with pytest.raises(ValueError, match="anchor_override_forbidden"):
@@ -202,15 +205,15 @@ def test_R1_retargeted_bootstrap_rejected_by_API_and_CLI_before_mutation(tmp_pat
     assert (old.path.read_bytes(), old.anchor_path.read_bytes()) == source_before
 
 
-def test_current_published_v4_anchor_matches_vendor_and_keeps_complete_N_null(tmp_path):
+def test_historical_v4_anchor_matches_vendor_and_keeps_complete_N_null(tmp_path):
     ledger, tip = authority_copy(tmp_path / "current", latest=True)
-    assert sha256(ledger.read_bytes()) == CURRENT_SOURCE_SHA
-    current = AuthorityLedger(ledger, tip, external_anchor=CURRENT_PUBLISHED)
+    assert sha256(ledger.read_bytes()) == HISTORICAL_V4_SOURCE_SHA
+    current = AuthorityLedger(ledger, tip, external_anchor=HISTORICAL_V4_PUBLISHED)
     cur = current.verify()
-    assert cur == vendor(ledger, tip, CURRENT_PUBLISHED["tip"])
+    assert cur == vendor(ledger, tip, HISTORICAL_V4_PUBLISHED["tip"])
     assert cur["N"] == 280 and cur["sequence"] == 182
     assert (
-        current.snapshot()["is_current_authority"]
+        not current.snapshot()["is_current_authority"]
         and current.snapshot()["complete_N"] is None
     )
 
@@ -224,49 +227,52 @@ def test_formal_entry_rejects_old_75_snapshot_even_with_matching_retained_old_wi
     assert AuthorityLedger(ledger, tip).verify()["N"] == 75  # Historical read only.
     monkeypatch.setattr(module, "PROJECT_LEDGER", ledger)
     monkeypatch.setattr(module, "PROJECT_WITNESS", tip)
-    with pytest.raises(ValueError, match="external_anchor_mismatch"):
+    with pytest.raises(ValueError, match="trusted_project_installation_required"):
         AuthorityLedger(ledger, tip)
-    with pytest.raises(ValueError, match="external_anchor_mismatch"):
+    with pytest.raises(ValueError, match="trusted_project_installation_required"):
         AttemptLedger.from_conventions(ledger, load_conventions())
 
 
-def test_formal_reader_reloads_new_controlled_witness_without_source_change(
-    tmp_path, monkeypatch
-):
-    from qlab.dynamic_factor import authority_ledger as module
+def test_historical_reader_reloads_explicit_fixture_witness(tmp_path, monkeypatch):
+    from qlab.dynamic_factor import historical_authority as module
 
     ledger, tip = authority_copy(tmp_path / "installed", latest=True)
     later, later_tip = authority_copy(tmp_path / "authority-unit", latest=True)
     published = tmp_path / "published.json"
     published.write_bytes(tip.read_bytes())
-    monkeypatch.setattr(module, "PROJECT_LEDGER", ledger)
-    monkeypatch.setattr(module, "PROJECT_WITNESS", tip)
-    monkeypatch.setattr(module, "CURRENT_WITNESS_INPUT", published)
-    reader = AuthorityLedger.open_project(ledger)
-    before = reader.verify()
+    monkeypatch.setattr(module, "HISTORICAL_V4_WITNESS_INPUT", published)
+
+    def verify():
+        return verify_bytes(
+            ledger.read_bytes(),
+            json.loads(tip.read_bytes()),
+            module.historical_v4_witness(),
+        )[0]
+
+    before = verify()
     future = AuthorityLedger(later, later_tip, writable=True).append(attempt())
     published.write_bytes(later_tip.read_bytes())
     original = ledger.read_bytes(), tip.read_bytes()
     with pytest.raises(ValueError, match="external_anchor_mismatch"):
-        reader.verify()
+        verify()
     assert (ledger.read_bytes(), tip.read_bytes()) == original
     ledger.write_bytes(later.read_bytes())
     tip.write_bytes(later_tip.read_bytes())
-    assert reader.verify() == future
+    assert verify() == future
     assert future["N"] == before["N"] + 1
-    assert reader.snapshot()["current_published_anchor"]["tip"] == future["tip"]
+    assert module.historical_v4_witness()["tip"] == future["tip"]
 
 
 @pytest.mark.parametrize(
     "mutation", [{"sequence": 20}, {"tip": "bad"}, {"n_high_water": -1}]
 )
 def test_invalid_or_old_controlled_witness_is_rejected(tmp_path, monkeypatch, mutation):
-    from qlab.dynamic_factor import authority_ledger as module
+    from qlab.dynamic_factor import historical_authority as module
 
-    witness = json.loads(module.CURRENT_WITNESS_INPUT.read_bytes())
+    witness = json.loads(module.HISTORICAL_V4_WITNESS_INPUT.read_bytes())
     witness.update(mutation)
     path = tmp_path / "published.json"
     path.write_text(json.dumps(witness))
-    monkeypatch.setattr(module, "CURRENT_WITNESS_INPUT", path)
-    with pytest.raises(ValueError, match="latest_external_witness_missing_or_invalid"):
-        module.latest_external_witness()
+    monkeypatch.setattr(module, "HISTORICAL_V4_WITNESS_INPUT", path)
+    with pytest.raises(ValueError, match="historical_v4_witness_missing_or_invalid"):
+        module.historical_v4_witness()

@@ -17,7 +17,7 @@ from qlab.dynamic_factor.reference_registry import (
     registered_request,
 )
 from qlab.dynamic_factor.reference_evidence import (
-    reference_runtime_check,
+    historical_reference_runtime_check as reference_runtime_check,
     seal_static,
     lineage_proof,
 )

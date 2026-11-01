@@ -1,3 +1,4 @@
+# Historical continuity regressions; current N03 paths are tested separately.
 """B7 audit 01a18c4d-486d-70b6-b279-567d00832006, plus consumer variants."""
 
 from copy import deepcopy
@@ -5,7 +6,9 @@ from copy import deepcopy
 import pytest
 
 from qlab.dynamic_factor.contract import digest
-from qlab.dynamic_factor.continuity import continuous_path_check
+from qlab.dynamic_factor.continuity import (
+    historical_continuous_path_check as continuous_path_check,
+)
 from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.event_quarantine import field_rules, sources
 from qlab.dynamic_factor.scope_harness import continuity_fixture

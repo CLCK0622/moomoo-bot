@@ -273,17 +273,25 @@ source SHA/assumptions. `--out-dir` writes immutable content-addressed readouts.
 
 ## Review corrections F1/F2 and current witness
 
-The current external witness is EVO-893 ledger v4, seq182 / recorded N280,
-tip `c9082ec0f045796754e12506cc468a09ac88a36873aee8cacbe5cf5d0769f851`.
-The seq20/N75 archive remains a legal ancestor, never the current formal floor.
-Formal construction and P7 reject older snapshots. The logical project path stays
-fixed; no shared ledger installation or writer run is performed. The EVO-883
-9301feb3 ruling accepts continuation structure, not complete N or S2 qualification.
-The current sequence/count/tip are loaded from the controlled versioned
-`evo893/EVO891-B-ledger-v4.tip.json` input, separately from the mutable project
-tip. Formal reads and appends reload that input and verify its ancestor against
-the retained chain. Authority updates replace accepted witness input bytes;
-candidate requests cannot select a different witness or reset the project.
+EVO-893 v4 (seq182 / book N280) is retained as historical evidence. Current
+formal readers use `authority_release.read_approved_release` and the opaque
+host snapshot from `verify_installation_readonly`; they never search a fixture
+folder or fall back to v4. The approved release keeps its complete anchor,
+including `ledger_file_sha256`, and reception/readback call the single V5
+`authority_prefix.verify_anchor_prefix` implementation.
+
+The original deployment/permission adapter is a separately gated prerequisite.
+Without it, current reads refuse `ledger.trusted_project_installation_required`;
+this implementation creates no deployment root, authority chain, mutable tip,
+external publication or budget reservation. Explicit `historical_*` helpers and
+`diagnostic_arm_readout` preserve old fixture regression behavior only.
+
+T1 permits historical null only with byte-exact trusted archive coverage, a
+nonblank reason and all original integrity checks. All 101 original unknowns
+remain unknown; book/high-water 1313 cannot become this arm's formal bounds.
+Only a separately approved own-arm reconciliation can close relevant unknowns;
+new writes retain strict nonnegative integer admission. `arm_n.project` stays
+an incomplete diagnostic. See `AUTHORITY-STAGE1.md` for contracts and evidence.
 
 F1: `fixtures/frozen-fixtures.json` explicitly names and hashes committed inputs.
 `fixture_inventory.frozen_fixture_hashes` verifies only that inventory and its own

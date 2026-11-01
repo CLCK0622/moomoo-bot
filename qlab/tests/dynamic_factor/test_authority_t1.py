@@ -7,7 +7,8 @@ from qlab.dynamic_factor.authority_ledger import (
     state,
 )
 from qlab.dynamic_factor.authority_record_types import validate_attempt_fields
-from authority_stage1_helpers import archive, rewrite
+from authority_stage1_helpers import archive, rewrite, raw_json
+from qlab.dynamic_factor.authority_record_types import _issue_coverage, _HOST_TOKEN
 
 
 def test_101_unknown_rows_preserve_book_and_never_become_formal_bounds():
@@ -47,7 +48,8 @@ def test_new_writes_never_relax(value):
 def test_reason_and_coverage_both_required(reason):
     raw, _, coverage = archive()
     row = dict(records(raw)[1149], n_evaluated_null_reason=reason)
-    with pytest.raises(ValueError):
+    coverage = _issue_coverage(raw_json(row) + b"\n", "PRIVATE-BAD-REASON", _HOST_TOKEN)
+    with pytest.raises(ValueError, match="attempt_field_missing_or_invalid"):
         validate_attempt_fields(
             row, mode="historical_replay", trusted_coverage=coverage
         )

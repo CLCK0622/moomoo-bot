@@ -1,6 +1,7 @@
 """One formal adapter for the original nine dispatch sites; no legacy overload."""
 
 from .arm_n import MISSING, readout
+from .contract import digest
 from .authority_host import view_binding
 from .reception_v2 import bind_formal_n
 
@@ -29,6 +30,9 @@ def bound_readout(
         arm_tag if isinstance(arm_tag, str) else None
     )
     report["metrics"]["arm_n"]["reasons"] = list(bound["reasons"])
+    report["metrics"]["arm_n"]["projection_sha256"] = digest(
+        {"refused_arm_tag": report["metrics"]["arm_n"]["arm_tag"]}
+    )
     report["artifacts"]["formal_N_binding"] = bound
     report["reasons"] = list(bound["reasons"])
     if bound["accepted"]:
@@ -39,7 +43,14 @@ def bound_readout(
             cumulative_n=details["complete_N"],
             n_complete=True,
             cumulative_n_lower_bound=details["complete_N"],
-            rows=details["N_rows"],
+            rows=[
+                dict(row, observed_N=row["value"], complete_N=row["value"])
+                for row in details["N_rows"]
+            ],
+            observed_N_config=details["complete_N"],
+            observed_N_generation_requests=details["N_rows"][1]["value"],
+            request_count_known=details["N_rows"][1]["known"],
+            projection_sha256=details["projection_sha256"],
             n_ledger_hash=accepted["input_identities"]["chain_sha256"],
         )
         report["metrics"].update(
@@ -50,4 +61,16 @@ def bound_readout(
             n_ledger_hash=arm["n_ledger_hash"],
         )
         report["artifacts"]["ledger"] = ledger.snapshot()
+        snapshot = report["artifacts"]["ledger"]
+        arm["global_history"] = {
+            key: snapshot.get(key)
+            for key in (
+                "legacy_count_readout",
+                "recorded_N",
+                "n_high_water",
+                "authority_tip",
+                "authority_sequence",
+            )
+        }
+        report["metrics"]["N_rows"] = arm["rows"]
     return report

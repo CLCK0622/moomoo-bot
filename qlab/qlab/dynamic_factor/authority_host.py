@@ -5,6 +5,8 @@ separately approved deployment/permission prerequisites. Private tests replace
 that source adapter; they do not install a deployment or enable this adapter.
 """
 
+from .arm_n import MISSING
+
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
@@ -26,6 +28,7 @@ def reader_manifest():
         "authority_host.py",
         "authority_ledger.py",
         "authority_record_types.py",
+        "authority_release.py",
         "authority_prefix.py",
         "authority_install_receipt.py",
         "authority_binding.py",
@@ -34,6 +37,13 @@ def reader_manifest():
         "reception_entrypoints_v3.py",
         "contract.py",
         "arm_n.py",
+        "statistics.py",
+        "ledger.py",
+        "pipeline.py",
+        "__main__.py",
+        "dsr_v0.py",
+        "continuity.py",
+        "reference_boundary.py",
     )
     paths = [root / name for name in names] + sorted(
         (root / "reception_contracts").glob("*.json")
@@ -203,6 +213,16 @@ def installed_snapshot(context):
     raise ValueError("ledger.trusted_project_installation_required")
 
 
+def snapshot_high_water(snapshot):
+    if type(snapshot) is not InstalledAuthoritySnapshot or snapshot not in _SNAPSHOTS:
+        raise ValueError("ledger.trusted_project_installation_required")
+    owner = _SNAPSHOTS[snapshot][0]()
+    if owner is None:
+        raise ValueError("ledger.trusted_project_installation_required")
+    _, replay, _ = check_snapshot(owner, snapshot)
+    return replay["high_water"]
+
+
 def host_view(context, snapshot, pin, arm_tag):
     check_snapshot(context, snapshot)
     check_pin(context, pin, arm_tag)
@@ -215,7 +235,7 @@ class InstalledAuthorityView:
     def __init__(self):
         raise TypeError("reception.N_caller_ledger_not_authoritative")
 
-    def arm_readout(self, arm_tag=None):
+    def arm_readout(self, arm_tag=MISSING):
         from .reception_entrypoints_v3 import bound_readout
 
         return bound_readout(self, arm_tag, "authority.arm_readout")
@@ -233,3 +253,25 @@ def view_binding(view):
     if type(view) is not InstalledAuthorityView or view not in _VIEWS:
         raise ValueError("reception.N_caller_ledger_not_authoritative")
     return _VIEWS[view]
+
+
+def open_formal_view(*, arm_tag, run_id):
+    """Readonly same-operation handshake; no installation or caller source input."""
+    from .arm_n import require_label
+    from .authority_install_receipt import verify_installation_readonly
+
+    require_label(arm_tag)
+    context = open_host_context()
+    source = observe(context)
+    checked = verify_installation_readonly(
+        host_context=context,
+        runtime_module_path=source["module_path"],
+        installation_receipt_bytes=source.get("installation_receipt_bytes"),
+        published_anchor_bytes=source["published_anchor_bytes"],
+        acceptance_bytes=source.get("installation_acceptance_bytes"),
+    )
+    if not checked["accepted"]:
+        raise ValueError(checked["reasons"][0])
+    snapshot = installed_snapshot(context)
+    pin = pin_run(context, arm_tag=arm_tag, run_id=run_id)
+    return host_view(context, snapshot, pin, arm_tag)

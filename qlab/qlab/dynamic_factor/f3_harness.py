@@ -1,7 +1,7 @@
 """Synthetic rejection receipts: preserve declarations before checking the grid."""
 
 from .contract import digest
-from .continuity import continuous_path_check
+from .continuity import historical_continuous_path_check as continuous_path_check
 from .scope_harness import continuity_fixture
 
 

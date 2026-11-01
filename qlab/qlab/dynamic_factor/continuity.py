@@ -4,7 +4,6 @@ from copy import deepcopy
 
 from .contract import digest, is_sha, result, unavailable
 from .conventions import load_conventions
-from .authority_ledger import latest_external_witness
 from .fees import finite
 from .input_scope import reject_b2_inputs
 from .input_disposition import HASHES, sources
@@ -38,7 +37,9 @@ def fold_records(manifest, run_id, reason):
     ]
 
 
-def continuous_path_check(request, *, conventions=None):
+def _continuous_path_check(
+    request, *, conventions=None, anchor_source, historical=False
+):
     """Validate supplied receipts against all frozen dates and causal state links.
 
     A valid structural receipt still leaves estimators/independent acceptance
@@ -112,8 +113,17 @@ def continuous_path_check(request, *, conventions=None):
                     }
                 )
                 out["metadata_validation_status"] = "pending"
-        published = latest_external_witness()
-        n_previous = request.get("initial_recorded_N", published["n_high_water"])
+        published = anchor_source()
+        n_previous = (
+            request.get("initial_recorded_N", published["n_high_water"])
+            if historical
+            else published["n_high_water"]
+        )
+        if (
+            not historical
+            and request.get("initial_recorded_N", n_previous) != n_previous
+        ):
+            raise ValueError("ledger.N_receipt_initial_mismatch")
         sources()
         if type(n_previous) is not int or n_previous < published["n_high_water"]:
             raise ValueError("ledger.N_receipt_below_published_anchor")
@@ -351,3 +361,32 @@ def continuous_path_check(request, *, conventions=None):
             },
         )
     )
+
+
+def continuous_path_check(request, *, conventions=None, installed_snapshot=None):
+    """Current path: high-water comes only from the host-retained N03 snapshot."""
+
+    def anchor():
+        from .authority_host import snapshot_high_water
+
+        return {"n_high_water": snapshot_high_water(installed_snapshot)}
+
+    report = _continuous_path_check(
+        request, conventions=conventions, anchor_source=anchor
+    )
+    report["artifacts"]["authority_mode"] = "CURRENT_HOST_SNAPSHOT_REQUIRED"
+    return report
+
+
+def historical_continuous_path_check(request, *, conventions=None):
+    """Historical fixture diagnostics only; no current N or runtime fallback."""
+    from .historical_authority import historical_v4_witness
+
+    report = _continuous_path_check(
+        request,
+        conventions=conventions,
+        anchor_source=historical_v4_witness,
+        historical=True,
+    )
+    report["artifacts"]["authority_mode"] = "HISTORICAL_V4_DIAGNOSTIC"
+    return report

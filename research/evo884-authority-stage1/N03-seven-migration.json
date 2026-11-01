@@ -1,0 +1,1426 @@
+[
+  {
+    "case_id": "N-03-01",
+    "original_case": {
+      "case_id": "N-03-01",
+      "item": "N-03",
+      "name": "缺必要原件/可信核收",
+      "fixture": "trusted-host-reception-fixture/N-03/v1",
+      "input_or_single_mutation": {
+        "remove": "required_receiver_document_or_trusted_approval",
+        "keep": "all request SHA/complete booleans valid"
+      },
+      "expected_semantics": "拒绝接收/正式消费；不得回退fixture、作者归档或caller自报",
+      "expected_stop": "拟新接收器的可信输入校验，早于其后的经济reader和数值回调",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "N-03安装请求还必须满足三前提；B2的unavailable正控与丢失其必要边界proof分开。"
+    },
+    "original_case_sha256": "c625751a47a9fd09f88c6b391d876d6d394ac914d5ba41da7f5cde0d371bec79",
+    "disposition": "经适配层兼容",
+    "final_function": "qlab.dynamic_factor.reception_v2.verify_installation_readonly",
+    "final_signature": "verify_installation_readonly(*, host_context, runtime_module_path, installation_receipt_bytes, published_anchor_bytes, acceptance_bytes)",
+    "argument_mapping": {
+      "host_context": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "runtime_module_path": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "installation_receipt_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "published_anchor_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "acceptance_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected"
+    },
+    "original_argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-01",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-01",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-",
+      "--contract-id",
+      "EVO884.InstalledAuthorityReceipt/v3.1"
+    ],
+    "original_installer_variant_argv": [],
+    "installer_variant_argv": [],
+    "original_root": "PROPOSAL.EVO884.InstalledAuthorityReceipt/v2",
+    "final_root": "EVO884.InstalledAuthorityReceipt/v3.1",
+    "final_schema_file": "contracts/N-03.v31.schema.json",
+    "original_assertions": {
+      "accepted": false,
+      "refusal": "REJECTED/DEPENDENCY_REQUIRED with nonempty reasons; preserve existing native error; new reason strings proposed",
+      "case_specific": "拒绝接收/正式消费；不得回退fixture、作者归档或caller自报",
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "new_assertions": {
+      "accepted": false,
+      "state": "REJECTED/DEPENDENCY_REQUIRED",
+      "installation_pointer": "/details/installation_fields",
+      "summary_pointer": "/details/verified_summary",
+      "typed_anchor_pointer": "/details/installation_fields/anchor/V1..V6",
+      "raw_twelve_groups": "all required if present; old booleans never pass",
+      "complete_N": null,
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "old_summary_migration": {
+      "/details/deployment_id": "/input_identities/deployment_id",
+      "/details/module_realpath": "/input_identities/module_realpath",
+      "/details/canonical_chain_realpath": "/input_identities/canonical_chain_realpath",
+      "/details/canonical_witness_realpath": "/input_identities/canonical_witness_realpath",
+      "/details/chain_sha256": "/input_identities/chain_sha256",
+      "/details/witness_sha256": "/input_identities/witness_sha256",
+      "/details/ledger_id": "/input_identities/ledger_id",
+      "/details/genesis_sha256": "/input_identities/genesis_sha256",
+      "/details/sequence": "/input_identities/sequence",
+      "/details/tip": "/input_identities/tip",
+      "/details/recorded_N": "/details/recorded_N",
+      "/details/external_anchor": "/details/installation_fields/anchor",
+      "/details/install_publication": [
+        "/details/installation_fields/identity",
+        "/details/installation_fields/readback"
+      ],
+      "/details/n_high_water": "/details/n_high_water",
+      "/details/chain_snapshot_sha256": "/details/installation_fields/ledger/snapshot_sha256",
+      "/details/n_evaluated_unknown_count": "/details/installation_fields/t1/null_n_evaluated_rows",
+      "/details/unknown_attempt_refs": {
+        "disposition": "retired serialized list assertion; preserve actual source rows without reserialization",
+        "replacement": [
+          "/details/installation_fields/t1/null_rows_list_sha256",
+          "/details/installation_fields/t1/null_rows_seq_range",
+          "/details/verified_summary/t1/evidence_refs"
+        ]
+      }
+    },
+    "expected_semantics": "拒绝接收/正式消费；不得回退fixture、作者归档或caller自报",
+    "reason_family": "ledger.trusted_project_installation_required",
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "expected_counts": {
+      "authority_append": 0,
+      "budget_api": 0,
+      "budget_mutating_api": 0,
+      "receiver_install_writes": 0,
+      "runtime_gate_writes": 0,
+      "account_IO": 0,
+      "producer_launch": 0,
+      "economic_reader": 0,
+      "numeric_callback": 0
+    },
+    "guard_expectation": "real semantic guard entered; unexpected_typeerror=0; retired_schema_dispatches=0; no historical fallback",
+    "adapter": "NEW tests/dynamic_factor/contract_adapters_v31.py::adapt_v2_n03; descriptor/assertion translation only, NOT a raw legacy receipt converter",
+    "adapter_caller": "same proposed reception_v2_driver; calls sole N03 signature and the new root only",
+    "structural_coverage": true,
+    "plan_semantics": "AUTHOR_CONTRACT_DEFINED_PENDING_INDEPENDENT_REVIEW",
+    "runtime_prerequisites_closed": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-03-02",
+    "original_case": {
+      "case_id": "N-03-02",
+      "item": "N-03",
+      "name": "自洽但非可信来源",
+      "fixture": "trusted-host-reception-fixture/N-03/v1",
+      "input_or_single_mutation": {
+        "replace": "caller_generated_document",
+        "recompute": "ALL affected envelope/file/aggregate SHA",
+        "fake_fields": {
+          "approved": true,
+          "complete": true,
+          "dependencies": []
+        }
+      },
+      "expected_semantics": "不因摘要自洽或空数组/登记回执而认证；拒绝相应接收",
+      "expected_stop": "可信发布/核收来源校验，而非故意坏SHA",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "不得修改测试host固定信任根来让伪件合法；真实权限/业务事实仍待原件。"
+    },
+    "original_case_sha256": "adbe4726d1641d907ffc162a22d44e18fc8baa276abc4540a0d35ecafe73efc0",
+    "disposition": "经适配层兼容",
+    "final_function": "qlab.dynamic_factor.reception_v2.verify_installation_readonly",
+    "final_signature": "verify_installation_readonly(*, host_context, runtime_module_path, installation_receipt_bytes, published_anchor_bytes, acceptance_bytes)",
+    "argument_mapping": {
+      "host_context": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "runtime_module_path": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "installation_receipt_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "published_anchor_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "acceptance_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected"
+    },
+    "original_argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-02",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-02",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-",
+      "--contract-id",
+      "EVO884.InstalledAuthorityReceipt/v3.1"
+    ],
+    "original_installer_variant_argv": [],
+    "installer_variant_argv": [],
+    "original_root": "PROPOSAL.EVO884.InstalledAuthorityReceipt/v2",
+    "final_root": "EVO884.InstalledAuthorityReceipt/v3.1",
+    "final_schema_file": "contracts/N-03.v31.schema.json",
+    "original_assertions": {
+      "accepted": false,
+      "refusal": "REJECTED/DEPENDENCY_REQUIRED with nonempty reasons; preserve existing native error; new reason strings proposed",
+      "case_specific": "不因摘要自洽或空数组/登记回执而认证；拒绝相应接收",
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "new_assertions": {
+      "accepted": false,
+      "state": "REJECTED/DEPENDENCY_REQUIRED",
+      "installation_pointer": "/details/installation_fields",
+      "summary_pointer": "/details/verified_summary",
+      "typed_anchor_pointer": "/details/installation_fields/anchor/V1..V6",
+      "raw_twelve_groups": "all required if present; old booleans never pass",
+      "complete_N": null,
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "old_summary_migration": {
+      "/details/deployment_id": "/input_identities/deployment_id",
+      "/details/module_realpath": "/input_identities/module_realpath",
+      "/details/canonical_chain_realpath": "/input_identities/canonical_chain_realpath",
+      "/details/canonical_witness_realpath": "/input_identities/canonical_witness_realpath",
+      "/details/chain_sha256": "/input_identities/chain_sha256",
+      "/details/witness_sha256": "/input_identities/witness_sha256",
+      "/details/ledger_id": "/input_identities/ledger_id",
+      "/details/genesis_sha256": "/input_identities/genesis_sha256",
+      "/details/sequence": "/input_identities/sequence",
+      "/details/tip": "/input_identities/tip",
+      "/details/recorded_N": "/details/recorded_N",
+      "/details/external_anchor": "/details/installation_fields/anchor",
+      "/details/install_publication": [
+        "/details/installation_fields/identity",
+        "/details/installation_fields/readback"
+      ],
+      "/details/n_high_water": "/details/n_high_water",
+      "/details/chain_snapshot_sha256": "/details/installation_fields/ledger/snapshot_sha256",
+      "/details/n_evaluated_unknown_count": "/details/installation_fields/t1/null_n_evaluated_rows",
+      "/details/unknown_attempt_refs": {
+        "disposition": "retired serialized list assertion; preserve actual source rows without reserialization",
+        "replacement": [
+          "/details/installation_fields/t1/null_rows_list_sha256",
+          "/details/installation_fields/t1/null_rows_seq_range",
+          "/details/verified_summary/t1/evidence_refs"
+        ]
+      }
+    },
+    "expected_semantics": "不因摘要自洽或空数组/登记回执而认证；拒绝相应接收",
+    "reason_family": "ledger.trusted_project_installation_required",
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "expected_counts": {
+      "authority_append": 0,
+      "budget_api": 0,
+      "budget_mutating_api": 0,
+      "receiver_install_writes": 0,
+      "runtime_gate_writes": 0,
+      "account_IO": 0,
+      "producer_launch": 0,
+      "economic_reader": 0,
+      "numeric_callback": 0
+    },
+    "guard_expectation": "real semantic guard entered; unexpected_typeerror=0; retired_schema_dispatches=0; no historical fallback",
+    "adapter": "NEW tests/dynamic_factor/contract_adapters_v31.py::adapt_v2_n03; descriptor/assertion translation only, NOT a raw legacy receipt converter",
+    "adapter_caller": "same proposed reception_v2_driver; calls sole N03 signature and the new root only",
+    "structural_coverage": true,
+    "plan_semantics": "AUTHOR_CONTRACT_DEFINED_PENDING_INDEPENDENT_REVIEW",
+    "runtime_prerequisites_closed": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-03-03",
+    "original_case": {
+      "case_id": "N-03-03",
+      "item": "N-03",
+      "name": "路径/身份错绑",
+      "fixture": "trusted-host-reception-fixture/N-03/v1",
+      "input_or_single_mutation": {
+        "change_one_at_a_time": [
+          "canonical_path",
+          "run_or_actor",
+          "source_version_or_arm"
+        ],
+        "recompute": "all dependent digests"
+      },
+      "expected_semantics": "逐项拒绝，不能换路径或拿别主体/版本回执代证",
+      "expected_stop": "相应路径/身份校验，早于正式消费",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "e6355fabe6f84b175f8a3c235e8d3102e02af44f898a9d82ec691db859fb3cd1",
+    "disposition": "经适配层兼容",
+    "final_function": "qlab.dynamic_factor.reception_v2.verify_installation_readonly",
+    "final_signature": "verify_installation_readonly(*, host_context, runtime_module_path, installation_receipt_bytes, published_anchor_bytes, acceptance_bytes)",
+    "argument_mapping": {
+      "host_context": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "runtime_module_path": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "installation_receipt_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "published_anchor_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "acceptance_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected"
+    },
+    "original_argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-03",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-03",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-",
+      "--contract-id",
+      "EVO884.InstalledAuthorityReceipt/v3.1"
+    ],
+    "original_installer_variant_argv": [],
+    "installer_variant_argv": [],
+    "original_root": "PROPOSAL.EVO884.InstalledAuthorityReceipt/v2",
+    "final_root": "EVO884.InstalledAuthorityReceipt/v3.1",
+    "final_schema_file": "contracts/N-03.v31.schema.json",
+    "original_assertions": {
+      "accepted": false,
+      "refusal": "REJECTED/DEPENDENCY_REQUIRED with nonempty reasons; preserve existing native error; new reason strings proposed",
+      "case_specific": "逐项拒绝，不能换路径或拿别主体/版本回执代证",
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "new_assertions": {
+      "accepted": false,
+      "state": "REJECTED/DEPENDENCY_REQUIRED",
+      "installation_pointer": "/details/installation_fields",
+      "summary_pointer": "/details/verified_summary",
+      "typed_anchor_pointer": "/details/installation_fields/anchor/V1..V6",
+      "raw_twelve_groups": "all required if present; old booleans never pass",
+      "complete_N": null,
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "old_summary_migration": {
+      "/details/deployment_id": "/input_identities/deployment_id",
+      "/details/module_realpath": "/input_identities/module_realpath",
+      "/details/canonical_chain_realpath": "/input_identities/canonical_chain_realpath",
+      "/details/canonical_witness_realpath": "/input_identities/canonical_witness_realpath",
+      "/details/chain_sha256": "/input_identities/chain_sha256",
+      "/details/witness_sha256": "/input_identities/witness_sha256",
+      "/details/ledger_id": "/input_identities/ledger_id",
+      "/details/genesis_sha256": "/input_identities/genesis_sha256",
+      "/details/sequence": "/input_identities/sequence",
+      "/details/tip": "/input_identities/tip",
+      "/details/recorded_N": "/details/recorded_N",
+      "/details/external_anchor": "/details/installation_fields/anchor",
+      "/details/install_publication": [
+        "/details/installation_fields/identity",
+        "/details/installation_fields/readback"
+      ],
+      "/details/n_high_water": "/details/n_high_water",
+      "/details/chain_snapshot_sha256": "/details/installation_fields/ledger/snapshot_sha256",
+      "/details/n_evaluated_unknown_count": "/details/installation_fields/t1/null_n_evaluated_rows",
+      "/details/unknown_attempt_refs": {
+        "disposition": "retired serialized list assertion; preserve actual source rows without reserialization",
+        "replacement": [
+          "/details/installation_fields/t1/null_rows_list_sha256",
+          "/details/installation_fields/t1/null_rows_seq_range",
+          "/details/verified_summary/t1/evidence_refs"
+        ]
+      }
+    },
+    "expected_semantics": "逐项拒绝，不能换路径或拿别主体/版本回执代证",
+    "reason_family": "ledger.trusted_project_installation_required",
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "expected_counts": {
+      "authority_append": 0,
+      "budget_api": 0,
+      "budget_mutating_api": 0,
+      "receiver_install_writes": 0,
+      "runtime_gate_writes": 0,
+      "account_IO": 0,
+      "producer_launch": 0,
+      "economic_reader": 0,
+      "numeric_callback": 0
+    },
+    "guard_expectation": "real semantic guard entered; unexpected_typeerror=0; retired_schema_dispatches=0; no historical fallback",
+    "adapter": "NEW tests/dynamic_factor/contract_adapters_v31.py::adapt_v2_n03; descriptor/assertion translation only, NOT a raw legacy receipt converter",
+    "adapter_caller": "same proposed reception_v2_driver; calls sole N03 signature and the new root only",
+    "structural_coverage": true,
+    "plan_semantics": "AUTHOR_CONTRACT_DEFINED_PENDING_INDEPENDENT_REVIEW",
+    "runtime_prerequisites_closed": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-03-04",
+    "original_case": {
+      "case_id": "N-03-04",
+      "item": "N-03",
+      "name": "三前提任缺一个",
+      "fixture": "trusted-host-reception-fixture/N-03/v1",
+      "input_or_single_mutation": {
+        "required": [
+          "Hanlin_complete_arm_N_and_tip_acceptance",
+          "N03_plan_review_accepted",
+          "chief_branch_decision"
+        ],
+        "remove_each_one": true
+      },
+      "expected_semantics": "安装请求拒绝；不能靠B15方案审或归档SHA补权",
+      "expected_stop": "授权安装入口，创建链/witness/外锚前",
+      "expected_counts": {
+        "installation_file_writes": 0,
+        "authority_append": 0,
+        "budget_api": 0,
+        "producer_launch": 0,
+        "economic_reader": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "69d88367e0036c44c7ff0fad434feba7ecadb2cb25424492fe86a78fcbdfd867",
+    "disposition": "经适配层兼容",
+    "final_function": "qlab.dynamic_factor.reception_v2.verify_installation_readonly",
+    "final_signature": "verify_installation_readonly(*, host_context, runtime_module_path, installation_receipt_bytes, published_anchor_bytes, acceptance_bytes)",
+    "argument_mapping": {
+      "host_context": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "runtime_module_path": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "installation_receipt_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "published_anchor_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "acceptance_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected"
+    },
+    "original_argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-04",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-04",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-",
+      "--contract-id",
+      "EVO884.InstalledAuthorityReceipt/v3.1"
+    ],
+    "original_installer_variant_argv": [
+      [
+        "<python>",
+        "-B",
+        "-m",
+        "tests.dynamic_factor.reception_v2_driver",
+        "--case-id",
+        "N-03-04",
+        "--role",
+        "trusted-installer-and-independent-reader",
+        "--private-fixtures",
+        "<private-root>",
+        "--report-json",
+        "-"
+      ]
+    ],
+    "installer_variant_argv": [
+      [
+        "<python>",
+        "-B",
+        "-m",
+        "tests.dynamic_factor.reception_v2_driver",
+        "--case-id",
+        "N-03-04",
+        "--role",
+        "trusted-installer-and-independent-reader",
+        "--private-fixtures",
+        "<private-root>",
+        "--report-json",
+        "-",
+        "--installation-receipt-contract",
+        "urn:evo884:n03-install-receipt:proposed-v3-types-1",
+        "--readback-contract",
+        "EVO884.InstalledAuthorityReceipt/v3.1"
+      ]
+    ],
+    "original_root": "PROPOSAL.EVO884.InstalledAuthorityReceipt/v2",
+    "final_root": "EVO884.InstalledAuthorityReceipt/v3.1",
+    "final_schema_file": "contracts/N-03.v31.schema.json",
+    "original_assertions": {
+      "accepted": false,
+      "refusal": "REJECTED/DEPENDENCY_REQUIRED with nonempty reasons; preserve existing native error; new reason strings proposed",
+      "case_specific": "安装请求拒绝；不能靠B15方案审或归档SHA补权",
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "new_assertions": {
+      "accepted": false,
+      "state": "REJECTED/DEPENDENCY_REQUIRED",
+      "installation_pointer": "/details/installation_fields",
+      "summary_pointer": "/details/verified_summary",
+      "typed_anchor_pointer": "/details/installation_fields/anchor/V1..V6",
+      "raw_twelve_groups": "all required if present; old booleans never pass",
+      "complete_N": null,
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "old_summary_migration": {
+      "/details/deployment_id": "/input_identities/deployment_id",
+      "/details/module_realpath": "/input_identities/module_realpath",
+      "/details/canonical_chain_realpath": "/input_identities/canonical_chain_realpath",
+      "/details/canonical_witness_realpath": "/input_identities/canonical_witness_realpath",
+      "/details/chain_sha256": "/input_identities/chain_sha256",
+      "/details/witness_sha256": "/input_identities/witness_sha256",
+      "/details/ledger_id": "/input_identities/ledger_id",
+      "/details/genesis_sha256": "/input_identities/genesis_sha256",
+      "/details/sequence": "/input_identities/sequence",
+      "/details/tip": "/input_identities/tip",
+      "/details/recorded_N": "/details/recorded_N",
+      "/details/external_anchor": "/details/installation_fields/anchor",
+      "/details/install_publication": [
+        "/details/installation_fields/identity",
+        "/details/installation_fields/readback"
+      ],
+      "/details/n_high_water": "/details/n_high_water",
+      "/details/chain_snapshot_sha256": "/details/installation_fields/ledger/snapshot_sha256",
+      "/details/n_evaluated_unknown_count": "/details/installation_fields/t1/null_n_evaluated_rows",
+      "/details/unknown_attempt_refs": {
+        "disposition": "retired serialized list assertion; preserve actual source rows without reserialization",
+        "replacement": [
+          "/details/installation_fields/t1/null_rows_list_sha256",
+          "/details/installation_fields/t1/null_rows_seq_range",
+          "/details/verified_summary/t1/evidence_refs"
+        ]
+      }
+    },
+    "expected_semantics": "安装请求拒绝；不能靠B15方案审或归档SHA补权",
+    "reason_family": "ledger.trusted_project_installation_required",
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "expected_counts": {
+      "authority_append": 0,
+      "budget_api": 0,
+      "budget_mutating_api": 0,
+      "receiver_install_writes": 0,
+      "runtime_gate_writes": 0,
+      "account_IO": 0,
+      "producer_launch": 0,
+      "installation_file_writes": 0,
+      "economic_reader": 0
+    },
+    "guard_expectation": "real semantic guard entered; unexpected_typeerror=0; retired_schema_dispatches=0; no historical fallback",
+    "adapter": "NEW tests/dynamic_factor/contract_adapters_v31.py::adapt_v2_n03; descriptor/assertion translation only, NOT a raw legacy receipt converter",
+    "adapter_caller": "same proposed reception_v2_driver; calls sole N03 signature and the new root only",
+    "structural_coverage": true,
+    "plan_semantics": "AUTHOR_CONTRACT_DEFINED_PENDING_INDEPENDENT_REVIEW",
+    "runtime_prerequisites_closed": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-03-05",
+    "original_case": {
+      "case_id": "N-03-05",
+      "item": "N-03",
+      "name": "只装户部worktree/半安装/伪witness",
+      "fixture": "trusted-host-reception-fixture/N-03/v1",
+      "input_or_single_mutation": {
+        "mutate_one": [
+          "install_root_not_runtime_module_root",
+          "chain_only",
+          "witness_only",
+          "caller_generated_project_tip_with_same_SHA",
+          "archive_copied_without_independent_published_anchor",
+          "external_anchor_identity_wrong"
+        ]
+      },
+      "expected_semantics": "运行方拒绝可信安装；缺链/witness保持ledger.trusted_project_installation_required；override/别路径维持原拒绝；不补链",
+      "expected_stop": "AuthorityLedger.open_project及_verify/latest_external_witness",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "先区分链/可变project-tip/独立发布外锚；对应文件一致不是发布权限证明。"
+    },
+    "original_case_sha256": "c708182d71e085f6f0075e8fce8dae091bea506b070f35bbd29047c8420e4bd0",
+    "disposition": "经适配层兼容",
+    "final_function": "qlab.dynamic_factor.reception_v2.verify_installation_readonly",
+    "final_signature": "verify_installation_readonly(*, host_context, runtime_module_path, installation_receipt_bytes, published_anchor_bytes, acceptance_bytes)",
+    "argument_mapping": {
+      "host_context": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "runtime_module_path": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "installation_receipt_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "published_anchor_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "acceptance_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected"
+    },
+    "original_argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-05",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-05",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-",
+      "--contract-id",
+      "EVO884.InstalledAuthorityReceipt/v3.1"
+    ],
+    "original_installer_variant_argv": [],
+    "installer_variant_argv": [],
+    "original_root": "PROPOSAL.EVO884.InstalledAuthorityReceipt/v2",
+    "final_root": "EVO884.InstalledAuthorityReceipt/v3.1",
+    "final_schema_file": "contracts/N-03.v31.schema.json",
+    "original_assertions": {
+      "accepted": false,
+      "refusal": "REJECTED/DEPENDENCY_REQUIRED with nonempty reasons; preserve existing native error; new reason strings proposed",
+      "case_specific": "运行方拒绝可信安装；缺链/witness保持ledger.trusted_project_installation_required；override/别路径维持原拒绝；不补链",
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "new_assertions": {
+      "accepted": false,
+      "state": "REJECTED/DEPENDENCY_REQUIRED",
+      "installation_pointer": "/details/installation_fields",
+      "summary_pointer": "/details/verified_summary",
+      "typed_anchor_pointer": "/details/installation_fields/anchor/V1..V6",
+      "raw_twelve_groups": "all required if present; old booleans never pass",
+      "complete_N": null,
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "old_summary_migration": {
+      "/details/deployment_id": "/input_identities/deployment_id",
+      "/details/module_realpath": "/input_identities/module_realpath",
+      "/details/canonical_chain_realpath": "/input_identities/canonical_chain_realpath",
+      "/details/canonical_witness_realpath": "/input_identities/canonical_witness_realpath",
+      "/details/chain_sha256": "/input_identities/chain_sha256",
+      "/details/witness_sha256": "/input_identities/witness_sha256",
+      "/details/ledger_id": "/input_identities/ledger_id",
+      "/details/genesis_sha256": "/input_identities/genesis_sha256",
+      "/details/sequence": "/input_identities/sequence",
+      "/details/tip": "/input_identities/tip",
+      "/details/recorded_N": "/details/recorded_N",
+      "/details/external_anchor": "/details/installation_fields/anchor",
+      "/details/install_publication": [
+        "/details/installation_fields/identity",
+        "/details/installation_fields/readback"
+      ],
+      "/details/n_high_water": "/details/n_high_water",
+      "/details/chain_snapshot_sha256": "/details/installation_fields/ledger/snapshot_sha256",
+      "/details/n_evaluated_unknown_count": "/details/installation_fields/t1/null_n_evaluated_rows",
+      "/details/unknown_attempt_refs": {
+        "disposition": "retired serialized list assertion; preserve actual source rows without reserialization",
+        "replacement": [
+          "/details/installation_fields/t1/null_rows_list_sha256",
+          "/details/installation_fields/t1/null_rows_seq_range",
+          "/details/verified_summary/t1/evidence_refs"
+        ]
+      }
+    },
+    "expected_semantics": "运行方拒绝可信安装；缺链/witness保持ledger.trusted_project_installation_required；override/别路径维持原拒绝；不补链",
+    "reason_family": "ledger.trusted_project_installation_required",
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "expected_counts": {
+      "authority_append": 0,
+      "budget_api": 0,
+      "budget_mutating_api": 0,
+      "receiver_install_writes": 0,
+      "runtime_gate_writes": 0,
+      "account_IO": 0,
+      "producer_launch": 0,
+      "economic_reader": 0,
+      "numeric_callback": 0
+    },
+    "guard_expectation": "real semantic guard entered; unexpected_typeerror=0; retired_schema_dispatches=0; no historical fallback",
+    "adapter": "NEW tests/dynamic_factor/contract_adapters_v31.py::adapt_v2_n03; descriptor/assertion translation only, NOT a raw legacy receipt converter",
+    "adapter_caller": "same proposed reception_v2_driver; calls sole N03 signature and the new root only",
+    "structural_coverage": true,
+    "plan_semantics": "AUTHOR_CONTRACT_DEFINED_PENDING_INDEPENDENT_REVIEW",
+    "runtime_prerequisites_closed": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-03-06",
+    "original_case": {
+      "case_id": "N-03-06",
+      "item": "N-03",
+      "name": "override和截断反例",
+      "fixture": "trusted-host-reception-fixture/N-03/v1",
+      "input_or_single_mutation": {
+        "request": {
+          "bootstrap_receipt": "self-created",
+          "anchor_path": "alternate"
+        },
+        "or": "truncate installed chain/witness together below externally accepted identity"
+      },
+      "expected_semantics": "原override/path/ancestor/tail校验拒绝，无fallback和修复性写入",
+      "expected_stop": "open_project:278-285 -> verify_bytes/verify_ancestor",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "285701aef91ee57e729e856f40932aedacc237791cc848115c68754e5c4e7ee3",
+    "disposition": "经适配层兼容",
+    "final_function": "qlab.dynamic_factor.reception_v2.verify_installation_readonly",
+    "final_signature": "verify_installation_readonly(*, host_context, runtime_module_path, installation_receipt_bytes, published_anchor_bytes, acceptance_bytes)",
+    "argument_mapping": {
+      "host_context": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "runtime_module_path": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "installation_receipt_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "published_anchor_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "acceptance_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected"
+    },
+    "original_argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-06",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-06",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-",
+      "--contract-id",
+      "EVO884.InstalledAuthorityReceipt/v3.1"
+    ],
+    "original_installer_variant_argv": [],
+    "installer_variant_argv": [],
+    "original_root": "PROPOSAL.EVO884.InstalledAuthorityReceipt/v2",
+    "final_root": "EVO884.InstalledAuthorityReceipt/v3.1",
+    "final_schema_file": "contracts/N-03.v31.schema.json",
+    "original_assertions": {
+      "accepted": false,
+      "refusal": "REJECTED/DEPENDENCY_REQUIRED with nonempty reasons; preserve existing native error; new reason strings proposed",
+      "case_specific": "原override/path/ancestor/tail校验拒绝，无fallback和修复性写入",
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "new_assertions": {
+      "accepted": false,
+      "state": "REJECTED/DEPENDENCY_REQUIRED",
+      "installation_pointer": "/details/installation_fields",
+      "summary_pointer": "/details/verified_summary",
+      "typed_anchor_pointer": "/details/installation_fields/anchor/V1..V6",
+      "raw_twelve_groups": "all required if present; old booleans never pass",
+      "complete_N": null,
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "old_summary_migration": {
+      "/details/deployment_id": "/input_identities/deployment_id",
+      "/details/module_realpath": "/input_identities/module_realpath",
+      "/details/canonical_chain_realpath": "/input_identities/canonical_chain_realpath",
+      "/details/canonical_witness_realpath": "/input_identities/canonical_witness_realpath",
+      "/details/chain_sha256": "/input_identities/chain_sha256",
+      "/details/witness_sha256": "/input_identities/witness_sha256",
+      "/details/ledger_id": "/input_identities/ledger_id",
+      "/details/genesis_sha256": "/input_identities/genesis_sha256",
+      "/details/sequence": "/input_identities/sequence",
+      "/details/tip": "/input_identities/tip",
+      "/details/recorded_N": "/details/recorded_N",
+      "/details/external_anchor": "/details/installation_fields/anchor",
+      "/details/install_publication": [
+        "/details/installation_fields/identity",
+        "/details/installation_fields/readback"
+      ],
+      "/details/n_high_water": "/details/n_high_water",
+      "/details/chain_snapshot_sha256": "/details/installation_fields/ledger/snapshot_sha256",
+      "/details/n_evaluated_unknown_count": "/details/installation_fields/t1/null_n_evaluated_rows",
+      "/details/unknown_attempt_refs": {
+        "disposition": "retired serialized list assertion; preserve actual source rows without reserialization",
+        "replacement": [
+          "/details/installation_fields/t1/null_rows_list_sha256",
+          "/details/installation_fields/t1/null_rows_seq_range",
+          "/details/verified_summary/t1/evidence_refs"
+        ]
+      }
+    },
+    "expected_semantics": "原override/path/ancestor/tail校验拒绝，无fallback和修复性写入",
+    "reason_family": "ledger.trusted_project_installation_required",
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "expected_counts": {
+      "authority_append": 0,
+      "budget_api": 0,
+      "budget_mutating_api": 0,
+      "receiver_install_writes": 0,
+      "runtime_gate_writes": 0,
+      "account_IO": 0,
+      "producer_launch": 0,
+      "economic_reader": 0,
+      "numeric_callback": 0
+    },
+    "guard_expectation": "real semantic guard entered; unexpected_typeerror=0; retired_schema_dispatches=0; no historical fallback",
+    "adapter": "NEW tests/dynamic_factor/contract_adapters_v31.py::adapt_v2_n03; descriptor/assertion translation only, NOT a raw legacy receipt converter",
+    "adapter_caller": "same proposed reception_v2_driver; calls sole N03 signature and the new root only",
+    "structural_coverage": true,
+    "plan_semantics": "AUTHOR_CONTRACT_DEFINED_PENDING_INDEPENDENT_REVIEW",
+    "runtime_prerequisites_closed": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-03-07",
+    "original_case": {
+      "case_id": "N-03-07",
+      "item": "N-03",
+      "name": "受控安装正控（后续另授权执行）",
+      "fixture": "trusted-host-reception-fixture/N-03/v1",
+      "input_or_single_mutation": {
+        "trusted_installer": "EVO891 unique writer per approved deployment",
+        "three_prerequisites": "all independently verified",
+        "runtime_visible_path": "canonical module-root mapping",
+        "published_anchor": "separate trusted publication with matching lineage"
+      },
+      "expected_semantics": "仅授权安装方可写声明的安装对象并交回执；非作者在运行方同一路径回读核验；读端随后只读通过，不认证完整N或执行权",
+      "expected_stop": "installer boundary + independent receipt/readback; not evaluation request",
+      "expected_counts": {
+        "installer_writes": "declared controlled installation objects only, count and changed-path list recorded",
+        "receiver_install_writes": 0,
+        "authority_business_append": 0,
+        "budget_api": 0,
+        "producer_launch": 0,
+        "economic_reader": 0
+      },
+      "positive_control": true,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "这条是未来安装验收规格；本批未安装、未创建现场链。"
+    },
+    "original_case_sha256": "4c2fe8e57372057c59c211d4284a0815e3bec673f97950ea1f62d1a33572cede",
+    "disposition": "经适配层兼容",
+    "final_function": "qlab.dynamic_factor.reception_v2.verify_installation_readonly",
+    "final_signature": "verify_installation_readonly(*, host_context, runtime_module_path, installation_receipt_bytes, published_anchor_bytes, acceptance_bytes)",
+    "argument_mapping": {
+      "host_context": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "runtime_module_path": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "installation_receipt_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "published_anchor_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected",
+      "acceptance_bytes": "original value retained; missing bytes -> None for domain guard; host_context never caller-selected"
+    },
+    "original_argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-07",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-03-07",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-",
+      "--contract-id",
+      "EVO884.InstalledAuthorityReceipt/v3.1"
+    ],
+    "original_installer_variant_argv": [
+      [
+        "<python>",
+        "-B",
+        "-m",
+        "tests.dynamic_factor.reception_v2_driver",
+        "--case-id",
+        "N-03-07",
+        "--role",
+        "trusted-installer-and-independent-reader",
+        "--private-fixtures",
+        "<private-root>",
+        "--report-json",
+        "-"
+      ]
+    ],
+    "installer_variant_argv": [
+      [
+        "<python>",
+        "-B",
+        "-m",
+        "tests.dynamic_factor.reception_v2_driver",
+        "--case-id",
+        "N-03-07",
+        "--role",
+        "trusted-installer-and-independent-reader",
+        "--private-fixtures",
+        "<private-root>",
+        "--report-json",
+        "-",
+        "--installation-receipt-contract",
+        "urn:evo884:n03-install-receipt:proposed-v3-types-1",
+        "--readback-contract",
+        "EVO884.InstalledAuthorityReceipt/v3.1"
+      ]
+    ],
+    "original_root": "PROPOSAL.EVO884.InstalledAuthorityReceipt/v2",
+    "final_root": "EVO884.InstalledAuthorityReceipt/v3.1",
+    "final_schema_file": "contracts/N-03.v31.schema.json",
+    "original_assertions": {
+      "accepted": true,
+      "refusal": "ACCEPTED_IDENTITY or B2 ACCEPTED_UNAVAILABLE only after trusted dependencies; current production state remains refused",
+      "case_specific": "仅授权安装方可写声明的安装对象并交回执；非作者在运行方同一路径回读核验；读端随后只读通过，不认证完整N或执行权",
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "new_assertions": {
+      "accepted": true,
+      "state": "ACCEPTED_IDENTITY",
+      "installation_pointer": "/details/installation_fields",
+      "summary_pointer": "/details/verified_summary",
+      "typed_anchor_pointer": "/details/installation_fields/anchor/V1..V6",
+      "raw_twelve_groups": "all required if present; old booleans never pass",
+      "complete_N": null,
+      "runtime_consumable": false,
+      "certifiable": false,
+      "performance_outputs": null
+    },
+    "old_summary_migration": {
+      "/details/deployment_id": "/input_identities/deployment_id",
+      "/details/module_realpath": "/input_identities/module_realpath",
+      "/details/canonical_chain_realpath": "/input_identities/canonical_chain_realpath",
+      "/details/canonical_witness_realpath": "/input_identities/canonical_witness_realpath",
+      "/details/chain_sha256": "/input_identities/chain_sha256",
+      "/details/witness_sha256": "/input_identities/witness_sha256",
+      "/details/ledger_id": "/input_identities/ledger_id",
+      "/details/genesis_sha256": "/input_identities/genesis_sha256",
+      "/details/sequence": "/input_identities/sequence",
+      "/details/tip": "/input_identities/tip",
+      "/details/recorded_N": "/details/recorded_N",
+      "/details/external_anchor": "/details/installation_fields/anchor",
+      "/details/install_publication": [
+        "/details/installation_fields/identity",
+        "/details/installation_fields/readback"
+      ],
+      "/details/n_high_water": "/details/n_high_water",
+      "/details/chain_snapshot_sha256": "/details/installation_fields/ledger/snapshot_sha256",
+      "/details/n_evaluated_unknown_count": "/details/installation_fields/t1/null_n_evaluated_rows",
+      "/details/unknown_attempt_refs": {
+        "disposition": "retired serialized list assertion; preserve actual source rows without reserialization",
+        "replacement": [
+          "/details/installation_fields/t1/null_rows_list_sha256",
+          "/details/installation_fields/t1/null_rows_seq_range",
+          "/details/verified_summary/t1/evidence_refs"
+        ]
+      }
+    },
+    "expected_semantics": "仅授权安装方可写声明的安装对象并交回执；非作者在运行方同一路径回读核验；读端随后只读通过，不认证完整N或执行权",
+    "reason_family": null,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "expected_counts": {
+      "authority_append": 0,
+      "budget_api": 0,
+      "budget_mutating_api": 0,
+      "receiver_install_writes": 0,
+      "runtime_gate_writes": 0,
+      "account_IO": 0,
+      "producer_launch": 0,
+      "installer_writes": "declared controlled installation objects only, count and changed-path list recorded",
+      "authority_business_append": 0,
+      "economic_reader": 0
+    },
+    "guard_expectation": "real semantic guard entered; unexpected_typeerror=0; retired_schema_dispatches=0; no historical fallback",
+    "adapter": "NEW tests/dynamic_factor/contract_adapters_v31.py::adapt_v2_n03; descriptor/assertion translation only, NOT a raw legacy receipt converter",
+    "adapter_caller": "same proposed reception_v2_driver; calls sole N03 signature and the new root only",
+    "structural_coverage": true,
+    "plan_semantics": "AUTHOR_CONTRACT_DEFINED_PENDING_INDEPENDENT_REVIEW",
+    "runtime_prerequisites_closed": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  }
+]

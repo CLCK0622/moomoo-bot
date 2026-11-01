@@ -25,7 +25,9 @@ def receive(context, source, raw=None, module=None):
 
 
 def test_twelve_groups_and_typed_V2_are_one_new_root(tmp_path, monkeypatch):
-    context, source, document = installation_host(tmp_path, monkeypatch)
+    context, source, document = installation_host(
+        tmp_path, monkeypatch, prefix_stub=False
+    )
     result = receive(context, source)
     assert result["accepted"] is True, result["reasons"]
     validate(result, "N-03.v31.schema.json")
@@ -46,7 +48,7 @@ def test_caller_all_PASS_cannot_override_actual_trusted_source_FAIL(
     tmp_path, monkeypatch, group
 ):
     context, source, document = installation_host(
-        tmp_path, monkeypatch, source_fail=group
+        tmp_path, monkeypatch, source_fail=group, prefix_stub=False
     )
     before = len(host._SNAPSHOTS)
     result = receive(context, source)
@@ -72,7 +74,9 @@ def test_caller_all_PASS_cannot_override_actual_trusted_source_FAIL(
     ["old_root", "boolean_V2", "missing_group", "caller_context", "wrong_module"],
 )
 def test_old_mixed_missing_or_untrusted_objects_refuse(tmp_path, monkeypatch, variant):
-    context, source, document = installation_host(tmp_path, monkeypatch)
+    context, source, document = installation_host(
+        tmp_path, monkeypatch, prefix_stub=False
+    )
     changed = deepcopy(document)
     module = None
     if variant == "old_root":

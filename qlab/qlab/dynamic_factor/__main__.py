@@ -18,7 +18,8 @@ from .pending import (
 )
 from .receipts import decay_check, shadow_readout
 from .statistics import dsr_eval_arm, prereg_check
-from .arm_n import MISSING
+from .arm_n import MISSING, label, valid_arm
+from .authority_host import open_formal_view
 from .validation import wf_manifest_check
 
 
@@ -143,19 +144,27 @@ def main():
         elif args.tool == "dsr_eval":
             if args.ledger is None:
                 raise ValueError("--ledger required")
-            genesis = json.loads(args.genesis.read_bytes()) if args.genesis else None
-            ledger = (
-                AttemptLedger(args.ledger, genesis)
-                if genesis is not None or policy is None
-                else AttemptLedger.from_conventions(
-                    args.ledger,
-                    policy,
-                    anchor_path=args.ledger_anchor,
-                    bootstrap_receipt=json.loads(args.ledger_bootstrap.read_bytes())
-                    if args.ledger_bootstrap
-                    else None,
+            if args.ledger_bootstrap or args.ledger_anchor or args.genesis:
+                raise ValueError("ledger.formal_bootstrap_or_anchor_override_forbidden")
+            explicit = request["arm_tag"] if "arm_tag" in request else MISSING
+            metrics = request.get("metrics", {})
+            tag = label(metrics, explicit)
+            if not valid_arm(tag):
+                ledger = None
+            else:
+                if args.ledger_bootstrap or args.ledger_anchor or args.genesis:
+                    raise ValueError(
+                        "ledger.formal_bootstrap_or_anchor_override_forbidden"
+                    )
+                from .authority_ledger import PROJECT_LEDGER
+
+                if args.ledger.resolve() != PROJECT_LEDGER.resolve():
+                    raise ValueError(
+                        "ledger.project_path_migration_acceptance_required"
+                    )
+                ledger = open_formal_view(
+                    arm_tag=tag, run_id=request.get("run_id", "CLI-N-READONLY")
                 )
-            )
             report = dsr_eval_arm(
                 request.get("metrics", {}),
                 ledger,
@@ -279,7 +288,10 @@ def main():
             reasons=[
                 str(exc)
                 if isinstance(exc, ConventionConflict)
-                or (isinstance(exc, ValueError) and str(exc).startswith("ledger."))
+                or (
+                    isinstance(exc, ValueError)
+                    and str(exc).startswith(("ledger.", "arm_n.", "reception."))
+                )
                 else f"input_invalid_or_missing:{type(exc).__name__}"
             ],
             missing=["valid tool inputs"],

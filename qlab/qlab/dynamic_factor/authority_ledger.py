@@ -8,9 +8,11 @@ bootstrap a ledger through request fields. Unit SQLite bootstrap is separate.
 import fcntl
 import json
 import os
+from .arm_n import MISSING
+
 from pathlib import Path
 
-from .contract import canonical, digest, sha256, result, is_sha
+from .contract import canonical, digest, sha256, result
 
 FIXTURES = Path(__file__).parent / "fixtures" / "evo891"
 PROJECT_ROOT = (
@@ -24,42 +26,15 @@ PUBLISHED = {
     "tip": "9e3220aa6aa6dcc7f2a03c4f1f917b2da40af78c90173156f6ca4e9efd8e9c0d",
     "n_high_water": 75,
 }
-CURRENT_FIXTURES = FIXTURES.parent / "evo893"
-CURRENT_WITNESS_INPUT = CURRENT_FIXTURES / "EVO891-B-ledger-v4.tip.json"
 
 
 def latest_external_witness():
-    """Read a controlled published input, never a candidate-selected override.
+    """Current release only; no import-time historical fixture or fallback."""
+    from .authority_release import read_approved_release
 
-    This file is installed/versioned by the authority handoff, independently of
-    the mutable project tip. Updating the accepted witness changes input bytes,
-    not Python. Each formal read/append re-reads it and verifies its ancestor.
-    Its publication/authorship is a trusted-install boundary, not a self-report.
-    """
-    try:
-        raw = CURRENT_WITNESS_INPUT.read_bytes()
-        witness = json.loads(raw)
-        if (
-            witness.get("ledger_id") != PUBLISHED["ledger_id"]
-            or type(witness.get("sequence")) is not int
-            or witness["sequence"] <= PUBLISHED["sequence"]
-            or type(witness.get("n_high_water")) is not int
-            or witness["n_high_water"] < PUBLISHED["n_high_water"]
-            or not is_sha(witness.get("tip"))
-            or not is_sha(witness.get("ledger_file_sha256"))
-        ):
-            raise ValueError
-        return {k: witness[k] for k in PUBLISHED}
-    except (OSError, TypeError, KeyError, ValueError):
-        raise ValueError("ledger.latest_external_witness_missing_or_invalid") from None
+    return read_approved_release()
 
 
-# Compatibility snapshots for fixture callers; formal paths use the loader
-# again before every operation. No current sequence/count/tip is in source.
-CURRENT_PUBLISHED = latest_external_witness()
-CURRENT_SOURCE_SHA = json.loads(CURRENT_WITNESS_INPUT.read_bytes())[
-    "ledger_file_sha256"
-]
 SOURCE_SHA = "a8f50e02644ec4a86460f8038b89edcbc1811352e5bf320dca592cef6abcb87e"
 TOOL_SHA = "36ab3dd0cfc7d9c68a0e9ab2f0cc5774f0f7ccb260a2db61b36abbe040181969"
 FIELDS = (
@@ -363,10 +338,16 @@ class AuthorityLedger:
 
     def snapshot(self):
         cur, rows, _ = self._verify()
-        latest = latest_external_witness()
+        canonical_project = self.path.resolve() == PROJECT_LEDGER.resolve()
+        if canonical_project:
+            latest = latest_external_witness()
+        else:
+            from .historical_authority import historical_v4_witness
+
+            latest = historical_v4_witness()
         try:
             verify_ancestor(rows, latest)
-            current = True
+            current = canonical_project
         except ValueError:
             current = False
         return {
@@ -388,7 +369,8 @@ class AuthorityLedger:
             "reasons": ["ledger_history_incomplete"]
             + ([] if current else ["ledger.archival_snapshot_below_current_anchor"]),
             "external_anchor": dict(PUBLISHED),
-            "current_published_anchor": latest,
+            "current_published_anchor": latest if canonical_project else None,
+            "historical_published_anchor": None if canonical_project else latest,
             "is_current_authority": current,
         }
 
@@ -406,7 +388,7 @@ class AuthorityLedger:
                 "reasons": ["ledger_unreadable_or_corrupt"],
             }
 
-    def arm_readout(self, arm_tag=None):
+    def arm_readout(self, arm_tag=MISSING):
         from .reception_entrypoints_v3 import bound_readout
 
         return bound_readout(self, arm_tag, "authority.arm_readout")
@@ -429,7 +411,7 @@ class AuthorityLedger:
                 "cumulative_n": None,
                 "complete_N": None,
                 "dsr": None,
-                "current_published_anchor": latest_external_witness(),
+                "current_published_anchor": self.snapshot()["current_published_anchor"],
                 "is_current_authority": self.snapshot()["is_current_authority"],
             },
             missing=["complete_history_acceptance"],

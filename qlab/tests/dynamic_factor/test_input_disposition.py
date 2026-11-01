@@ -1,4 +1,4 @@
-from qlab.dynamic_factor.authority_ledger import CURRENT_PUBLISHED
+from qlab.dynamic_factor.historical_authority import HISTORICAL_V4_PUBLISHED
 from copy import deepcopy
 
 import pytest
@@ -11,7 +11,7 @@ from qlab.dynamic_factor.input_disposition import (
     MAPPING_SHA,
     HASHES,
     cash_bindings,
-    input_migration_check,
+    historical_input_migration_check as input_migration_check,
     panel_input_check,
     qqq_cash_input,
     sources,
@@ -205,7 +205,7 @@ def test_same_chain_versioned_input_migration_receipt_binds_current_tip_and_both
     request = migration_input(writer)
     r = input_migration_check(request, writer)
     receipt = r["metrics"]["receipt"]
-    assert r["ok"] and receipt["old_anchor"]["tip"] == CURRENT_PUBLISHED["tip"]
+    assert r["ok"] and receipt["old_anchor"]["tip"] == HISTORICAL_V4_PUBLISHED["tip"]
     assert (
         receipt["new_anchor"]["N"] == 280 and receipt["new_anchor"]["sequence"] == 182
     )

@@ -1,0 +1,1733 @@
+[
+  {
+    "case_id": "N-01-01",
+    "original_case": {
+      "case_id": "N-01-01",
+      "item": "N-01",
+      "name": "缺必要原件/可信核收",
+      "fixture": "trusted-host-reception-fixture/N-01/v1",
+      "input_or_single_mutation": {
+        "remove": "required_receiver_document_or_trusted_approval",
+        "keep": "all request SHA/complete booleans valid"
+      },
+      "expected_semantics": "拒绝接收/正式消费；不得回退fixture、作者归档或caller自报",
+      "expected_stop": "拟新接收器的可信输入校验，早于其后的经济reader和数值回调",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "N-03安装请求还必须满足三前提；B2的unavailable正控与丢失其必要边界proof分开。"
+    },
+    "original_case_sha256": "40080b907347ec1be3f1a1c6ae7369e72da27b5f0260858c39064c0c462b5296",
+    "original_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "original_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+    "original_root_schema": "PROPOSAL.EVO884.NAcceptanceReceipt/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n01",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "final_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag=MISSING)",
+    "final_root_schema": "EVO884.NAcceptanceReceipt/v3",
+    "final_schema_uri": "urn:evo884:n-acceptance:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "approval_bytes": "original candidate bytes or None for missing document",
+      "projection_bytes": "original candidate bytes, including attacks and all recomputed digests"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.NAcceptanceReceipt/v3",
+      "/details/N_rows/0/complete_N": "/details/N_rows/0/value",
+      "/details/N_rows/1/complete_N": "/details/N_rows/1/value",
+      "old T1 root fields": "/details/t1_replay/<same-original-field>"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-01-01",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "trusted_approval_origin",
+    "expected_reasons": [
+      "reception.N_untrusted_acceptance"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-01-02",
+    "original_case": {
+      "case_id": "N-01-02",
+      "item": "N-01",
+      "name": "自洽但非可信来源",
+      "fixture": "trusted-host-reception-fixture/N-01/v1",
+      "input_or_single_mutation": {
+        "replace": "caller_generated_document",
+        "recompute": "ALL affected envelope/file/aggregate SHA",
+        "fake_fields": {
+          "approved": true,
+          "complete": true,
+          "dependencies": []
+        }
+      },
+      "expected_semantics": "不因摘要自洽或空数组/登记回执而认证；拒绝相应接收",
+      "expected_stop": "可信发布/核收来源校验，而非故意坏SHA",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "不得修改测试host固定信任根来让伪件合法；真实权限/业务事实仍待原件。"
+    },
+    "original_case_sha256": "7582d28866e5ebd8938ec2f8ab3a0f9d5e5f3873e9cc3a6d41d0684d5d12b899",
+    "original_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "original_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+    "original_root_schema": "PROPOSAL.EVO884.NAcceptanceReceipt/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n01",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "final_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag=MISSING)",
+    "final_root_schema": "EVO884.NAcceptanceReceipt/v3",
+    "final_schema_uri": "urn:evo884:n-acceptance:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "approval_bytes": "original candidate bytes or None for missing document",
+      "projection_bytes": "original candidate bytes, including attacks and all recomputed digests"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.NAcceptanceReceipt/v3",
+      "/details/N_rows/0/complete_N": "/details/N_rows/0/value",
+      "/details/N_rows/1/complete_N": "/details/N_rows/1/value",
+      "old T1 root fields": "/details/t1_replay/<same-original-field>"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-01-02",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "trusted_approval_origin",
+    "expected_reasons": [
+      "reception.N_untrusted_acceptance"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-01-03",
+    "original_case": {
+      "case_id": "N-01-03",
+      "item": "N-01",
+      "name": "路径/身份错绑",
+      "fixture": "trusted-host-reception-fixture/N-01/v1",
+      "input_or_single_mutation": {
+        "change_one_at_a_time": [
+          "canonical_path",
+          "run_or_actor",
+          "source_version_or_arm"
+        ],
+        "recompute": "all dependent digests"
+      },
+      "expected_semantics": "逐项拒绝，不能换路径或拿别主体/版本回执代证",
+      "expected_stop": "相应路径/身份校验，早于正式消费",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "449b7eb7f4ed52dd99def16cec0dcf1e2c70760e6fb206ded5cfaa2814bba28e",
+    "original_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "original_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+    "original_root_schema": "PROPOSAL.EVO884.NAcceptanceReceipt/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n01",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "final_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag=MISSING)",
+    "final_root_schema": "EVO884.NAcceptanceReceipt/v3",
+    "final_schema_uri": "urn:evo884:n-acceptance:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "approval_bytes": "original candidate bytes or None for missing document",
+      "projection_bytes": "original candidate bytes, including attacks and all recomputed digests"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.NAcceptanceReceipt/v3",
+      "/details/N_rows/0/complete_N": "/details/N_rows/0/value",
+      "/details/N_rows/1/complete_N": "/details/N_rows/1/value",
+      "old T1 root fields": "/details/t1_replay/<same-original-field>"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-01-03",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "object_scope_binding",
+    "expected_reasons": [
+      "reception.N_object_or_coverage_mismatch"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-02-01",
+    "original_case": {
+      "case_id": "N-02-01",
+      "item": "N-02",
+      "name": "缺必要原件/可信核收",
+      "fixture": "trusted-host-reception-fixture/N-02/v1",
+      "input_or_single_mutation": {
+        "remove": "required_receiver_document_or_trusted_approval",
+        "keep": "all request SHA/complete booleans valid"
+      },
+      "expected_semantics": "拒绝接收/正式消费；不得回退fixture、作者归档或caller自报",
+      "expected_stop": "拟新接收器的可信输入校验，早于其后的经济reader和数值回调",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "N-03安装请求还必须满足三前提；B2的unavailable正控与丢失其必要边界proof分开。"
+    },
+    "original_case_sha256": "5721a52dea602a186aa380110e2ffdead9b1e9554a8420ebba27d0d11e9bd7c4",
+    "original_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "original_signature": "bind_formal_n(*, host_context, request_metrics, arm_tag, entrypoint, run_pin, candidate_ledger=None)",
+    "original_root_schema": "PROPOSAL.EVO884.FormalNBinding/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n02",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "final_signature": "bind_formal_n(*, host_context, request_metrics, installed_snapshot, entrypoint, run_pin, arm_tag=MISSING, candidate_ledger=None)",
+    "final_root_schema": "EVO884.FormalNBinding/v3",
+    "final_schema_uri": "urn:evo884:formal-n-binding:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "request_metrics": "unchanged original entry request/context retaining embedded arm_tag and self-report",
+      "entrypoint": "each original entrypoint ID, not inferred from T1 result",
+      "candidate_ledger": "original supplied object or None; do not discard forged-999 attack"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.FormalNBinding/v3",
+      "/details/gate_N": "/details/gate_N",
+      "old T1 root fields": "/details/n_acceptance/details/t1_replay/<same-original-field>",
+      "old N02 unknown refs": "/details/n_acceptance/details/unknown_attempt_refs"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-02-01",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "trusted_approval_origin",
+    "expected_reasons": [
+      "reception.N_untrusted_acceptance"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-02-02",
+    "original_case": {
+      "case_id": "N-02-02",
+      "item": "N-02",
+      "name": "自洽但非可信来源",
+      "fixture": "trusted-host-reception-fixture/N-02/v1",
+      "input_or_single_mutation": {
+        "replace": "caller_generated_document",
+        "recompute": "ALL affected envelope/file/aggregate SHA",
+        "fake_fields": {
+          "approved": true,
+          "complete": true,
+          "dependencies": []
+        }
+      },
+      "expected_semantics": "不因摘要自洽或空数组/登记回执而认证；拒绝相应接收",
+      "expected_stop": "可信发布/核收来源校验，而非故意坏SHA",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "不得修改测试host固定信任根来让伪件合法；真实权限/业务事实仍待原件。"
+    },
+    "original_case_sha256": "1452daf95662a00958bec099dde6125d35f93bcd35f5b001fd568c0b88e608e2",
+    "original_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "original_signature": "bind_formal_n(*, host_context, request_metrics, arm_tag, entrypoint, run_pin, candidate_ledger=None)",
+    "original_root_schema": "PROPOSAL.EVO884.FormalNBinding/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n02",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "final_signature": "bind_formal_n(*, host_context, request_metrics, installed_snapshot, entrypoint, run_pin, arm_tag=MISSING, candidate_ledger=None)",
+    "final_root_schema": "EVO884.FormalNBinding/v3",
+    "final_schema_uri": "urn:evo884:formal-n-binding:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "request_metrics": "unchanged original entry request/context retaining embedded arm_tag and self-report",
+      "entrypoint": "each original entrypoint ID, not inferred from T1 result",
+      "candidate_ledger": "original supplied object or None; do not discard forged-999 attack"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.FormalNBinding/v3",
+      "/details/gate_N": "/details/gate_N",
+      "old T1 root fields": "/details/n_acceptance/details/t1_replay/<same-original-field>",
+      "old N02 unknown refs": "/details/n_acceptance/details/unknown_attempt_refs"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-02-02",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "trusted_approval_origin",
+    "expected_reasons": [
+      "reception.N_untrusted_acceptance"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-02-03",
+    "original_case": {
+      "case_id": "N-02-03",
+      "item": "N-02",
+      "name": "路径/身份错绑",
+      "fixture": "trusted-host-reception-fixture/N-02/v1",
+      "input_or_single_mutation": {
+        "change_one_at_a_time": [
+          "canonical_path",
+          "run_or_actor",
+          "source_version_or_arm"
+        ],
+        "recompute": "all dependent digests"
+      },
+      "expected_semantics": "逐项拒绝，不能换路径或拿别主体/版本回执代证",
+      "expected_stop": "相应路径/身份校验，早于正式消费",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "1d984e98c968a81f8071a0f07e2d9d944c494c8b4db52b4e7112be5baf03a73d",
+    "original_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "original_signature": "bind_formal_n(*, host_context, request_metrics, arm_tag, entrypoint, run_pin, candidate_ledger=None)",
+    "original_root_schema": "PROPOSAL.EVO884.FormalNBinding/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n02",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "final_signature": "bind_formal_n(*, host_context, request_metrics, installed_snapshot, entrypoint, run_pin, arm_tag=MISSING, candidate_ledger=None)",
+    "final_root_schema": "EVO884.FormalNBinding/v3",
+    "final_schema_uri": "urn:evo884:formal-n-binding:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "request_metrics": "unchanged original entry request/context retaining embedded arm_tag and self-report",
+      "entrypoint": "each original entrypoint ID, not inferred from T1 result",
+      "candidate_ledger": "original supplied object or None; do not discard forged-999 attack"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.FormalNBinding/v3",
+      "/details/gate_N": "/details/gate_N",
+      "old T1 root fields": "/details/n_acceptance/details/t1_replay/<same-original-field>",
+      "old N02 unknown refs": "/details/n_acceptance/details/unknown_attempt_refs"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-02-03",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "object_scope_binding",
+    "expected_reasons": [
+      "reception.N_object_or_coverage_mismatch"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-01-04",
+    "original_case": {
+      "case_id": "N-01-04",
+      "item": "N-01",
+      "name": "错臂/来源组冒正式配置",
+      "fixture": "trusted-host-reception-fixture/N-01/v1",
+      "input_or_single_mutation": {
+        "mutate_one": [
+          "arm=OTHER",
+          "source_group_count_as_complete_N",
+          "recorded_N_1313_as_gate",
+          "request_sensitivity_as_PRIMARY"
+        ],
+        "recompute_all_SHA": true
+      },
+      "expected_semantics": "拒绝；PRIMARY与SENSITIVITY分列，不转写未知N为0",
+      "expected_stop": "完整N核收receiver；数值DSR/probe前",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "b428eda4bb99aa4a1758bb1de11ae4e0c191a6fc862ec8ff59daafbbfe9f3727",
+    "original_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "original_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+    "original_root_schema": "PROPOSAL.EVO884.NAcceptanceReceipt/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n01",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "final_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag=MISSING)",
+    "final_root_schema": "EVO884.NAcceptanceReceipt/v3",
+    "final_schema_uri": "urn:evo884:n-acceptance:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "approval_bytes": "original candidate bytes or None for missing document",
+      "projection_bytes": "original candidate bytes, including attacks and all recomputed digests"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.NAcceptanceReceipt/v3",
+      "/details/N_rows/0/complete_N": "/details/N_rows/0/value",
+      "/details/N_rows/1/complete_N": "/details/N_rows/1/value",
+      "old T1 root fields": "/details/t1_replay/<same-original-field>"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-01-04",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "arm_and_approved_PRIMARY_scope",
+    "expected_reasons": [
+      "reception.N_schema_or_arm_mismatch",
+      "reception.N_complete_projection_required"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-01-05",
+    "original_case": {
+      "case_id": "N-01-05",
+      "item": "N-01",
+      "name": "核收tip/覆盖与现场对象错配",
+      "fixture": "trusted-host-reception-fixture/N-01/v1",
+      "input_or_single_mutation": {
+        "approved": {
+          "seq": 100,
+          "tip": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "scope": "arm-A/window-A"
+        },
+        "installed": {
+          "seq": 102,
+          "tip": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        },
+        "mutate_one": [
+          "genesis",
+          "projection_sha",
+          "coverage",
+          "schema_version"
+        ],
+        "recompute_all_SHA": true
+      },
+      "expected_semantics": "核收覆盖不匹配时拒绝或保持未完整；不自行扩覆盖/续用过期完整位",
+      "expected_stop": "N projection acceptance -> formal arm reader 前",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "数字100/102是后续私有合成夹具标号，不是实际权威链seq。"
+    },
+    "original_case_sha256": "93b0c8656003abba6de7ff93663668ee2bf3ceee5572ef2722ce799133fd1a5f",
+    "original_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "original_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+    "original_root_schema": "PROPOSAL.EVO884.NAcceptanceReceipt/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n01",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "final_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag=MISSING)",
+    "final_root_schema": "EVO884.NAcceptanceReceipt/v3",
+    "final_schema_uri": "urn:evo884:n-acceptance:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "approval_bytes": "original candidate bytes or None for missing document",
+      "projection_bytes": "original candidate bytes, including attacks and all recomputed digests"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.NAcceptanceReceipt/v3",
+      "/details/N_rows/0/complete_N": "/details/N_rows/0/value",
+      "/details/N_rows/1/complete_N": "/details/N_rows/1/value",
+      "old T1 root fields": "/details/t1_replay/<same-original-field>"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-01-05",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "installed_coverage_version_binding",
+    "expected_reasons": [
+      "reception.N_object_or_coverage_mismatch"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-01-06",
+    "original_case": {
+      "case_id": "N-01-06",
+      "item": "N-01",
+      "name": "可信核收投影正控",
+      "fixture": "trusted-host-reception-fixture/N-01/v1",
+      "input_or_single_mutation": {
+        "host": "approved schema + actual synthetic installed chain/tip/genesis + own-arm accepted projection + coverage",
+        "project_function": "unchanged incomplete diagnostic"
+      },
+      "expected_semantics": "新接收边界接收正确本臂投影并保留两行N与证据身份；原runtime/V门不解开",
+      "expected_stop": "N receiver返回已核N身份；不运行策略或填真实complete_N",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": true,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "268cf4785df1bccc84a9d5672b8943d450731d04dc8a219853b1ccfcc8874ae8",
+    "original_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "original_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag)",
+    "original_root_schema": "PROPOSAL.EVO884.NAcceptanceReceipt/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n01",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.receive_arm_n",
+    "final_signature": "receive_arm_n(approval_bytes, projection_bytes, *, host_context, installed_snapshot, run_pin, arm_tag=MISSING)",
+    "final_root_schema": "EVO884.NAcceptanceReceipt/v3",
+    "final_schema_uri": "urn:evo884:n-acceptance:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "approval_bytes": "original candidate bytes or None for missing document",
+      "projection_bytes": "original candidate bytes, including attacks and all recomputed digests"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.NAcceptanceReceipt/v3",
+      "/details/N_rows/0/complete_N": "/details/N_rows/0/value",
+      "/details/N_rows/1/complete_N": "/details/N_rows/1/value",
+      "old T1 root fields": "/details/t1_replay/<same-original-field>"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-01-06",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "accepted_identity_and_approved_projection",
+    "expected_reasons": [],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": true,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-02-04",
+    "original_case": {
+      "case_id": "N-02-04",
+      "item": "N-02",
+      "name": "所有正式入口的标签反例矩阵",
+      "fixture": "trusted-host-reception-fixture/N-02/v1",
+      "input_or_single_mutation": {
+        "entrypoints": [
+          "authority.arm_readout",
+          "AttemptLedger.arm_readout",
+          "statistics.dsr_eval_arm",
+          "statistics.arm_snapshot",
+          "pipeline._n_snapshot",
+          "pipeline.evaluate_arm",
+          "__main__.dsr_eval",
+          "dsr_v0.evaluate",
+          "run_train_pipeline"
+        ],
+        "labels": [
+          "omitted",
+          "explicit_null",
+          "invalid",
+          "embedded_explicit_conflict"
+        ]
+      },
+      "expected_semantics": "在各新formal N接缝前拒绝/保持兼容诊断，不用未来完整结果升级身份",
+      "expected_stop": "现有arm label guard及新增接线，早于正式N投影消费/S0",
+      "expected_counts": {
+        "formal_N_projection_consumer": 0,
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "S0_record": 0,
+        "probe": 0,
+        "calibrate": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": "CLI已有ledger构造可能做结构核链，须单列该metadata IO；不能写所有底层链读数均0。run_train当前runtime门可先拒绝，后续实现审须用可信合成ready夹具观察标签门，不能以永远runtime=false替代该验收。"
+    },
+    "original_case_sha256": "dcd1d06deb32a76e373b6e43f14bd2268719e83663388586f86f406720a5096c",
+    "original_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "original_signature": "bind_formal_n(*, host_context, request_metrics, arm_tag, entrypoint, run_pin, candidate_ledger=None)",
+    "original_root_schema": "PROPOSAL.EVO884.FormalNBinding/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n02",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "final_signature": "bind_formal_n(*, host_context, request_metrics, installed_snapshot, entrypoint, run_pin, arm_tag=MISSING, candidate_ledger=None)",
+    "final_root_schema": "EVO884.FormalNBinding/v3",
+    "final_schema_uri": "urn:evo884:formal-n-binding:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "request_metrics": "unchanged original entry request/context retaining embedded arm_tag and self-report",
+      "entrypoint": "each original entrypoint ID, not inferred from T1 result",
+      "candidate_ledger": "original supplied object or None; do not discard forged-999 attack"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.FormalNBinding/v3",
+      "/details/gate_N": "/details/gate_N",
+      "old T1 root fields": "/details/n_acceptance/details/t1_replay/<same-original-field>",
+      "old N02 unknown refs": "/details/n_acceptance/details/unknown_attempt_refs"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-02-04",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "original_label_guard",
+    "expected_reasons": [
+      "arm_n.arm_tag_missing_or_invalid",
+      "arm_n.request_arm_tag_conflict",
+      "reception.N_arm_pin_conflict"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-02-05",
+    "original_case": {
+      "case_id": "N-02-05",
+      "item": "N-02",
+      "name": "caller ledger/fixture假装完整",
+      "fixture": "trusted-host-reception-fixture/N-02/v1",
+      "input_or_single_mutation": {
+        "ledger": "caller supplied object/fixture",
+        "arm_readout_return": {
+          "n_complete": true,
+          "complete_N": 999
+        },
+        "controlled_installation_identity": "missing"
+      },
+      "expected_semantics": "新可信N接缝拒绝该对象；不调用S0/probe/插件，不能靠鸭子类型自证",
+      "expected_stop": "host-owned formal factory/receipt-origin boundary",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "1177a3af010f3a69d1a868486f27de05b1ed9b8027f5633701e23d686d28e9a0",
+    "original_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "original_signature": "bind_formal_n(*, host_context, request_metrics, arm_tag, entrypoint, run_pin, candidate_ledger=None)",
+    "original_root_schema": "PROPOSAL.EVO884.FormalNBinding/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n02",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "final_signature": "bind_formal_n(*, host_context, request_metrics, installed_snapshot, entrypoint, run_pin, arm_tag=MISSING, candidate_ledger=None)",
+    "final_root_schema": "EVO884.FormalNBinding/v3",
+    "final_schema_uri": "urn:evo884:formal-n-binding:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "request_metrics": "unchanged original entry request/context retaining embedded arm_tag and self-report",
+      "entrypoint": "each original entrypoint ID, not inferred from T1 result",
+      "candidate_ledger": "original supplied object or None; do not discard forged-999 attack"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.FormalNBinding/v3",
+      "/details/gate_N": "/details/gate_N",
+      "old T1 root fields": "/details/n_acceptance/details/t1_replay/<same-original-field>",
+      "old N02 unknown refs": "/details/n_acceptance/details/unknown_attempt_refs"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-02-05",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "caller_ledger_identity_before_its_methods",
+    "expected_reasons": [
+      "reception.N_caller_ledger_not_authoritative"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-02-06",
+    "original_case": {
+      "case_id": "N-02-06",
+      "item": "N-02",
+      "name": "阶段间投影或覆盖漂移",
+      "fixture": "trusted-host-reception-fixture/N-02/v1",
+      "input_or_single_mutation": {
+        "preflight_acceptance_version": "vA",
+        "candidate_or_meta_version": "vB",
+        "same_arm": true
+      },
+      "expected_semantics": "失配拒绝，旧核收不能悄悄换新版/扩覆盖",
+      "expected_stop": "candidate/meta _n_snapshot before numeric evaluation",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": false,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "324051faa5a49b5e338eac9395e6d34dcbb636301f98e0e8759b7000b7bc3bb4",
+    "original_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "original_signature": "bind_formal_n(*, host_context, request_metrics, arm_tag, entrypoint, run_pin, candidate_ledger=None)",
+    "original_root_schema": "PROPOSAL.EVO884.FormalNBinding/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n02",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "final_signature": "bind_formal_n(*, host_context, request_metrics, installed_snapshot, entrypoint, run_pin, arm_tag=MISSING, candidate_ledger=None)",
+    "final_root_schema": "EVO884.FormalNBinding/v3",
+    "final_schema_uri": "urn:evo884:formal-n-binding:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "request_metrics": "unchanged original entry request/context retaining embedded arm_tag and self-report",
+      "entrypoint": "each original entrypoint ID, not inferred from T1 result",
+      "candidate_ledger": "original supplied object or None; do not discard forged-999 attack"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.FormalNBinding/v3",
+      "/details/gate_N": "/details/gate_N",
+      "old T1 root fields": "/details/n_acceptance/details/t1_replay/<same-original-field>",
+      "old N02 unknown refs": "/details/n_acceptance/details/unknown_attempt_refs"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-02-06",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "stage_pin_guard",
+    "expected_reasons": [
+      "reception.N_stage_pin_changed"
+    ],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": false,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  },
+  {
+    "case_id": "N-02-07",
+    "original_case": {
+      "case_id": "N-02-07",
+      "item": "N-02",
+      "name": "全入口可信接线正控",
+      "fixture": "trusted-host-reception-fixture/N-02/v1",
+      "input_or_single_mutation": {
+        "host": "trusted accepted N projection for one arm, installed identity pinned",
+        "each_entrypoint": "same API/args and receipt version",
+        "runtime_and_V": "still independently gated"
+      },
+      "expected_semantics": "各入口只读得到同一N身份；无标签兼容分支仍诊断；不发生S0/预算/权威写入",
+      "expected_stop": "每入口新N adapter返回成功，原其他门维持",
+      "expected_counts": {
+        "economic_reader": 0,
+        "numeric_callback": 0,
+        "authority_append": 0,
+        "budget_mutating_api": 0,
+        "receiver_install_writes": 0
+      },
+      "positive_control": true,
+      "source_and_side_effects": "hash before/after original chain, mutable witness, external anchor, budget, authorization and retained state; receipt compares full bound identity. Metadata/hash reads permitted and counted separately.",
+      "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY",
+      "notes": ""
+    },
+    "original_case_sha256": "9bcf725568552bbc3b0843185e49d83548352988fc7b6cc7ba20a39c400ab01b",
+    "original_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "original_signature": "bind_formal_n(*, host_context, request_metrics, arm_tag, entrypoint, run_pin, candidate_ledger=None)",
+    "original_root_schema": "PROPOSAL.EVO884.FormalNBinding/v2",
+    "disposition": "经适配层兼容",
+    "adapter_location": "qlab/tests/dynamic_factor/contract_adapters_v3.py (NEW; test-only)",
+    "adapter_function": "adapt_v2_n02",
+    "adapter_caller": "qlab/tests/dynamic_factor/reception_v2_driver.py (NEW; legacy-spec compatibility driver)",
+    "final_function": "qlab.dynamic_factor.reception_v2.bind_formal_n",
+    "final_signature": "bind_formal_n(*, host_context, request_metrics, installed_snapshot, entrypoint, run_pin, arm_tag=MISSING, candidate_ledger=None)",
+    "final_root_schema": "EVO884.FormalNBinding/v3",
+    "final_schema_uri": "urn:evo884:formal-n-binding:v3",
+    "argument_mapping": {
+      "host_context": "same original private controlled host fixture; never derived from candidate JSON",
+      "installed_snapshot": "original host fixture's verified snapshot; missing -> None, never install/copy/fallback",
+      "run_pin": "same original immutable run pin, including drift mutations",
+      "arm_tag": "original explicit value/MISSING/null preserved; never drop/replace with host arm",
+      "request_metrics": "unchanged original entry request/context retaining embedded arm_tag and self-report",
+      "entrypoint": "each original entrypoint ID, not inferred from T1 result",
+      "candidate_ledger": "original supplied object or None; do not discard forged-999 attack"
+    },
+    "assertion_pointer_mapping": {
+      "/schema": "EVO884.FormalNBinding/v3",
+      "/details/gate_N": "/details/gate_N",
+      "old T1 root fields": "/details/n_acceptance/details/t1_replay/<same-original-field>",
+      "old N02 unknown refs": "/details/n_acceptance/details/unknown_attempt_refs"
+    },
+    "argv": [
+      "<python3.9.6-or-3.12.13>",
+      "-B",
+      "<repo>/qlab/tests/dynamic_factor/reception_v2_driver.py",
+      "--case-id",
+      "N-02-07",
+      "--contract-version",
+      "3",
+      "--contracts-dir",
+      "<private-root>/v3-contracts",
+      "--private-fixtures",
+      "<private-root>/trusted-host-reception-fixture",
+      "--baseline",
+      "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+      "--report-json",
+      "-"
+    ],
+    "semantic_stop": "all_entrypoints_unique_binding",
+    "expected_reasons": [],
+    "semantic_validator_entered": true,
+    "unexpected_typeerror": 0,
+    "hooks": {
+      "metadata_open": [
+        "exact realpath, mode, byte count, digest; include constructor verification reads separately"
+      ],
+      "construction_chain_verify": [
+        "qlab/qlab/dynamic_factor/ledger.py:31",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:255",
+        "qlab/qlab/dynamic_factor/authority_ledger.py:288"
+      ],
+      "formal_N_projection_consumer": [
+        "future reception_v2.receive_arm_n and bind_formal_n"
+      ],
+      "economic_reader": [
+        "qlab/qlab/dynamic_factor/scope_reader.py:29",
+        "qlab/qlab/dynamic_factor/reference_inputs.py:38"
+      ],
+      "numeric_callback": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:215",
+        "qlab/qlab/dynamic_factor/reference_compile_v3.py:96"
+      ],
+      "source_actor_numeric_calls": [
+        "qlab/qlab/dynamic_factor/noncash_v3.py:228",
+        "qlab/qlab/dynamic_factor/reference_noncash.py:112"
+      ],
+      "target_actor_numeric_calls": [
+        "same actual numeric seams but separately keyed by target actor and consumer"
+      ],
+      "synthetic_cash_validator_calls": [
+        "qlab/qlab/dynamic_factor/valuation.py:145",
+        "qlab/qlab/shadow15k/cash.py:12",
+        "qlab/qlab/shadow15k/cash.py:70"
+      ],
+      "S0_record_probe_calibrate": [
+        "qlab/qlab/dynamic_factor/pipeline.py:417",
+        "injected probe/calibrate/adapter spies before invocation"
+      ],
+      "forbidden_write": [
+        "qlab/qlab/dynamic_factor/authority_ledger.py:299",
+        "qlab/qlab/dynamic_factor/ledger.py:215",
+        "all budget consume/reserve/reset/save APIs",
+        "open with write/create/truncate flags",
+        "runtime/policy object mutation and constructor fallback"
+      ],
+      "worker_boundary": [
+        "qlab/qlab/dynamic_factor/reference_boundary.py:95",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:18",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:57",
+        "qlab/qlab/dynamic_factor/reference_producer_v3.py:59",
+        "report reader_calls/accessed_roles/complete/reason; process return code"
+      ]
+    },
+    "positive_control": true,
+    "execution_status": "NOT_RUN_DESIGN_SPEC_ONLY"
+  }
+]

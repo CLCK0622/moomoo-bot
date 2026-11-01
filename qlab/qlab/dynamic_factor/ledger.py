@@ -8,6 +8,8 @@ The hash covers logical content, not SQLite page layout or filesystem paths.
 
 from __future__ import annotations
 
+from .arm_n import MISSING
+
 import json
 import math
 import sqlite3
@@ -487,7 +489,7 @@ class AttemptLedger:
             "reasons": reasons,
         }
 
-    def arm_readout(self, arm_tag=None):
+    def arm_readout(self, arm_tag=MISSING):
         from .reception_entrypoints_v3 import bound_readout
 
         return bound_readout(self, arm_tag, "AttemptLedger.arm_readout")

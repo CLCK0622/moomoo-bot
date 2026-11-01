@@ -1,5 +1,7 @@
 """F1/F2 review reproductions on private fixtures, never author tool caches."""
 
+from .historical_authority import HISTORICAL_V4_FIXTURES, HISTORICAL_V4_PUBLISHED
+
 import json
 import shutil
 import subprocess
@@ -11,8 +13,6 @@ from .fixture_inventory import MANIFEST, frozen_fixture_hashes
 from .fees import _legacy_fee_frontier, fee_frontier
 from .authority_ledger import (
     AuthorityLedger,
-    CURRENT_FIXTURES,
-    CURRENT_PUBLISHED,
     TOOL_SHA,
 )
 
@@ -77,9 +77,11 @@ def cases(workdir, policy):
             observed=observed,
         )
     )
-    ledger = CURRENT_FIXTURES / "EVO891-B-ledger-v4.jsonl"
-    tip = CURRENT_FIXTURES / "EVO891-B-ledger-v4.tip.json"
-    actual = AuthorityLedger(ledger, tip, external_anchor=CURRENT_PUBLISHED).verify()
+    ledger = HISTORICAL_V4_FIXTURES / "EVO891-B-ledger-v4.jsonl"
+    tip = HISTORICAL_V4_FIXTURES / "EVO891-B-ledger-v4.tip.json"
+    actual = AuthorityLedger(
+        ledger, tip, external_anchor=HISTORICAL_V4_PUBLISHED
+    ).verify()
     tool = FIXTURES / "evo891" / "EVO891-B-ledger-v2.py"
     assert sha256(tool.read_bytes()) == TOOL_SHA
     r = subprocess.run(
@@ -90,11 +92,11 @@ def cases(workdir, policy):
             str(ledger),
             str(tip),
             "--expect-tip",
-            CURRENT_PUBLISHED["tip"],
+            HISTORICAL_V4_PUBLISHED["tip"],
             "--expect-sequence",
-            str(CURRENT_PUBLISHED["sequence"]),
+            str(HISTORICAL_V4_PUBLISHED["sequence"]),
             "--expect-high-water",
-            str(CURRENT_PUBLISHED["n_high_water"]),
+            str(HISTORICAL_V4_PUBLISHED["n_high_water"]),
         ],
         capture_output=True,
         text=True,

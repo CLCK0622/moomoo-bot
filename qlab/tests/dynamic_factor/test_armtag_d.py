@@ -144,12 +144,13 @@ def test_formal_missing_and_invalid_identity_with_complete_N_has_no_consumer_or_
 
 @pytest.mark.parametrize("entry", FORMAL)
 @pytest.mark.parametrize("tag", ["EVO883_FACTOR", "EVO896_LLMCLI"])
-def test_same_formal_conditions_only_valid_label_reaches_consumer_sentinel(
+def test_untrusted_ready_object_even_with_valid_label_has_no_consumer(
     ready_consumers, entry, tag
 ):
     ledger = ReadyLedger()
-    with pytest.raises(ConsumerSentinel):
-        formal_call(entry, ledger, tag)
+    report = formal_call(entry, ledger, tag)
+    assert report["reasons"]
+    assert not ledger.formal_reads
     assert not ledger.writes and not ledger.callbacks
 
 
@@ -193,15 +194,16 @@ def test_omission_is_permanent_diagnostic_with_complete_N_and_ready_consumer(
 
 @pytest.mark.parametrize("entry", ["dsr_eval", "pipeline.evaluate"])
 @pytest.mark.parametrize("tag", ["EVO883_FACTOR", "EVO896_LLMCLI"])
-def test_same_compat_conditions_only_valid_label_reaches_formal_sentinel(
+def test_compat_valid_label_cannot_authorize_a_caller_object(
     ready_consumers, entry, tag
 ):
     ledger = ReadyLedger()
-    with pytest.raises(ConsumerSentinel):
-        if entry == "dsr_eval":
-            statistics.dsr_eval({"arm_tag": tag}, ledger)
-        else:
-            pipeline.evaluate({"arm_tag": tag}, ledger, None)
+    report = (
+        statistics.dsr_eval({"arm_tag": tag}, ledger)
+        if entry == "dsr_eval"
+        else pipeline.evaluate({"arm_tag": tag}, ledger, None)
+    )
+    assert report["reasons"] and not ledger.formal_reads
     assert not ledger.writes and not ledger.callbacks
 
 
@@ -372,7 +374,11 @@ def alias_call(entry, ledger, tag, tmp_path):
     with (
         patch.object(sys, "argv", argv),
         patch.object(cli, "load_conventions", return_value=policy),
-        patch.object(cli.AttemptLedger, "from_conventions", return_value=ledger),
+        patch.object(cli, "open_formal_view", return_value=ledger),
+        patch(
+            "qlab.dynamic_factor.authority_ledger.PROJECT_LEDGER",
+            tmp_path / "never-created.sqlite",
+        ),
         redirect_stdout(stdout),
     ):
         assert cli.main() == 2
@@ -393,10 +399,10 @@ def test_formal_aliases_with_complete_N_refuse_without_consumer_or_write(
 
 @pytest.mark.parametrize("entry", ["CLI", "legacy_evaluate"])
 @pytest.mark.parametrize("tag", ["EVO883_FACTOR", "EVO896_LLMCLI"])
-def test_same_ready_alias_conditions_only_valid_label_reaches_sentinel(
+def test_alias_valid_label_cannot_authorize_caller_object(
     ready_consumers, entry, tag, tmp_path
 ):
     ledger = ReadyLedger()
-    with pytest.raises(ConsumerSentinel):
-        alias_call(entry, ledger, tag, tmp_path)
+    report = alias_call(entry, ledger, tag, tmp_path)
+    assert report["reasons"] and not ledger.formal_reads
     assert not ledger.writes and not ledger.callbacks

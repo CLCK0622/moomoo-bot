@@ -1,8 +1,11 @@
+# Historical continuity regressions; current N03 paths are tested separately.
 from copy import deepcopy
 
 import pytest
 
-from qlab.dynamic_factor.continuity import continuous_path_check
+from qlab.dynamic_factor.continuity import (
+    historical_continuous_path_check as continuous_path_check,
+)
 from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.contract import digest
 from qlab.dynamic_factor.scope_harness import continuity_fixture
