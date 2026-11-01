@@ -304,8 +304,8 @@ def validate_scope(scope, view, binding):
         ):
             raise ValueError("reference.same_E_t_required")
         if (
-            day["quantity_state"] != "VERIFIED_GE50"
-            or len(eligible) < 50
+            day["quantity_state"] not in {"VERIFIED_GE50", "VERIFIED_LT50"}
+            or not eligible
             or day["verified_count"] != len(eligible)
         ):
             raise ValueError(

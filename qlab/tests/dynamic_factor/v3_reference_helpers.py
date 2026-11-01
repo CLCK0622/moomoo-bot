@@ -11,9 +11,9 @@ from qlab.dynamic_factor.reference_compile_v3 import seal_scope
 from test_v2_isolation import synthetic_manifest
 
 
-def sealed(*, real=False):
+def sealed(*, real=False, verified=50):
     p = load_conventions()
-    r = synthetic_manifest(p)
+    r = synthetic_manifest(p, verified=verified)
     r.update(
         role="external_reference_roles",
         sealed_at="2026-10-30T12:00:00Z",
@@ -36,18 +36,18 @@ def sealed(*, real=False):
     return seal_manifest(r, p)
 
 
-def unit_scope(*, real=False):
+def unit_scope(*, real=False, verified=50):
     p = load_conventions()
-    return seal_scope(sealed(real=real), [p.calendar[600]], [], p)
+    return seal_scope(sealed(real=real, verified=verified), [p.calendar[600]], [], p)
 
 
-def protocol_scope(train, warmup):
+def protocol_scope(train, warmup, *, verified=50):
     """Counterfactual wire-format fixture only, not a full eligibility proof.
 
     Public source compilation is independently checked on original evidence;
     this expands one synthetic day to exercise the complete 1260/252 protocol.
     """
-    s = unit_scope()
+    s = unit_scope(verified=verified)
     template = next(iter(s["days"].values()))
     days = {}
     for date in train:

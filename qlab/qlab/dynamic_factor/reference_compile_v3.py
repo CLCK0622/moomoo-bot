@@ -53,7 +53,12 @@ def seal_scope(sealed, train, warmup, policy=None):
         sealed_at=sealed["request"]["sealed_at"],
         first_performance_at=sealed["request"]["first_performance_at"],
         bindings=p.binding,
-        complete=all(day["quantity_state"] == "VERIFIED_GE50" for day in days.values()),
+        complete=all(
+            day["quantity_state"] in {"VERIFIED_GE50", "VERIFIED_LT50"}
+            and day["verified_count"] == len(day["eligible"])
+            and bool(day["eligible"])
+            for day in days.values()
+        ),
         runtime_consumable=False,
         certifiable=False,
     )
