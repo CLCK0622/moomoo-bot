@@ -89,24 +89,9 @@ def validate_new_attempt(row, previous):
     Historical P02 stays untouched. Equal parameter cells alone never suffice.
     Evidence must bind the linked run and an already recorded artifact/log SHA.
     """
-    if (
-        any(k not in row for k in ATTEMPT_FIELDS)
-        or not isinstance(row["attempt_id"], str)
-        or not row["attempt_id"]
-        or not isinstance(row["run_id"], str)
-        or not row["run_id"]
-        or any(
-            type(row[k]) is not int or row[k] < 0
-            for k in ("n_trials_total", "n_evaluated")
-        )
-        or not isinstance(row["evidence"], list)
-        or not row["evidence"]
-        or any(
-            not isinstance(e, dict) or not is_sha(e.get("sha256"))
-            for e in row["evidence"]
-        )
-    ):
-        raise ValueError("ledger.attempt_field_missing_or_invalid")
+    from .authority_record_types import validate_attempt_fields
+
+    validate_attempt_fields(row, mode="new_write", trusted_coverage=None)
     if row.get("n_contribution") != 0:
         if type(row.get("n_contribution")) is not int or row["n_contribution"] < 1:
             raise ValueError("ledger.contribution_or_attempt_id_invalid")
@@ -153,7 +138,7 @@ def records(raw):
     return out
 
 
-def state(rows):
+def state(rows, *, trusted_coverage=None):
     if (
         not rows
         or rows[0].get("event") != "genesis"
@@ -178,7 +163,14 @@ def state(rows):
                 raise ValueError("ledger.contribution_or_attempt_id_invalid")
             ids.add(row["attempt_id"])
             if k > PUBLISHED["sequence"]:
-                validate_new_attempt(row, rows[:k])
+                if row.get("n_evaluated") is None and trusted_coverage is not None:
+                    from .authority_record_types import validate_attempt_fields
+
+                    validate_attempt_fields(
+                        row, mode="historical_replay", trusted_coverage=trusted_coverage
+                    )
+                else:
+                    validate_new_attempt(row, rows[:k])
             # Preserve the published historical exception; new writes have a
             # stricter continuation rule checked separately, never rewrite P02.
             if c == 0 and not row.get("same_cells_as"):
@@ -219,20 +211,20 @@ def state(rows):
     )
 
 
-def verify_ancestor(rows, anchor):
+def verify_ancestor(rows, anchor, *, trusted_coverage=None):
     if not isinstance(anchor, dict) or any(k not in anchor for k in PUBLISHED):
         raise ValueError("ledger.external_anchor_required")
     seq = anchor["sequence"]
     if type(seq) is not int or seq < PUBLISHED["sequence"] or seq >= len(rows):
         raise ValueError("ledger.external_anchor_mismatch")
-    prefix = state(rows[: seq + 1])
+    prefix = state(rows[: seq + 1], trusted_coverage=trusted_coverage)
     if any(prefix[k] != anchor[k] for k in PUBLISHED):
         raise ValueError("ledger.external_anchor_mismatch")
 
 
-def verify_bytes(raw, witness, external_anchor=None):
+def verify_bytes(raw, witness, external_anchor=None, *, trusted_coverage=None):
     rows = records(raw)
-    cur = state(rows)
+    cur = state(rows, trusted_coverage=trusted_coverage)
     if witness.get("migrated_to") or witness.get("migration_pending"):
         raise ValueError("ledger.migration_pending_or_source_retired")
     if any(witness.get(k) != cur[k] for k in FIELDS) or witness.get(
@@ -246,8 +238,12 @@ def verify_bytes(raw, witness, external_anchor=None):
         or sha256(b"".join(canonical(r) + b"\n" for r in rows[:21])) != SOURCE_SHA
     ):
         raise ValueError("ledger.published_prefix_mismatch")
-    verify_ancestor(rows, PUBLISHED)
-    verify_ancestor(rows, PUBLISHED if external_anchor is None else external_anchor)
+    verify_ancestor(rows, PUBLISHED, trusted_coverage=trusted_coverage)
+    verify_ancestor(
+        rows,
+        PUBLISHED if external_anchor is None else external_anchor,
+        trusted_coverage=trusted_coverage,
+    )
     return cur, rows
 
 
@@ -442,4 +438,59 @@ class AuthorityLedger:
 
     begin = finish = record = recorded = declare_family = observe_self_report_n = (
         _unique_writer_required
+    )
+
+
+def replay_approved_archive(raw, *, trusted_release, witness):
+    """Replay covered original bytes without interpreting unknown evaluation counts."""
+    from .authority_record_types import covered_archive
+
+    identity = covered_archive(raw, trusted_release)
+    if (
+        not raw.endswith(b"\n")
+        or b"\r" in raw
+        or any(not line for line in raw[:-1].split(b"\n"))
+    ):
+        raise ValueError("ledger.line_not_canonical")
+    current, rows = verify_bytes(raw, witness, trusted_coverage=trusted_release)
+    unknowns = [
+        dict(
+            seq=row["seq"],
+            attempt_id=row["attempt_id"],
+            raw_line_sha256=sha256(canonical(row)),
+            n_evaluated=None,
+            n_evaluated_null_reason=row["n_evaluated_null_reason"],
+            classification="CONTROLLED_HISTORICAL_UNKNOWN",
+        )
+        for row in rows
+        if row.get("event") == "attempt" and row.get("n_evaluated") is None
+    ]
+    return dict(
+        schema="EVO884.T1-reception-result/v2.1",
+        accepted=True,
+        stage="archive",
+        reasons=["ledger.controlled_historical_unknown"] if unknowns else [],
+        source_archive_sha256=identity[0],
+        approved_coverage_sha256=digest([identity[0], identity[1]]),
+        source_rows_preserved=True,
+        book_N=current["N"],
+        high_water=current["n_high_water"],
+        book_N_certified=False,
+        own_arm_formal_bound_from_book=False,
+        counted_as_zero=False,
+        counted_as_not_evaluated=False,
+        new_writes_relaxed=False,
+        raw_unknown_rows=len(unknowns),
+        unknown_rows=unknowns,
+        relevant_unresolved_unknowns=len(unknowns),
+        accepted_reconciliation_sha256=None,
+        full_authority_projection_complete=False,
+        complete_N=None,
+        n_complete=False,
+        gate_N=None,
+        formal_lower_bound=None,
+        formal_upper_bound=None,
+        DSR=None,
+        runtime_consumable=False,
+        certifiable=False,
     )
