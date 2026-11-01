@@ -11,11 +11,11 @@ from qlab.dynamic_factor.reference_registry_v3 import DISPATCH, member_spec
 from v3_reference_helpers import protocol_scope, reference_proofs
 
 
-def wire_fixture(root):
+def wire_fixture(root, *, verified=50):
     p = load_conventions()
     fold = p.fold_manifest()["folds"][0]
     view = shared_views(p.calendar, fold, train_days=1260, warmup_days=252)
-    scope = protocol_scope(view.train, view.warmup)
+    scope = protocol_scope(view.train, view.warmup, verified=verified)
     files = compile_inputs(scope, lambda *a: 100, lambda *a: 100, p)
     root.mkdir()
     bindings = {}

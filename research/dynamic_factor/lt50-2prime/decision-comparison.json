@@ -1,0 +1,42 @@
+{
+  "baseline": "6fa70f6c2f5d3599acb31e6063d78611c206fa7a",
+  "changed_decisions": [
+    {
+      "after_source_sha256": "fdfd2e267771d128ca527182293cfd741c498603262d7b7cbe60ac44484cb430",
+      "after_statement": "complete=all(\n            day[\"quantity_state\"] in {\"VERIFIED_GE50\", \"VERIFIED_LT50\"}\n            and day[\"verified_count\"] == len(day[\"eligible\"])\n            and bool(day[\"eligible\"])\n            for day in days.values()\n        )",
+      "after_statement_sha256": "876b2b2fcbb36b3fdc229f66690eeafe0d2dcaefb50c847bd60332540dba56a6",
+      "all_other_AST_identical": true,
+      "before_source_sha256": "eaf445eaea105bf1bb27514c75acd1dce0356098795a11f89c7518b8c3ffb221",
+      "before_statement": "complete=all(day[\"quantity_state\"] == \"VERIFIED_GE50\" for day in days.values())",
+      "before_statement_sha256": "d9bfabe7374019cae156be29195b1c135bf2ad08db7ecdfea000f3cc9c3772e6",
+      "file": "qlab/qlab/dynamic_factor/reference_compile_v3.py"
+    },
+    {
+      "after_source_sha256": "41e3ac0d38163f456a737d1293ee2b19326643c14850fd5167515836bc4a40e4",
+      "after_statement": "if (\n            day[\"quantity_state\"] not in {\"VERIFIED_GE50\", \"VERIFIED_LT50\"}\n            or not eligible\n            or day[\"verified_count\"] != len(eligible)\n        ):\n            raise ValueError(\n                \"reference.quantity_unknown_or_insufficient_no_QQQ_substitution\"\n            )",
+      "after_statement_sha256": "958c665b36f2e2417e2fa09895f31e8afdd3222f04175258fa4f04c142be85db",
+      "all_other_AST_identical": true,
+      "before_source_sha256": "92a580db3c304aa09b188dd07860e31e2bc29b53b6b951ae7b94e13a9e02ff06",
+      "before_statement": "if (\n            day[\"quantity_state\"] != \"VERIFIED_GE50\"\n            or len(eligible) < 50\n            or day[\"verified_count\"] != len(eligible)\n        ):\n            raise ValueError(\n                \"reference.quantity_unknown_or_insufficient_no_QQQ_substitution\"\n            )",
+      "before_statement_sha256": "5c833d8960fab4f5645808decaf8c3bf3a0e6f23fd482adf8f143632070b3a43",
+      "file": "qlab/qlab/dynamic_factor/reference_v3_scope.py"
+    }
+  ],
+  "protected_restrictions": [
+    {
+      "after_sha256": "f97964bc7be05a9fe2d7712bf309d7b6684e7c9828946804e04793bd9a5cea61",
+      "before_sha256": "f97964bc7be05a9fe2d7712bf309d7b6684e7c9828946804e04793bd9a5cea61",
+      "byte_identical": true,
+      "reason": "reference.runtime_B_release_not_published",
+      "statement": "if (\n        guard[\"accepted_catalog_sha256\"] is not None\n        or scope[\"B_catalog_release_sha256\"] is not None\n        or any(not strings(guard[k]) for k in (\"B\", \"unknown\", \"children\"))\n    ):\n        raise ValueError(\"reference.runtime_B_release_not_published\")"
+    },
+    {
+      "after_sha256": "ad00d840dabae87bbfb23c0554aea403d6ae79d451eb3594fd7e7c8e34d52722",
+      "before_sha256": "ad00d840dabae87bbfb23c0554aea403d6ae79d451eb3594fd7e7c8e34d52722",
+      "byte_identical": true,
+      "reason": "reference.same_registered_v21_derivation_required",
+      "statement": "if (\n        guard[\"request\"][\"synthetic\"] is not True\n        and guard[\"catalog_sha256\"] != REGISTERED_CATALOG_SHA256\n    ):\n        raise ValueError(\"reference.same_registered_v21_derivation_required\")"
+    }
+  ],
+  "registered_catalog_constant_unchanged": true
+}
