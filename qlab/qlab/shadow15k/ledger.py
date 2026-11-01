@@ -73,15 +73,22 @@ def isolated_root(root, *, anchor=None):
     if path.exists():
         allowed = {"ledger.sqlite3", "ledger.sqlite3-journal"}
         for p in path.iterdir():
+            if p.name not in allowed:
+                raise ValueError("namespace_contains_foreign_files")
+            journal = p.name == "ledger.sqlite3-journal"
             try:
                 info = p.lstat()
+                if journal and stat.S_ISREG(info.st_mode) and info.st_nlink == 0:
+                    # APFS can return an unlinked inode instead of ENOENT when
+                    # another connection commits. Check the current pathname
+                    # again so a replacement symlink/hardlink is still refused.
+                    info = p.lstat()
             except FileNotFoundError:
-                # A concurrent commit may already have removed its SQLite journal.
-                continue
-            if (
-                p.name not in allowed
-                or not stat.S_ISREG(info.st_mode)
-                or info.st_nlink != 1
+                if journal:
+                    continue
+                raise ValueError("namespace_contains_foreign_files") from None
+            if not stat.S_ISREG(info.st_mode) or (
+                info.st_nlink != 1 and not (journal and info.st_nlink == 0)
             ):
                 raise ValueError("namespace_contains_foreign_files")
     return path
