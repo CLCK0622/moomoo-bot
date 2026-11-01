@@ -1,0 +1,27 @@
+{
+  "seq1148.jsonl.gz": {
+    "original_bytes": 883774,
+    "original_sha256": "268b9da8ba2d479172979cf50e15a2bb8e1738fd983bf44022866f1240292af6",
+    "stored_sha256": "1fae65dfff4ae34882e327a40881fec015ccd2b883b96bb57682ab204d79b07f"
+  },
+  "seq1148.tip.json": {
+    "original_bytes": 522,
+    "original_sha256": "11c52fc87c71a14762766466aa97f8f708b184f0362cb5fcce449fa475d82eec",
+    "stored_sha256": "11c52fc87c71a14762766466aa97f8f708b184f0362cb5fcce449fa475d82eec"
+  },
+  "v24.jsonl.gz": {
+    "original_bytes": 1070390,
+    "original_sha256": "538b0b0c67cfc080a46b76ca7010aaa5ab15c015d18f338dacfe15521a30ede6",
+    "stored_sha256": "49485a02c73ddd8e5119be11f15ae6ed459886dbbe0545eb90604216bf221755"
+  },
+  "v24.tip.json": {
+    "original_bytes": 516,
+    "original_sha256": "ad41c0a17bf217bc2c92b2f484fe80c5f2766a9420af59ddb7cc08c330c1c836",
+    "stored_sha256": "ad41c0a17bf217bc2c92b2f484fe80c5f2766a9420af59ddb7cc08c330c1c836"
+  },
+  "v4.tip.json": {
+    "original_bytes": 512,
+    "original_sha256": "c739c88d983a3f51540d54ec175f1ca416cd01ec72c8fc29f24dc8d308a92457",
+    "stored_sha256": "c739c88d983a3f51540d54ec175f1ca416cd01ec72c8fc29f24dc8d308a92457"
+  }
+}

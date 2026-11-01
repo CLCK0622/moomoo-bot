@@ -28,6 +28,12 @@ from installation_host_helpers import installation_host
 from test_reception_n03 import receive
 from contract_adapters_v3 import adapt_v2_n01, adapt_v2_n02
 from contract_adapters_v31 import adapt_v2_n03
+from authority_rework_specimens import (
+    typed_anchor_case,
+    physical_pair_case,
+    original_prefix_case,
+    old_l2_case,
+)
 
 BASELINE = "4cdfcbc0726abeadfff9e143b49281fab815bc43"
 DESIGN_BASELINE = "6fa70f6c2f5d3599acb31e6063d78611c206fa7a"
@@ -213,6 +219,14 @@ def n_case(case, path, mp, variant="original"):
 
 
 def t_case(case, path, mp, variant="original"):
+    if case in ("A-02", "A-03"):
+        if variant == "old_L2":
+            return old_l2_case(path, mp)
+        return typed_anchor_case(case, path, mp)
+    if case in ("A-04", "A-06"):
+        return physical_pair_case(case, path, mp)
+    if case == "T1-05":
+        return original_prefix_case()
     raw, witness, coverage = archive()
     if case in ("T1-01", "T1-07"):
         report = replay_approved_archive(raw, trusted_release=coverage, witness=witness)
@@ -267,13 +281,6 @@ def t_case(case, path, mp, variant="original"):
                 changed, trusted_release=coverage, witness=witness
             )
         )
-    if case == "T1-05":
-        changed = b"\n".join(raw.splitlines()[:1149]) + b"\n"
-        return rejection(
-            lambda: replay_approved_archive(
-                changed, trusted_release=coverage, witness=witness
-            )
-        )
     if case == "T1-06":
         return rejection(
             lambda: validate_new_attempt(records(raw)[1149], records(raw)[:1149])
@@ -303,17 +310,9 @@ def t_case(case, path, mp, variant="original"):
     context, source, document = installation_host(path, mp, prefix_stub=False)
     if case == "A-01":
         context = {"source_verified": True}
-    elif case in ("A-02", "A-03", "A-04", "A-06", "A-08"):
+    elif case == "A-08":
         changed = deepcopy(document)
-        if case == "A-02":
-            changed["anchor"]["V2"]["L1_revision"] = 999
-        elif case == "A-03":
-            changed["anchor"]["V1"]["sequence"] = 182
-        elif case == "A-04":
-            changed["ledger"]["tip"] = "0" * 64
-        elif case == "A-06":
-            changed["ledger"]["ledger_id"] = "1" * 64
-        elif variant == "path_integer":
+        if variant == "path_integer":
             changed["ledger"]["ledger_path"] = 123
         elif variant == "revision_bool":
             changed["anchor"]["V2"]["L1_revision"] = True
@@ -374,6 +373,7 @@ VARIANTS = {
         "approved_other_arm_no_feedback",
     ],
     "A-05": ["caller_V5_PASS", "shared_V5_binding_missing"],
+    "A-03": ["typed_old_sequence", "old_L2"],
     "A-08": [
         "path_integer",
         "revision_bool",
