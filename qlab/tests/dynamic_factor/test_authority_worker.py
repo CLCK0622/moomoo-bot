@@ -25,7 +25,7 @@ from test_reception_n03 import receive
     ],
 )
 def test_bound_worker_real_subprocess_precedes_every_data_reader(
-    tmp_path, monkeypatch, attack
+    tmp_path, monkeypatch, attack, record_property
 ):
     inputs = tmp_path / "inputs"
     request = wire_fixture(inputs, verified=49)
@@ -65,6 +65,8 @@ def test_bound_worker_real_subprocess_precedes_every_data_reader(
         run_pin=pin,
         arm_tag="EVO883_FACTOR",
     )
+    record_property("worker_report", json.dumps(result, sort_keys=True))
+    record_property("child_exit_codes", json.dumps(child_codes))
     assert request == original
     assert child_codes == [2]
     assert result["returns"] is result["sr"] is None

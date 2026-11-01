@@ -1,4 +1,5 @@
 from copy import deepcopy
+import json
 
 import pytest
 
@@ -45,13 +46,14 @@ def test_twelve_groups_and_typed_V2_are_one_new_root(tmp_path, monkeypatch):
     "group", ["identity", "anchor", "readback"], ids=["S02", "S05", "S09"]
 )
 def test_caller_all_PASS_cannot_override_actual_trusted_source_FAIL(
-    tmp_path, monkeypatch, group
+    tmp_path, monkeypatch, group, record_property
 ):
     context, source, document = installation_host(
         tmp_path, monkeypatch, source_fail=group, prefix_stub=False
     )
     before = len(host._SNAPSHOTS)
     result = receive(context, source)
+    record_property("N03_source_FAIL_report", json.dumps(result, sort_keys=True))
     assert result["accepted"] is False
     assert result["details"]["trusted_validation"]["status"] == "FAIL"
     assert result["details"]["verified_summary"][group]["status"] == "FAIL"

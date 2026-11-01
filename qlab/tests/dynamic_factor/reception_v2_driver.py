@@ -21,11 +21,13 @@ from qlab.dynamic_factor.authority_ledger import (
 from qlab.dynamic_factor.authority_record_types import validate_attempt_fields
 from qlab.dynamic_factor.arm_n import MISSING
 from qlab.dynamic_factor.contract import sha256, digest
-from qlab.dynamic_factor.reception_v2 import receive_arm_n, bind_formal_n, ENTRYPOINTS
+from qlab.dynamic_factor.reception_v2 import bind_formal_n, ENTRYPOINTS
 from qlab.dynamic_factor.reception_schema import validate
 from authority_stage1_helpers import archive, rewrite, raw_json
 from installation_host_helpers import installation_host
 from test_reception_n03 import receive
+from contract_adapters_v3 import adapt_v2_n01, adapt_v2_n02
+from contract_adapters_v31 import adapt_v2_n03
 
 BASELINE = "4cdfcbc0726abeadfff9e143b49281fab815bc43"
 DESIGN_BASELINE = "6fa70f6c2f5d3599acb31e6063d78611c206fa7a"
@@ -53,6 +55,14 @@ def rejection(call):
 
 
 def n_case(case, path, mp, variant="original"):
+    adapter = (
+        adapt_v2_n01
+        if case.startswith("N-01")
+        else adapt_v2_n02
+        if case.startswith("N-02")
+        else adapt_v2_n03
+    )(case)
+    receiver = adapter["receiver"]
     context, source, document = installation_host(
         path,
         mp,
@@ -88,21 +98,13 @@ def n_case(case, path, mp, variant="original"):
             Path(source["chain_path"]).write_bytes(
                 source["chain_raw"].split(b"\n")[0] + b"\n"
             )
-        result = receive(context, source, raw, module) if raw is not None else None
-        # receive(None) is convenience default in the unit helper; exercise raw
-        # None via the actual receiver so missing original is not masked.
-        if case == "N-03-01":
-            from qlab.dynamic_factor.authority_install_receipt import (
-                verify_installation_readonly,
-            )
-
-            result = verify_installation_readonly(
-                host_context=context,
-                runtime_module_path=source["module_path"],
-                installation_receipt_bytes=None,
-                published_anchor_bytes=source["published_anchor_bytes"],
-                acceptance_bytes=source["installation_acceptance_bytes"],
-            )
+        result = receiver(
+            host_context=context,
+            runtime_module_path=source["module_path"] if module is None else module,
+            installation_receipt_bytes=raw,
+            published_anchor_bytes=source["published_anchor_bytes"],
+            acceptance_bytes=source["installation_acceptance_bytes"],
+        )
         assert result["accepted"] is (case == "N-03-07"), result["reasons"]
         validate(result, "N-03.v31.schema.json")
     else:
@@ -139,7 +141,7 @@ def n_case(case, path, mp, variant="original"):
             changed["coverage"] = "NEW-UNCOVERED-TIP"
             approval = raw_json(changed)
         if case.startswith("N-01"):
-            result = receive_arm_n(
+            result = receiver(
                 approval,
                 projection,
                 host_context=context,
@@ -184,7 +186,7 @@ def n_case(case, path, mp, variant="original"):
                 host._HOSTS[context] = changed
             reports = []
             for entry in sorted(ENTRYPOINTS):
-                result = bind_formal_n(entrypoint=entry, **kwargs)
+                result = receiver(entrypoint=entry, **kwargs)
                 validate(result, "N-02.v3.schema.json")
                 assert result["accepted"] is (case == "N-02-07"), (
                     entry,

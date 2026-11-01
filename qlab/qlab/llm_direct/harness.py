@@ -678,24 +678,21 @@ def run(workdir):
         )
 
         def arm_inputs(arm_tag):
-            # Exercise the actual readout/DSR/pipeline entries, not project().
+            # Actual formal adapters reject this unbound fixture even if its
+            # diagnostic projection observes counts. No caller ledger is trust.
             before = (chain.path.read_bytes(), chain.anchor_path.read_bytes())
             ledger_report = chain.arm_readout(arm_tag)
             request = {} if arm_tag is None else {"arm_tag": arm_tag}
             dsr_report = dsr_eval_arm(request, chain)
             pipeline_n = _n_snapshot(chain, 10**9, arm_tag=arm_tag)
             assert before == (chain.path.read_bytes(), chain.anchor_path.read_bytes())
-            arm = dsr_report["metrics"]["arm_n"]
-            assert ledger_report["metrics"]["arm_n"] == pipeline_n["arm_n"] == arm
-            assert (
-                dsr_report["metrics"]["N_rows"]
-                == ledger_report["metrics"]["N_rows"]
-                == pipeline_n["N_rows"]
-            )
-            assert (
-                dsr_report["metrics"]["dsr"] is None and not dsr_report["certifiable"]
-            )
+            assert ledger_report["metrics"]["cumulative_n"] is None
+            assert dsr_report["metrics"]["cumulative_n"] is None
             assert pipeline_n["gate_n"] is None and not pipeline_n["n_complete"]
+            assert dsr_report["metrics"]["dsr"] is None
+            assert ledger_report["reasons"] and dsr_report["reasons"]
+            # Retained historical projection tests are explicit diagnostics.
+            arm = chain.diagnostic_arm_readout(arm_tag)["metrics"]["arm_n"]
             return arm
 
         factor = arm_inputs("EVO883_FACTOR")
@@ -716,6 +713,8 @@ def run(workdir):
                     "pipeline._n_snapshot",
                 ],
                 chain_unchanged=True,
+                observed_counts_mode="HISTORICAL_DIAGNOSTIC",
+                formal_N_consumed=False,
             ),
         )
         assert [r["observed_N"] for r in factor["rows"]] == [1, 2] and factor[
