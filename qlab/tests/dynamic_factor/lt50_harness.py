@@ -75,7 +75,7 @@ def scope_negative(root, original, case):
     for side in ("host", "worker"):
         report = out[side]
         assert report["complete"] is False
-        assert report["reason"] == SCOPE_CASES[case]
+        assert report["reason"].split(":", 1)[0] == SCOPE_CASES[case]
         assert report["reader_calls"] == 0 and report["accessed_roles"] == []
     preparation_refused(out["worker"])
     return out

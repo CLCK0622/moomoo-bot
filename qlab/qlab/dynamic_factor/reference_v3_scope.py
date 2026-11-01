@@ -303,13 +303,43 @@ def validate_scope(scope, view, binding):
             != guard["noncash_guard_manifest_sha256"]
         ):
             raise ValueError("reference.same_E_t_required")
+        # Recompute the frozen three-state rule from individual facts. Owned
+        # summaries and their re-signed hashes are not independent evidence.
+        lower = sum(state == "VERIFIED_USABLE" for state in day["states"].values())
+        upper = lower + sum(state == "UNKNOWN" for state in day["states"].values())
+        quantity = (
+            "VERIFIED_GE50"
+            if lower >= 50
+            else "VERIFIED_LT50"
+            if upper < 50
+            else "UNKNOWN"
+        )
+        recomputed = dict(
+            verified_count=lower,
+            upper_bound=upper,
+            quantity_state=quantity,
+            new_tilt_allowed=quantity == "VERIFIED_GE50",
+        )
+        reported = {key: day[key] for key in recomputed}
         if (
-            day["quantity_state"] not in {"VERIFIED_GE50", "VERIFIED_LT50"}
-            or not eligible
-            or day["verified_count"] != len(eligible)
+            quantity == "UNKNOWN"
+            or not lower
+            or type(day["verified_count"]) is not int
+            or type(day["upper_bound"]) is not int
+            or reported != recomputed
+            # A numeric claim, including a tiny positive value, is not a
+            # boolean permission. LT50 must carry exactly False, never tilt.
+            or day["new_tilt_allowed"] is not recomputed["new_tilt_allowed"]
         ):
             raise ValueError(
                 "reference.quantity_unknown_or_insufficient_no_QQQ_substitution"
+                + ": "
+                + json.dumps(
+                    dict(date=date, reported=reported, recomputed=recomputed),
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    allow_nan=False,
+                )
             )
     union = sorted({s for day in scope["days"].values() for s in day["eligible"]})
     expected = {
