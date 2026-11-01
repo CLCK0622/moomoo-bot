@@ -2,6 +2,8 @@
 
 本模块只处理显式合成意图、累计收据和盯市输入；不生成策略信号，不连接 OpenD、SIMULATE 交易上下文或 REAL。`execution_verified` 与 `certifiable` 始终为 `false`。固定本金是 USD 15,000，与旧 `llm_paper` 的目录、数据库、库存和调度分离。
 
+仅支持 DELETE journal；非 DELETE 或外来 WAL/SHM 文件会拒绝新构造和已有对象的操作。人工保全、完整副本诊断、导出/checkpoint、DELETE 转换及逐行核收见[恢复规程](../../docs/shadow15k-journal-recovery.md)。不得直接丢弃含已提交帧的 WAL；`integrity_check=ok` 不等于可以清理。
+
 本次 base 为 PR #10 的 `08c9d87ab4bef9abae6b5edabaf07c0adcb40052`。原 `6c63505..703e27c` 三笔原样重放至 `cf1a5b753a11246c3235c041711f547c46f9b4a4`，无冲突，range-diff 全为等号；之后一个独立 commit 修 B4-R1/R2。只改本模块和对应测试/说明，不修改 PR #10 源码、接口或封存件。重放记录在 `evidence/b4-rework-v1/`，旧回执保留历史身份。
 
 ## 运行和复现
