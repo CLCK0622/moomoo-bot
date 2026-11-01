@@ -1,0 +1,1444 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:evo884:n-acceptance:v3",
+  "title": "DESIGN ONLY — sole v3 root, not implemented or approved runtime",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "item_id",
+    "accepted",
+    "state",
+    "reasons",
+    "baseline_commit",
+    "input_identities",
+    "binding_sha256",
+    "details",
+    "runtime_consumable",
+    "certifiable",
+    "performance_outputs",
+    "observations"
+  ],
+  "properties": {
+    "schema": {
+      "const": "EVO884.NAcceptanceReceipt/v3"
+    },
+    "item_id": {
+      "const": "N-01"
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "state": {
+      "enum": [
+        "ACCEPTED_IDENTITY",
+        "REJECTED",
+        "DEPENDENCY_REQUIRED"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "baseline_commit": {
+      "const": "6fa70f6c2f5d3599acb31e6063d78611c206fa7a"
+    },
+    "input_identities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_id",
+        "genesis_sha256",
+        "tip",
+        "chain_sha256",
+        "witness_sha256",
+        "anchor_sha256",
+        "approved_release_sha256",
+        "approval_sha256",
+        "projection_sha256",
+        "coverage_contract_sha256",
+        "run_pin_sha256",
+        "reader_source_sha256",
+        "conventions_sha256",
+        "prereg_sha256",
+        "common_profile_sha256",
+        "freeze_manifest_sha256",
+        "sequence",
+        "host_deployment_id",
+        "deployment_commit",
+        "freeze_manifest_version",
+        "canonical_chain_realpath",
+        "canonical_witness_realpath",
+        "module_realpath"
+      ],
+      "properties": {
+        "ledger_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "genesis_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tip": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "chain_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "witness_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "anchor_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approved_release_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approval_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "projection_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coverage_contract_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "run_pin_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reader_source_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conventions_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "prereg_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "common_profile_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "freeze_manifest_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "host_deployment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deployment_commit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "freeze_manifest_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canonical_chain_realpath": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/",
+              "minLength": 2
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canonical_witness_realpath": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/",
+              "minLength": 2
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "module_realpath": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/",
+              "minLength": 2
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "binding_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arm_tag",
+        "arm_tag_presence",
+        "N_rows",
+        "complete_N",
+        "formal_n_available",
+        "projection_sha256",
+        "coverage_contract_sha256",
+        "acceptance_version",
+        "n_evaluated_unknown_count",
+        "unknown_attempt_refs",
+        "t1_replay",
+        "t1_replay_reason"
+      ],
+      "properties": {
+        "arm_tag": {
+          "anyOf": [
+            {
+              "enum": [
+                "EVO883_FACTOR",
+                "EVO896_LLMCLI"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "arm_tag_presence": {
+          "enum": [
+            "ABSENT",
+            "EXPLICIT_NULL",
+            "EXPLICIT_VALUE",
+            "INVALID"
+          ]
+        },
+        "N_rows": {
+          "anyOf": [
+            {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "role",
+                    "basis",
+                    "value",
+                    "known"
+                  ],
+                  "properties": {
+                    "role": {
+                      "const": "PRIMARY_GATE"
+                    },
+                    "basis": {
+                      "const": "N_config_own_arm"
+                    },
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "known": {
+                      "type": "boolean"
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "known": {
+                            "const": false
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "value": {
+                            "type": "null"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "known": {
+                            "const": true
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "value": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "role",
+                    "basis",
+                    "value",
+                    "known"
+                  ],
+                  "properties": {
+                    "role": {
+                      "const": "SENSITIVITY"
+                    },
+                    "basis": {
+                      "const": "N_generation_requests_own_arm"
+                    },
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "known": {
+                      "type": "boolean"
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "known": {
+                            "const": false
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "value": {
+                            "type": "null"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "known": {
+                            "const": true
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "value": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ],
+              "items": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "complete_N": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "formal_n_available": {
+          "type": "boolean"
+        },
+        "projection_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coverage_contract_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "acceptance_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "n_evaluated_unknown_count": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unknown_attempt_refs": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "seq",
+                  "attempt_id",
+                  "row_sha256"
+                ],
+                "properties": {
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "attempt_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "row_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  }
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "t1_replay": {
+          "anyOf": [
+            {
+              "$ref": "urn:evo884:t1-replay:v2.1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "t1_replay_reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "runtime_consumable": {
+      "const": false
+    },
+    "certifiable": {
+      "const": false
+    },
+    "performance_outputs": {
+      "const": null
+    },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label_guard",
+        "semantic_validator_entered",
+        "installed_identity_check",
+        "archive_integrity_check",
+        "formal_projection_consumption",
+        "construction_chain_verify",
+        "S0_record",
+        "probe",
+        "calibrate",
+        "economic_reader",
+        "numeric_callback",
+        "authority_append",
+        "budget_api",
+        "installation_writes",
+        "runtime_gate_writes",
+        "unexpected_typeerror"
+      ],
+      "properties": {
+        "label_guard": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "semantic_validator_entered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "installed_identity_check": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "archive_integrity_check": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "formal_projection_consumption": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "construction_chain_verify": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "S0_record": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "probe": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "calibrate": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "economic_reader": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "numeric_callback": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "authority_append": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "budget_api": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "installation_writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runtime_gate_writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unexpected_typeerror": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "state": {
+            "enum": [
+              "REJECTED",
+              "DEPENDENCY_REQUIRED"
+            ]
+          },
+          "reasons": {
+            "minItems": 1
+          },
+          "binding_sha256": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "state": {
+            "const": "ACCEPTED_IDENTITY"
+          },
+          "binding_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "input_identities": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ledger_id",
+              "genesis_sha256",
+              "tip",
+              "chain_sha256",
+              "witness_sha256",
+              "anchor_sha256",
+              "approved_release_sha256",
+              "approval_sha256",
+              "projection_sha256",
+              "coverage_contract_sha256",
+              "run_pin_sha256",
+              "reader_source_sha256",
+              "conventions_sha256",
+              "prereg_sha256",
+              "common_profile_sha256",
+              "freeze_manifest_sha256",
+              "sequence",
+              "host_deployment_id",
+              "deployment_commit",
+              "freeze_manifest_version",
+              "canonical_chain_realpath",
+              "canonical_witness_realpath",
+              "module_realpath"
+            ],
+            "properties": {
+              "ledger_id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "genesis_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "tip": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "chain_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "witness_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "anchor_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "approved_release_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "approval_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "projection_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "coverage_contract_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "run_pin_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "reader_source_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "conventions_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "prereg_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "common_profile_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "freeze_manifest_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "sequence": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "host_deployment_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "deployment_commit": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "freeze_manifest_version": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "canonical_chain_realpath": {
+                "type": "string",
+                "pattern": "^/",
+                "minLength": 2
+              },
+              "canonical_witness_realpath": {
+                "type": "string",
+                "pattern": "^/",
+                "minLength": 2
+              },
+              "module_realpath": {
+                "type": "string",
+                "pattern": "^/",
+                "minLength": 2
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "observations": {
+          "properties": {
+            "S0_record": {
+              "const": 0
+            },
+            "probe": {
+              "const": 0
+            },
+            "calibrate": {
+              "const": 0
+            },
+            "economic_reader": {
+              "const": 0
+            },
+            "numeric_callback": {
+              "const": 0
+            },
+            "authority_append": {
+              "const": 0
+            },
+            "budget_api": {
+              "const": 0
+            },
+            "installation_writes": {
+              "const": 0
+            },
+            "runtime_gate_writes": {
+              "const": 0
+            },
+            "unexpected_typeerror": {
+              "const": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "details": {
+            "properties": {
+              "formal_n_available": {
+                "const": true
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "accepted": {
+            "const": true
+          },
+          "details": {
+            "properties": {
+              "complete_N": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "N_rows": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "role",
+                      "basis",
+                      "value",
+                      "known"
+                    ],
+                    "properties": {
+                      "role": {
+                        "const": "PRIMARY_GATE"
+                      },
+                      "basis": {
+                        "const": "N_config_own_arm"
+                      },
+                      "value": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "known": {
+                        "const": true
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "known": {
+                              "const": false
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "value": {
+                              "type": "null"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "known": {
+                              "const": true
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "value": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "role",
+                      "basis",
+                      "value",
+                      "known"
+                    ],
+                    "properties": {
+                      "role": {
+                        "const": "SENSITIVITY"
+                      },
+                      "basis": {
+                        "const": "N_generation_requests_own_arm"
+                      },
+                      "value": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "known": {
+                        "type": "boolean"
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "known": {
+                              "const": false
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "value": {
+                              "type": "null"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "known": {
+                              "const": true
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "value": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "items": false
+              },
+              "t1_replay": {
+                "type": "object",
+                "properties": {
+                  "accepted": {
+                    "const": true
+                  },
+                  "relevant_unresolved_unknowns": {
+                    "const": 0
+                  },
+                  "full_authority_projection_complete": {
+                    "const": true
+                  },
+                  "n_complete": {
+                    "const": true
+                  },
+                  "complete_N": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "gate_N": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "details": {
+            "properties": {
+              "formal_n_available": {
+                "const": false
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "details": {
+            "properties": {
+              "complete_N": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "details": {
+            "properties": {
+              "formal_n_available": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "details": {
+            "properties": {
+              "t1_replay": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "details": {
+            "properties": {
+              "t1_replay_reason": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "details": {
+            "properties": {
+              "arm_tag": {
+                "enum": [
+                  "EVO883_FACTOR",
+                  "EVO896_LLMCLI"
+                ]
+              },
+              "N_rows": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "role",
+                      "basis",
+                      "value",
+                      "known"
+                    ],
+                    "properties": {
+                      "role": {
+                        "const": "PRIMARY_GATE"
+                      },
+                      "basis": {
+                        "const": "N_config_own_arm"
+                      },
+                      "value": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "known": {
+                        "type": "boolean"
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "known": {
+                              "const": false
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "value": {
+                              "type": "null"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "known": {
+                              "const": true
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "value": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "role",
+                      "basis",
+                      "value",
+                      "known"
+                    ],
+                    "properties": {
+                      "role": {
+                        "const": "SENSITIVITY"
+                      },
+                      "basis": {
+                        "const": "N_generation_requests_own_arm"
+                      },
+                      "value": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "known": {
+                        "type": "boolean"
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "known": {
+                              "const": false
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "value": {
+                              "type": "null"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "known": {
+                              "const": true
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "value": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "items": false
+              },
+              "projection_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "coverage_contract_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "acceptance_version": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "n_evaluated_unknown_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "unknown_attempt_refs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "seq",
+                    "attempt_id",
+                    "row_sha256"
+                  ],
+                  "properties": {
+                    "seq": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "attempt_id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    "row_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    }
+                  }
+                }
+              },
+              "t1_replay": {
+                "type": "object",
+                "properties": {
+                  "accepted": {
+                    "const": true
+                  }
+                }
+              },
+              "t1_replay_reason": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

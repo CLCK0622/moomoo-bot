@@ -243,7 +243,9 @@ def dsr_eval_arm(
         return _arm_refusal(request, str(exc))
     if not valid_arm(tag):  # D_FORMAL_LABEL_GUARD
         return _arm_refusal(request, "arm_n.arm_tag_missing_or_invalid", tag)
-    arm_report = ledger.arm_readout(tag)
+    from .reception_entrypoints_v3 import bound_readout
+
+    arm_report = bound_readout(ledger, tag, "statistics.dsr_eval_arm", request)
     snapshot = arm_report["artifacts"]["ledger"]
     reasons = list(arm_report["reasons"]) + ["dsr.runtime_bindings_pending"]
     metrics = dict(
@@ -278,10 +280,12 @@ def arm_snapshot(ledger, self_report_n, policy=None, *, arm_tag=None):
     """Read-only v3 arm projection; a self-report is audit metadata, never gate N."""
     if policy is not None and not hasattr(policy, "document"):
         raise ValueError("dsr.policy_invalid")
+    from .reception_entrypoints_v3 import bound_readout
+
     arm_report = (
         readout(None, arm_tag)
         if not valid_arm(arm_tag)
-        else ledger.arm_readout(arm_tag)
+        else bound_readout(ledger, arm_tag, "statistics.arm_snapshot")
     )
     arm = arm_report["metrics"]["arm_n"]
     return dict(

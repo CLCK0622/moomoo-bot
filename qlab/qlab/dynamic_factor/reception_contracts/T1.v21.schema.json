@@ -1,0 +1,343 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "EVO884.T1-reception-result/v2.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "accepted",
+    "stage",
+    "reasons",
+    "source_archive_sha256",
+    "approved_coverage_sha256",
+    "source_rows_preserved",
+    "book_N",
+    "high_water",
+    "book_N_certified",
+    "own_arm_formal_bound_from_book",
+    "counted_as_zero",
+    "counted_as_not_evaluated",
+    "new_writes_relaxed",
+    "raw_unknown_rows",
+    "unknown_rows",
+    "relevant_unresolved_unknowns",
+    "accepted_reconciliation_sha256",
+    "full_authority_projection_complete",
+    "complete_N",
+    "n_complete",
+    "gate_N",
+    "formal_lower_bound",
+    "formal_upper_bound",
+    "DSR",
+    "runtime_consumable",
+    "certifiable"
+  ],
+  "properties": {
+    "schema": {
+      "const": "EVO884.T1-reception-result/v2.1"
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "stage": {
+      "enum": [
+        "archive",
+        "writer",
+        "formal_N",
+        "preflight",
+        "worker_binding",
+        "receipt"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "source_archive_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "approved_coverage_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source_rows_preserved": {
+      "type": "boolean"
+    },
+    "book_N": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "high_water": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "book_N_certified": {
+      "const": false
+    },
+    "own_arm_formal_bound_from_book": {
+      "const": false
+    },
+    "counted_as_zero": {
+      "const": false
+    },
+    "counted_as_not_evaluated": {
+      "const": false
+    },
+    "new_writes_relaxed": {
+      "const": false
+    },
+    "raw_unknown_rows": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "unknown_rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "seq",
+          "attempt_id",
+          "raw_line_sha256",
+          "n_evaluated",
+          "n_evaluated_null_reason",
+          "classification"
+        ],
+        "properties": {
+          "seq": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "attempt_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "raw_line_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "n_evaluated": {
+            "type": "null"
+          },
+          "n_evaluated_null_reason": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "classification": {
+            "const": "CONTROLLED_HISTORICAL_UNKNOWN"
+          }
+        }
+      }
+    },
+    "relevant_unresolved_unknowns": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "accepted_reconciliation_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "full_authority_projection_complete": {
+      "type": "boolean"
+    },
+    "complete_N": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "n_complete": {
+      "type": "boolean"
+    },
+    "gate_N": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "formal_lower_bound": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "formal_upper_bound": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "DSR": {
+      "type": "null"
+    },
+    "runtime_consumable": {
+      "const": false
+    },
+    "certifiable": {
+      "const": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "anyOf": [
+          {
+            "properties": {
+              "full_authority_projection_complete": {
+                "const": false
+              }
+            }
+          },
+          {
+            "not": {
+              "properties": {
+                "relevant_unresolved_unknowns": {
+                  "const": 0
+                }
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "n_complete": {
+            "const": false
+          },
+          "complete_N": {
+            "type": "null"
+          },
+          "gate_N": {
+            "type": "null"
+          },
+          "formal_lower_bound": {
+            "type": "null"
+          },
+          "formal_upper_bound": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reasons": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "n_complete": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "accepted": {
+            "const": true
+          },
+          "full_authority_projection_complete": {
+            "const": true
+          },
+          "relevant_unresolved_unknowns": {
+            "const": 0
+          },
+          "complete_N": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "gate_N": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  ],
+  "$comment": "Proposal only. Current approved fixture has relevant unknowns; current arm_n.project remains incomplete. A08 reconciliation may close provenance without editing old nulls, but does not itself certify N or calculate DSR."
+}

@@ -407,6 +407,11 @@ class AuthorityLedger:
             }
 
     def arm_readout(self, arm_tag=None):
+        from .reception_entrypoints_v3 import bound_readout
+
+        return bound_readout(self, arm_tag, "authority.arm_readout")
+
+    def diagnostic_arm_readout(self, arm_tag=None):
         """Explicit formal arm read; absent/invalid identity never reads the chain."""
         from .arm_n import readout
 

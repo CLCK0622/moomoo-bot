@@ -16,6 +16,12 @@ six==1.17.0
 tomli==2.4.1
 tzdata==2026.2
 urllib3==2.6.3
+attrs==26.1.0
+jsonschema==4.23.0
+jsonschema-specifications==2025.9.1
+referencing==0.36.2
+rpds-py==0.27.1
+typing-extensions==4.16.0
 
 # --- OpenD-only extra (not needed for offline suite / SEC / free price sources).
 # Install on a host with a reachable OpenD gateway to run

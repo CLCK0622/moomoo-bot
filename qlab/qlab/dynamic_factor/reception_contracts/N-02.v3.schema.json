@@ -1,0 +1,909 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:evo884:formal-n-binding:v3",
+  "title": "DESIGN ONLY — sole v3 root, not implemented or approved runtime",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "item_id",
+    "accepted",
+    "state",
+    "reasons",
+    "baseline_commit",
+    "input_identities",
+    "binding_sha256",
+    "details",
+    "runtime_consumable",
+    "certifiable",
+    "performance_outputs",
+    "observations"
+  ],
+  "properties": {
+    "schema": {
+      "const": "EVO884.FormalNBinding/v3"
+    },
+    "item_id": {
+      "const": "N-02"
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "state": {
+      "enum": [
+        "ACCEPTED_IDENTITY",
+        "REJECTED",
+        "DEPENDENCY_REQUIRED"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "baseline_commit": {
+      "const": "6fa70f6c2f5d3599acb31e6063d78611c206fa7a"
+    },
+    "input_identities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_id",
+        "genesis_sha256",
+        "tip",
+        "chain_sha256",
+        "witness_sha256",
+        "anchor_sha256",
+        "approved_release_sha256",
+        "approval_sha256",
+        "projection_sha256",
+        "coverage_contract_sha256",
+        "run_pin_sha256",
+        "reader_source_sha256",
+        "conventions_sha256",
+        "prereg_sha256",
+        "common_profile_sha256",
+        "freeze_manifest_sha256",
+        "sequence",
+        "host_deployment_id",
+        "deployment_commit",
+        "freeze_manifest_version",
+        "canonical_chain_realpath",
+        "canonical_witness_realpath",
+        "module_realpath"
+      ],
+      "properties": {
+        "ledger_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "genesis_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tip": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "chain_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "witness_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "anchor_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approved_release_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approval_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "projection_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coverage_contract_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "run_pin_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reader_source_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conventions_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "prereg_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "common_profile_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "freeze_manifest_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "host_deployment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deployment_commit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "freeze_manifest_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canonical_chain_realpath": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/",
+              "minLength": 2
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canonical_witness_realpath": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/",
+              "minLength": 2
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "module_realpath": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/",
+              "minLength": 2
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "binding_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entrypoint",
+        "arm_tag",
+        "arm_tag_presence",
+        "embedded_tag_presence",
+        "accepted_N_receipt_sha256",
+        "run_pin_sha256",
+        "gate_N",
+        "request_book_or_high_water",
+        "candidate_ledger_status",
+        "legacy_route",
+        "n_acceptance",
+        "n_acceptance_reason"
+      ],
+      "properties": {
+        "entrypoint": {
+          "enum": [
+            "authority.arm_readout",
+            "AttemptLedger.arm_readout",
+            "statistics.dsr_eval_arm",
+            "statistics.arm_snapshot",
+            "pipeline._n_snapshot",
+            "pipeline.evaluate_arm",
+            "__main__.dsr_eval",
+            "dsr_v0.evaluate",
+            "run_train_pipeline"
+          ]
+        },
+        "arm_tag": {
+          "anyOf": [
+            {
+              "enum": [
+                "EVO883_FACTOR",
+                "EVO896_LLMCLI"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "arm_tag_presence": {
+          "enum": [
+            "ABSENT",
+            "EXPLICIT_NULL",
+            "EXPLICIT_VALUE",
+            "INVALID"
+          ]
+        },
+        "embedded_tag_presence": {
+          "enum": [
+            "ABSENT",
+            "EXPLICIT_NULL",
+            "EXPLICIT_VALUE",
+            "INVALID"
+          ]
+        },
+        "accepted_N_receipt_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "run_pin_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gate_N": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "request_book_or_high_water": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidate_ledger_status": {
+          "enum": [
+            "NOT_PROVIDED",
+            "HOST_BOUND_VIEW",
+            "REJECTED",
+            "NOT_CHECKED"
+          ]
+        },
+        "legacy_route": {
+          "const": "FORMAL"
+        },
+        "n_acceptance": {
+          "anyOf": [
+            {
+              "$ref": "urn:evo884:n-acceptance:v3"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "n_acceptance_reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "runtime_consumable": {
+      "const": false
+    },
+    "certifiable": {
+      "const": false
+    },
+    "performance_outputs": {
+      "const": null
+    },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label_guard",
+        "semantic_validator_entered",
+        "installed_identity_check",
+        "archive_integrity_check",
+        "formal_projection_consumption",
+        "construction_chain_verify",
+        "S0_record",
+        "probe",
+        "calibrate",
+        "economic_reader",
+        "numeric_callback",
+        "authority_append",
+        "budget_api",
+        "installation_writes",
+        "runtime_gate_writes",
+        "unexpected_typeerror"
+      ],
+      "properties": {
+        "label_guard": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "semantic_validator_entered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "installed_identity_check": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "archive_integrity_check": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "formal_projection_consumption": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "construction_chain_verify": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "S0_record": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "probe": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "calibrate": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "economic_reader": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "numeric_callback": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "authority_append": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "budget_api": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "installation_writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runtime_gate_writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unexpected_typeerror": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "state": {
+            "enum": [
+              "REJECTED",
+              "DEPENDENCY_REQUIRED"
+            ]
+          },
+          "reasons": {
+            "minItems": 1
+          },
+          "binding_sha256": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "state": {
+            "const": "ACCEPTED_IDENTITY"
+          },
+          "binding_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "input_identities": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ledger_id",
+              "genesis_sha256",
+              "tip",
+              "chain_sha256",
+              "witness_sha256",
+              "anchor_sha256",
+              "approved_release_sha256",
+              "approval_sha256",
+              "projection_sha256",
+              "coverage_contract_sha256",
+              "run_pin_sha256",
+              "reader_source_sha256",
+              "conventions_sha256",
+              "prereg_sha256",
+              "common_profile_sha256",
+              "freeze_manifest_sha256",
+              "sequence",
+              "host_deployment_id",
+              "deployment_commit",
+              "freeze_manifest_version",
+              "canonical_chain_realpath",
+              "canonical_witness_realpath",
+              "module_realpath"
+            ],
+            "properties": {
+              "ledger_id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "genesis_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "tip": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "chain_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "witness_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "anchor_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "approved_release_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "approval_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "projection_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "coverage_contract_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "run_pin_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "reader_source_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "conventions_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "prereg_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "common_profile_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "freeze_manifest_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "sequence": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "host_deployment_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "deployment_commit": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "freeze_manifest_version": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "canonical_chain_realpath": {
+                "type": "string",
+                "pattern": "^/",
+                "minLength": 2
+              },
+              "canonical_witness_realpath": {
+                "type": "string",
+                "pattern": "^/",
+                "minLength": 2
+              },
+              "module_realpath": {
+                "type": "string",
+                "pattern": "^/",
+                "minLength": 2
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "observations": {
+          "properties": {
+            "S0_record": {
+              "const": 0
+            },
+            "probe": {
+              "const": 0
+            },
+            "calibrate": {
+              "const": 0
+            },
+            "economic_reader": {
+              "const": 0
+            },
+            "numeric_callback": {
+              "const": 0
+            },
+            "authority_append": {
+              "const": 0
+            },
+            "budget_api": {
+              "const": 0
+            },
+            "installation_writes": {
+              "const": 0
+            },
+            "runtime_gate_writes": {
+              "const": 0
+            },
+            "unexpected_typeerror": {
+              "const": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "details": {
+            "properties": {
+              "arm_tag": {
+                "enum": [
+                  "EVO883_FACTOR",
+                  "EVO896_LLMCLI"
+                ]
+              },
+              "gate_N": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "accepted_N_receipt_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "run_pin_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "candidate_ledger_status": {
+                "enum": [
+                  "NOT_PROVIDED",
+                  "HOST_BOUND_VIEW"
+                ]
+              },
+              "n_acceptance": {
+                "type": "object",
+                "properties": {
+                  "accepted": {
+                    "const": true
+                  },
+                  "details": {
+                    "properties": {
+                      "formal_n_available": {
+                        "const": true
+                      },
+                      "complete_N": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                }
+              },
+              "n_acceptance_reason": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "details": {
+            "properties": {
+              "gate_N": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "details": {
+            "properties": {
+              "n_acceptance": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "details": {
+            "properties": {
+              "n_acceptance_reason": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
