@@ -126,3 +126,24 @@ def test_actual_formal_adapters_require_the_registered_same_operation_view(
     rejected = refused.get("metrics", refused)
     assert rejected["cumulative_n"] is None
     assert refused["reasons"]
+
+
+@pytest.mark.parametrize("entry", ["statistics.dsr_eval", "pipeline.evaluate"])
+def test_omitted_compatibility_on_real_host_view_is_null_diagnostic(
+    tmp_path, monkeypatch, entry
+):
+    context, snapshot, pin, source = current(tmp_path, monkeypatch, complete=True)
+    view = host.host_view(context, snapshot, pin, "EVO883_FACTOR")
+    # Omission remains diagnostic despite a complete approved projection.
+    call = (
+        statistics.dsr_eval
+        if entry == "statistics.dsr_eval"
+        else lambda r, v: pipeline.evaluate(r, v, None)
+    )
+    report = call({}, view)
+    assert report["metrics"]["cumulative_n"] is None
+    assert report["metrics"]["cumulative_n_lower_bound"] is None
+    assert report["metrics"]["dsr"] is report["metrics"]["trials_variance"] is None
+    assert report["metrics"]["recorded_N"] == 1313
+    assert report["runtime_consumable"] is report["certifiable"] is False
+    assert "formal_N_binding" not in report["artifacts"]

@@ -242,9 +242,35 @@ class InstalledAuthorityView:
 
     def snapshot(self):
         context, snapshot, pin, arm = _VIEWS[self]
-        source, _, _ = check_snapshot(context, snapshot)
+        source, replay, _ = check_snapshot(context, snapshot)
         check_pin(context, pin, arm)
-        return deepcopy(source["diagnostic_snapshot"])
+        from .authority_ledger import records
+
+        rows = records(source["chain_raw"])
+        witness = source["witness"]
+        # Diagnostic omission cannot inherit a prefilled caller/book bound.
+        # All own-arm formal values come exclusively from bind_formal_n.
+        return dict(
+            authority_ledger=True,
+            genesis=rows[0],
+            events=rows[1:],
+            recorded_N=replay["book_N"],
+            n_high_water=replay["high_water"],
+            authority_tip=witness["tip"],
+            authority_sequence=witness["sequence"],
+            local_attempts_n=None,
+            local_counted_n=None,
+            cumulative_n=None,
+            cumulative_n_lower_bound=None,
+            n_complete=False,
+            complete_N=None,
+            certifiable=False,
+            n_ledger_hash=source["chain_sha256"],
+            reasons=["ledger_history_incomplete"],
+            current_published_anchor=deepcopy(source["anchor"]),
+            historical_published_anchor=None,
+            is_current_authority=True,
+        )
 
     safe_snapshot = snapshot
 
