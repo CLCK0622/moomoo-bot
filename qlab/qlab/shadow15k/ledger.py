@@ -177,6 +177,10 @@ class ShadowLedger:
         isolated_root(self.root, anchor=self._physical_root)
         db = sqlite3.connect(str(self.path), timeout=30, isolation_level=None)
         try:
+            row = db.execute("PRAGMA journal_mode").fetchone()
+            mode = row[0] if row else None
+            if mode != "delete":
+                raise ValueError(f"journal_mode_delete_required:{mode}")
             db.execute("PRAGMA synchronous=FULL")
             db.execute("BEGIN IMMEDIATE" if write else "BEGIN")
             yield db
