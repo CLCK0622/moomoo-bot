@@ -17,6 +17,113 @@ from qlab.shadow15k.harness import FIXTURE, fixture_fees
 
 GENESIS = json.loads(FIXTURE.read_bytes())["genesis"]
 
+# Keep the full sys.version string: it identifies the build timestamp and
+# compiler as well as Python's patch release, unlike the two-field version gate.
+AUDITED_NATIVE_BUILDS = (
+    {
+        "version_info": (3, 9, 6, "final", 0),
+        "sqlite_version": "3.51.0",
+        "platform": "darwin",
+        "sys_version": (
+            "3.9.6 (default, Apr 17 2026, 18:15:52) \n"
+            "[Clang 21.0.0 (clang-2100.1.1.101)]"
+        ),
+    },
+    {
+        "version_info": (3, 12, 13, "final", 0),
+        "sqlite_version": "3.53.1",
+        "platform": "darwin",
+        "sys_version": "3.12.13 (main, Jul 23 2026, 14:33:47) [Clang 22.1.3 ]",
+    },
+)
+
+
+def audited_native_build():
+    observed = dict(
+        version_info=tuple(sys.version_info),
+        sqlite_version=sqlite3.sqlite_version,
+        platform=sys.platform,
+        sys_version=sys.version,
+    )
+    if observed not in AUDITED_NATIVE_BUILDS:
+        pytest.skip(
+            "native sidecar contract requires an exact audited build; observed="
+            + json.dumps(observed, sort_keys=True)
+        )
+    return observed
+
+
+def inject_native_build(patch, build):
+    patch.setattr(sys, "version_info", build["version_info"])
+    patch.setattr(sqlite3, "sqlite_version", build["sqlite_version"])
+    patch.setattr(sys, "platform", build["platform"])
+    patch.setattr(sys, "version", build["sys_version"])
+
+
+@pytest.mark.parametrize("build", AUDITED_NATIVE_BUILDS, ids=["py39", "py312"])
+def test_audited_native_build_accepts_exact_identity(monkeypatch, build):
+    with monkeypatch.context() as patch:
+        inject_native_build(patch, build)
+        observed = audited_native_build()
+    assert observed == build
+    print(json.dumps(dict(native_gate="accepted", observed=observed)))
+
+
+@pytest.mark.parametrize(
+    "build_index,field,value",
+    [
+        (0, "version_info", (3, 9, 7, "final", 0)),
+        (1, "version_info", (3, 12, 14, "final", 0)),
+        (0, "sqlite_version", "3.51.1"),
+        (0, "platform", "linux"),
+        (0, "sys_version", "3.9.6 (unreviewed build) [different compiler]"),
+        (0, "version_info", (3, 9, 6, "candidate", 0)),
+        (1, "version_info", (3, 12, 13, "final", 1)),
+    ],
+    ids=["py397", "py31214", "sqlite", "platform", "build", "releaselevel", "serial"],
+)
+def test_audited_native_build_skips_unknown_identity(
+    monkeypatch, build_index, field, value
+):
+    build = dict(AUDITED_NATIVE_BUILDS[build_index], **{field: value})
+    with monkeypatch.context() as patch:
+        inject_native_build(patch, build)
+        with pytest.raises(pytest.skip.Exception) as skipped:
+            audited_native_build()
+    observed = json.loads(str(skipped.value).split("observed=", 1)[1])
+    assert observed == json.loads(json.dumps(build))
+    print(json.dumps(dict(native_gate="skipped", observed=observed)))
+
+
+@pytest.mark.parametrize(
+    "build_index,version_info,sqlite_version,platform",
+    [
+        (0, (3, 9, 7), "3.51.0", "darwin"),
+        (1, (3, 12, 14), "3.53.1", "darwin"),
+    ],
+    ids=["B16R-py397-original-input", "B16R-py31214-original-input"],
+)
+def test_b16r_original_patch_version_inputs_are_skipped(
+    monkeypatch, build_index, version_info, sqlite_version, platform
+):
+    # Preserve B16R's three-component version tuple verbatim. It is injected
+    # metadata, not a claim that a third interpreter was installed or executed.
+    build = dict(
+        AUDITED_NATIVE_BUILDS[build_index],
+        version_info=version_info,
+        sqlite_version=sqlite_version,
+        platform=platform,
+    )
+    with monkeypatch.context() as patch:
+        inject_native_build(patch, build)
+        with pytest.raises(pytest.skip.Exception) as skipped:
+            audited_native_build()
+    observed = json.loads(str(skipped.value).split("observed=", 1)[1])
+    assert observed["version_info"] == list(version_info)
+    assert observed["sqlite_version"] == sqlite_version
+    assert observed["platform"] == platform
+    print(json.dumps(dict(B16R_original_input=observed, native_gate="skipped")))
+
 
 def reopen(book, boundary):
     if boundary == "constructor":
@@ -197,14 +304,8 @@ def test_external_wal_repeated_open_contract(
 ):
     # These are native regressions for the two audited macOS runtime builds,
     # not a claim that all SQLite builds behave like their Python version.
-    audited_sqlite = {(3, 9): "3.51.0", (3, 12): "3.53.1"}
-    version = sys.version_info[:2]
-    if sys.platform != "darwin" or sqlite3.sqlite_version != audited_sqlite.get(
-        version
-    ):
-        pytest.skip(
-            "native sidecar contract requires an audited macOS Python/SQLite pair"
-        )
+    build = audited_native_build()
+    version = build["version_info"][:2]
 
     book = ShadowLedger(tmp_path / "shadow15k", GENESIS, fixture_fees("x1"))
     fixture = json.loads(FIXTURE.read_bytes())
