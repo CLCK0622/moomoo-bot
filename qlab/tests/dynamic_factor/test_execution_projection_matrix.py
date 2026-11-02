@@ -58,6 +58,10 @@ def test_D1_real_DUT_full_raw_matrix(hashseed, seed, clock, order, tmp_path):
         + "))\n"
     )
     env = dict(os.environ, PYTHONHASHSEED=hashseed, PYTHONDONTWRITEBYTECODE="1")
+    package_root = str(Path(__file__).resolve().parents[2])
+    env["PYTHONPATH"] = os.pathsep.join(
+        path for path in (package_root, env.get("PYTHONPATH")) if path
+    )
     outer = os.environ.get("EVO884_MATRIX_EXTERNAL_OS_GUARD") == "1"
     layer = (
         "OS_file_sandbox" if outer else "python_audit_in_inherited_OS_network_sandbox"
@@ -105,6 +109,18 @@ def test_D1_real_DUT_full_raw_matrix(hashseed, seed, clock, order, tmp_path):
         )
         + "\n"
     )
+
+
+def test_D1_matrix_worker_imports_with_empty_pythonpath(monkeypatch, tmp_path):
+    monkeypatch.setenv("PYTHONPATH", "")
+    monkeypatch.setenv("PYTHONNOUSERSITE", "1")
+    test_D1_real_DUT_full_raw_matrix(
+        "1", "0", "2000-01-01T00:00:00Z", "canonical", tmp_path
+    )
+    cell = json.loads((tmp_path / "matrix-cell.json").read_bytes())
+    assert cell["returncode"] == 0
+    assert len(cell["comparisons"]) == 2
+    assert all(result["pass_exact_bytes"] for result in cell["comparisons"])
 
 
 @pytest.mark.parametrize(
