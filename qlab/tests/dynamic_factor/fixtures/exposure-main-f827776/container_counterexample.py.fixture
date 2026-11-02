@@ -1,0 +1,34 @@
+"""Actual accepted host numeric states; no monkeypatch or monetary conversion."""
+from pathlib import Path
+from copy import deepcopy
+import json,sys
+repo=Path(sys.argv[1]).resolve();out=Path(sys.argv[2]).resolve();out.mkdir(parents=True,exist_ok=True)
+sys.path[:0]=[str(repo/'qlab'),str(repo/'qlab/tests/dynamic_factor')]
+from qlab.dynamic_factor.execution_cash import check_cash_state
+from qlab.dynamic_factor.noncash_v3 import zero_exposure
+from qlab.dynamic_factor.state_v2 import necessary_state_known
+from qlab.dynamic_factor.execution_state import necessary_execution_state_known
+from qlab.dynamic_factor.conventions import load_conventions
+from v3_test_helpers import synthetic_guard,synthetic_zero_state
+p=load_conventions();g=synthetic_guard(p,blocked=[p.profile['universe'][0]])
+child=next(iter(g['children']));permitted=next(s for s in p.profile['universe'] if s not in g['B'])
+class ExtraOrderKeys(dict):
+ def keys(self):return set(super().keys())|{'VIRTUAL_EXTRA'}
+class HiddenMissingInventory(dict):
+ def keys(self):return set(super().keys())|{child}
+cases=[]
+s=synthetic_zero_state(g);s['pending_orders']=[ExtraOrderKeys(symbol=permitted,side='BUY',quantity=1)];cases.append(('valid-order-with-keys-override',s))
+s=synthetic_zero_state(g);s['inventory'].pop(child);s['inventory']=HiddenMissingInventory(s['inventory']);cases.append(('missing-required-child-with-keys-override',s))
+def actual(fn):
+ try:return dict(ok=True,value=repr(fn()))
+ except Exception as e:return dict(ok=False,type=type(e).__name__,reason=str(e))
+rows=[]
+for name,s in cases:
+ before=repr(s)
+ row=dict(case=name,missing_actual_inventory=list((set(g['request']['catalog']['universe'])|set(g['children']))-set(s['inventory'])),old_state_validator=actual(lambda:necessary_state_known(s)),execution_state_validator=actual(lambda:necessary_execution_state_known(s)),legacy_predicate=actual(lambda:zero_exposure(s,g)),actual_check_cash_state=actual(lambda:check_cash_state(s,g,None)))
+ assert row['old_state_validator']['ok'] and row['execution_state_validator']['ok'] and repr(s)==before
+ rows.append(row)
+(out/'observations.json').write_text(json.dumps(rows,indent=2)+'\n');print(json.dumps(rows,indent=2))
+if '--expect-legacy' in sys.argv:
+ assert rows[0]['actual_check_cash_state']['ok'], 'accepted legacy numeric order is newly rejected'
+ assert not rows[1]['actual_check_cash_state']['ok'] and rows[1]['actual_check_cash_state']['reason']=='B.complete_inventory_zero_evidence_required', 'missing child evidence is newly accepted'

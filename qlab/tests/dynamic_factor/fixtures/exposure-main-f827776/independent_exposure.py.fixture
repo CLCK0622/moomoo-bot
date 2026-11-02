@@ -1,0 +1,82 @@
+"""Independent domain and priority probes; do not convert amounts or forge state."""
+from pathlib import Path
+from copy import deepcopy
+from decimal import Decimal
+import json,sys
+repo=Path(sys.argv[1]).resolve();out=Path(sys.argv[2]).resolve();out.mkdir(parents=True,exist_ok=True)
+sys.path[:0]=[str(repo/'qlab'),str(repo/'qlab/tests/dynamic_factor')]
+from qlab.dynamic_factor.noncash_v3 import zero_exposure
+from qlab.dynamic_factor.execution_exposure import verify_execution_exposure
+from qlab.dynamic_factor.execution_state import necessary_execution_state_known
+from qlab.dynamic_factor.state_v2 import necessary_state_known
+from qlab.dynamic_factor.conventions import load_conventions
+from v3_test_helpers import synthetic_guard,synthetic_zero_state
+import numpy as np
+p=load_conventions();g=synthetic_guard(p,blocked=[p.profile['universe'][0]])
+g['unknown']=['SYNTHETIC_UNKNOWN']
+base=synthetic_zero_state(g);base['inventory']['SYNTHETIC_UNKNOWN']=0
+blocked=g['B'][0];child=next(iter(g['children']));allowed=next(s for s in p.profile['universe'] if s not in set(g['B'])|set(g['unknown']))
+class IntChild(int):pass
+class FloatChild(float):pass
+cases=[]
+def add(n,change,category='numeric-or-type-refusal'):
+ s=deepcopy(base);change(s);cases.append((n,s,category))
+def held(s,symbol,q=1):
+ s['inventory'][symbol]=q;s['age'][symbol]=0;s['origin'][symbol]='SYNTHETIC'
+def order(symbol,side='BUY',quantity=1):return dict(symbol=symbol,side=side,quantity=quantity)
+add('zero',lambda s:None)
+for symbol in [blocked,'SYNTHETIC_UNKNOWN',child,'UNDECLARED','QQQ',allowed]:
+ for quantity in [0,1,2**63]:
+  add('holding/'+symbol+'/'+str(quantity),lambda s,z=symbol,q=quantity:held(s,z,q))
+ for side in ['BUY','SELL']:
+  for quantity in [0,1,2**63]:
+   add('pending/'+symbol+'/'+side+'/'+str(quantity),lambda s,z=symbol,d=side,q=quantity:s.update(pending_orders=[order(z,d,q)]))
+for value in [True,False,None,-1,1.0,float('nan'),np.int64(1),IntChild(1),Decimal('1'),'1']:
+ add('inventory-type/'+type(value).__name__+'/'+str(value),lambda s,q=value:held(s,blocked,q))
+ add('pending-type/'+type(value).__name__+'/'+str(value),lambda s,q=value:s.update(pending_orders=[order(allowed,quantity=q)]))
+for key in ['cash','nav']:
+ for value in [0,-0.0,-1,True,None,float('inf'),float('nan'),np.float64(1),IntChild(1),FloatChild(1),Decimal('1'),10**400]:
+  add(key+'/type/'+type(value).__name__+'/'+str(value),lambda s,k=key,v=value:s.update({k:v}))
+ for value in ['0','1','0.1','15000.1234567890123456789','01','1.0','1e3','-1','NaN','１','']:
+  add(key+'/decimal/'+value,lambda s,k=key,v=value:s.update({k:v}),'separate-decimal-extension')
+for key in list(base):
+ if key not in ['pending_orders']:
+  add('missing/'+key,lambda s,k=key:s.pop(k))
+for value in [None,{},(),True,[{}],[order(allowed,quantity=-1)],[order(allowed,side=[])],[dict(order(allowed),extra=0)]]:
+ add('pending-container/'+repr(value),lambda s,v=value:s.update(pending_orders=deepcopy(v)))
+# New priority combinations; each reverses a different earlier refusal stage.
+add('R2-before-missing-inventory-before-rights-before-B',lambda s:(s.update(cash=True),s['inventory'].pop(child),s.update(rights={'x':1}),held(s,blocked)))
+add('missing-inventory-before-rights-before-B',lambda s:(s['inventory'].pop(child),s.update(rights={'x':1}),held(s,blocked)))
+add('rights-before-inventory-before-pending',lambda s:(s.update(rights={'x':1}),held(s,blocked),s.update(pending_orders=[{}])))
+add('receivables-before-pending',lambda s:s.update(receivables={'x':{'amount':1}},pending_orders=[order(blocked)]))
+add('inventory-before-valid-and-invalid-pending',lambda s:(held(s,child),s.update(pending_orders=[order(allowed),{}])))
+for pending in [[order(allowed),order(child),{}],[order(allowed),{},order(child)],[order(child),order(allowed),{}]]:
+ add('ordered-pending/'+repr(pending),lambda s,v=pending:s.update(pending_orders=v))
+add('missing-pending-and-inventory',lambda s:(s.pop('pending_orders'),s['inventory'].pop(child)))
+add('zero-extra-inventory-allowed',lambda s:held(s,'ZERO_EXTRA',0))
+def actual(fn):
+ try:return dict(ok=True,value=fn())
+ except Exception as e:return dict(ok=False,type=type(e).__name__,reason=str(e))
+def execution(s,initial):
+ necessary_execution_state_known(s);return verify_execution_exposure(s,g,initial=initial)
+rows=[]
+for initial in [False,True]:
+ for name,s,category in cases:
+  before=repr(s)
+  a=actual(lambda:zero_exposure(s,g,initial=initial));b=actual(lambda:execution(s,initial))
+  assert repr(s)==before
+  def same_numeric_validation():
+   necessary_state_known(s);return verify_execution_exposure(s,g,initial=initial)
+  same=actual(same_numeric_validation)
+  row=dict(case=name,category=category,initial=initial,old=a,new=b,equal=a==b,same_legacy_input_validation=same,B_predicate_equal=a==same)
+  rows.append(row)
+  assert a==same,row
+# An explicitly separate host-object boundary: not representable in frozen JSON.
+class DifferentKeys(dict):
+ def keys(self):return {'symbol','side','quantity','EXTRA'}
+s=deepcopy(base);s['pending_orders']=[DifferentKeys(order(allowed))]
+exotic=dict(case='host-dict-subclass-overrides-keys',old=actual(lambda:zero_exposure(s,g)),new=actual(lambda:execution(s,False)),scope='not a plain JSON container; proves unqualified arbitrary-Python equivalence is false')
+(out/'observations.json').write_text(json.dumps(rows,indent=2)+'\n')
+(out/'outside-json-container-domain.json').write_text(json.dumps(exotic,indent=2)+'\n')
+summary=dict(cases=len(rows),B_predicate_mismatches=sum(not x['B_predicate_equal'] for x in rows),numeric_or_type_refusals=sum(x['category']!='separate-decimal-extension' for x in rows),numeric_validator_differences=[x for x in rows if x['category']!='separate-decimal-extension' and not x['equal']],decimal_cases=sum(x['category']=='separate-decimal-extension' for x in rows),intentional_decimal_differences=sum(x['category']=='separate-decimal-extension' and not x['equal'] for x in rows),outside_plain_JSON=exotic)
+(out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(summary,indent=2))
