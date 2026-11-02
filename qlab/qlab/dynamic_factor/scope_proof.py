@@ -399,14 +399,15 @@ FIXED_READS = (
 )
 
 # Bind the inspected helper bodies/roots as well as their call-site domain.
-# These files are unchanged in C13. A byte drift, including a comment, fails;
+# Accounting is re-pinned for B step 3 propagation; the other four stay unchanged.
+# Any byte drift, including a comment, fails;
 # no basename, prefix or source-identity exception is introduced.
 FIXED_READER_SOURCES = {
     "execution_closure.py": "998ef21c68825ab9254489f29b12095c8dc0d4b3f6f14e507e8fbea6808615ae",
     "execution_clock.py": "c1f9563c645110335cdbf006328b3cee4d1d8952d8433ffd5306b91d07e8ecf6",
     "reference_definition_v301.py": "95a51f2f5c5d3473254e247ac8d1b408c4f89c9253b3622ee2fe4d7941ef1a55",
     "reference_registry_v3.py": "90ff033cb06bbedce4315ec04bb7c84b8a300fdd133015db58a23b1f7fee997a",
-    "execution_accounting.py": "36ba63882a55e97e6d040b48ed15fcdf7246ba1f27f16faa47414adb585d0e6d",
+    "execution_accounting.py": "191d8bacf2d77b618ba62ebb348889cce72a20f8c89b492f4368c21d82d7c692",
 }
 
 
