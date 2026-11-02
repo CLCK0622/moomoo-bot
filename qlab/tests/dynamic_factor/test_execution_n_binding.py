@@ -94,26 +94,26 @@ def private_bound_source(tmp_path, monkeypatch, *, complete=False):
     ), source
 
 
-def test_G14_design_count_five_is_only_an_accepted_archive_reference():
+def test_G14_design_count_six_is_only_an_accepted_archive_reference():
     ref = design_archive_reference()
-    assert ref["value"] == 5
-    assert ref["archive_sequence"] == 1384
+    assert ref["value"] == 6
+    assert ref["archive_sequence"] == 1386
     assert ref["archive_tip"] == (
-        "1dfd40e38afeb40f7c3e658d264ebb478056534baf6c5c80321640b993e1fbe1"
+        "88cdf27dc0b6a83fb2685fef756dc6f0861fad335714a7b2f6357c7ba6a176a7"
     )
     assert (
         ref["acceptance_sha256"]
-        == "b62f9d8a7cc440e7552b9bc22822f8d57b12ca722a37b2dc33b6435a60dea586"
+        == "31de871ec2564b34330d882e21f6f0e9edcfa169371dc5cfdf9aae28dc3412ab"
     )
     assert ref["gate_N"] is ref["complete_N"] is None
     assert ref["formal_projection_consumer_accepted"] is False
 
 
 @pytest.mark.parametrize("field", ["design_N", "seq", "tip"])
-@pytest.mark.parametrize("version", [27, 28, 29])
+@pytest.mark.parametrize("version", [27, 28, 29, 30])
 def test_G14_old_design_count_sequence_or_tip_is_rejected(monkeypatch, field, version):
     root = Path(n_binding.__file__).parent / "contracts"
-    receipt_path = root / "EVO883-BRR-v30-archive-acceptance-v1.json"
+    receipt_path = root / "EVO883-SAR-v31-archive-acceptance-v1.json"
     receipt = json.loads(receipt_path.read_bytes())
     old = {
         27: dict(
@@ -131,6 +131,11 @@ def test_G14_old_design_count_sequence_or_tip_is_rejected(monkeypatch, field, ve
             seq=1380,
             tip="8e87034167b9d8ad28a91c33b824eecb5cba59c1b47efbb982079e32ddecde4a",
         ),
+        30: dict(
+            design_N=5,
+            seq=1384,
+            tip="1dfd40e38afeb40f7c3e658d264ebb478056534baf6c5c80321640b993e1fbe1",
+        ),
     }
     receipt["accepted_archive"][field] = old[version][field]
     changed = canonical(receipt) + b"\n"
@@ -145,7 +150,7 @@ def test_G14_old_design_count_sequence_or_tip_is_rejected(monkeypatch, field, ve
 
 
 @pytest.mark.parametrize("replace", ["receipt", "archive", "both"])
-@pytest.mark.parametrize("version", [27, 28, 29])
+@pytest.mark.parametrize("version", [27, 28, 29, 30])
 def test_G14_old_receipt_or_archive_cannot_replace_current_binding(
     monkeypatch, replace, version
 ):
@@ -166,6 +171,11 @@ def test_G14_old_receipt_or_archive_cannot_replace_current_binding(
             "40ba00bf7e64a10b4f66990dde6828be02f339365ee1df36dfc324e4fa85b6b0",
             1380,
         ),
+        30: (
+            "EVO883-BRR-v30-archive-acceptance-v1.json",
+            "b62f9d8a7cc440e7552b9bc22822f8d57b12ca722a37b2dc33b6435a60dea586",
+            1384,
+        ),
     }[version]
     old_receipt = (root / receipt_name).read_bytes()
     assert sha256(old_receipt) == receipt_sha
@@ -173,9 +183,9 @@ def test_G14_old_receipt_or_archive_cannot_replace_current_binding(
     assert json.loads(gzip.decompress(old_archive).splitlines()[-1])["seq"] == sequence
     replacement = {}
     if replace in {"receipt", "both"}:
-        replacement[root / "EVO883-BRR-v30-archive-acceptance-v1.json"] = old_receipt
+        replacement[root / "EVO883-SAR-v31-archive-acceptance-v1.json"] = old_receipt
     if replace in {"archive", "both"}:
-        replacement[root / "EVO891-B-ledger-v30.jsonl.gz"] = old_archive
+        replacement[root / "EVO891-B-ledger-v31.jsonl.gz"] = old_archive
     read_bytes = Path.read_bytes
     monkeypatch.setattr(
         Path,
@@ -186,15 +196,16 @@ def test_G14_old_receipt_or_archive_cannot_replace_current_binding(
         design_archive_reference()
 
 
-def test_G14_fifth_design_charge_cannot_be_dropped(monkeypatch):
+def test_G14_sixth_design_charge_cannot_be_dropped(monkeypatch):
     root = Path(n_binding.__file__).parent / "contracts"
-    path = root / "EVO883-BRR-v30-archive-acceptance-v1.json"
+    path = root / "EVO883-SAR-v31-archive-acceptance-v1.json"
     receipt = json.loads(path.read_bytes())
-    receipt["formal_arm_projection"]["retain_all_five_charge_sequences"] = [
+    receipt["formal_arm_projection"]["retain_all_six_charge_sequences"] = [
         1373,
         1377,
         1379,
         1381,
+        1383,
     ]
     changed = canonical(receipt) + b"\n"
     read_bytes = Path.read_bytes
@@ -235,9 +246,29 @@ def test_G14_v30_preserves_original_prefix_attempts_and_external_null_acceptance
         is True
     )
     ref = design_archive_reference()
-    assert ref["value"] == 5
+    assert ref["value"] == 6
     assert ref["complete_N"] is ref["gate_N"] is None
     assert ref["formal_projection_consumer_accepted"] is False
+
+
+def test_G14_v31_preserves_original_prefix_attempts_and_design_only_isolation():
+    root = Path(n_binding.__file__).parent / "contracts"
+    old = gzip.decompress((root / "EVO891-B-ledger-v30.jsonl.gz").read_bytes())
+    raw = gzip.decompress((root / "EVO891-B-ledger-v31.jsonl.gz").read_bytes())
+    assert raw[: len(old)] == old
+    rows = records(raw)
+    charges = [r for r in rows if r.get("record_type") == "design_count"]
+    assert [r["seq"] for r in charges] == [1373, 1377, 1379, 1381, 1383, 1385]
+    attempts = [r for r in rows if r["event"] == "attempt"]
+    assert len(attempts) == 661
+    assert sum(r["n_contribution"] for r in attempts) == 1313
+    assert sum(r["n_evaluated"] is None for r in attempts) == 101
+    assert rows[-1]["N"] == rows[-1]["n_high_water"] == 1313
+    assert charges[-1]["book_N"] == 1313
+    assert charges[-1]["effect_on_N"] == 0 and charges[-1]["is_attempt"] is False
+    assert design_archive_reference()["value"] == 6
+    assert design_archive_reference()["complete_N"] is None
+    assert design_archive_reference()["gate_N"] is None
 
 
 @pytest.mark.parametrize("stage", sorted(STAGES))
@@ -283,7 +314,7 @@ def test_A22_production_missing_authority_objects_refuses_with_no_runtime_slot()
     assert result["formal_N_slot"] is None
     assert result["reasons"] == ["ledger.trusted_project_installation_required"]
     assert result["runtime_consumable"] is result["complete"] is False
-    assert result["design_count_archive_reference"]["value"] == 5
+    assert result["design_count_archive_reference"]["value"] == 6
     assert before == (len(host._PINS), len(host._SNAPSHOTS))
     assert (
         result["N_reader_receipt"]["observations"]["formal_projection_consumption"] == 0
@@ -371,7 +402,7 @@ def test_A24_only_private_complete_reader_value_is_consumed_not_a_runtime_releas
     assert result["formal_N_slot"] == 7
     assert len(execution_configurations()) == 308
     assert len(result["bound_attempts"]) == 101
-    assert result["design_count_archive_reference"]["value"] == 5
+    assert result["design_count_archive_reference"]["value"] == 6
     assert result["runtime_consumable"] is result["complete"] is False
     assert result["remaining_reception"] == [
         "actual_B_publication",

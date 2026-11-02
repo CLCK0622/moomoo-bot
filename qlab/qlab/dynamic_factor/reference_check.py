@@ -379,13 +379,13 @@ EXECUTION_MODULES = {
 EXECUTION_FIXED_READS = (
     (
         "execution_receipts.n_binding",
-        "EVO883-BRR-v30-archive-acceptance-v1.json",
-        "b62f9d8a7cc440e7552b9bc22822f8d57b12ca722a37b2dc33b6435a60dea586",
+        "EVO883-SAR-v31-archive-acceptance-v1.json",
+        "31de871ec2564b34330d882e21f6f0e9edcfa169371dc5cfdf9aae28dc3412ab",
     ),
     (
         "execution_receipts.n_binding",
-        "EVO891-B-ledger-v30.jsonl.gz",
-        "2fed6c86968ee7373f7b2c708603ecc2afced2ea9d9cd3712ee636fc4501cf90",
+        "EVO891-B-ledger-v31.jsonl.gz",
+        "eed3021a7b0f44dd31c884daa8f375555ae64cf1c12dd8e72e7b790a01cd1328",
     ),
     (
         "execution_receipts.g14",

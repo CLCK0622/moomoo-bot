@@ -1,0 +1,231 @@
+{
+  "accepted_archive": {
+    "attempts": 661,
+    "book_N": 1313,
+    "bytes": 1115904,
+    "design_N": 6,
+    "file": "EVO891-B-ledger-v31.jsonl",
+    "file_sha256": "d143442723af0d0add9ce04983ea7fc32dfb178d1da8f0d381516ac334f3ccdd",
+    "high_water": 1313,
+    "ledger_id": "37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc",
+    "lines": 1387,
+    "seq": 1386,
+    "snapshot_sha256": "cd181be6687a7245db6731cf800a09fdf0515f3fbfe699adbf7e07f05299dd0c",
+    "tip": "88cdf27dc0b6a83fb2685fef756dc6f0861fad335714a7b2f6357c7ba6a176a7"
+  },
+  "actions_this_review": {
+    "author_append_script_executed": false,
+    "budget_installation_or_source_receipts_issued": false,
+    "ledger_or_frozen_bytes_modified": false,
+    "market_source_requests": 0,
+    "product_strategy_reference_pytest_runs": 0
+  },
+  "book_N_shape_adjudication": {
+    "accepted": true,
+    "new_seq1385_book_N": 1313,
+    "old_seq1383_has_book_N": false,
+    "product_reader_executed_or_certified": false,
+    "reason": "book_N is a documentary duplicate on a non-attempt gap_update, not a contribution. Present value is independently checked against unchanged attempt sum and checkpoint; absent prior duplicate was valid. No historical row needs rewriting, no new contribution, no complete-N certification.",
+    "rewrite_or_recharge_required": false,
+    "static_source": {
+      "commit": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "file": "qlab/qlab/dynamic_factor/authority_ledger.py",
+      "lines": [
+        133,
+        159,
+        166,
+        167,
+        169,
+        171
+      ],
+      "sha256": "a696c5d81bed8f19226cb9489f32b456277f98c51d7d884d3894bc4c4bf09120"
+    }
+  },
+  "decision": "ACCEPT_AUTHOR_ARCHIVE_V31_AND_ONE_SRC_AUTH_RECEPTION_P1_COMMON_DESIGN_CHARGE",
+  "effective_condition": "Successful publication in the dispatched EVO881 reply thread; seq1386 then becomes the author-archive continuation baseline only. An attachment upload by itself is not acceptance publication.",
+  "effects": {
+    "DSR_effect_computed_or_claimed_stricter": false,
+    "OOS_increment_this_document_design_record_only": 0,
+    "SRC_AUTH_two_receipts_chinese_package_role_member_fold_recharge": 0,
+    "book_N_increment": 0,
+    "design_N_increment": 1,
+    "history_budget_account_or_63_126_clock_reset": false,
+    "market_attempt_increment": 0,
+    "nine_clauses_and_execution_note_one_common_charge": true,
+    "original_proposal_three_lineage_only_not_primary_or_new_charge": true,
+    "real_training_reference_failure_retry_stage_N_budget_exemption": false
+  },
+  "finance_final_review_comment_id": "01a19e65-7698-7332-833f-53c767af4d08",
+  "formal_arm_projection": {
+    "archive_design_count_replaces_complete_arm_N_or_effective_trials": false,
+    "book_N_mechanical_increment": false,
+    "complete_N": null,
+    "complete_N_or_lower_bound_certified": false,
+    "gate_N": null,
+    "new_record_sha256": "1fa0382ebe4d1cbc5eac72a894c9bd5c5b0348a74e934320a809be33646c7a73",
+    "retain_all_six_charge_sequences": [
+      1373,
+      1377,
+      1379,
+      1381,
+      1383,
+      1385
+    ]
+  },
+  "formal_bindings": {
+    "adopted_at": "2026-11-02T22:20:17Z",
+    "adopted_at_source": "首辅采用评论 01a19e59-55ca 的平台 created_at（updated_at 相同，revision 1），与正式机器采用件 /authority/adopted_at 及发布绑定 adopted_at 一致；不替代 D12 T0（2026-11-01T21:00:10Z，seq 1373 所绑）、L0 或 EVO-939 正式派单 / 三日钟时点；也不是前向观察起点",
+    "base": {
+      "file_bytes": 1106104,
+      "file_sha256": "967070adfa3503155ef6b42d2b5133dd4ce5468877fb2193c809ffbefec89453",
+      "hanlin_acceptance": "01a19dd9-1528-7cbe-b227-e4c80b0e2f93",
+      "hanlin_acceptance_receipt_sha256": "b62f9d8a7cc440e7552b9bc22822f8d57b12ca722a37b2dc33b6435a60dea586",
+      "ledger_id": "37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc",
+      "seq": 1384,
+      "tip": "1dfd40e38afeb40f7c3e658d264ebb478056534baf6c5c80321640b993e1fbe1"
+    },
+    "chief_adoption": {
+      "author_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+      "content_sha256": "289ed8dcded09bb7e83cfc4eb0e685bbbee8819a5cd538a3cb62c9059edb3e2d",
+      "created_at": "2026-11-02T22:20:17Z",
+      "id": "01a19e59-55ca-724a-9046-592d4197b58d",
+      "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+      "parent_id": "01a19e58-cb41-776b-ba94-322c24d99bcb",
+      "revision": 1,
+      "updated_at": "2026-11-02T22:20:17Z"
+    },
+    "deputy_countersign": {
+      "author_id": "9b5d10be-e7ba-4142-8dc6-b929d5885342",
+      "content_sha256": "13d620d0016f988eba1d25e5a662cd7ba9ed87fe568eb0e4f7201cbe969743bc",
+      "created_at": "2026-11-02T22:19:41Z",
+      "id": "01a19e58-cb41-776b-ba94-322c24d99bcb",
+      "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+      "parent_id": "01a19e54-dc0d-78c1-99f9-9b15069d7e11",
+      "revision": 1,
+      "updated_at": "2026-11-02T22:19:41Z"
+    },
+    "deputy_verdict": "修订后通过（采用件才是正式件，原提案只作谱系）",
+    "execution_note_raw_utf8_sha256": "0b02d85359d31e1cfcba6359e12414411a7251b220db7a604600085e7c37dfa2",
+    "formal_chinese": {
+      "bytes": 13322,
+      "file": "EVO883-SRC-AUTH-RECEPTION-P1-adopted-protocol-v1.0.0.md",
+      "platform_attachment_id": "01a19e5e-9dd2-79c0-b6ee-9b01461298f2",
+      "sha256": "cdb26103820cb17681ad78b61147fff7804fd9f065888625e2e85b8eb1352cb0"
+    },
+    "formal_machine_adoption": {
+      "bytes": 32069,
+      "file": "EVO883-SRC-AUTH-RECEPTION-P1-adopted-protocol-v1.0.0.json",
+      "issue_id": "01a18a63-02ca-77bc-a7bf-9f0769ed8bbf",
+      "platform_attachment_id": "01a19e5e-9d75-79bc-b0ff-1bce982f5d09",
+      "primary": true,
+      "sha256": "d38bd1328189f468d103693b0a4cde355db767f374db8eb83237ceaffa539c7b"
+    },
+    "hanlin_publication_comment": {
+      "author_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+      "content_sha256": "55390b9103ef66f0afd7b3c44941c49a59691f5826c09251e1fd98060b0fed61",
+      "created_at": "2026-11-02T22:28:44Z",
+      "id": "01a19e61-132e-71fb-9bfc-d3edee9f4a62",
+      "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+      "parent_id": "01a19e59-e93e-7525-a2e3-0d09510d987a",
+      "revision": 1,
+      "updated_at": "2026-11-02T22:28:44Z"
+    },
+    "original_proposal_lineage": [
+      {
+        "attachment_id": "01a19e52-6082-7d04-937c-65968bff4c59",
+        "comment_id": null,
+        "file": "EVO883-SRC-AUTH-RECEPTION-P1-proposal-v1.0.0.md",
+        "sha256": "ea32cec2220483b671dfdde103f3698a4d1a34c3ba25b853bc52c8e6c4226dac"
+      },
+      {
+        "attachment_id": "01a19e52-60fa-7982-b8be-aa1d81c11dff",
+        "comment_id": null,
+        "file": "EVO883-SRC-AUTH-RECEPTION-P1-proposal-v1.0.0.json",
+        "sha256": "5b5f2aaa4d4a59de963bc2c2631037887fe4e7d9fa0a269a132699b2209212c6"
+      },
+      {
+        "attachment_id": "01a19e52-6289-7341-87f3-34d5cf6aae83",
+        "comment_id": null,
+        "file": "EVO883-SRC-AUTH-RECEPTION-P1-proposal-v1.0.0-review.zip",
+        "sha256": "a0284b28c86a432def13e66704d86f383d1bf89d4ea8aab9d24c735858865a47"
+      }
+    ],
+    "publication_binding": {
+      "file": "publication-binding.json（发布包内）",
+      "sha256": "7e8274e1c8002db3dde1c4709fc7c23b37fa466c62a74b9eb003a8d20d5760a7"
+    },
+    "published_at": "2026-11-02T22:26:03Z",
+    "published_at_source": "EVO-883 issue 附件列表读回：正式机器件附件 01a19e5e-9d75 的平台 created_at（comment_id=null，上传者翰林院），与发布绑定 published_at 一致；不替代 D12 T0（2026-11-01T21:00:10Z，seq 1373 所绑）、L0 或 EVO-939 正式派单 / 三日钟时点；也不是前向观察起点",
+    "release_package": {
+      "bytes": 363242,
+      "file": "EVO883-SRC-AUTH-RECEPTION-P1-adoption-release-v1.0.0.zip",
+      "manifest_items": 17,
+      "platform_attachment_id": "01a19e60-5b2f-70e9-b877-05c7fc2f06d9",
+      "sha256": "ffee2b5702898674340c4ea31524e811bb70dee5d3497a5265418caf4a89e9ef"
+    }
+  },
+  "handoff": "Libu may register seq1386/design_count6 as the author-archive continuation baseline and update archive-charge references along the existing engineering line. Do not append this charge again. Complete/gate N, SRC/AUTH fact acceptance and receiver, G5/G12, preliminary material sufficiency and EVO939 dispatch remain separate. This receipt starts no delivery or observation clock.",
+  "input_package_sha256": "6fd3a0cb5a4d8454ef8b63f6ddf7e55b9bce14db80c2504f93c8bb8359259c77",
+  "new_records": {
+    "archive_row_backwritten": false,
+    "book_N_duplicate": 1313,
+    "checkpoint_seq": 1386,
+    "design_N_after": 6,
+    "design_N_before": 5,
+    "design_N_increment": 1,
+    "design_record_sha256": "1fa0382ebe4d1cbc5eac72a894c9bd5c5b0348a74e934320a809be33646c7a73",
+    "design_seq": 1385,
+    "effect_on_N": 0,
+    "event": "gap_update",
+    "identity": "SRC-AUTH-RECEPTION-P1 v1.0.0 共同协议修订",
+    "is_attempt": false,
+    "new_charge_projection_hanlin_acceptance_null_externally_resolved_by_this_receipt": true,
+    "record_type": "design_count"
+  },
+  "predecessor": {
+    "bytes": 1106104,
+    "entire_file_is_exact_byte_prefix": true,
+    "file_sha256": "967070adfa3503155ef6b42d2b5133dd4ce5468877fb2193c809ffbefec89453",
+    "hanlin_acceptance_comment_id": "01a19dd9-1528-7cbe-b227-e4c80b0e2f93",
+    "hanlin_acceptance_receipt_sha256": "b62f9d8a7cc440e7552b9bc22822f8d57b12ca722a37b2dc33b6435a60dea586",
+    "seq": 1384,
+    "tip": "1dfd40e38afeb40f7c3e658d264ebb478056534baf6c5c80321640b993e1fbe1"
+  },
+  "remaining": {
+    "G14_overall_certified": false,
+    "G5_G12_closed_by_this_receipt": false,
+    "L0_authorized": false,
+    "SRC_AUTH_fact_receipt_receiver_material_sufficiency_or_implementation_accepted": false,
+    "T1_compatibility_preconditions_waived": false,
+    "certifiable": false,
+    "clock63_started": false,
+    "complete_N_certified": false,
+    "historical_null_n_evaluated": 101,
+    "history": "PAUSED",
+    "installed_authority_project_tip_external_anchor_verified": false,
+    "product_reader_executed_or_certified": false,
+    "runtime_consumable": false
+  },
+  "schema": "EVO883.SourceAuthorizationDesignChargeAuthorArchiveAcceptance/v1",
+  "scope": "AUTHOR_ARCHIVE_ONLY_NOT_SRC_AUTH_FACT_RECEIPT_RECEIVER_COMPLETE_N_OR_G5_G12_ACCEPTANCE",
+  "source_delivery_comment_id": "01a19e64-f0cf-76e1-ba25-970bd3cf80b6",
+  "time_scope": {
+    "D12_T0": "2026-11-01T21:00:10Z",
+    "EVO939_prejudgement_or_disposition_accepted_by_this_archive_receipt": false,
+    "UUID_time_used_as_authority": false,
+    "adopted_at": "2026-11-02T22:20:17Z",
+    "formal_dispatch_or_three_day_clock_triggered_by_this_archive_receipt": false,
+    "formal_machine_attachment_published_at": "2026-11-02T22:26:03Z",
+    "publication_reply_created_at": "2026-11-02T22:28:44Z",
+    "replace_D12_T0_L0_EVO939_dispatch_or_delivery_clock": false
+  },
+  "trigger_comment_id": "01a19e65-b651-7a11-bb6b-aebc536670e1",
+  "verification": {
+    "canonical_hash_chain_rows_verified": 1387,
+    "formal_release_manifest_files": 17,
+    "independent_verification_report_sha256": "a5ee2e8acb366b8fa30ee9a5170a522170a26140c57ef4f5757c47a6f1159d88",
+    "independent_verifier_sha256": "c1174cfaa31aa3a2faecd095bf8bd741d0b6ce5994bade8be67e22659290aba4",
+    "submission_manifest_files": 13
+  },
+  "version": "1.0.0"
+}
