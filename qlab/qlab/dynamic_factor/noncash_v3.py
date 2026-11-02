@@ -279,16 +279,6 @@ def economic_read_receipt(
 
 def zero_exposure(state, guard, *, initial=False):
     necessary_state_known(state)
-    _zero_exposure_known_state(state, guard, initial=initial)
-
-
-def _zero_exposure_known_state(state, guard, *, initial=False):
-    """Shared B predicates after the caller's scoped state validation.
-
-    Legacy zero_exposure validates numeric-only state above. The C04/C06
-    consumer validates the full exact-money state before this private helper.
-    No monetary value is read or transformed by these inventory predicates.
-    """
     if not (
         set(guard["request"]["catalog"]["universe"]) | set(guard["children"])
     ).issubset(state["inventory"]):

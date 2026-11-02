@@ -104,7 +104,7 @@ def check_cash_state(state, guard, cash_proof, *, initial=False):
     temporary view is exclusively for the noncash inventory guard; no monetary
     value or economic state is imputed/erased. D1/NAV consume the full amount.
     """
-    from .noncash_v3 import _zero_exposure_known_state
+    from .execution_exposure import verify_execution_exposure
     from .execution_state import necessary_execution_state_known
 
     necessary_execution_state_known(state)
@@ -114,9 +114,9 @@ def check_cash_state(state, guard, cash_proof, *, initial=False):
         cash_proof.check(state, guard)
         view = deepcopy(state)
         view["receivables"] = {}
-        _zero_exposure_known_state(view, guard)
+        verify_execution_exposure(view, guard)
         return cash_proof.value
-    _zero_exposure_known_state(state, guard, initial=initial)
+    verify_execution_exposure(state, guard, initial=initial)
     return amount(0)
 
 

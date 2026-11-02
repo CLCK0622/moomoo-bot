@@ -275,8 +275,6 @@ class RiskHistory:
             expected_accounting_sha256=expected_accounting_sha256,
             expected_fills_sha256=expected_fills_sha256,
         )
-        if cash_proof is not None:
-            inputs["cash_proof_sha256"] = cash_proof.sha256
         self._declarations.append(
             dict(
                 input_index=len(self._declarations),
@@ -285,6 +283,15 @@ class RiskHistory:
             )
         )
         try:
+            if cash_proof is not None:
+                from .execution_cash import CashProof
+
+                if type(cash_proof) is not CashProof:
+                    inputs["cash_proof_type_invalid"] = True
+                    self._declarations[-1]["declaration"] = deepcopy(inputs)
+                    raise ValueError("accounting.owned_cash_proof_required")
+                inputs["cash_proof_sha256"] = cash_proof.sha256
+                self._declarations[-1]["declaration"] = deepcopy(inputs)
             output = self._observe(
                 date,
                 accounting,
@@ -621,6 +628,10 @@ class RiskHistory:
                     output = book.prepare_open(**event["inputs"])
                 elif event["op"] == "close":
                     close_inputs = dict(event["inputs"])
+                    if close_inputs.pop("cash_proof_type_invalid", False):
+                        # Reproduce the same type refusal without serializing
+                        # an arbitrary host object or treating it as missing.
+                        close_inputs["cash_proof"] = False
                     proof_sha = close_inputs.pop("cash_proof_sha256", None)
                     if proof_sha is not None:
                         proof = (cash_proofs or {}).get(proof_sha)

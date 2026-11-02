@@ -1,0 +1,17 @@
+{
+  "audit_sha256": "7278189bfc06be221317611073f601a55dac31a7b28e6c3048d76cab4f7b149b",
+  "files": {
+    "frozen-origin-inputs.json": {
+      "bytes": 58313,
+      "sha256": "9d3d7c3d6b0271fcb1800129334c73bf024009225cbb449d6d4380b38465d612"
+    },
+    "independent_old_receipts.py.fixture": {
+      "bytes": 3101,
+      "sha256": "866e52af4df95fa7fe62284a1a4af68b35d73f2c89323825d5186a0740b43604"
+    },
+    "README.md": {
+      "bytes": 930,
+      "sha256": "111dc0d45dc56d03909e7545c644d29bbb4fea5bc64cb73f650f18c4536f4eca"
+    }
+  }
+}
