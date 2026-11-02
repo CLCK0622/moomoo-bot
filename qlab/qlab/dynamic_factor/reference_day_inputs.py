@@ -10,8 +10,9 @@ from copy import deepcopy
 from .contract import code_sha, digest, is_sha
 from .conventions import load_conventions
 from .fees import finite
+from .execution_cash import check_cash_state
 from .execution_risk import RiskBook
-from .noncash_v3 import CONSUMERS, assert_consumer_symbols, zero_exposure
+from .noncash_v3 import CONSUMERS, assert_consumer_symbols
 from .reference_noncash import numeric_read, origin
 from .reference_profile_v301 import validate_solo_profile
 from .reference_v3_scope import validate_scope
@@ -35,8 +36,10 @@ class BookScopedInputs:
         expected_state_sha256,
         *,
         policy=None,
+        cash_proof=None,
     ):
         self._policy = policy or load_conventions()
+        self._cash_proof = cash_proof
         self._profile = validate_solo_profile(profile)
         if not is_sha(book_id):
             raise ValueError("reference.book_identity_required")
@@ -84,11 +87,9 @@ class BookScopedInputs:
             raise ValueError("reference.book_snapshot_identity_mismatch")
         # Reuse the original R2/B check. Never clear unknowns, rights or holdings
         # to manufacture a zero origin, and never reconstruct an initial book.
-        zero_exposure(self._state, scope["guard"])
+        check_cash_state(self._state, scope["guard"], self._cash_proof)
         if (
-            type(self._state["cash"]) not in (int, float)
-            or type(self._state["nav"]) not in (int, float)
-            or type(self._state.get("initialization_count")) is not int
+            type(self._state.get("initialization_count")) is not int
             or self._state["initialization_count"] != 1
         ):
             raise ValueError("state.R2_necessary_state_unknown")
@@ -168,6 +169,7 @@ class BookScopedInputs:
             expected_clock_binding_sha256=expected_clock_binding_sha256,
             expected_ruling_sha256=expected_ruling_sha256,
             policy=self._policy,
+            cash_proof=self._cash_proof,
         )
         required = risk.required_m(
             signal,

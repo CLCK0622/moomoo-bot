@@ -5,6 +5,19 @@ scope/profile, book identity, full original account declaration, original zero
 origin receipt and the host-expected state SHA. The current declaration is
 retained without dropping fields, inventory, rights or history clocks.
 
+The optional host-only constructor keyword `cash_proof` accepts the owned
+C04 `execution_cash.CashProof` capability. C08 calls the shared
+`execution_cash.check_cash_state` directly and passes the identical capability
+to `RiskBook`; it has no money parser, receipt adapter or cash classifier.
+C04/C06 canonical decimal-string cash and NAV are retained byte for byte,
+without a float projection. A retained cash receivable requires its original
+C04 close proof, bound to the complete monetary state, B guard and book.
+Missing, wire-dictionary, boolean, stale or other-book proofs refuse before M
+or a numeric callback. Noncash rights and unknown state still refuse. Legacy
+`state_v2.necessary_state_known` and its existing consumers are unchanged.
+This capability does not certify actual source reception or open a runtime
+gate. An original zero-origin receipt remains a separate declaration.
+
 `read(date, consumer, symbols, reader, *, ...)` requires all the following host
 inputs, with no defaults: `risk_scope`, `close_session`, `prior_risk`,
 `fees_x2`, `clock_binding`, `expected_prior_risk_sha256`,
@@ -75,3 +88,11 @@ three-state forgeries/UNKNOWN/empty refusals. A13 covers six consumers' whole
 batch B-first with both M and reader counts zero, R2/state erasure, member/day/
 history drift, and actual RiskHistory snapshot/M equality. Full accounting and
 real reception are not claimed by this component regression.
+
+`tests/dynamic_factor/test_reference_day_cash.py` adds the C04 integration:
+actual synthetic-fact `ExecutionAccount.close_session` issues the proof,
+`RiskHistory.observe_close` advances the same account, and C08 consumes the
+same snapshot and complete 22-key M receipt. It also checks exact decimal
+retention, noncanonical-money refusal, proof substitution/drift and all six
+consumers' B-first ordering. These are component fixtures, not a real strategy
+or reference-performance run.

@@ -233,7 +233,14 @@ def test_A11_A13_missing_state_or_old_rights_refuses_without_erasing(key, value)
     args[3][key] = value
     args[5] = digest(args[3])
     before = deepcopy(args[3])
-    with pytest.raises(ValueError, match="state.R2|B.zero_exposure"):
+    reason = (
+        "accounting.owned_cash_proof_required"
+        if key == "receivables"
+        else "B.zero_exposure_unproven_or_old_rights"
+        if key == "rights"
+        else "state.R2_necessary_state_unknown"
+    )
+    with pytest.raises(ValueError, match=reason):
         BookScopedInputs(*args)
     assert args[3] == before
 
