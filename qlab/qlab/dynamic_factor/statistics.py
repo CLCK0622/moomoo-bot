@@ -80,7 +80,16 @@ def _diagnostic_dsr(
     request, ledger, *, prereg=None, prereg_sha256=None, plugin=None, conventions=None
 ):
     """All public paths refuse runtime DSR/V, including the legacy plugin seam."""
-    snapshot = ledger.safe_snapshot()
+    from .authority_ledger import AuthorityLedger, PROJECT_LEDGER
+
+    if type(ledger) is AuthorityLedger and (
+        ledger.path.resolve() != PROJECT_LEDGER.resolve()
+    ):
+        from .historical_authority import historical_diagnostic_snapshot
+
+        snapshot = historical_diagnostic_snapshot(ledger)
+    else:
+        snapshot = ledger.safe_snapshot()
     # Only future complete synthetic/readied snapshots need this clamp. Frozen
     # diagnostics keep exact fields and order, including historical lower bounds.
     if snapshot.get("n_complete") or snapshot["cumulative_n"] is not None:
@@ -90,8 +99,6 @@ def _diagnostic_dsr(
     reasons = list(snapshot["reasons"])
     if conventions is not None:
         from .ledger import bound_genesis
-
-        from .authority_ledger import AuthorityLedger
 
         if not isinstance(ledger, AuthorityLedger) and snapshot[
             "genesis"

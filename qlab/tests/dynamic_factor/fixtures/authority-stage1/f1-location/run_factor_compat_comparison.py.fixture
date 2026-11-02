@@ -1,0 +1,138 @@
+"""Run the unfiltered B21R comparison using task-private local clones.
+
+No commits, pushes, production paths or network-enabled execution. The source
+repository must already contain the requested refs. Repeated runs need a new
+--out directory. --assert-minimum gives rc1 for the observed F1 regression.
+"""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import shutil
+import subprocess
+import sys
+
+
+def differences(old, new, pointer=""):
+    if type(old) is not type(new):
+        return [dict(pointer=pointer, old=old, new=new)]
+    if isinstance(old, dict):
+        result = []
+        for key in sorted(old.keys() | new.keys()):
+            token = key.replace("~", "~0").replace("/", "~1")
+            path = pointer + "/" + token
+            if key not in old or key not in new:
+                result.append(dict(pointer=path, old_present=key in old, new_present=key in new,
+                                   old=old.get(key), new=new.get(key)))
+            else:
+                result.extend(differences(old[key], new[key], path))
+        return result
+    if isinstance(old, list):
+        result = []
+        for i in range(max(len(old), len(new))):
+            path = pointer + "/" + str(i)
+            if i >= len(old) or i >= len(new):
+                result.append(dict(pointer=path, old_present=i<len(old), new_present=i<len(new),
+                                   old=old[i] if i<len(old) else None, new=new[i] if i<len(new) else None))
+            else:
+                result.extend(differences(old[i], new[i], path))
+        return result
+    return [] if old == new else [dict(pointer=pointer, old=old, new=new)]
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--repo", type=Path, required=True)
+    p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--refs", nargs="+", default=["98cd60f9", "4cdfcbc", "a3df329"])
+    p.add_argument("--python39", type=Path, required=True)
+    p.add_argument("--python312", type=Path, required=True)
+    p.add_argument("--deps39", type=Path)
+    p.add_argument("--deps312", type=Path)
+    p.add_argument("--assert-minimum", action="store_true")
+    p.add_argument("--assert-omitted", action="store_true", help="rc1 for any non-source difference in the nine omitted-label outputs; raw outputs/diffs retained")
+    args = p.parse_args()
+    root = Path(__file__).resolve().parent
+    out, source = args.out.resolve(), args.repo.resolve()
+    if out.exists() and any(out.iterdir()):
+        raise ValueError("Use a new output directory")
+    out.mkdir(parents=True, exist_ok=True)
+    repo = out / "checkout"
+    cloned = subprocess.run(["git", "clone", "--no-hardlinks", "--local", str(source), str(repo)], capture_output=True, text=True)
+    (out/"clone.stdout").write_text(cloned.stdout)
+    (out/"clone.stderr").write_text(cloned.stderr)
+    cloned.check_returncode()
+    resolved = [subprocess.check_output(["git", "rev-parse", r], cwd=repo, text=True).strip() for r in args.refs]
+    results = {}
+    for label, python, deps in (("39", args.python39, args.deps39), ("312", args.python312, args.deps312)):
+        environment = {k:v for k,v in os.environ.items() if not k.startswith("QLAB_") and k not in {"PYTHONPATH", "PYTEST_ADDOPTS"}}
+        environment.update(PYTHONDONTWRITEBYTECODE="1", PYTEST_DISABLE_PLUGIN_AUTOLOAD="1")
+        if deps:
+            environment["PYTHONPATH"] = str(deps.resolve())
+        results[label] = []
+        for revision in resolved:
+            subprocess.run(["git", "checkout", "--detach", revision], cwd=repo, check=True, capture_output=True)
+            output = out / label / (revision + ".json")
+            command = ["/usr/bin/sandbox-exec", "-f", str(root/"f1-location-offline.sb"), str(python.resolve()), "-B",
+                       str(root/"factor_compat_probe.py"), "--repo", str(repo), "--work", str(out/("work"+label)),
+                       "--output", str(output), "--all-modes"]
+            completed = subprocess.run(command, cwd=root, env=environment, capture_output=True, text=True, timeout=120)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.with_suffix(".command.json").write_text(json.dumps(dict(argv=command,revision=revision,returncode=completed.returncode,
+                pythonpath=environment.get("PYTHONPATH"),platform=platform.platform()),indent=2)+"\n")
+            output.with_suffix(".stdout").write_text(completed.stdout)
+            output.with_suffix(".stderr").write_text(completed.stderr)
+            completed.check_returncode()
+            payload=json.loads(output.read_bytes())
+            assert len(payload["cases"])==45 and payload["network_events"]==[]
+            sample=out/label/(revision+".minimum-files")
+            for stage,folder in (("before","inputs"),("after","after")):
+                shutil.copytree(out/("work"+label)/folder/"sqlite-positive__n_snapshot_omitted",sample/stage)
+            assert not subprocess.check_output(["git","status","--porcelain"],cwd=repo,text=True).strip()
+            results[label].append(payload)
+            print(label,revision[:12],"45 cases; no network events",flush=True)
+    comparisons=[]
+    any_minimum_difference=False
+    any_omitted_business_difference=False
+    for label, payloads in results.items():
+        baseline=payloads[0]
+        for revision,payload in zip(resolved[1:],payloads[1:]):
+            assert baseline["python"]==payload["python"] and baseline["dependencies"]==payload["dependencies"]
+            assert baseline["policy_sha"]==payload["policy_sha"]
+            compared=[]
+            for old,new in zip(baseline["cases"],payload["cases"]):
+                assert old["input"]==new["input"], (label,revision,old["input"],new["input"])
+                raw_diff=differences(old["output"],new["output"])
+                source_diff=[v for v in raw_diff if v["pointer"]=="/returned/source_sha256" or v["pointer"]=="/returned/source_files" or v["pointer"].startswith("/returned/source_files/")]
+                business_diff=[v for v in raw_diff if v not in source_diff]
+                if old["input"]["mode"]=="omitted":
+                    any_omitted_business_difference |= bool(business_diff)
+                compared.append(dict(input=old["input"], old_output=old["output"], new_output=new["output"],
+                    differences=raw_diff,source_identity_differences=source_diff,non_source_differences=business_diff,
+                    old_observation=old["observation"],new_observation=new["observation"]))
+            minimum=next(c for c in compared if c["input"]["kind"]=="sqlite-positive" and c["input"]["entry"]=="_n_snapshot" and c["input"]["mode"]=="omitted")
+            any_minimum_difference |= bool(minimum["differences"])
+            record=dict(python=label,baseline=resolved[0],revision=revision,cases=compared,minimum=minimum,
+                        omitted_cases=9,omitted_cases_with_raw_differences=sum(c["input"]["mode"]=="omitted" and bool(c["differences"]) for c in compared),
+                        omitted_cases_with_non_source_differences=sum(c["input"]["mode"]=="omitted" and bool(c["non_source_differences"]) for c in compared))
+            (out/label/(revision+".comparison.json")).write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n")
+            comparisons.append(dict(python=label,revision=revision,minimum_difference=bool(minimum["differences"]),
+                                    minimum_difference_paths=[v["pointer"] for v in minimum["differences"]],
+                                    omitted_cases_with_raw_differences=record["omitted_cases_with_raw_differences"],
+                                    omitted_cases_with_non_source_differences=record["omitted_cases_with_non_source_differences"]))
+    summary=dict(schema="EVO884.F1CompatibilityComparison/v1",refs=resolved,comparisons=comparisons,
+                 output_fields_filtered=False,arrays_reordered=False,input_bytes_same_per_interpreter=True,
+                 production_writes=0,minimum_compatible=not any_minimum_difference,
+                 assert_minimum=args.assert_minimum,assert_omitted=args.assert_omitted,
+                 omitted_compatible_except_enumerated_source_identity=not any_omitted_business_difference,
+                 source_identity_comparison_exceptions=["/returned/source_files","/returned/source_sha256"],
+                 exception_basis="D /byte_comparison/approved_exclusions_only; applied to assertions only; raw outputs and every raw difference retained")
+    (out/"summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2)+"\n")
+    print(json.dumps(summary,ensure_ascii=False,indent=2))
+    return 1 if (args.assert_minimum and any_minimum_difference) or (args.assert_omitted and any_omitted_business_difference) else 0
+
+
+if __name__=="__main__":
+    raise SystemExit(main())

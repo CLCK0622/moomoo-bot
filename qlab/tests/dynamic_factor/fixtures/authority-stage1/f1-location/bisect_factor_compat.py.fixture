@@ -1,0 +1,43 @@
+"""Portable oracle for a private clone; git bisect run returns 0/1/125."""
+import argparse
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--repo', type=Path, required=True)
+    p.add_argument('--out', type=Path, required=True)
+    p.add_argument('--python', type=Path, required=True)
+    p.add_argument('--deps', type=Path)
+    a = p.parse_args()
+    root = Path(__file__).resolve().parent
+    repo, out = a.repo.resolve(), a.out.resolve()
+    revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repo, text=True).strip()
+    out.mkdir(parents=True, exist_ok=True)
+    output = out / (revision + '.json')
+    env = {k: v for k, v in os.environ.items() if not k.startswith('QLAB_') and k not in {'PYTHONPATH', 'PYTEST_ADDOPTS'}}
+    env['PYTHONDONTWRITEBYTECODE'] = '1'
+    if a.deps:
+        env['PYTHONPATH'] = str(a.deps.resolve())
+    command = ['/usr/bin/sandbox-exec', '-f', str(root / 'f1-location-offline.sb'), str(a.python.resolve()), '-B', str(root / 'factor_compat_probe.py'), '--repo', str(repo), '--work', str(out / 'private-work'), '--output', str(output)]
+    c = subprocess.run(command, env=env, capture_output=True, text=True, timeout=120)
+    (out / (revision + '.command.json')).write_text(json.dumps(dict(argv=command, returncode=c.returncode), indent=2) + '\n')
+    output.with_suffix('.stdout').write_text(c.stdout)
+    output.with_suffix('.stderr').write_text(c.stderr)
+    if c.returncode:
+        print(c.stderr, file=sys.stderr)
+        return 125
+    payload = json.loads(output.read_bytes())
+    actual = next(c['output'] for c in payload['cases'] if c['input']['kind'] == 'sqlite-positive' and c['input']['entry'] == '_n_snapshot').get('returned')
+    expected = dict(gate_n=None, n_complete=False, cumulative_n=None, n_ledger_hash='00a9087bf322355b90d6fe1fbd794cc0c21fa4475b60364d3bb68184ea631b0f', book_or_request_high_water=1313)
+    verdict = 0 if actual == expected else (1 if isinstance(actual, dict) and (actual.get('n_ledger_hash') is None or any(k in actual for k in ('N_rows', 'arm_n', 'reasons'))) else 125)
+    print(json.dumps(dict(commit=revision, verdict=verdict, actual=actual), ensure_ascii=False))
+    return verdict
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

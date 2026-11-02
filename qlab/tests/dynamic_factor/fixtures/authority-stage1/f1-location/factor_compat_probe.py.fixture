@@ -1,0 +1,123 @@
+"""Replay B21R's private inputs and retain every returned JSON field.
+
+Run under the shipped OS network-denial profile. Only --work is mutated;
+it must be an empty/new task-owned directory. No production installation,
+authority, market, budget, strategy or training entrypoint is selected.
+"""
+import argparse
+import hashlib
+import importlib.metadata
+import json
+import os
+from pathlib import Path
+import shutil
+import sys
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repo", type=Path, required=True)
+    parser.add_argument("--work", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--all-modes", action="store_true")
+    args = parser.parse_args()
+    repo, work = args.repo.resolve(), args.work.resolve()
+    if work == repo or repo in work.parents:
+        raise ValueError("Use a private work directory outside the checkout")
+    work.mkdir(parents=True, exist_ok=True)
+    marker = work / ".F1_SYNTHETIC_ONLY"
+    if not marker.exists() and any(work.iterdir()):
+        raise ValueError("Refuse an existing unmarked work directory")
+    marker.write_text("B21R F1 private synthetic input directory\n")
+    common = work / "common"
+    common.mkdir(exist_ok=True)
+    sys.path[:0] = [str(repo / "qlab"), str(repo)]
+    from qlab.dynamic_factor import pipeline, statistics
+    from qlab.dynamic_factor.conventions import load_conventions
+    from qlab.dynamic_factor.harness_helpers import fixture_ledger
+    from qlab.dynamic_factor.authority_ledger import AuthorityLedger, FIXTURES
+
+    policy = load_conventions()
+    cases = []
+    network_events = []
+    def network_observer(event, values):
+        if event in {"socket.connect", "socket.bind", "socket.getaddrinfo"}:
+            network_events.append(dict(event=event, arguments=repr(values)))
+    sys.addaudithook(network_observer)
+    modes = ("omitted", "request-null", "request-valid", "keyword-null", "keyword-valid") if args.all_modes else ("omitted",)
+    for kind in ("sqlite-positive", "sqlite-corrupt-anchor", "archive-v2"):
+        for entry in ("dsr_eval", "evaluate", "_n_snapshot"):
+            for mode in modes:
+                for p in common.iterdir():
+                    if p.is_symlink() or not p.is_file():
+                        raise ValueError("Unexpected object in private common directory")
+                    p.unlink()
+                if kind.startswith("sqlite"):
+                    ledger = fixture_ledger(common / "same.sqlite", policy)
+                    if kind == "sqlite-corrupt-anchor":
+                        (common / "same.sqlite.unit-tip.json").write_bytes(b"{}\n")
+                else:
+                    shutil.copyfile(FIXTURES / "EVO891-B-ledger-v2.jsonl", common / "same.jsonl")
+                    shutil.copyfile(FIXTURES / "EVO891-B-ledger-v2.tip.json", common / "same.tip.json")
+                    ledger = AuthorityLedger(common / "same.jsonl", common / "same.tip.json")
+                request, kwargs = {}, {}
+                if mode.startswith("request-"):
+                    request["arm_tag"] = None if mode.endswith("null") else "EVO883_FACTOR"
+                if mode.startswith("keyword-"):
+                    kwargs["arm_tag"] = None if mode.endswith("null") else "EVO883_FACTOR"
+                def hashes():
+                    return {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(common.iterdir()) if p.is_file()}
+                before = hashes()
+                saved = work / "inputs" / (kind + "_" + entry + "_" + mode)
+                saved.mkdir(parents=True, exist_ok=True)
+                for p in common.iterdir():
+                    if p.is_file():
+                        shutil.copyfile(p, saved / p.name)
+                observed = {}
+                def profile(frame, event, value):
+                    if event == "call" and frame.f_code.co_name in {"observe_self_report_n", "_append", "arm_snapshot", "arm_readout", "readout", "project"}:
+                        key = Path(frame.f_code.co_filename).name + ":" + frame.f_code.co_name
+                        observed[key] = observed.get(key, 0) + 1
+                input_record = dict(kind=kind, entry=entry, mode=mode, request=request, kwargs=kwargs,
+                                    self_report_n=1313, policy_sha=policy.raw_sha256, initial_file_sha256=before)
+                sys.setprofile(profile)
+                try:
+                    if entry == "dsr_eval":
+                        result = statistics.dsr_eval(request, ledger, conventions=policy, **kwargs)
+                    elif entry == "evaluate":
+                        result = pipeline.evaluate(request, ledger, policy, **kwargs)
+                    else:
+                        result = pipeline._n_snapshot(ledger, 1313, policy, **kwargs)
+                    output = dict(returned=result)
+                except Exception as exc:
+                    output = dict(raised=type(exc).__name__, message=str(exc))
+                finally:
+                    sys.setprofile(None)
+                final_files = hashes()
+                final_saved = work / "after" / (kind + "_" + entry + "_" + mode)
+                final_saved.mkdir(parents=True, exist_ok=True)
+                for p in common.iterdir():
+                    if p.is_file():
+                        shutil.copyfile(p, final_saved / p.name)
+                cases.append(dict(input=input_record, output=output,
+                                  observation=dict(calls=observed, final_file_sha256=final_files)))
+                connection = getattr(ledger, "db", None)
+                if connection is not None and hasattr(connection, "close"):
+                    connection.close()
+    deps = {}
+    for name in ("jsonschema", "numpy", "referencing", "rpds-py"):
+        try:
+            deps[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            deps[name] = None
+    result = dict(python=sys.version, version_info=list(sys.version_info), executable=sys.executable,
+                  policy_sha=policy.raw_sha256, dependencies=deps, cases=cases,
+                  network_events=network_events, production_writes=0,
+                  note="Unfiltered outputs; observed baseline self-report writes affect private synthetic fixtures only")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
+    print(json.dumps(dict(output=str(args.output), cases=len(cases), network_events=len(network_events))))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,22 @@
+{
+  "run_factor_compat_comparison.py.fixture": {
+    "upstream_filename": "run_factor_compat_comparison.py",
+    "bytes": 8907,
+    "sha256": "59580b273fad7b836c3db017c1a076bb3f0594da532dd1b93f5e1a72dba4c7e0"
+  },
+  "factor_compat_probe.py.fixture": {
+    "upstream_filename": "factor_compat_probe.py",
+    "bytes": 6680,
+    "sha256": "56b3487a04ef69d4882ebfc06c0c376e39add5f73a0765d830cc7e81aca69af5"
+  },
+  "bisect_factor_compat.py.fixture": {
+    "upstream_filename": "bisect_factor_compat.py",
+    "bytes": 2353,
+    "sha256": "1e9d23cc82a9965b6b247a0e925febe2bf4ca19db7c2cb555e5e330a719d10d7"
+  },
+  "f1-location-offline.sb": {
+    "upstream_filename": "f1-location-offline.sb",
+    "bytes": 44,
+    "sha256": "5c358b8d847211333e7ba22df82d84f796b5f30a41a2682209a949d783adbd08"
+  }
+}

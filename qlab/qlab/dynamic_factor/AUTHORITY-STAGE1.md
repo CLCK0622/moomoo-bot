@@ -69,3 +69,32 @@ isolated subprocess binding refusal (reader calls 0, roles empty). Historical
 proof material is preserved; its corrected design-verifier citation is
 `verify.py:40` (not `:33`). Live authority/permission/deployment inputs remain
 external prerequisites and are not synthesized by this implementation.
+
+## Frozen D public diagnostics and C6
+
+`EVO897-ARMTAG-D-SCOPE-v1.0.0` (`35b8b4fb…96b2`) preserves three omitted-label
+public entries: `dsr_eval`, `pipeline.evaluate`, and `run_train_pipeline` in the
+original frozen domain. `_n_snapshot` remains formal: missing identity refuses
+before ledger reads, observations, writes or consumers; no virtual hash exists.
+
+For a noncanonical archive only, the public diagnostic route uses
+`historical_authority.historical_diagnostic_snapshot`. It reconstructs the
+complete frozen D input record from verified rows and the explicit historical
+v4 cut. The old field names `current_published_anchor` and `is_current_authority`
+describe that historical cut, not a live installation. This record never enters
+N01/N02/N03 or the current loader. Canonical project objects cannot use it.
+
+The current `AuthorityLedger.snapshot` remains unchanged: a copied archive has
+`current_published_anchor=null`, an explicitly historical anchor, and no current
+authority. The opaque host view and formal adapters retain their existing
+verification. This separates a frozen diagnostic input schema from a current
+authority snapshot without dropping fields from the current object. Every
+diagnostic input hash is computed from its complete actual preimage; no
+constant hash, excluded input_sha256, default arm or old write is introduced.
+
+`test_c6_public_compatibility.py` retains full baseline-98cd snapshots/reports,
+uses the supplied original comparison function, and checks all three entries,
+including training's frozen refusal. Only D's two source identity paths are
+separated; raw reports/diffs and full input preimages remain available. Further
+tests reject historical fallback on the canonical project, keep copied archives
+out of formal N, and retain the helper's zero-operation refusal.
