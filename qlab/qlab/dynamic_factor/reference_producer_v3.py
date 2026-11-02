@@ -225,7 +225,9 @@ def main(mechanisms=None):
     return 2
 
 
-def result_main(expected_sha256, expected_program_sha256, expected_reads):
+def result_main(
+    expected_sha256, expected_program_sha256, expected_reads, expected_facts_sha256=None
+):
     """Recompute a bound fact program with the same cores inside the worker."""
     from .execution_receipts.input_data import strict_json
     from .execution_receipts.reference_result import check_transport, read_observation
@@ -233,11 +235,21 @@ def result_main(expected_sha256, expected_program_sha256, expected_reads):
     from .reference_execution import replay_execution
     from .conventions import load_conventions
     from .contract import digest
+    from .execution_receipts.input_facts import bind_program
 
     policy = load_conventions()
     reads = install_result(expected_reads)
     try:
         program = strict_json(input())
+        binding = None
+        if expected_facts_sha256 is not None:
+            if type(program) is not dict or set(program) != {"program", "facts"}:
+                raise ValueError("reference.closed_bound_program_required")
+            facts = program["facts"]
+            if digest(facts) != expected_facts_sha256:
+                raise ValueError("reference.worker_facts_binding_mismatch")
+            program = program["program"]
+            binding = bind_program(program, facts)
         if digest(program) != expected_program_sha256:
             raise ValueError("reference.worker_program_binding_mismatch")
         observation = replay_execution(program, policy)
@@ -255,6 +267,8 @@ def result_main(expected_sha256, expected_program_sha256, expected_reads):
             runtime_consumable=False,
             certifiable=False,
         )
+        if binding is not None:
+            report["input_fact_binding"] = binding
         print(json.dumps(report, sort_keys=True, allow_nan=False))
         return 0
     except (ValueError, KeyError, TypeError, AttributeError) as exc:

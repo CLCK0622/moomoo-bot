@@ -28,6 +28,7 @@ MODULES = {
         "execution_receipts.input_reader",
         "execution_receipts.reference_result",
         "execution_receipts.replay_guard",
+        "execution_receipts.input_facts",
         "reference_execution",
         "conventions",
         "contract",
@@ -72,6 +73,7 @@ def static_proof():
         "execution_receipts.input_reader",
         "execution_receipts.reference_result",
         "execution_receipts.replay_guard",
+        "execution_receipts.input_facts",
         "reference_execution",
         "conventions",
         "contract",
@@ -209,6 +211,7 @@ def static_proof():
                 not in {
                     "execution_receipts.reference_result",
                     "execution_receipts.replay_guard",
+                    "execution_receipts.input_facts",
                     "reference_execution",
                     "conventions",
                     "contract",
@@ -232,6 +235,7 @@ def static_proof():
                     "execution_receipts.input_data",
                     "execution_receipts.reference_result",
                     "execution_receipts.replay_guard",
+                    "execution_receipts.input_facts",
                     "reference_execution",
                     "conventions",
                     "contract",
@@ -277,6 +281,29 @@ EXECUTION_MODULES = {
         "contract",
         "input_envelope",
     },
+    "execution_receipts.input_facts": {
+        "copy",
+        "json",
+        "weakref",
+        "contract",
+        "execution_numbers",
+        "reference_validation",
+        "input_data",
+        "input_run",
+        "input_envelope",
+        "reference_boundary",
+    },
+    "execution_receipts.p4p7": {
+        "copy",
+        "json",
+        "weakref",
+        "contract",
+        "input_facts",
+        "reference_result",
+        "n_binding",
+        "input_data",
+        "reference_boundary",
+    },
     "execution_receipts.input_envelope": {
         "copy",
         "datetime",
@@ -311,6 +338,7 @@ EXECUTION_MODULES = {
     "reference_execution": {
         "copy",
         "contract",
+        "execution_numbers",
         "execution_accounting",
         "execution_candidate",
         "execution_returns",
@@ -416,7 +444,20 @@ def execution_proof():
             if (
                 name == "execution_receipts.input_run"
                 and isinstance(statement, ast.Assign)
-                and ast.unparse(statement) == "_RUNS = WeakKeyDictionary()"
+                and ast.unparse(statement)
+                in {"_RUNS = WeakKeyDictionary()", "_CONTEXTS = WeakKeyDictionary()"}
+            ):
+                continue
+            if (
+                name == "execution_receipts.input_facts"
+                and isinstance(statement, ast.Assign)
+                and ast.unparse(statement) == "_READS = WeakKeyDictionary()"
+            ):
+                continue
+            if (
+                name == "execution_receipts.p4p7"
+                and isinstance(statement, ast.Assign)
+                and ast.unparse(statement) == "_SIDECARS = WeakKeyDictionary()"
             ):
                 continue
             if isinstance(statement, ast.Assign):

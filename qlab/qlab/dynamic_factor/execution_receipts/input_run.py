@@ -9,6 +9,7 @@ from .input_envelope import prepare_input_envelope
 
 
 _RUNS = WeakKeyDictionary()
+_CONTEXTS = WeakKeyDictionary()
 
 
 class InputPreparation:
@@ -31,6 +32,7 @@ def prepare(profile, scope, manifest, **expected):
     binding.update(request_sha256=digest(request), manifest_sha256=digest(manifest))
     run = object.__new__(InputPreparation)
     _RUNS[run] = (deepcopy(request), deepcopy(binding))
+    _CONTEXTS[run] = (deepcopy(profile), deepcopy(scope))
     return run
 
 
@@ -38,3 +40,8 @@ def read_preparation(run):
     if type(run) is not InputPreparation or run not in _RUNS:
         raise ValueError("execution_input.host_preparation_required")
     return deepcopy(_RUNS[run])
+
+
+def read_context(run):
+    read_preparation(run)
+    return deepcopy(_CONTEXTS[run])

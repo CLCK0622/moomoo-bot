@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EVO884.ReferenceP4P7Sidecar/v1 (pending engineering evidence)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "run_id", "book_id", "scope", "input_manifest_sha256", "input_facts_sha256", "program_sha256", "observation_sha256", "P4", "P7", "series", "source_receipt_identities", "source_reception", "permission_reception", "B_catalog_release_sha256", "seal_status", "execution_verified", "complete", "runtime_consumable", "certifiable"],
+  "properties": {
+    "schema": {"const": "EVO884.ReferenceP4P7Sidecar/v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "book_id": {"$ref": "#/$defs/sha"},
+    "scope": {"type": "object"},
+    "input_manifest_sha256": {"$ref": "#/$defs/sha"},
+    "input_facts_sha256": {"$ref": "#/$defs/sha"},
+    "program_sha256": {"$ref": "#/$defs/sha"},
+    "observation_sha256": {"$ref": "#/$defs/sha"},
+    "P4": {
+      "type": "object", "additionalProperties": false,
+      "required": ["input_fact_binding", "actual_DAG", "actual_events", "worker_role", "worker_execution_steps", "source_proof_sha256", "source_acceptance"],
+      "properties": {
+        "input_fact_binding": {"type": "object"},
+        "actual_DAG": {"type": "object"},
+        "actual_events": {"type": "array"},
+        "worker_role": {"const": "reference_diagnostic_execution"},
+        "worker_execution_steps": {"type": "integer", "minimum": 1},
+        "source_proof_sha256": {"$ref": "#/$defs/sha"},
+        "source_acceptance": {"const": "not_checked"}
+      }
+    },
+    "P7": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reader_receipt", "attempt", "configuration_sha256", "complete_N", "reasons"],
+      "properties": {
+        "reader_receipt": {"type": "object"},
+        "attempt": {"type": ["object", "null"]},
+        "configuration_sha256": {"$ref": "#/$defs/sha"},
+        "complete_N": {"type": ["integer", "null"], "minimum": 1},
+        "reasons": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "series": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dates", "n_observations", "active_series_sha256", "active_series_raw", "scale_daily", "return_receipt_sha256", "benchmark_sha256"],
+      "properties": {
+        "dates": {"type": "array", "minItems": 1260, "maxItems": 1260, "items": {"type": "string"}},
+        "n_observations": {"const": 1260},
+        "active_series_sha256": {"$ref": "#/$defs/sha"},
+        "active_series_raw": {"type": "string", "minLength": 1},
+        "scale_daily": {"const": true},
+        "return_receipt_sha256": {"$ref": "#/$defs/sha"},
+        "benchmark_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "source_receipt_identities": {
+      "type": "object", "additionalProperties": false,
+      "required": ["raw", "rights", "adv", "cash"],
+      "properties": {
+        "raw": {"$ref": "#/$defs/sha"}, "rights": {"$ref": "#/$defs/sha"},
+        "adv": {"$ref": "#/$defs/sha"}, "cash": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "source_reception": {"type": "null"},
+    "permission_reception": {"type": "null"},
+    "B_catalog_release_sha256": {"type": "null"},
+    "seal_status": {"const": "seal_pending"},
+    "execution_verified": {"const": false},
+    "complete": {"const": false},
+    "runtime_consumable": {"const": false},
+    "certifiable": {"const": false}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

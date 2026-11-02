@@ -13,6 +13,7 @@ from .execution_candidate import close_execution_day
 from .execution_returns import TrainingReturns
 from .execution_risk_history import RiskHistory
 from .execution_startup import StartupBook
+from .execution_numbers import amount
 from .reference_definition_v301 import member_definition
 from .reference_profile_v301 import solo_profile
 from .execution_receipts.reference_result import issue_observation
@@ -222,6 +223,18 @@ class ReferenceExecution:
             )
         )
         if pending_startup:
+            valuation = startup_valuation["valuation"]
+            proof = self.history._book._cash_proof
+            if (
+                type(valuation) is not dict
+                or set(valuation)
+                != {"rights_value", "receivables_value", "components_known"}
+                or valuation["components_known"] is not True
+                or amount(valuation["rights_value"]) != 0
+                or proof is None
+                or amount(valuation["receivables_value"]) != proof.value
+            ):
+                raise ValueError("reference.startup_valuation_not_from_same_account")
             self.startup.close_session(
                 evidence["asof"],
                 startup_valuation["raw_close"],
@@ -247,6 +260,35 @@ class ReferenceExecution:
             benchmark=benchmark,
             expected_benchmark_sha256=expected_benchmark_sha256,
         )
+
+    def cash_event(self, role, event, *, session, asof):
+        """Pass original file events to the sole C04 reader, without rewriting."""
+        if role == "rights":
+            out = self.account.record_unknown_right(
+                event, expected_event_sha256=digest(event)
+            )
+        elif role == "cash" and event.get("kind") == "cash_dividend":
+            out = self.account.record_cash_events(
+                [event], session=session, expected_event_sha256=[digest(event)]
+            )
+        elif role == "cash" and event.get("kind") == "cash_available":
+            out = self.account.settle_cash(
+                event, expected_event_sha256=digest(event), asof=asof
+            )
+        else:
+            raise ValueError("reference.original_event_kind_required")
+        self._events.append(
+            dict(operation="C04_ORIGINAL_EVENT", input_sha256=digest(event))
+        )
+        self._program.append(
+            dict(
+                operation="cash_event",
+                arguments=dict(
+                    role=role, event=deepcopy(event), session=session, asof=asof
+                ),
+            )
+        )
+        return out
 
 
 def replay_execution(program, policy):
@@ -282,6 +324,8 @@ def replay_execution(program, policy):
             execution.model_open(**arguments)
         elif operation == "close":
             execution.close(**arguments)
+        elif operation == "cash_event":
+            execution.cash_event(**arguments)
         else:
             raise ValueError("reference.execution_operation_not_whitelisted")
     return execution.observe(

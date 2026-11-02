@@ -223,7 +223,7 @@ def prepare_execution_inputs(profile, scope, manifest, **expected):
     return prepare(profile, scope, manifest, **expected)
 
 
-def run_execution_result(observation):
+def run_execution_result(observation, *, input_read=None):
     """A separate nonempty diagnostic channel; old preparation stays empty.
 
     No JSON result, current candidate/meta output or evaluator is accepted.
@@ -237,6 +237,12 @@ def run_execution_result(observation):
 
     document, expected_sha256 = read_observation(observation)
     program, expected_program_sha256 = read_program(observation)
+    facts = binding = None
+    if input_read is not None:
+        from .execution_receipts.input_facts import read_facts, bind_program
+
+        facts, facts_sha256 = read_facts(input_read)
+        binding = bind_program(program, facts)
     proof = reference_execution_proof(load_conventions())
     source_root = Path(__file__).parent
     expected_reads = {
@@ -254,11 +260,15 @@ def run_execution_result(observation):
         + repr(expected_program_sha256)
         + ","
         + repr(expected_reads)
+        + ("," + repr(facts_sha256) if facts is not None else "")
         + "))"
     )
     child = subprocess.run(
         [sys.executable, "-I", "-S", "-c", bootstrap],
-        input=canonical(program).decode() + "\n",
+        input=canonical(
+            dict(program=program, facts=facts) if facts is not None else program
+        ).decode()
+        + "\n",
         capture_output=True,
         text=True,
         env={},
@@ -287,6 +297,8 @@ def run_execution_result(observation):
         runtime_consumable=False,
         certifiable=False,
     )
+    if binding is not None:
+        expected["input_fact_binding"] = binding
     if (
         canonical(report) != canonical(expected)
         or type(report["protocol_read_paths"]) is not list
@@ -301,7 +313,14 @@ def run_execution_result(observation):
     return report
 
 
-def run_execution_family(observations):
+def read_execution_inputs(root, preparation):
+    """Owned four-file read; diagnostic only, not SRC/AUTH permission."""
+    from .execution_receipts.input_facts import read_files
+
+    return read_files(root, preparation)
+
+
+def run_execution_family(observations, *, input_reads=None):
     """Closed four-member family; bind the entire batch before any child."""
     from .execution_receipts.reference_result import read_observation
     from .reference_registry_v3 import DISPATCH
@@ -330,7 +349,25 @@ def run_execution_family(observations):
         )
     ):
         raise ValueError("reference.separate_books_same_family_binding_required")
-    outputs = {m: run_execution_result(observations[m]) for m in sorted(DISPATCH)}
+    if input_reads is not None:
+        from .execution_receipts.input_facts import read_facts, bind_program
+        from .execution_receipts.reference_result import read_program
+
+        if type(input_reads) is not dict or set(input_reads) != set(DISPATCH):
+            raise ValueError("reference.closed_four_owned_input_reads_required")
+        # Preflight every member before the first result child. A missing or
+        # foreign read capability cannot silently take the diagnostic fallback.
+        for member in sorted(DISPATCH):
+            bind_program(
+                read_program(observations[member])[0],
+                read_facts(input_reads[member])[0],
+            )
+    outputs = {
+        m: run_execution_result(observations[m], input_read=input_reads[m])
+        if input_reads is not None
+        else run_execution_result(observations[m])
+        for m in sorted(DISPATCH)
+    }
     return dict(
         schema="EVO884.ReferenceExecutionFamily/v1",
         run_id=first["run_id"],

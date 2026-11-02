@@ -758,9 +758,19 @@ def reference_execution_proof(policy):
     return dict(
         schema="EVO884.ReferenceExecutionScope/v1",
         C09_C10=extension,
+        C09_component_readers={
+            name: [r for r in extension["reader_sites"] if r["module"] == name]
+            for name in sorted(extension["source_files"])
+        },
+        C09_numeric_input_files=["raw.json", "rights.json", "adv.json", "cash.json"],
+        C09_fixed_input_files=[
+            {k: row[k] for k in ("module", "path", "sha256")}
+            for row in extension["reader_sites"]
+            if "path" in row
+        ],
         shared_execution_source_sha256=inherited["source_sha256"],
         shared_fixed_reads=inherited["C13_registered_fixed_reads"],
-        coverage_boundary="new orchestration has no economic file readers; replay metadata files are individually registered, and the shared core retains its separately inspected original mechanisms",
+        coverage_boundary="C09 four-file reader is separately registered before fact binding; the result worker consumes only the exact owned read facts and common-engine program, with individually registered metadata files; old component entries retain their original meanings",
         seal_status="seal_pending",
         runtime_consumable=False,
     )

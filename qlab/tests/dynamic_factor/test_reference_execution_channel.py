@@ -178,6 +178,297 @@ def worker_family(owned_references):
     return run_execution_family({m: cap for m, (_, cap) in owned_references.items()})
 
 
+@pytest.fixture(scope="module")
+def bound_reference(owned_references, tmp_path_factory):
+    from reference_fact_helpers import four_file_program
+    from qlab.dynamic_factor.conventions import load_conventions
+
+    _, original = owned_references["CREF-F1-L020"]
+    program, read, facts = four_file_program(
+        tmp_path_factory.mktemp("four-files"), read_program(original)[0]
+    )
+    cap = replay_execution(program, load_conventions())
+    return cap, read, facts
+
+
+def test_C09_unowned_input_read_refuses_before_child(bound_reference, monkeypatch):
+    from qlab.dynamic_factor.execution_receipts.input_facts import InputRead
+
+    cap, _, facts = bound_reference
+    calls = []
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: calls.append(a))
+    for wire in (facts, object.__new__(InputRead)):
+        with pytest.raises(ValueError, match="owned_four_file_read_required"):
+            run_execution_result(cap, input_read=wire)
+    with pytest.raises(TypeError, match="owned_four_file_read_required"):
+        InputRead()
+    assert calls == []
+
+
+def test_C09_actual_worker_rejects_substituted_read_facts(
+    bound_reference, monkeypatch, record_property
+):
+    import qlab.dynamic_factor.reference_boundary as boundary
+
+    cap, read, _ = bound_reference
+    original, seen = subprocess.run, []
+
+    def child(*a, **kw):
+        wire = json.loads(kw["input"])
+        wire["facts"]["data"]["raw"]["records"][0]["values"]["raw_open"] = "999"
+        kw["input"] = json.dumps(wire) + "\n"
+        out = original(*a, **kw)
+        result = json.loads(out.stdout)
+        assert out.returncode == 2
+        assert result["reason"] == "reference.worker_facts_binding_mismatch"
+        assert result["returns"] is None and result["reader_calls"] == 0
+        seen.append(result)
+        return out
+
+    monkeypatch.setattr(boundary.subprocess, "run", child)
+    with pytest.raises(ValueError, match="worker_facts_binding_mismatch"):
+        boundary.run_execution_result(cap, input_read=read)
+    assert len(seen) == 1
+    record_property(
+        "C09_changed_fact_worker_actual", json.dumps(seen[0], sort_keys=True)
+    )
+
+
+def test_C09_original_right_passes_to_C04_without_emptying_declaration():
+    reference = born()
+    event = dict(
+        symbol="QQQ",
+        kind="split",
+        ratio=None,
+        source_sha256=digest("SYNTHETIC ORIGINAL"),
+    )
+    date = reference.series._dates[0]
+    result = reference.cash_event(
+        "rights", event, session=date, asof=date + "T14:30:00Z"
+    )
+    assert result["retained_state"]["rights"][digest(event)] == event
+    assert result["NAV"] is result["cash"] is None
+    assert result["complete"] is False
+    assert reference._program[-1]["arguments"]["event"] == event
+
+
+def test_C10_startup_cannot_inject_unearned_valuation():
+    reference = born()
+    d = reference.series._dates[0]
+    facts = dict(
+        timestamp=d + "T14:30:00Z", raw_open=100, source_sha256=digest("SYNTHETIC")
+    )
+    reference.startup_open(**facts, expected_input_sha256=digest(facts))
+    opening = dict(
+        session=d,
+        asof=facts["timestamp"],
+        prices={"QQQ": "100"},
+        source_sha256=facts["source_sha256"],
+        price_kind="verified_tradable_raw_open",
+        origins=model_origins(reference.account),
+    )
+    reference.model_open(opening, expected_evidence_sha256=digest(opening))
+    close = dict(
+        session=d,
+        asof=d + "T20:00:00Z",
+        prices={"QQQ": "100"},
+        source_sha256=facts["source_sha256"],
+        price_kind="verified_raw_close",
+        rights_complete=True,
+        cash_events_complete=True,
+        execution_outcomes={
+            key: dict(
+                filled_quantity=row["filled"],
+                status="verified_DAY_closed",
+                source_sha256=digest("SYNTHETIC DAY"),
+            )
+            for key, row in reference.account.intent()["orders"].items()
+        },
+    )
+    with pytest.raises(ValueError, match="startup_valuation_not_from_same_account"):
+        reference.close(
+            close,
+            expected_evidence_sha256=digest(close),
+            startup_valuation=dict(
+                raw_close=100,
+                valuation=dict(
+                    rights_value=0, receivables_value=1, components_known=True
+                ),
+            ),
+        )
+    assert reference.startup.snapshot()["startup_complete"] is False
+
+
+def test_C09_C10_actual_read_facts_bind_before_real_worker_replay(
+    bound_reference, record_property
+):
+    cap, read, facts = bound_reference
+    report = run_execution_result(cap, input_read=read)
+    binding = report["input_fact_binding"]
+    assert binding["facts_sha256"] == digest(facts)
+    assert binding["program_sha256"] == read_program(cap)[1]
+    assert binding["original_reader_calls"] == 4
+    assert binding["original_read_roles"] == ["raw", "rights", "adv", "cash"]
+    assert len(binding["fact_cells"]) > 1260 * 3
+    assert len(report["observation"]["returns"]) == 1260
+    assert report["observation"]["execution_verified"] is False
+    assert report["seal_status"] == "seal_pending"
+    record_property(
+        "C09_bound_worker_actual",
+        json.dumps(
+            dict(
+                binding=binding,
+                worker=report["worker_role"],
+                replay_steps=report["execution_steps"],
+            ),
+            sort_keys=True,
+        ),
+    )
+
+
+@pytest.mark.parametrize(
+    "attack",
+    [
+        "price",
+        "ADV",
+        "event",
+        "unknown",
+        "future",
+        "date",
+        "scope",
+        "book",
+        "run",
+        "raw_source",
+    ],
+)
+def test_C09_fact_rebinding_or_omission_refuses_before_replay(
+    bound_reference, monkeypatch, attack, record_property
+):
+    from qlab.dynamic_factor.execution_receipts import input_facts
+    from qlab.dynamic_factor.execution_receipts import reference_result
+
+    cap, read, original = bound_reference
+    p, facts = read_program(cap)[0], deepcopy(original)
+    role = "raw"
+    if attack == "price":
+        facts["data"][role]["records"][0]["values"]["raw_open"] = "101"
+    elif attack == "ADV":
+        first = next(e for e in p["operations"] if e["operation"] == "lock_projection")
+        date = first["arguments"]["inputs"]["close_state"]["signal_close_session"]
+        next(r for r in facts["data"]["adv"]["records"] if r["date"] == date)["values"][
+            "adv20_dollar"
+        ] = "1"
+    elif attack == "event":
+        from qlab.dynamic_factor.contract import sha256
+
+        raw = '{"symbol":"QQQ","kind":"cash_available"}'
+        facts["data"]["cash"]["records"][0]["values"]["cash_events"] = [
+            dict(raw=raw, sha256=sha256(raw.encode()))
+        ]
+    elif attack == "unknown":
+        facts["data"][role]["records"][0]["values"]["raw_close"] = None
+    elif attack == "future":
+        facts["data"][role]["records"][0]["available_at"] = "2099-01-01T00:00:00Z"
+    elif attack == "date":
+        facts["data"][role]["records"].pop()
+    elif attack == "scope":
+        e = next(e for e in p["operations"] if e["operation"] == "lock_projection")
+        e["arguments"]["inputs"]["eligibility"]["E_t"] = []
+    elif attack == "book":
+        p["initial"]["history"]["book_id"] = digest("other book")
+    elif attack == "run":
+        p["initial"]["run_id"] = "other run"
+    else:
+        p["operations"][0]["arguments"]["source_sha256"] = digest("different source")
+    # Bypass only the ownership hash in this semantic-guard mutation. Both
+    # documents still pass their closed transport schema; use the public host
+    # path to prove rejection before it creates a child or replays the engine.
+    expected = {
+        "price": "reference.execution_price_not_from_read",
+        "ADV": "reference.execution_ADV_not_from_read",
+        "event": "reference.unprocessed_original_event",
+        "unknown": "reference.execution_cell_unknown",
+        "future": "reference.execution_cell_not_yet_available",
+        "date": "execution_input.exact_declared_date_symbol_batch_required",
+        "scope": "reference.execution_E_t_not_from_scope",
+        "book": "reference.input_execution_identity_mismatch",
+        "run": "reference.input_execution_identity_mismatch",
+        "raw_source": "reference.execution_raw_source_mismatch",
+    }[attack]
+    calls = []
+    monkeypatch.setattr(input_facts, "read_facts", lambda _: (facts, digest(facts)))
+    monkeypatch.setattr(reference_result, "read_program", lambda _: (p, digest(p)))
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: calls.append(a))
+    with pytest.raises(ValueError) as exc:
+        run_execution_result(cap, input_read=read)
+    assert str(exc.value) == expected
+    assert calls == []
+    record_property(
+        "C09_fact_refusal_actual",
+        json.dumps(
+            dict(attack=attack, reason=str(exc.value), worker_calls=0), sort_keys=True
+        ),
+    )
+
+
+def test_C09_P4_P7_sidecar_retains_unaccepted_N_and_sources(
+    bound_reference, record_property
+):
+    from qlab.dynamic_factor.execution_receipts.p4p7 import read_sidecar
+    from qlab.dynamic_factor.reference_v3_evidence import (
+        prepare_execution_sidecar as prepare_sidecar,
+        receive_execution_sidecar as receive_sidecar,
+    )
+    from qlab.dynamic_factor.execution_receipts.n_binding import stage_budget_mapping
+
+    cap, read, _ = bound_reference
+    doc = read_observation(cap)[0]
+    n = dict(
+        host_context=None,
+        installed_snapshot=None,
+        run_pin=None,
+        traces=[],
+        expected_run_ids=[doc["run_id"]],
+        stage_mapping=stage_budget_mapping(
+            stage="independent_reference",
+            producer_id="SYNTHETIC-DIAGNOSTIC",
+            run_id=doc["run_id"],
+        ),
+    )
+    sidecar = prepare_sidecar(cap, read, n_binding=n)
+    actual, identity = read_sidecar(sidecar)
+    from jsonschema import validate
+    from qlab.dynamic_factor.execution_receipts import p4p7
+
+    validate(
+        actual,
+        json.loads(
+            (
+                Path(p4p7.__file__).parent / "schemas/reference-p4p7.schema.json"
+            ).read_bytes()
+        ),
+    )
+    assert actual["P4"]["input_fact_binding"]["original_reader_calls"] == 4
+    assert actual["P7"]["complete_N"] is None and actual["P7"]["reasons"]
+    assert actual["source_reception"] is actual["permission_reception"] is None
+    assert actual["series"]["active_series_sha256"] == digest(doc["returns"])
+    assert actual["input_manifest_sha256"] != actual["series"]["active_series_sha256"]
+    out = receive_sidecar(sidecar)
+    assert out["sidecar_sha256"] == identity
+    assert out["reasons"] == ["reference.seal_pending"]
+    assert out["returns"] is out["formal_N"] is None
+    assert out["reader_calls"] == out["worker_calls"] == 0
+    actual["seal_status"] = "sealed"
+    actual["source_reception"] = {"accepted": True}
+    assert receive_sidecar(actual)["reasons"] == ["reference.owned_P4_P7_required"]
+    record_property(
+        "C09_P4_P7_actual",
+        json.dumps(
+            dict(sidecar=read_sidecar(sidecar)[0], reception=out), sort_keys=True
+        ),
+    )
+
+
 @pytest.mark.parametrize("member", sorted(DISPATCH))
 def test_C10_four_owned_nonempty_results_cross_real_isolated_worker(
     owned_references, worker_family, member, record_property
@@ -239,6 +530,22 @@ def test_C10_whole_family_preserves_independent_roles_books_and_run(worker_famil
         "independent_meta_reference_probe_component",
     }
     assert all(r["observation"]["returns"] for r in out["outputs"].values())
+
+
+@pytest.mark.parametrize("attack", ["missing", "wire"])
+def test_C09_whole_family_missing_or_unowned_reads_never_falls_back(
+    owned_references, monkeypatch, attack
+):
+    caps = {m: cap for m, (_, cap) in owned_references.items()}
+    reads = {} if attack == "missing" else {m: {} for m in caps}
+    calls = []
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: calls.append(a))
+    with pytest.raises(
+        ValueError,
+        match="closed_four_owned_input_reads_required|owned_four_file_read_required",
+    ):
+        run_execution_family(caps, input_reads=reads)
+    assert calls == []
 
 
 @pytest.mark.parametrize("attack", ["subset", "duplicate", "swap"])

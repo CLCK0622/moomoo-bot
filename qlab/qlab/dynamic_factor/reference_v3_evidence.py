@@ -15,6 +15,20 @@ from .reference_registry_v3 import (
 from .fold_split import shared_views, reference_view, train_dates
 
 
+def prepare_execution_sidecar(observation, input_read, *, n_binding):
+    """Collect owned P4/P7 evidence; this never accepts SRC/AUTH or B."""
+    from .execution_receipts.p4p7 import prepare_sidecar
+
+    return prepare_sidecar(observation, input_read, n_binding=n_binding)
+
+
+def receive_execution_sidecar(sidecar):
+    """Formal reception remains fail-closed before any numerical read."""
+    from .execution_receipts.p4p7 import receive_sidecar
+
+    return receive_sidecar(sidecar)
+
+
 def seal_static(scope, sealed_at, policy=None):
     p = policy or load_conventions()
     anchor = artifact("platform-anchor.json")["document"]
