@@ -1,0 +1,26 @@
+{
+  "source_package_sha256": "20d159b6f9f1a54087000c5179151e6b2c0ac23e34186acf6a44afcb2777aaed",
+  "source_comment": "01a199b1-ce27-7d12-9baa-fd0a0e7c1f06",
+  "files": {
+    "run_factor_compat_comparison.py": {
+      "bytes": 11422,
+      "sha256": "40ab99036306ec8a2aa58ce6dcc3ff487d764ffece49d925d0233bff69bae7f6"
+    },
+    "factor_compat_probe.py": {
+      "bytes": 12681,
+      "sha256": "8d6838bc4940a274042a01d8fc7fbf889e125dd7f46388d9559bac2ab4fb6024"
+    },
+    "f1_ready_controls.py": {
+      "bytes": 9298,
+      "sha256": "49aa9145fbd487bbf803337fd5aa88d632e0d2de9501f361b3e13ae7e75422e3"
+    },
+    "f1-location-offline.sb": {
+      "bytes": 44,
+      "sha256": "5c358b8d847211333e7ba22df82d84f796b5f30a41a2682209a949d783adbd08"
+    },
+    "EVO897-ARMTAG-D-SCOPE-v1.0.0.json": {
+      "bytes": 7042,
+      "sha256": "35b8b4fba4f63bc259bea48777b09e4d2bb73cc596be16b300c868a8dbb196b2"
+    }
+  }
+}

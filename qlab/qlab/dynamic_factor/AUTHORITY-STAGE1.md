@@ -98,3 +98,15 @@ including training's frozen refusal. Only D's two source identity paths are
 separated; raw reports/diffs and full input preimages remain available. Further
 tests reject historical fallback on the canonical project, keep copied archives
 out of formal N, and retain the helper's zero-operation refusal.
+
+The fixed peer v2 comparison is retained as byte-preserved fixtures under
+`fixtures/authority-stage1/f1-scope-v2`. The repository regression entry is
+`qlab/tests/dynamic_factor/run_f1_scope_v2.py`. It requires an explicit final
+40-character `--head`, clean source, actual Python 3.9.6 / 3.12.13 executables,
+and private dependency/output directories. It verifies all five original
+file identities, materializes them without editing their bytes, and passes
+the full 98cd/main/final refs plus `--assert-all` to the original driver.
+Thus its demonstration defaults cannot select the old failing head, a missing
+assertion flag cannot turn collection into acceptance, and mislabeled Python
+executables are rejected. Public equality, formal helper refusal and all ready
+controls remain separate observations; no product authority path is added.

@@ -1,0 +1,180 @@
+"""Isolated F1-NO-UPGRADE fixtures: no production capability or file writer."""
+from collections import Counter
+from contextlib import ExitStack
+import inspect
+from types import SimpleNamespace
+from unittest.mock import patch
+
+
+class ConsumerSentinel(RuntimeError):
+    pass
+
+
+def run_controls(pipeline, statistics, policy, repo):
+    from qlab.dynamic_factor import arm_n
+    records = []
+
+    class ReadyLedger:
+        def __init__(self):
+            self.calls = Counter()
+
+        def safe_snapshot(self):
+            self.calls["diagnostic_snapshot"] += 1
+            return dict(genesis={}, events=[], cumulative_n=7, cumulative_n_lower_bound=7,
+                n_complete=True, certifiable=True, n_ledger_hash="a" * 64, reasons=[])
+
+        def arm_readout(self, tag):
+            self.calls["formal_reader"] += 1
+            arm = dict(arm_tag=None if tag is arm_n.MISSING else tag, cumulative_n=7,
+                cumulative_n_lower_bound=7, n_complete=True, certifiable=True,
+                n_ledger_hash="a" * 64, reasons=[],
+                rows=[dict(role="PRIMARY_GATE", observed_N=7, complete_N=7),
+                      dict(role="SENSITIVITY", observed_N=11, complete_N=11)])
+            return dict(metrics=dict(arm_n=arm), reasons=[])
+
+        def recorded(self, key):
+            self.calls["S0_lookup"] += 1
+            return None
+
+        def record(self, *args, **kwargs):
+            self.calls["before_S0_write_sentinel"] += 1
+            raise ConsumerSentinel("before_S0_write")
+
+        def observe_self_report_n(self, *args):
+            self.calls["observer"] += 1
+            raise AssertionError("observer reached")
+
+        def __getattr__(self, name):
+            self.calls["unexpected_access:" + name] += 1
+            raise AssertionError("unexpected_access:" + name)
+
+    def run(name, action, expected):
+        ledger, counts = ReadyLedger(), Counter()
+        try:
+            output = dict(returned=action(ledger, counts))
+        except Exception as exc:
+            output = dict(raised=type(exc).__name__, message=str(exc))
+        checks = expected(output, ledger.calls, counts)
+        records.append(dict(id=name, output=output, ledger_calls=dict(ledger.calls), counts=dict(counts),
+            checks=checks, passed=all(checks.values()), actual_ledger_writes=0))
+
+    original_snapshot = statistics.arm_snapshot
+
+    def helper(tag, mutant=False):
+        def action(ledger, counts):
+            def bound(obj, actual_tag, *args, **kwargs):
+                counts["synthetic_trusted_adapter"] += 1
+                return obj.arm_readout(actual_tag)
+
+            def complete_project(*args, **kwargs):
+                counts["projector"] += 1
+                return ledger.arm_readout(tag)["metrics"]["arm_n"]
+
+            def stop(*args, **kwargs):
+                value = original_snapshot(*args, **kwargs)
+                if value["n_complete"]:
+                    counts["consumer_sentinel"] += 1
+                    raise ConsumerSentinel("before_N_consumer")
+                return value
+
+            with ExitStack() as stack:
+                stack.enter_context(patch.object(arm_n, "project", complete_project))
+                stack.enter_context(patch.object(statistics, "arm_snapshot", stop))
+                if (repo / "qlab/qlab/dynamic_factor/reception_entrypoints_v3.py").is_file():
+                    from qlab.dynamic_factor import reception_entrypoints_v3
+                    stack.enter_context(patch.object(reception_entrypoints_v3, "bound_readout", bound))
+                if mutant:
+                    stack.enter_context(patch.object(statistics, "valid_arm", lambda value: True))
+                kwargs = {} if tag is arm_n.MISSING else dict(arm_tag=tag)
+                return pipeline._n_snapshot(ledger, 1313, policy, **kwargs)
+        return action
+
+    def helper_negative(out, calls, counts):
+        value = out.get("returned", {})
+        return dict(refused=value.get("reasons") == ["arm_n.arm_tag_missing_or_invalid"],
+            incomplete=value.get("n_complete") is False, no_formal_access=not calls and not counts)
+
+    invalid = [("omitted", arm_n.MISSING), ("null", None), ("empty", ""),
+               ("unknown", "UNKNOWN"), ("list", []), ("object", {})]
+    for name, tag in invalid:
+        run("helper.complete_ready." + name, helper(tag), helper_negative)
+    for tag in ("EVO883_FACTOR", "EVO896_LLMCLI"):
+        run("helper.valid_label." + tag, helper(tag), lambda out, calls, counts: dict(
+            sentinel=out == dict(raised="ConsumerSentinel", message="before_N_consumer"),
+            consumer_once=counts["consumer_sentinel"] == 1, formal_reader_once=calls["formal_reader"] == 1,
+            zero_observer=calls["observer"] == 0))
+    run("helper.guard_mutation.detected", helper(arm_n.MISSING, True), lambda out, calls, counts: dict(
+        original_negative_would_fail=not all(helper_negative(out, calls, counts).values()),
+        reached_sentinel=counts["consumer_sentinel"] == 1))
+
+    def diagnostic(entry, mutant=False):
+        def action(ledger, counts):
+            original = statistics.dsr_eval_arm
+            def formal(*args, **kwargs):
+                counts["formal_dispatch"] += 1
+                return original(*args, **kwargs)
+            with ExitStack() as stack:
+                stack.enter_context(patch.object(statistics, "dsr_eval_arm", formal))
+                if mutant:
+                    source = inspect.getsource(statistics.dsr_eval)
+                    assert source.count("if tag is MISSING:") == 1
+                    namespace = dict(statistics.__dict__)
+                    exec(compile(source.replace("if tag is MISSING:", "if False:"),
+                        "<isolated-compat-route-mutation>", "exec"), namespace)
+                    stack.enter_context(patch.object(statistics, "dsr_eval", namespace["dsr_eval"]))
+                return (statistics.dsr_eval({}, ledger) if entry == "dsr_eval"
+                    else pipeline.evaluate({}, ledger, None))
+        return action
+
+    def diagnostic_negative(out, calls, counts):
+        value = out.get("returned", {})
+        metrics = value.get("metrics", {})
+        return dict(no_formal_dispatch=not counts, no_formal_reader=calls["formal_reader"] == 0,
+            no_writer_observer=calls["observer"] == 0 and calls["before_S0_write_sentinel"] == 0,
+            null_formal_values=all(k in metrics and metrics[k] is None for k in ("gate_N", "cumulative_n", "dsr", "trials_variance")),
+            no_upgrade=all(value.get(k) is False for k in ("certifiable", "runtime_consumable")) and metrics.get("passed") is False)
+
+    for entry in ("dsr_eval", "evaluate"):
+        run(entry + ".complete_ready_omitted", diagnostic(entry), diagnostic_negative)
+        run(entry + ".compat_route_mutation.detected", diagnostic(entry, True), lambda out, calls, counts: dict(
+            original_negative_would_fail=not all(diagnostic_negative(out, calls, counts).values()),
+            formal_dispatch_observed=counts["formal_dispatch"] == 1))
+
+    ready_policy = SimpleNamespace(document=dict(runtime_consumable=True,
+        variance_layers=dict(family_definitions=dict(candidate_members=[], meta_members=["meta"]))), binding={})
+
+    def training(tag, mutant=False):
+        def action(ledger, counts):
+            def complete(*args, **kwargs):
+                counts["N_preflight"] += 1
+                return dict(n_complete=True)
+            def forbidden(*args, **kwargs):
+                counts["training_callback"] += 1
+                raise AssertionError("training callback reached")
+            context = dict(fold_id="SYNTHETIC")
+            if tag is not arm_n.MISSING:
+                context["arm_tag"] = tag
+            with ExitStack() as stack:
+                stack.enter_context(patch.object(pipeline, "_n_snapshot", complete))
+                if mutant:
+                    stack.enter_context(patch.object(pipeline, "valid_arm", lambda value: True))
+                return pipeline.run_train_pipeline(policy=ready_policy, ledger=ledger,
+                    run_id="F1_READY_SYNTHETIC", context=context, registry=None, proposals=[],
+                    probe=forbidden, calibrate=forbidden, build_meta=forbidden, self_report_n=1313)
+        return action
+
+    def training_negative(out, calls, counts):
+        return dict(refused=out == dict(returned=dict(candidate=None, meta=None, reason="arm_n.arm_tag_missing_or_invalid")),
+            before_any_access=not calls and not counts)
+
+    for name, tag in invalid:
+        run("training.ready." + name, training(tag), training_negative)
+    for tag in ("EVO883_FACTOR", "EVO896_LLMCLI"):
+        run("training.valid_label." + tag, training(tag), lambda out, calls, counts: dict(
+            sentinel=out == dict(raised="ConsumerSentinel", message="before_S0_write"),
+            before_S0=calls["before_S0_write_sentinel"] == 1,
+            zero_callbacks=counts["training_callback"] == 0, zero_observer=calls["observer"] == 0))
+    run("training.guard_mutation.detected", training(arm_n.MISSING, True), lambda out, calls, counts: dict(
+        original_negative_would_fail=not all(training_negative(out, calls, counts).values()),
+        reached_prewrite_sentinel=calls["before_S0_write_sentinel"] == 1))
+    return records

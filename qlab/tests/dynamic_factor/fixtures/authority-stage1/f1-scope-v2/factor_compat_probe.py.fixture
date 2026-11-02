@@ -1,0 +1,242 @@
+"""F1 scope v2: three frozen public entries, separate formal helper checks.
+
+All data is synthetic and task-private. Frozen training calls must stop before
+ledger access or callbacks. No helper-to-baseline equality assertion remains.
+"""
+import argparse
+from collections import Counter
+import hashlib
+import importlib.metadata
+import inspect
+import json
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+
+BASELINE = "98cd60f9d93dba3e44bd23a76261eaa8c9516d88"
+SCOPE_SHA = "35b8b4fba4f63bc259bea48777b09e4d2bb73cc596be16b300c868a8dbb196b2"
+KINDS = ("sqlite-positive", "sqlite-corrupt-anchor", "archive-v2")
+VERSIONS = ("v1.0.1", "v2.0.0", "v3.0.0")
+PUBLIC = ("dsr_eval", "evaluate", "run_train_pipeline")
+BAD_TAGS = (("omitted",), ("explicit-null", None), ("empty-string", ""),
+            ("unknown-string", "UNKNOWN"), ("ambiguous-object", {}))
+
+
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+
+def hashes(folder):
+    return {p.name: sha(p.read_bytes()) for p in sorted(folder.iterdir()) if p.is_file()}
+
+
+class ReadTrap:
+    """Detect attempted ledger access before identity, without forwarding."""
+    def __init__(self):
+        self.attempts = []
+
+    def __getattr__(self, name):
+        self.attempts.append(name)
+        raise AssertionError("ledger_access_before_identity:" + name)
+
+
+class Monitor:
+    def __init__(self, consumer_codes):
+        self.active = None
+        self.network = []
+        self.consumer_codes = set(consumer_codes)
+        sys.addaudithook(self.audit)
+
+    def audit(self, event, args):
+        if event in {"socket.connect", "socket.bind", "socket.getaddrinfo"}:
+            self.network.append(dict(event=event, arguments=repr(args)))
+        if self.active is not None and event in {"open", "sqlite3.connect"}:
+            name = args[0] if args else None
+            if isinstance(name, str) and str(Path(name).resolve()) in self.active["files"]:
+                self.active["counts"]["physical_ledger_access"] += 1
+
+    def capture(self, call, ledger, files):
+        counts, methods = Counter(), Counter()
+        self.active = dict(counts=counts, files={str(p.resolve()) for p in files})
+        def profile(frame, event, value):
+            if event != "call":
+                return
+            name = frame.f_code.co_name
+            if frame.f_locals.get("self") is ledger:
+                methods[name] += 1
+                if name == "observe_self_report_n":
+                    counts["observer"] += 1
+                elif name in {"_append", "record", "begin", "finish", "declare_family"}:
+                    counts["writer"] += 1
+                else:
+                    counts["ledger_method"] += 1
+            if Path(frame.f_code.co_filename).name == "arm_n.py" and name == "project":
+                counts["formal_projector"] += 1
+            if frame.f_code in self.consumer_codes:
+                counts["consumer"] += 1
+        sys.setprofile(profile)
+        try:
+            output = dict(returned=call(counts))
+        except Exception as exc:
+            output = dict(raised=type(exc).__name__, message=str(exc))
+        finally:
+            sys.setprofile(None)
+            self.active = None
+        activity = dict(ledger_methods=sum(methods.values()),
+            physical_ledger_access=counts["physical_ledger_access"], observer=counts["observer"],
+            writer=counts["writer"], formal_projector=counts["formal_projector"],
+            consumer=counts["consumer"], training_callback=counts["training_callback"])
+        return output, dict(counts=dict(counts), ledger_calls=dict(methods), activity=activity)
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--repo", type=Path, required=True)
+    p.add_argument("--work", type=Path, required=True)
+    p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--historical-baseline", action="store_true")
+    args = p.parse_args()
+    repo, work = args.repo.resolve(), args.work.resolve()
+    if work == repo or repo in work.parents:
+        raise ValueError("Use a private work directory outside the checkout")
+    revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
+    if args.historical_baseline and revision != BASELINE:
+        raise ValueError("Formal exemption is only for the pre-D baseline")
+    work.mkdir(parents=True, exist_ok=True)
+    marker = work / ".F1_SYNTHETIC_ONLY"
+    if not marker.exists() and any(work.iterdir()):
+        raise ValueError("Refuse an existing unmarked work directory")
+    marker.write_text("F1 D-scope private synthetic input directory\n")
+    common = work / "common"
+    common.mkdir(exist_ok=True)
+    sys.path[:0] = [str(repo / "qlab"), str(repo)]
+    from qlab.dynamic_factor import pipeline, statistics
+    from qlab.dynamic_factor.conventions import load_conventions, FIXTURES as POLICY_FIXTURES
+    from qlab.dynamic_factor.harness_helpers import fixture_ledger
+    from qlab.dynamic_factor.authority_ledger import AuthorityLedger, FIXTURES
+    monitor = Monitor(getattr(pipeline, name).__code__ for name in
+        ("_dsr", "_layer", "_reference_variance", "select_pool"))
+
+    def fixture(kind, policy):
+        for item in common.iterdir():
+            if item.is_symlink() or not item.is_file():
+                raise ValueError("Unexpected object in private common directory")
+            item.unlink()
+        if kind.startswith("sqlite"):
+            ledger = fixture_ledger(common / "same.sqlite", policy)
+            if kind == "sqlite-corrupt-anchor":
+                (common / "same.sqlite.unit-tip.json").write_bytes(b"{}\n")
+        else:
+            shutil.copyfile(FIXTURES / "EVO891-B-ledger-v2.jsonl", common / "same.jsonl")
+            shutil.copyfile(FIXTURES / "EVO891-B-ledger-v2.tip.json", common / "same.tip.json")
+            ledger = AuthorityLedger(common / "same.jsonl", common / "same.tip.json")
+        return ledger
+
+    def close(ledger):
+        connection = getattr(ledger, "db", None)
+        if connection is not None and hasattr(connection, "close"):
+            connection.close()
+
+    policies, public = {}, []
+    for version in VERSIONS:
+        policy = load_conventions(POLICY_FIXTURES / ("conventions-" + version + ".json"))
+        assert policy.document["runtime_consumable"] is False
+        policies[version] = policy.raw_sha256
+        for kind in KINDS:
+            for entry in PUBLIC:
+                ledger = fixture(kind, policy)
+                before = hashes(common)
+                def invoke(counts):
+                    if entry == "dsr_eval":
+                        return statistics.dsr_eval({}, ledger, conventions=policy)
+                    if entry == "evaluate":
+                        return pipeline.evaluate({}, ledger, policy)
+                    def forbidden(*args, **kwargs):
+                        counts["training_callback"] += 1
+                        counts["consumer"] += 1
+                        raise AssertionError("frozen training callback reached")
+                    return pipeline.run_train_pipeline(
+                        policy=policy, ledger=ledger, run_id="F1_PUBLIC_FROZEN", context={},
+                        registry=None, proposals=[], probe=forbidden, calibrate=forbidden,
+                        build_meta=forbidden, self_report_n=1313)
+                output, observation = monitor.capture(invoke, ledger, list(common.iterdir()))
+                after = hashes(common)
+                checks = dict(files_unchanged=before == after,
+                    zero_observer=observation["counts"].get("observer", 0) == 0,
+                    zero_writer=observation["counts"].get("writer", 0) == 0,
+                    zero_training_callback=observation["counts"].get("training_callback", 0) == 0)
+                if entry == "run_train_pipeline":
+                    checks.update(frozen_pending=output == dict(returned=dict(candidate=None, meta=None, reason="dsr.runtime_bindings_pending")),
+                                  zero_ledger_access=not observation["ledger_calls"] and not observation["counts"])
+                else:
+                    value = output.get("returned", {})
+                    metrics = value.get("metrics", {})
+                    checks.update(diagnostic_envelope=value.get("schema") == "dynamic_factor.tool/v1",
+                        never_consumable=value.get("runtime_consumable") is False and value.get("certifiable") is False,
+                        null_formal_metrics=all(k in metrics and metrics[k] is None for k in ("gate_N", "dsr", "trials_variance")),
+                        not_passed=metrics.get("passed") is False)
+                public.append(dict(input=dict(version=version, kind=kind, entry=entry, mode="omitted", request={},
+                    context={} if entry == "run_train_pipeline" else None, policy_sha256=policy.raw_sha256,
+                    train_arguments=dict(run_id="F1_PUBLIC_FROZEN", registry=None, proposals=[],
+                        callbacks=["probe:forbidden", "calibrate:forbidden", "build_meta:forbidden"])
+                        if entry == "run_train_pipeline" else None,
+                    self_report_n=1313, initial_file_sha256=before),
+                    output=output, observation=observation, final_file_sha256=after,
+                    checks=checks, passed=all(checks.values())))
+                close(ledger)
+
+    formal, controls = [], []
+    policy = load_conventions(POLICY_FIXTURES / "conventions-v3.0.0.json")
+    if not args.historical_baseline:
+        assert list(inspect.signature(pipeline._n_snapshot).parameters)[2] == "policy"
+        for kind in KINDS:
+            for item in BAD_TAGS:
+                ledger = fixture(kind, policy)
+                before = hashes(common)
+                trap = ReadTrap()
+                kwargs = {} if len(item) == 1 else dict(arm_tag=item[1])
+                output, observation = monitor.capture(
+                    lambda counts: pipeline._n_snapshot(trap, 1313, policy, **kwargs),
+                    trap, list(common.iterdir()))
+                after = hashes(common)
+                value = output.get("returned", {})
+                checks = dict(returned=isinstance(value, dict),
+                    refused=value.get("reasons") == ["arm_n.arm_tag_missing_or_invalid"],
+                    null_fields=all(k in value and value[k] is None for k in ("gate_n", "cumulative_n", "n_ledger_hash")),
+                    incomplete=value.get("n_complete") is False,
+                    zero_ledger_attribute_attempts=not trap.attempts,
+                    zero_ledger_methods=not observation["ledger_calls"],
+                    zero_observer_writer_projector_consumer=not observation["counts"],
+                    files_unchanged=before == after)
+                formal.append(dict(input=dict(kind=kind, mode=item[0], kwargs=kwargs,
+                    policy_sha256=policy.raw_sha256, initial_file_sha256=before),
+                    output=output, observation=observation, ledger_attribute_attempts=trap.attempts,
+                    checks=checks, passed=all(checks.values())))
+                close(ledger)
+        from f1_ready_controls import run_controls
+        controls = run_controls(pipeline, statistics, policy, repo)
+
+    deps = {}
+    for name in ("jsonschema", "numpy", "referencing", "rpds-py"):
+        try:
+            deps[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            deps[name] = None
+    result = dict(schema="EVO884.F1ScopeProbe/v2", scope_sha256=SCOPE_SHA,
+        revision=revision, python=sys.version, version_info=list(sys.version_info),
+        executable=sys.executable, dependencies=deps, policy_sha256=policies,
+        public=public, formal=formal, no_upgrade=controls,
+        formal_status="NOT_APPLICABLE_PRE_D_BASELINE" if args.historical_baseline else "CHECKED",
+        retired_helper_legacy_equality_assertions=15, helper_in_public_comparison=False,
+        network_events=monitor.network, production_writes=0,
+        note="Raw fields retained; isolated ready fixtures do not authorize real consumers.")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
+    print(json.dumps(dict(revision=revision, public=len(public), formal=len(formal), no_upgrade=len(controls),
+        public_mechanism_passed=sum(c["passed"] for c in public), formal_passed=sum(c["passed"] for c in formal),
+        no_upgrade_passed=sum(c["passed"] for c in controls), network_events=len(monitor.network))))
+
+
+if __name__ == "__main__":
+    main()

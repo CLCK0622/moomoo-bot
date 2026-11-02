@@ -1,0 +1,186 @@
+"""Portable F1-PUBLIC / F1-FORMAL / F1-NO-UPGRADE comparison, scope v2.
+
+Existing local Git objects only. Use a new --out directory. --assert-all returns
+1 for an actual contract failure, 0 for a pass; collection without assertions
+never certifies compatibility. Pre-D baseline is not subject to F1-FORMAL.
+"""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import subprocess
+
+BASELINE = "98cd60f9d93dba3e44bd23a76261eaa8c9516d88"
+SCOPE_SHA = "35b8b4fba4f63bc259bea48777b09e4d2bb73cc596be16b300c868a8dbb196b2"
+
+
+def differences(old, new, pointer=""):
+    if type(old) is not type(new):
+        return [dict(pointer=pointer, old=old, new=new)]
+    if isinstance(old, dict):
+        result = []
+        for key in sorted(old.keys() | new.keys()):
+            path = pointer + "/" + key.replace("~", "~0").replace("/", "~1")
+            if key not in old or key not in new:
+                result.append(dict(pointer=path, old_present=key in old, new_present=key in new,
+                                   old=old.get(key), new=new.get(key)))
+            else:
+                result.extend(differences(old[key], new[key], path))
+        return result
+    if isinstance(old, list):
+        result = []
+        for i in range(max(len(old), len(new))):
+            path = pointer + "/" + str(i)
+            if i >= len(old) or i >= len(new):
+                result.append(dict(pointer=path, old_present=i < len(old), new_present=i < len(new),
+                                   old=old[i] if i < len(old) else None, new=new[i] if i < len(new) else None))
+            else:
+                result.extend(differences(old[i], new[i], path))
+        return result
+    return [] if old == new else [dict(pointer=pointer, old=old, new=new)]
+
+
+def source_identity(item):
+    path = item["pointer"]
+    return path in {"/returned/source_sha256", "/returned/source_files"} or path.startswith("/returned/source_files/")
+
+
+def key(case):
+    return tuple(case["input"][name] for name in ("version", "kind", "entry", "mode"))
+
+
+def reason_order(output):
+    value = output.get("returned")
+    if not isinstance(value, dict):
+        return dict(returned=False)
+    # Preserve absence separately from null; lists are never sorted.
+    return {name: dict(present=name in value, value=value.get(name)) for name in ("reason", "reasons")}
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--repo", type=Path, required=True)
+    p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--refs", nargs="+", default=["98cd60f9", "4cdfcbc", "c1c9d4f"])
+    p.add_argument("--python39", type=Path, required=True)
+    p.add_argument("--python312", type=Path, required=True)
+    p.add_argument("--deps39", type=Path)
+    p.add_argument("--deps312", type=Path)
+    p.add_argument("--scope", type=Path, default=Path(__file__).resolve().parent / "EVO897-ARMTAG-D-SCOPE-v1.0.0.json")
+    p.add_argument("--assert-public", action="store_true")
+    p.add_argument("--assert-formal", action="store_true")
+    p.add_argument("--assert-no-upgrade", action="store_true")
+    p.add_argument("--assert-all", action="store_true")
+    args = p.parse_args()
+    assert differences({"x": None}, {}) and differences({"x": False}, {"x": 0})
+    assert differences({"x": 1}, {"x": 1.0}) and differences(["a", "b"], ["b", "a"])
+    assert hashlib.sha256(args.scope.read_bytes()).hexdigest() == SCOPE_SHA
+    root = Path(__file__).resolve().parent
+    out, source = args.out.resolve(), args.repo.resolve()
+    if out == source or source in out.parents:
+        raise ValueError("Use output outside the source checkout")
+    if out.exists() and any(out.iterdir()):
+        raise ValueError("Use a new output directory")
+    out.mkdir(parents=True, exist_ok=True)
+    repo = out / "checkout"
+    cloned = subprocess.run(["git", "clone", "--no-hardlinks", "--local", str(source), str(repo)], capture_output=True, text=True)
+    (out / "clone.stdout").write_text(cloned.stdout)
+    (out / "clone.stderr").write_text(cloned.stderr)
+    cloned.check_returncode()
+    refs = [subprocess.check_output(["git", "rev-parse", ref], cwd=repo, text=True).strip() for ref in args.refs]
+    assert refs[0] == BASELINE and len(refs) >= 2
+    results, mechanism = {}, []
+    for label, python, deps in (("39", args.python39, args.deps39), ("312", args.python312, args.deps312)):
+        environment = {k: v for k, v in os.environ.items() if not k.startswith("QLAB_") and k not in {"PYTHONPATH", "PYTEST_ADDOPTS"}}
+        environment.update(PYTHONDONTWRITEBYTECODE="1", PYTEST_DISABLE_PLUGIN_AUTOLOAD="1")
+        if deps:
+            environment["PYTHONPATH"] = str(deps.resolve())
+        results[label] = []
+        for revision in refs:
+            subprocess.run(["git", "checkout", "--detach", revision], cwd=repo, check=True, capture_output=True)
+            output = out / label / (revision + ".json")
+            # Keep the venv path; resolve() on its Python symlink can discard venv context.
+            command = ["/usr/bin/sandbox-exec", "-f", str(root / "f1-location-offline.sb"),
+                       str(python.absolute()), "-B", str(root / "factor_compat_probe.py"),
+                       "--repo", str(repo), "--work", str(out / ("work" + label)), "--output", str(output)]
+            if revision == BASELINE:
+                command.append("--historical-baseline")
+            done = subprocess.run(command, cwd=root, env=environment, capture_output=True, text=True, timeout=180)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.with_suffix(".command.json").write_text(json.dumps(dict(argv=command, revision=revision,
+                returncode=done.returncode, pythonpath=environment.get("PYTHONPATH"), platform=platform.platform()), indent=2) + "\n")
+            output.with_suffix(".stdout").write_text(done.stdout)
+            output.with_suffix(".stderr").write_text(done.stderr)
+            done.check_returncode()
+            payload = json.loads(output.read_bytes())
+            assert payload["revision"] == revision and payload["scope_sha256"] == SCOPE_SHA
+            assert len(payload["public"]) == 27 and payload["network_events"] == []
+            assert {c["input"]["entry"] for c in payload["public"]} == {"dsr_eval", "evaluate", "run_train_pipeline"}
+            assert not payload["helper_in_public_comparison"]
+            if revision == BASELINE:
+                assert payload["formal_status"] == "NOT_APPLICABLE_PRE_D_BASELINE" and not payload["formal"] and not payload["no_upgrade"]
+            else:
+                assert payload["formal_status"] == "CHECKED" and len(payload["formal"]) == 15 and len(payload["no_upgrade"]) == 22
+            assert not subprocess.check_output(["git", "status", "--porcelain"], cwd=repo, text=True).strip()
+            row = dict(python=label, revision=revision,
+                public_mechanism_passed=sum(c["passed"] for c in payload["public"]),
+                public_mechanism_total=len(payload["public"]), formal_status=payload["formal_status"],
+                formal_passed=sum(c["passed"] for c in payload["formal"]), formal_total=len(payload["formal"]),
+                no_upgrade_passed=sum(c["passed"] for c in payload["no_upgrade"]), no_upgrade_total=len(payload["no_upgrade"]))
+            mechanism.append(row)
+            results[label].append(payload)
+            print(json.dumps(row), flush=True)
+
+    comparison = []
+    any_public_failure = any(m["public_mechanism_passed"] != m["public_mechanism_total"] for m in mechanism)
+    any_formal_failure = any(m["formal_passed"] != m["formal_total"] for m in mechanism)
+    any_no_upgrade_failure = any(m["no_upgrade_passed"] != m["no_upgrade_total"] for m in mechanism)
+    for label, payloads in results.items():
+        baseline = payloads[0]
+        for payload in payloads[1:]:
+            assert baseline["python"] == payload["python"] and baseline["dependencies"] == payload["dependencies"]
+            assert baseline["policy_sha256"] == payload["policy_sha256"]
+            old_cases = {key(c): c for c in baseline["public"]}
+            new_cases = {key(c): c for c in payload["public"]}
+            assert old_cases.keys() == new_cases.keys()
+            compared = []
+            for ident, old in old_cases.items():
+                new = new_cases[ident]
+                assert old["input"] == new["input"], (label, payload["revision"], ident, old["input"], new["input"])
+                raw = differences(old["output"], new["output"])
+                allowed = [v for v in raw if source_identity(v)]
+                non_source = [v for v in raw if not source_identity(v)]
+                reasons_equal = reason_order(old["output"]) == reason_order(new["output"])
+                any_public_failure |= bool(non_source) or not reasons_equal
+                compared.append(dict(input=old["input"], old_output=old["output"], new_output=new["output"],
+                    differences=raw, source_identity_differences=allowed, non_source_differences=non_source,
+                    reason_order_identical=reasons_equal, old_observation=old["observation"], new_observation=new["observation"]))
+            record = dict(python=label, baseline=BASELINE, revision=payload["revision"], cases=compared,
+                all_fields_retained=True, types_and_presence_preserved=True, arrays_reordered=False,
+                source_identity_exceptions=["/returned/source_files", "/returned/source_sha256"])
+            (out / label / (payload["revision"] + ".comparison.json")).write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n")
+            comparison.append(dict(python=label, revision=payload["revision"], public_total=27,
+                public_compatible=sum(not c["non_source_differences"] for c in compared),
+                entries={entry: dict(total=sum(c["input"]["entry"] == entry for c in compared),
+                    compatible=sum(c["input"]["entry"] == entry and not c["non_source_differences"] for c in compared))
+                    for entry in ("dsr_eval", "evaluate", "run_train_pipeline")},
+                reason_order_identical=all(c["reason_order_identical"] for c in compared),
+                non_source_difference_cases=[dict(input=c["input"], differences=c["non_source_differences"]) for c in compared if c["non_source_differences"]]))
+    failed = ((args.assert_all or args.assert_public) and any_public_failure
+        or (args.assert_all or args.assert_formal) and any_formal_failure
+        or (args.assert_all or args.assert_no_upgrade) and any_no_upgrade_failure)
+    summary = dict(schema="EVO884.F1ScopeComparison/v2", scope_sha256=SCOPE_SHA, refs=refs,
+        mechanisms=mechanism, comparisons=comparison, public_passed=not any_public_failure,
+        formal_passed=not any_formal_failure, no_upgrade_passed=not any_no_upgrade_failure,
+        retired_helper_legacy_equality_assertions=15, helper_public_equality_assertions=0,
+        input_bytes_same_per_interpreter=True, output_fields_filtered=False, arrays_reordered=False,
+        input_sha256_excluded=False, production_writes=0, exit_code=1 if failed else 0)
+    (out / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    return summary["exit_code"]
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

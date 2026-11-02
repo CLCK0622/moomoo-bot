@@ -1,0 +1,171 @@
+{
+  "schema": "EVO897.ArmTagCompatibilityScopeRuling/v1",
+  "ruling_id": "EVO897-ARMTAG-D-SCOPE-v1.0.0",
+  "status": "FINAL_SCOPE_CLARIFICATION",
+  "issuer_agent_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+  "request_comment_id": "01a19993-040a-76fd-a345-c80bd2ab9546",
+  "effective_condition": "Successful publication of this ruling in the assigned EVO-881 thread.",
+  "bindings": {
+    "original_ruling_id": "EVO897-ARMTAG-D-v1.0.0",
+    "original_ruling_sha256": "f47b559335b74f291d9232716930be7bd0b82007d20b78d9201612b66426ede1",
+    "original_comment_id": "01a18d97-3c9f-7d1f-8e9b-575f6835e8d3",
+    "engineering_comment_id": "01a19992-4e6b-7942-8fac-b1cfec2551ad",
+    "engineering_archive_sha256": "87dbd366463c34963249935ce3da77c0ec088117fe0afadb342a2824b4cee65e",
+    "baseline_commit": "98cd60f9d93dba3e44bd23a76261eaa8c9516d88",
+    "helper_change_commit": "28c9d8fff26129570a12a3b8f90fedd5695a93d2",
+    "helper_parent_commit": "7ea7ccc23c005c747a46dc09f7ef6879732145b6",
+    "audited_main_commit": "4cdfcbc0726abeadfff9e143b49281fab815bc43",
+    "reviewed_stage_head": "a3df32911786274a96f8580a11f9fe57a0c1e1e6",
+    "c6_parent_commit": "907d063cb760ddc174e3333e547be89bc99a0ec2",
+    "c6_commit": "9e0306fa2a2dcb2d9bc89057e9927afe8bbde739"
+  },
+  "decision": "a",
+  "original_authority_pointers": [
+    "/authority_scope",
+    "/normative_rules/compatibility_eligibility",
+    "/normative_rules/formal_route",
+    "/normative_rules/side_effect_order",
+    "/entry_matrix/0",
+    "/entry_matrix/1",
+    "/entry_matrix/2",
+    "/entry_matrix/3",
+    "/byte_comparison/scope",
+    "/byte_comparison/approved_exclusions_only",
+    "/byte_comparison/requirements/4"
+  ],
+  "entry_scopes": [
+    {
+      "entry": "statistics.dsr_eval",
+      "mode": "EXISTING_FROZEN_OMITTED_TAG_DIAGNOSTIC_COMPATIBILITY"
+    },
+    {
+      "entry": "pipeline.evaluate",
+      "mode": "EXISTING_FROZEN_OMITTED_TAG_DIAGNOSTIC_COMPATIBILITY"
+    },
+    {
+      "entry": "pipeline.run_train_pipeline",
+      "mode": "FROZEN_PENDING_AND_INDEPENDENT_PRE_SIDE_EFFECT_LABEL_GUARD"
+    },
+    {
+      "entry": "pipeline._n_snapshot",
+      "mode": "FORMAL_LABEL_REQUIRED_NO_LEGACY_OUTPUT_EQUALITY"
+    }
+  ],
+  "helper": {
+    "preserve_existing_formal_refusal": true,
+    "third_positional_parameter": "policy",
+    "valid_policy_missing_label_reason": "arm_n.arm_tag_missing_or_invalid",
+    "forbidden_before_valid_label": [
+      "ledger_read",
+      "formal_projector",
+      "self_report_observation",
+      "ledger_write",
+      "consumer",
+      "training_callback"
+    ],
+    "null_fields": [
+      "gate_n",
+      "cumulative_n",
+      "n_ledger_hash"
+    ],
+    "n_complete": false,
+    "virtual_hash_semantics_authorized": false,
+    "remove_from_test_inventory": false,
+    "old_write_restoration_allowed": false,
+    "existing_invalid_policy_validation_changed": false
+  },
+  "b21r_item1": [
+    {
+      "id": "F1-PUBLIC",
+      "required": "Compare three old public entries only in the D frozen omission domain against their original baseline; preserve types, presence and array order."
+    },
+    {
+      "id": "F1-FORMAL",
+      "required": "Keep helper coverage as formal refusal, preserve positional policy; no ledger access, observers, writes or consumer on invalid identity."
+    },
+    {
+      "id": "F1-NO-UPGRADE",
+      "required": "Synthetic complete/ready negative control, valid-label pre-side-effect sentinel positive control, guard mutation detection and event/other-arm isolation remain required."
+    }
+  ],
+  "byte_comparison": {
+    "raw_outputs_and_all_diffs_required": true,
+    "allowed_exclusions": [
+      "source_files",
+      "source_sha256",
+      "Enumerated summaries depending exclusively on those source-identity fields"
+    ],
+    "input_sha256_blanket_exclusion_allowed": false,
+    "missing_null_false_and_numeric_types_distinct": true,
+    "array_order_preserved": true,
+    "default_arm_injection_allowed": false
+  },
+  "c6": {
+    "present_archive_v2_digest_change_waived": false,
+    "old_input_sha256": "2c4b4edaa055e5a1e314a3352a0f7ebea7faf8bbb06c06452b0ceaf6f08e8ca5",
+    "changed_input_sha256": "2d31381d11c757e4f8812014428569fa08ff0b3e9b166688d67dc9a5f4708a54",
+    "code_preimage_path": "result.inputs.ledger <- statistics._diagnostic_dsr snapshot",
+    "evidence": "authority_ledger current_published_anchor/historical_published_anchor split changes input snapshot, not only source identity.",
+    "branches": [
+      {
+        "when": "EXCLUSIVELY_APPROVED_SOURCE_IDENTITY_DERIVED",
+        "disposition": "Enumerated exclusion allowed only with exact dependency paths, retained raw values and no business-input changes."
+      },
+      {
+        "when": "GENUINE_LEGACY_DIAGNOSTIC_HASH_SEMANTICS_PRESERVED_AND_C6_FORMAL_BOUNDARY_PRESERVED",
+        "disposition": "Engineering compatibility repair; true declared preimage must reproduce digest. No hardcoded hash, authority impersonation, write restoration or witness fallback."
+      },
+      {
+        "when": "C6_NECESSARILY_CHANGES_IN_SCOPE_INPUT_DIGEST",
+        "disposition": "STOP_AND_RETURN_VIA_LIBU_FOR_SEPARATE_VERSIONED_ACCEPTANCE_SUPPLEMENT",
+        "required": [
+          "exact entries and fixtures",
+          "full old and new preimages with SHA",
+          "transformation rule",
+          "return schema",
+          "enumerated expected differences",
+          "current/historical authorization boundary",
+          "negative controls",
+          "nonauthor acceptance"
+        ]
+      },
+      {
+        "when": "TRULY_NEW_APPROVED_INPUT_OR_FUTURE_READY_FORMAL_ROUTE",
+        "disposition": "Validate by its approved version and true inputs; cannot substitute this for the fixed compatibility sample."
+      }
+    ],
+    "future_supplement_preapproved": false,
+    "future_supplement_N_OOS_cost_prejudged": false
+  },
+  "impact": {
+    "original_B21R_record_rewritten": false,
+    "fixed_head_acceptance_granted": false,
+    "F2_obligations_unchanged": true,
+    "C6_obligations_unchanged": true,
+    "PR17_PR18_PR19": "Inherited helper difference per engineering evidence; no new acceptance or rerun.",
+    "D10": "Original authorization scope not invalidated; cannot extrapolate to legacy helper output equality.",
+    "unverified_this_turn": [
+      "race",
+      "WAL",
+      "LT50",
+      "other D10 specialist checks",
+      "repaired head acceptance"
+    ]
+  },
+  "boundaries": {
+    "statistics_or_economic_rules_changed": false,
+    "design_N_increment": 0,
+    "frozen_bytes_changed": false,
+    "authority_chain_written": false,
+    "implementation_authorized_by_this_document": false,
+    "runtime_consumable": false,
+    "certifiable": false,
+    "P0_started": false,
+    "S0_started": false,
+    "L0_started": false,
+    "clock_63_started": false,
+    "history_resumed": false,
+    "G14_P1": "HOLD_PREPARED_ONLY_UNTIL_FIRST_STAGE_NONAUTHOR_ACCEPTANCE"
+  },
+  "handoff": "Libu updates F1 acceptance wording and routes this clarification to the existing engineering repair. No duplicate dispatch by issuer."
+}
