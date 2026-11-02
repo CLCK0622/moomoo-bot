@@ -18,6 +18,9 @@ end-of-day time substitutes for a missing open observation.
 
 Cash and rights retain the original event JSON and its byte SHA. Every nonempty
 event on a consumed close date needs a matching original-event operation.
+Both event files must cover every symbol whose opening or closing price the
+program consumed on that date; a valid partial file cannot imply empty events
+for an omitted held or traded symbol.
 `ReferenceExecution.cash_event` delegates to C04 entitlement, available-cash or
 unknown-right processing. It never treats a payment date as cash availability,
 converts analytical TR to integer cash, or clears an unknown right. Such an

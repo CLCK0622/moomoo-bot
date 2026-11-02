@@ -339,6 +339,8 @@ def test_C09_C10_actual_read_facts_bind_before_real_worker_replay(
         "book",
         "run",
         "raw_source",
+        "cash_coverage",
+        "rights_coverage",
     ],
 )
 def test_C09_fact_rebinding_or_omission_refuses_before_replay(
@@ -378,6 +380,13 @@ def test_C09_fact_rebinding_or_omission_refuses_before_replay(
         p["initial"]["history"]["book_id"] = digest("other book")
     elif attack == "run":
         p["initial"]["run_id"] = "other run"
+    elif attack in {"cash_coverage", "rights_coverage"}:
+        role = attack.split("_")[0]
+        target = next(iter(facts["scope"]["days"].values()))["eligible"][0]
+        facts["manifest"]["inputs"][role]["symbols"] = [target]
+        for row in facts["data"][role]["records"]:
+            row["symbol"] = target
+        facts["boundary"]["declared_input_manifest"] = deepcopy(facts["manifest"])
     else:
         p["operations"][0]["arguments"]["source_sha256"] = digest("different source")
     # Bypass only the ownership hash in this semantic-guard mutation. Both
@@ -394,6 +403,8 @@ def test_C09_fact_rebinding_or_omission_refuses_before_replay(
         "book": "reference.input_execution_identity_mismatch",
         "run": "reference.input_execution_identity_mismatch",
         "raw_source": "reference.execution_raw_source_mismatch",
+        "cash_coverage": "reference.original_event_coverage_required",
+        "rights_coverage": "reference.original_event_coverage_required",
     }[attack]
     calls = []
     monkeypatch.setattr(input_facts, "read_facts", lambda _: (facts, digest(facts)))

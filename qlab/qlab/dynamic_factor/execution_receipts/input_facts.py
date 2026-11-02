@@ -102,7 +102,7 @@ def bind_program(program, facts):
         != {role: m["inputs"][role]["sha256"] for role in ROLES}
     ):
         raise ValueError("reference.four_file_boundary_mismatch")
-    index, reads, processed = {}, [], set()
+    index, reads, processed, consumed = {}, [], set(), {}
     if set(facts["data"]) != set(ROLES):
         raise ValueError("reference.four_roles_required")
     for role in ROLES:
@@ -132,6 +132,7 @@ def bind_program(program, facts):
         return value
 
     def prices(values, date, key, asof):
+        consumed.setdefault(date, set()).update(values)
         for symbol, value in values.items():
             if amount(value) != amount(cell("raw", date, symbol, key, asof)):
                 raise ValueError("reference.execution_price_not_from_read")
@@ -205,6 +206,10 @@ def bind_program(program, facts):
                 # Original nonempty events must have a common-accounting
                 # operation. A complete flag never erases an unread event.
                 for role in ("rights", "cash"):
+                    if not consumed[date] <= {
+                        symbol for d, symbol in index[role] if d == date
+                    }:
+                        raise ValueError("reference.original_event_coverage_required")
                     for d, symbol in index[role]:
                         if d != date:
                             continue
