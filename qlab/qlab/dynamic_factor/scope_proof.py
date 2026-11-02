@@ -749,6 +749,23 @@ def b2_isolation_proof(policy):
     }
 
 
+def reference_execution_proof(policy):
+    """Independent C09/C10 segment; old B2 entries retain their own names."""
+    from .reference_check import execution_proof
+
+    inherited = b2_isolation_proof(policy)
+    extension = execution_proof()
+    return dict(
+        schema="EVO884.ReferenceExecutionScope/v1",
+        C09_C10=extension,
+        shared_execution_source_sha256=inherited["source_sha256"],
+        shared_fixed_reads=inherited["C13_registered_fixed_reads"],
+        coverage_boundary="new orchestration has no economic file readers; replay metadata files are individually registered, and the shared core retains its separately inspected original mechanisms",
+        seal_status="seal_pending",
+        runtime_consumable=False,
+    )
+
+
 def noncash_isolation_proof(policy):
     """Inspect owned economic boundaries; this does not attest a real account."""
     from .noncash_v3 import (

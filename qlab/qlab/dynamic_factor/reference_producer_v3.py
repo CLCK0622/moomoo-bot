@@ -1,8 +1,9 @@
-"""Independent sealed-input preparation entry; never generates returns.
+"""Legacy preparation plus a separately bound diagnostic replay entry.
 
 Run as `python -m qlab.dynamic_factor.reference_producer --inputs-root DIR`.
 The parent binds the four EVO-892 definitions and the shared train/warmup view.
-No result input or evaluator callback is accepted; execution belongs to EVO-886.
+The legacy main keeps returns empty. result_main replays only an owned fact
+program with the shared engines; neither entry accepts a caller return vector.
 """
 
 import argparse
@@ -222,6 +223,54 @@ def main(mechanisms=None):
     report["seal_status"] = "seal_pending"
     print(json.dumps(report, sort_keys=True, allow_nan=False))
     return 2
+
+
+def result_main(expected_sha256, expected_program_sha256, expected_reads):
+    """Recompute a bound fact program with the same cores inside the worker."""
+    from .execution_receipts.input_data import strict_json
+    from .execution_receipts.reference_result import check_transport, read_observation
+    from .execution_receipts.replay_guard import install as install_result
+    from .reference_execution import replay_execution
+    from .conventions import load_conventions
+    from .contract import digest
+
+    policy = load_conventions()
+    reads = install_result(expected_reads)
+    try:
+        program = strict_json(input())
+        if digest(program) != expected_program_sha256:
+            raise ValueError("reference.worker_program_binding_mismatch")
+        observation = replay_execution(program, policy)
+        document = check_transport(read_observation(observation)[0], expected_sha256)
+        report = dict(
+            schema="EVO884.ReferenceResultTransport/v1",
+            observation=document,
+            observation_sha256=expected_sha256,
+            accessed_roles=[],
+            reader_calls=0,
+            worker_role="reference_diagnostic_execution",
+            execution_steps=len(program["operations"]),
+            protocol_read_paths=sorted(reads),
+            seal_status="seal_pending",
+            runtime_consumable=False,
+            certifiable=False,
+        )
+        print(json.dumps(report, sort_keys=True, allow_nan=False))
+        return 0
+    except (ValueError, KeyError, TypeError, AttributeError) as exc:
+        print(
+            json.dumps(
+                dict(
+                    complete=False,
+                    returns=None,
+                    reader_calls=0,
+                    accessed_roles=[],
+                    reason=str(exc),
+                ),
+                sort_keys=True,
+            )
+        )
+        return 2
 
 
 if __name__ == "__main__":

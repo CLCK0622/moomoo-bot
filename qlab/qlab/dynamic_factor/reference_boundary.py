@@ -223,6 +223,123 @@ def prepare_execution_inputs(profile, scope, manifest, **expected):
     return prepare(profile, scope, manifest, **expected)
 
 
+def run_execution_result(observation):
+    """A separate nonempty diagnostic channel; old preparation stays empty.
+
+    No JSON result, current candidate/meta output or evaluator is accepted.
+    The worker replays only the immutable fact program issued by the owned book
+    and must reproduce its full C07 result. No caller return vector is sent.
+    """
+    from .execution_receipts.reference_result import read_observation, read_program
+    from .scope_proof import reference_execution_proof
+    from .conventions import load_conventions
+    from .contract import canonical
+
+    document, expected_sha256 = read_observation(observation)
+    program, expected_program_sha256 = read_program(observation)
+    proof = reference_execution_proof(load_conventions())
+    source_root = Path(__file__).parent
+    expected_reads = {
+        str((source_root / name).resolve()): value
+        for name, value in proof["C09_C10"]["replay_file_sha256"].items()
+    }
+    package = str(Path(__file__).resolve().parents[2])
+    bootstrap = (
+        "import sys;sys.dont_write_bytecode=True;sys.path.insert(0,"
+        + repr(package)
+        + ");from qlab.dynamic_factor.reference_producer_v3 import result_main;"
+        + "raise SystemExit(result_main("
+        + repr(expected_sha256)
+        + ","
+        + repr(expected_program_sha256)
+        + ","
+        + repr(expected_reads)
+        + "))"
+    )
+    child = subprocess.run(
+        [sys.executable, "-I", "-S", "-c", bootstrap],
+        input=canonical(program).decode() + "\n",
+        capture_output=True,
+        text=True,
+        env={},
+        close_fds=True,
+        timeout=600,
+    )
+    if child.returncode != 0 or child.stderr:
+        raise ValueError(
+            "reference.result_worker_failed:"
+            + child.stdout[-500:]
+            + child.stderr[-500:]
+        )
+    from .execution_receipts.input_data import strict_json
+
+    report = strict_json(child.stdout)
+    expected = dict(
+        schema="EVO884.ReferenceResultTransport/v1",
+        observation=document,
+        observation_sha256=expected_sha256,
+        accessed_roles=[],
+        reader_calls=0,
+        worker_role="reference_diagnostic_execution",
+        execution_steps=len(program["operations"]),
+        protocol_read_paths=report.get("protocol_read_paths"),
+        seal_status="seal_pending",
+        runtime_consumable=False,
+        certifiable=False,
+    )
+    if (
+        canonical(report) != canonical(expected)
+        or type(report["protocol_read_paths"]) is not list
+        or len(report["protocol_read_paths"]) != len(set(report["protocol_read_paths"]))
+        or not set(report["protocol_read_paths"]) <= set(expected_reads)
+    ):
+        raise ValueError("reference.unexpected_result_worker_output")
+    # Check the actual owned account again after the child exits.
+    if read_observation(observation)[1] != expected_sha256:
+        raise ValueError("reference.observation_account_drift")
+    report["source_proof_sha256"] = digest(proof)
+    return report
+
+
+def run_execution_family(observations):
+    """Closed four-member family; bind the entire batch before any child."""
+    from .execution_receipts.reference_result import read_observation
+    from .reference_registry_v3 import DISPATCH
+
+    if type(observations) is not dict or set(observations) != set(DISPATCH):
+        raise ValueError("reference.closed_four_owned_observations_required")
+    documents = {
+        member: read_observation(cap)[0] for member, cap in observations.items()
+    }
+    first = documents[sorted(DISPATCH)[0]]
+    if (
+        len({d["book_id"] for d in documents.values()}) != 4
+        or len({d["scope"]["attempt_id"] for d in documents.values()}) != 4
+        or any(
+            d["scope"]["member_id"] != member
+            or d["scope"]["fold_id"] != first["scope"]["fold_id"]
+            or d["run_id"] != first["run_id"]
+            or d["dates"] != first["dates"]
+            or d["DAG"]["sources"] != first["DAG"]["sources"]
+            or d["execution_closure_sha256"] != first["execution_closure_sha256"]
+            or d["clock_ruling_sha256"] != first["clock_ruling_sha256"]
+            for member, d in documents.items()
+        )
+    ):
+        raise ValueError("reference.separate_books_same_family_binding_required")
+    outputs = {m: run_execution_result(observations[m]) for m in sorted(DISPATCH)}
+    return dict(
+        schema="EVO884.ReferenceExecutionFamily/v1",
+        run_id=first["run_id"],
+        fold_id=first["scope"]["fold_id"],
+        outputs=outputs,
+        seal_status="seal_pending",
+        execution_verified=False,
+        runtime_consumable=False,
+        certifiable=False,
+    )
+
+
 def _run_input_preparation(root, request, preparation):
     from .execution_receipts.input_run import read_preparation
     from .reference_check import static_proof
