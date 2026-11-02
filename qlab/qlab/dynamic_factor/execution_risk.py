@@ -118,7 +118,7 @@ def position_clock_check(state, book_id, scope, date, policy):
         if (
             fold is None
             or clock["global_start"] != fold["train_start"]
-            or not start - 1 <= index <= policy.calendar.index(fold["train_end"])
+            or not start - 1 <= index <= policy.calendar.index(fold["history_end"])
         ):
             raise ValueError("risk.training_book_scope_mismatch")
     if scope["kind"] == "stitched_test":

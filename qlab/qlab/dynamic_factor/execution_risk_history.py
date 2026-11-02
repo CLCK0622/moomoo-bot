@@ -329,7 +329,7 @@ class RiskHistory:
             ),
             None,
         )
-        if self._scope["kind"] == "independent_training" and date > fold["train_end"]:
+        if self._scope["kind"] == "independent_training" and date > fold["history_end"]:
             raise ValueError("risk.training_book_cannot_enter_other_fold")
         if (
             self._scope["kind"] == "stitched_test"
