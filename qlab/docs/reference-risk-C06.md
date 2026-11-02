@@ -48,7 +48,7 @@ and M envelopes explicitly require `age_clock`, `cooldown_boundary`, and
 `fixtures/execution-risk/close-risk.schema.json` and `required-M.schema.json`.
 Unknown states retain these keys with null values/reasons where unavailable.
 
-M means **持仓股数（工作假设，待翰林院确认，见 CORE-READBACK M-01）**:
+M follows the contract semantics in `../qlab/dynamic_factor/fixtures/execution-risk/required-M.schema.json#/properties/M/description` (M-01/I09 ruling SHA-256 `03809f4527ece1012b18bb214aa23a39a7d8d52da4e573cdd57c03dc3dd13914`):
 the nonnegative integer inventory after necessary actions; neither an upper
 bound nor a signed order delta. Working pointers are D12
 `/D1/projection/1`, `/D1/target/required_exit_cannot_be_undone`, and
