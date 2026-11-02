@@ -9,7 +9,11 @@ shared `RiskBook`, clock ruling, execution adoption and planner source. The open
 supplies only bound execution/feasibility inputs. It cannot replace M, P,
 signal, risk, selection or returns. Old v3 self-reported M/P requests refuse;
 the original numeric-state refusal precedes that refusal. Frozen omitted-label
-public diagnostics retain their separate compatibility contract.
+public diagnostics retain their separate compatibility contract. Legacy v3
+LT50/UNKNOWN/isolated-buy refusals still precede the new-intent refusal, using
+the original isolation predicate. Their caller M is explicitly diagnostic,
+with no quote or gain-plan/outcome write. A cached old v3 success cannot bypass
+the owned-intent path. Other historical versions keep their original cache.
 
 The route calls `execution_projection.project` and `RiskBook.required_m`.
 `ExactOrderCosts` quotes complete net orders from original inventory, without

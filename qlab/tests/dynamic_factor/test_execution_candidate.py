@@ -29,6 +29,43 @@ def wire_hash(value):
     )
 
 
+@pytest.mark.parametrize(
+    "verified,unknown,reason",
+    [(49, 0, "VERIFIED_LT50"), (49, 1, "UNKNOWN"), (50, 0, "isolated_optional_buy")],
+)
+def test_C13_original_isolation_refusals_do_not_restore_legacy_plan_writes(
+    tmp_path, monkeypatch, record_property, verified, unknown, reason
+):
+    from qlab.dynamic_factor.ledger import AttemptLedger
+    from test_v2_state import (
+        test_trade_consumer_keeps_computable_M_without_fabricating_tilt,
+    )
+
+    writes = []
+    original = AttemptLedger.record
+
+    def observed(self, key, value):
+        if key.startswith("gain/"):
+            writes.append(key)
+        return original(self, key, value)
+
+    monkeypatch.setattr(AttemptLedger, "record", observed)
+    test_trade_consumer_keeps_computable_M_without_fabricating_tilt(
+        tmp_path, verified, unknown, reason
+    )
+    assert writes == []
+    record_property(
+        "C13_legacy_refusal_actual",
+        json.dumps(
+            dict(
+                reason=reason,
+                gain_plan_or_outcome_writes=writes,
+                scope="legacy refusal only; caller M is diagnostic, not adopted D2",
+            )
+        ),
+    )
+
+
 def intent_case(*, recipe="F1-L020", meta=False, alpha=0.0):
     inputs, args, signal = meta_case() if meta else case()
     if not meta:
@@ -132,6 +169,31 @@ def intent_case(*, recipe="F1-L020", meta=False, alpha=0.0):
         decay=decay,
     )
     return inputs, args, template, kwargs
+
+
+def test_C13_legacy_cached_success_cannot_promote_new_source_or_write_outcome(tmp_path):
+    from qlab.dynamic_factor.conventions import load_conventions
+    from qlab.dynamic_factor.ledger import AttemptLedger
+    from test_execution_state_boundary import gain_request
+
+    policy = load_conventions()
+    request = gain_request(policy)
+    key = f"gain/{request['account_scope']}/{request['signal_close']}"
+    ledger = AttemptLedger(tmp_path / "synthetic-old-gain.sqlite")
+    ledger.record("v02/SYNTHETIC/0/S1", {"calibration": {}})
+    ledger.record("v02/SYNTHETIC/0/S2", {"pool": []})
+    old = dict(
+        request_sha256=digest(request), report={"ok": True, "old_cached_success": True}
+    )
+    ledger.record(key + "/outcome", old)
+    ledger.record(key + "/plan", {"request_sha256": digest(request), **policy.binding})
+    before = ledger.snapshot()
+    out = voluntary_trade_gate(request, conventions=policy, ledger=ledger)
+    assert out["ok"] is False
+    assert out["reasons"] == ["candidate.shared_execution_intent_required"]
+    assert out["seal_status"] == "seal_pending"
+    assert ledger.snapshot() == before
+    assert ledger.recorded(key + "/outcome") == old
 
 
 class StageReader:
