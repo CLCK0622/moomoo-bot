@@ -91,3 +91,8 @@ field or input digest is excluded. Other unit counter-controls independently
 mutate quantity, priority, ordering, nonce, clock, trace, root or order count and
 use the same publisher comparator. Original comparator qualification remains
 historical evidence, not substituted for actual DUT execution.
+
+
+## B release context propagation (local preliminary branch)
+
+The projector takes the context from its owned RiskBook, rechecks before numeric consumption and forwards it to the exact-cost bridge and CashProof. Fixed signals use the same common check. These additions do not change quantity projection, ordering, floor, fee formula, or frozen oracle bytes. Missing B01/B02 cannot become a successful formal projection; named diagnostic probes only verify forwarding and refusal. See b-release-context-interface-v1.md v1.0.1.

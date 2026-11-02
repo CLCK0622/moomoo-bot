@@ -33,6 +33,7 @@ def _r2(method):
     @wraps(method)
     def call(self, *args, **kwargs):
         with self._lock:
+            self._check_release()
             declaration = dict(
                 operation=method.__name__,
                 args=deepcopy(list(args)),
@@ -43,10 +44,10 @@ def _r2(method):
             try:
                 result = method(self, *args, **kwargs)
                 declaration["status"] = "verified"
-                if (
-                    isinstance(result, dict)
-                    and result.get("schema") == "EVO884.ExecutionAccount/v1"
-                ):
+                if isinstance(result, dict) and result.get("schema") in {
+                    "EVO884.ExecutionAccount/v1",
+                    "EVO884.ExecutionAccount/v1-BR1",
+                }:
                     return self.snapshot()
                 return result
             except (ValueError, KeyError, TypeError, ArithmeticError) as exc:
@@ -92,6 +93,8 @@ class ExecutionAccount:
         self._mode = execution_mode
         self._book = risk_book
         self._policy, self._guard = risk_book._policy, risk_book._guard
+        self._release_context = risk_book._release_context
+        self._release_identity_bytes = risk_book._release_identity_bytes
         self._binding, self._book_id = binding, snap["book_id"]
         self._scope = snap["scope"]
         self._initial_snapshot_sha256 = expected_snapshot_sha256
@@ -317,7 +320,19 @@ class ExecutionAccount:
         with self._lock:
             return dict(ticket=deepcopy(self._active), orders=deepcopy(self._orders))
 
+    def _check_release(self):
+        raw = RiskBook.release_guard(
+            self._guard,
+            self._policy,
+            self._release_context,
+            self._release_identity_bytes,
+        )
+        if self._book._check_release() != raw:
+            raise ValueError("B.release_context_persistent_identity_mismatch")
+        return raw
+
     def _ready(self):
+        self._check_release()
         validate_execution_binding(self._binding)
         if self._reasons:
             raise ValueError(self._reasons[0])
@@ -334,6 +349,8 @@ class ExecutionAccount:
             {order["symbol"]: Decimal(decimal_text(notional))},
             guard=self._guard,
             execution_binding=self._binding,
+            release_context=self._release_context,
+            expected_release_identity_bytes=self._release_identity_bytes,
         )
 
     def _fill(self, fact, expected_sha256, *, model=False):
@@ -684,6 +701,8 @@ class ExecutionAccount:
                     expected_event_sha256=identity,
                     guard=self._guard,
                     policy=self._policy,
+                    release_context=self._release_context,
+                    expected_release_identity_bytes=self._release_identity_bytes,
                 )
                 self._state["receivables"][key] = row
                 self._needs_valuation = True
@@ -898,6 +917,7 @@ class ExecutionAccount:
                 runtime_consumable=False,
                 certifiable=False,
             )
+            payload = RiskBook.release_payload(payload, self._release_identity_bytes)
             self._closes.append(deepcopy(payload))
             self._active, self._date = None, date
             self._needs_valuation = False
@@ -906,6 +926,9 @@ class ExecutionAccount:
                 self._state,
                 book_id=self._book_id,
                 guard=self._guard,
+                release_context=self._release_context,
+                expected_release_identity_bytes=self._release_identity_bytes,
+                policy=self._policy,
                 ledger_sha256=digest(self._facts),
             )
             return dict(
@@ -937,7 +960,17 @@ class ExecutionAccount:
                 )
             ):
                 raise ValueError("accounting.C06_account_close_binding_mismatch")
+            raw = RiskBook.release_guard(
+                risk_book._guard,
+                risk_book._policy,
+                risk_book._release_context,
+                self._release_identity_bytes,
+            )
+            if raw != self._release_identity_bytes:
+                raise ValueError("B.release_context_persistent_identity_mismatch")
             self._book = risk_book
+            self._release_context = risk_book._release_context
+            self._guard = risk_book._guard
             self._state = deepcopy(snap["state"])
             return self.snapshot()
 
@@ -952,20 +985,25 @@ class ExecutionAccount:
         C06 owns state/clock replay; its cash proofs must remain host owned.
         """
         with self._lock:
+            self._check_release()
             return canonical(
-                dict(
-                    schema="EVO884.ExecutionAccountJournal/v1",
-                    initial_snapshot_sha256=self._initial_snapshot_sha256,
-                    original_initial_snapshot=self._initial_snapshot,
-                    accounting_source_sha256=code_sha(ExecutionAccount),
-                    active_intent=self._active,
-                    closes=self._closes,
-                    snapshot=self.snapshot(),
+                RiskBook.release_payload(
+                    dict(
+                        schema="EVO884.ExecutionAccountJournal/v1",
+                        initial_snapshot_sha256=self._initial_snapshot_sha256,
+                        original_initial_snapshot=self._initial_snapshot,
+                        accounting_source_sha256=code_sha(ExecutionAccount),
+                        active_intent=self._active,
+                        closes=self._closes,
+                        snapshot=self.snapshot(),
+                    ),
+                    self._release_identity_bytes,
                 )
             )
 
     def snapshot(self):
         with self._lock:
+            self._check_release()
             payload = dict(
                 schema="EVO884.ExecutionAccount/v1",
                 book_id=self._book_id,
@@ -990,4 +1028,5 @@ class ExecutionAccount:
                 runtime_consumable=False,
                 certifiable=False,
             )
+            payload = RiskBook.release_payload(payload, self._release_identity_bytes)
             return dict(payload, account_sha256=digest(payload))

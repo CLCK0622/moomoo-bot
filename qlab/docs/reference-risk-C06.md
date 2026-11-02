@@ -133,3 +133,10 @@ reception remain separately assigned. Pending EXEC-CLOSURE monetary, reference
 fill, settlement, lifecycle-clock and phase rules are not implemented or
 silently defaulted here; an accepted actual declaration is not a new model for
 generating those values. Actual META pool chronology remains upstream.
+
+
+## B release context propagation (local preliminary branch)
+
+RiskBook and RiskHistory hold the host-only release_context and canonical binding bytes. Each snapshot, close, fold and restore rechecks the same pinned identity before advancing state. Restore compares disk, host and context before replay; its JSON cannot construct a capability. B01/B02 are absent: formal requests fail with B.release_context_implementation_unavailable. Diagnostic test doubles are not formal acceptance controls.
+
+The v1.0.1 interface is in b-release-context-interface-v1.md. BR1 payloads carry an explicit release_context_binding; old diagnostic roots gain no keys. CashProof and C04 receive the same context without changing monetary or R2 rules.

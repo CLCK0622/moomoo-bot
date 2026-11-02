@@ -76,3 +76,10 @@ readout; it is not a real strategy or reference performance run. META's actual
 20/25/50 transitions use separately supplied synthetic template monitoring.
 The CF01 original expected bytes and fee engine remain untouched. C09/C10
 source, permission, isolated execution and result ownership are separate work.
+
+
+## B release context propagation (local preliminary branch)
+
+CandidateIntent inherits the owned RiskBook context and checks it again before returning a cached result. Context is forwarded to costs and cash proofs. A BR1 result carries the canonical binding; account/history and observation boundaries recheck the owned context. No consumer issues a new A.
+
+B01/B02 and their real positive integration are pending. Tests distinguish diagnostic probes from formal paths, and old receipts bound only to unchanged noncash_v3 may still replay on this preliminary head. Actual old/new results must be listed per receipt; the complete B head must repeat the hard gate after B02. See b-release-context-interface-v1.md v1.0.1.

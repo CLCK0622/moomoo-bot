@@ -17,7 +17,7 @@ from .execution_numbers import amount
 from .execution_clock import ADOPTED_SHA256, validate_clock_binding
 from .execution_closure import validate_execution_binding
 from .noncash_v3 import checked_guard
-from .execution_cash import check_cash_state
+from .execution_cash import CashProof, check_cash_state
 from .reference_definition_v301 import FROZEN, frozen_documents, member_definition
 from .execution_state import necessary_execution_state_known
 
@@ -211,7 +211,11 @@ class RiskBook:
         expected_ruling_sha256,
         policy=None,
         cash_proof=None,
+        release_context=None,
+        expected_release_identity_bytes=None,
     ):
+        self._release_context = release_context
+        self._release_identity_bytes = expected_release_identity_bytes
         self._cash_proof = cash_proof
         self._policy = policy or load_conventions()
         if (
@@ -293,9 +297,18 @@ class RiskBook:
             if close_session not in calendar or calendar.index(close_session) == 0:
                 raise ValueError("risk.calendar_not_adjacent")
             previous_session = calendar[calendar.index(close_session) - 1]
-            checked_guard(guard, self._policy)
+            self._check_release()
+            if self._release_identity_bytes is None:
+                checked_guard(guard, self._policy)
             necessary_execution_state_known(state)
-            check_cash_state(state, guard, cash_proof)
+            check_cash_state(
+                state,
+                guard,
+                cash_proof,
+                release_context=self._release_context,
+                expected_release_identity_bytes=self._release_identity_bytes,
+                policy=self._policy,
+            )
             try:
                 fee_value = amount(fees_x2)
             except (ValueError, TypeError, ArithmeticError) as exc:
@@ -329,6 +342,28 @@ class RiskBook:
             )
 
     @staticmethod
+    def release_guard(
+        guard, policy, release_context=None, expected_release_identity_bytes=None
+    ):
+        return CashProof.release_guard(
+            guard, policy, release_context, expected_release_identity_bytes
+        )
+
+    @staticmethod
+    def release_payload(payload, raw):
+        return CashProof.bind_payload(payload, raw)
+
+    def _check_release(self):
+        raw = self.release_guard(
+            self._guard,
+            self._policy,
+            self._release_context,
+            self._release_identity_bytes,
+        )
+        self._release_identity_bytes = raw
+        return raw
+
+    @staticmethod
     def _bound_clock(binding, expected_binding_sha, expected_ruling_sha):
         return validate_clock_binding(
             binding, expected_binding_sha, expected_ruling_sha
@@ -336,6 +371,7 @@ class RiskBook:
 
     def snapshot(self):
         validate_execution_binding(self._execution_binding)
+        self._check_release()
         payload = dict(
             schema="EVO884.CloseRiskSnapshot/v1",
             book_id=self._book_id,
@@ -363,6 +399,7 @@ class RiskBook:
             runtime_consumable=False,
             certifiable=False,
         )
+        payload = self.release_payload(payload, self._release_identity_bytes)
         return dict(payload, snapshot_sha256=digest(payload))
 
     def order_intent(self, signal, *, expected_signal_sha256, expected_snapshot_sha256):
@@ -561,6 +598,7 @@ class RiskBook:
             runtime_consumable=False,
             certifiable=False,
         )
+        payload = self.release_payload(payload, self._release_identity_bytes)
         return dict(payload, required_m_sha256=digest(payload))
 
     def decision_due(self):
@@ -610,6 +648,7 @@ class RiskBook:
                 raise ValueError("risk.calendar_not_adjacent")
             if symbol == "QQQ":
                 raise ValueError("risk.QQQ_base_policy_separate")
+            self._check_release()
             assert_consumer_symbols(self._guard, "order", [symbol], self._policy)
             clock = self._state["_risk_clock"]
             remaining = cooldown_remaining(clock, symbol, self._date, self._policy)
