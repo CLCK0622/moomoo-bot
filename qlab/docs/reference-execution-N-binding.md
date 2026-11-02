@@ -19,7 +19,8 @@ the completeness of the host's run enumeration require C09/C10 original evidence
 
 An identity-accepted archive with 101 historical unknowns can supply a verified
 attempt map while its formal N slot remains null. Only a value returned by the
-existing complete formal reader can populate that slot; 2, 308 and high-water
+existing complete formal reader can populate that slot; the design archive
+reference, 308 and high-water
 1313 cannot. Even a private counterfactual complete reader result leaves
 `complete=false`, `runtime_consumable=false` and explicit outstanding actual B,
 P4/P7 and C09/C10 reception. A24 here tests only N binding, not the whole
@@ -27,10 +28,15 @@ four-member execution family. A22 full runtime integration remains C09/C10.
 
 ## G14 design archive and stage mapping
 
-The accepted design archive reference is 2, read from the exact published
-acceptance receipt (`7543d251…d5d6`), checked against original archive v27
-(`d57cd84b…cd08`), seq1378, tip `93a5f3b1…0effb`, and both design-charge rows
-1373/1377. The gzip fixture decompresses to original bytes; it is an author
+The accepted design-only archive reference is 3, read from the exact published
+acceptance receipt
+(`40ba00bf7e64a10b4f66990dde6828be02f339365ee1df36dfc324e4fa85b6b0`),
+checked against original archive v28
+(`64378745818ce4aa23f492e925ae4dd28b37306a3774dda85e67896311b64aed`),
+seq1380, tip
+`8e87034167b9d8ad28a91c33b824eecb5cba59c1b47efbb982079e32ddecde4a`,
+and design-charge sequence `[1373, 1377, 1379]`.
+The gzip fixture decompresses to original bytes; it is an author
 archive fixture, never a deployment root, current witness or installation.
 The reference's own complete_N/gate_N remain null. No design write occurs.
 

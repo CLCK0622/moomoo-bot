@@ -21,7 +21,11 @@ entry age, removing the file or altering its bytes fails. There is no default.
 `RiskHistory` requires `book_id`, `scope`, complete zero `genesis`, its expected
 SHA, the existing B guard, and the three clock parameters above. Scope contains
 exactly `kind`, `scope_id`, `member_id`, `fold_id`, `attempt_id`,
-`execution_role`, `recipe_id`. Each independent training member/fold/attempt
+`execution_role`, `recipe_id`, `execution_binding`. The required
+`execution_binding` comes from
+`adopted_execution_binding(*, expected_adoption_sha256)` and is checked against
+the formal EXEC-CLOSURE adoption independently of the C06 clock binding.
+Each independent training member/fold/attempt
 has a separate identity and cannot migrate into another fold. A stitched book
 starts only before fold 0; `advance_fold(fold_id, *, expected_snapshot_sha256)`
 requires adjacent folds and the previous fold's last verified close. It retains
@@ -35,8 +39,11 @@ fees and exact clock binding. Its `required_m(signal, *, expected_book_id,
 expected_close_session, expected_snapshot_sha256,
 expected_original_state_sha256, expected_signal_sha256)` returns
 `EVO884.RequiredM/v1`. Signal has exactly `book_id`, `signal_session`,
-`execution_session`, `ranks`, `origin_context`. META context binds its original
-selection-layer source SHA, signal close and permissions. Solo context is null;
+`execution_session`, `ranks`, `origin_context`. META context has exactly
+`source_sha256`, `signal_session`, `permissions`, `fold_id`,
+`execution_closure_sha256`: it binds its original selection-layer source SHA,
+signal close, permissions, current scope fold and formal EXEC-CLOSURE SHA.
+Solo context is null;
 solo references cannot read the current META pool.
 
 The **original state SHA** covers every retained account field, including
@@ -44,7 +51,8 @@ generated `_risk_clock`. The **snapshot SHA** separately covers state, previous
 risk, `fees_x2`, scope, date and clock. Fees stay outside the original state;
 they are not silently added to a C08 initial-state declaration. Both snapshots
 and M envelopes explicitly require `age_clock`, `cooldown_boundary`, and
-`ruling_sha256`. Their closed 22/20-field root JSON Schemas are in
+`ruling_sha256`, plus `execution_closure_sha256` and
+`execution_binding_sha256`. Their closed 24/22-field root JSON Schemas are in
 `fixtures/execution-risk/close-risk.schema.json` and `required-M.schema.json`.
 Unknown states retain these keys with null values/reasons where unavailable.
 

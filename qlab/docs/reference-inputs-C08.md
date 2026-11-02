@@ -29,7 +29,7 @@ state, prior risk, signal and adopted clock. The original state SHA and risk
 envelope SHA are distinct; x2 fees remain outside the original state. No
 binding is repaired, silently defaulted or inferred from a wire hash.
 
-Only `RiskBook.required_m` generates M. Its complete 20-key receipt, reasons
+Only `RiskBook.required_m` generates M. Its complete 22-key receipt, reasons
 and M are passed through without rewriting. Hanlin's
 `EVO883-M01-contract-ruling-v1.0.0.json` confirms existing contract semantics:
 M is the planned final holding after necessary actions, never a filled sale,
