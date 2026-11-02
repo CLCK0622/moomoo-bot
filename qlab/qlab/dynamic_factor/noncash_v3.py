@@ -277,7 +277,7 @@ def economic_read_receipt(
     return values, dict(payload, numeric_read_receipt_sha256=digest(payload))
 
 
-def zero_exposure(state, guard, *, initial=False):
+def zero_exposure(state, guard, *, initial=False, cash_proof=None):
     necessary_state_known(state)
     if not (
         set(guard["request"]["catalog"]["universe"]) | set(guard["children"])
@@ -287,7 +287,14 @@ def zero_exposure(state, guard, *, initial=False):
         "pending_orders" not in state
         or not isinstance(state["pending_orders"], list)
         or state["rights"]
-        or state["receivables"]
+        or (
+            state["receivables"]
+            and (
+                initial
+                or cash_proof is None
+                or not _cash_receivables_proven(state, guard, cash_proof)
+            )
+        )
     ):
         raise ValueError("B.zero_exposure_unproven_or_old_rights")
     blocked = set(guard["B"]) | set(guard["unknown"]) | set(guard["children"])
@@ -319,6 +326,17 @@ def zero_exposure(state, guard, *, initial=False):
             )
         ):
             raise ValueError("B.guarded_pending_buy")
+
+
+def _cash_receivables_proven(state, guard, proof):
+    # An owned C04 capability, never a boolean or a wire receipt. Noncash
+    # rights remain forbidden; initial-state proofs never use this exception.
+    from .execution_cash import CashProof
+
+    if type(proof) is not CashProof:
+        return False
+    proof.check(state, guard)
+    return True
 
 
 def zero_origin(guard, actor, state, source_sha256, policy=None):

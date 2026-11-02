@@ -13,7 +13,7 @@ import re
 
 from .contract import code_sha, digest, is_sha
 from .conventions import authoritative, load_conventions
-from .fees import finite
+from .execution_numbers import amount
 from .execution_clock import ADOPTED_SHA256, validate_clock_binding
 from .execution_closure import validate_execution_binding
 from .noncash_v3 import checked_guard, zero_exposure
@@ -75,7 +75,10 @@ M_KEYS = {
 
 
 def _positive(value):
-    return type(value) in (int, float) and finite(value) and value > 0
+    try:
+        return amount(value) > 0
+    except (ValueError, TypeError, ArithmeticError):
+        return False
 
 
 def position_clock_check(state, book_id, scope, date, policy):
@@ -206,7 +209,9 @@ class RiskBook:
         expected_clock_binding_sha256,
         expected_ruling_sha256,
         policy=None,
+        cash_proof=None,
     ):
+        self._cash_proof = cash_proof
         self._policy = policy or load_conventions()
         if (
             not authoritative(self._policy)
@@ -289,17 +294,13 @@ class RiskBook:
             previous_session = calendar[calendar.index(close_session) - 1]
             checked_guard(guard, self._policy)
             necessary_state_known(state)
-            zero_exposure(state, guard)
+            zero_exposure(state, guard, cash_proof=cash_proof)
             if (
-                type(fees_x2) not in (int, float)
-                or not finite(fees_x2)
-                or fees_x2 < 0
+                amount(fees_x2) < 0
                 or type(state.get("initialization_count")) is not int
                 or state["initialization_count"] != 1
-                or type(state["cash"]) not in (int, float)
-                or not finite(state["cash"])
-                or state["cash"] < 0
-                or type(state["nav"]) not in (int, float)
+                or amount(state["cash"]) < 0
+                or not _positive(state["nav"])
             ):
                 raise ValueError("risk.required_state_unknown")
             self._risk = _close_risk(
@@ -358,6 +359,29 @@ class RiskBook:
             certifiable=False,
         )
         return dict(payload, snapshot_sha256=digest(payload))
+
+    def order_intent(self, signal, *, expected_signal_sha256, expected_snapshot_sha256):
+        """The one C06 DAY intent used by both D2 history and C04 accounting."""
+        snap = self.snapshot()
+        required = self.required_m(
+            signal,
+            expected_book_id=self._book_id,
+            expected_close_session=self._date,
+            expected_snapshot_sha256=expected_snapshot_sha256,
+            expected_original_state_sha256=snap["original_state_sha256"],
+            expected_signal_sha256=expected_signal_sha256,
+        )
+        if not required["complete"]:
+            raise ValueError(required["reasons"][0])
+        intent = dict(
+            book_id=self._book_id,
+            signal_session=self._date,
+            execution_session=signal["execution_session"],
+            required_m_sha256=required["required_m_sha256"],
+            required_exits=deepcopy(required["required_exits"]),
+            origin_new_risk_enabled=deepcopy(required["origin_new_risk_enabled"]),
+        )
+        return dict(intent, intent_sha256=digest(intent))
 
     def required_m(
         self,

@@ -400,8 +400,14 @@ def project(
     ):
         raise ValueError("projection.price_or_ADV_unknown")
     # Nonzero rights need C04's accepted valuation, never assumed spendable.
-    if any(state[k] for k in ("rights", "receivables")):
+    rights_value = Fraction(0)
+    if state["rights"]:
         raise ValueError("projection.accepted_rights_valuation_required")
+    if state["receivables"]:
+        proof = risk_book._cash_proof
+        if proof is None:
+            raise ValueError("projection.accepted_rights_valuation_required")
+        rights_value = proof.check(state, risk_book._guard)
     cash, nav = amount(close["cash"]), amount(close["NAV_anchor"])
     costs = OrderCosts(policy, opened["session"], "research_restored")
 
@@ -414,7 +420,7 @@ def project(
             exits,
             scores,
             cash,
-            Fraction(0),
+            rights_value,
             nav,
             costs,
             risk_book._guard,

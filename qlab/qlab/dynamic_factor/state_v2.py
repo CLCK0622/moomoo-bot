@@ -6,6 +6,7 @@ from .contract import digest, is_sha, result
 from .conventions import load_conventions
 from .fees import finite
 from .input_scope import reject_b2_inputs
+from .execution_numbers import amount
 
 CORE = {
     "inventory",
@@ -42,15 +43,16 @@ def necessary_state_known(state):
             or (isinstance(x, list) and any(unknown(v) for v in x))
         )
 
+    try:
+        money_known = amount(state["nav"]) > 0 and amount(state["cash"]) >= 0
+    except (ValueError, TypeError, KeyError, ArithmeticError):
+        money_known = False
     if (
         not isinstance(state, dict)
         or not CORE.issubset(state)
         or any(unknown(state[k]) for k in CORE)
         or state["unknown_components"]
-        or not finite(state["nav"])
-        or state["nav"] <= 0
-        or not finite(state["cash"])
-        or state["cash"] < 0
+        or not money_known
         or any(
             not isinstance(state[k], dict)
             for k in ("inventory", "age", "origin", "rights", "receivables")

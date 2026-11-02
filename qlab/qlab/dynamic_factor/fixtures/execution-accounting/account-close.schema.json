@@ -1,0 +1,178 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "book_id",
+    "session",
+    "accounting",
+    "fills",
+    "cancelled_DAY_orders",
+    "previous_close_NAV",
+    "return_ratio",
+    "x1_replay",
+    "execution_verified",
+    "execution_closure_sha256",
+    "runtime_consumable",
+    "certifiable",
+    "execution_mode",
+    "close_evidence_sha256",
+    "ledger_facts_sha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "EVO884.AccountClose/v1"
+    },
+    "book_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "session": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "accounting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asof",
+        "inventory",
+        "cash",
+        "nav",
+        "fees_x2",
+        "rights",
+        "receivables",
+        "pending_orders",
+        "unknown_components",
+        "initialization_count"
+      ],
+      "properties": {
+        "asof": {
+          "type": "string"
+        },
+        "inventory": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "cash": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"
+        },
+        "nav": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"
+        },
+        "fees_x2": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"
+        },
+        "rights": {
+          "type": "object",
+          "maxProperties": 0
+        },
+        "receivables": {
+          "type": "object"
+        },
+        "pending_orders": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "unknown_components": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "initialization_count": {
+          "const": 1
+        }
+      }
+    },
+    "fills": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "cancelled_DAY_orders": {
+      "type": "array"
+    },
+    "previous_close_NAV": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"
+    },
+    "return_ratio": {
+      "type": "string"
+    },
+    "x1_replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "same_orders_and_quantities",
+        "additional_orders",
+        "fees_since_open",
+        "cash_difference",
+        "net_equity_fee_difference",
+        "NAV",
+        "canonical"
+      ],
+      "properties": {
+        "same_orders_and_quantities": {
+          "const": true
+        },
+        "additional_orders": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "fees_since_open": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"
+        },
+        "cash_difference": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"
+        },
+        "net_equity_fee_difference": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"
+        },
+        "NAV": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"
+        },
+        "canonical": {
+          "const": false
+        }
+      }
+    },
+    "execution_verified": {
+      "type": "boolean"
+    },
+    "execution_closure_sha256": {
+      "const": "7677b123fa2fe573343fad3fe3f43887c5f5d2c0fd7c12d9a1de8bc625162e1b"
+    },
+    "runtime_consumable": {
+      "const": false
+    },
+    "certifiable": {
+      "const": false
+    },
+    "execution_mode": {
+      "enum": [
+        "accepted_actual",
+        "named_training_diagnostic"
+      ]
+    },
+    "close_evidence_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ledger_facts_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "EVO884.AccountClose/v1"
+}

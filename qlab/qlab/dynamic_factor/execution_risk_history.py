@@ -14,6 +14,7 @@ from .conventions import load_conventions
 from .execution_clock import ADOPTED_SHA256, validate_clock_binding
 from .execution_closure import validate_execution_binding
 from .execution_risk import RiskBook
+from .execution_numbers import amount
 from .execution_startup import INITIAL_FIELDS, _locked
 from .noncash_v3 import checked_guard, zero_exposure
 from .reference_validation import utc_instant
@@ -126,6 +127,7 @@ class RiskHistory:
             expected_clock_binding_sha256=expected_clock_binding_sha256,
             expected_ruling_sha256=expected_ruling_sha256,
         )
+        self._cash_proof = None
         self._book_id, self._scope, self._guard = (
             book_id,
             deepcopy(scope),
@@ -184,6 +186,7 @@ class RiskHistory:
             expected_clock_binding_sha256=digest(self._clock),
             expected_ruling_sha256=ADOPTED_SHA256,
             policy=self._policy,
+            cash_proof=self._cash_proof,
         )
 
     @_locked
@@ -221,15 +224,11 @@ class RiskHistory:
         )
         if not result["complete"]:
             raise ValueError(result["reasons"][0])
-        intent = dict(
-            book_id=self._book_id,
-            signal_session=self._date,
-            execution_session=signal["execution_session"],
-            required_m_sha256=result["required_m_sha256"],
-            required_exits=deepcopy(result["required_exits"]),
-            origin_new_risk_enabled=deepcopy(result["origin_new_risk_enabled"]),
+        intent = self._book.order_intent(
+            signal,
+            expected_signal_sha256=expected_signal_sha256,
+            expected_snapshot_sha256=expected_snapshot_sha256,
         )
-        intent["intent_sha256"] = digest(intent)
         if self._active is not None and self._active != intent:
             raise ValueError("risk.one_locked_intent_per_open")
         for row in result["required_exits"]:
@@ -267,6 +266,7 @@ class RiskHistory:
         *,
         expected_accounting_sha256,
         expected_fills_sha256,
+        cash_proof=None,
     ):
         inputs = dict(
             date=date,
@@ -275,6 +275,8 @@ class RiskHistory:
             expected_accounting_sha256=expected_accounting_sha256,
             expected_fills_sha256=expected_fills_sha256,
         )
+        if cash_proof is not None:
+            inputs["cash_proof_sha256"] = cash_proof.sha256
         self._declarations.append(
             dict(
                 input_index=len(self._declarations),
@@ -289,6 +291,7 @@ class RiskHistory:
                 fills,
                 expected_accounting_sha256,
                 expected_fills_sha256,
+                cash_proof,
             )
         except (
             ValueError,
@@ -311,7 +314,7 @@ class RiskHistory:
         )
         return output
 
-    def _observe(self, date, accounting, fills, accounting_sha, fills_sha):
+    def _observe(self, date, accounting, fills, accounting_sha, fills_sha, cash_proof):
         calendar = self._policy.calendar
         if (
             calendar.index(self._date) + 1 >= len(calendar)
@@ -491,12 +494,14 @@ class RiskHistory:
             expected_clock_binding_sha256=digest(self._clock),
             expected_ruling_sha256=ADOPTED_SHA256,
             policy=self._policy,
+            cash_proof=cash_proof,
         )
         result = book.snapshot()
         if not result["complete"]:
             raise ValueError(result["reasons"][0])
-        if accounting["fees_x2"] < self._fees:
+        if amount(accounting["fees_x2"]) < amount(self._fees):
             raise ValueError("risk.accrued_fees_cannot_reset")
+        self._cash_proof = cash_proof
         self._date, self._state, self._prior, self._fees = (
             date,
             candidate,
@@ -591,7 +596,14 @@ class RiskHistory:
 
     @classmethod
     def restore(
-        cls, raw, *, expected_sha256, expected_book_id, expected_scope, policy=None
+        cls,
+        raw,
+        *,
+        expected_sha256,
+        expected_book_id,
+        expected_scope,
+        policy=None,
+        cash_proofs=None,
     ):
         if not is_sha(expected_sha256) or sha256(raw) != expected_sha256:
             raise ValueError("risk.current_history_bytes_mismatch")
@@ -608,7 +620,16 @@ class RiskHistory:
                 if event["op"] == "prepare":
                     output = book.prepare_open(**event["inputs"])
                 elif event["op"] == "close":
-                    output = book.observe_close(**event["inputs"])
+                    close_inputs = dict(event["inputs"])
+                    proof_sha = close_inputs.pop("cash_proof_sha256", None)
+                    if proof_sha is not None:
+                        proof = (cash_proofs or {}).get(proof_sha)
+                        if proof is None or proof.sha256 != proof_sha:
+                            raise ValueError(
+                                "risk.owned_cash_proof_required_for_replay"
+                            )
+                        close_inputs["cash_proof"] = proof
+                    output = book.observe_close(**close_inputs)
                 elif event["op"] == "fold":
                     output = book.advance_fold(**event["inputs"])
                 elif event["op"] == "forward":
