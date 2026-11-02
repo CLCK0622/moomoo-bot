@@ -1,7 +1,10 @@
-release_context 共同接口规格 v1.0.1（v1.0.0 已核，附加约束落实）
+release_context 共同接口规格 v1.0.2（内部传参授权冲突与入口顺序澄清，待核）
 
 作者：营缮主事。任务：EVO-881，工部派令 `01a19e47-e352-7af1-a330-9965c15ac876`。
-本件定义接口，不提供 B01 类、接收器或 A 的实现。v1.0.0 已经工部核稿（01a19e53-9ee0）；本版落实该评论两条约束，传播实现在同一本地分支另交。
+本件定义接口，不提供 B01 类、接收器或 A 的实现。v1.0.0 已经工部核稿（01a19e53-9ee0）；v1.0.1 落实该评论两条约束。本版响应都水回读 01a19e8e-ed4e：保留已核接口与 12 码，明确内部传参在现有授权内不能闭合，交工部裁定；并补入口顺序及双缺陷矩阵，不把规格澄清称为实现通过。
+
+本版只改此文档；产品基准固定本地头 `0cb4ba91fb5bcf6ea1854a14f51eb54487607599`。
+其产品全量结果仍属于该固定头，本版没有重跑或升级为 B01/B02 正控。v1.0.1 原字节及逐字 diff 随交。
 
 本地起点：`037e112ef1ab4919b1827e566b0387217ba0edc6`，取自本次 fetch 的远端
 `evo884-exec-loop`。只在本地 `evo884-b-release-local` 分支保存本规格，不推送。
@@ -41,9 +44,8 @@ B02 的既有公共模块 `noncash_v3` 须导出同一个类对象，不能另�
 再导出，以及 seal_guard/checked_guard 正式分支的签名和消费；不新增其他导出，不改其他
 函数。scope_proof.IMPORTS["noncash_v3"] 只增 b_release_context 一个精确模块名并配反例。
 这两件由都水在 B01/B02 实现，营缮先行头不动。八文件没有新增模块 import 或文件读取。
-尚需 B02 联调核查：既有 allowed_symbols/assert_consumer_symbols/三证明内部不带上下文
-重跑 checked_guard 的调用，如何在上述约束内消费同一受信上下文。本段仍保留这些原调用，
-不得绕过、删掉或将其成功视为已经实现；B01/B02 未到时一律拒绝，未宣称真实正向可达。
+内部重核的授权冲突见 2.1，不能再以“待联调”当作有可行合同。本段仍保留这些原调用，
+不得绕过、删掉或将其成功视为已经实现；B01/B02 未到时新正式路径仍拒绝，未宣称真实正向可达。
 
 正式检查必须使用 `type(context) is ReleaseContext`。普通 dict、子类、代理、同名类、
 仅有同名字段的对象和测试替身全部拒绝；不使用 `isinstance`、Protocol/duck typing、
@@ -58,6 +60,72 @@ B02 的既有公共模块 `noncash_v3` 须导出同一个类对象，不能另�
 复制可返回同一不可变能力；序列化/进程通信不得复制出新的受信能力。
 host 在另一进程重载时，须用自己的受信输入重新核验同一份既存 A，取得当地同一规范类的实例。
 仅反序列化旧身份记录不能生成实例，且不得因此重新签发 A。
+
+### 2.1 内部重核：现行授权不能闭合，停止在合同裁定处
+
+核对对象：main / 远端 2d45320 / 本地 0cb4ba9 的 noncash_v3 原字节相同，SHA256
+`08301f9d7a5ad5bdcd2fcaae8422dec9896e18b59d197a9c183e81057e106744`。
+都水回读包 SHA256 `ccf08c079548b7c4c7c9cbfda0b7ce145d13f11b39b7fdfd67df655090fe9ac2`
+已下载重算核符；本地再次静态核对八件实际调用，不以回读结论代替源码。
+
+现有传参链是 `assert_consumer_symbols:211 → allowed_symbols:202 → checked_guard:184 → seal_guard`，
+前三条边均未携带 context / expected identity。`execution_amounts:75/88` 显式核验后，
+`:94` 仍进入该链；`execution_cash:335` 复核后，`:345` 同样如此。
+guard 是普通可持久化 dict；其中的 binding/hash 只有数据身份，不是 host 能力。
+RiskHistory.restore 解码得到的也只是普通 dict，不能由其 JSON 反向生成能力。
+
+只改 seal_guard/checked_guard 的签名和正式分支，无法让这些未改调用的默认 None
+变成原 host 注入的能力及期待 bytes；先前外层成功不替代本次重核。
+这结论限定于本规格已经核过的普通 guard / 显式能力接口，不声称否定另行设计新接口的可能。
+本版不引入隐式线程/进程上下文、全局或按摘要查能力的注册表、guard 隐藏能力包装器、
+函数装饰器、monkeypatch、从 policy/JSON 倒填能力或测试替身。这些均不是已核合同。
+因此三处边界与每次原消费者重核的要求在当前接口下冲突，完整 B02 仍未闭合；
+不以放宽 required、跳过消费者或仅比对自述摘要解决。
+
+**交工部裁定的最小显式传参方案，未授权、未实现：**
+
+| noncash_v3 原函数（原行号） | 建议仅增加的关键词及转递 |
+| --- | --- |
+| allowed_symbols:200 | 两关键词转 checked_guard |
+| assert_consumer_symbols:208 | 两关键词转 allowed_symbols；原 consumer 检查仍先行 |
+| guarded_value:215 | 两关键词转 assert_consumer_symbols；保留原 reader 位置 |
+| economic_values:221 | 两关键词转 assert_consumer_symbols、每次 guarded_value |
+| economic_read_receipt:228 | 两关键词转 zero_origin、economic_values；原 actor/origin 检查仍先行 |
+| zero_origin:324 | 两关键词转 checked_guard；不改 zero_exposure、资本/初态检查 |
+| acquisition_check:348 | 两关键词转 checked_guard、zero_origin；原 route/actor 顺序不动 |
+| no_dependency_receipt:377 | 两关键词转 checked_guard、zero_origin、assert_consumer_symbols |
+| forward_event:452 | 两关键词转 checked_guard、seal_guard；保留原前向门与状态保留逻辑 |
+
+“两关键词”精确为 keyword-only `release_context=None, expected_release_identity_bytes=None`，
+不改变已有位置参数/返回形态，不新增导出、import、读取、码或放行开关。
+九函数共 15 处内部调用转递，预计约 45–80 行增加（排版相关），仅签名与实参；
+这超出已授权的 seal_guard/checked_guard 两函数边界，未获裁定前不落产品 patch。
+三个证明及 guarded_value 的源码身份会随实际差量变化，需迁移、重审与重封，不能复用旧 seal。
+
+若获准，完整能力归属合同如下；在获准并联调以前仅是方案：
+
+1. 原可信 host 从独立原输入核验/重载既存 A，将同一规范 ReleaseContext 实例及期待绑定
+   注入拥有对象。首次构造可由共同 checker 得到绑定；一旦持有，此后固定传回同一 bytes。
+2. 八件已有拥有对象/显式参数把自己持有的 context 与 bytes 传至表内入口；每条内部边
+   原样转递，不从 guard 生成、不按 consumer 重签。每次到 checked_guard 仍进入共同重建，
+   不把外层验证成功作为跳过令牌。
+3. restore 先按第 6 节比较磁盘/host/context 身份，再构造拥有对象、传递同一能力；
+   跨进程由当地 host 独立重载同一 A 得到当地规范实例，不传输或 pickle 能力。
+4. forward_event 的新 request 也要用同一 context 重新核范围；若新 catalog/event 不属
+   原接受范围，保持 scope 拒绝，不能借“转递”自动扩大许可或生成新 A。
+
+八件中受影响的外部调用在 execution_amounts、execution_cash、execution_risk、
+execution_accounting、execution_signals、execution_projection、execution_candidate；
+execution_risk_history 负责能力拥有/恢复。它们仍需在获准后补实参与复核测试。
+本地 0cb4ba9 上，八件之外另见 execution、valuation、k5、reference_day_inputs、
+reference_compile_v3、reference_noncash、execution_receipts/input_envelope 调用上述函数。
+它们只是影响清单，不是本版授权；逐调用行、源码 SHA 与 main 原件归属见随件静态 inventory。
+正式调用须由各自原 host/拥有对象传入，诊断调用保留 None 的原范围；哪些调用进入正式
+分支须由工部与原作者逐件划定，不能凭函数同名扩大到所有调用。R 固定头到件后重出清单。
+
+请工部决定是否提请扩充这九函数的传参授权及对应调用方分工；本版不自行扩大边界，
+不请求修改 zero_exposure/state、费用算法或旧 golden。两个既定再导出本身足够，
+冲突在内部参数边，不在 B01 返回类型或增加公共出口。
 
 ## 3. 固定属性
 
@@ -121,7 +189,8 @@ expected identity 若传入必须为精确 bytes，且是第 5 节规范绑定�
 `seal_guard` 从原输入生成具名正式 guard；`checked_guard` 从同一 context、policy、
 guard.request 从头重建，逐字段/值比较 guard，不以 guard 自摘要为充分条件。
 
-校验顺序为：检查实现可用及能力类型/来源；从独立 host 期待值和原件核正式采用件、
+下述顺序只描述共同核验边界内部，不覆盖 seal/checked/restore 或八件入口已经在前面的旧检查：
+检查实现可用及能力类型/来源；从独立 host 期待值和原件核正式采用件、
 R/P/发布身份、限定输入、A/固定时点证据及外部附注；重算 H_C/H_D；核 expected identity
 及当前 policy/request 的 mode、范围和时点；最后重建并比较 guard。
 传 expected identity 是额外一致性要求，不是放宽独立核验的替代方案。
@@ -155,6 +224,70 @@ R/P/发布身份、限定输入、A/固定时点证据及外部附注；重算 H
 本表不改 C09 的 B 发布门或 SRC/AUTH 外部门原码。旧静态/合成诊断只在原有明确诊断范围
 继续存在；正式 schema 或含正式 release_binding 的请求不得删字段、改 synthetic 或回退
 旧 guard。缺实现时也不能声称存在正式正控。
+
+### 4.1 入口位置与拒绝顺序
+
+12 行是码义集合，不是全局排序；persistent_identity 两码还涉及 restore 数据门，
+guard_identity 则属于重建比较。以下是 B01/B02 到件时的接口合同澄清，仍待工部核稿；
+不是这些尚不存在的正式分支已经执行通过。
+
+| 入口 | 前置检查、共同核验及后置比较 |
+| --- | --- |
+| 直接 check_release_context | 入口已可用才可调用；缺实现由调用方解析出口时报 unavailable。依次缺能力/精确类型、host 来源与独立绑定存在性、原件/期待绑定严格编码、采用件及 R/P/发布身份和 H_C/H_D 重算、固定 A/接收时点证据、外部附注、可选 expected identity 的逐字节比较、当前 policy/request 范围。首次构造未传 expected 不报 persistent_identity_required。成功只返回完整 C 编码 bytes，不比较业务 guard。 |
+| 直接 seal_guard | 先走该分支适用的原 request 结构/mode/synthetic、时间、prior、完整 U64/catalog/证据、可选注册派生检查；保留原先遇错即停的顺序。正式分支的共同 checker 位于原 runtime catalog 接受检查的位置、payload 重建之前。旧诊断分支原接受检查不动；正式分支由核过的 R/P/A 接受合同取代旧静态 ACCEPTED_CATALOG_SHA256 比较，不先让旧空常量永久挡住新分支。不得据此跳过 schema、时间或注册派生检查。 |
+| 直接 checked_guard | 先保留原外形及取 request 行为：非 dict 报 guard_identity_mismatch，dict 缺 request 仍为原 KeyError('request')。之后以同一 context/expected bytes 调用 seal_guard 重建；seal 前置失败原样传播，其共同 checker 成功后才比较整份 guard，不等才报 guard_identity_mismatch。不把 checker 提到上述旧前置之前。 |
+| 正式 RiskHistory.restore | 按当前 0cb4ba9：raw SHA → 严格 JSON 解码 → 原 schema/book/scope → history_source_sha256 → 正式根闭集 → BR1 根及 host 期待绑定存在性 → 磁盘绑定严格编码 → host 期待绑定严格编码 → 两份 bytes 相等 → 整份 raw 规范编码相等 → context 存在性 → release_guard（解析共同实现、精确类型、共同 checker、checked_guard）→ initial 闭集/构造 → 事件逐次重放 → 完整导出相等。来源不符在能力检查前拒绝。C04 Journal 没有 restore，本版不新增。 |
+
+seal 的“原结构”是各分支定义允许的闭集；新正式键的允许范围由 B02 登记，不能拿旧
+诊断闭集排除正式必填字段，也不能为正式键放松旧诊断闭集。原函数即时异常保持原语义：
+例如坏时间文本可能是 datetime 的原 ValueError，缺 signal_close/request 可能是 KeyError；
+本表不新造统一码来掩盖它们。
+
+八件先行桥本来会在调用 checked_guard 前显式调用共同 checker，这仍是该外层入口自己的
+调用位置，不等于“直接 checked_guard”的顺序。例：quote_exact 先检查 orders/notionals
+成员，再解析 B01 出口、核 context、checked_guard，最后原消费者。CashProof.check 先核
+原 state/book/guard 身份，再核拥有的 release 绑定和共同 checker，最后原 allowed_symbols。
+本版不把所有入口改成同一顺序；2.1 的缺口未裁定前，桥后的原消费者链仍未闭合。
+
+### 4.2 双缺陷矩阵（合同预期与当前实物分开）
+
+下面 S/K/C 行描述 B01/B02 已实现时的合同预期，**本轮未实跑正式能力正控或这些未来分支**。
+每行其余字段须有效且足以到达所列门；“缺 context”指已识别的新正式分支，不能回退诊断。
+R 行是 0cb4ba9 已存在 restore 语句的静态顺序；不是本轮产品执行结果。
+
+| ID / 入口 | 同时存在的两个缺陷 | 先失败的结果 / 尚未到达 |
+| --- | --- | --- |
+| S01 seal | request 结构不合法 + 缺 context | B.guard_schema_invalid；未进 checker |
+| S02 seal | sealed_at 缺时区 + 缺 context | B.timezone_required；未进 checker |
+| S03 seal | 历史 sealed_at 不早于 first_performance_at + 缺 context | B.not_sealed_before_performance；未进 checker |
+| S04 seal | U64 catalog 不完整 + context 类型错 | B.full_U64_catalog_required；未进 checker |
+| S05 seal | 原前置全有效，B01 出口缺件 + 缺 context | B.release_context_implementation_unavailable；不回退 |
+| K01 checked | guard 非 dict + 缺 context | B.guard_identity_mismatch；不取 request |
+| K02 checked | guard 缺 request + 缺 context | 原 KeyError('request')；未进 seal |
+| K03 checked | request 时间无时区 + guard 摘要错 | B.timezone_required；未比较重建结果 |
+| K04 checked | 原前置有效，缺 context + guard 内容错 | B.release_context_required；未比较 guard（B01 出口已可用） |
+| C01 checker | 能力精确类型错 + R/P 身份错 | B.release_context_type_mismatch；未核 R/P |
+| C02 checker | 无独立 host 绑定 + A 身份错 | B.release_context_trust_binding_missing；未核 A |
+| C03 checker | 原件编码非法 + R/P 身份错 | B.release_context_encoding_invalid；未比 release |
+| C04 checker | R/P 身份错 + A 身份错 | B.release_context_release_mismatch；未核 A |
+| C05 checker | A 身份错 + 附注缺失 | B.release_context_acceptance_mismatch；未核附注 |
+| C06 checker | expected bytes 合法但混版 + request 范围错 | B.release_context_persistent_identity_mismatch；未核当前范围 |
+| R01 restore | raw SHA 错 + scope 错 | risk.current_history_bytes_mismatch；未解析 |
+| R02 restore | scope 错 + history source 错 | risk.history_scope_mismatch；未核 source |
+| R03 restore | history source 错 + 缺 context | risk.history_replay_mismatch；未核能力 |
+| R04 restore | 正式根缺 release_context_binding 键 + host 期待缺失 | B.release_context_encoding_invalid；根闭集先失败 |
+| R05 restore | 根键齐全但 host 期待缺失 + 磁盘绑定为另一合法版本 | B.release_context_persistent_identity_required；尚未作混版比较 |
+| R06 restore | 磁盘绑定编码非法 + host 期待为另一合法版本 | B.release_context_encoding_invalid；先解析磁盘 |
+| R07 restore | 磁盘/host 两份合法 bytes 混版 + 缺 context | B.release_context_persistent_identity_mismatch；未核能力 |
+| R08 restore | 整份 raw 非规范编码（摘要取实际 bytes）+ 缺 context | B.release_context_encoding_invalid；未核能力，前面的根/绑定门均有效 |
+| R09 restore | 缺 context + B01 出口缺件 | B.release_context_required；未解析 B01 出口 |
+| E01 quote_exact | orders/notionals 成员错 + 缺 context | fee.exact_net_order_membership；未解析 B01 出口 |
+| E02 CashProof.check | 原 state/book/guard 身份错 + context 混版 | accounting.cash_proof_state_or_scope_mismatch；未核 release |
+
+R04 与 R05 刻意区分“磁盘根缺键”和“host 期待缺失”，不可统称缺绑定后随意选码。
+S05 与 R09 也刻意不同：unavailable 不是覆盖所有入口的全局最高优先级。
+表中拒绝均不得推进 reader/worker、事件或日期；这一不推进条件须在完整 B 头真实联调取证，
+本次静态顺序核查不能替代 T10/T11/T19/T20 验收。
 
 ## 5. 持久身份：只记录绑定，不保存信任能力
 
@@ -290,9 +423,10 @@ T19/T20 必须对同一份旧原件逐件作旧/新源码对照；不得旧端�
 
 ## 8. 核稿、版本与交付
 
-本版请工部先核类型/出口、固定字段、拒绝码、持久根/恢复约定及替身边界，并转都水核接口
-可落地性。核过再进入第 2 步；接口若改版，显式升版保留 diff，不把本稿当作已采用规则。
-不等待回读后在本轮继续实现，也不设循环唤醒。
+v1.0.0 类型/出口等接口与 v1.0.1 附加约束已经核稿，八件先行传播及 pin 修复已另交。
+本版请工部核第 4 节入口顺序，并裁定第 2.1 节九函数传参超出现有授权的冲突；
+未获裁定不继续产品实现。12 码及规范签名不变，不把本稿或都水静态回读当作 B02 闭合。
+显式保留 v1.0.1 原字节/diff；不等待回读后在本轮继续实现，也不设循环唤醒。
 
 本地未推送提交须等 R 固定头确定后再 rebase 到该头，之后才可推到新
 `evo884-b-release` 分支；不向 evo884-exec-loop 推送，不重写已推历史，八文件冲突即停报。
