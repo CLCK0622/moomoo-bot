@@ -13,6 +13,7 @@ from .contract import canonical, code_sha, digest, is_sha, sha256
 from .conventions import load_conventions
 from .execution_clock import ADOPTED_SHA256, validate_clock_binding
 from .execution_closure import validate_execution_binding
+from .execution_cash import CashProof
 from .execution_risk import RiskBook
 from .execution_numbers import amount
 from .execution_startup import INITIAL_FIELDS, _locked
@@ -60,6 +61,8 @@ class RiskHistory:
         expected_clock_binding_sha256,
         expected_ruling_sha256,
         policy=None,
+        release_context=None,
+        expected_release_identity_bytes=None,
     ):
         validate_execution_binding(
             scope.get("execution_binding") if type(scope) is dict else None
@@ -68,7 +71,12 @@ class RiskHistory:
         self._clock = validate_clock_binding(
             clock_binding, expected_clock_binding_sha256, expected_ruling_sha256
         )
-        checked_guard(guard, self._policy)
+        self._release_context = release_context
+        self._release_identity_bytes = RiskBook.release_guard(
+            guard, self._policy, release_context, expected_release_identity_bytes
+        )
+        if self._release_identity_bytes is None:
+            checked_guard(guard, self._policy)
         if (
             not is_sha(book_id)
             or digest(genesis) != expected_genesis_sha256
@@ -187,10 +195,24 @@ class RiskHistory:
             expected_ruling_sha256=ADOPTED_SHA256,
             policy=self._policy,
             cash_proof=self._cash_proof,
+            release_context=self._release_context,
+            expected_release_identity_bytes=self._release_identity_bytes,
         )
+
+    def _check_release(self):
+        raw = RiskBook.release_guard(
+            self._guard,
+            self._policy,
+            self._release_context,
+            self._release_identity_bytes,
+        )
+        if self._book._check_release() != raw:
+            raise ValueError("B.release_context_persistent_identity_mismatch")
+        return raw
 
     @_locked
     def snapshot(self):
+        self._check_release()
         snapshot = self._book.snapshot()
         if self._halt:
             snapshot.update(complete=False, risk=None, reasons=[self._halt])
@@ -322,6 +344,7 @@ class RiskHistory:
         return output
 
     def _observe(self, date, accounting, fills, accounting_sha, fills_sha, cash_proof):
+        self._check_release()
         calendar = self._policy.calendar
         if (
             calendar.index(self._date) + 1 >= len(calendar)
@@ -502,6 +525,8 @@ class RiskHistory:
             expected_ruling_sha256=ADOPTED_SHA256,
             policy=self._policy,
             cash_proof=cash_proof,
+            release_context=self._release_context,
+            expected_release_identity_bytes=self._release_identity_bytes,
         )
         result = book.snapshot()
         if not result["complete"]:
@@ -587,17 +612,21 @@ class RiskHistory:
 
     @_locked
     def export_bytes(self):
+        self._check_release()
         return canonical(
-            dict(
-                schema="EVO884.RiskHistory/v1",
-                initial=self._initial,
-                history_source_sha256=code_sha(RiskHistory),
-                events=self._events,
-                declarations=self._declarations,
-                pending_required_exits=self._pending,
-                active_order_intent=self._active,
-                halt_reason=self._halt,
-                snapshot=self.snapshot(),
+            RiskBook.release_payload(
+                dict(
+                    schema="EVO884.RiskHistory/v1",
+                    initial=self._initial,
+                    history_source_sha256=code_sha(RiskHistory),
+                    events=self._events,
+                    declarations=self._declarations,
+                    pending_required_exits=self._pending,
+                    active_order_intent=self._active,
+                    halt_reason=self._halt,
+                    snapshot=self.snapshot(),
+                ),
+                self._release_identity_bytes,
             )
         )
 
@@ -611,17 +640,86 @@ class RiskHistory:
         expected_scope,
         policy=None,
         cash_proofs=None,
+        release_context=None,
+        expected_release_identity_bytes=None,
     ):
         if not is_sha(expected_sha256) or sha256(raw) != expected_sha256:
             raise ValueError("risk.current_history_bytes_mismatch")
-        payload = json.loads(raw)
+        formal = (
+            release_context is not None
+            or expected_release_identity_bytes is not None
+            or b"-BR1" in raw
+            or b"release_context_binding" in raw
+        )
+        payload = (
+            json.loads(
+                raw,
+                object_pairs_hook=CashProof._pairs,
+                parse_constant=CashProof._constant,
+            )
+            if formal
+            else json.loads(raw)
+        )
         if (
-            payload.get("schema") != "EVO884.RiskHistory/v1"
+            payload.get("schema")
+            not in {"EVO884.RiskHistory/v1", "EVO884.RiskHistory/v1-BR1"}
             or payload["initial"]["book_id"] != expected_book_id
             or payload["initial"]["scope"] != expected_scope
         ):
             raise ValueError("risk.history_scope_mismatch")
-        book = cls(**payload["initial"], policy=policy)
+        if payload.get("history_source_sha256") != code_sha(cls):
+            raise ValueError("risk.history_replay_mismatch")
+        if formal:
+            if set(payload) != {
+                "schema",
+                "initial",
+                "history_source_sha256",
+                "events",
+                "declarations",
+                "pending_required_exits",
+                "active_order_intent",
+                "halt_reason",
+                "snapshot",
+                "release_context_binding",
+            }:
+                raise ValueError("B.release_context_encoding_invalid")
+            if (
+                payload.get("schema") != "EVO884.RiskHistory/v1-BR1"
+                or "release_context_binding" not in payload
+                or expected_release_identity_bytes is None
+            ):
+                raise ValueError("B.release_context_persistent_identity_required")
+            disk = CashProof.binding_bytes(payload["release_context_binding"])
+            CashProof.binding_value(expected_release_identity_bytes)
+            if disk != expected_release_identity_bytes:
+                raise ValueError("B.release_context_persistent_identity_mismatch")
+            if canonical(payload) != raw:
+                raise ValueError("B.release_context_encoding_invalid")
+            if release_context is None:
+                raise ValueError("B.release_context_required")
+            RiskBook.release_guard(
+                payload["initial"]["guard"],
+                policy,
+                release_context,
+                expected_release_identity_bytes,
+            )
+        if set(payload["initial"]) != {
+            "book_id",
+            "scope",
+            "genesis",
+            "expected_genesis_sha256",
+            "guard",
+            "clock_binding",
+            "expected_clock_binding_sha256",
+            "expected_ruling_sha256",
+        }:
+            raise ValueError("risk.history_scope_mismatch")
+        book = cls(
+            **payload["initial"],
+            policy=policy,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         for event in payload["events"]:
             try:
                 if event["op"] == "prepare":

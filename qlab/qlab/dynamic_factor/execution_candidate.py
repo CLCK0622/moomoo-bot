@@ -270,6 +270,7 @@ class CandidateIntent:
         )
 
     def identity(self):
+        self._book._check_release()
         return deepcopy(self._identity)
 
     def _gain(self, plan, inputs):
@@ -298,6 +299,8 @@ class CandidateIntent:
                     },
                     guard=self._book._guard,
                     execution_binding=self.binding,
+                    release_context=self._book._release_context,
+                    expected_release_identity_bytes=self._book._release_identity_bytes,
                 )
             )
         if self._role == "candidate_solo_probe":
@@ -339,7 +342,13 @@ class CandidateIntent:
             s: {k: r[s] for k, r in ranks.items() if s in r} for s in stocks
         }
         rights = (
-            self._book._cash_proof.check(state, self._book._guard)
+            self._book._cash_proof.check(
+                state,
+                self._book._guard,
+                release_context=self._book._release_context,
+                expected_release_identity_bytes=self._book._release_identity_bytes,
+                policy=self.policy,
+            )
             if state["receivables"]
             else Fraction(0)
         )
@@ -403,6 +412,7 @@ class CandidateIntent:
         if type(opened) is not CandidateOpen:
             raise ValueError("candidate.host_bound_open_required_no_caller_plans")
         with self._lock:
+            self._book._check_release()
             opened_sha = sha256(opened._bytes)
             if self._opened_sha is not None and self._opened_sha != opened_sha:
                 raise ValueError("candidate.one_open_binding_no_second_P")
@@ -451,6 +461,9 @@ class CandidateIntent:
                     runtime_consumable=False,
                     execution_verified=False,
                     certifiable=False,
+                )
+                self._result = RiskBook.release_payload(
+                    self._result, self._book._release_identity_bytes
                 )
                 return deepcopy(self._result)
             except (ValueError, KeyError, TypeError, ArithmeticError) as exc:
@@ -522,6 +535,7 @@ class ExecutionObservation:
         ):
             raise ValueError("candidate.owned_account_and_original_scores_required")
         account = series._account
+        account._check_release()
         scope = account._scope
         if scope["execution_role"] not in ROLES:
             raise ValueError("candidate.reference_cannot_replace_candidate_attempt")
@@ -602,6 +616,8 @@ def close_execution_day(
         or account._book is not history._book
     ):
         raise ValueError("pipeline.same_owned_account_and_D2_required")
+    account._check_release()
+    history._book._check_release()
     meta = account._scope["execution_role"] == "current_META_POLICY_execution_layer"
     if meta:
         if (

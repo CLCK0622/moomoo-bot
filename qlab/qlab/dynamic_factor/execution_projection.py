@@ -171,6 +171,8 @@ def _quote(
     sale_cash,
     *,
     necessary,
+    release_context=None,
+    expected_release_identity_bytes=None,
 ):
     if set(plan) != set(original) or any(
         type(q) is not int or q < 0 for q in plan.values()
@@ -189,6 +191,8 @@ def _quote(
             {s: Decimal(decimal_text(value))},
             guard=guard,
             execution_binding=binding,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
         )
         total += fee
         gross += value
@@ -308,6 +312,7 @@ def project(
     if "factor_scores" in signal:
         for row in signal["factor_scores"].values():
             symbols.update(row)
+    risk_book._check_release()
     assert_consumer_symbols(risk_book._guard, "order", symbols, policy)
     if (
         close["inventory"] != original
@@ -407,7 +412,13 @@ def project(
         proof = risk_book._cash_proof
         if proof is None:
             raise ValueError("projection.accepted_rights_valuation_required")
-        rights_value = proof.check(state, risk_book._guard)
+        rights_value = proof.check(
+            state,
+            risk_book._guard,
+            release_context=risk_book._release_context,
+            expected_release_identity_bytes=risk_book._release_identity_bytes,
+            policy=policy,
+        )
     cash, nav = amount(close["cash"]), amount(close["NAV_anchor"])
     costs = OrderCosts(policy, opened["session"], "research_restored")
 
@@ -428,6 +439,8 @@ def project(
             binding,
             sale_cash,
             necessary=necessary,
+            release_context=risk_book._release_context,
+            expected_release_identity_bytes=risk_book._release_identity_bytes,
         )
 
     ok, _ = feasible(M, True)

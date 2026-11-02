@@ -35,9 +35,251 @@ class CashProof:
     boundary. It grants no permission for noncash rights or original B names.
     """
 
-    def __init__(self, issuer, state, book_id, guard, ledger_sha256):
+    @staticmethod
+    def _pairs(pairs):
+        value = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError("B.release_context_encoding_invalid")
+            value[key] = item
+        return value
+
+    @staticmethod
+    def _constant(value):
+        raise ValueError("B.release_context_encoding_invalid")
+
+    @staticmethod
+    def binding_bytes(value):
+        """An identity record is data, never a way to construct a capability."""
+        fields = {
+            "schema",
+            "context_version",
+            "release_id",
+            "release_version",
+            "adoption_sha256",
+            "h_a",
+            "h_r",
+            "h_p",
+            "h_c",
+            "h_d",
+            "receiver_id",
+            "implementation_id",
+            "implementation_sha256",
+            "accepted_at",
+            "acceptance_time_evidence_sha256",
+            "policy_binding",
+            "annotation_binding",
+        }
+        if (
+            type(value) is not dict
+            or set(value) != {"schema", "identity", "identity_sha256"}
+            or value["schema"] != "EVO884.BReleaseContextBinding/v1"
+            or type(value["identity"]) is not dict
+            or set(value["identity"]) != fields
+            or value["identity"].get("schema") != "EVO884.BReleaseContextIdentity/v1"
+            or not is_sha(value["identity_sha256"])
+            or sha256(canonical(value["identity"])) != value["identity_sha256"]
+        ):
+            raise ValueError("B.release_context_encoding_invalid")
+        identity = value["identity"]
+        if any(
+            type(identity[k]) is not str or not identity[k]
+            for k in fields - {"policy_binding", "annotation_binding"}
+        ):
+            raise ValueError("B.release_context_encoding_invalid")
+        if any(
+            not is_sha(identity[k])
+            for k in (
+                "adoption_sha256",
+                "h_a",
+                "h_r",
+                "h_p",
+                "h_c",
+                "h_d",
+                "implementation_sha256",
+                "acceptance_time_evidence_sha256",
+            )
+        ):
+            raise ValueError("B.release_context_encoding_invalid")
+        policy = identity["policy_binding"]
+        annotation = identity["annotation_binding"]
+        if (
+            type(policy) is not dict
+            or set(policy)
+            != {
+                "conventions_version",
+                "conventions_sha256",
+                "conventions_status",
+                "profile_sha256",
+                "prereg_sha256",
+                "prereg_version",
+                "common_profile_sha256",
+                "date_manifest_sha256",
+                "common_calendar_sha256",
+                "universe",
+            }
+            or type(annotation) is not dict
+            or set(annotation)
+            != {
+                "issue_id",
+                "comment_id",
+                "revision",
+                "content_sha256",
+            }
+            or type(annotation["revision"]) is not int
+            or annotation["revision"] < 1
+            or any(
+                type(annotation[k]) is not str or not annotation[k]
+                for k in ("issue_id", "comment_id", "content_sha256")
+            )
+            or not is_sha(annotation["content_sha256"])
+            or type(policy["universe"]) is not list
+            or len(policy["universe"]) != 64
+            or any(type(v) is not str or not v for v in policy["universe"])
+            or len(set(policy["universe"])) != 64
+            or any(
+                type(v) is not str or not v
+                for k, v in policy.items()
+                if k != "universe"
+            )
+            or any(not is_sha(v) for k, v in policy.items() if k.endswith("sha256"))
+        ):
+            raise ValueError("B.release_context_encoding_invalid")
+        for key in ("issue_id", "comment_id"):
+            identifier = annotation[key]
+            if (
+                len(identifier) != 36
+                or [i for i, c in enumerate(identifier) if c == "-"] != [8, 13, 18, 23]
+                or any(c not in "0123456789abcdef" for c in identifier.replace("-", ""))
+            ):
+                raise ValueError("B.release_context_encoding_invalid")
+        try:
+            utc_instant(identity["accepted_at"])
+        except ValueError as exc:
+            raise ValueError("B.release_context_encoding_invalid") from exc
+        if not identity["accepted_at"].endswith(("Z", "+00:00")):
+            raise ValueError("B.release_context_encoding_invalid")
+        raw = canonical(value)
+        # Do not inherit contract.clean's NaN/Infinity-to-null normalization.
+        try:
+            strict = json.dumps(
+                value,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=False,
+                allow_nan=False,
+            ).encode("utf-8")
+        except (TypeError, ValueError) as exc:
+            raise ValueError("B.release_context_encoding_invalid") from exc
+        if strict != raw:
+            raise ValueError("B.release_context_encoding_invalid")
+        return raw
+
+    @staticmethod
+    def binding_value(raw):
+        try:
+            if type(raw) is not bytes:
+                raise ValueError("B.release_context_encoding_invalid")
+            value = json.loads(
+                raw,
+                object_pairs_hook=CashProof._pairs,
+                parse_constant=CashProof._constant,
+            )
+            if CashProof.binding_bytes(value) != raw:
+                raise ValueError("B.release_context_encoding_invalid")
+            return value
+        except (TypeError, UnicodeError, json.JSONDecodeError) as exc:
+            raise ValueError("B.release_context_encoding_invalid") from exc
+
+    @staticmethod
+    def release_requested(guard, release_context, expected_release_identity_bytes):
+        return (
+            release_context is not None
+            or expected_release_identity_bytes is not None
+            or (
+                type(guard) is dict
+                and (
+                    guard.get("schema") == "EVO883.BRuntimeGuard/v1"
+                    or any(
+                        guard.get(key) is not None
+                        for key in (
+                            "B_catalog_release_sha256",
+                            "B_release_acceptance_sha256",
+                            "accepted_catalog_sha256",
+                            "release_context_binding",
+                        )
+                    )
+                    or (
+                        type(guard.get("request")) is dict
+                        and "release_binding" in guard["request"]
+                    )
+                )
+            )
+        )
+
+    @staticmethod
+    def release_guard(
+        guard, policy, release_context=None, expected_release_identity_bytes=None
+    ):
+        """Forward to B01/B02; this bridge cannot receive or issue an A."""
+        if not CashProof.release_requested(
+            guard, release_context, expected_release_identity_bytes
+        ):
+            return None
+        try:
+            from .noncash_v3 import ReleaseContext, check_release_context, checked_guard
+        except ImportError as exc:
+            raise ValueError("B.release_context_implementation_unavailable") from exc
+        if release_context is None:
+            raise ValueError("B.release_context_required")
+        if type(release_context) is not ReleaseContext:
+            raise ValueError("B.release_context_type_mismatch")
+        raw = check_release_context(
+            release_context,
+            policy=policy,
+            request=guard["request"],
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
+        CashProof.binding_value(raw)
+        if (
+            expected_release_identity_bytes is not None
+            and raw != expected_release_identity_bytes
+        ):
+            raise ValueError("B.release_context_persistent_identity_mismatch")
+        checked_guard(
+            guard,
+            policy,
+            release_context=release_context,
+            expected_release_identity_bytes=raw,
+        )
+        return raw
+
+    @staticmethod
+    def bind_payload(payload, raw):
+        if raw is not None:
+            payload = dict(payload)
+            payload["schema"] += "-BR1"
+            payload["release_context_binding"] = CashProof.binding_value(raw)
+        return payload
+
+    def __init__(
+        self,
+        issuer,
+        state,
+        book_id,
+        guard,
+        ledger_sha256,
+        *,
+        release_context=None,
+        expected_release_identity_bytes=None,
+        policy=None,
+    ):
         if issuer is not _ISSUER:
             raise ValueError("accounting.owned_cash_proof_required")
+        self._release_context = release_context
+        self._release_identity_bytes = self.release_guard(
+            guard, policy, release_context, expected_release_identity_bytes
+        )
         self._state_bytes = canonical({k: deepcopy(state[k]) for k in IDENTITY_FIELDS})
         self._book_id = book_id
         self._guard_sha = digest(guard)
@@ -55,16 +297,27 @@ class CashProof:
 
     @property
     def sha256(self):
-        return digest(
-            dict(
-                state_sha256=self._identity,
-                book_id=self._book_id,
-                guard_sha256=self._guard_sha,
-                ledger_sha256=self._ledger_sha,
-            )
+        value = dict(
+            state_sha256=self._identity,
+            book_id=self._book_id,
+            guard_sha256=self._guard_sha,
+            ledger_sha256=self._ledger_sha,
         )
+        if self._release_identity_bytes is not None:
+            value["release_context_binding"] = self.binding_value(
+                self._release_identity_bytes
+            )
+        return digest(value)
 
-    def check(self, state, guard):
+    def check(
+        self,
+        state,
+        guard,
+        *,
+        release_context=None,
+        expected_release_identity_bytes=None,
+        policy=None,
+    ):
         if (
             digest({k: state[k] for k in IDENTITY_FIELDS}) != self._identity
             or digest(guard) != self._guard_sha
@@ -73,6 +326,20 @@ class CashProof:
             or state["unknown_components"]
         ):
             raise ValueError("accounting.cash_proof_state_or_scope_mismatch")
+        expected = self._release_identity_bytes
+        if (
+            expected_release_identity_bytes is not None
+            and expected_release_identity_bytes != expected
+        ):
+            raise ValueError("B.release_context_persistent_identity_mismatch")
+        raw = self.release_guard(
+            guard,
+            policy,
+            self._release_context if release_context is None else release_context,
+            expected,
+        )
+        if raw != expected:
+            raise ValueError("B.release_context_persistent_identity_mismatch")
         from .noncash_v3 import allowed_symbols
 
         allowed = allowed_symbols(guard)
@@ -97,7 +364,16 @@ class CashProof:
         )
 
 
-def check_cash_state(state, guard, cash_proof, *, initial=False):
+def check_cash_state(
+    state,
+    guard,
+    cash_proof,
+    *,
+    initial=False,
+    release_context=None,
+    expected_release_identity_bytes=None,
+    policy=None,
+):
     """Classify proven cash for the unchanged legacy noncash-only proof.
 
     The raw state, its SHA and every retained receivable stay intact. This
@@ -108,10 +384,19 @@ def check_cash_state(state, guard, cash_proof, *, initial=False):
     from .execution_state import necessary_execution_state_known
 
     necessary_execution_state_known(state)
+    CashProof.release_guard(
+        guard, policy, release_context, expected_release_identity_bytes
+    )
     if state["receivables"] and not initial:
         if type(cash_proof) is not CashProof:
             raise ValueError("accounting.owned_cash_proof_required")
-        cash_proof.check(state, guard)
+        cash_proof.check(
+            state,
+            guard,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+            policy=policy,
+        )
         view = deepcopy(state)
         view["receivables"] = {}
         verify_execution_exposure(view, guard)
@@ -120,7 +405,16 @@ def check_cash_state(state, guard, cash_proof, *, initial=False):
     return amount(0)
 
 
-def issue_cash_proof(state, *, book_id, guard, ledger_sha256):
+def issue_cash_proof(
+    state,
+    *,
+    book_id,
+    guard,
+    ledger_sha256,
+    release_context=None,
+    expected_release_identity_bytes=None,
+    policy=None,
+):
     """Internal producer boundary, called after C04 reconciliation, not on wire."""
     if (
         not is_sha(book_id)
@@ -131,7 +425,16 @@ def issue_cash_proof(state, *, book_id, guard, ledger_sha256):
         or amount(state["nav"]) <= 0
     ):
         raise ValueError("accounting.complete_cash_close_required")
-    return CashProof(_ISSUER, state, book_id, guard, ledger_sha256)
+    return CashProof(
+        _ISSUER,
+        state,
+        book_id,
+        guard,
+        ledger_sha256,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+        policy=policy,
+    )
 
 
 def _cash_lineage(event):
@@ -157,7 +460,16 @@ def _cash_lineage(event):
 
 
 def dividend_entitlement(
-    event, *, book_id, previous_inventory, session, expected_event_sha256, guard, policy
+    event,
+    *,
+    book_id,
+    previous_inventory,
+    session,
+    expected_event_sha256,
+    guard,
+    policy,
+    release_context=None,
+    expected_release_identity_bytes=None,
 ):
     """Derive integer entitlement from the retained pre-ex-open inventory.
 
@@ -169,6 +481,9 @@ def dividend_entitlement(
     reject_b2_inputs(event, "holdings_cash")
     _cash_lineage(event)
     symbol = event.get("symbol")
+    CashProof.release_guard(
+        guard, policy, release_context, expected_release_identity_bytes
+    )
     assert_consumer_symbols(guard, "cash_valuation", [symbol], policy)
     if (
         not is_sha(expected_event_sha256)

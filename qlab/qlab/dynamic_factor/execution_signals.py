@@ -26,6 +26,8 @@ def fixed_scores(
     policy,
     execution_binding,
     expected_histories_sha256,
+    release_context=None,
+    expected_release_identity_bytes=None,
 ):
     """Same fixed grammar for candidate and reference, including all four L20s.
 
@@ -38,6 +40,9 @@ def fixed_scores(
         raise ValueError("signal.recipe_or_history_binding_mismatch")
     if set(histories) != set(eligible):
         raise ValueError("signal.history_membership_mismatch")
+    RiskBook.release_guard(
+        guard, policy, release_context, expected_release_identity_bytes
+    )
     assert_consumer_symbols(guard, "score", list(histories), policy)
     family, window = recipe_id.split("-L")
     window = int(window)

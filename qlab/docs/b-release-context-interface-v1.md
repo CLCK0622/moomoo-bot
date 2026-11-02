@@ -1,7 +1,7 @@
-release_context 共同接口规格 v1.0.0（待工部核稿）
+release_context 共同接口规格 v1.0.1（v1.0.0 已核，附加约束落实）
 
 作者：营缮主事。任务：EVO-881，工部派令 `01a19e47-e352-7af1-a330-9965c15ac876`。
-本件只定义接口；不提供类、接收器、A、guard 或测试替身的实现。核稿通过前不进入传播实现。
+本件定义接口，不提供 B01 类、接收器或 A 的实现。v1.0.0 已经工部核稿（01a19e53-9ee0）；本版落实该评论两条约束，传播实现在同一本地分支另交。
 
 本地起点：`037e112ef1ab4919b1827e566b0387217ba0edc6`，取自本次 fetch 的远端
 `evo884-exec-loop`。只在本地 `evo884-b-release-local` 分支保存本规格，不推送。
@@ -37,6 +37,13 @@ B02 的既有公共模块 `noncash_v3` 须导出同一个类对象，不能另�
 `noncash_v3.ReleaseContext is b_release_context.ReleaseContext`。
 共同校验函数也经该既有模块导出，使营缮八件不必新增模块读取或扩大静态 import 能力。
 这只是将来的接口要求；本件没有创建新 Python 模块或修改 noncash_v3。
+工部附加约束：noncash_v3 的 main 差量只能是一行导入 b_release_context、上述两个名字的
+再导出，以及 seal_guard/checked_guard 正式分支的签名和消费；不新增其他导出，不改其他
+函数。scope_proof.IMPORTS["noncash_v3"] 只增 b_release_context 一个精确模块名并配反例。
+这两件由都水在 B01/B02 实现，营缮先行头不动。八文件没有新增模块 import 或文件读取。
+尚需 B02 联调核查：既有 allowed_symbols/assert_consumer_symbols/三证明内部不带上下文
+重跑 checked_guard 的调用，如何在上述约束内消费同一受信上下文。本段仍保留这些原调用，
+不得绕过、删掉或将其成功视为已经实现；B01/B02 未到时一律拒绝，未宣称真实正向可达。
 
 正式检查必须使用 `type(context) is ReleaseContext`。普通 dict、子类、代理、同名类、
 仅有同名字段的对象和测试替身全部拒绝；不使用 `isinstance`、Protocol/duck typing、
@@ -274,10 +281,12 @@ import/read 能力或宽泛回退。日后从既有 noncash 公共出口接 B01/
 
 T19/T20 先行新源码只证明本传播头的硬门，不外推尚未实现的 noncash 修改。
 B01/B02 真正改动 noncash 后，完整 B 新头必须重跑新硬门及固定 main AST/zero_exposure
-原函数体字节对照，不能复用先行结果代替。当前规格阶段六项均未执行。
+原函数体字节对照，不能复用先行结果代替。本版六项的实际执行状态以先行头交件的原始日志为准；替身观察、持久化数据控制不作为正式重建正控。
 T19/T20 必须对同一份旧原件逐件作旧/新源码对照；不得旧端选 noncash 回执、新端改选
 另一份 B2 manifest 后混称同件红绿。若先行头因 noncash 尚未改动而仍接受某份旧回执，
 保留实跑结果及具体未闭合项回工部，不伪造拒绝、不扩大 main 范围或改旧夹具来造绿。
+工部明确：先行头未改 noncash_v3，只绑定它的旧回执继续接受是预期，不是缺陷；交件逐件
+标“因八文件传播改变被拒”或“待 B02 改 noncash 后才拒”，两版均记录实际输出，完整 B 头再统一重跑。
 
 ## 8. 核稿、版本与交付
 

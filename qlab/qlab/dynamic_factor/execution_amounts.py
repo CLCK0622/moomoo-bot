@@ -9,7 +9,16 @@ from .execution_numbers import amount as amount, decimal_text as decimal_text
 
 
 class ExactOrderCosts(OrderCosts):
-    def quote_exact(self, orders, notionals, *, guard, execution_binding):
+    def quote_exact(
+        self,
+        orders,
+        notionals,
+        *,
+        guard,
+        execution_binding,
+        release_context=None,
+        expected_release_identity_bytes=None,
+    ):
         """EA.N1 bridge to the unchanged per-order fee formula.
 
         D1 supplies exact, already netted notionals. Do not multiply binary
@@ -28,6 +37,60 @@ class ExactOrderCosts(OrderCosts):
             raise ValueError("fee.exact_net_order_membership")
         from .noncash_v3 import assert_consumer_symbols
 
+        formal = (
+            release_context is not None
+            or expected_release_identity_bytes is not None
+            or (
+                isinstance(guard, dict)
+                and (
+                    guard.get("schema") == "EVO883.BRuntimeGuard/v1"
+                    or any(
+                        guard.get(k) is not None
+                        for k in (
+                            "B_catalog_release_sha256",
+                            "B_release_acceptance_sha256",
+                            "accepted_catalog_sha256",
+                            "release_context_binding",
+                        )
+                    )
+                    or "release_binding" in guard.get("request", {})
+                )
+            )
+        )
+        if formal:
+            try:
+                from .noncash_v3 import (
+                    ReleaseContext,
+                    check_release_context,
+                    checked_guard,
+                )
+            except ImportError as exc:
+                raise ValueError(
+                    "B.release_context_implementation_unavailable"
+                ) from exc
+            if release_context is None:
+                raise ValueError("B.release_context_required")
+            if type(release_context) is not ReleaseContext:
+                raise ValueError("B.release_context_type_mismatch")
+            raw = check_release_context(
+                release_context,
+                policy=self.policy,
+                request=guard["request"],
+                expected_release_identity_bytes=expected_release_identity_bytes,
+            )
+            if type(raw) is not bytes:
+                raise ValueError("B.release_context_encoding_invalid")
+            if (
+                expected_release_identity_bytes is not None
+                and raw != expected_release_identity_bytes
+            ):
+                raise ValueError("B.release_context_persistent_identity_mismatch")
+            checked_guard(
+                guard,
+                self.policy,
+                release_context=release_context,
+                expected_release_identity_bytes=raw,
+            )
         assert_consumer_symbols(
             guard, "order", [s for s, q in orders.items() if q], self.policy
         )

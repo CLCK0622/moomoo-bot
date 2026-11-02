@@ -113,3 +113,10 @@ prices, fills, cash flows, origins or acquisition receipts from the snapshot,
 change its input, modify a golden, or substitute another account. The current
 repair stops at this material gap; projection equality and the HANDOFF erratum
 do not close R12 or authorize S, B release or runtime.
+
+
+## B release context propagation (local preliminary branch)
+
+CandidateIntent inherits the owned RiskBook context and checks it again before returning a cached result. Context is forwarded to costs and cash proofs. A BR1 result carries the canonical binding; account/history and observation boundaries recheck the owned context. No consumer issues a new A.
+
+B01/B02 and their real positive integration are pending. Tests distinguish diagnostic probes from formal paths, and old receipts bound only to unchanged noncash_v3 may still replay on this preliminary head. Actual old/new results must be listed per receipt; the complete B head must repeat the hard gate after B02. See b-release-context-interface-v1.md v1.0.1.
