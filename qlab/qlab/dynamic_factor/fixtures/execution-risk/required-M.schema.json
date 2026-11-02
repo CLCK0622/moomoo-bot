@@ -11,6 +11,8 @@
     "close_session",
     "complete",
     "cooldown_boundary",
+    "execution_binding_sha256",
+    "execution_closure_sha256",
     "execution_session",
     "origin_new_risk_enabled",
     "original_state_sha256",
@@ -188,6 +190,13 @@
       "pattern": "^[0-9a-f]{64}$"
     },
     "snapshot_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "execution_closure_sha256": {
+      "const": "7677b123fa2fe573343fad3fe3f43887c5f5d2c0fd7c12d9a1de8bc625162e1b"
+    },
+    "execution_binding_sha256": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
     }

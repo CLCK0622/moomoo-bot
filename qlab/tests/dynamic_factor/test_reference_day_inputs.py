@@ -8,6 +8,10 @@ from v3_reference_helpers import unit_scope, sealed
 from v3_test_helpers import synthetic_zero_state, synthetic_guard
 from lt50_quantity_harness import CASES, attack
 
+from qlab.dynamic_factor.execution_closure import (
+    ADOPTED_SHA256 as CLOSURE_SHA,
+    adopted_execution_binding,
+)
 from qlab.dynamic_factor.contract import digest
 from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.execution_clock import ADOPTED_SHA256, adopted_clock_binding
@@ -89,6 +93,9 @@ def wire(args, **changes):
     clock = adopted_clock_binding(expected_ruling_sha256=ADOPTED_SHA256)
     result = dict(
         risk_scope=dict(
+            execution_binding=adopted_execution_binding(
+                expected_adoption_sha256=CLOSURE_SHA
+            ),
             kind="independent_training",
             scope_id="C08-OWNED-SYNTHETIC",
             member_id=definition["member_id"],

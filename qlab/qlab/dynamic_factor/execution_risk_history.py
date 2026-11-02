@@ -12,6 +12,7 @@ from threading import RLock
 from .contract import canonical, code_sha, digest, is_sha, sha256
 from .conventions import load_conventions
 from .execution_clock import ADOPTED_SHA256, validate_clock_binding
+from .execution_closure import validate_execution_binding
 from .execution_risk import RiskBook
 from .execution_startup import INITIAL_FIELDS, _locked
 from .noncash_v3 import checked_guard, zero_exposure
@@ -59,6 +60,9 @@ class RiskHistory:
         expected_ruling_sha256,
         policy=None,
     ):
+        validate_execution_binding(
+            scope.get("execution_binding") if type(scope) is dict else None
+        )
         self._policy = policy or load_conventions()
         self._clock = validate_clock_binding(
             clock_binding, expected_clock_binding_sha256, expected_ruling_sha256

@@ -1,0 +1,220 @@
+{
+  "L0_opened": false,
+  "N_effect": {
+    "OOS_increment": 0,
+    "archive_seq": 1380,
+    "book_N": 1313,
+    "complete_N": null,
+    "current_design_N": 3,
+    "design_increment": 0,
+    "ledger_written": false,
+    "market_attempt_increment": 0
+  },
+  "author_scope": {
+    "P13": [
+      "I15",
+      "I16"
+    ],
+    "core_blocks": [
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C13"
+    ],
+    "core_handoffs": [
+      "I35",
+      "I36"
+    ],
+    "core_matrix_already_contains": 34,
+    "core_rows": 36,
+    "dushui_rows": 21,
+    "future_implementation_has_no_omissions_certified": false,
+    "new_evidenced_groups_in_this_readback": 0
+  },
+  "basis": "explicit_v1_final_holdings_definition_preserved_in_v3_and_D12_not_code_as_authority",
+  "clock_started": false,
+  "code_corroboration": {
+    "core_baseline_as_declared_by_author": "6bacb107c21834828004b9fe5a3d8b071f41730c",
+    "git_object_at_core_baseline_independently_verified_this_review": false,
+    "lines": "490-498",
+    "role": "corroboration_only_not_contract_authority",
+    "sha256": "1e6fe3745836f844590d5b8bf56a4c621f9fde82041cd7524cede5c7948588fb",
+    "snapshot_as_declared_in_source_bundle": "262bdb4346ddf4cc0221aead50c6a8d4c2793708",
+    "source_file": "dushui-v2/source/qlab/qlab/dynamic_factor/execution.py"
+  },
+  "contract_evidence": [
+    {
+      "evidence_kind": "EXPLICIT_CONTRACT_TEXT",
+      "line": 169,
+      "quote": "两者均指最终持仓；其从原库存产生的总订单必须先净额合并，不按因子分单。",
+      "sha256": "9bcc845a25edc115f8515325963fe7591be5474a2e34422288cf3e0c61ae913c",
+      "source": "prereg_v1_md"
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D1/logical_inputs",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": [
+        "immutable_close_state_at_s",
+        "source_bound_frozen_signal_weight_and_rank_intents",
+        "internally_generated_D2_required_M",
+        "calendar_s_T",
+        "role_scoped_raw_open_T",
+        "known_spendable_cash_and_entitlements",
+        "frozen_fee_binding_and_same_shared_quote",
+        "asof_ADV_and_units",
+        "age_cooldown",
+        "B_E_t_and_isolation_evidence"
+      ]
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D1/logical_output_closed_keys",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": [
+        "input_sha256",
+        "NAV_anchor",
+        "M",
+        "P",
+        "net_orders",
+        "reasons",
+        "trace"
+      ]
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D1/encoding/quantities",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": "JSON_integer_not_bool"
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D1/feasible/integer_nonnegative",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": true
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D1/projection/1",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": {
+        "id": "REQUIRED_M",
+        "rule": "Generate M internally through the same D2 risk module. No voluntary buys. Verify complete net M with real fees and original safety/ADV/cash rules. If infeasible retain intent/state and refuse formal execution; no invented smaller M.",
+        "step": 1
+      }
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D1/projection/3",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": {
+        "id": "OTHER_REDUCTIONS",
+        "rule": "Starting at M, iterate other reductions by ticker; attempt full target reduction per symbol; accept iff full resulting net plan is feasible, otherwise cancel the voluntary reduction and record reason.",
+        "step": 3
+      }
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D1/projection/6",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": {
+        "id": "SEAL_SINGLE_P",
+        "rule": "Each feasibility quote is on the full net plan from original inventory and is not an accounting charge. Seal exactly one final P, then apply existing role-specific voluntary G/K. Reject P means use verified M without a second optional search.",
+        "step": 6
+      }
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D1/projection/7",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": {
+        "id": "EXECUTE_AND_ACCOUNT",
+        "rule": "Execute only the selected net plan with frozen fees once per original order/trading-day contract; x1 replays identical orders/quantities. Real fills/cash/NAV need their separate execution receipts.",
+        "step": 7
+      }
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D1/target/required_exit_cannot_be_undone",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": true
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/D2/M",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "source": "D12_json",
+      "value": {
+        "QQQ": "retain_original_base_policy_not_stock_holding_age_rule",
+        "account_stop": "next_available_open_all_satellite_exit_intents_regardless_min_age_or_GK_but_no_fake_fills",
+        "age10to19": "keep_only_if_rank<=5_and_effective_origin_flag_true",
+        "age5to9": "exit_if_rank>20_or_effective_origin_flag_is_false",
+        "isolation_creates_new_exit_policy": false,
+        "maximum_age": "age>=20_exit",
+        "unknown_rank_or_necessary_state": "original_missing_state_rules_no_unknown_to_false_sale"
+      }
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/gain_model/plans",
+      "sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+      "source": "prereg_v3_json",
+      "value": {
+        "M": "unique_required_exit_risk_and_integrity_plan_from_original_inventory",
+        "P": "single_final_feasible_plan_add_optional_changes_by_frozen_rank_target_age_capacity_integer_cash_and_turnover_constraints",
+        "P_refinement": "all_rounding_cash_and_turnover_constraints_before_G_and_K_no_post_approval_change",
+        "asset_set": "union_of_old_new_satellite_names_plus_QQQ_and_cash",
+        "if_reject_P": "use_M_no_second_optional_subset_or_weight_search",
+        "netting": "each_complete_plan_net_orders_from_original_inventory_once",
+        "optional_undo_required_exits": false
+      }
+    },
+    {
+      "evidence_kind": "FROZEN_CONTRACT_FIELD",
+      "pointer": "/gain_model/delta_w_i",
+      "sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+      "source": "prereg_v3_json",
+      "value": "(q_P_i-q_M_i)*raw_open_P_i/E"
+    }
+  ],
+  "decision": "EXISTING_CONTRACT_RESOLVES",
+  "implementation_accepted": false,
+  "issue_id": "01a18a63-02ca-77bc-a7bf-9f0769ed8bbf",
+  "limits": [
+    "Only quantity semantics is settled; no matching/fill/settlement/precision/close-order rule adopted.",
+    "M and P are plans; actual inventory changes require accepted actual fills; no fake liquidation.",
+    "Existing missing-state, entitlement, age, fee, ADV, safety, B and R2 gates remain applicable.",
+    "No unspecified omission/default/key-coverage/zero-exposure convention is added by this explanation.",
+    "Schema description updates remain on the original writer line; implementation/independent business acceptance not certified."
+  ],
+  "matrix_id": "I09",
+  "quantity_semantics": {
+    "M": "planned_final_position_after_required_actions_from_original_inventory",
+    "M_is_quantity_cap": false,
+    "M_is_sell_quantity_or_delta": false,
+    "M_proves_actual_fill": false,
+    "P": "single_final_planned_position_including_accepted_optional_projection_starting_at_M",
+    "execute_M_then_execute_P": false,
+    "optional_GK_difference_only": "q_P - q_M",
+    "required_net_delta": "q_M - q_original",
+    "selected_plan_net_delta": "q_selected - q_original",
+    "unit": "shares_nonnegative_JSON_integer_not_bool",
+    "unproven_inventory_missing_keys_or_rights_default_to_zero": false
+  },
+  "runtime_consumable": false,
+  "schema": "EVO883.M01ContractInterpretation/v1",
+  "schema_description_for_existing_writer": "M 中每个证券的数量表示：由同一 D2 风险模块从已绑定原库存生成、实施必要动作后拟剩余的非负整数持仓股数。这是计划最终库存，既不是卖出差量或数量上限，也不代表已成交；净订单另列，并相对原库存生成。必要状态未知或 M 不可行时，保留原状态/意图并按原合同拒绝，不默认零或另造较小 M。",
+  "trigger_comment_id": "01a19a87-57f3-7dff-8cc2-4afbb1c0e9ca",
+  "version": "1.0.0"
+}

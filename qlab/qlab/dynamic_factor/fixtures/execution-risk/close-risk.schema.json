@@ -12,6 +12,8 @@
     "close_session",
     "complete",
     "cooldown_boundary",
+    "execution_binding_sha256",
+    "execution_closure_sha256",
     "fees_x2",
     "original_state_sha256",
     "prior_risk",
@@ -164,6 +166,13 @@
     "state": {
       "type": "object",
       "description": "All original declared account fields are retained, including unknowns; fees_x2 stays in the outer envelope."
+    },
+    "execution_closure_sha256": {
+      "const": "7677b123fa2fe573343fad3fe3f43887c5f5d2c0fd7c12d9a1de8bc625162e1b"
+    },
+    "execution_binding_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "allOf": [

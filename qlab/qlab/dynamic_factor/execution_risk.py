@@ -15,6 +15,7 @@ from .contract import code_sha, digest, is_sha
 from .conventions import authoritative, load_conventions
 from .fees import finite
 from .execution_clock import ADOPTED_SHA256, validate_clock_binding
+from .execution_closure import validate_execution_binding
 from .noncash_v3 import checked_guard, zero_exposure
 from .reference_definition_v301 import FROZEN, frozen_documents, member_definition
 from .state_v2 import necessary_state_known
@@ -38,6 +39,8 @@ SNAPSHOT_KEYS = {
     "ruling_sha256",
     "canonical_scenario",
     "shared_contract_sha256",
+    "execution_closure_sha256",
+    "execution_binding_sha256",
     "risk_source_sha256",
     "complete",
     "reasons",
@@ -54,6 +57,8 @@ M_KEYS = {
     "original_state_sha256",
     "signal_sha256",
     "shared_contract_sha256",
+    "execution_closure_sha256",
+    "execution_binding_sha256",
     "risk_source_sha256",
     "M",
     "age_clock",
@@ -224,12 +229,18 @@ class RiskBook:
                 "attempt_id",
                 "execution_role",
                 "recipe_id",
+                "execution_binding",
             }
             or scope["kind"] not in {"independent_training", "stitched_test", "forward"}
-            or any(type(v) is not str or not v.strip() for v in scope.values())
+            or any(
+                type(v) is not str or not v.strip()
+                for k, v in scope.items()
+                if k != "execution_binding"
+            )
             or scope["execution_role"] not in self._shared["applies_to"]
         ):
             raise ValueError("risk.book_scope_required")
+        self._execution_binding = validate_execution_binding(scope["execution_binding"])
         self._book_id = book_id
         self._scope = deepcopy(scope)
         role = scope["execution_role"]
@@ -318,6 +329,7 @@ class RiskBook:
         )
 
     def snapshot(self):
+        validate_execution_binding(self._execution_binding)
         payload = dict(
             schema="EVO884.CloseRiskSnapshot/v1",
             book_id=self._book_id,
@@ -337,6 +349,8 @@ class RiskBook:
             ruling_sha256=self._clock["ruling_sha256"] if self._clock else None,
             canonical_scenario="x2",
             shared_contract_sha256=FROZEN[SHARED_NAME],
+            execution_closure_sha256=self._execution_binding["adoption_sha256"],
+            execution_binding_sha256=digest(self._execution_binding),
             risk_source_sha256=code_sha(RiskBook),
             complete=not self._reasons,
             reasons=list(self._reasons),
@@ -394,6 +408,17 @@ class RiskBook:
                 or calendar[calendar.index(self._date) + 1] != execution_session
             ):
                 raise ValueError("risk.calendar_not_adjacent")
+            if self._scope["kind"] == "stitched_test":
+                next_fold = next(
+                    (
+                        f
+                        for f in self._policy.fold_manifest()["folds"]
+                        if f["test_start"] <= execution_session <= f["test_end"]
+                    ),
+                    None,
+                )
+                if next_fold is None or next_fold["fold_id"] != self._scope["fold_id"]:
+                    raise ValueError("risk.new_fold_context_required_no_old_pool")
             role = self._scope["execution_role"]
             meta = role == "current_META_POLICY_execution_layer"
             context = signal["origin_context"]
@@ -401,9 +426,18 @@ class RiskBook:
                 if (
                     type(context) is not dict
                     or set(context)
-                    != {"source_sha256", "signal_session", "permissions"}
+                    != {
+                        "source_sha256",
+                        "signal_session",
+                        "permissions",
+                        "fold_id",
+                        "execution_closure_sha256",
+                    }
                     or not is_sha(context["source_sha256"])
                     or context["signal_session"] != self._date
+                    or context["fold_id"] != self._scope["fold_id"]
+                    or context["execution_closure_sha256"]
+                    != self._execution_binding["adoption_sha256"]
                     or type(context["permissions"]) is not dict
                 ):
                     raise ValueError("risk.origin_context_role_mismatch")
@@ -484,6 +518,8 @@ class RiskBook:
             original_state_sha256=snapshot["original_state_sha256"],
             signal_sha256=expected_signal_sha256,
             shared_contract_sha256=FROZEN[SHARED_NAME],
+            execution_closure_sha256=self._execution_binding["adoption_sha256"],
+            execution_binding_sha256=digest(self._execution_binding),
             risk_source_sha256=code_sha(RiskBook),
             M=M,
             age_clock=deepcopy(snapshot["age_clock"]),

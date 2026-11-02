@@ -4,6 +4,10 @@ from copy import deepcopy
 
 import pytest
 
+from qlab.dynamic_factor.execution_closure import (
+    ADOPTED_SHA256 as CLOSURE_SHA,
+    adopted_execution_binding,
+)
 from qlab.dynamic_factor.contract import digest
 from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.execution_clock import (
@@ -27,6 +31,9 @@ def fixture(*, age=8, nav=15000, peak=15000, latch=False, meta=False):
     date = policy.calendar[index]
     book_id = digest("SYNTHETIC C06 BOOK")
     scope = dict(
+        execution_binding=adopted_execution_binding(
+            expected_adoption_sha256=CLOSURE_SHA
+        ),
         kind="independent_training",
         scope_id="SYNTHETIC",
         fold_id="0",
@@ -78,6 +85,8 @@ def fixture(*, age=8, nav=15000, peak=15000, latch=False, meta=False):
         ranks={"AAPL": 4},
         origin_context=dict(
             source_sha256=digest("SYNTHETIC META ORIGIN"),
+            fold_id=scope["fold_id"],
+            execution_closure_sha256=CLOSURE_SHA,
             signal_session=date,
             permissions={"F1-L020": True},
         )

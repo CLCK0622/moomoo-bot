@@ -6,6 +6,10 @@ import json
 
 import pytest
 
+from qlab.dynamic_factor.execution_closure import (
+    ADOPTED_SHA256 as CLOSURE_SHA,
+    adopted_execution_binding,
+)
 from qlab.dynamic_factor.contract import canonical, digest, sha256
 from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.execution_clock import (
@@ -34,6 +38,9 @@ def history(
         else "candidate_solo_probe"
     )
     scope = dict(
+        execution_binding=adopted_execution_binding(
+            expected_adoption_sha256=CLOSURE_SHA
+        ),
         kind=kind,
         scope_id="SYNTHETIC-C06-" + member + "-" + kind + "-" + fold,
         member_id=member,
@@ -122,6 +129,8 @@ def signal(book, *, rank=1, permissions=None):
         ranks={"AAPL": rank},
         origin_context=dict(
             source_sha256=digest("SYNTHETIC ORIGINAL POOL"),
+            fold_id=snapshot["scope"]["fold_id"],
+            execution_closure_sha256=CLOSURE_SHA,
             signal_session=snapshot["close_session"],
             permissions=permissions or {"F1-L020": True},
         )
