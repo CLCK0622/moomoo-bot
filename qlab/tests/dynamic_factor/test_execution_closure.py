@@ -3,6 +3,7 @@
 from copy import deepcopy
 from decimal import Decimal, localcontext
 import json
+from pathlib import Path
 
 import pytest
 
@@ -109,7 +110,7 @@ def test_EA_N2_named_diagnostic_book_never_actual_forward_or_merge(record_proper
 
 
 def test_EA_N1_original_seven_fee_lexemes_and_oracle_bytes_unchanged(record_property):
-    root = FIXTURES / "execution-closure-oracle"
+    root = Path(__file__).parent / "fixtures" / "execution-closure-oracle"
     expected = (root / "CF01.expected.canonical.json").read_bytes()
     # Published expected bytes stay literal; this test never writes any oracle.
     assert (
@@ -172,3 +173,10 @@ def test_EA_N1_startup_fee_does_not_inherit_callers_decimal_context():
         assert ambient.prec == 3
     before = deepcopy(binding())
     assert closure.validate_execution_binding(before) == before
+
+
+def test_EA_N1_expected_bytes_stay_on_host_not_in_product_package():
+    root = Path(__file__).parent / "fixtures" / "execution-closure-oracle"
+    assert root.is_dir()
+    assert not (FIXTURES / "execution-closure-oracle").exists()
+    assert not list(FIXTURES.rglob("CF01.expected.canonical.json"))
