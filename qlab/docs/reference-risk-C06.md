@@ -52,7 +52,7 @@ M follows the contract semantics in `../qlab/dynamic_factor/fixtures/execution-r
 the nonnegative integer inventory after necessary actions; neither an upper
 bound nor a signed order delta. Working pointers are D12
 `/D1/projection/1`, `/D1/target/required_exit_cannot_be_undone`, and
-`execution.py:490–498`. The schema records the pending contract confirmation.
+`execution.py:490–498`. The schema records the accepted M-01 contract wording.
 `complete` describes the D2 risk calculation only. C03 still must verify the
 whole necessary net plan with prices, fees, cash, ADV and turnover; this output
 is not a filled/feasible execution or permission to consume market data.
