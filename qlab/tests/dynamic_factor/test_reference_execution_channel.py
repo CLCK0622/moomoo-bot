@@ -118,7 +118,7 @@ def owned_references():
                     origins=model_origins(account),
                 )
                 reference.model_open(opening, expected_evidence_sha256=digest(opening))
-            if i == 6:
+            if reference.history._book.decision_due()["order_intent_due"]:
                 inputs, signal = no_tilt(reference)
                 reference.lock_projection(
                     inputs,
@@ -193,7 +193,8 @@ def test_C10_four_owned_nonempty_results_cross_real_isolated_worker(
     assert out["observation"]["book_id"] == reference.startup.book_id
     assert out["reader_calls"] == 0 and out["accessed_roles"] == []
     assert out["worker_role"] == "reference_diagnostic_execution"
-    assert out["execution_steps"] == 1267
+    assert out["execution_steps"] == len(read_program(cap)[0]["operations"])
+    assert len(out["observation"]["eligibility_by_close"]) == 251
     assert out["protocol_read_paths"] and all(
         Path(p).name not in {"raw.json", "rights.json", "adv.json", "cash.json"}
         for p in out["protocol_read_paths"]
@@ -399,6 +400,68 @@ def test_C10_account_drift_cannot_reuse_a_finished_observation(
     reference, cap = owned_references["CREF-F1-L020"]
     monkeypatch.setattr(reference.account, "_cash", reference.account._cash + 1)
     with pytest.raises(ValueError, match="observation_account_drift"):
+        run_execution_result(cap)
+
+
+def test_C10_shared_due_clock_cannot_omit_a_required_D1_plan(owned_references):
+    reference, cap = owned_references["CREF-F1-L020"]
+    program, _ = read_program(cap)
+    first = next(
+        i
+        for i, event in enumerate(program["operations"])
+        if event["operation"] == "lock_projection"
+    )
+    del program["operations"][first]
+    with pytest.raises(ValueError, match="same_D1_plan_required_for_due_open"):
+        replay_execution(program, reference.history._policy)
+
+
+def test_C10_family_cannot_mix_a_different_benchmark(owned_references, monkeypatch):
+    reference, cap = owned_references["CREF-F1-L020"]
+    program, _ = read_program(cap)
+    benchmark = program["benchmark"]
+    benchmark["values"][0] = 0.001
+    different = reference.observe(
+        benchmark, expected_benchmark_sha256=digest(benchmark)
+    )
+    caps = {m: cap for m, (_, cap) in owned_references.items()}
+    caps["CREF-F1-L020"] = different
+    calls = []
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: calls.append(a))
+    with pytest.raises(ValueError, match="separate_books_same_family_binding_required"):
+        run_execution_family(caps)
+    assert calls == []
+
+
+def test_C10_family_rejects_a_changed_eligibility_trace_before_worker(
+    owned_references, monkeypatch
+):
+    reference, cap = owned_references["CREF-F1-L020"]
+    program, _ = read_program(cap)
+    operations = deepcopy(reference._program)
+    first = next(e for e in operations if e["operation"] == "lock_projection")
+    first["arguments"]["inputs"]["eligibility"]["named_count"] = 1
+    monkeypatch.setattr(reference, "_program", operations)
+    different = reference.observe(
+        program["benchmark"], expected_benchmark_sha256=program["benchmark_sha256"]
+    )
+    caps = {m: cap for m, (_, cap) in owned_references.items()}
+    caps["CREF-F1-L020"] = different
+    calls = []
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: calls.append(a))
+    with pytest.raises(ValueError, match="separate_books_same_family_binding_required"):
+        run_execution_family(caps)
+    assert calls == []
+
+
+def test_C10_guard_drift_cannot_reuse_a_finished_observation(
+    owned_references, monkeypatch
+):
+    reference, cap = owned_references["CREF-F1-L020"]
+    changed = deepcopy(reference.account._guard)
+    changed["guard_injected"] = True
+    monkeypatch.setattr(reference.account, "_guard", changed)
+    with pytest.raises(ValueError, match="observation_guard_drift"):
         run_execution_result(cap)
 
 

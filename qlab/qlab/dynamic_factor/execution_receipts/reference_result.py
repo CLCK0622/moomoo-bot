@@ -40,6 +40,16 @@ def issue_observation(execution, *, benchmark, expected_benchmark_sha256):
     profile = validate_solo_profile(execution.profile)
     account = series._account
     with account._lock:
+        guard_sha = digest(execution._initial["history"]["guard"])
+        if any(
+            digest(guard) != guard_sha
+            for guard in (
+                account._guard,
+                account._book._guard,
+                execution.history._guard,
+            )
+        ):
+            raise ValueError("reference.observation_guard_drift")
         snapshot, closes, _, _ = series._journal()
         result = series.evaluate(
             benchmark, expected_benchmark_sha256=expected_benchmark_sha256
@@ -71,6 +81,14 @@ def issue_observation(execution, *, benchmark, expected_benchmark_sha256):
             operations=deepcopy(execution._program),
             benchmark=deepcopy(benchmark),
             benchmark_sha256=expected_benchmark_sha256,
+            shared_guard_sha256=guard_sha,
+            eligibility_by_close={
+                event["arguments"]["inputs"]["close_state"][
+                    "signal_close_session"
+                ]: digest(event["arguments"]["inputs"]["eligibility"])
+                for event in execution._program
+                if event["operation"] == "lock_projection"
+            },
         )
         document = dict(
             schema="EVO884.ReferenceExecutionObservation/v1",
@@ -124,6 +142,11 @@ def read_observation(observation):
     series, raw, _ = _OWNED[observation]
     document = json.loads(raw)
     with series._account._lock:
+        if (
+            digest(series._account._guard) != document["shared_guard_sha256"]
+            or digest(series._account._book._guard) != document["shared_guard_sha256"]
+        ):
+            raise ValueError("reference.observation_guard_drift")
         if series._account.snapshot()["account_sha256"] != document["account_sha256"]:
             raise ValueError("reference.observation_account_drift")
         series._journal()

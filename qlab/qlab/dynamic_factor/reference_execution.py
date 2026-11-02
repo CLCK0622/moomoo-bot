@@ -189,6 +189,14 @@ class ReferenceExecution:
         return receipt
 
     def close(self, evidence, *, expected_evidence_sha256, startup_valuation=None):
+        if self.history._book.decision_due()["order_intent_due"]:
+            ticket = self.account.intent()["ticket"]
+            if (
+                ticket is None
+                or ticket["signal_session"] != self.history.snapshot()["close_session"]
+                or ticket["execution_session"] != evidence.get("session")
+            ):
+                raise ValueError("reference.same_D1_plan_required_for_due_open")
         pending_startup = self.startup.snapshot()["pending_close"]
         # Validate C05's explicitly supplied valuation before mutating C04.
         if pending_startup and (

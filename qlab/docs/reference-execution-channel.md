@@ -25,6 +25,8 @@ C07 重新从完整 1260 个原始收盘记录计算收益，调用方只能提�
 
 `run_execution_family` 要求原四成员一个不少；先核全批成员、独立 book/attempt、同一
 run/fold/calendar、D1/D2 源码及两份采用件身份，再启动任一子进程。
+同批还必须共用完全相同的 guard、QQQ 基准及逐决策资格集。每个 C06 `decision_due`
+要求的开盘都必须消费同源 D1 的锁定计划，不能省略决策而仍签发完整收益。
 成员的角色保留 `independent_candidate_reference` 或
 `independent_meta_reference_probe_component`，没有改标候选或实际 META。
 
