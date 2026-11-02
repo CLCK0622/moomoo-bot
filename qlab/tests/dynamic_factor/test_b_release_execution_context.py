@@ -7,6 +7,7 @@ They are never installed as the canonical ReleaseContext or a host issuer.
 from copy import deepcopy
 from decimal import Decimal
 import json
+from pathlib import Path
 
 import pytest
 
@@ -333,4 +334,57 @@ def test_T13_fixed_signal_checks_context_before_consuming_history_numbers():
             expected_histories_sha256=digest(values),
             release_context=ReleaseContextTestDouble(),
         )
+    )
+
+
+def test_B_step3_old_accounting_bytes_fail_the_exact_updated_source_pin(
+    tmp_path, monkeypatch, record_property
+):
+    from qlab.dynamic_factor import scope_proof
+    from qlab.dynamic_factor.conventions import load_conventions
+
+    root = Path(scope_proof.__file__).parent
+    before = (root / "execution_accounting.py").read_bytes()
+    old = (
+        Path(__file__).parent / "fixtures/b-release/old-execution-accounting.py.fixture"
+    ).read_bytes()
+    assert (
+        sha256(old)
+        == "36ba63882a55e97e6d040b48ed15fcdf7246ba1f27f16faa47414adb585d0e6d"
+    )
+    assert sha256(before) == scope_proof.FIXED_READER_SOURCES["execution_accounting.py"]
+    assert sha256(old) != sha256(before)
+    # Positive static source inspection, not a B01/A/runtime positive.
+    assert (
+        scope_proof.b2_isolation_proof(load_conventions())["seal_status"]
+        == "seal_pending"
+    )
+    private = tmp_path / "B_STEP3_PRIVATE_AST_ONLY"
+    private.mkdir()
+    for source in root.glob("*.py"):
+        (private / source.name).write_bytes(source.read_bytes())
+    for _, relative, _ in scope_proof.FIXED_READS:
+        target = private / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((root / relative).read_bytes())
+    (private / "execution_accounting.py").write_bytes(old)
+    # Only inspect these immutable old bytes; never import or execute the copy.
+    with monkeypatch.context() as patch:
+        patch.setattr(scope_proof, "__file__", str(private / "scope_proof.py"))
+        with pytest.raises(
+            ValueError, match="^scope.file_access_not_whitelisted$"
+        ) as refused:
+            scope_proof.b2_isolation_proof(load_conventions())
+    assert (root / "execution_accounting.py").read_bytes() == before
+    record_property(
+        "B_step3_pin_actual",
+        json.dumps(
+            dict(
+                old_raw_sha256=sha256(old),
+                current_raw_sha256=sha256(before),
+                reason=str(refused.value),
+                scope="static inspection; private old source not executed",
+            ),
+            sort_keys=True,
+        ),
     )
