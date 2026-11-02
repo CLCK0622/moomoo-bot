@@ -31,7 +31,7 @@
         "object",
         "null"
       ],
-      "description": "持仓股数（工作假设，待翰林院确认，见 CORE-READBACK M-01）。必要动作之后的最终非负整数持仓；不是上限，也不是相对原持仓的差量。净订单另表。出处 D12 /D1/projection/1、/D1/logical_output_closed_keys、/D1/target/required_exit_cannot_be_undone；execution.py:490-498。",
+      "description": "合同口径（M-01/I09，机器裁定 SHA-256 03809f4527ece1012b18bb214aa23a39a7d8d52da4e573cdd57c03dc3dd13914；依据 v1 中文第169行、v3 /gain_model/plans、D12.D1.4–D1.5）：M 是由同一 D2 从原库存生成、必要动作之后拟剩余的非负整数持仓股数，不是数量上限或卖出差量；P 从 M 起步。二者都是计划，不证明已成交。选中计划的完整净订单相对原库存生成；P−M 只表示自愿调整差额，不能代替完整订单，也不能先成交 M 再成交 P。缺必要状态时按原 R2 保留库存、权益和意图，不默认为零或另造较小 M。本项属于既有合同解释，不计设计 N。",
       "additionalProperties": {
         "type": "integer",
         "minimum": 0
