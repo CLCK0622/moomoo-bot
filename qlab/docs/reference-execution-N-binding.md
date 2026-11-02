@@ -28,17 +28,18 @@ four-member execution family. A22 full runtime integration remains C09/C10.
 
 ## G14 design archive and stage mapping
 
-The accepted design-only archive reference is 3, read from the exact published
+The accepted design-only archive reference is 4, read from the exact published
 acceptance receipt
-(`40ba00bf7e64a10b4f66990dde6828be02f339365ee1df36dfc324e4fa85b6b0`),
-checked against original archive v28
-(`64378745818ce4aa23f492e925ae4dd28b37306a3774dda85e67896311b64aed`),
-seq1380, tip
-`8e87034167b9d8ad28a91c33b824eecb5cba59c1b47efbb982079e32ddecde4a`,
-and design-charge sequence `[1373, 1377, 1379]`.
+(`ffa8176e788b69bc4df60577d96afe6d8532d4ecf41633d39a53deb959495e01`),
+checked against original archive v29
+(`a0f56badde7c410c96e2b5b294fd32f712064940c62c79d1b6746f10405a8e7f`),
+seq1382, tip
+`0fd7a2ed945dc13268cfbfd4dc94cddca416c3e4b0313ec0dea1718a0d8f4ee4`,
+and design-charge sequence `[1373, 1377, 1379, 1381]`.
 The gzip fixture decompresses to original bytes; it is an author
 archive fixture, never a deployment root, current witness or installation.
 The reference's own complete_N/gate_N remain null. No design write occurs.
+Historical v27/v28 fixtures remain refusal evidence, never a current fallback.
 
 `stage_budget_mapping` binds all five adopted G14 clauses and keeps separate
 historical-token, prospective-sample and actual-attempt/N columns. Forward

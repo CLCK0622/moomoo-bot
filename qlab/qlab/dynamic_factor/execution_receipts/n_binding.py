@@ -16,11 +16,11 @@ from .g14 import PROTOCOL_SHA256, adopted_protocol
 
 
 DESIGN_RECEIPT_SHA256 = (
-    "40ba00bf7e64a10b4f66990dde6828be02f339365ee1df36dfc324e4fa85b6b0"
+    "ffa8176e788b69bc4df60577d96afe6d8532d4ecf41633d39a53deb959495e01"
 )
-ARCHIVE_SHA256 = "64378745818ce4aa23f492e925ae4dd28b37306a3774dda85e67896311b64aed"
-ARCHIVE_SEQUENCE = 1380
-ARCHIVE_TIP = "8e87034167b9d8ad28a91c33b824eecb5cba59c1b47efbb982079e32ddecde4a"
+ARCHIVE_SHA256 = "a0f56badde7c410c96e2b5b294fd32f712064940c62c79d1b6746f10405a8e7f"
+ARCHIVE_SEQUENCE = 1382
+ARCHIVE_TIP = "0fd7a2ed945dc13268cfbfd4dc94cddca416c3e4b0313ec0dea1718a0d8f4ee4"
 STAGES = {
     "historical_train",
     "independent_reference",
@@ -50,54 +50,49 @@ def execution_configurations():
 
 
 def design_archive_reference():
-    """Pinned accepted v28 archive only; never a current installation/N view.
+    """Pinned accepted v29 archive only; never a current installation/N view.
 
     Recheck the newest accepted anchor before batch submission; a later common
     design charge requires a new pin commit, never an inferred count or upgrade.
-    Historical v27 bytes remain evidence and are not a fallback.
+    Historical v27/v28 bytes remain evidence and are not a fallback.
     """
     root = Path(__file__).parent / "contracts"
-    receipt_raw = (root / "EVO883-C06CLK-v28-archive-acceptance-v1.json").read_bytes()
-    raw = gzip.decompress((root / "EVO891-B-ledger-v28.jsonl.gz").read_bytes())
+    receipt_raw = (root / "EVO883-EXECCL-v29-archive-acceptance-v1.json").read_bytes()
+    raw = gzip.decompress((root / "EVO891-B-ledger-v29.jsonl.gz").read_bytes())
     if sha256(receipt_raw) != DESIGN_RECEIPT_SHA256 or sha256(raw) != ARCHIVE_SHA256:
         raise ValueError("execution.design_archive_identity_changed")
     receipt = strict_json(receipt_raw)
     rows = records(raw)
-    archive = receipt["archive"]
-    reference = receipt["engineering_handoff"]["C12_design_count_archive_reference"]
+    archive = receipt["accepted_archive"]
+    projection = receipt["formal_arm_projection"]
     charges = [r for r in rows if r.get("record_type") == "design_count"]
     if (
-        receipt["outcome"] != "ACCEPTED_AUTHOR_ARCHIVE_V28_DESIGN_COUNT_ONLY"
+        receipt["decision"]
+        != "ACCEPT_AUTHOR_ARCHIVE_V29_AND_ONE_EXEC_CLOSURE_COMMON_DESIGN_CHARGE"
+        or receipt["scope"]
+        != "AUTHOR_ARCHIVE_ONLY_NOT_INSTALLED_AUTHORITY_OR_COMPLETE_GATE_N_OR_BUSINESS_ACCEPTANCE"
         or len(rows) != archive["lines"]
-        or len(raw) != archive["file_bytes"]
+        or len(raw) != archive["bytes"]
         or archive["file_sha256"] != ARCHIVE_SHA256
         or rows[-1]["seq"] != archive["seq"]
         or archive["seq"] != ARCHIVE_SEQUENCE
         or digest(rows[-1]) != archive["tip"]
         or archive["tip"] != ARCHIVE_TIP
-        or [r["seq"] for r in charges]
-        != receipt["accepted_design_count"][
-            "charge_sequences_for_formal_arm_projection"
-        ]
-        or [r["seq"] for r in charges] != [1373, 1377, 1379]
-        or charges[-1]["design_N_after"] != 3
-        or receipt["accepted_design_count"]["after"] != 3
+        or [r["seq"] for r in charges] != projection["retain_all_four_charge_sequences"]
+        or [r["seq"] for r in charges] != [1373, 1377, 1379, 1381]
+        or charges[-1]["design_N_after"] != 4
+        or archive["design_N"] != 4
         or charges[1]["binding"]["formal_release"]["sha256"] != PROTOCOL_SHA256
-        or not _same(
-            reference,
-            dict(
-                value=3,
-                seq=ARCHIVE_SEQUENCE,
-                tip=ARCHIVE_TIP,
-                ledger_file_sha256=ARCHIVE_SHA256,
-                scope="AUTHOR_ARCHIVE_DESIGN_COUNT_ONLY",
-            ),
-        )
+        or charges[-1]["binding"]["formal_machine_adoption"]["sha256"]
+        != receipt["formal_bindings"]["formal_machine_adoption"]["sha256"]
+        or projection["complete_N"] is not None
+        or projection["complete_N_or_lower_bound_certified"] is not False
+        or projection["book_N_mechanical_increment"] is not False
     ):
         raise ValueError("execution.design_archive_binding_changed")
     return dict(
         schema="EVO884.DesignCountArchiveReference/v1",
-        value=reference["value"],
+        value=archive["design_N"],
         archive_sequence=archive["seq"],
         archive_tip=archive["tip"],
         archive_sha256=ARCHIVE_SHA256,
