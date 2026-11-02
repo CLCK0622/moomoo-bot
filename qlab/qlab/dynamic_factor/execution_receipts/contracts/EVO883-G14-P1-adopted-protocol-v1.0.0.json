@@ -1,0 +1,169 @@
+{
+  "schema": "EVO883.G14AdoptedCommonProtocol/v1",
+  "protocol_id": "G14-P1",
+  "protocol_version": "1.0.0",
+  "display_identity": "G14-P1 v1.0.0 共同协议修订",
+  "status": "ADOPTED_COMMON_PROTOCOL_RUNTIME_NOT_RELEASED",
+  "adopted_at": "2026-11-02T02:04:40Z",
+  "adopted_at_basis": "Chief adoption comment platform timestamp; not D12 T0, L0 or a forward observation start.",
+  "target_issue_id": "01a18a63-02ca-77bc-a7bf-9f0769ed8bbf",
+  "authority_issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+  "deputy_countersign_comment_id": "01a199ff-e4c7-7837-82ad-b08bc0571ed4",
+  "chief_adoption_comment_id": "01a19a00-69c4-744f-8b5a-3c6d6497f572",
+  "release_dispatch_comment_id": "01a19a01-1dc4-7bc6-aad9-72b255397450",
+  "bindings": {
+    "proposal_chinese": {
+      "file": "inputs/EVO883-G14-P1-formal-proposal-v1.md",
+      "bytes": 13492,
+      "sha256": "4f4cc15eb9e02a181d795389d0dc5c4236236c00b64bd4816304398725d455f4"
+    },
+    "proposal_machine": {
+      "file": "inputs/EVO883-G14-P1-formal-proposal-v1.json",
+      "bytes": 6728,
+      "sha256": "c9a472052516cb48751214b32b006dd93c69a5f58c382858b7e428699b21a396"
+    },
+    "proposal_delivery_package": {
+      "file": "inputs/EVO883-G14-P1-formal-delivery-v1.0.0.zip",
+      "bytes": 549280,
+      "sha256": "f7c0fe56a589493e6eb9b22434aedcc24bb8c085d41145246c374cdc35d2c854"
+    },
+    "deputy_countersign": {
+      "file": "inputs/deputy_countersign.json",
+      "sha256": "1407785b5bff03a7a1b086e73843bd45da5ccf2e66029588ae51ab8577d5fc14",
+      "comment_id": "01a199ff-e4c7-7837-82ad-b08bc0571ed4",
+      "author_agent_id": "9b5d10be-e7ba-4142-8dc6-b929d5885342",
+      "platform_created_at": "2026-11-02T02:04:06Z"
+    },
+    "chief_adoption": {
+      "file": "inputs/chief_adoption.json",
+      "sha256": "4c6a8b1a9ebf89d77829b8899e30d19ac81de604e02c91e410ce7c5e3241b699",
+      "comment_id": "01a19a00-69c4-744f-8b5a-3c6d6497f572",
+      "author_agent_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+      "platform_created_at": "2026-11-02T02:04:40Z"
+    },
+    "release_dispatch": {
+      "file": "inputs/release_dispatch.json",
+      "sha256": "f2b5d7da3220a08ae3fc4707cb205d855a328c38284c36f6444f14756ce34624",
+      "comment_id": "01a19a01-1dc4-7bc6-aad9-72b255397450",
+      "author_agent_id": "b0469dec-48ce-497e-b3f3-57c493f01bc2",
+      "platform_created_at": "2026-11-02T02:05:26Z"
+    }
+  },
+  "adopted_clauses": [
+    {
+      "id": "G14.P1.1",
+      "title": "预算对象分列",
+      "adoption_mode": "ADOPTED_BY_IMMUTABLE_REFERENCE",
+      "source_sha256": "c9a472052516cb48751214b32b006dd93c69a5f58c382858b7e428699b21a396",
+      "source_pointer": "/new_proposed_clauses/0",
+      "original_proposal_text": "拟将“唯一历史walk-forward领用预算”与“获准前向观察的真实样本记录”明确分列。仅在本条经会签采用、正式版本/阶段归属完成核收、并由首辅独立签发L0后，真实前向观察本身不领用EVO-886唯一历史walk-forward的次数令牌；原历史账本及其实际领用状态保持原样，不重置、不复制、不补发、不认定未用。",
+      "text_utf8_sha256": "21cb551c3ce480a1594643b9e22bd2fda1a69b601bb9931a637b0f0c7e7c8b13",
+      "text_rewritten": false
+    },
+    {
+      "id": "G14.P1.2",
+      "title": "前向OOS证据的精确定义",
+      "adoption_mode": "ADOPTED_BY_IMMUTABLE_REFERENCE",
+      "source_sha256": "c9a472052516cb48751214b32b006dd93c69a5f58c382858b7e428699b21a396",
+      "source_pointer": "/new_proposed_clauses/1",
+      "original_proposal_text": "拟将该获准前向观察称为相对启动前已封存规则的prospective OOS记录，限于真实前向时点产生、决策前未见的评价样本，并保留当时可见输入、既定自动训练/选池、订单/费用/现金权益/NAV及输出时间锚。训练/校准、既见历史、离线重放、合成夹具、预备观察、同一结果副本和数据修订不因此变成新前向OOS。原政策用已成熟前向数据作后续滚动训练时，该被复用部分不再冒称新的未见评价样本；仍保留其首次评价身份。",
+      "text_utf8_sha256": "400b5fc03dcee577a249801ae71f6fbe7a5998c81db217b6683825c634bbc799",
+      "text_rewritten": false
+    },
+    {
+      "id": "G14.P1.3",
+      "title": "不向训练或参考扩散豁免",
+      "adoption_mode": "ADOPTED_BY_IMMUTABLE_REFERENCE",
+      "source_sha256": "c9a472052516cb48751214b32b006dd93c69a5f58c382858b7e428699b21a396",
+      "source_pointer": "/new_proposed_clauses/2",
+      "original_proposal_text": "该拟议分列只限定实际前向观察与历史令牌的关系。历史训练、独立参考实算、候选probe、meta诊断、失败和真实重试的阶段、attempt、N和预算归属仍由原权限线逐producer核收；本提案不批准这些运行，不自动声明其历史预算扣减为0。任何读取held-out test或完成历史walk-forward的执行不得仅改名forward/reference而绕过原预算。归属未闭合时G14不关门，不能以本提案自证。",
+      "text_utf8_sha256": "e59935d077b7209e0627aaeae937597dddfc943aaedfd1c395573b443baed3d2",
+      "text_rewritten": false
+    },
+    {
+      "id": "G14.P1.4",
+      "title": "与已采用四条及原门的关系",
+      "adoption_mode": "ADOPTED_BY_IMMUTABLE_REFERENCE",
+      "source_sha256": "c9a472052516cb48751214b32b006dd93c69a5f58c382858b7e428699b21a396",
+      "source_pointer": "/new_proposed_clauses/3",
+      "original_proposal_text": "原G1—G14、候选DSR≥0.95、S2、真实训练/标签、完整分臂N、资格和现金权益闸保持。已采用FWD-DRAFT-1～4继续约束：历史结果不人工反馈已启动配置，共用前提失效照原完整性处置，“停该版本”仍覆盖在途路径，63/126、DATA_INVALID和连续账户/钟不重置。本条不授予第二次历史对照、新观察窗口、调参、重放获利或自动认证，不证明IID、统计独立、显著性或策略成功。",
+      "text_utf8_sha256": "f48be643ca3276fb3be80a0c4d2efd20de3db750184719d67fd1437624dee9d5",
+      "text_rewritten": false
+    },
+    {
+      "id": "G14.P1.5",
+      "title": "拟采用后的版本与N处理",
+      "adoption_mode": "ADOPTED_BY_IMMUTABLE_REFERENCE",
+      "source_sha256": "c9a472052516cb48751214b32b006dd93c69a5f58c382858b7e428699b21a396",
+      "source_pointer": "/new_proposed_clauses/4",
+      "original_proposal_text": "本提案当前不采用、不冻结、不写链，设计/市场/OOS增量均不预记。建议若会签实质采用，将它作为一个共同协议修订计设计N+1一次，明确标为本G14修订而非已停止的v4-iso；采用后的正式协议身份及该次收费须会签明确批准。由原唯一writer以正式SHA/平台时点及当时最新已核锚只追加一次，正式分臂N投影保留新旧已批准设计收费；不把版本费伪造成一次市场attempt，也不把账面N直接机械加一。真实市场评价、失败/重试继续原配置/覆盖规则，不能因为phase=forward免记；不按每日观测机械虚增新配置，也不以日观察标签抹掉实际新producer/重试。",
+      "text_utf8_sha256": "d880b5b6869f83f44d35f1c8d6a99e02d0d7f09cc3ac73fa74ef1cddde5bfa20",
+      "text_rewritten": false
+    }
+  ],
+  "text_and_identity_relation": {
+    "substantive_text_changes": [],
+    "original_proposal_bytes_preserved": true,
+    "original_preparation_status_is_provenance_not_current_adoption_status": true,
+    "present_adoption_and_charge_authority": "chief_adoption_comment_id",
+    "all_runtime_conditions_and_qualifications_in_source_retained": true,
+    "original_v3_and_D12_bytes_modified": false,
+    "v4_iso_identity_used": false
+  },
+  "deputy_reservations": {
+    "forward_no_lookahead_not_established": true,
+    "required_evidence": "P1.2 actual event times, input visibility, output timestamps and no backwriting.",
+    "design_N_plus_one_not_total_cost_claim": true,
+    "stage_mapping_acceptance_and_engineering_still_required": true,
+    "exact_authority_text_file": "inputs/deputy_countersign.json"
+  },
+  "design_charge": {
+    "approved_common_design_increment": 1,
+    "common_revision_identity": "G14-P1 v1.0.0 共同协议修订",
+    "approved_once_not_per_producer_role_fold": true,
+    "publication_envelope_or_identical_redelivery_additional_increment": 0,
+    "writer": "Original sole authority writer via Libu dispatch; not the issuer of this record.",
+    "append_basis": "Latest accepted anchor at actual append time; preserve prior design charges in formal arm projections.",
+    "if_current_design_count_is_one_then_two": true,
+    "prior_count_assumed_in_advance": false,
+    "book_N_1313_to_1314_mechanical_edit_allowed": false,
+    "market_attempt_created_by_release": false,
+    "actual_chain_append_by_this_release": false,
+    "chain_acceptance_by_this_release": false
+  },
+  "history_and_stage": {
+    "rule_content": "Use adopted clause references P1.1 through P1.5 with all qualifications; no abbreviated unconditional forward exemption.",
+    "actual_forward_only_after_stage_acceptance_and_independent_L0": true,
+    "training_reference_probe_meta_and_real_retries_exempted": false,
+    "per_producer_stage_N_and_budget_acceptance_still_required": true,
+    "historical_budget_remaining_certified": false,
+    "historical_token_reset_or_reissue": false,
+    "history_resumed": false,
+    "new_history_runs_or_observation_windows_granted": 0,
+    "clock63_126_account_and_budget_reset_allowed": false
+  },
+  "acceptance_status": {
+    "rules_adopted": true,
+    "G14": "UNVERIFIED",
+    "complete_N_certified": false,
+    "actual_budget_mapping_certified": false,
+    "engineering_wiring_or_nonauthor_acceptance_granted": false,
+    "research_suitability_certified": false,
+    "startup_order": "G1-G14 factual/implementation/independent-review/sealing acceptance under original authority -> Hanlin research suitability -> chief independent L0.",
+    "runtime_consumable": false,
+    "certifiable": false,
+    "L0_started": false,
+    "clock63_started": false
+  },
+  "publication_identity": {
+    "formal_release_file": "EVO883-G14-P1-adopted-protocol-v1.0.0.json",
+    "formal_release_SHA256_location": "release-binding.json and the parent publication result comment",
+    "actual_platform_publication_time_location": "release-binding.json after successful attachment upload",
+    "hash_not_embedded_in_own_bytes": true
+  },
+  "handoff": {
+    "next_step": "Libu dispatches finance append after receiving this formal release SHA; Hanlin later accepts appended chain, then G14 wiring/stage evidence under the original approved contract.",
+    "current_release_is_not_final_G14_acceptance": true,
+    "installation_or_runtime_authorization": false
+  }
+}
