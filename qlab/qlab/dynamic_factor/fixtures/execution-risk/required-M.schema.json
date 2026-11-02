@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "EVO884.RequiredM/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "M",
+    "age_clock",
+    "book_id",
+    "certifiable",
+    "close_session",
+    "complete",
+    "cooldown_boundary",
+    "execution_session",
+    "origin_new_risk_enabled",
+    "original_state_sha256",
+    "reasons",
+    "required_exits",
+    "required_m_sha256",
+    "risk_source_sha256",
+    "ruling_sha256",
+    "runtime_consumable",
+    "schema",
+    "shared_contract_sha256",
+    "signal_sha256",
+    "snapshot_sha256"
+  ],
+  "properties": {
+    "M": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "持仓股数（工作假设，待翰林院确认，见 CORE-READBACK M-01）。必要动作之后的最终非负整数持仓；不是上限，也不是相对原持仓的差量。净订单另表。出处 D12 /D1/projection/1、/D1/logical_output_closed_keys、/D1/target/required_exit_cannot_be_undone；execution.py:490-498。",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "age_clock": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "entry_close_age",
+            "step_per_held_close"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "entry_close_age": {
+              "const": 1
+            },
+            "step_per_held_close": {
+              "const": 1
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "book_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "certifiable": {
+      "const": false
+    },
+    "close_session": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "cooldown_boundary": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "start_event",
+            "first_blocked_execution_offset",
+            "blocked_sessions"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "start_event": {
+              "const": "complete_exit_fill_open"
+            },
+            "first_blocked_execution_offset": {
+              "const": 1
+            },
+            "blocked_sessions": {
+              "const": 5
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "execution_session": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "origin_new_risk_enabled": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "original_state_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "required_exits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "quantity",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "required_m_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "risk_source_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ruling_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "runtime_consumable": {
+      "const": false
+    },
+    "schema": {
+      "const": "EVO884.RequiredM/v1"
+    },
+    "shared_contract_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signal_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "snapshot_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "complete": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "M": {
+            "type": "object"
+          },
+          "origin_new_risk_enabled": {
+            "type": "object"
+          },
+          "age_clock": {
+            "type": "object",
+            "required": [
+              "entry_close_age",
+              "step_per_held_close"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "entry_close_age": {
+                "const": 1
+              },
+              "step_per_held_close": {
+                "const": 1
+              }
+            }
+          },
+          "cooldown_boundary": {
+            "type": "object",
+            "required": [
+              "start_event",
+              "first_blocked_execution_offset",
+              "blocked_sessions"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "start_event": {
+                "const": "complete_exit_fill_open"
+              },
+              "first_blocked_execution_offset": {
+                "const": 1
+              },
+              "blocked_sessions": {
+                "const": 5
+              }
+            }
+          },
+          "ruling_sha256": {
+            "const": "8cd32345adb5ebe16cb9020687091532c46f803f046d6c1527eeedee41407a5a"
+          },
+          "reasons": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}

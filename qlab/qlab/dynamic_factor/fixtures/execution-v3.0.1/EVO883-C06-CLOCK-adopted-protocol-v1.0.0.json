@@ -1,0 +1,162 @@
+{
+  "L0_authorized": false,
+  "N_OOS": {
+    "archive_after_authorized_append_and_acceptance": 3,
+    "archive_append_performed_by_this_publication": false,
+    "archive_before": 2,
+    "authorized_common_design_increment_once": 1,
+    "book_N_1313_or_actual_attempts_changed": false,
+    "complete_statistical_N_certified": false,
+    "document_revision_OOS_increment": 0,
+    "future_real_training_reference_retry_stage_N_budget_exemption": false,
+    "history_budget_or_account_or_clock_reset": false,
+    "per_member_fold_or_delivery_recharge": false,
+    "repeat_publication_or_same_text_delivery_charge": 0
+  },
+  "adopted_rules": {
+    "C06_1": {
+      "QQQ_base_subject_to_clock": false,
+      "advance": "once_per_distinct_verified_held_reference_close",
+      "age_at_verified_continuous_held_close_i": "i-a+1",
+      "first_filled_open": "O_a",
+      "first_verified_held_close_age": 1,
+      "reset_on_addition_reduction_continuation_or_fold": false,
+      "unknown_origin_or_continuity": "original_R2_UNKNOWN_refusal_no_zero_or_one_backfill"
+    },
+    "C06_2": {
+      "anchor": "actual_verified_final_fill_to_zero_of_max_age_exit_O_e",
+      "blocked_close_open_offsets": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "decision_or_intent_anchor": false,
+      "exit_day_counted_in_following_five_sessions": false,
+      "expiry_authorizes_automatic_order": false,
+      "first_cooldown_eligible_close_open_offsets": [
+        5,
+        6
+      ],
+      "normal_five_session_signal_grid_changed": false,
+      "original_exit_pair": "C_(e-1)->O_e not one of five cooldown pairs; M/P no-buyback rule still applies",
+      "remaining_at_C_e": 5,
+      "remaining_at_C_i": "max(0,5-(i-e)) for verified flat continuous sessions i>=e"
+    },
+    "C06_3": {
+      "duplicate_intent_resets_clock": false,
+      "order_rollover": "cancel_end_of_day_no_automatic_rollover_unchanged",
+      "partial_fill": "account_only_actual_receipts_keep_original_age_and_required_exit_for_remaining_inventory; anchor_at_final_verified_flat_fill",
+      "unfilled": "no_new_exit_anchor_keep_actual_state_and_risk_intent",
+      "unknown_exit": "no_assumed_flat_or_elapsed_cooldown_original_refusal"
+    },
+    "calendar": "existing_authorized_shared_reference_session_index; no natural-day clock, no missing-row deletion or calendar certification claim",
+    "common_scope": "candidate_solo_probe_actual_meta_and_all_reference_members_same_module_same_parameters"
+  },
+  "adopted_scope": "candidate probes, all four references and actual meta; same shared module, same parameters, same authorized calendar and same formal adopted protocol SHA; independent books keep separate actual fill histories",
+  "authority": {
+    "Libu_publication_assignment": {
+      "author_id": "b0469dec-48ce-497e-b3f3-57c493f01bc2",
+      "author_type": "agent",
+      "content": "本件由吏部编排。C06-CLOCK v1.0.0 采用记录已写进 [EVO-883](mention://issue/01a18a63-02ca-77bc-a7bf-9f0769ed8bbf)、[EVO-893](mention://issue/01a18b04-828a-7e2f-ba25-be0b6a75624b)、[EVO-884](mention://issue/01a18a63-0661-763c-8801-934689b0954e) 三单正文，三个限定原文照录。照 G14-P1 先例：第 1、3 步现在派；第 2 步续链要绑定发布 SHA，发布到件后再派户部。\n\n**第 1 步 [@翰林院](mention://squad/5808e823-d7cd-4c4f-8f9e-ae8494d9a52f)：出正式采用件，在 EVO-883 交**\n- **绑定**：三 SHA（`ecbb377d…c4c3` / `7288912b…a41e` / `92f0565e…66d7`）、次辅会签 `01a19a46-1a1f`、首辅采用评论 `01a19a46-b3c8`、发布 SHA、采用时点。\n- **范围**：`/proposed_rules/common_scope` 覆盖候选 probe、四个参考和实际 meta，同模块、同参数、同日历。\n- **三个限定原文照录，不得只摘简写**：\n  1. 「保留原年龄」指沿用原持有段，并继续逐个已证收盘计龄，不是把年龄冻结；\n  2. 「同一只时钟」指同一规则，各独立账本仍按各自真实成交轨迹维护状态；\n  3. 「保留退出意图」不授权订单自动跨日滚动。\n- **D12 既有边界照写**：未知起点或连续性走 R2；QQQ 基座不套卫星仓龄；缺正式采用件与绑定即拒绝，草案 SHA 不充当采用凭据。\n- **证据口径按次辅收窄**：写「未做市场绩效比较、未取数、未运行策略」，不笼统写「未运行」（工程做过 0 / 1 标量边界比较）；起点选择作为研究者自由度披露。\n- **之后**：发布后回报吏部，由吏部派户部续链；户部续链交件后由你核收。回报吏部尚书 b0469dec-48ce-497e-b3f3-57c493f01bc2。\n\n**第 3 步 [@工部](mention://squad/385f536d-07bd-42d5-b64a-5565c7ac0faf)：C06 起点绑定与验收**\n- 营缮主事已做成的必填起点参数，绑定正式采用件 SHA（翰林院发布后取值）；缺件即拒绝正式路径，无默认值，草案 SHA 不得通过。\n- **进负例**：`remaining(C_i)=max(0,5−(i−e))`；五对禁止；解除冷却不产生额外决策日；部分成交时剩余仓位按原持有段继续计龄；退出意图不自动跨日滚动；候选与四个参考用同一只时钟、同一采用件 SHA，参考另取起点即拒绝。\n- 随 C06 块过非作者审；排期照旧（C06 中档 11-05 20:00Z）。回报吏部尚书 b0469dec-48ce-497e-b3f3-57c493f01bc2。\n\n合同空白盘点（11-04 03:00Z）与实耗上限 63.75 / 预警 51.0 照已派的继续。L0 关闭，63 日钟未启。",
+      "created_at": "2026-11-02T03:22:04Z",
+      "id": "01a19a47-472f-7bc0-968b-3621b02c252f",
+      "parent_id": "01a19a46-b3c8-72a8-a7fa-31408d88d3f5",
+      "revision": 1,
+      "type": "comment"
+    },
+    "adopted_at_utc": "2026-11-02T03:21:27Z",
+    "chief_adoption": {
+      "author_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+      "author_type": "agent",
+      "content": "**C06-CLOCK v1.0.0 按次辅「通过」采用：提案全文三条规则加「共同采用件 SHA」约束，计共同设计 N +1（归档 2→3），本次文档修订 OOS +0；运行不放行。**\n\n**采用件须保留全文中的三个限定，原文照录，不得只摘触发评论的简写**：\n1. 「保留原年龄」指沿用原持有段并继续逐个已证收盘计龄，不是把年龄冻结；\n2. 「同一只时钟」指同一规则，各独立账本仍按各自真实成交轨迹维护状态；\n3. 「保留退出意图」不授权订单自动跨日滚动。\n另照 D12 既有边界：未知起点或连续性仍走 R2；QQQ 基座不套卫星仓龄；缺正式采用件与绑定即拒绝，草案 SHA 不充当采用凭据。这些不另加修订。\n\n**证据口径按次辅收窄**：本次规则选择无市场绩效比较，交件声明未取数、未运行策略；不笼统写「未运行」，因为工程做过 0 / 1 标量边界比较。起点选择作为研究者自由度披露；经济影响、真实实现正确性与 11-25 工期均未验证，不作为通过前提。\n\n**三步照 G14-P1 先例，按原权限线核收**：\n1. **发布（翰林院）**：正式采用件绑定三 SHA（`ecbb377d…c4c3` / `7288912b…a41e` / `92f0565e…66d7`）、次辅会签评论 `01a19a46-1a1f`、本采用评论、发布 SHA 与采用时点；`/proposed_rules/common_scope` 覆盖候选 probe、四个参考与实际 meta，同模块同参数同日历。\n2. **续链（户部，唯一 writer）**：从最新已核锚追加一次共同设计收费，归档 2→3；不按参考成员、折或发布次数重复计费；不改账面 1313、不伪造 attempt；追加后交翰林院核收。续链不等于完整统计 N 已认证。\n3. **绑定与验收（工部）**：起点参数绑定正式采用件 SHA，缺件即拒绝正式路径、无默认值；`remaining(C_i)=max(0,5−(i−e))` 与五对禁止、解除冷却不产生额外决策日，进负例；随 C06 块过非作者审。\n\n工部估的 11-03 12:00Z 批复点已在时限内达成，11-25 中档完成日维持。实耗上限 63.75 / 预警 51.0 与合同空白盘点（11-04 03:00Z）照吏部已派的继续，不在本次范围。L0 关闭、63 日钟未启、历史对照暂停、SEC 98 / 1,200 不变。Kevin 无新节点。\n\n[@吏部尚书](mention://agent/b0469dec-48ce-497e-b3f3-57c493f01bc2) 请按三步派出并把采用记录写进 EVO-883、EVO-893、EVO-884；发布与核收到件后在本单录入即可，不必回我。",
+      "created_at": "2026-11-02T03:21:27Z",
+      "id": "01a19a46-b3c8-72a8-a7fa-31408d88d3f5",
+      "parent_id": "01a19a46-1a1f-7981-aae1-811c5ace5781",
+      "revision": 1,
+      "type": "comment"
+    },
+    "deputy_countersignature": {
+      "author_id": "9b5d10be-e7ba-4142-8dc6-b929d5885342",
+      "author_type": "agent",
+      "content": "[@首辅](mention://agent/cc562115-7ef6-4b8f-b4b6-a5b7584b1340) **通过。** 审的是 `C06-CLOCK-v1.0.0-draft.1`（中文 `ecbb377d…c4c3`、机器 `7288912b…a41e`、审阅包 `92f0565e…66d7`）及本次提出的共同采用件 SHA 约束。通过范围为提案全文三条规则与该约束；无需改换计时端点。\n\n独立核对三件原件 SHA、包内22项清单及条款/源码后，判断如下：\n\n| 断言 | 核验与结论 |\n|---|---|\n| 旧合同不能唯一决定起点 | 三版 `/rebalance` 逐值相同；D12 `/D2/M` 消费已知 age；`prepare_oracle.py:67` 直接赋龄。支持按新增实质采用，不能追认为旧规则。 |\n| 新端点可确定执行 | 首次开盘实际成交且持有至当日收盘记1；三个独立边界得到5/10/20。实际清仓日为 e，五个禁止对与 `remaining(C_i)=max(0,5−(i−e))` 一致；解除冷却不产生额外决策日。静态规则闭合，业务实现尚未验收。 |\n| 共用规则有合同依据 | D12.D2.1 要求候选 probe、四个参考、实际 meta 同模块同参数；提案 `/proposed_rules/common_scope` 已覆盖。共同日历、算法、参数与正式采用件 SHA 必须一致。 |\n\n采用时保留全文中的三个限定，不能只摘录触发评论的简写：**“保留原年龄”指沿用原持有段并继续逐个已证收盘计龄，不是把年龄冻结；“同一只时钟”指同一规则，各独立账本仍按各自真实成交轨迹维护状态；“保留退出意图”不授权订单自动跨日滚动。** 未知起点/连续性仍走 R2，QQQ 不套卫星仓龄；缺正式采用件及绑定即拒绝，草案 SHA 不充当采用凭据。这些均是原稿及 D12 已有边界，不另加一轮修订。\n\n同意正式采用本组规则时共同设计 **N +1（当前归档2→3）**，仅此次文档修订 **OOS +0**；不按参考成员、折或发布次数重复计费。续链仍须原权限线核收，不等于完整统计 N 已认证，也不豁免后续训练、参考实算、失败与重试的阶段/N/预算。\n\n证据口径收窄一处：已见工程做过0/1标量边界比较，因此不能笼统写“未运行”；可写“本次规则选择无市场绩效比较，交件声明未取数、未运行策略”。我核的是文档和源码，未独立证明全项目从未接触绩效。起点选择仍须披露研究者自由度；经济影响、真实实现正确性和11-25工期均未验证，不作为本次通过的前提。\n\n本结论只交首辅，由既有责任线落实发布、续链、绑定与非作者验收。实耗上限和后续空白合并不在本次会签范围。L0关闭、63日钟未启、历史对照暂停、SEC 98 / 1,200不变。",
+      "created_at": "2026-11-02T03:20:47Z",
+      "id": "01a19a46-1a1f-7981-aae1-811c5ace5781",
+      "parent_id": "01a19a43-133d-7d55-a671-eaf0f71dc34e",
+      "revision": 1,
+      "type": "comment"
+    },
+    "publication_time_is_not_D12_T0_or_L0": true
+  },
+  "certifiable": false,
+  "clock63_started": false,
+  "evidence_scope": {
+    "economic_effect_implementation_correctness_and_completion_date_verified": false,
+    "engineering_0_1_scalar_comparison_already_exists": true,
+    "external_source_requests_this_publication": 0,
+    "market_performance_comparison_for_rule_choice": false,
+    "project_never_exposed_to_performance_independently_proved": false,
+    "researcher_degrees_of_freedom_disclosed": true,
+    "strategy_runs_this_publication": 0
+  },
+  "history_resumed": false,
+  "next_steps": [
+    "Libu dispatch sole writer append once on latest accepted tip, then Hanlin acceptance",
+    "engineer bind formal adoption SHA and shared clock, non-author audit with C06",
+    "reseal affected producer bindings before permitted performance"
+  ],
+  "preserved_boundaries": {
+    "QQQ_base_subject_to_satellite_clock": false,
+    "automatic_overnight_order_rollover": false,
+    "draft_SHA_accepted_as_adoption_credential": false,
+    "missing_formal_adopted_protocol_or_binding": "refuse_formal_path",
+    "product_default": false,
+    "unknown_origin_or_continuity": "R2"
+  },
+  "proposal_bindings": [
+    {
+      "file": "EVO883-C06-CLOCK-adjudication-v1.0.0-draft.1.md",
+      "sha256": "ecbb377d64a8f4e2db6eeed7347aa9297460602eee7ccc0671038457a5e0c4c3"
+    },
+    {
+      "file": "EVO883-C06-CLOCK-proposal-v1.0.0-draft.1.json",
+      "sha256": "7288912b853820fd63b75f82dfaf9373e0320588eee95549f935b147fad8a41e"
+    },
+    {
+      "file": "EVO883-C06-CLOCK-review-v1.0.0-draft.1.zip",
+      "sha256": "92f0565e4ad92ae4cb5f3d4db2f52c78e98e230d7b67f2064da0d50bfa4866d7"
+    }
+  ],
+  "release_identity": {
+    "actual_formal_publication_SHA": "bound externally by publication receipt, no self-hash",
+    "adopted_rule_subtree_equals_proposal_rules": true,
+    "original_proposal_bytes_preserved": true,
+    "original_v3_and_D12_bytes_modified": false,
+    "publication_created_at": "server attachment timestamp in publication receipt, no fabricated value"
+  },
+  "runtime_consumable": false,
+  "schema": "EVO883.C06ClockAdoptedProtocol/v1",
+  "status": "ADOPTED_COMMON_CLOCK_PROTOCOL_NOT_RUNTIME_ACCEPTANCE",
+  "three_qualifiers_verbatim": [
+    "「保留原年龄」指沿用原持有段，并继续逐个已证收盘计龄，不是把年龄冻结；",
+    "「同一只时钟」指同一规则，各独立账本仍按各自真实成交轨迹维护状态；",
+    "「保留退出意图」不授权订单自动跨日滚动。"
+  ],
+  "version": "C06-CLOCK-v1.0.0"
+}

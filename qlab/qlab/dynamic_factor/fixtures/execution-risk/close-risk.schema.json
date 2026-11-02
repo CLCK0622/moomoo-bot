@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "EVO884.CloseRiskSnapshot/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "age_clock",
+    "book_id",
+    "canonical_scenario",
+    "certifiable",
+    "clock_binding",
+    "close_session",
+    "complete",
+    "cooldown_boundary",
+    "fees_x2",
+    "original_state_sha256",
+    "prior_risk",
+    "prior_risk_sha256",
+    "reasons",
+    "risk",
+    "risk_source_sha256",
+    "ruling_sha256",
+    "runtime_consumable",
+    "schema",
+    "scope",
+    "shared_contract_sha256",
+    "snapshot_sha256",
+    "state"
+  ],
+  "properties": {
+    "age_clock": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "entry_close_age",
+            "step_per_held_close"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "entry_close_age": {
+              "const": 1
+            },
+            "step_per_held_close": {
+              "const": 1
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "book_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "canonical_scenario": {
+      "const": "x2"
+    },
+    "certifiable": {
+      "const": false
+    },
+    "clock_binding": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "close_session": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "cooldown_boundary": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "start_event",
+            "first_blocked_execution_offset",
+            "blocked_sessions"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "start_event": {
+              "const": "complete_exit_fill_open"
+            },
+            "first_blocked_execution_offset": {
+              "const": 1
+            },
+            "blocked_sessions": {
+              "const": 5
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fees_x2": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "original_state_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "prior_risk": {},
+    "prior_risk_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "risk": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "risk_source_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ruling_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "runtime_consumable": {
+      "const": false
+    },
+    "schema": {
+      "const": "EVO884.CloseRiskSnapshot/v1"
+    },
+    "scope": {
+      "type": "object"
+    },
+    "shared_contract_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "snapshot_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "state": {
+      "type": "object",
+      "description": "All original declared account fields are retained, including unknowns; fees_x2 stays in the outer envelope."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "complete": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "risk": {
+            "type": "object"
+          },
+          "clock_binding": {
+            "type": "object"
+          },
+          "age_clock": {
+            "type": "object",
+            "required": [
+              "entry_close_age",
+              "step_per_held_close"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "entry_close_age": {
+                "const": 1
+              },
+              "step_per_held_close": {
+                "const": 1
+              }
+            }
+          },
+          "cooldown_boundary": {
+            "type": "object",
+            "required": [
+              "start_event",
+              "first_blocked_execution_offset",
+              "blocked_sessions"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "start_event": {
+                "const": "complete_exit_fill_open"
+              },
+              "first_blocked_execution_offset": {
+                "const": 1
+              },
+              "blocked_sessions": {
+                "const": 5
+              }
+            }
+          },
+          "ruling_sha256": {
+            "const": "8cd32345adb5ebe16cb9020687091532c46f803f046d6c1527eeedee41407a5a"
+          },
+          "reasons": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}
