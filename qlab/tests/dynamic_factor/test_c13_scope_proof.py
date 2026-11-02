@@ -13,6 +13,52 @@ from qlab.dynamic_factor.contract import sha256
 
 
 ROOT = Path(scope_proof.__file__).parent
+
+
+def test_C13_filename_registration_has_no_artifact_SHA_and_R055_literal_is_unique():
+    out = scope_proof.b2_isolation_proof(load_conventions())
+    names = out["C13_filename_registration_scope"]
+    assert names["registrations"] == {
+        "conventions": ["provenance.json", "provenance-v2.json", "provenance-v3.json"],
+        "input_disposition": ["qqq-events-v1.csv"],
+        "historical_authority": ["EVO891-B-ledger-v4.tip.json"],
+    }
+    witness = names["historical_witness"]
+    assert witness["assignments"] == 1
+    assert witness["literal_filename"] == "EVO891-B-ledger-v4.tip.json"
+    assert witness["source_identity_bound"] is True
+    assert names["unverified_not_in_table"] == ["R056", "R057", "R058", "R059", "R060"]
+    assert out["non_market_read_whitelist"]["execution"].count("fee_schedule.json") == 1
+
+
+@pytest.mark.parametrize(
+    "mutation", ["replacement", "reassignment", "dynamic_injection"]
+)
+def test_C13_R055_source_override_or_injection_is_rejected(
+    private_sources, monkeypatch, record_property, mutation
+):
+    original = (private_sources / "historical_authority.py").read_bytes()
+    if mutation == "replacement":
+        raw = original.replace(b'"EVO891-B-ledger-v4.tip.json"', b'"other.tip.json"')
+    elif mutation == "reassignment":
+        raw = (
+            original + b'\nHISTORICAL_V4_WITNESS_INPUT = FIXTURES / "other.tip.json"\n'
+        )
+    else:
+        raw = (
+            original
+            + b'\nglobals()["HISTORICAL_V4_WITNESS_INPUT"] = FIXTURES / "other.tip.json"\n'
+        )
+    with changed(
+        private_sources, "historical_authority.py", raw, monkeypatch
+    ) as identity:
+        with pytest.raises(
+            ValueError, match="scope.file_access_not_whitelisted"
+        ) as refused:
+            scope_proof.b2_isolation_proof(load_conventions())
+    observed(record_property, "R055:" + mutation, identity, refused)
+
+
 REGISTRATION = Path(__file__).parent / "fixtures/c13-registration"
 REGISTERED_IMPORTS = json.loads((REGISTRATION / "import-delta.json").read_bytes())
 FIXED = json.loads((REGISTRATION / "fixed-reads.json").read_bytes())

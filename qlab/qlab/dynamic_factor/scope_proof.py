@@ -410,6 +410,80 @@ FIXED_READER_SOURCES = {
 }
 
 
+FILENAME_READS = {
+    "conventions": ["provenance.json", "provenance-v2.json", "provenance-v3.json"],
+    "input_disposition": ["qqq-events-v1.csv"],
+    "historical_authority": ["EVO891-B-ledger-v4.tip.json"],
+}
+# Source identity, not a SHA requirement on these five filename-only artifacts.
+# These helpers retain their original read mechanisms; they are not additional
+# IMPORTS entries or a claim to cover every read in their whole modules.
+FILENAME_SOURCE_IDENTITIES = {
+    "conventions": "4b98838d3fca24664470c1e2fb65921eefc3d93a7bfb9331e857d65f0205064a",
+    "input_disposition": "515945c2ee3de0d8e9a1ec0087f8087b5750258d013ada6ed08060f50e872d65",
+    "historical_authority": "fb401e78c115876d73f9f5a6cece6d7d820927c9cd1222dad49eca983629fcce",
+}
+
+
+def _filename_read_scope(trees, sources):
+    for name, expected in FILENAME_SOURCE_IDENTITIES.items():
+        if sources[name + ".py"] != expected:
+            raise ValueError("scope.file_access_not_whitelisted")
+    for module in ("conventions", "input_disposition"):
+        names = {
+            node.func.value.right.value
+            for node in ast.walk(trees[module])
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "read_bytes"
+            and isinstance(node.func.value, ast.BinOp)
+            and isinstance(node.func.value.op, ast.Div)
+            and isinstance(node.func.value.left, ast.Name)
+            and node.func.value.left.id == "FIXTURES"
+            and isinstance(node.func.value.right, ast.Constant)
+        }
+        if not set(FILENAME_READS[module]) <= names:
+            raise ValueError("scope.file_access_not_whitelisted")
+    tree = trees["historical_authority"]
+    stores = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Name)
+        and node.id == "HISTORICAL_V4_WITNESS_INPUT"
+        and isinstance(node.ctx, ast.Store)
+    ]
+    assignments = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        and any(
+            isinstance(t, ast.Name) and t.id == "HISTORICAL_V4_WITNESS_INPUT"
+            for t in node.targets
+        )
+    ]
+    expected = ast.parse(
+        "HISTORICAL_V4_FIXTURES / 'EVO891-B-ledger-v4.tip.json'", mode="eval"
+    ).body
+    if (
+        len(stores) != 1
+        or len(assignments) != 1
+        or ast.dump(assignments[0].value) != ast.dump(expected)
+    ):
+        raise ValueError("scope.file_access_not_whitelisted")
+    return dict(
+        registrations=FILENAME_READS,
+        historical_witness=dict(
+            constant="HISTORICAL_V4_WITNESS_INPUT",
+            assignments=len(stores),
+            literal_filename="EVO891-B-ledger-v4.tip.json",
+            source_identity_bound=True,
+            scope="historical diagnostic only",
+        ),
+        unverified_not_in_table=["R056", "R057", "R058", "R059", "R060"],
+        guarantee="Pinned owned source and static assignments; no arbitrary host mutation sandbox claim",
+    )
+
+
 def _candidate_registry_scope(trees, sources):
     """Bound the reached artifact calls, not the generic function's HASHES.
 
@@ -515,7 +589,11 @@ def b2_isolation_proof(policy):
     root = Path(__file__).parent
     targets = [
         (name, name + ".py", None)
-        for name in sorted(set(IMPORTS) | {module for module, _, _ in FIXED_READS})
+        for name in sorted(
+            set(IMPORTS)
+            | {module for module, _, _ in FIXED_READS}
+            | set(FILENAME_READS)
+        )
     ]
     targets.extend(FIXED_READS)
     for name, relative, expected in targets:
@@ -527,6 +605,8 @@ def b2_isolation_proof(policy):
         sources[name + ".py"] = sha256(raw)
         tree = ast.parse(raw)
         trees[name] = tree
+        if name in FILENAME_READS:
+            continue
         graph[name] = sorted(
             {n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)}
             | {
@@ -616,6 +696,7 @@ def b2_isolation_proof(policy):
     }:
         raise ValueError("scope.file_access_not_whitelisted")
     registry_scope = _candidate_registry_scope(trees, sources)
+    filename_scope = _filename_read_scope(trees, sources)
     ref = static_proof()
     return {
         "schema": "EVO884.B2-isolation-proof/v1",
@@ -641,9 +722,11 @@ def b2_isolation_proof(policy):
             for module, path, expected in FIXED_READS
         ],
         "C13_registry_call_scope": registry_scope,
+        "C13_filename_registration_scope": filename_scope,
         "C13_coverage_boundary": "Registered 3+7 fixed reads only; existing transitive helper reads retain original mechanisms and are not claimed fully covered by this table",
         "seal_status": "seal_pending",
         "non_market_read_whitelist": {
+            **FILENAME_READS,
             "catalog_v21": [
                 "catalog-v21/EVO893-B-noncash-catalog-v21.csv",
                 "catalog-v21/EVO893-B-CMI-guard-v21.json",

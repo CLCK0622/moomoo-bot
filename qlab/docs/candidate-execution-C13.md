@@ -58,8 +58,13 @@ the conservative source-fingerprint check. Other registry HASHES are not
 granted. Existing GATES, old import members and forbidden dynamic calls remain.
 The earlier helper-read mechanisms and dynamic C09/ledger inputs are explicitly
 outside the new fixed-read table's complete-coverage claim. Filename-only
-registrations are a separate follow-up commit; generic schema readers remain
-unverified and outside that table.
+registrations follow in a separate commit: R036/R037/R038/R054 list only the
+filename. R055 statically resolves the one historical witness assignment and
+pins its existing source against replacement/reassignment/injection; it gives
+that historical witness no current authority. Artifact hashes are not imposed
+on these filename-only rows. Generic schema readers R056--R060 remain
+unverified and outside the table. This is a pinned-source proof, not a sandbox
+against arbitrary mutation by trusted host Python.
 
 Tests use synthetic inputs only. The candidate accounting fixture exercises
 owned startup, an LT50 no-new-tilt projection, C04/C06 daily closes and C07
