@@ -520,7 +520,16 @@ def nav_increment(M, P, prices, alpha, mu_Q, E, c_M, c_P, mu_cash=0, qqq="QQQ"):
     }
 
 
-def voluntary_trade_gate(request, *, conventions, ledger=None):
+def voluntary_trade_gate(request, *, conventions, ledger=None, execution=None):
+    if execution is not None:
+        from .execution_candidate import CandidateIntent
+
+        if (
+            type(execution) is not CandidateIntent
+            or conventions is not execution.policy
+        ):
+            raise ValueError("candidate.owned_preclose_intent_required")
+        return execution.next_open(request)
     # One predeclared signal in an accounting scope has one final optional plan.
     key = None
     if (
@@ -572,6 +581,8 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
             necessary_state_known(state)
             if state["inventory"] != original or state["cash"] != cash:
                 raise ValueError("state.required_state_identity_mismatch")
+        if conventions.document["version"] == "v3.0.0":
+            raise ValueError("candidate.shared_execution_intent_required")
         if (
             not finite(cash)
             or cash < 0

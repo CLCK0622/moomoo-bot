@@ -1,0 +1,508 @@
+{
+  "B2_only_readout_entry": "valuation.benchmark_valuation(symbol=VTI)",
+  "B2_series_capability_for_strategy_roles": false,
+  "certifiable": false,
+  "common_profile_sha256": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",
+  "conventions_sha256": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+  "conventions_status": "FROZEN_DESIGN_INTERFACE_EXECUTION_GATES_UNMET",
+  "conventions_version": "v3.0.0",
+  "guarded_consumers": {
+    "admission": {
+      "function": "select_pool",
+      "guard_line": 264,
+      "module": "pipeline"
+    },
+    "calibration": {
+      "function": "calibrate_gain",
+      "guard_line": 361,
+      "module": "execution"
+    },
+    "features": {
+      "function": "_features",
+      "guard_line": 56,
+      "module": "folds"
+    },
+    "holdings_cash": {
+      "function": "integer_cash_valuation",
+      "guard_line": 172,
+      "module": "valuation"
+    },
+    "orders": {
+      "function": "_tool",
+      "guard_line": 158,
+      "module": "execution"
+    },
+    "qqq_labels": {
+      "function": "_run_walk_forward_unbound",
+      "guard_line": 76,
+      "module": "folds"
+    },
+    "reference": {
+      "function": "read_inputs",
+      "guard_line": 21,
+      "module": "reference_inputs"
+    }
+  },
+  "import_graph": {
+    "catalog_members": [],
+    "catalog_v21": [
+      "contract",
+      "conventions",
+      "csv",
+      "io",
+      "json"
+    ],
+    "continuity": [
+      "authority_host",
+      "contract",
+      "conventions",
+      "copy",
+      "fees",
+      "historical_authority",
+      "input_disposition",
+      "input_scope",
+      "k5",
+      "state_v2"
+    ],
+    "execution": [
+      "__future__",
+      "contract",
+      "conventions",
+      "fee_model",
+      "fees",
+      "input_scope",
+      "isolation",
+      "json",
+      "math",
+      "noncash_v3",
+      "pipeline",
+      "re",
+      "state_v2"
+    ],
+    "folds": [
+      "__future__",
+      "continuity",
+      "contract",
+      "conventions",
+      "dataclasses",
+      "fees",
+      "fold_split",
+      "input_scope",
+      "json",
+      "pipeline",
+      "validation"
+    ],
+    "input_scope": [],
+    "isolation": [
+      "contract",
+      "conventions",
+      "copy",
+      "datetime",
+      "event_quarantine",
+      "fees",
+      "input_scope",
+      "math",
+      "noncash_v3"
+    ],
+    "k5": [
+      "contract",
+      "conventions",
+      "csv",
+      "decimal",
+      "fees",
+      "input_scope",
+      "io",
+      "isolation",
+      "json",
+      "noncash_v3"
+    ],
+    "noncash_v3": [
+      "catalog_members",
+      "catalog_v21",
+      "contract",
+      "conventions",
+      "copy",
+      "datetime",
+      "state_v2"
+    ],
+    "pending": [
+      "__future__",
+      "contract",
+      "execution",
+      "input_scope",
+      "pipeline"
+    ],
+    "pipeline": [
+      "__future__",
+      "contract",
+      "conventions",
+      "copy",
+      "dsr_v0",
+      "execution",
+      "fees",
+      "input_scope",
+      "isolation",
+      "json",
+      "math",
+      "pathlib",
+      "re",
+      "reference_registry",
+      "reference_registry_v3",
+      "statistics"
+    ],
+    "reference_inputs": [
+      "hashlib",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "scope_proof": [
+      "ast",
+      "contract",
+      "conventions",
+      "input_disposition",
+      "input_scope",
+      "json",
+      "noncash_v3",
+      "pathlib",
+      "reference_check"
+    ],
+    "scope_reader": [
+      "contract",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "state_v2": [
+      "contract",
+      "conventions",
+      "copy",
+      "fees",
+      "input_scope"
+    ],
+    "validation": [
+      "__future__",
+      "contract",
+      "conventions",
+      "datetime",
+      "fees",
+      "input_disposition",
+      "scope_proof",
+      "valuation"
+    ],
+    "valuation": [
+      "__future__",
+      "contract",
+      "conventions",
+      "csv",
+      "fees",
+      "input_disposition",
+      "input_scope",
+      "io",
+      "k5",
+      "math",
+      "noncash_v3"
+    ]
+  },
+  "import_whitelist": {
+    "catalog_members": [],
+    "catalog_v21": [
+      "contract",
+      "conventions",
+      "csv",
+      "io",
+      "json"
+    ],
+    "continuity": [
+      "authority_host",
+      "authority_ledger",
+      "contract",
+      "conventions",
+      "copy",
+      "fees",
+      "historical_authority",
+      "input_disposition",
+      "input_scope",
+      "k5",
+      "state_v2"
+    ],
+    "execution": [
+      "__future__",
+      "contract",
+      "conventions",
+      "fee_model",
+      "fees",
+      "input_scope",
+      "isolation",
+      "json",
+      "math",
+      "noncash_v3",
+      "pipeline",
+      "re",
+      "state_v2"
+    ],
+    "folds": [
+      "__future__",
+      "continuity",
+      "contract",
+      "conventions",
+      "dataclasses",
+      "fees",
+      "fold_split",
+      "input_scope",
+      "json",
+      "pipeline",
+      "validation"
+    ],
+    "input_scope": [],
+    "isolation": [
+      "contract",
+      "conventions",
+      "copy",
+      "datetime",
+      "event_quarantine",
+      "fees",
+      "input_scope",
+      "math",
+      "noncash_v3"
+    ],
+    "k5": [
+      "contract",
+      "conventions",
+      "csv",
+      "decimal",
+      "fees",
+      "input_scope",
+      "io",
+      "isolation",
+      "json",
+      "noncash_v3"
+    ],
+    "noncash_v3": [
+      "catalog_members",
+      "catalog_v21",
+      "contract",
+      "conventions",
+      "copy",
+      "datetime",
+      "fees",
+      "state_v2"
+    ],
+    "pending": [
+      "__future__",
+      "contract",
+      "execution",
+      "input_scope",
+      "pipeline"
+    ],
+    "pipeline": [
+      "__future__",
+      "arm_n",
+      "contract",
+      "conventions",
+      "copy",
+      "dsr_v0",
+      "execution",
+      "fees",
+      "input_scope",
+      "isolation",
+      "json",
+      "math",
+      "pathlib",
+      "re",
+      "reference_registry",
+      "reference_registry_v3",
+      "statistics"
+    ],
+    "reference_inputs": [
+      "hashlib",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "scope_proof": [
+      "ast",
+      "contract",
+      "conventions",
+      "input_disposition",
+      "input_scope",
+      "json",
+      "noncash_v3",
+      "pathlib",
+      "reference_check"
+    ],
+    "scope_reader": [
+      "contract",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "state_v2": [
+      "contract",
+      "conventions",
+      "copy",
+      "fees",
+      "input_scope"
+    ],
+    "validation": [
+      "__future__",
+      "contract",
+      "conventions",
+      "datetime",
+      "fees",
+      "input_disposition",
+      "scope_proof",
+      "valuation"
+    ],
+    "valuation": [
+      "__future__",
+      "contract",
+      "conventions",
+      "csv",
+      "fees",
+      "input_disposition",
+      "input_scope",
+      "io",
+      "k5",
+      "math",
+      "noncash_v3"
+    ]
+  },
+  "k5_scoped_quote_read_whitelist": [
+    "k5/S2-field-receipt-v1.json",
+    "k5/VSNT-open-close-none.csv"
+  ],
+  "market_reader_sites": [
+    {
+      "line": 38,
+      "module": "reference_inputs"
+    },
+    {
+      "line": 29,
+      "module": "scope_reader"
+    }
+  ],
+  "non_market_read_whitelist": {
+    "catalog_v21": [
+      "catalog-v21/EVO893-B-noncash-catalog-v21.csv",
+      "catalog-v21/EVO893-B-CMI-guard-v21.json",
+      "catalog-v21/EVO883-v21-final-receipt.json"
+    ],
+    "execution": [
+      "fee_params_x2.json",
+      "fee_schedule.json"
+    ],
+    "pipeline": [
+      "predeclared_reference_registry.json",
+      "candidate_reference_manifest.json",
+      "meta_reference_manifest.json"
+    ],
+    "scope_proof": [
+      "current pinned Python sources"
+    ],
+    "valuation": [
+      "qqq-events-v1.csv"
+    ]
+  },
+  "prereg_sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+  "prereg_version": "v3",
+  "profile_sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+  "reference_benchmark_symbol": "QQQ",
+  "reference_file_whitelist": {
+    "benchmark": "benchmark.json",
+    "panel": "panel.json",
+    "profile": "profile.json"
+  },
+  "runtime_consumable": false,
+  "schema": "EVO884.B2-isolation-proof/v1",
+  "scope": "Pinned owned Python entrypoints and declared source/header identities; caller adapters and independent market-source correctness require separate acceptance. No arbitrary native-code sandbox claim.",
+  "scope_ruling_sha256": "730931cdd7b9c2f62db9841438235e0aa4887f27ef4a842844d63b6570fd7ede",
+  "source_files": {
+    "catalog_members.py": "a4afc328161064689e24c85dfa1e3d946fd1c4fc7563701fd90e08864e82a82b",
+    "catalog_v21.py": "12c3b0d33dcee4518ba39905d49f06fa55b62865f4ec041a5e0cf7f4a4189ab4",
+    "continuity.py": "ee759682cd58c80195d5acf5e51ca2705f897f4144cd8c8eb99fb0ea5f658f95",
+    "execution.py": "1e6fe3745836f844590d5b8bf56a4c621f9fde82041cd7524cede5c7948588fb",
+    "folds.py": "d6f052976cc2bafacf3b7814a1fdf801e71c471ca4aca3b2813471e0666ccb02",
+    "input_scope.py": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+    "isolation.py": "0d4d780f8ea9076d418c382113eb872daaf11be1340975f66eb6bb19889126ca",
+    "k5.py": "70c9a7dad040103356fb2c016813c8f544105b7af44084319006d353c8659981",
+    "noncash_v3.py": "82628ab9961961d8e990f6c83f69ba1fc9c154e055f7797895acb4a4eda48663",
+    "pending.py": "3a1625313ea1d5491a8d0670a6698176ed80bdd98e7efd37a1447b2878349c06",
+    "pipeline.py": "1857b83d8832be52207d673f077ffa0d7fd481ace09654f183e4fb240fe2b1cc",
+    "reference_inputs.py": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+    "scope_proof.py": "bb297549ef4b017ed332b7855bc495b04d1dfa2c7d5944bb8b0629d3cdeeb3e0",
+    "scope_reader.py": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38",
+    "state_v2.py": "0c31a71defe68d23126ada28b15dbd3b6574b661508d53f0d1697a9ed1492e2c",
+    "validation.py": "5d3d6d97ab350c14bf9e5d62f51b2d42244f4466f9ed7636d7eb77d7c4a2be8d",
+    "valuation.py": "5cf69bb26737b11cc0089cd972ec3f6cb3d047287e9331427d5dc70104b82dba"
+  },
+  "source_sha256": "047b7537f8d1fb6c1f0bcf1b598da755a19d5baf600a02f8d4279efa45d0fcf2",
+  "strategy_market_file_whitelist": "<frozen_symbol>.json, matching symbol header and SHA, exact supplied frozen date vector; no link/alias/path expansion",
+  "strategy_market_symbol_whitelist": [
+    "AAPL",
+    "ABBV",
+    "ABNB",
+    "ABT",
+    "ACN",
+    "ADBE",
+    "ADI",
+    "ADP",
+    "ADSK",
+    "AEP",
+    "AJG",
+    "ALL",
+    "AMAT",
+    "AMD",
+    "AMGN",
+    "AMZN",
+    "ANET",
+    "AON",
+    "APD",
+    "APH",
+    "APO",
+    "APP",
+    "AVGO",
+    "AXP",
+    "B",
+    "BA",
+    "BAC",
+    "BE",
+    "BKNG",
+    "BKR",
+    "BLK",
+    "BMY",
+    "BNY",
+    "BRK.B",
+    "BSX",
+    "C",
+    "CAH",
+    "CARR",
+    "CAT",
+    "CB",
+    "CDNS",
+    "CEG",
+    "CI",
+    "CIEN",
+    "CL",
+    "CMCSA",
+    "CME",
+    "CMG",
+    "CMI",
+    "COF",
+    "COHR",
+    "COIN",
+    "COP",
+    "COR",
+    "COST",
+    "CRDO",
+    "CRH",
+    "CRM",
+    "CRWD",
+    "CSCO",
+    "CSX",
+    "CTAS",
+    "CVNA",
+    "CVS",
+    "QQQ"
+  ]
+}

@@ -20,6 +20,7 @@ GATES = {
 
 IMPORTS = {
     "execution": {
+        "execution_candidate",
         "noncash_v3",
         "__future__",
         "contract",
@@ -48,6 +49,7 @@ IMPORTS = {
         "validation",
     },
     "pipeline": {
+        "execution_candidate",
         "arm_n",
         "__future__",
         "contract",
@@ -142,6 +144,191 @@ IMPORTS = {
         "input_scope",
         "isolation",
     },
+    "execution_accounting": {
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_cash",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_risk",
+        "execution_startup",
+        "fees",
+        "fractions",
+        "functools",
+        "input_scope",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading",
+    },
+    "execution_amounts": {
+        "decimal",
+        "execution",
+        "execution_closure",
+        "execution_numbers",
+        "fee_model",
+        "fees",
+        "fractions",
+        "input_scope",
+        "noncash_v3",
+        "re",
+    },
+    "execution_candidate": {
+        "contract",
+        "copy",
+        "decimal",
+        "execution",
+        "execution_accounting",
+        "execution_amounts",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_returns",
+        "execution_risk",
+        "execution_risk_history",
+        "execution_signals",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading",
+    },
+    "execution_cash": {
+        "contract",
+        "copy",
+        "datetime",
+        "event_quarantine",
+        "execution_exposure",
+        "execution_numbers",
+        "execution_state",
+        "input_disposition",
+        "input_scope",
+        "json",
+        "lineage_schema",
+        "noncash_v3",
+        "reference_validation",
+    },
+    "execution_clock": {
+        "contract",
+        "copy",
+        "json",
+        "reference_definition_v301",
+    },
+    "execution_closure": {
+        "contract",
+        "copy",
+        "decimal",
+        "json",
+        "reference_definition_v301",
+    },
+    "execution_exposure": set(),
+    "execution_numbers": {
+        "decimal",
+        "fractions",
+        "re",
+    },
+    "execution_projection": {
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3",
+    },
+    "execution_returns": {
+        "contract",
+        "copy",
+        "execution_accounting",
+        "execution_closure",
+        "execution_numbers",
+        "fees",
+        "fold_split",
+        "fractions",
+        "math",
+        "pipeline",
+    },
+    "execution_risk": {
+        "contract",
+        "conventions",
+        "copy",
+        "decimal",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_state",
+        "fractions",
+        "noncash_v3",
+        "re",
+        "reference_definition_v301",
+    },
+    "execution_risk_history": {
+        "contract",
+        "conventions",
+        "copy",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_risk",
+        "execution_startup",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading",
+    },
+    "execution_signals": {
+        "contract",
+        "copy",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "math",
+        "noncash_v3",
+        "threading",
+    },
+    "execution_startup": {
+        "contract",
+        "conventions",
+        "copy",
+        "execution",
+        "execution_closure",
+        "fees",
+        "functools",
+        "json",
+        "math",
+        "pipeline",
+        "reference_definition_v301",
+        "reference_profile_v301",
+        "reference_validation",
+        "threading",
+    },
+    "execution_state": {
+        "fees",
+        "state_v2",
+    },
+    "reference_definition_v301": {
+        "contract",
+        "json",
+        "pathlib",
+        "reference_registry_v3",
+    },
+    "reference_profile_v301": {
+        "contract",
+        "reference_definition_v301",
+        "reference_registry_v3",
+    },
     "scope_proof": {
         "conventions",
         "noncash_v3",
@@ -156,19 +343,190 @@ IMPORTS = {
 }
 
 
+# C13's registered additions only. Existing helper reads remain under their
+# original mechanisms; this table does not attest complete transitive coverage.
+FIXED_READS = (
+    (
+        "execution_closure",
+        "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.json",
+        "7677b123fa2fe573343fad3fe3f43887c5f5d2c0fd7c12d9a1de8bc625162e1b",
+    ),
+    (
+        "execution_closure",
+        "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.md",
+        "34f25ce19dcf8687f7068b62f751c83573a858997ab11fa0096794157f3a373f",
+    ),
+    (
+        "execution_clock",
+        "fixtures/execution-v3.0.1/EVO883-C06-CLOCK-adopted-protocol-v1.0.0.json",
+        "8cd32345adb5ebe16cb9020687091532c46f803f046d6c1527eeedee41407a5a",
+    ),
+    (
+        "reference_definition_v301",
+        "fixtures/execution-v3.0.1/EVO883-D12-shared-execution-contract-v3.0.1.json",
+        "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+    ),
+    (
+        "reference_definition_v301",
+        "fixtures/execution-v3.0.1/EVO883-D12-common-profile-v3.0.1.json",
+        "07b71b3fc59dc6dae1c96cadd3155622a18f4c4ad29b7c69b8f79c1455efc2d3",
+    ),
+    (
+        "reference_definition_v301",
+        "fixtures/execution-v3.0.1/EVO883-D12-addendum-v3.0.1.md",
+        "f540dce44e00b7077a94d3155f55db5fdba700b7a48911ec03697724b8dfa8c9",
+    ),
+    (
+        "reference_registry_v3",
+        "fixtures/evo892-v3/candidate_reference_manifest.json",
+        "bcce6f17f3515d66eb5b87569720740efb6eb70eca2d774a853be8e3cdecb4a4",
+    ),
+    (
+        "reference_registry_v3",
+        "fixtures/evo892-v3/predeclared_reference_registry.json",
+        "f531d65a5ad54fc68a8be40bc25cbb3987d0aeedd4c2c345ed334b1599445c48",
+    ),
+    (
+        "reference_registry_v3",
+        "fixtures/evo892-v3/meta_reference_manifest.json",
+        "964e9903e13bd618777f00652bad09272d7aa4ddbb3cec2c28371a8378002ae6",
+    ),
+    (
+        "execution_accounting",
+        "fixtures/fee_params_x1.json",
+        "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+    ),
+)
+
+# Bind the inspected helper bodies/roots as well as their call-site domain.
+# These files are unchanged in C13. A byte drift, including a comment, fails;
+# no basename, prefix or source-identity exception is introduced.
+FIXED_READER_SOURCES = {
+    "execution_closure.py": "998ef21c68825ab9254489f29b12095c8dc0d4b3f6f14e507e8fbea6808615ae",
+    "execution_clock.py": "c1f9563c645110335cdbf006328b3cee4d1d8952d8433ffd5306b91d07e8ecf6",
+    "reference_definition_v301.py": "95a51f2f5c5d3473254e247ac8d1b408c4f89c9253b3622ee2fe4d7941ef1a55",
+    "reference_registry_v3.py": "90ff033cb06bbedce4315ec04bb7c84b8a300fdd133015db58a23b1f7fee997a",
+    "execution_accounting.py": "36ba63882a55e97e6d040b48ed15fcdf7246ba1f27f16faa47414adb585d0e6d",
+}
+
+
+def _candidate_registry_scope(trees, sources):
+    """Bound the reached artifact calls, not the generic function's HASHES.
+
+    The candidate path reaches member_definition and solo_profile, then
+    member_spec for the four literal DISPATCH members. registered_request is
+    not an entry: its platform anchor and five other HASHES are not allowed.
+    """
+
+    def assignment(tree, name):
+        return next(
+            n.value
+            for n in tree.body
+            if isinstance(n, ast.Assign)
+            and any(isinstance(t, ast.Name) and t.id == name for t in n.targets)
+        )
+
+    def function(module, name):
+        return next(
+            n
+            for n in trees[module].body
+            if isinstance(n, ast.FunctionDef) and n.name == name
+        )
+
+    def artifact_calls(node):
+        return [
+            n
+            for n in ast.walk(node)
+            if isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Name)
+            and n.func.id == "artifact"
+        ]
+
+    allowed = {
+        path.rsplit("/", 1)[-1]
+        for module, path, _ in FIXED_READS
+        if module == "reference_registry_v3"
+    }
+    try:
+        dispatch = ast.literal_eval(
+            assignment(trees["reference_registry_v3"], "DISPATCH")
+        )
+        if dispatch != {
+            "CREF-F1-L020": ("candidate", "F1-L020"),
+            "CREF-F3-L020": ("candidate", "F3-L020"),
+            "MREF-F2-L020": ("meta", "F2-L020"),
+            "MREF-F4-L020": ("meta", "F4-L020"),
+        }:
+            raise ValueError
+        direct = artifact_calls(
+            function("reference_definition_v301", "member_definition")
+        )
+        indirect = artifact_calls(function("reference_registry_v3", "member_spec"))
+        if (
+            len(direct) != 1
+            or len(indirect) != 1
+            or len(direct[0].args) != 1
+            or len(indirect[0].args) != 1
+        ):
+            raise ValueError
+        names = {ast.literal_eval(direct[0].args[0])}
+        expression = indirect[0].args[0]
+        if isinstance(expression, ast.Constant) and type(expression.value) is str:
+            names.add(expression.value)
+        elif ast.dump(expression) == ast.dump(
+            ast.parse("role + '_reference_manifest.json'", mode="eval").body
+        ):
+            names.update(
+                role + "_reference_manifest.json" for role, _ in dispatch.values()
+            )
+        else:
+            raise ValueError
+        if names != allowed:
+            raise ValueError
+        # The original functions' guards/root assignments remain byte-pinned.
+        # In particular role comes from DISPATCH and callers cannot override it.
+        if any(
+            sources[name] != expected for name, expected in FIXED_READER_SOURCES.items()
+        ):
+            raise ValueError
+    except (ValueError, TypeError, KeyError, StopIteration) as exc:
+        raise ValueError("scope.file_access_not_whitelisted") from exc
+    return {
+        "entry_functions": [
+            "reference_definition_v301.member_definition",
+            "reference_profile_v301.solo_profile",
+        ],
+        "reached_reader": "reference_registry_v3.member_spec -> artifact",
+        "literal_filenames": sorted(names),
+        "DISPATCH_members": sorted(dispatch),
+        "other_HASHES_granted": False,
+        "registered_request_is_entry": False,
+    }
+
+
 def b2_isolation_proof(policy):
     from .reference_check import static_proof
     from .input_disposition import HASHES, sources as disposition_sources
 
     disposition_sources()
 
-    graph, sources, gates, readers = {}, {}, {}, []
+    graph, sources, gates, readers, trees = {}, {}, {}, [], {}
     file_reads = {}
     root = Path(__file__).parent
-    for name in sorted(IMPORTS):
-        raw = (root / (name + ".py")).read_bytes()
+    targets = [
+        (name, name + ".py", None)
+        for name in sorted(set(IMPORTS) | {module for module, _, _ in FIXED_READS})
+    ]
+    targets.extend(FIXED_READS)
+    for name, relative, expected in targets:
+        raw = (root / relative).read_bytes()
+        if expected is not None:
+            if sha256(raw) != expected:
+                raise ValueError("scope.file_access_not_whitelisted")
+            continue
         sources[name + ".py"] = sha256(raw)
         tree = ast.parse(raw)
+        trees[name] = tree
         graph[name] = sorted(
             {n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)}
             | {
@@ -178,7 +536,7 @@ def b2_isolation_proof(policy):
                 for a in n.names
             }
         )
-        if not set(graph[name]).issubset(IMPORTS[name]):
+        if name in IMPORTS and not set(graph[name]).issubset(IMPORTS[name]):
             raise ValueError("scope.static_import_not_whitelisted")
         for node in ast.walk(tree):
             if (
@@ -250,8 +608,14 @@ def b2_isolation_proof(policy):
         "scope_reader": 1,
         "valuation": 1,
         "k5": 2,
+        "execution_accounting": 1,
+        "execution_clock": 1,
+        "execution_closure": 2,
+        "reference_definition_v301": 1,
+        "reference_registry_v3": 1,
     }:
         raise ValueError("scope.file_access_not_whitelisted")
+    registry_scope = _candidate_registry_scope(trees, sources)
     ref = static_proof()
     return {
         "schema": "EVO884.B2-isolation-proof/v1",
@@ -272,6 +636,13 @@ def b2_isolation_proof(policy):
             "k5/VSNT-open-close-none.csv",
         ],
         "reference_benchmark_symbol": "QQQ",
+        "C13_registered_fixed_reads": [
+            {"module": module, "path": path, "sha256": expected}
+            for module, path, expected in FIXED_READS
+        ],
+        "C13_registry_call_scope": registry_scope,
+        "C13_coverage_boundary": "Registered 3+7 fixed reads only; existing transitive helper reads retain original mechanisms and are not claimed fully covered by this table",
+        "seal_status": "seal_pending",
         "non_market_read_whitelist": {
             "catalog_v21": [
                 "catalog-v21/EVO893-B-noncash-catalog-v21.csv",

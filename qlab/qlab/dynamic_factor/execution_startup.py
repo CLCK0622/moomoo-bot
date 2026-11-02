@@ -19,7 +19,7 @@ from .execution import initial_build_turnover_check, lock_startup_intent
 from .execution_closure import fee_context, reference_model, validate_execution_binding
 from .fees import finite
 from .pipeline import price_basis_check
-from .reference_definition_v301 import reference_definitions
+from .reference_definition_v301 import FROZEN, frozen_documents, reference_definitions
 from .reference_profile_v301 import solo_profile
 from .reference_validation import utc_instant
 
@@ -90,6 +90,50 @@ class _Journal:
         self.rows[key] = deepcopy(value)
 
 
+def _candidate_startup_binding(member_id, execution_role):
+    """Project registered definitions into startup identity, not a new profile.
+
+    The common profile supplies the finite family/window grammar and unchanged
+    initialization. META retains its original selection-layer role. This
+    binding introduces no quantity, risk, signal or pool-selection algorithm.
+    """
+    documents = frozen_documents()
+    common = documents["EVO883-D12-common-profile-v3.0.1.json"]
+    shared = documents["EVO883-D12-shared-execution-contract-v3.0.1.json"]
+    recipes = {
+        f"{family['id']}-L{window:03}": dict(family, window=window)
+        for family in common["signal_params"]["families"]
+        for window in common["signal_params"]["windows"]
+    }
+    role = (
+        "candidate_solo_probe"
+        if member_id in recipes
+        else "current_META_POLICY_execution_layer"
+        if member_id == "META_POLICY_V3"
+        else None
+    )
+    if role is None:
+        raise ValueError("reference.member_not_registered_or_incomplete")
+    if execution_role != role or role not in shared["applies_to"]:
+        raise ValueError("reference.execution_role_mismatch")
+    definition = dict(
+        schema="EVO884.CandidateStartupBinding/v1",
+        member_id=member_id,
+        recipe_id=member_id,
+        execution_role=role,
+        fixed_recipe=recipes.get(member_id),
+        registered_sources=deepcopy(FROZEN),
+    )
+    profile = dict(
+        definition=definition,
+        common_profile=common,
+        purpose="startup identity only; unchanged common three-session algorithm",
+    )
+    return dict(definition_sha256=digest(definition)), dict(
+        profile_sha256=digest(profile)
+    )
+
+
 class StartupBook:
     """One member × frozen fold × actual attempt; no cross-book state copying.
 
@@ -108,6 +152,7 @@ class StartupBook:
         context,
         *,
         execution_binding,
+        execution_role=None,
         policy=None,
     ):
         self._execution_binding = validate_execution_binding(execution_binding)
@@ -118,10 +163,15 @@ class StartupBook:
         ):
             raise ValueError("startup.frozen_v3_required")
         definitions = {d["member_id"]: d for d in reference_definitions()}
-        if type(member_id) is not str or member_id not in definitions:
+        if type(member_id) is not str:
             raise ValueError("reference.member_not_registered_or_incomplete")
-        definition = definitions[member_id]
-        profile = solo_profile(definition)
+        if member_id in definitions:
+            definition = definitions[member_id]
+            if execution_role not in (None, definition["execution_role"]):
+                raise ValueError("reference.execution_role_mismatch")
+            profile = solo_profile(definition)
+        else:
+            definition, profile = _candidate_startup_binding(member_id, execution_role)
         if (
             type(fold_id) is not str
             or type(attempt_id) is not str
@@ -186,6 +236,8 @@ class StartupBook:
             execution_binding=deepcopy(self._execution_binding),
             **self._policy.binding,
         )
+        if member_id not in definitions:
+            self._identity["execution_role"] = execution_role
         self._book_id = digest(self._identity)
         self._model = reference_model(
             self._execution_binding,
@@ -467,6 +519,7 @@ class StartupBook:
             document["genesis"],
             document["context"],
             execution_binding=document["identity"].get("execution_binding"),
+            execution_role=document["identity"].get("execution_role"),
             policy=policy,
         )
         if book.identity != document["identity"]:

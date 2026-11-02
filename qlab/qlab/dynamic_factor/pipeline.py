@@ -446,6 +446,13 @@ def run_train_pipeline(
         for aid, proposal in zip(attempts, proposals):
             try:
                 observation = probe(proposal, p["variance_layers"]["probe_profile"])
+                if policy.document["version"] == "v3.0.0":
+                    observation = execution_observation(
+                        observation,
+                        context=context,
+                        member_id=proposal["id"],
+                        execution_role="candidate_solo_probe",
+                    )
                 if len(observation["returns"]) != len(context["train_calendar"]):
                     raise ValueError("pipeline.probe_return_window_mismatch")
                 m = moments(observation["returns"], policy)
@@ -554,6 +561,15 @@ def run_train_pipeline(
         ledger.record(key + "/S3", {"meta_attempt_id": meta_id, "pool": pool, **n_meta})
         try:
             observation = build_meta(tuple(pool), deepcopy(calibration))
+            if policy.document["version"] == "v3.0.0":
+                observation = execution_observation(
+                    observation,
+                    context=context,
+                    member_id="META_POLICY_V3",
+                    execution_role="current_META_POLICY_execution_layer",
+                    pool=pool,
+                    calibration_sha256=calibration["calibration_sha256"],
+                )
             if len(observation["returns"]) != len(context["train_calendar"]):
                 raise ValueError("pipeline.meta_return_window_mismatch")
             m = moments(observation["returns"], policy)
@@ -649,3 +665,49 @@ def oos_dsr(returns, fold_receipts, expected_fold_ids, n_snapshot, policy):
         trials_variance=v,
         certifiable=False,
     )
+
+
+def execution_selection(ledger, **kwargs):
+    """Bind original S0/S1/S2 read-only; no pool reselection or N writes."""
+    from .execution_candidate import selection_from_stages
+
+    return selection_from_stages(ledger, **kwargs)
+
+
+def execution_observation(
+    observation,
+    *,
+    context,
+    member_id,
+    execution_role,
+    pool=None,
+    calibration_sha256=None,
+):
+    """Consume owned accounting returns only after a separate reseal."""
+    from .execution_candidate import ExecutionObservation
+
+    if type(observation) is not ExecutionObservation:
+        raise ValueError("pipeline.owned_execution_observation_required")
+    out = observation.document()
+    # C13 changes source identity. No caller option can promote an unsealed
+    # result into a formal S0/S3 success or an accepted receipt.
+    if out["seal_status"] == "seal_pending":
+        raise ValueError("pipeline.execution_seal_pending")
+    scope = out["scope"]
+    if (
+        scope["member_id"] != member_id
+        or scope["execution_role"] != execution_role
+        or scope["fold_id"] != context["fold_id"]
+        or out["dates"] != context["train_calendar"]
+        or out["pool"] != pool
+        or out["calibration_sha256"] != calibration_sha256
+    ):
+        raise ValueError("pipeline.execution_role_window_or_selection_mismatch")
+    return out
+
+
+def close_execution_day(*args, **kwargs):
+    """Dispatch to the existing C04/C06/N4 objects in their frozen order."""
+    from .execution_candidate import close_execution_day as close_day
+
+    return close_day(*args, **kwargs)
