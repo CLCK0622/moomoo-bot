@@ -377,13 +377,13 @@ def test_C09_new_scope_segment_registers_each_exact_file_and_SHA(monkeypatch, at
     elif attack == "other_contract":
         target = base / "execution_receipts/n_binding.py"
         changed = original(target).replace(
-            b"EVO883-EXECCL-v29-archive-acceptance-v1.json", b"unapproved.json"
+            b"EVO883-BRR-v30-archive-acceptance-v1.json", b"unapproved.json"
         )
         reason = "execution_fixed_file_not_registered"
     else:
         target = (
             base
-            / "execution_receipts/contracts/EVO883-EXECCL-v29-archive-acceptance-v1.json"
+            / "execution_receipts/contracts/EVO883-BRR-v30-archive-acceptance-v1.json"
         )
         changed = original(target) + b"\n"
         reason = "execution_fixed_file_identity_mismatch"
