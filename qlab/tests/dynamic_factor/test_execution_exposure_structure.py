@@ -31,7 +31,7 @@ def frozen_function():
     assert hashlib.sha256(raw).hexdigest() == MAIN_SHA
     fn = next(
         node
-        for node in ast.parse(raw).body
+        for node in ast.parse(raw, type_comments=True).body
         if isinstance(node, ast.FunctionDef) and node.name == "zero_exposure"
     )
     assert ast.dump(fn.body[0], include_attributes=False) == ast.dump(
@@ -54,6 +54,26 @@ def body_nodes(fn):
 
 def body_dump(body):
     return ast.dump(ast.Module(body=body, type_ignores=[]), include_attributes=False)
+
+
+def function_dump(fn, *, original=False):
+    """Normalize only the allowed exclusions; keep the complete node kind.
+
+    Do not rebuild a FunctionDef: doing so would erase AsyncFunctionDef and
+    future AST fields. Decorators, defaults, annotations and the full arguments
+    object remain part of the same whole-node comparison.
+    """
+    fn = deepcopy(fn)
+    fn.name = "B_segment"
+    fn.body = body_nodes(fn)
+    if original:
+        # frozen_function already SHA-checks and verifies this exact first call.
+        fn.body = fn.body[1:]
+    return ast.dump(fn, include_attributes=False)
+
+
+def assert_B_structure(current):
+    assert function_dump(current) == function_dump(frozen_function(), original=True)
 
 
 def reference(*, B_only=False):
@@ -82,12 +102,88 @@ def observe(call):
 
 
 def test_B_segment_structure_matches_SHA_pinned_main():
-    original = frozen_function()
-    current = ast.parse(inspect.getsource(verify_execution_exposure)).body[0]
-    assert ast.dump(current.args, include_attributes=False) == ast.dump(
-        original.args, include_attributes=False
+    current = ast.parse(
+        inspect.getsource(verify_execution_exposure), type_comments=True
+    ).body[0]
+    assert_B_structure(current)
+
+
+def structural_mutation(fn, kind):
+    fn = deepcopy(fn)
+    if kind == "async":
+        return ast.AsyncFunctionDef(
+            **{field: getattr(fn, field) for field in fn._fields}
+        )
+    if kind == "decorator_add":
+        fn.decorator_list.append(ast.Name(id="SYNTHETIC_DECORATOR", ctx=ast.Load()))
+    elif kind == "returns":
+        fn.returns = ast.Name(id="SYNTHETIC_RETURN", ctx=ast.Load())
+    elif kind == "default":
+        fn.args.kw_defaults[0] = ast.Constant(True)
+    elif kind == "parameter_add":
+        fn.args.kwonlyargs.append(ast.arg(arg="SYNTHETIC_PARAMETER"))
+        fn.args.kw_defaults.append(ast.Constant(None))
+    elif kind == "parameter_delete":
+        del fn.args.args[-1]
+    else:
+        raise ValueError(kind)
+    return fn
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "async",
+        "decorator_add",
+        "returns",
+        "default",
+        "parameter_add",
+        "parameter_delete",
+    ],
+)
+def test_whole_function_gate_rejects_kind_decorators_annotations_and_arguments(
+    mutation, record_property
+):
+    original = ast.parse(
+        inspect.getsource(verify_execution_exposure), type_comments=True
+    ).body[0]
+    changed = structural_mutation(original, mutation)
+    with pytest.raises(AssertionError):
+        assert_B_structure(changed)
+    record_property(
+        "AST_KIND_actual",
+        json.dumps(
+            dict(
+                mutation=mutation,
+                rejected=True,
+                expected_node=type(original).__name__,
+                actual_node=type(changed).__name__,
+            )
+        ),
     )
-    assert body_dump(body_nodes(current)) == body_dump(original.body[1:])
+
+
+def test_whole_function_dump_detects_decorator_deletion_symmetrically():
+    # The pinned main has no decorators. This controlled pair tests deletion
+    # from an equal decorated pair; it does not invent a main decorator.
+    baseline = ast.parse(
+        inspect.getsource(verify_execution_exposure), type_comments=True
+    ).body[0]
+    baseline.decorator_list = [ast.Name(id="SYNTHETIC_DECORATOR", ctx=ast.Load())]
+    changed = deepcopy(baseline)
+    assert function_dump(changed) == function_dump(baseline)
+    changed.decorator_list.clear()
+    assert function_dump(changed) != function_dump(baseline)
+
+
+def test_whole_function_dump_keeps_only_permitted_exclusions():
+    baseline = ast.parse(
+        inspect.getsource(verify_execution_exposure), type_comments=True
+    ).body[0]
+    changed = deepcopy(baseline)
+    changed.name = "SYNTHETIC_ALLOWED_NAME"
+    changed.body.insert(0, ast.Expr(value=ast.Constant("SYNTHETIC ALLOWED DOCSTRING")))
+    assert function_dump(changed) == function_dump(baseline)
 
 
 @pytest.mark.parametrize("mutation", ["keys", "get", "order", "constant"])
