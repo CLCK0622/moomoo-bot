@@ -114,15 +114,21 @@ accepts canonical nonnegative decimal strings under EA.N1. Legacy numeric
 inputs remain accepted. Old no-receivable callers retain their strict B gate.
 The new C04/C06 adapter accepts only a state/book/date/guard/journal-bound typed
 `CashProof` for already reconciled cash receivables. It first checks the complete
-original state, then presents a temporary cash-classified view to the unchanged
-legacy noncash inventory proof. This view omits proven cash receivables solely
+original state, then presents a temporary cash-classified view to the shared
+noncash inventory predicates. This view omits proven cash receivables solely
 for that noncash proof; it never changes the retained state, state SHA or NAV
 value. D1 and accounting still consume the full cash receivable. Wire dicts,
-booleans and foreign/drifted state fail. The legacy `zero_exposure` and static
-import whitelist are byte-identical to the parent. Initial proofs, noncash
-rights, blocked names, children and inventory completeness retain their original
-restrictions. `state_v2` adds a built-in structural decimal-string check with no
-new import path, float conversion or placeholder amount.
+booleans and foreign/drifted state fail. `state_v2.py` is restored byte-for-byte to main `f827776`: legacy execution,
+noncash and continuity readers remain numeric-only, with their original R2
+rejection code. Only the new `execution_state.necessary_execution_state_known`
+validator accepts canonical decimal strings, and only C04/C06 invoke it.
+`zero_exposure` still calls the original numeric-only validator first; its
+remaining B predicates are extracted verbatim into one private shared helper.
+The exact-money adapter validates the complete original state before invoking
+those same predicates. No numeric placeholders, float conversion, monetary
+rewrite or duplicated B policy are introduced. The static import whitelist
+is byte-identical; initial proofs, noncash rights, blocked names, children and
+inventory completeness retain their original restrictions.
 C06 replay requires the host's matching owned cash proofs, never reconstructs
 one from a wire receipt, and otherwise refuses. `close_receipts` and
 `export_bytes` expose reconciliation evidence, not an installed checkpoint or

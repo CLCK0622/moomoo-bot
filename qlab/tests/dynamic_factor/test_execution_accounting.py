@@ -700,8 +700,11 @@ def test_cash_proof_cannot_be_wire_dict_or_rebound_to_other_book():
     out = book.close_session(e, expected_evidence_sha256=digest(e))
     state = deepcopy(book.snapshot()["retained_state"])
     check_cash_state(state, args["guard"], out["cash_proof"])
-    with pytest.raises(ValueError, match="old_rights"):
+    with pytest.raises(ValueError, match="R2_necessary_state_unknown"):
         zero_exposure(state, args["guard"])
+    numeric_legacy = dict(state, cash=float(state["cash"]), nav=float(state["nav"]))
+    with pytest.raises(ValueError, match="old_rights"):
+        zero_exposure(numeric_legacy, args["guard"])
     with pytest.raises(ValueError):
         check_cash_state(state, args["guard"], {"verified": True})
     state["_risk_clock"]["book_id"] = digest("other ledger")

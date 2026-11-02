@@ -19,7 +19,7 @@ from .execution_closure import validate_execution_binding
 from .noncash_v3 import checked_guard
 from .execution_cash import check_cash_state
 from .reference_definition_v301 import FROZEN, frozen_documents, member_definition
-from .state_v2 import necessary_state_known
+from .execution_state import necessary_execution_state_known
 
 
 SHARED_NAME = "EVO883-D12-shared-execution-contract-v3.0.1.json"
@@ -294,7 +294,7 @@ class RiskBook:
                 raise ValueError("risk.calendar_not_adjacent")
             previous_session = calendar[calendar.index(close_session) - 1]
             checked_guard(guard, self._policy)
-            necessary_state_known(state)
+            necessary_execution_state_known(state)
             check_cash_state(state, guard, cash_proof)
             try:
                 fee_value = amount(fees_x2)
