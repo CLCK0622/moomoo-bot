@@ -209,15 +209,7 @@ class RiskHistory:
             raise ValueError(self._halt)
         if snapshot["snapshot_sha256"] != expected_snapshot_sha256:
             raise ValueError("risk.snapshot_binding_mismatch")
-        position = self._policy.calendar.index(
-            self._date
-        ) - self._policy.calendar.index(self._start)
-        emergency = snapshot["risk"]["risk_latch"] or any(
-            age >= 20
-            for s, age in self._state["age"].items()
-            if s != "QQQ" and self._state["inventory"].get(s)
-        )
-        if not emergency and not (position >= 5 and position % 5 == 0):
+        if not self._book.decision_due()["order_intent_due"]:
             raise ValueError("risk.not_regular_decision")
         result = self._book.required_m(
             signal,

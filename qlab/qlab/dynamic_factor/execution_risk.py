@@ -534,6 +534,33 @@ class RiskBook:
         )
         return dict(payload, required_m_sha256=digest(payload))
 
+    def decision_due(self):
+        """One shared decision clock for D1 and RiskHistory's order lock."""
+        snapshot = self.snapshot()
+        if not snapshot["complete"]:
+            raise ValueError(snapshot["reasons"][0])
+        calendar = self._policy.calendar
+        position = calendar.index(self._date) - calendar.index(
+            self._state["_risk_clock"]["global_start"]
+        )
+        step = self._policy.document["initialization"][
+            "first_regular_signal_close_position"
+        ]
+        regular = position >= step and position % step == 0
+        maximum = self._shared["D2"]["frozen_params"]["holding_max_sessions"]
+        emergency = self._risk["risk_latch"] or any(
+            age >= maximum
+            for s, age in self._state["age"].items()
+            if s != "QQQ" and self._state["inventory"].get(s)
+        )
+        return dict(
+            regular_decision=regular,
+            emergency=emergency,
+            order_intent_due=regular or emergency,
+            close_session=self._date,
+            ruling_sha256=snapshot["ruling_sha256"],
+        )
+
     def entry_allowed(
         self, symbol, *, expected_snapshot_sha256, expected_execution_session
     ):
@@ -557,8 +584,7 @@ class RiskBook:
             assert_consumer_symbols(self._guard, "order", [symbol], self._policy)
             clock = self._state["_risk_clock"]
             remaining = cooldown_remaining(clock, symbol, self._date, self._policy)
-            position = i - calendar.index(clock["global_start"])
-            regular = position >= 5 and position % 5 == 0
+            regular = self.decision_due()["regular_decision"]
             allowed = not self._risk["risk_latch"] and remaining == 0 and regular
             if not allowed:
                 reasons.append(
