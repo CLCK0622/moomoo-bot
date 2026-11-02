@@ -675,6 +675,7 @@ def test_A19_M_selection_uses_original_inventory_not_P_minus_M():
 
 def test_cash_proof_cannot_be_wire_dict_or_rebound_to_other_book():
     from qlab.dynamic_factor.noncash_v3 import zero_exposure
+    from qlab.dynamic_factor.execution_cash import check_cash_state
 
     book, inputs, args, _ = account()
     date = book.intent()["ticket"]["execution_session"]
@@ -698,12 +699,14 @@ def test_cash_proof_cannot_be_wire_dict_or_rebound_to_other_book():
     e = close_evidence(book, inputs)
     out = book.close_session(e, expected_evidence_sha256=digest(e))
     state = deepcopy(book.snapshot()["retained_state"])
-    zero_exposure(state, args["guard"], cash_proof=out["cash_proof"])
+    check_cash_state(state, args["guard"], out["cash_proof"])
+    with pytest.raises(ValueError, match="old_rights"):
+        zero_exposure(state, args["guard"])
     with pytest.raises(ValueError):
-        zero_exposure(state, args["guard"], cash_proof={"verified": True})
+        check_cash_state(state, args["guard"], {"verified": True})
     state["_risk_clock"]["book_id"] = digest("other ledger")
     with pytest.raises(ValueError):
-        zero_exposure(state, args["guard"], cash_proof=out["cash_proof"])
+        check_cash_state(state, args["guard"], out["cash_proof"])
 
 
 def model_origins(book):
@@ -986,3 +989,86 @@ def test_issued_cash_proof_is_immutable_exact_state_capability():
     out = book.close_session(e, expected_evidence_sha256=digest(e))
     with pytest.raises(ValueError, match="immutable"):
         out["cash_proof"]._ledger_sha = digest("other ledger")
+
+
+def test_N3_new_unspendable_entitlement_cannot_bypass_post_buy_two_percent():
+    book, inputs, *_ = account()
+    date = book.intent()["ticket"]["execution_session"]
+    event = dict(
+        event_id="DIV",
+        book_id=book.snapshot()["book_id"],
+        kind="cash_dividend",
+        symbol="COP",
+        ex_date=date,
+        ex_date_status="verified",
+        exact_amount_status="verified_exact",
+        cash_basis="integer_pre_tax_cash",
+        declared_cash_amount="100000",
+        pay_date=date,
+        entitled_integer_shares=4,
+        source_sha256=digest("SYNTHETIC ADVERSARIAL ONLY"),
+    )
+    book.record_cash_events(
+        [event], session=date, expected_event_sha256=[digest(event)]
+    )
+    rows = facts(book, inputs)
+    with pytest.raises(ValueError, match="post_buy_cash_or_investment_limit"):
+        record(book, rows)
+    result = book.snapshot()
+    assert result["NAV"] is None
+    assert result["retained_state"]["receivables"]["DIV"]["amount"] == "400000"
+    assert sum(r["status"] == "ACCEPTED_ACTUAL" for r in result["facts"]) == 2
+    assert result["retained_state"]["inventory"]["CVS"] == 0
+    assert result["retained_state"]["inventory"]["COP"] == 3
+    assert result["retained_state"]["inventory"]["COST"] == 0
+
+
+def test_N3_actual_price_slippage_cannot_bypass_post_buy_two_percent():
+    book, inputs, *_ = account()
+    rows = facts(book, inputs)
+    row = rows[-1]
+    # Sells and satellite buys were accepted. The final actual QQQ cost is
+    # still cash-positive, but breaches the frozen 2% post-fee NAV buffer.
+    row["price"] = "140"
+    with pytest.raises(ValueError, match="post_buy_cash_or_investment_limit"):
+        record(book, rows)
+    result = book.snapshot()
+    assert result["NAV"] is None and result["cash"] is None
+    assert sum(r["status"] == "ACCEPTED_ACTUAL" for r in result["facts"]) == 6
+    assert result["retained_state"]["inventory"]["QQQ"] == 100
+
+
+def test_known_exdate_cash_before_order_lock_still_requires_current_valuation():
+    inputs, args, _ = case()
+    risk = RiskBook(**args)
+    book = ExecutionAccount(
+        risk_book=risk,
+        expected_snapshot_sha256=risk.snapshot()["snapshot_sha256"],
+        execution_binding=args["scope"]["execution_binding"],
+        execution_mode="accepted_actual",
+    )
+    date = inputs["execution_open"]["session"]
+    event = dict(
+        event_id="DIV",
+        book_id=book.snapshot()["book_id"],
+        kind="cash_dividend",
+        symbol="COP",
+        ex_date=date,
+        ex_date_status="verified",
+        exact_amount_status="verified_exact",
+        cash_basis="integer_pre_tax_cash",
+        declared_cash_amount="0.5",
+        pay_date=date,
+        entitled_integer_shares=4,
+        source_sha256=digest("SYNTHETIC"),
+    )
+    result = book.record_cash_events(
+        [event], session=date, expected_event_sha256=[digest(event)]
+    )
+    assert book.intent()["ticket"] is None
+    assert result["complete"] is False and result["NAV"] is None
+    assert (
+        result["cash"] == "3900"
+        and result["retained_state"]["receivables"]["DIV"]["amount"] == "2"
+    )
+    assert "accounting.close_pending" in result["reasons"]

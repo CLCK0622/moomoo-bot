@@ -97,6 +97,27 @@ class CashProof:
         )
 
 
+def check_cash_state(state, guard, cash_proof, *, initial=False):
+    """Classify proven cash for the unchanged legacy noncash-only proof.
+
+    The raw state, its SHA and every retained receivable stay intact. This
+    temporary view is exclusively for the noncash inventory guard; no monetary
+    value or economic state is imputed/erased. D1/NAV consume the full amount.
+    """
+    from .noncash_v3 import zero_exposure
+
+    if state["receivables"] and not initial:
+        if type(cash_proof) is not CashProof:
+            raise ValueError("accounting.owned_cash_proof_required")
+        cash_proof.check(state, guard)
+        view = deepcopy(state)
+        view["receivables"] = {}
+        zero_exposure(view, guard)
+        return cash_proof.value
+    zero_exposure(state, guard, initial=initial)
+    return amount(0)
+
+
 def issue_cash_proof(state, *, book_id, guard, ledger_sha256):
     """Internal producer boundary, called after C04 reconciliation, not on wire."""
     if (

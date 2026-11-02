@@ -95,6 +95,8 @@ class ExecutionAccount:
         self._binding, self._book_id = binding, snap["book_id"]
         self._scope = snap["scope"]
         self._initial_snapshot_sha256 = expected_snapshot_sha256
+        self._initial_snapshot = deepcopy(snap)
+        self._needs_valuation = False
         self._state = deepcopy(snap["state"])
         self._date, self._fees = snap["close_session"], amount(snap["fees_x2"])
         self._asof = self._state.get("asof", self._date + "T20:00:00Z")
@@ -158,11 +160,13 @@ class ExecutionAccount:
                 original_state_sha256=digest(self._state),
                 execution_closure_sha256=self._binding["adoption_sha256"],
                 startup_price=event["price"],
+                raw_open={"QQQ": event["price"]},
                 model_only=True,
             )
             ticket["intent_sha256"] = digest(intent)
             ticket["ticket_sha256"] = digest(ticket)
             self._active, self._fills = ticket, []
+            self._needs_valuation = True
             for index, row in enumerate(orders):
                 key = digest([ticket["intent_sha256"], index])
                 self._orders[key] = dict(
@@ -275,6 +279,7 @@ class ExecutionAccount:
                 selected_plan=selected_plan,
                 source_input_sha256=expected_input_sha256,
                 raw_open_sha256=digest(inputs["execution_open"]["raw_open"]),
+                raw_open=deepcopy(inputs["execution_open"]["raw_open"]),
                 selection_sha256=expected_selection_sha256,
                 original_state_sha256=digest(self._state),
                 orders=deepcopy(orders),
@@ -293,6 +298,7 @@ class ExecutionAccount:
             )["origin_new_risk_enabled"]
             ticket["ticket_sha256"] = digest(ticket)
             self._active = ticket
+            self._needs_valuation = True
             self._fills = []
             for index, row in enumerate(orders):
                 key = digest([ticket["intent_sha256"], index])
@@ -418,6 +424,30 @@ class ExecutionAccount:
         symbol = fact["symbol"]
         if self._state["inventory"][symbol] + quantity < 0:
             raise ValueError("accounting.short_inventory_forbidden")
+        if quantity > 0:
+            # Recheck the frozen D1 cash/investment limits on the selected
+            # actual account, including cash events received after selection.
+            # This never changes quantities or optimizes an alternative plan.
+            prices = self._active["raw_open"]
+            invested = Fraction(0)
+            for name, held in self._state["inventory"].items():
+                q = held + (quantity if name == symbol else 0)
+                if q:
+                    if name not in prices or amount(prices[name]) <= 0:
+                        raise ValueError("accounting.post_fill_valuation_unknown")
+                    invested += q * amount(prices[name])
+            receivables = sum(
+                (amount(r["amount"]) for r in self._state["receivables"].values()),
+                Fraction(0),
+            )
+            post_cash = self._cash + cash_change
+            post_nav = post_cash + invested + receivables
+            if (
+                post_nav <= 0
+                or post_cash * 50 < post_nav
+                or invested * 50 > post_nav * 49
+            ):
+                raise ValueError("accounting.post_buy_cash_or_investment_limit")
         # No mutation before a fully checked fact; no rollback of prior facts.
         self._cash += cash_change
         self._fees += delta
@@ -426,6 +456,14 @@ class ExecutionAccount:
         if receivable is None:
             self._x1_cash_difference += delta - delta1
         self._state["inventory"][symbol] += quantity
+        self._state["cash"] = decimal_text(self._cash)
+        self._asof = (
+            max(utc_instant(self._asof), utc_instant(fact["confirmed_at"]))
+            .isoformat()
+            .replace("+00:00", "Z")
+        )
+        self._state["asof"] = self._asof
+        self._needs_valuation = True
         if receivable:
             self._state["receivables"][fact["fill_id"]] = receivable
         order.update(
@@ -600,6 +638,8 @@ class ExecutionAccount:
                 k: getattr(self, k)
                 for k in (
                     "_state",
+                    "_asof",
+                    "_needs_valuation",
                     "_cash",
                     "_fees",
                     "_x1_fees",
@@ -646,6 +686,7 @@ class ExecutionAccount:
                     policy=self._policy,
                 )
                 self._state["receivables"][key] = row
+                self._needs_valuation = True
                 self._seen[key] = deepcopy(event)
                 self._facts.append(
                     dict(
@@ -712,6 +753,9 @@ class ExecutionAccount:
                 amount="0", payment_state="PAID", payment_sha256=expected_event_sha256
             )
             self._cash += value
+            self._state.update(cash=decimal_text(self._cash), asof=asof)
+            self._asof = asof
+            self._needs_valuation = True
             self._facts.append(
                 dict(
                     fact=deepcopy(event),
@@ -758,6 +802,8 @@ class ExecutionAccount:
                 raise ValueError(
                     "accounting.complete_raw_close_and_rights_evidence_required"
                 )
+            if utc_instant(evidence["asof"]) < utc_instant(self._asof):
+                raise ValueError("accounting.cash_or_fill_fact_after_close_asof")
             if any(
                 utc_instant(row["fact"]["confirmed_at"]) > utc_instant(evidence["asof"])
                 for row in self._facts
@@ -854,6 +900,7 @@ class ExecutionAccount:
             )
             self._closes.append(deepcopy(payload))
             self._active, self._date = None, date
+            self._needs_valuation = False
             self._fills = []
             proof = issue_cash_proof(
                 self._state,
@@ -909,6 +956,7 @@ class ExecutionAccount:
                 dict(
                     schema="EVO884.ExecutionAccountJournal/v1",
                     initial_snapshot_sha256=self._initial_snapshot_sha256,
+                    original_initial_snapshot=self._initial_snapshot,
                     accounting_source_sha256=code_sha(ExecutionAccount),
                     active_intent=self._active,
                     closes=self._closes,
@@ -923,18 +971,20 @@ class ExecutionAccount:
                 book_id=self._book_id,
                 retained_state=deepcopy(self._state),
                 cash=None if self._reasons else decimal_text(self._cash),
-                NAV=None if self._reasons or self._active else self._state["nav"],
+                NAV=None
+                if self._reasons or self._needs_valuation
+                else self._state["nav"],
                 fees_x2=decimal_text(self._fees),
                 declarations=deepcopy(self._declarations),
                 facts=deepcopy(self._facts),
                 orders=deepcopy(self._orders),
-                complete=not self._reasons and self._active is None,
+                complete=not self._reasons and not self._needs_valuation,
                 reasons=list(self._reasons)
-                + (["accounting.close_pending"] if self._active else []),
+                + (["accounting.close_pending"] if self._needs_valuation else []),
                 model_receipts=deepcopy(self._receipts),
                 execution_mode=self._mode,
                 execution_verified=self._mode == "accepted_actual"
-                and self._active is None
+                and not self._needs_valuation
                 and not self._reasons,
                 execution_closure_sha256=self._binding["adoption_sha256"],
                 runtime_consumable=False,

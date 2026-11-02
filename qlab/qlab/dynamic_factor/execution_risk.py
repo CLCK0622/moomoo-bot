@@ -16,7 +16,8 @@ from .conventions import authoritative, load_conventions
 from .execution_numbers import amount
 from .execution_clock import ADOPTED_SHA256, validate_clock_binding
 from .execution_closure import validate_execution_binding
-from .noncash_v3 import checked_guard, zero_exposure
+from .noncash_v3 import checked_guard
+from .execution_cash import check_cash_state
 from .reference_definition_v301 import FROZEN, frozen_documents, member_definition
 from .state_v2 import necessary_state_known
 
@@ -294,9 +295,13 @@ class RiskBook:
             previous_session = calendar[calendar.index(close_session) - 1]
             checked_guard(guard, self._policy)
             necessary_state_known(state)
-            zero_exposure(state, guard, cash_proof=cash_proof)
+            check_cash_state(state, guard, cash_proof)
+            try:
+                fee_value = amount(fees_x2)
+            except (ValueError, TypeError, ArithmeticError) as exc:
+                raise ValueError("risk.required_state_unknown") from exc
             if (
-                amount(fees_x2) < 0
+                fee_value < 0
                 or type(state.get("initialization_count")) is not int
                 or state["initialization_count"] != 1
                 or amount(state["cash"]) < 0

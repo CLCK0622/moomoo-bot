@@ -56,7 +56,10 @@ use this same implementation and adoption SHA. Accounts are separate objects.
 `execution_numbers` contains the unchanged C03 exact finite-decimal parser and
 renderer. `execution_amounts` re-exports them for existing callers. Quantities
 stay integer; monetary arithmetic uses exact rational values of canonical
-finite decimal lexemes. The original `execution.py`, `fees.py`, `fee_model.py`,
+finite decimal lexemes. Each actual buy rechecks the same frozen 2% cash / 98% investment limits using
+accepted raw-open prices and all retained cash receivables, without changing
+quantities. A new entitlement or slippage cannot bypass that check.
+The original `execution.py`, `fees.py`, `fee_model.py`,
 fee parameters, fee schedule and accepted oracle bytes remain unchanged.
 `ExactOrderCosts` calls that same frozen engine with its existing float output
 boundary and fixed Decimal context. A net order/day accumulates its actual
@@ -109,10 +112,17 @@ C06 replay. No duplicate quantity or risk algorithm is added.
 C06 still has its 24-field snapshot and 22-field M root. `fees_x2` additionally
 accepts canonical nonnegative decimal strings under EA.N1. Legacy numeric
 inputs remain accepted. Old no-receivable callers retain their strict B gate.
-The only exception is a state/book/date/guard/journal-bound typed `CashProof`
-for already reconciled cash receivables; wire dictionaries/booleans and
-foreign/drifted state fail. Initial-state proofs, noncash rights, blocked names,
-children and inventory completeness retain their original restrictions.
+The new C04/C06 adapter accepts only a state/book/date/guard/journal-bound typed
+`CashProof` for already reconciled cash receivables. It first checks the complete
+original state, then presents a temporary cash-classified view to the unchanged
+legacy noncash inventory proof. This view omits proven cash receivables solely
+for that noncash proof; it never changes the retained state, state SHA or NAV
+value. D1 and accounting still consume the full cash receivable. Wire dicts,
+booleans and foreign/drifted state fail. The legacy `zero_exposure` and static
+import whitelist are byte-identical to the parent. Initial proofs, noncash
+rights, blocked names, children and inventory completeness retain their original
+restrictions. `state_v2` adds a built-in structural decimal-string check with no
+new import path, float conversion or placeholder amount.
 C06 replay requires the host's matching owned cash proofs, never reconstructs
 one from a wire receipt, and otherwise refuses. `close_receipts` and
 `export_bytes` expose reconciliation evidence, not an installed checkpoint or
