@@ -1,0 +1,227 @@
+{
+  "accepted_archive": {
+    "attempts": 661,
+    "book_N": 1313,
+    "bytes": 1106104,
+    "design_N": 5,
+    "file": "EVO891-B-ledger-v30.jsonl",
+    "file_sha256": "967070adfa3503155ef6b42d2b5133dd4ce5468877fb2193c809ffbefec89453",
+    "high_water": 1313,
+    "ledger_id": "37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc",
+    "lines": 1385,
+    "seq": 1384,
+    "snapshot_sha256": "708a7c1e980591f0d9750d644e017fdebf40fac56576e9760c9707ccd139fcb8",
+    "tip": "1dfd40e38afeb40f7c3e658d264ebb478056534baf6c5c80321640b993e1fbe1"
+  },
+  "actions_this_review": {
+    "author_append_script_executed": false,
+    "budget_installation_or_R_P_A_generation": false,
+    "ledger_or_frozen_bytes_modified": false,
+    "new_market_source_requests": 0,
+    "product_strategy_reference_pytest_runs": 0
+  },
+  "book_N_field_omission_adjudication": {
+    "accepted_for_this_gap_update": true,
+    "prior_seq1381_same_shape": true,
+    "reader_executed_or_certified": false,
+    "reason": "Book N is the sum of unchanged attempt contributions. A design gap_update is not an attempt and has effect_on_N=0. The final checkpoint and independent fold both yield N/high-water 1313; its record schema does not require a book_N duplicate. Absence is not zero-fill or completion of unknown statistical N.",
+    "rewrite_or_recharge_required": false,
+    "static_source": {
+      "commit": "b6eee1f0af9e54198df3cbe3809c1b0ae8457bf5",
+      "file": "qlab/qlab/dynamic_factor/authority_ledger.py",
+      "lines": [
+        133,
+        159,
+        160,
+        166,
+        167,
+        169,
+        170,
+        171
+      ],
+      "sha256": "a696c5d81bed8f19226cb9489f32b456277f98c51d7d884d3894bc4c4bf09120"
+    }
+  },
+  "decision": "ACCEPT_AUTHOR_ARCHIVE_V30_AND_ONE_B_RUNTIME_RELEASE_P1_COMMON_DESIGN_CHARGE",
+  "effective_condition": "Successful publication of this receipt in the dispatched EVO-881 reply thread; then seq1384 becomes the author-archive continuation reference. Uploading an attachment alone is not acceptance publication.",
+  "effects": {
+    "DSR_effect_computed_or_claimed_stricter": false,
+    "OOS_increment_this_document_design_record_only": 0,
+    "book_N_increment": 0,
+    "charge_basis": "新增正式接收与配置契约；归档设计计数不代替完整分臂N或有效试验数，对DSR的影响未实算。",
+    "design_N_increment": 1,
+    "market_attempt_increment": 0,
+    "original_proposal_three_lineage_only_not_primary_binding_or_new_charge": true,
+    "real_training_reference_probe_meta_failure_retry_stage_N_budget_exemption": false,
+    "same_text_chinese_release_package_role_member_fold_recharge": 0,
+    "single_history_budget_account_63_126_clock_reset": false
+  },
+  "finance_final_review_comment_id": "01a19dd2-61da-70d8-985e-e8cf5fc02a4d",
+  "formal_arm_projection": {
+    "book_N_mechanical_increment": false,
+    "complete_N": null,
+    "complete_N_or_lower_bound_certified": false,
+    "design_count_replaces_complete_arm_N_or_effective_trials": false,
+    "new_record_sha256": "b767effb9b3b8eafc3873b54e33be06603103ba28d30408cee706afca46c1c47",
+    "retain_all_five_charge_sequences": [
+      1373,
+      1377,
+      1379,
+      1381,
+      1383
+    ]
+  },
+  "formal_bindings": {
+    "adopted_at": "2026-11-02T19:32:17Z",
+    "adopted_at_source": "首辅采用评论 01a19dbf-8791 的平台 created_at（updated_at 相同，revision 1），与正式机器采用件 /authority/adopted_at 及发布绑定 adopted_at 一致；不替代 D12 T0（2026-11-01T21:00:10Z，seq 1373 所绑）或 L0；也不是前向观察起点",
+    "base": {
+      "file_bytes": 1097198,
+      "file_sha256": "a0f56badde7c410c96e2b5b294fd32f712064940c62c79d1b6746f10405a8e7f",
+      "hanlin_acceptance": "01a19aa4-7848-77f8-91ba-8d88271c5432",
+      "hanlin_acceptance_receipt_sha256": "ffa8176e788b69bc4df60577d96afe6d8532d4ecf41633d39a53deb959495e01",
+      "ledger_id": "37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc",
+      "seq": 1382,
+      "tip": "0fd7a2ed945dc13268cfbfd4dc94cddca416c3e4b0313ec0dea1718a0d8f4ee4"
+    },
+    "chief_adoption": {
+      "author_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+      "content_sha256": "eb167619c5a0d4683a3e621f88338e8d53fe0da149f1c268b094b8409f835085",
+      "created_at": "2026-11-02T19:32:17Z",
+      "id": "01a19dbf-8791-7a52-b89a-cc2c9e9fc96b",
+      "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+      "parent_id": "01a19dbe-cab6-73d9-b6a4-10423e482a16",
+      "revision": 1,
+      "updated_at": "2026-11-02T19:32:17Z"
+    },
+    "deputy_countersign": {
+      "author_id": "9b5d10be-e7ba-4142-8dc6-b929d5885342",
+      "content_sha256": "7ad6a2075e411a1e9b3bd78cea53b5baf574b06e98b7970ba05eea0673e44475",
+      "created_at": "2026-11-02T19:31:29Z",
+      "id": "01a19dbe-cab6-73d9-b6a4-10423e482a16",
+      "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+      "parent_id": "01a19dbb-be37-7a86-a218-08303c48a5ce",
+      "revision": 1,
+      "updated_at": "2026-11-02T19:31:29Z"
+    },
+    "deputy_verdict": "修订后通过（采用件才是正式件，原提案只作谱系）",
+    "formal_chinese": {
+      "bytes": 23140,
+      "file": "EVO883-B-RUNTIME-RELEASE-P1-adopted-protocol-v1.0.0.md",
+      "platform_attachment_id": "01a19dc5-8576-7a47-a06d-a748a7fa9030",
+      "sha256": "ca6a635e71a396abb0fc55469791e5700e971a0e22ddb49854aae8ea877e96d3"
+    },
+    "formal_machine_adoption": {
+      "bytes": 33300,
+      "file": "EVO883-B-RUNTIME-RELEASE-P1-adopted-protocol-v1.0.0.json",
+      "issue_id": "01a18a63-02ca-77bc-a7bf-9f0769ed8bbf",
+      "platform_attachment_id": "01a19dc5-850e-7b27-8123-49b49753eb66",
+      "primary": true,
+      "sha256": "ff5da6ef748d5f1fca592559e73656d5283e28ec9d279b65b3ac0fd5943069ff"
+    },
+    "hanlin_publication_comment": {
+      "author_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+      "content_sha256": "ec297b5c917d2a1e5f550091b1288d528ee6ad52156be5910082ef484c5553fa",
+      "created_at": "2026-11-02T19:41:58Z",
+      "id": "01a19dc8-65de-7e9d-8218-6f4c6dad9e87",
+      "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+      "parent_id": "01a19dc0-24db-731e-90e7-85db1792555a",
+      "revision": 1,
+      "updated_at": "2026-11-02T19:41:58Z"
+    },
+    "original_proposal_lineage": [
+      {
+        "attachment_id": "01a19db9-f108-7b44-8e35-d0b5582636f9",
+        "comment_id": "01a19db9-f405-7a38-96c3-34450b74fe2a",
+        "file": "EVO883-B-RUNTIME-RELEASE-clause-proposal-v1.0.0.md",
+        "sha256": "a26de6e43af7908b8b92355657fbefabfc1c80c130342e79d8781e97741abc48"
+      },
+      {
+        "attachment_id": "01a19db9-f190-79c1-9af9-a3a99ee4fd37",
+        "comment_id": "01a19db9-f405-7a38-96c3-34450b74fe2a",
+        "file": "EVO883-B-RUNTIME-RELEASE-clause-proposal-v1.0.0.json",
+        "sha256": "16030b4c7fde30de7e288da8a0a04a149d159a42ef9d8e8a7551a7e52e1cca20"
+      },
+      {
+        "attachment_id": "01a19db9-f31b-7dfd-97ad-df029bcc5de7",
+        "comment_id": "01a19db9-f405-7a38-96c3-34450b74fe2a",
+        "file": "EVO883-B-RUNTIME-RELEASE-clause-proposal-v1.0.0-review.zip",
+        "sha256": "63d4e869d8cf1055e62e52d25f1e27d0201389677d0a265f3539bbbf365f97b6"
+      }
+    ],
+    "publication_binding": {
+      "file": "publication-binding.json（发布包内）",
+      "sha256": "efdec5052fe1b536908adc9232aa0e4818796b459dd0d17204604331fa586b45"
+    },
+    "published_at": "2026-11-02T19:38:50Z",
+    "published_at_source": "EVO-883 issue 附件列表读回：正式机器件附件 01a19dc5-850e 的平台 created_at（comment_id=null，上传者翰林院），与发布绑定 published_at 一致；不替代 D12 T0（2026-11-01T21:00:10Z，seq 1373 所绑）或 L0；也不是前向观察起点",
+    "release_package": {
+      "bytes": 256774,
+      "file": "EVO883-B-RUNTIME-RELEASE-P1-adoption-release-v1.0.0.zip",
+      "manifest_items": 14,
+      "platform_attachment_id": "01a19dc8-652d-7cb7-a5b1-79595cd6d6f9",
+      "sha256": "f240004e8c2e0037c8ddefbc884e757cb950e029d1be985386ecae328edb75ad"
+    }
+  },
+  "handoff": "Libu may register seq1384/design_count5 as the accepted author-archive continuation baseline, replacing seq1382 for future author-only continuations. Do not append another charge. C12 archive-charge references may cite this receipt; complete/gate N, implementation bindings, nonauthor review, runtime release and G14 stay on their original acceptance paths.",
+  "input_package_sha256": "84f032eb306f4d5f736a49cb5177c6392a4015f326f152615a55d9baa6f4a920",
+  "new_records": {
+    "archive_row_backwritten": false,
+    "checkpoint_seq": 1384,
+    "design_N_after": 5,
+    "design_N_before": 4,
+    "design_N_increment": 1,
+    "design_record_sha256": "b767effb9b3b8eafc3873b54e33be06603103ba28d30408cee706afca46c1c47",
+    "design_seq": 1383,
+    "event": "gap_update",
+    "identity": "B-RUNTIME-RELEASE-P1 v1.0.0 共同协议修订",
+    "is_attempt": false,
+    "new_charge_projection_hanlin_acceptance_null_externally_resolved_by_this_receipt": true,
+    "record_type": "design_count"
+  },
+  "predecessor": {
+    "bytes": 1097198,
+    "entire_file_is_exact_byte_prefix": true,
+    "file_sha256": "a0f56badde7c410c96e2b5b294fd32f712064940c62c79d1b6746f10405a8e7f",
+    "hanlin_acceptance_comment_id": "01a19aa4-7848-77f8-91ba-8d88271c5432",
+    "hanlin_acceptance_receipt_sha256": "ffa8176e788b69bc4df60577d96afe6d8532d4ecf41633d39a53deb959495e01",
+    "seq": 1382,
+    "tip": "0fd7a2ed945dc13268cfbfd4dc94cddca416c3e4b0313ec0dea1718a0d8f4ee4"
+  },
+  "remaining": {
+    "G14_overall_verified": false,
+    "L0_authorized": false,
+    "R_P_A_or_receiver_implementation_accepted": false,
+    "SEC_cap": 1200,
+    "SEC_used": 98,
+    "T1_compatibility_preconditions_waived": false,
+    "certifiable": false,
+    "clock63_started": false,
+    "complete_N_certified": false,
+    "historical_null_n_evaluated": 101,
+    "history": "PAUSED",
+    "installed_site_authority_chain_project_tip_or_external_anchor_accepted": false,
+    "product_reader_executed_or_certified": false,
+    "runtime_consumable": false,
+    "strict_eligible_count_V_DSR_accepted": false
+  },
+  "schema": "EVO883.BRuntimeReleaseDesignChargeAuthorArchiveAcceptance/v1",
+  "scope": "AUTHOR_ARCHIVE_ONLY_NOT_RUNTIME_B_R_P_A_RECEIVER_OR_INSTALLED_AUTHORITY_OR_COMPLETE_N_OR_G14",
+  "source_delivery_comment_id": "01a19dd1-a983-7b68-a4de-3df686375990",
+  "time_scope": {
+    "D12_T0": "2026-11-01T21:00:10Z",
+    "UUID_embedded_time_used_as_authority": false,
+    "adopted_at": "2026-11-02T19:32:17Z",
+    "formal_machine_attachment_published_at": "2026-11-02T19:38:50Z",
+    "publication_reply_on_EVO881_at": "2026-11-02T19:41:58Z",
+    "replace_D12_T0_L0_or_observation_start": false
+  },
+  "trigger_comment_id": "01a19dd2-ac9b-7a14-a5f3-cec614064a21",
+  "verification": {
+    "canonical_hash_chain_rows_verified": 1385,
+    "formal_release_manifest_files": 14,
+    "independent_static_verifier_sha256": "f7773e69165a35497807fb01e3797e2d46f073ad44e19d4864d264a3d3cbf853",
+    "independent_verification_report_sha256": "ccadd9eb047a24e28b3887afac975669ba2fd0daaafa99ac63cc6e881d1eff5c",
+    "submission_manifest_files": 13
+  },
+  "version": "1.0.0"
+}

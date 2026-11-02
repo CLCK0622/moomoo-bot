@@ -16,11 +16,11 @@ from .g14 import PROTOCOL_SHA256, adopted_protocol
 
 
 DESIGN_RECEIPT_SHA256 = (
-    "ffa8176e788b69bc4df60577d96afe6d8532d4ecf41633d39a53deb959495e01"
+    "b62f9d8a7cc440e7552b9bc22822f8d57b12ca722a37b2dc33b6435a60dea586"
 )
-ARCHIVE_SHA256 = "a0f56badde7c410c96e2b5b294fd32f712064940c62c79d1b6746f10405a8e7f"
-ARCHIVE_SEQUENCE = 1382
-ARCHIVE_TIP = "0fd7a2ed945dc13268cfbfd4dc94cddca416c3e4b0313ec0dea1718a0d8f4ee4"
+ARCHIVE_SHA256 = "967070adfa3503155ef6b42d2b5133dd4ce5468877fb2193c809ffbefec89453"
+ARCHIVE_SEQUENCE = 1384
+ARCHIVE_TIP = "1dfd40e38afeb40f7c3e658d264ebb478056534baf6c5c80321640b993e1fbe1"
 STAGES = {
     "historical_train",
     "independent_reference",
@@ -50,15 +50,15 @@ def execution_configurations():
 
 
 def design_archive_reference():
-    """Pinned accepted v29 archive only; never a current installation/N view.
+    """Pinned accepted v30 archive only; never a current installation/N view.
 
     Recheck the newest accepted anchor before batch submission; a later common
     design charge requires a new pin commit, never an inferred count or upgrade.
-    Historical v27/v28 bytes remain evidence and are not a fallback.
+    Historical v27/v28/v29 bytes remain evidence and are not a fallback.
     """
     root = Path(__file__).parent / "contracts"
-    receipt_raw = (root / "EVO883-EXECCL-v29-archive-acceptance-v1.json").read_bytes()
-    raw = gzip.decompress((root / "EVO891-B-ledger-v29.jsonl.gz").read_bytes())
+    receipt_raw = (root / "EVO883-BRR-v30-archive-acceptance-v1.json").read_bytes()
+    raw = gzip.decompress((root / "EVO891-B-ledger-v30.jsonl.gz").read_bytes())
     if sha256(receipt_raw) != DESIGN_RECEIPT_SHA256 or sha256(raw) != ARCHIVE_SHA256:
         raise ValueError("execution.design_archive_identity_changed")
     receipt = strict_json(receipt_raw)
@@ -68,9 +68,9 @@ def design_archive_reference():
     charges = [r for r in rows if r.get("record_type") == "design_count"]
     if (
         receipt["decision"]
-        != "ACCEPT_AUTHOR_ARCHIVE_V29_AND_ONE_EXEC_CLOSURE_COMMON_DESIGN_CHARGE"
+        != "ACCEPT_AUTHOR_ARCHIVE_V30_AND_ONE_B_RUNTIME_RELEASE_P1_COMMON_DESIGN_CHARGE"
         or receipt["scope"]
-        != "AUTHOR_ARCHIVE_ONLY_NOT_INSTALLED_AUTHORITY_OR_COMPLETE_GATE_N_OR_BUSINESS_ACCEPTANCE"
+        != "AUTHOR_ARCHIVE_ONLY_NOT_RUNTIME_B_R_P_A_RECEIVER_OR_INSTALLED_AUTHORITY_OR_COMPLETE_N_OR_G14"
         or len(rows) != archive["lines"]
         or len(raw) != archive["bytes"]
         or archive["file_sha256"] != ARCHIVE_SHA256
@@ -78,13 +78,24 @@ def design_archive_reference():
         or archive["seq"] != ARCHIVE_SEQUENCE
         or digest(rows[-1]) != archive["tip"]
         or archive["tip"] != ARCHIVE_TIP
-        or [r["seq"] for r in charges] != projection["retain_all_four_charge_sequences"]
-        or [r["seq"] for r in charges] != [1373, 1377, 1379, 1381]
-        or charges[-1]["design_N_after"] != 4
-        or archive["design_N"] != 4
+        or [r["seq"] for r in charges] != projection["retain_all_five_charge_sequences"]
+        or [r["seq"] for r in charges] != [1373, 1377, 1379, 1381, 1383]
+        or charges[-1]["design_N_after"] != 5
+        or archive["design_N"] != 5
         or charges[1]["binding"]["formal_release"]["sha256"] != PROTOCOL_SHA256
         or charges[-1]["binding"]["formal_machine_adoption"]["sha256"]
         != receipt["formal_bindings"]["formal_machine_adoption"]["sha256"]
+        or receipt["new_records"][
+            "new_charge_projection_hanlin_acceptance_null_externally_resolved_by_this_receipt"
+        ]
+        is not True
+        or charges[-1]["design_charges_for_formal_arm_projection"][-1][
+            "hanlin_acceptance"
+        ]
+        is not None
+        or archive["book_N"] != 1313
+        or archive["high_water"] != 1313
+        or archive["attempts"] != 661
         or projection["complete_N"] is not None
         or projection["complete_N_or_lower_bound_certified"] is not False
         or projection["book_N_mechanical_increment"] is not False

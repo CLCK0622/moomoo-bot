@@ -28,18 +28,22 @@ four-member execution family. A22 full runtime integration remains C09/C10.
 
 ## G14 design archive and stage mapping
 
-The accepted design-only archive reference is 4, read from the exact published
+The accepted design-only archive reference is 5, read from the exact published
 acceptance receipt
-(`ffa8176e788b69bc4df60577d96afe6d8532d4ecf41633d39a53deb959495e01`),
-checked against original archive v29
-(`a0f56badde7c410c96e2b5b294fd32f712064940c62c79d1b6746f10405a8e7f`),
-seq1382, tip
-`0fd7a2ed945dc13268cfbfd4dc94cddca416c3e4b0313ec0dea1718a0d8f4ee4`,
-and design-charge sequence `[1373, 1377, 1379, 1381]`.
+(`b62f9d8a7cc440e7552b9bc22822f8d57b12ca722a37b2dc33b6435a60dea586`),
+checked against original archive v30
+(`967070adfa3503155ef6b42d2b5133dd4ce5468877fb2193c809ffbefec89453`),
+seq1384, tip
+`1dfd40e38afeb40f7c3e658d264ebb478056534baf6c5c80321640b993e1fbe1`,
+and design-charge sequence `[1373, 1377, 1379, 1381, 1383]`.
 The gzip fixture decompresses to original bytes; it is an author
 archive fixture, never a deployment root, current witness or installation.
 The reference's own complete_N/gate_N remain null. No design write occurs.
-Historical v27/v28 fixtures remain refusal evidence, never a current fallback.
+Historical v27/v28/v29 fixtures remain refusal evidence, never a current fallback.
+The fifth charge's original null acceptance is closed externally by the pinned
+receipt; no archive row is rewritten. Book N/high-water 1313, attempt 661 and
+101 historical unknowns are unchanged. Accepting this author archive does not
+accept B release R/P/A, installed authority, complete N or G14 as a whole.
 
 `stage_budget_mapping` binds all five adopted G14 clauses and keeps separate
 historical-token, prospective-sample and actual-attempt/N columns. Forward
