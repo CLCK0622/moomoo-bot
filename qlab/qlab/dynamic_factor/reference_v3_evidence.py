@@ -1,9 +1,10 @@
 """V3 P1-P7 source seals and receipt validators; no performance or N writer."""
 
-from .contract import digest, result, unavailable
+from .contract import digest, is_sha, result, unavailable
 from .conventions import load_conventions
 from .reference_check import static_proof, verify_registry
-from .reference_evidence import lineage_sources, timestamp
+from .reference_evidence import blob, lineage_sources, timestamp
+from .execution_receipts.input_data import require_resealed_evidence
 from .reference_registry_v3 import (
     HASHES,
     DISPATCH,
@@ -143,6 +144,16 @@ def runtime_check(request, policy=None):
         seal = request["static_seal"]
         if seal_static(scope, seal["sealed_at"], p) != seal:
             raise ValueError("reference.static_seal_mismatch")
+        sidecars = request.get("sidecars")
+        if type(sidecars) is dict:
+            for sidecar in sidecars.values():
+                # Direct caller claims are not content-addressed sidecars.
+                # Preserve their original B/P4/P7 refusal rather than parsing
+                # them as if a trusted artifact had been supplied.
+                if is_sha(sidecar):
+                    require_resealed_evidence(
+                        blob(request.get("evidence_files", {}), sidecar)
+                    )
         # No B runtime release has been issued. Static candidate protection and
         # synthetic source/route witnesses cannot satisfy this external gate.
         if scope["B_catalog_release_sha256"] is None:

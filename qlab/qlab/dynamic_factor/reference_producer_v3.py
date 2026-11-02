@@ -123,10 +123,70 @@ def prepare(root, request, mechanisms=None):
         "returns": None,
         "sr": None,
         "reason": "reference_runtime_evidence_pending_EVO886_EVO891",
+        "seal_status": "seal_pending",
         "runtime_consumable": False,
         "certifiable": False,
         **request["profile_binding"],
     }
+
+
+def execution_main(expected):
+    """Read declared execution inputs only; C10 owns later core execution.
+
+    The host passes expected identities outside stdin. These expectations bind
+    transport, not trusted provenance. No economic decision or return is made.
+    """
+    from .execution_receipts.input_data import strict_json
+    from .execution_receipts.input_guard import install as install_execution
+    from .execution_receipts.input_reader import read_inputs as read_execution
+
+    parser = argparse.ArgumentParser(description=execution_main.__doc__)
+    parser.add_argument("--inputs-root", required=True)
+    args = parser.parse_args()
+    reads = []
+    try:
+        request = strict_json(input())
+        reads = install_execution(args.inputs_root)
+        data = read_execution(args.inputs_root, request, expected)
+        report = dict(
+            schema="EVO884.ExecutionInputTransport/v1",
+            run_id=expected["run_id"],
+            book_id=expected["book_id"],
+            member_id=expected["member_id"],
+            manifest_sha256=expected["manifest_sha256"],
+            transport_complete=True,
+            data=data,
+            economic_content_validated=False,
+            accounting_executed=False,
+            evidence_accepted=False,
+            seal_status="seal_pending",
+            complete=False,
+            returns=None,
+            sr=None,
+            reason="reference.C10_execution_and_source_reception_required",
+            runtime_consumable=False,
+            certifiable=False,
+        )
+    except (ValueError, KeyError, TypeError, OSError, AttributeError) as exc:
+        report = dict(
+            schema="EVO884.ExecutionInputTransport/v1",
+            transport_complete=False,
+            economic_content_validated=False,
+            accounting_executed=False,
+            evidence_accepted=False,
+            seal_status="seal_pending",
+            complete=False,
+            returns=None,
+            sr=None,
+            reason=str(exc)
+            if isinstance(exc, ValueError)
+            else "execution_input.invalid",
+            runtime_consumable=False,
+            certifiable=False,
+        )
+    report.update(accessed_roles=list(reads), reader_calls=len(reads))
+    print(json.dumps(report, sort_keys=True, allow_nan=False))
+    return 2
 
 
 def main(mechanisms=None):
@@ -159,6 +219,7 @@ def main(mechanisms=None):
         }
     report["accessed_roles"] = list(reads)
     report["reader_calls"] = len(reads)
+    report["seal_status"] = "seal_pending"
     print(json.dumps(report, sort_keys=True, allow_nan=False))
     return 2
 

@@ -23,6 +23,9 @@ MODULES = {
         "reference_inputs",
         "reference_guard",
         "reference_v3_scope",
+        "execution_receipts.input_data",
+        "execution_receipts.input_guard",
+        "execution_receipts.input_reader",
     },
     "reference_v3_scope": {
         "hashlib",
@@ -45,13 +48,26 @@ MODULES = {
     "input_scope": set(),
     "fold_split": {"dataclasses"},
     "reference_guard": {"os", "sys", "pathlib"},
+    "execution_receipts.input_data": {
+        "hashlib",
+        "json",
+        "math",
+        "reference_validation",
+    },
+    "execution_receipts.input_guard": {"os", "sys", "pathlib"},
+    "execution_receipts.input_reader": {"hashlib", "json", "pathlib", "input_data"},
 }
 
 
 def static_proof():
     graph, sources, reads = {}, {}, []
+    extension = {
+        "execution_receipts.input_data",
+        "execution_receipts.input_guard",
+        "execution_receipts.input_reader",
+    }
     for name, allowed in MODULES.items():
-        raw = (Path(__file__).parent / (name + ".py")).read_bytes()
+        raw = (Path(__file__).parent / (name.replace(".", "/") + ".py")).read_bytes()
         tree = ast.parse(raw)
         for statement in tree.body:
             if isinstance(
@@ -97,6 +113,7 @@ def static_proof():
                     "__import__",
                     "compile",
                     "open",
+                    "read_text",
                     "write_text",
                     "write_bytes",
                     "unlink",
@@ -104,13 +121,20 @@ def static_proof():
                 }:
                     raise ValueError("reference.static_call_forbidden")
                 if call == "read_bytes":
-                    if name != "reference_inputs":
+                    if name not in {
+                        "reference_inputs",
+                        "execution_receipts.input_reader",
+                    }:
                         raise ValueError("reference.static_reader_forbidden")
                     reads.append(
                         {
                             "module": name,
                             "line": node.lineno,
-                            "roles": ["panel", "benchmark", "profile"],
+                            "roles": (
+                                ["panel", "benchmark", "profile"]
+                                if name == "reference_inputs"
+                                else ["raw", "rights", "adv", "cash"]
+                            ),
                         }
                     )
         if not imports.issubset(allowed):
@@ -130,15 +154,56 @@ def static_proof():
             }
             if calls.get("install", 10**9) >= calls.get("prepare", -1):
                 raise ValueError("reference.audit_hook_must_precede_data_reads")
+            if name == "reference_producer_v3":
+                entry = next(
+                    n
+                    for n in tree.body
+                    if isinstance(n, ast.FunctionDef) and n.name == "execution_main"
+                )
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.ImportFrom) and node.module in extension:
+                        if not entry.lineno < node.lineno <= entry.end_lineno:
+                            raise ValueError("reference.execution_import_outside_entry")
+                calls = {
+                    n.func.id: n.lineno
+                    for n in ast.walk(entry)
+                    if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+                }
+                if calls.get("install_execution", 10**9) >= calls.get(
+                    "read_execution", -1
+                ):
+                    raise ValueError("reference.audit_hook_must_precede_data_reads")
     return {
-        "import_graph": graph,
+        # Keep the original preparation entry's graph separately named. The
+        # complete module graph and the new dispatch graph are also published;
+        # no source bytes or source identities are excluded from the proof.
+        "import_graph": {
+            name: [dep for dep in deps if dep not in extension]
+            for name, deps in graph.items()
+            if name not in extension
+        },
+        "module_import_graph": graph,
+        "execution_preparation_import_graph": {
+            name: deps
+            for name, deps in graph.items()
+            if name in extension or name == "reference_producer_v3"
+        },
         "source_files": sources,
-        "reader_sites": reads,
+        "reader_sites": [r for r in reads if r["module"] == "reference_inputs"],
+        "execution_preparation_reader_sites": [
+            r for r in reads if r["module"] == "execution_receipts.input_reader"
+        ],
         "source_sha256": digest(sources),
         "read_whitelist": {
             "panel": "panel.json",
             "benchmark": "benchmark.json",
             "profile": "profile.json",
+        },
+        "execution_preparation_read_whitelist": {
+            "raw": "raw.json",
+            "rights": "rights.json",
+            "adv": "adv.json",
+            "cash": "cash.json",
         },
         "forbidden_inputs": [
             "candidate_returns",
