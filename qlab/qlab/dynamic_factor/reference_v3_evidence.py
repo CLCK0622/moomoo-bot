@@ -233,6 +233,7 @@ def execution_readiness(
         P4_actual_run=None,
         P7_reader_receipt=None,
         execution_proof=None,
+        remaining_external_gates=[],
         seal_status="seal_pending",
         runtime_consumable=False,
         certifiable=False,
@@ -269,6 +270,22 @@ def execution_readiness(
             )
         report["formal_N"] = received["formal_N_slot"]
         report["execution_proof"] = reference_execution_proof(load_conventions())
+        # The original first-error B refusal below stays first. Enumerate the
+        # independent external obligations without substituting the N host for
+        # a source/permission receiver or treating this metadata preflight as
+        # actual P4 execution, resealing or runtime acceptance.
+        report["remaining_external_gates"] = [
+            dict(
+                gate="B_RUNTIME_RELEASE",
+                reason="reference.runtime_B_release_and_actual_proofs_missing",
+                accepted=False,
+            ),
+            dict(
+                gate="SRC_AUTH_RECEPTION",
+                reason="reference.SRC_AUTH_source_and_permission_reception_required",
+                accepted=False,
+            ),
+        ]
         # A non-null release already fails the unchanged original scope
         # validator. Do not synthesize an anchor or a replacement guard.
         raise ValueError("reference.runtime_B_release_and_actual_proofs_missing")

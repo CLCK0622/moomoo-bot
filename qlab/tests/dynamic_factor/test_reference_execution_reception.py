@@ -20,7 +20,7 @@ def readiness_args(tmp_path, monkeypatch, *, complete=True):
     return profile, scope, manifest, expected, n
 
 
-def test_C09_all_preexecution_metadata_and_private_N_leave_only_external_B_gate(
+def test_C09_all_preexecution_metadata_and_private_N_leave_only_external_gates(
     tmp_path, monkeypatch, record_property
 ):
     profile, scope, manifest, expected, n = readiness_args(tmp_path, monkeypatch)
@@ -29,12 +29,24 @@ def test_C09_all_preexecution_metadata_and_private_N_leave_only_external_B_gate(
     assert out["formal_N"] == 7  # private host reconciliation, never 1313/design 4
     assert out["execution_proof"]["schema"] == "EVO884.ReferenceExecutionScope/v1"
     assert out["reasons"] == ["reference.runtime_B_release_and_actual_proofs_missing"]
+    assert out["remaining_external_gates"] == [
+        dict(
+            gate="B_RUNTIME_RELEASE",
+            reason="reference.runtime_B_release_and_actual_proofs_missing",
+            accepted=False,
+        ),
+        dict(
+            gate="SRC_AUTH_RECEPTION",
+            reason="reference.SRC_AUTH_source_and_permission_reception_required",
+            accepted=False,
+        ),
+    ]
     assert out["returns"] is out["sr"] is out["P4_actual_run"] is None
     assert (
         out["reader_calls"] == out["worker_calls"] == 0 and out["accessed_roles"] == []
     )
     assert out["complete"] is out["runtime_consumable"] is out["certifiable"] is False
-    record_property("C09_B_gate_actual", json.dumps(out, sort_keys=True))
+    record_property("C09_external_gates_actual", json.dumps(out, sort_keys=True))
 
 
 @pytest.mark.parametrize(
@@ -67,4 +79,5 @@ def test_C09_metadata_or_formal_N_cannot_be_borrowed_before_B_gate(
     assert out["reasons"] and out["reasons"] != [
         "reference.runtime_B_release_and_actual_proofs_missing"
     ]
+    assert out["remaining_external_gates"] == []
     assert out["returns"] is None and out["reader_calls"] == out["worker_calls"] == 0

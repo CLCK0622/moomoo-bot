@@ -1,4 +1,4 @@
-C09/C10：同源执行、隔离重放与外部 B 门
+C09/C10：同源执行、隔离重放与剩余外部门
 
 `reference_execution.ReferenceExecution` 只编排原 C03/C04/C05/C06/C07。
 构造时必须是同一参考成员、fold、attempt、独立零账本的 `StartupBook` 和
@@ -48,10 +48,15 @@ run/fold/calendar、D1/D2 源码及两份采用件身份，再启动任一子进
 
 `reference_v3_evidence.execution_readiness` 是正式执行之前的只读元数据接收。
 它复用原输入准备和 C12 的 `bind_execution_n`，校验实际 run/成员与全尝试映射，
-完整本臂 N 只来自原 host reader；design 4、账面 1313、自报值不进该槽位。
-缺失/漂移/N 未闭合会先拒绝。对其他前置元数据齐备的受控正控，唯一返回的拒绝码为
-`reference.runtime_B_release_and_actual_proofs_missing`，收益为空、数值 reader 和 worker
-启动次数均为 0。P4 的实际正式运行尚未发生，`P4_actual_run` 明确保持 null；诊断实际
+完整本臂 N 只来自原 host reader；design archive reference、账面 1313、自报值不进该槽位。
+缺失/漂移/N 未闭合会先拒绝，剩余外部门清单为空，不能冒充只有外部缺件。
+对其他前置元数据齐备的受控正控，原短路拒绝码仍为
+`reference.runtime_B_release_and_actual_proofs_missing`；`remaining_external_gates` 精确列出
+`B_RUNTIME_RELEASE` 和 `SRC_AUTH_RECEPTION` 两项，后者的具名拒绝码为
+`reference.SRC_AUTH_source_and_permission_reception_required`。两项均 `accepted=false`。
+清单不把 N 的 authority_host 当来源许可，不接受请求自报或任何来源/权限替身。
+收益为空、数值 reader 和 worker 启动次数均为 0。这是剩余外部义务的枚举，
+不是已获准的来源或 P4/P7 正式运行回执。P4 的实际正式运行尚未发生，`P4_actual_run` 明确保持 null；诊断实际
 DAG 不冒充正式运行回执。正控的私有完整 N 安装假设也不代表生产安装或完整 N 获准。
 
 B 发布仍属外部门。原 `reference_v3_scope.py`、`execution_risk.py`、旧 guard/reader
