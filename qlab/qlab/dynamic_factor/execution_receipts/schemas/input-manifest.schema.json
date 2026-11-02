@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "C09 input manifest preparation; does not verify source or economic payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "book_id",
+    "run_id",
+    "member_id",
+    "scope_sha256",
+    "profile_sha256",
+    "inputs"
+  ],
+  "properties": {
+    "schema": {
+      "const": "EVO884.RestrictedExecutionInputManifest/v1"
+    },
+    "book_id": {
+      "$ref": "#/$defs/sha"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "member_id": {
+      "enum": [
+        "CREF-F1-L020",
+        "CREF-F3-L020",
+        "MREF-F2-L020",
+        "MREF-F4-L020"
+      ]
+    },
+    "scope_sha256": {
+      "$ref": "#/$defs/sha"
+    },
+    "profile_sha256": {
+      "$ref": "#/$defs/sha"
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw",
+        "rights",
+        "adv",
+        "cash"
+      ],
+      "properties": {
+        "raw": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "properties": {
+                "file": {
+                  "const": "raw.json"
+                }
+              }
+            }
+          ]
+        },
+        "rights": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "properties": {
+                "file": {
+                  "const": "rights.json"
+                }
+              }
+            }
+          ]
+        },
+        "adv": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "properties": {
+                "file": {
+                  "const": "adv.json"
+                }
+              }
+            }
+          ]
+        },
+        "cash": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "properties": {
+                "file": {
+                  "const": "cash.json"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "sha256",
+        "source_receipt_sha256",
+        "requested_dates",
+        "requested_consumer",
+        "symbols"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "enum": [
+            "raw.json",
+            "rights.json",
+            "adv.json",
+            "cash.json"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha"
+        },
+        "source_receipt_sha256": {
+          "$ref": "#/$defs/sha"
+        },
+        "requested_dates": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          }
+        },
+        "requested_consumer": {
+          "type": "string",
+          "enum": [
+            "calibration",
+            "cash_valuation",
+            "holdings_valuation",
+            "label",
+            "order",
+            "score"
+          ]
+        },
+        "symbols": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
