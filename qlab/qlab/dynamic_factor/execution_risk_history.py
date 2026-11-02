@@ -667,7 +667,7 @@ class RiskHistory:
             or payload["initial"]["scope"] != expected_scope
         ):
             raise ValueError("risk.history_scope_mismatch")
-        if payload.get("history_source_sha256") != code_sha(cls):
+        if payload.get("history_source_sha256") != code_sha(RiskHistory):
             raise ValueError("risk.history_replay_mismatch")
         if formal:
             if set(payload) != {
