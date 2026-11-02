@@ -1,7 +1,9 @@
 """C12/A22-A24. Private sources are counterfactual, not real installation."""
 
 from copy import deepcopy
+import gzip
 import json
+from pathlib import Path
 
 import pytest
 
@@ -18,6 +20,7 @@ from qlab.dynamic_factor.execution_receipts.n_binding import (
 )
 import authority_host_helpers
 from authority_stage1_helpers import archive
+from qlab.dynamic_factor.execution_receipts import n_binding
 
 
 def mapping(stage="independent_reference"):
@@ -91,16 +94,66 @@ def private_bound_source(tmp_path, monkeypatch, *, complete=False):
     ), source
 
 
-def test_G14_design_count_two_is_only_an_accepted_archive_reference():
+def test_G14_design_count_three_is_only_an_accepted_archive_reference():
     ref = design_archive_reference()
-    assert ref["value"] == 2
-    assert ref["archive_sequence"] == 1378
+    assert ref["value"] == 3
+    assert ref["archive_sequence"] == 1380
+    assert ref["archive_tip"] == (
+        "8e87034167b9d8ad28a91c33b824eecb5cba59c1b47efbb982079e32ddecde4a"
+    )
     assert (
         ref["acceptance_sha256"]
-        == "7543d251170dd423a0b4aec42913486e0b02f0de876cc7809d1105b0b1e9d5d6"
+        == "40ba00bf7e64a10b4f66990dde6828be02f339365ee1df36dfc324e4fa85b6b0"
     )
     assert ref["gate_N"] is ref["complete_N"] is None
     assert ref["formal_projection_consumer_accepted"] is False
+
+
+@pytest.mark.parametrize("field", ["value", "seq", "tip"])
+def test_G14_old_design_count_sequence_or_tip_is_rejected(monkeypatch, field):
+    root = Path(n_binding.__file__).parent / "contracts"
+    receipt_path = root / "EVO883-C06CLK-v28-archive-acceptance-v1.json"
+    receipt = json.loads(receipt_path.read_bytes())
+    receipt["engineering_handoff"]["C12_design_count_archive_reference"][field] = {
+        "value": 2,
+        "seq": 1378,
+        "tip": "93a5f3b115e1651613d87f08de61d3b327c8aab31b95f8d77202d9fac1c0effb",
+    }[field]
+    changed = canonical(receipt) + b"\n"
+    read_bytes = Path.read_bytes
+    monkeypatch.setattr(
+        Path, "read_bytes", lambda p: changed if p == receipt_path else read_bytes(p)
+    )
+    # Bypass only the byte pin to exercise the semantic binding rejection too.
+    monkeypatch.setattr(n_binding, "DESIGN_RECEIPT_SHA256", sha256(changed))
+    with pytest.raises(ValueError, match="^execution.design_archive_binding_changed$"):
+        design_archive_reference()
+
+
+@pytest.mark.parametrize("replace", ["receipt", "archive", "both"])
+def test_G14_v27_receipt_or_archive_cannot_replace_current_binding(
+    monkeypatch, replace
+):
+    root = Path(n_binding.__file__).parent / "contracts"
+    old_receipt = (root / "EVO883-G14P1-v27-archive-acceptance-v1.json").read_bytes()
+    assert sha256(old_receipt) == (
+        "7543d251170dd423a0b4aec42913486e0b02f0de876cc7809d1105b0b1e9d5d6"
+    )
+    old_archive = (root / "EVO891-B-ledger-v27.jsonl.gz").read_bytes()
+    assert json.loads(gzip.decompress(old_archive).splitlines()[-1])["seq"] == 1378
+    replacement = {}
+    if replace in {"receipt", "both"}:
+        replacement[root / "EVO883-C06CLK-v28-archive-acceptance-v1.json"] = old_receipt
+    if replace in {"archive", "both"}:
+        replacement[root / "EVO891-B-ledger-v28.jsonl.gz"] = old_archive
+    read_bytes = Path.read_bytes
+    monkeypatch.setattr(
+        Path,
+        "read_bytes",
+        lambda p: replacement[p] if p in replacement else read_bytes(p),
+    )
+    with pytest.raises(ValueError, match="^execution.design_archive_identity_changed$"):
+        design_archive_reference()
 
 
 @pytest.mark.parametrize("stage", sorted(STAGES))
@@ -146,14 +199,14 @@ def test_A22_production_missing_authority_objects_refuses_with_no_runtime_slot()
     assert result["formal_N_slot"] is None
     assert result["reasons"] == ["ledger.trusted_project_installation_required"]
     assert result["runtime_consumable"] is result["complete"] is False
-    assert result["design_count_archive_reference"]["value"] == 2
+    assert result["design_count_archive_reference"]["value"] == 3
     assert before == (len(host._PINS), len(host._SNAPSHOTS))
     assert (
         result["N_reader_receipt"]["observations"]["formal_projection_consumption"] == 0
     )
 
 
-@pytest.mark.parametrize("claim", [2, 308, 1313, 9999])
+@pytest.mark.parametrize("claim", [2, 3, 308, 1313, 9999])
 def test_A23_design_slots_or_book_high_water_never_replace_complete_arm_N(
     tmp_path, monkeypatch, claim
 ):
@@ -161,6 +214,8 @@ def test_A23_design_slots_or_book_high_water_never_replace_complete_arm_N(
     result = bind_execution_n(**arguments, request_metrics={"self_report_n": claim})
     assert result["formal_N_slot"] is None
     assert result["reasons"] == ["reception.N_complete_projection_required"]
+    assert result["N_reader_receipt"]["details"]["gate_N"] is None
+    assert result["N_reader_receipt"]["details"]["request_book_or_high_water"] is None
     child = result["N_reader_receipt"]["details"]["n_acceptance"]
     assert child["details"]["n_evaluated_unknown_count"] == 101
     assert child["details"]["complete_N"] is None
@@ -232,7 +287,7 @@ def test_A24_only_private_complete_reader_value_is_consumed_not_a_runtime_releas
     assert result["formal_N_slot"] == 7
     assert len(execution_configurations()) == 308
     assert len(result["bound_attempts"]) == 101
-    assert result["design_count_archive_reference"]["value"] == 2
+    assert result["design_count_archive_reference"]["value"] == 3
     assert result["runtime_consumable"] is result["complete"] is False
     assert result["remaining_reception"] == [
         "actual_B_publication",

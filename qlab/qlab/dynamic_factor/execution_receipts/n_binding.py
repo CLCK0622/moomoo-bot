@@ -16,9 +16,11 @@ from .g14 import PROTOCOL_SHA256, adopted_protocol
 
 
 DESIGN_RECEIPT_SHA256 = (
-    "7543d251170dd423a0b4aec42913486e0b02f0de876cc7809d1105b0b1e9d5d6"
+    "40ba00bf7e64a10b4f66990dde6828be02f339365ee1df36dfc324e4fa85b6b0"
 )
-ARCHIVE_SHA256 = "d57cd84b6b8578e3cfac14d899fcf311eddab755608d4f573e465f1632c4cd08"
+ARCHIVE_SHA256 = "64378745818ce4aa23f492e925ae4dd28b37306a3774dda85e67896311b64aed"
+ARCHIVE_SEQUENCE = 1380
+ARCHIVE_TIP = "8e87034167b9d8ad28a91c33b824eecb5cba59c1b47efbb982079e32ddecde4a"
 STAGES = {
     "historical_train",
     "independent_reference",
@@ -48,29 +50,55 @@ def execution_configurations():
 
 
 def design_archive_reference():
-    """Pinned accepted author archive only; never a current installation/N view."""
+    """Pinned accepted v28 archive only; never a current installation/N view.
+
+    Recheck the newest accepted anchor before batch submission; a later common
+    design charge requires a new pin commit, never an inferred count or upgrade.
+    Historical v27 bytes remain evidence and are not a fallback.
+    """
     root = Path(__file__).parent / "contracts"
-    receipt_raw = (root / "EVO883-G14P1-v27-archive-acceptance-v1.json").read_bytes()
-    raw = gzip.decompress((root / "EVO891-B-ledger-v27.jsonl.gz").read_bytes())
+    receipt_raw = (root / "EVO883-C06CLK-v28-archive-acceptance-v1.json").read_bytes()
+    raw = gzip.decompress((root / "EVO891-B-ledger-v28.jsonl.gz").read_bytes())
     if sha256(receipt_raw) != DESIGN_RECEIPT_SHA256 or sha256(raw) != ARCHIVE_SHA256:
         raise ValueError("execution.design_archive_identity_changed")
     receipt = strict_json(receipt_raw)
     rows = records(raw)
-    archive = receipt["accepted_archive"]
+    archive = receipt["archive"]
+    reference = receipt["engineering_handoff"]["C12_design_count_archive_reference"]
     charges = [r for r in rows if r.get("record_type") == "design_count"]
     if (
-        len(rows) != archive["lines"]
-        or rows[-1]["seq"] != archive["sequence"]
+        receipt["outcome"] != "ACCEPTED_AUTHOR_ARCHIVE_V28_DESIGN_COUNT_ONLY"
+        or len(rows) != archive["lines"]
+        or len(raw) != archive["file_bytes"]
+        or archive["file_sha256"] != ARCHIVE_SHA256
+        or rows[-1]["seq"] != archive["seq"]
+        or archive["seq"] != ARCHIVE_SEQUENCE
         or digest(rows[-1]) != archive["tip"]
+        or archive["tip"] != ARCHIVE_TIP
         or [r["seq"] for r in charges]
-        != receipt["accounting"]["design_charge_sequences"]
-        or receipt["authority_bindings"]["formal_release_sha256"] != PROTOCOL_SHA256
+        != receipt["accepted_design_count"][
+            "charge_sequences_for_formal_arm_projection"
+        ]
+        or [r["seq"] for r in charges] != [1373, 1377, 1379]
+        or charges[-1]["design_N_after"] != 3
+        or receipt["accepted_design_count"]["after"] != 3
+        or charges[1]["binding"]["formal_release"]["sha256"] != PROTOCOL_SHA256
+        or not _same(
+            reference,
+            dict(
+                value=3,
+                seq=ARCHIVE_SEQUENCE,
+                tip=ARCHIVE_TIP,
+                ledger_file_sha256=ARCHIVE_SHA256,
+                scope="AUTHOR_ARCHIVE_DESIGN_COUNT_ONLY",
+            ),
+        )
     ):
         raise ValueError("execution.design_archive_binding_changed")
     return dict(
         schema="EVO884.DesignCountArchiveReference/v1",
-        value=receipt["engineering_handoff"]["C12_design_count_reference"]["value"],
-        archive_sequence=archive["sequence"],
+        value=reference["value"],
+        archive_sequence=archive["seq"],
         archive_tip=archive["tip"],
         archive_sha256=ARCHIVE_SHA256,
         acceptance_sha256=DESIGN_RECEIPT_SHA256,
