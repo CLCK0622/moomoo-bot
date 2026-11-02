@@ -10,6 +10,10 @@ import pytest
 from qlab.dynamic_factor.contract import canonical, sha256
 from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.execution_startup import StartupBook
+from qlab.dynamic_factor.execution_closure import (
+    ADOPTED_SHA256 as CLOSURE_SHA,
+    adopted_execution_binding,
+)
 from qlab.dynamic_factor.reference_registry_v3 import DISPATCH
 from qlab.dynamic_factor.v1_harness import unit_context
 
@@ -43,6 +47,9 @@ def book(member="CREF-F1-L020", fold="0", attempt="C05-SYNTHETIC-ONLY", state=No
         attempt,
         initial_state(policy, fold) if state is None else state,
         unit_context(policy),
+        execution_binding=adopted_execution_binding(
+            expected_adoption_sha256=CLOSURE_SHA
+        ),
         policy=policy,
     )
 

@@ -16,6 +16,7 @@ from threading import RLock
 from .contract import canonical, digest, sha256
 from .conventions import authoritative, load_conventions
 from .execution import initial_build_turnover_check, lock_startup_intent
+from .execution_closure import fee_context, reference_model, validate_execution_binding
 from .fees import finite
 from .pipeline import price_basis_check
 from .reference_definition_v301 import reference_definitions
@@ -68,7 +69,8 @@ def _transition(method):
                 raise ValueError("startup.reentrant_state_transition_forbidden")
             self._transitioning = True
             try:
-                return method(self, *args, **kwargs)
+                with fee_context(self._execution_binding):
+                    return method(self, *args, **kwargs)
             finally:
                 self._transitioning = False
 
@@ -98,8 +100,17 @@ class StartupBook:
     """
 
     def __init__(
-        self, member_id, fold_id, attempt_id, initial_state, context, *, policy=None
+        self,
+        member_id,
+        fold_id,
+        attempt_id,
+        initial_state,
+        context,
+        *,
+        execution_binding,
+        policy=None,
     ):
+        self._execution_binding = validate_execution_binding(execution_binding)
         self._policy = policy or load_conventions()
         if (
             not authoritative(self._policy)
@@ -172,9 +183,15 @@ class StartupBook:
             shared_execution_contract_sha256=CONTRACT_SHA256,
             member_definition_sha256=definition["definition_sha256"],
             solo_profile_sha256=profile["profile_sha256"],
+            execution_binding=deepcopy(self._execution_binding),
             **self._policy.binding,
         )
         self._book_id = digest(self._identity)
+        self._model = reference_model(
+            self._execution_binding,
+            book_id=self._book_id,
+            scope=self._identity["scope"],
+        )
         self._genesis = state
         self._state = deepcopy(state)
         # These fields describe the verified genesis only. C06 owns later risk
@@ -222,6 +239,7 @@ class StartupBook:
                 book_id=self._book_id,
                 identity=self._identity,
                 genesis=self._genesis,
+                model_receipt=self._model,
                 account_state=self._state,
                 valued_components=self._valuation,
                 complete_account_state=None,
@@ -327,7 +345,14 @@ class StartupBook:
                 )
             )
             raise ValueError(self._halt)
-        actual = report["metrics"]
+        actual = deepcopy(report["metrics"])
+        actual.update(
+            plan_accepted=True,
+            planned_quantity=actual["quantity"],
+            modeled_filled_quantity=actual["quantity"],
+            model_receipt=deepcopy(self._model),
+            execution_verified=False,
+        )
         self._previous_close_nav = self._state["nav"]
         self._state["inventory"]["QQQ"] = actual["inventory"]["QQQ"]
         self._state["cash"] = actual["cash"]
@@ -441,6 +466,7 @@ class StartupBook:
             attempt_id,
             document["genesis"],
             document["context"],
+            execution_binding=document["identity"].get("execution_binding"),
             policy=policy,
         )
         if book.identity != document["identity"]:
