@@ -81,14 +81,6 @@ def issue_observation(execution, *, benchmark, expected_benchmark_sha256):
             operations=deepcopy(execution._program),
             benchmark=deepcopy(benchmark),
             benchmark_sha256=expected_benchmark_sha256,
-            shared_guard_sha256=guard_sha,
-            eligibility_by_close={
-                event["arguments"]["inputs"]["close_state"][
-                    "signal_close_session"
-                ]: digest(event["arguments"]["inputs"]["eligibility"])
-                for event in execution._program
-                if event["operation"] == "lock_projection"
-            },
         )
         document = dict(
             schema="EVO884.ReferenceExecutionObservation/v1",
@@ -101,6 +93,14 @@ def issue_observation(execution, *, benchmark, expected_benchmark_sha256):
             execution_closure_sha256=account._binding["adoption_sha256"],
             clock_ruling_sha256=account._initial_snapshot["ruling_sha256"],
             benchmark_sha256=expected_benchmark_sha256,
+            shared_guard_sha256=guard_sha,
+            eligibility_by_close={
+                event["arguments"]["inputs"]["close_state"][
+                    "signal_close_session"
+                ]: digest(event["arguments"]["inputs"]["eligibility"])
+                for event in execution._program
+                if event["operation"] == "lock_projection"
+            },
             program_sha256=digest(program),
             dates=deepcopy(result["dates"]),
             returns=deepcopy(result["active_daily"]),
