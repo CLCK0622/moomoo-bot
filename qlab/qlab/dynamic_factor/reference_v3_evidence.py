@@ -180,3 +180,88 @@ def runtime_check(request, policy=None):
             },
         )
     )
+
+
+def execution_readiness(
+    profile,
+    scope,
+    manifest,
+    *,
+    expected,
+    host_context,
+    installed_snapshot,
+    run_pin,
+    traces,
+    expected_run_ids,
+    stage_mapping,
+):
+    """Read-only pre-execution metadata reception; B stays an external gate.
+
+    P4's execution mechanism is inspected, not an invented actual-run receipt.
+    P7 consumes the original host reader, never a caller's numeric N. This
+    preflight cannot read a price, start a worker or issue a runtime capability.
+    The separate owned diagnostic/result channel never bypasses this gate.
+    """
+    from .execution_receipts.input_envelope import prepare_input_envelope
+    from .execution_receipts.n_binding import bind_execution_n
+    from .scope_proof import reference_execution_proof
+
+    report = dict(
+        schema="EVO884.ReferenceExecutionReadiness/v1",
+        complete=False,
+        returns=None,
+        sr=None,
+        reasons=[],
+        reader_calls=0,
+        accessed_roles=[],
+        worker_calls=0,
+        formal_N=None,
+        P4_actual_run=None,
+        P7_reader_receipt=None,
+        execution_proof=None,
+        seal_status="seal_pending",
+        runtime_consumable=False,
+        certifiable=False,
+    )
+    try:
+        preparation = prepare_input_envelope(profile, scope, manifest, **expected)
+        if not preparation["prepared"]:
+            raise ValueError(preparation["reasons"][0])
+        if (
+            stage_mapping["stage"] != "independent_reference"
+            or stage_mapping["run_id"] != manifest["run_id"]
+            or manifest["run_id"] not in expected_run_ids
+            or not any(
+                t["run_id"] == manifest["run_id"]
+                and t["member_id"] == manifest["member_id"]
+                for t in traces
+            )
+        ):
+            raise ValueError("reference.reference_run_attempt_binding_required")
+        received = bind_execution_n(
+            host_context=host_context,
+            installed_snapshot=installed_snapshot,
+            run_pin=run_pin,
+            traces=traces,
+            expected_run_ids=expected_run_ids,
+            stage_mapping=stage_mapping,
+        )
+        report["P7_reader_receipt"] = received
+        if received["formal_N_slot"] is None or received["reasons"]:
+            raise ValueError(
+                received["reasons"][0]
+                if received["reasons"]
+                else "reference.complete_N_required"
+            )
+        report["formal_N"] = received["formal_N_slot"]
+        report["execution_proof"] = reference_execution_proof(load_conventions())
+        # A non-null release already fails the unchanged original scope
+        # validator. Do not synthesize an anchor or a replacement guard.
+        raise ValueError("reference.runtime_B_release_and_actual_proofs_missing")
+    except (ValueError, KeyError, TypeError, AttributeError, OSError) as exc:
+        report["reasons"] = [
+            str(exc)
+            if isinstance(exc, ValueError)
+            else "reference.execution_reception_invalid"
+        ]
+    return report
