@@ -1,0 +1,17 @@
+{
+  "B_release": false,
+  "L0": false,
+  "R_D_receipt": "01a19fd9-8f01-7381-8c2f-937cccd3e1ef",
+  "R_closed_on": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+  "SRC_AUTH": false,
+  "formal_economic_oracle_bytes": 1747,
+  "formal_economic_oracle_sha256": "b935b633e29830e30469d9f08bb2666bcb272c2bda2143b7011e7faecaa102b7",
+  "full_adapter_observation_bytes": 4049,
+  "full_adapter_observation_sha256": "0f7a0cb9f377498774555aaef93ddbe4c10ded50644efe16fa87941543779a36",
+  "oracle_permanent_limitation": "C13 DUT 在 oracle 注入的反事实前收快照下，与 4049B oracle 逐字节一致；owned 前史与该 oracle 的同源接续无法证明，因为 oracle 按构造就没有前史。",
+  "pending_diagnostics_not_promoted": true,
+  "production_complete_N": false,
+  "real_1260_execution": false,
+  "real_source_permission": false,
+  "runtime_permission": false
+}

@@ -1,0 +1,59 @@
+{
+  "B_branch_excluded": "df91ea1229ae7d77736601116119455aa41018c7",
+  "authorization_comment": "01a19fdb-b12b-774b-a4ef-a9547d9aec91",
+  "bindings": {
+    "B2-provenance.json": {
+      "bytes": 559,
+      "sha256": "349699248d2d5c720203945ab2c8f197ce0292cfef6aa69764e989134d123ed9"
+    },
+    "B2-unavailable-manifest.json": {
+      "bytes": 58187,
+      "sha256": "ac5517bc01325dfeb1fada82e62722d09aa49c4ef73877ad34d0a1d31beb7f03"
+    },
+    "collection.json": {
+      "bytes": 665277,
+      "sha256": "6ddf320362cfb4ee7a914eb099586c9e05de05f196459df807405e97e7f13aec"
+    },
+    "ledger-B-coverage.json": {
+      "bytes": 125586,
+      "sha256": "07bb27dafc178d7a5b8e887b12c6d154c24d8e9bf0a66e91506cd2538216eac2"
+    },
+    "limitations.json": {
+      "bytes": 869,
+      "sha256": "85767a0dc6869e7521d56ce5eaccd8a30e551033b1cb73ab65f3d0483498935e"
+    },
+    "migration-manifest.json": {
+      "bytes": 32501,
+      "sha256": "55ae24cd39271dfc633d9084b09596cb9f8c9191e869a4f01149a4573ca0556e"
+    },
+    "read-dag.json": {
+      "bytes": 74324,
+      "sha256": "42eaf8366b31b96c0a5fbc81e443f66ebddb62ec29921d8fa51bc1d7bee84e42"
+    },
+    "reference-static-proof.json": {
+      "bytes": 5619,
+      "sha256": "736f7dbab431813892ddb50809b35937d00b0722812ef376cecafdee9594f1d7"
+    },
+    "scope.json": {
+      "bytes": 453,
+      "sha256": "34b165098de39625e87dc6f3e1ec0968c3a53cdaa43e9e7f7092f3c7d8f61326"
+    },
+    "source-inventory.json": {
+      "bytes": 38555,
+      "sha256": "82688a8d7749a4fb9b6e80767fbb97ee93cb159603f210454413b3186ab995f0"
+    },
+    "static-seal.json": {
+      "bytes": 5661,
+      "sha256": "5ac1110499183549057517decbd252421f1bc6a20d0db91c729841421ebefbe5"
+    }
+  },
+  "certifiable": false,
+  "independent_review": "pending EVO887 S",
+  "issuance": "one content-addressed static-source reseal publication; existing seal semantics, not a cryptographic runtime permission",
+  "issued_at_utc": "2026-11-03T05:39:02Z",
+  "issuer_agent_id": "5a307571-9534-4bbc-932c-93ffc9c94d73",
+  "publication_sha256": "6e55f52908616b5e22e210e2542c27b718218c5e58747a0444239301732d4a78",
+  "runtime_consumable": false,
+  "schema": "EVO884.S.SourceBindingPublication/v1",
+  "source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774"
+}
