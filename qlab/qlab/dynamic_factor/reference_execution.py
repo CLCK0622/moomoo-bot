@@ -153,6 +153,13 @@ class ReferenceExecution:
             selection_receipt=selection,
             expected_selection_sha256=digest(selection),
         )
+        # Only a validated C04 plan may register the SAME signal with C06.
+        # This belongs to the recorded lock operation, including worker replay.
+        self.history.prepare_open(
+            signal,
+            expected_signal_sha256=expected_signal_sha256,
+            expected_snapshot_sha256=snap["snapshot_sha256"],
+        )
         self._events.append(
             dict(operation="C06_M_C03_P_C04_LOCK", input_sha256=digest(inputs))
         )
