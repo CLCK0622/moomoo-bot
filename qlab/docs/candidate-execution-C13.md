@@ -76,3 +76,40 @@ readout; it is not a real strategy or reference performance run. META's actual
 20/25/50 transitions use separately supplied synthetic template monitoring.
 The CF01 original expected bytes and fee engine remain untouched. C09/C10
 source, permission, isolated execution and result ownership are separate work.
+
+R item 12 disclosure and handoff erratum (2026-11-03)
+--------------------------------------------------
+
+The earlier C13 HANDOFF phrase "complete 1747 bytes" describes only the
+`projection` subobject. On the fixed R source `047c2885ea9c`, the complete CF01
+`CandidateExecution` envelope is 4049 bytes, SHA-256
+`0f7a0cb9f377498774555aaef93ddbe4c10ded50644efe16fa87941543779a36`.
+Its embedded projection alone equals the published 1747-byte oracle, SHA-256
+`b935b633e29830e30469d9f08bb2666bcb272c2bda2143b7011e7faecaa102b7`.
+The original HANDOFF attachment and oracle remain historical original bytes.
+
+The supplementary R12 correspondence retains all 12 envelope fields, object
+keys, array order and numeric lexemes. Projection and selected holdings map to
+the original oracle; C2_M and C2_P map to the original fee worksheet. Identity
+and selection are derived bindings; schema and pending flags describe this
+component's envelope. Those bindings and flags do not certify prior account
+history or turn this observation into an accepted end-to-end expected output.
+
+R12 remains unmet. The published CF01 source declaration describes a
+counterfactual prior-close snapshot; its publisher assigns inventory and ages
+as literals, without a C05/C06/C04 event history. The existing CF01 test helper
+uses `forward` scope and fold `CF01`. The existing owned candidate accounting
+fixture instead uses frozen training fold `0` and another book. Borrowing it
+fails `candidate.same_owned_account_and_D2_required`. Attempting to construct
+RiskHistory with the helper's scope fails `risk.book_scope_required`; C05 with
+fold `CF01` fails `startup.frozen_fold_required`. These are rejection controls,
+not proof that the economic snapshot could never have a legitimate history.
+
+No corresponding accepted history was located in the inspected repository,
+original D12 fixture package, C13 delivery package or R audit package. Completing
+the missing history requires the corresponding already accepted artifact, or
+separate authorization for new fixture material and its review. Do not infer
+prices, fills, cash flows, origins or acquisition receipts from the snapshot,
+change its input, modify a golden, or substitute another account. The current
+repair stops at this material gap; projection equality and the HANDOFF erratum
+do not close R12 or authorize S, B release or runtime.
