@@ -86,7 +86,7 @@ def identity(version="A-test-version-one"):
     )
 
 
-def rejected_context(call, reason="type_mismatch"):
+def rejected_context(call, reason="scope_mismatch"):
     with pytest.raises(ValueError, match="^B.release_context_" + reason + "$"):
         call()
 
@@ -123,7 +123,7 @@ def test_T13_each_role_uses_real_refusal_not_a_test_double_positive(
     rejected_context(book.snapshot)
     assert args["state"] == before
     assert book._state == before
-    assert book._reasons == ["B.release_context_type_mismatch"]
+    assert book._reasons == ["B.release_context_scope_mismatch"]
 
 
 @pytest.mark.parametrize("point", ["account", "history", "project", "candidate-cache"])
