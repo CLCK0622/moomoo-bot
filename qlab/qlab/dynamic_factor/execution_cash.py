@@ -193,27 +193,20 @@ class CashProof:
 
     @staticmethod
     def release_requested(guard, release_context, expected_release_identity_bytes):
-        return (
-            release_context is not None
-            or expected_release_identity_bytes is not None
-            or (
-                type(guard) is dict
-                and (
-                    guard.get("schema") == "EVO883.BRuntimeGuard/v1"
-                    or any(
-                        guard.get(key) is not None
-                        for key in (
-                            "B_catalog_release_sha256",
-                            "B_release_acceptance_sha256",
-                            "accepted_catalog_sha256",
-                            "release_context_binding",
-                        )
-                    )
-                    or (
-                        type(guard.get("request")) is dict
-                        and "release_binding" in guard["request"]
-                    )
+        return type(guard) is dict and (
+            guard.get("schema") == "EVO883.BRuntimeGuard/v1"
+            or any(
+                guard.get(key) is not None
+                for key in (
+                    "B_catalog_release_sha256",
+                    "B_release_acceptance_sha256",
+                    "accepted_catalog_sha256",
+                    "release_context_binding",
                 )
+            )
+            or (
+                type(guard.get("request")) is dict
+                and "release_binding" in guard["request"]
             )
         )
 
@@ -225,6 +218,11 @@ class CashProof:
         if not CashProof.release_requested(
             guard, release_context, expected_release_identity_bytes
         ):
+            if (
+                release_context is not None
+                or expected_release_identity_bytes is not None
+            ):
+                raise ValueError("B.release_context_scope_mismatch")
             return None
         try:
             from .noncash_v3 import ReleaseContext, check_release_context, checked_guard
@@ -327,6 +325,12 @@ class CashProof:
         ):
             raise ValueError("accounting.cash_proof_state_or_scope_mismatch")
         expected = self._release_identity_bytes
+        if not self.release_requested(
+            guard, release_context, expected_release_identity_bytes
+        ) and (
+            release_context is not None or expected_release_identity_bytes is not None
+        ):
+            raise ValueError("B.release_context_scope_mismatch")
         if (
             expected_release_identity_bytes is not None
             and expected_release_identity_bytes != expected

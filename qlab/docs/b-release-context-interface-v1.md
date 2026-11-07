@@ -1,9 +1,13 @@
-release_context 共同接口规格 v1.0.2（内部传参授权冲突与入口顺序澄清，待核）
+release_context 共同接口规格 v1.0.3（正式／诊断交叉分类具名拒绝）
+
+v1.0.3 按工部 `01a1b7bd-23f3-7b32-8483-db0b504a1f22` 澄清第4节的交叉分类。
+v1.0.2 已核合同保留；本版只修桥侧分类门，不改变12码、共同 checker、数值域或既有前置顺序。
+与 v1.0.2 的逐字 diff 随交。下文的 v1.0.2 本地起点与当时结果属于版本历史。
 
 作者：营缮主事。任务：EVO-881，工部派令 `01a19e47-e352-7af1-a330-9965c15ac876`。
 本件定义接口，不提供 B01 类、接收器或 A 的实现。v1.0.0 已经工部核稿（01a19e53-9ee0）；v1.0.1 落实该评论两条约束。本版响应都水回读 01a19e8e-ed4e：保留已核接口与 12 码，明确内部传参在现有授权内不能闭合，交工部裁定；并补入口顺序及双缺陷矩阵，不把规格澄清称为实现通过。
 
-本版只改此文档；产品基准固定本地头 `0cb4ba91fb5bcf6ea1854a14f51eb54487607599`。
+v1.0.2 当时只改此文档；产品基准固定本地头 `0cb4ba91fb5bcf6ea1854a14f51eb54487607599`。
 其产品全量结果仍属于该固定头，本版没有重跑或升级为 B01/B02 正控。v1.0.1 原字节及逐字 diff 随交。
 
 本地起点：`037e112ef1ab4919b1827e566b0387217ba0edc6`，取自本次 fetch 的远端
@@ -224,6 +228,23 @@ R/P/发布身份、限定输入、A/固定时点证据及外部附注；重算 H
 本表不改 C09 的 B 发布门或 SRC/AUTH 外部门原码。旧静态/合成诊断只在原有明确诊断范围
 继续存在；正式 schema 或含正式 release_binding 的请求不得删字段、改 synthetic 或回退
 旧 guard。缺实现时也不能声称存在正式正控。
+
+### 4.0.1 正式／诊断分类与多余参数（v1.0.3）
+
+分类只由 guard/request 的正式 BR1 schema 和正式 release 字段决定；
+`release_context` 或 `expected_release_identity_bytes` 是否为 None 不参与分类。
+桥侧保留既有正式标记集合：`EVO883.BRuntimeGuard/v1` schema、四个正式 release 字段，
+以及 request 中的 `release_binding`。持久恢复仍按原 BR1 根／绑定数据门检查，
+host 传来的能力或期待 bytes 不得把旧诊断回执升格为正式回执。
+
+| guard/request 分类 | context／期待 bytes | 行为 |
+| --- | --- | --- |
+| 诊断 | 任一个非 None | 在分类门报 `B.release_context_scope_mismatch`；不调用共同 checker，reader0、worker0，状态不推进 |
+| 正式 | context 为 None | 保留既有前置顺序，到能力门报 `B.release_context_required`，不回落诊断 |
+| 诊断 | 两者均为 None | 按 main 的原诊断范围逐路径保持原行为 |
+
+拒绝多余参数不改变原 state/book/guard 身份前置；restore 仍先核 raw/source，再核能力。
+该规则使用已有 scope_mismatch 码，不增加码，也不把该码提升为所有入口的全局最高优先级。
 
 ### 4.1 入口位置与拒绝顺序
 

@@ -645,12 +645,7 @@ class RiskHistory:
     ):
         if not is_sha(expected_sha256) or sha256(raw) != expected_sha256:
             raise ValueError("risk.current_history_bytes_mismatch")
-        formal = (
-            release_context is not None
-            or expected_release_identity_bytes is not None
-            or b"-BR1" in raw
-            or b"release_context_binding" in raw
-        )
+        formal = b"-BR1" in raw or b"release_context_binding" in raw
         payload = (
             json.loads(
                 raw,
@@ -669,6 +664,10 @@ class RiskHistory:
             raise ValueError("risk.history_scope_mismatch")
         if payload.get("history_source_sha256") != code_sha(RiskHistory):
             raise ValueError("risk.history_replay_mismatch")
+        if not formal and (
+            release_context is not None or expected_release_identity_bytes is not None
+        ):
+            raise ValueError("B.release_context_scope_mismatch")
         if formal:
             if set(payload) != {
                 "schema",

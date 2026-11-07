@@ -37,26 +37,23 @@ class ExactOrderCosts(OrderCosts):
             raise ValueError("fee.exact_net_order_membership")
         from .noncash_v3 import assert_consumer_symbols
 
-        formal = (
-            release_context is not None
-            or expected_release_identity_bytes is not None
-            or (
-                isinstance(guard, dict)
-                and (
-                    guard.get("schema") == "EVO883.BRuntimeGuard/v1"
-                    or any(
-                        guard.get(k) is not None
-                        for k in (
-                            "B_catalog_release_sha256",
-                            "B_release_acceptance_sha256",
-                            "accepted_catalog_sha256",
-                            "release_context_binding",
-                        )
-                    )
-                    or "release_binding" in guard.get("request", {})
+        formal = isinstance(guard, dict) and (
+            guard.get("schema") == "EVO883.BRuntimeGuard/v1"
+            or any(
+                guard.get(k) is not None
+                for k in (
+                    "B_catalog_release_sha256",
+                    "B_release_acceptance_sha256",
+                    "accepted_catalog_sha256",
+                    "release_context_binding",
                 )
             )
+            or "release_binding" in guard.get("request", {})
         )
+        if not formal and (
+            release_context is not None or expected_release_identity_bytes is not None
+        ):
+            raise ValueError("B.release_context_scope_mismatch")
         if formal:
             try:
                 from .noncash_v3 import (
