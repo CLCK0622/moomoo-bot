@@ -37,8 +37,12 @@ class BookScopedInputs:
         *,
         policy=None,
         cash_proof=None,
+        release_context=None,
+        expected_release_identity_bytes=None,
     ):
         self._policy = policy or load_conventions()
+        self._release_context = release_context
+        self._release_identity_bytes = expected_release_identity_bytes
         self._cash_proof = cash_proof
         self._profile = validate_solo_profile(profile)
         if not is_sha(book_id):
@@ -65,6 +69,15 @@ class BookScopedInputs:
                     "common_profile_sha256",
                 )
             },
+            policy=self._policy,
+            release_context=self._release_context,
+            expected_release_identity_bytes=self._release_identity_bytes,
+        )
+        self._release_identity_bytes = RiskBook.release_guard(
+            scope["guard"],
+            self._policy,
+            self._release_context,
+            self._release_identity_bytes,
         )
         initial = self._initial
         if (
@@ -76,6 +89,8 @@ class BookScopedInputs:
                 initial["initial_state"],
                 initial["source_sha256"],
                 self._policy,
+                release_context=self._release_context,
+                expected_release_identity_bytes=self._release_identity_bytes,
             )
             != initial
         ):
@@ -87,7 +102,14 @@ class BookScopedInputs:
             raise ValueError("reference.book_snapshot_identity_mismatch")
         # Reuse the original R2/B check. Never clear unknowns, rights or holdings
         # to manufacture a zero origin, and never reconstruct an initial book.
-        check_cash_state(self._state, scope["guard"], self._cash_proof)
+        check_cash_state(
+            self._state,
+            scope["guard"],
+            self._cash_proof,
+            policy=self._policy,
+            release_context=self._release_context,
+            expected_release_identity_bytes=self._release_identity_bytes,
+        )
         if (
             type(self._state.get("initialization_count")) is not int
             or self._state["initialization_count"] != 1
@@ -132,7 +154,14 @@ class BookScopedInputs:
         symbols = list(symbols)
         # Validate the complete batch before invoking the first callback. The
         # B predicate precedes even a membership/eligibility-based read filter.
-        assert_consumer_symbols(scope["guard"], consumer, symbols, self._policy)
+        assert_consumer_symbols(
+            scope["guard"],
+            consumer,
+            symbols,
+            self._policy,
+            release_context=self._release_context,
+            expected_release_identity_bytes=self._release_identity_bytes,
+        )
         eligible = set(scope["numeric_symbols"][date])
         if consumer in {"score", "label", "calibration"}:
             allowed = eligible | ({"QQQ"} if consumer == "label" else set())
@@ -170,6 +199,8 @@ class BookScopedInputs:
             expected_ruling_sha256=expected_ruling_sha256,
             policy=self._policy,
             cash_proof=self._cash_proof,
+            release_context=self._release_context,
+            expected_release_identity_bytes=self._release_identity_bytes,
         )
         required = risk.required_m(
             signal,
@@ -195,6 +226,8 @@ class BookScopedInputs:
                 read_symbol,
                 self._policy,
                 initial=self._initial,
+                release_context=self._release_context,
+                expected_release_identity_bytes=self._release_identity_bytes,
             )
         if any(type(v) not in (int, float) or not finite(v) for v in values.values()):
             raise ValueError("reference.execution_numeric_value_unknown")

@@ -51,9 +51,23 @@ def state_schema(state):
             raise ValueError("reference.zero_state_schema_invalid")
 
 
-def origin(guard, actor, state, source_sha256, policy=None):
+def origin(
+    guard,
+    actor,
+    state,
+    source_sha256,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
-    checked_guard(guard, p)
+    checked_guard(
+        guard,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if actor not in actors() or not is_sha(source_sha256):
         raise ValueError("reference.separate_actor_and_source_required")
     state_schema(state)
@@ -77,12 +91,31 @@ def origin(guard, actor, state, source_sha256, policy=None):
     return dict(payload, zero_origin_receipt_sha256=digest(payload))
 
 
-def acquisition(guard, actor, initial, before, after, route, policy=None):
+def acquisition(
+    guard,
+    actor,
+    initial,
+    before,
+    after,
+    route,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
     if (
         route not in ROUTES
         or actor not in actors()
-        or origin(guard, actor, initial["initial_state"], initial["source_sha256"], p)
+        or origin(
+            guard,
+            actor,
+            initial["initial_state"],
+            initial["source_sha256"],
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         != initial
     ):
         raise ValueError("reference.separate_zero_origin_or_route_required")
@@ -109,21 +142,55 @@ def acquisition(guard, actor, initial, before, after, route, policy=None):
     return dict(payload, route_receipt_sha256=digest(payload))
 
 
-def numeric_read(guard, actor, consumer, symbols, reader, policy=None, *, initial=None):
+def numeric_read(
+    guard,
+    actor,
+    consumer,
+    symbols,
+    reader,
+    policy=None,
+    *,
+    initial=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
     if actor not in actors() or consumer not in CONSUMERS:
         raise ValueError("reference.separate_actor_and_consumer_required")
     # The common B guard dominates the injected numeric callback. Each actor
     # gets its own invocation and receipt, even when the submitted values match.
-    assert_consumer_symbols(guard, consumer, symbols, p)
+    assert_consumer_symbols(
+        guard,
+        consumer,
+        symbols,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if (
         not isinstance(initial, dict)
-        or origin(guard, actor, initial["initial_state"], initial["source_sha256"], p)
+        or origin(
+            guard,
+            actor,
+            initial["initial_state"],
+            initial["source_sha256"],
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         != initial
     ):
         raise ValueError("reference.separate_zero_origin_required")
     values, inner = economic_read_receipt(
-        guard, consumer, symbols, reader, actor=actor, origin=initial, policy=p
+        guard,
+        consumer,
+        symbols,
+        reader,
+        actor=actor,
+        origin=initial,
+        policy=p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
     )
     inner["registry_sha256"] = HASHES["predeclared_reference_registry.json"]
     inner["numeric_read_receipt_sha256"] = digest(
@@ -146,7 +213,17 @@ def numeric_read(guard, actor, consumer, symbols, reader, policy=None, *, initia
     return values, dict(payload, reference_numeric_receipt_sha256=digest(payload))
 
 
-def packet(guard, actor, initial, routes, reads, policy=None):
+def packet(
+    guard,
+    actor,
+    initial,
+    routes,
+    reads,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
     if not isinstance(initial, dict) or not {"initial_state", "source_sha256"}.issubset(
         initial
@@ -154,7 +231,15 @@ def packet(guard, actor, initial, routes, reads, policy=None):
         raise ValueError("reference.separate_zero_origin_required")
     if (
         actor not in actors()
-        or origin(guard, actor, initial["initial_state"], initial["source_sha256"], p)
+        or origin(
+            guard,
+            actor,
+            initial["initial_state"],
+            initial["source_sha256"],
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         != initial
     ):
         raise ValueError("reference.separate_zero_origin_required")
@@ -208,8 +293,22 @@ def mechanism_bindings():
     }
 
 
-def validate_packet(guard, actor, supplied, policy=None, *, scope=None):
-    checked_guard(guard, policy or load_conventions())
+def validate_packet(
+    guard,
+    actor,
+    supplied,
+    policy=None,
+    *,
+    scope=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
+    checked_guard(
+        guard,
+        policy or load_conventions(),
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if scope is not None:
         validate_timing(scope, guard["request"])
         if scope["guard"] != guard:

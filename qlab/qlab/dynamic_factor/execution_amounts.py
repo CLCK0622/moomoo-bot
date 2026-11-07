@@ -89,7 +89,12 @@ class ExactOrderCosts(OrderCosts):
                 expected_release_identity_bytes=raw,
             )
         assert_consumer_symbols(
-            guard, "order", [s for s, q in orders.items() if q], self.policy
+            guard,
+            "order",
+            [s for s, q in orders.items() if q],
+            self.policy,
+            release_context=release_context,
+            expected_release_identity_bytes=raw if formal else None,
         )
         floor = float(
             re.search(

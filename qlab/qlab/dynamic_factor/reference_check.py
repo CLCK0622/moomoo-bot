@@ -34,6 +34,7 @@ MODULES = {
         "contract",
     },
     "reference_v3_scope": {
+        "noncash_v3",
         "hashlib",
         "json",
         "math",

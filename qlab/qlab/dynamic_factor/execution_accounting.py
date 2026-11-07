@@ -356,7 +356,12 @@ class ExecutionAccount:
     def _fill(self, fact, expected_sha256, *, model=False):
         reject_b2_inputs(fact, "orders")
         assert_consumer_symbols(
-            self._guard, "order", [fact.get("symbol")], self._policy
+            self._guard,
+            "order",
+            [fact.get("symbol")],
+            self._policy,
+            release_context=self._release_context,
+            expected_release_identity_bytes=self._release_identity_bytes,
         )
         if not is_sha(expected_sha256) or digest(fact) != expected_sha256:
             raise ValueError("accounting.fill_source_binding_mismatch")
@@ -554,7 +559,12 @@ class ExecutionAccount:
                 raise ValueError("accounting.named_training_model_only")
             reject_b2_inputs(evidence, "orders")
             assert_consumer_symbols(
-                self._guard, "order", evidence.get("prices", {}), self._policy
+                self._guard,
+                "order",
+                evidence.get("prices", {}),
+                self._policy,
+                release_context=self._release_context,
+                expected_release_identity_bytes=self._release_identity_bytes,
             )
             if (
                 digest(evidence) != expected_evidence_sha256
@@ -791,7 +801,12 @@ class ExecutionAccount:
             self._ready()
             reject_b2_inputs(evidence, "holdings_cash")
             assert_consumer_symbols(
-                self._guard, "cash_valuation", evidence.get("prices", {}), self._policy
+                self._guard,
+                "cash_valuation",
+                evidence.get("prices", {}),
+                self._policy,
+                release_context=self._release_context,
+                expected_release_identity_bytes=self._release_identity_bytes,
             )
             date = evidence.get("session")
             next_date = self._policy.calendar[

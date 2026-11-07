@@ -142,7 +142,14 @@ def benchmark_valuation(request, *, conventions=None):
     )
 
 
-def integer_cash_valuation(request, *, conventions=None, factor_scope=False):
+def integer_cash_valuation(
+    request,
+    *,
+    conventions=None,
+    factor_scope=False,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     from .input_disposition import quarantine_check
 
     policy = conventions or load_conventions()
@@ -173,7 +180,11 @@ def integer_cash_valuation(request, *, conventions=None, factor_scope=False):
         cash = request["known_cash"]
         as_of = iso_date(request["as_of"])
         inventory = request["inventory"]
-        quarantine = quarantine_check(request)
+        quarantine = quarantine_check(
+            request,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         if policy.document["version"] == "v3.0.0" and factor_scope:
             from .noncash_v3 import assert_consumer_symbols
 
@@ -188,19 +199,28 @@ def integer_cash_valuation(request, *, conventions=None, factor_scope=False):
                 "holdings_valuation",
                 held,
                 policy,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
             )
             assert_consumer_symbols(
                 request.get("noncash_guard_manifest"),
                 "cash_valuation",
                 [e.get("symbol") for e in request.get("events", [])],
                 policy,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
             )
             metrics["factor_arm_numeric_scope_checked"] = True
         if quarantine["ok"] and policy.document["version"] in ("v2.0.0", "v3.0.0"):
             from .k5 import k5_dependency_check, CHILDREN
 
             k5_reports = [
-                k5_dependency_check(dep, conventions=policy)
+                k5_dependency_check(
+                    dep,
+                    conventions=policy,
+                    release_context=release_context,
+                    expected_release_identity_bytes=expected_release_identity_bytes,
+                )
                 for dep in request.get("k5_dependencies", [])
             ]
             k5_reasons = [r for report in k5_reports for r in report["reasons"]]

@@ -57,7 +57,16 @@ def _dates(values):
         raise ValueError("input_manifest.date_vector_required")
 
 
-def _prepare(profile, scope, manifest, expected):
+def _prepare(
+    profile,
+    scope,
+    manifest,
+    expected,
+    *,
+    policy=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     if type(manifest) is not dict or set(manifest) != MANIFEST_KEYS:
         raise ValueError("input_manifest.schema_or_injection_forbidden")
     if manifest["schema"] != SCHEMA:
@@ -82,6 +91,9 @@ def _prepare(profile, scope, manifest, expected):
         scope,
         dict(train=scope["train"], warmup=scope["warmup"]),
         {key: scope["bindings"][key] for key in BINDING_KEYS},
+        policy=policy,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
     )
     if (
         manifest["book_id"] != expected["book_id"]
@@ -120,7 +132,12 @@ def _prepare(profile, scope, manifest, expected):
     for role in SLOTS:
         slot = slots[role]
         assert_consumer_symbols(
-            scope["guard"], slot["requested_consumer"], slot["symbols"]
+            scope["guard"],
+            slot["requested_consumer"],
+            slot["symbols"],
+            policy,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
         )
     return deepcopy(manifest)
 
@@ -135,6 +152,9 @@ def prepare_input_envelope(
     expected_manifest_sha256,
     expected_scope_sha256,
     expected_profile_sha256,
+    policy=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
 ):
     """Structural host preflight only; hashes are expectations, not authority.
 
@@ -151,7 +171,15 @@ def prepare_input_envelope(
     )
     prepared, reasons = None, []
     try:
-        prepared = _prepare(profile, scope, manifest, expected)
+        prepared = _prepare(
+            profile,
+            scope,
+            manifest,
+            expected,
+            policy=policy,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
     except (ValueError, KeyError, TypeError, AttributeError, OverflowError) as exc:
         reasons = [
             str(exc)

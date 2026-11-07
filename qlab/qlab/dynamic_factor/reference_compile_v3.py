@@ -8,15 +8,33 @@ from .fees import finite
 from .reference_validation import validate_timing
 
 
-def seal_scope(sealed, train, warmup, policy=None):
+def seal_scope(
+    sealed,
+    train,
+    warmup,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
-    checked_manifest(sealed, p)
+    checked_manifest(
+        sealed,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if (
         p.document["version"] != "v3.0.0"
         or sealed["request"]["role"] != "external_reference_roles"
     ):
         raise ValueError("reference.shared_v3_role_required")
-    guard = checked_guard(sealed["request"]["noncash_guard_manifest"], p)
+    guard = checked_guard(
+        sealed["request"]["noncash_guard_manifest"],
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     train, warmup = list(train), list(warmup)
     if (
         not train
@@ -31,7 +49,9 @@ def seal_scope(sealed, train, warmup, policy=None):
         for date in warmup + train
     }
     payload = dict(
-        schema="EVO900.reference-shared-scope/v3",
+        schema="EVO900.reference-shared-scope/v3-BR1"
+        if guard.get("schema") == "EVO883.BRuntimeGuard/v1"
+        else "EVO900.reference-shared-scope/v3",
         guard=guard,
         days=days,
         train=train,
@@ -47,7 +67,9 @@ def seal_scope(sealed, train, warmup, policy=None):
             {date: day["eligible"] for date, day in days.items()}
         ),
         source_evidence_version_sha256=digest(sealed["request"]["records"]),
-        B_catalog_release_sha256=guard["accepted_catalog_sha256"],
+        B_catalog_release_sha256=guard["B_catalog_release_sha256"]
+        if guard.get("schema") == "EVO883.BRuntimeGuard/v1"
+        else guard["accepted_catalog_sha256"],
         B_derivation_sha256=guard.get("B_derivation_sha256", guard["catalog_sha256"]),
         mode=sealed["request"]["mode"],
         sealed_at=sealed["request"]["sealed_at"],
@@ -62,11 +84,21 @@ def seal_scope(sealed, train, warmup, policy=None):
         runtime_consumable=False,
         certifiable=False,
     )
+    if guard.get("schema") == "EVO883.BRuntimeGuard/v1":
+        payload["B_release_acceptance_sha256"] = guard["B_release_acceptance_sha256"]
     validate_timing(payload, guard["request"])
     return dict(payload, scope_sha256=digest(payload))
 
 
-def compile_panel(scope, reader, policy=None, *, reference_proofs=None):
+def compile_panel(
+    scope,
+    reader,
+    policy=None,
+    *,
+    reference_proofs=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     """The numeric callback sees E(t) only; UNKNOWN never becomes a QQQ plan."""
     from .reference_v3_scope import validate_scope
 
@@ -83,8 +115,16 @@ def compile_panel(scope, reader, policy=None, *, reference_proofs=None):
                 "common_profile_sha256",
             )
         },
+        policy=p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
     )
-    guard = checked_guard(scope["guard"], p)
+    guard = checked_guard(
+        scope["guard"],
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if reference_proofs is not None:
         from .reference_noncash import actors, validate_packet
 
@@ -93,11 +133,26 @@ def compile_panel(scope, reader, policy=None, *, reference_proofs=None):
         ):
             raise ValueError("reference.separate_three_proofs_required")
         for actor, packet in reference_proofs.items():
-            validate_packet(guard, actor, packet, p, scope=scope)
+            validate_packet(
+                guard,
+                actor,
+                packet,
+                p,
+                scope=scope,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
+            )
     rows = []
     for date in scope["warmup"] + scope["train"]:
         symbols = scope["numeric_symbols"][date]
-        assert_consumer_symbols(guard, "score", symbols, p)
+        assert_consumer_symbols(
+            guard,
+            "score",
+            symbols,
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         prices = {s: reader(date, s) for s in symbols}
         if any(not finite(v) or v <= 0 for v in prices.values()):
             raise ValueError("reference.numeric_input_invalid")
@@ -105,13 +160,39 @@ def compile_panel(scope, reader, policy=None, *, reference_proofs=None):
     return dict(schema="reference.train_panel/v1", rows=rows)
 
 
-def compile_inputs(scope, price_reader, benchmark_reader, policy=None):
+def compile_inputs(
+    scope,
+    price_reader,
+    benchmark_reader,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     from .reference_registry_v3 import artifact
 
     p = policy or load_conventions()
-    panel = compile_panel(scope, price_reader, p)
-    guard = checked_guard(scope["guard"], p)
-    assert_consumer_symbols(guard, "label", ["QQQ"], p)
+    panel = compile_panel(
+        scope,
+        price_reader,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
+    guard = checked_guard(
+        scope["guard"],
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
+    assert_consumer_symbols(
+        guard,
+        "label",
+        ["QQQ"],
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     rows = []
     for date in scope["warmup"] + scope["train"]:
         value = benchmark_reader(date, "QQQ")

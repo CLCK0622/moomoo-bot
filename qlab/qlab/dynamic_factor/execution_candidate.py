@@ -554,7 +554,12 @@ class ExecutionObservation:
             if date not in series._dates:
                 raise ValueError("candidate.scores_outside_original_train")
             assert_consumer_symbols(
-                account._guard, "score", list(values), account._policy
+                account._guard,
+                "score",
+                list(values),
+                account._policy,
+                release_context=account._release_context,
+                expected_release_identity_bytes=account._release_identity_bytes,
             )
         result = series.evaluate(
             benchmark, expected_benchmark_sha256=expected_benchmark_sha256

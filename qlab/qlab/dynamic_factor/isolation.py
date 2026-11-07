@@ -52,7 +52,9 @@ def timestamp(s):
     return t
 
 
-def seal_manifest(request, policy=None):
+def seal_manifest(
+    request, policy=None, *, release_context=None, expected_release_identity_bytes=None
+):
     """Close the input schema before scoring; no outcome-dependent selectors."""
     reject_b2_inputs(request, "features")
     p = policy or load_conventions()
@@ -79,7 +81,12 @@ def seal_manifest(request, policy=None):
     if p.document["version"] == "v3.0.0":
         from .noncash_v3 import checked_guard
 
-        guard = checked_guard(request.get("noncash_guard_manifest"), p)
+        guard = checked_guard(
+            request.get("noncash_guard_manifest"),
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         if (
             timestamp(guard["request"]["sealed_at"]) > timestamp(request["sealed_at"])
             or guard["request"]["first_performance_at"]
@@ -133,7 +140,11 @@ def seal_manifest(request, policy=None):
     if p.document["version"] == "v3.0.0":
         from .event_quarantine import normalize_dependencies, _project, sources
 
-        graph = normalize_dependencies({"isolation_manifest": sealed})
+        graph = normalize_dependencies(
+            {"isolation_manifest": sealed},
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         projected = {r["id"]: r for r in _project(graph, sources()[0])}
         for record in records:
             if record["state"] == "VERIFIED_USABLE" and any(
@@ -143,15 +154,34 @@ def seal_manifest(request, policy=None):
     return sealed
 
 
-def checked_manifest(sealed, policy):
-    expected = seal_manifest(sealed["request"], policy)
+def checked_manifest(
+    sealed, policy, *, release_context=None, expected_release_identity_bytes=None
+):
+    expected = seal_manifest(
+        sealed["request"],
+        policy,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if expected != sealed:
         raise ValueError("isolation.sealed_identity_mismatch")
 
 
-def eligible_day(sealed, date, policy=None):
+def eligible_day(
+    sealed,
+    date,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
-    checked_manifest(sealed, p)
+    checked_manifest(
+        sealed,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     return _eligible_day(sealed, date, p)
 
 
@@ -277,10 +307,24 @@ def rank_scores(scores, eligible):
     return result
 
 
-def score_day(sealed, date, scorer, policy=None):
+def score_day(
+    sealed,
+    date,
+    scorer,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     """The scorer sees E(t) only. Labels/returns are not an input to E(t)."""
     p = policy or load_conventions()
-    day = eligible_day(sealed, date, p)
+    day = eligible_day(
+        sealed,
+        date,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     ranks = None
     scores = None
     if day["quantity_state"] == "VERIFIED_GE50":
@@ -304,14 +348,27 @@ def score_day(sealed, date, scorer, policy=None):
     return dict(payload, rank_receipt_sha256=digest(payload))
 
 
-def verify_rank_receipt(receipt, sealed, policy=None):
+def verify_rank_receipt(
+    receipt,
+    sealed,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
     if (
         digest({k: v for k, v in receipt.items() if k != "rank_receipt_sha256"})
         != receipt["rank_receipt_sha256"]
     ):
         raise ValueError("isolation.rank_receipt_identity_mismatch")
-    day = eligible_day(sealed, receipt["day"]["date"], p)
+    day = eligible_day(
+        sealed,
+        receipt["day"]["date"],
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if day != receipt["day"] or day["quantity_state"] != "VERIFIED_GE50":
         raise ValueError("isolation.ranked_quantity_or_mask_mismatch")
     ids = p.document["variance_layers"]["family_definitions"]["candidate_members"]
@@ -336,14 +393,21 @@ def verify_rank_receipt(receipt, sealed, policy=None):
     return day
 
 
-def selection_projection(request, policy):
+def selection_projection(
+    request, policy, *, release_context=None, expected_release_identity_bytes=None
+):
     """Remove only explicitly tagged selection consumers from the old blanket halt.
 
     Holdings, rights, cash and untagged consumers retain their original blockers.
     Isolated inputs remain in the returned audit list; U64 is never rewritten.
     """
     sealed = request["isolation_manifest"]
-    checked_manifest(sealed, policy)
+    checked_manifest(
+        sealed,
+        policy,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     projected, removed, days = deepcopy(request), [], {}
     fields = {
         "feature",
@@ -361,7 +425,16 @@ def selection_projection(request, policy):
         for item in request.get(key, []):
             if item.get("consumer_role") in ROLES and item.get("field") in fields:
                 d = item["date"]
-                days.setdefault(d, eligible_day(sealed, d, policy))
+                days.setdefault(
+                    d,
+                    eligible_day(
+                        sealed,
+                        d,
+                        policy,
+                        release_context=release_context,
+                        expected_release_identity_bytes=expected_release_identity_bytes,
+                    ),
+                )
                 state = days[d]["states"].get(item.get("symbol"), "UNKNOWN")
                 if state != "VERIFIED_USABLE":
                     removed.append(
@@ -380,14 +453,32 @@ def selection_projection(request, policy):
     return projected, removed, days
 
 
-def isolation_readout(request, *, conventions=None):
+def isolation_readout(
+    request,
+    *,
+    conventions=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = conventions or load_conventions()
     metrics, reasons = {"rank_receipt": None, "quantity_state": None}, []
     try:
         if set(request) != {"manifest", "date", "scores"}:
             raise ValueError("isolation.readout_schema_invalid")
-        sealed = seal_manifest(request["manifest"], p)
-        receipt = score_day(sealed, request["date"], lambda names: request["scores"], p)
+        sealed = seal_manifest(
+            request["manifest"],
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
+        receipt = score_day(
+            sealed,
+            request["date"],
+            lambda names: request["scores"],
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         metrics.update(
             rank_receipt=receipt,
             quantity_state=receipt["day"]["quantity_state"],

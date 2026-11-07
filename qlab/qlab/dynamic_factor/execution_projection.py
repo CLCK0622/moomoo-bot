@@ -313,7 +313,14 @@ def project(
         for row in signal["factor_scores"].values():
             symbols.update(row)
     risk_book._check_release()
-    assert_consumer_symbols(risk_book._guard, "order", symbols, policy)
+    assert_consumer_symbols(
+        risk_book._guard,
+        "order",
+        symbols,
+        policy,
+        release_context=risk_book._release_context,
+        expected_release_identity_bytes=risk_book._release_identity_bytes,
+    )
     if (
         close["inventory"] != original
         or amount(close["cash"]) != amount(state["cash"])

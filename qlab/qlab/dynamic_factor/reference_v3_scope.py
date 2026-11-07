@@ -46,7 +46,34 @@ def hash_value(value):
     )
 
 
-def validate_scope(scope, view, binding):
+def validate_scope(
+    scope,
+    view,
+    binding,
+    *,
+    policy=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
+    formal = isinstance(scope, dict) and (
+        scope.get("schema") == "EVO900.reference-shared-scope/v3-BR1"
+        or (
+            isinstance(scope.get("guard"), dict)
+            and (
+                scope["guard"].get("schema") == "EVO883.BRuntimeGuard/v1"
+                or any(
+                    scope["guard"].get(k) is not None
+                    for k in (
+                        "B_catalog_release_sha256",
+                        "B_release_acceptance_sha256",
+                        "accepted_catalog_sha256",
+                        "release_context_binding",
+                    )
+                )
+                or "release_binding" in scope["guard"].get("request", {})
+            )
+        )
+    )
     fields = {
         "schema",
         "guard",
@@ -71,6 +98,8 @@ def validate_scope(scope, view, binding):
         "certifiable",
         "scope_sha256",
     }
+    if formal:
+        fields.add("B_release_acceptance_sha256")
     if (
         not isinstance(scope, dict)
         or set(scope) != fields
@@ -93,7 +122,12 @@ def validate_scope(scope, view, binding):
     ):
         raise ValueError("reference.scope_schema_invalid")
     if (
-        scope["schema"] != "EVO900.reference-shared-scope/v3"
+        scope["schema"]
+        != (
+            "EVO900.reference-shared-scope/v3-BR1"
+            if formal
+            else "EVO900.reference-shared-scope/v3"
+        )
         or scope["train"] != list(view["train"])
         or scope["warmup"] != list(view["warmup"])
         or set(scope["days"]) != set(view["train"])
@@ -104,6 +138,23 @@ def validate_scope(scope, view, binding):
         raise ValueError("reference.scope_view_or_preperformance_mismatch")
     guard = scope["guard"]
     validate_timing(scope, guard["request"])
+    if not formal and (
+        release_context is not None or expected_release_identity_bytes is not None
+    ):
+        raise ValueError("B.release_context_scope_mismatch")
+    if formal:
+        if release_context is None:
+            raise ValueError("B.release_context_required")
+        if policy is None:
+            raise ValueError("B.release_context_scope_mismatch")
+        from .noncash_v3 import checked_guard
+
+        checked_guard(
+            guard,
+            policy,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
     binding_keys = {
         "conventions_version",
         "conventions_status",
@@ -129,7 +180,7 @@ def validate_scope(scope, view, binding):
         raise ValueError("reference.guard_identity_invalid")
     catalog = guard["request"]["catalog"]
     if (
-        guard["catalog_sha256"] != digest(catalog)
+        (not formal and guard["catalog_sha256"] != digest(catalog))
         or catalog["universe"] != scope["universe"]
         or len(scope["universe"]) != 64
         or len(set(scope["universe"])) != 64
@@ -156,13 +207,29 @@ def validate_scope(scope, view, binding):
             "catalog_registration_only",
             "fact_counts",
         }
+        - (
+            {"schema", "B_release_acceptance_sha256", "seal_status"}
+            if formal
+            else set()
+        )
     ):
         raise ValueError("reference.guard_schema_invalid")
+    if formal:
+        if (
+            guard["catalog_sha256"] != release_context.h_c
+            or guard["accepted_catalog_sha256"] != release_context.h_c
+            or scope["B_catalog_release_sha256"] != release_context.h_r
+            or scope["B_release_acceptance_sha256"] != release_context.h_a
+            or scope["B_derivation_sha256"] != release_context.h_d
+        ):
+            raise ValueError("B.release_context_release_mismatch")
     if (
-        guard["accepted_catalog_sha256"] is not None
-        or scope["B_catalog_release_sha256"] is not None
-        or any(not strings(guard[k]) for k in ("B", "unknown", "children"))
-    ):
+        not formal
+        and (
+            guard["accepted_catalog_sha256"] is not None
+            or scope["B_catalog_release_sha256"] is not None
+        )
+    ) or any(not strings(guard[k]) for k in ("B", "unknown", "children")):
         raise ValueError("reference.runtime_B_release_not_published")
     if "fact_counts" in guard and (
         set(guard["fact_counts"]) != {"known_unclosed", "UNKNOWN"}
@@ -178,7 +245,11 @@ def validate_scope(scope, view, binding):
         "signal_close",
         "prior_guard_sha256",
         "catalog_registration",
-    } or set(catalog) != {"universe", "calendar_sha256", "entries"}:
+    } - ({"release_binding"} if formal else set()) or set(catalog) != {
+        "universe",
+        "calendar_sha256",
+        "entries",
+    }:
         raise ValueError("reference.guard_schema_invalid")
     for entry in entries:
         base_entry = {
@@ -235,7 +306,8 @@ def validate_scope(scope, view, binding):
     if [e["symbol"] for e in entries] != scope["universe"]:
         raise ValueError("reference.same_B_catalog_required")
     if (
-        guard["request"]["synthetic"] is not True
+        not formal
+        and guard["request"]["synthetic"] is not True
         and guard["catalog_sha256"] != REGISTERED_CATALOG_SHA256
     ):
         raise ValueError("reference.same_registered_v21_derivation_required")

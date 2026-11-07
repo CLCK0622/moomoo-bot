@@ -133,7 +133,9 @@ def event_receipts(doc):
     ]
 
 
-def normalize_dependencies(request):
+def normalize_dependencies(
+    request, *, release_context=None, expected_release_identity_bytes=None
+):
     """Flatten supported consumer scopes before evaluating any formal value.
 
     Node identities remain global across folds/states, so duplicate or
@@ -199,7 +201,12 @@ def normalize_dependencies(request):
         if "noncash_guard_manifest" in declaration:
             from .noncash_v3 import checked_guard
 
-            guard = checked_guard(declaration["noncash_guard_manifest"], policy)
+            guard = checked_guard(
+                declaration["noncash_guard_manifest"],
+                policy,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
+            )
             guarded = set(guard["B"]) | set(guard["unknown"])
         fields = {
             "symbol",
@@ -352,7 +359,11 @@ def normalize_dependencies(request):
         from .noncash_v3 import checked_guard
 
         extra_symbols.update(
-            checked_guard(request["noncash_guard_manifest"])["children"]
+            checked_guard(
+                request["noncash_guard_manifest"],
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
+            )["children"]
         )
     validate_consumer(
         {
@@ -485,7 +496,9 @@ def _project(request, doc):
     return [done[row["id"]] for row in rows]
 
 
-def quarantine_check(request):
+def quarantine_check(
+    request, *, release_context=None, expected_release_identity_bytes=None
+):
     """Read-only business boundary; all 40 records and 15 relations survive.
 
     readouts is the conservative formal projection when any requested consumer
@@ -495,7 +508,14 @@ def quarantine_check(request):
     reasons, projected, doc = [], None, None
     try:
         doc, _ = sources()
-        projected = _project(normalize_dependencies(request), doc)
+        projected = _project(
+            normalize_dependencies(
+                request,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
+            ),
+            doc,
+        )
         if any(row["reasons"] for row in projected):
             reasons.append("data.v10_quarantined_dependency")
         if request.get("skip_invalid_folds") or request.get("valid_only"):

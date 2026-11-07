@@ -160,7 +160,13 @@ def inventory_reachability(request, policy):
     }
 
 
-def k5_dependency_check(request, *, conventions=None):
+def k5_dependency_check(
+    request,
+    *,
+    conventions=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = conventions or load_conventions()
     metrics = {
         "dependency_value": None,
@@ -211,13 +217,20 @@ def k5_dependency_check(request, *, conventions=None):
                 acquisition_check,
             )
 
-            guard = checked_guard(request["noncash_guard_manifest"], p)
+            guard = checked_guard(
+                request["noncash_guard_manifest"],
+                p,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
+            )
             expected = no_dependency_receipt(
                 guard,
                 request["actor"],
                 request["zero_origin"],
                 request["numeric_read_receipts"],
                 p,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
             )
             if (
                 request.get("no_dependency_receipt") != expected
@@ -232,6 +245,8 @@ def k5_dependency_check(request, *, conventions=None):
                 request["state"],
                 "old_rights",
                 p,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
             )
             metrics.update(
                 inventory_origin_dependency_closed=True,

@@ -649,7 +649,14 @@ class RiskBook:
             if symbol == "QQQ":
                 raise ValueError("risk.QQQ_base_policy_separate")
             self._check_release()
-            assert_consumer_symbols(self._guard, "order", [symbol], self._policy)
+            assert_consumer_symbols(
+                self._guard,
+                "order",
+                [symbol],
+                self._policy,
+                release_context=self._release_context,
+                expected_release_identity_bytes=self._release_identity_bytes,
+            )
             clock = self._state["_risk_clock"]
             remaining = cooldown_remaining(clock, symbol, self._date, self._policy)
             regular = self.decision_due()["regular_decision"]

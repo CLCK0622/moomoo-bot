@@ -47,9 +47,12 @@ def instant(value):
     return parsed
 
 
-def seal_guard(request, policy=None):
+def seal_guard(
+    request, policy=None, *, release_context=None, expected_release_identity_bytes=None
+):
     p = policy or load_conventions()
     required = {"catalog", "mode", "sealed_at", "first_performance_at", "synthetic"}
+    formal = isinstance(request, dict) and "release_binding" in request
     if (
         p.document["version"] != "v3.0.0"
         or not isinstance(request, dict)
@@ -57,10 +60,15 @@ def seal_guard(request, policy=None):
         or set(request)
         - required
         - {"signal_close", "prior_guard_sha256", "catalog_registration"}
+        - ({"release_binding"} if formal else set())
         or request["mode"] not in {"history", "forward"}
         or type(request["synthetic"]) is not bool
     ):
         raise ValueError("B.guard_schema_invalid")
+    if not formal and (
+        release_context is not None or expected_release_identity_bytes is not None
+    ):
+        raise ValueError("B.release_context_scope_mismatch")
     sealed = instant(request["sealed_at"])
     if "prior_guard_sha256" in request and (
         request["mode"] != "forward" or not is_sha(request["prior_guard_sha256"])
@@ -156,7 +164,16 @@ def seal_guard(request, policy=None):
             )
         ):
             raise ValueError("B.v21_registered_derivation_required")
-    if (
+    if formal:
+        check_release_context(
+            release_context,
+            policy=p,
+            request=request,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
+        if registration is not None:
+            raise ValueError("B.release_context_scope_mismatch")
+    elif (
         not request["synthetic"]
         and registration is None
         and (ACCEPTED_CATALOG_SHA256 is None or catalog_sha != ACCEPTED_CATALOG_SHA256)
@@ -181,11 +198,65 @@ def seal_guard(request, policy=None):
             catalog_registration_only=True,
             fact_counts=derived["fact_counts"],
         )
+    if formal:
+        payload.update(
+            schema="EVO883.BRuntimeGuard/v1",
+            catalog_sha256=release_context.h_c,
+            accepted_catalog_sha256=release_context.h_c,
+            B_catalog_release_sha256=release_context.h_r,
+            B_release_acceptance_sha256=release_context.h_a,
+            B_derivation_sha256=release_context.h_d,
+            catalog_registration_only=False,
+            fact_counts=dict(
+                known_unclosed=sum(
+                    r["fact_state"] == "UNRESOLVED" for r in catalog["entries"]
+                ),
+                UNKNOWN=sum(r["fact_state"] == "UNKNOWN" for r in catalog["entries"]),
+            ),
+            seal_status="seal_pending",
+        )
     return dict(payload, noncash_guard_manifest_sha256=digest(payload))
 
 
-def checked_guard(guard, policy=None):
-    if not isinstance(guard, dict) or seal_guard(guard["request"], policy) != guard:
+def checked_guard(
+    guard, policy=None, *, release_context=None, expected_release_identity_bytes=None
+):
+    if not isinstance(guard, dict):
+        raise ValueError("B.guard_identity_mismatch")
+    request = guard["request"]
+    formal = (
+        guard.get("schema") == "EVO883.BRuntimeGuard/v1"
+        or any(
+            guard.get(k) is not None
+            for k in (
+                "B_catalog_release_sha256",
+                "B_release_acceptance_sha256",
+                "accepted_catalog_sha256",
+                "release_context_binding",
+            )
+        )
+        or (isinstance(request, dict) and "release_binding" in request)
+    )
+    if not formal and (
+        release_context is not None or expected_release_identity_bytes is not None
+    ):
+        raise ValueError("B.release_context_scope_mismatch")
+    if formal and (not isinstance(request, dict) or "release_binding" not in request):
+        check_release_context(
+            release_context,
+            policy=policy or load_conventions(),
+            request=request,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
+    if (
+        seal_guard(
+            request,
+            policy,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
+        != guard
+    ):
         raise ValueError("B.guard_identity_mismatch")
     return guard
 
@@ -201,36 +272,108 @@ def actor_ids(policy=None):
     )
 
 
-def allowed_symbols(guard, policy=None):
+def allowed_symbols(
+    guard, policy=None, *, release_context=None, expected_release_identity_bytes=None
+):
     p = policy or load_conventions()
-    checked_guard(guard, p)
+    checked_guard(
+        guard,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     return set(p.profile["universe"]) - set(guard["B"]) - set(guard["unknown"]) | {
         p.profile["portfolio"]["base_ticker"]
     }
 
 
-def assert_consumer_symbols(guard, consumer, symbols, policy=None):
+def assert_consumer_symbols(
+    guard,
+    consumer,
+    symbols,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     if consumer not in CONSUMERS:
         raise ValueError("B.factor_consumer_required_reference_proof_deferred")
-    if not set(symbols).issubset(allowed_symbols(guard, policy)):
+    if not set(symbols).issubset(
+        allowed_symbols(
+            guard,
+            policy,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
+    ):
         raise ValueError("B.parent_unknown_or_child_numeric_read_forbidden")
 
 
-def guarded_value(guard, consumer, symbol, reader, *, policy=None):
+def guarded_value(
+    guard,
+    consumer,
+    symbol,
+    reader,
+    *,
+    policy=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     """The only injected numeric-reader call, dominated by the symbol guard."""
-    assert_consumer_symbols(guard, consumer, [symbol], policy)
+    assert_consumer_symbols(
+        guard,
+        consumer,
+        [symbol],
+        policy,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     return reader(symbol)
 
 
-def economic_values(guard, consumer, symbols, reader, *, policy=None):
-    assert_consumer_symbols(guard, consumer, symbols, policy)
+def economic_values(
+    guard,
+    consumer,
+    symbols,
+    reader,
+    *,
+    policy=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
+    assert_consumer_symbols(
+        guard,
+        consumer,
+        symbols,
+        policy,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     return {
-        s: guarded_value(guard, consumer, s, reader, policy=policy) for s in symbols
+        s: guarded_value(
+            guard,
+            consumer,
+            s,
+            reader,
+            policy=policy,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
+        for s in symbols
     }
 
 
 def economic_read_receipt(
-    guard, consumer, symbols, reader, *, actor=None, origin=None, policy=None
+    guard,
+    consumer,
+    symbols,
+    reader,
+    *,
+    actor=None,
+    origin=None,
+    policy=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
 ):
     """Witness the numeric boundary; a catalog/hash lookup is not this receipt."""
     p = policy or load_conventions()
@@ -250,7 +393,13 @@ def economic_read_receipt(
     if actor in actor_ids(p):
         if (
             zero_origin(
-                guard, actor, origin["initial_state"], origin["source_sha256"], p
+                guard,
+                actor,
+                origin["initial_state"],
+                origin["source_sha256"],
+                p,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
             )
             != origin
         ):
@@ -262,7 +411,15 @@ def economic_read_receipt(
         "reference/MREF-F4-L020",
     }:
         raise ValueError("B.actor_bound_numeric_origin_required")
-    values = economic_values(guard, consumer, symbols, reader, policy=p)
+    values = economic_values(
+        guard,
+        consumer,
+        symbols,
+        reader,
+        policy=p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     payload = dict(
         actor=actor,
         zero_origin_receipt_sha256=origin["zero_origin_receipt_sha256"],
@@ -325,9 +482,23 @@ def zero_exposure(state, guard, *, initial=False):
             raise ValueError("B.guarded_pending_buy")
 
 
-def zero_origin(guard, actor, state, source_sha256, policy=None):
+def zero_origin(
+    guard,
+    actor,
+    state,
+    source_sha256,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
-    checked_guard(guard, p)
+    checked_guard(
+        guard,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if actor not in actor_ids(p) or not is_sha(source_sha256):
         raise ValueError("B.actor_and_source_receipt_required")
     zero_exposure(state, guard, initial=True)
@@ -349,15 +520,37 @@ def zero_origin(guard, actor, state, source_sha256, policy=None):
     return dict(payload, zero_origin_receipt_sha256=digest(payload))
 
 
-def acquisition_check(guard, actor, origin, before, after, route, policy=None):
+def acquisition_check(
+    guard,
+    actor,
+    origin,
+    before,
+    after,
+    route,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
-    checked_guard(guard, p)
+    checked_guard(
+        guard,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if route not in ROUTES or actor not in actor_ids(p):
         raise ValueError("B.acquisition_route_or_actor_unknown")
     if (
         not isinstance(origin, dict)
         or zero_origin(
-            guard, actor, origin["initial_state"], origin["source_sha256"], p
+            guard,
+            actor,
+            origin["initial_state"],
+            origin["source_sha256"],
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
         )
         != origin
     ):
@@ -378,12 +571,34 @@ def acquisition_check(guard, actor, origin, before, after, route, policy=None):
     )
 
 
-def no_dependency_receipt(guard, actor, origin, reads, policy=None):
+def no_dependency_receipt(
+    guard,
+    actor,
+    origin,
+    reads,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     """Close only new-path child-price dependencies, separately for each actor."""
     p = policy or load_conventions()
-    checked_guard(guard, p)
+    checked_guard(
+        guard,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if (
-        zero_origin(guard, actor, origin["initial_state"], origin["source_sha256"], p)
+        zero_origin(
+            guard,
+            actor,
+            origin["initial_state"],
+            origin["source_sha256"],
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
         != origin
     ):
         raise ValueError("B.zero_origin_or_actor_mismatch")
@@ -432,7 +647,14 @@ def no_dependency_receipt(guard, actor, origin, reads, policy=None):
         ):
             raise ValueError("B.numeric_boundary_receipt_required_not_catalog_hash")
         symbols = receipt["symbols"]
-        assert_consumer_symbols(guard, consumer, symbols, p)
+        assert_consumer_symbols(
+            guard,
+            consumer,
+            symbols,
+            p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
     payload = dict(
         actor=actor,
         zero_origin_receipt_sha256=origin["zero_origin_receipt_sha256"],
@@ -466,11 +688,18 @@ def forward_event(
     other_gates,
     previously_stopped=False,
     policy=None,
+    release_context=None,
+    expected_release_identity_bytes=None,
 ):
     p = policy or load_conventions()
     reasons = []
     retained = deepcopy(state)
-    checked_guard(guard, p)
+    checked_guard(
+        guard,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if guard["request"]["mode"] != "forward" or parent not in p.profile["universe"]:
         raise ValueError("B.forward_scope_required")
     if not is_sha(event_source_sha256):
@@ -488,7 +717,12 @@ def forward_event(
         credible_event_evidence=True,
         event_or_candidate_id="received/" + parent + "/" + event_source_sha256,
     )
-    updated = seal_guard(request, p)
+    updated = seal_guard(
+        request,
+        p,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     try:
         if instant(received_at) > instant(signal_close):
             raise ValueError("B.forward_information_not_received")

@@ -346,7 +346,11 @@ class CashProof:
             raise ValueError("B.release_context_persistent_identity_mismatch")
         from .noncash_v3 import allowed_symbols
 
-        allowed = allowed_symbols(guard)
+        allowed = allowed_symbols(
+            guard,
+            release_context=self._release_context,
+            expected_release_identity_bytes=self._release_identity_bytes,
+        )
         for row in state["receivables"].values():
             if (
                 row["kind"] not in {"cash_dividend", "sale_proceeds"}
@@ -488,7 +492,14 @@ def dividend_entitlement(
     CashProof.release_guard(
         guard, policy, release_context, expected_release_identity_bytes
     )
-    assert_consumer_symbols(guard, "cash_valuation", [symbol], policy)
+    assert_consumer_symbols(
+        guard,
+        "cash_valuation",
+        [symbol],
+        policy,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     if (
         not is_sha(expected_event_sha256)
         or digest(event) != expected_event_sha256

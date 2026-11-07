@@ -43,7 +43,14 @@ def fixed_scores(
     RiskBook.release_guard(
         guard, policy, release_context, expected_release_identity_bytes
     )
-    assert_consumer_symbols(guard, "score", list(histories), policy)
+    assert_consumer_symbols(
+        guard,
+        "score",
+        list(histories),
+        policy,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     family, window = recipe_id.split("-L")
     window = int(window)
     scores = {}

@@ -436,7 +436,7 @@ FIXED_READER_SOURCES = {
     "execution_clock.py": "c1f9563c645110335cdbf006328b3cee4d1d8952d8433ffd5306b91d07e8ecf6",
     "reference_definition_v301.py": "95a51f2f5c5d3473254e247ac8d1b408c4f89c9253b3622ee2fe4d7941ef1a55",
     "reference_registry_v3.py": "90ff033cb06bbedce4315ec04bb7c84b8a300fdd133015db58a23b1f7fee997a",
-    "execution_accounting.py": "191d8bacf2d77b618ba62ebb348889cce72a20f8c89b492f4368c21d82d7c692",
+    "execution_accounting.py": "f8101633e86d2ee42e75dd66793ae0e153f1454e38ce008cc10bd2d6611a5a4a",
 }
 
 
