@@ -4,6 +4,8 @@ from copy import copy, deepcopy
 import json
 from pathlib import Path
 import pickle
+import subprocess
+import sys
 
 import pytest
 
@@ -21,8 +23,10 @@ ORIGINALS = Path(__file__).parent / "fixtures/b-release/B01-originals"
 def private_host_source(monkeypatch):
     """Explicit private source adapter. No production authority is installed."""
     policy = load_conventions()
+
     def read(name):
         return (ORIGINALS / name).read_bytes()
+
     r_raw = read("EVO938-B-runtime-release-R-v1.0.0.json")
     p_raw = read("EVO938-B-runtime-release-P-v1.0.0.json")
     r, p = json.loads(r_raw), json.loads(p_raw)
@@ -229,3 +233,67 @@ def test_request_cannot_expand_host_accepted_domain(private_host_source, change)
 def test_exact_noncash_import_edge_has_no_fourth_module_grant():
     assert "b_release_context" in scope_proof.IMPORTS["noncash_v3"]
     assert "UNAPPROVED_MODULE" not in scope_proof.IMPORTS["noncash_v3"]
+
+
+def test_formal_guard_without_context_cannot_fall_back_to_diagnostic(
+    private_host_source,
+):
+    _, policy = private_host_source
+    context = b.receive_release_context(policy=policy)
+    guard = dict(schema="EVO883.BRuntimeGuard/v1", request=request(context))
+    assert CashProof.release_requested(guard, None, None) is True
+    with pytest.raises(ValueError, match="^B.release_context_required$"):
+        CashProof.release_guard(guard, policy, None, None)
+
+
+def test_diagnostic_guard_with_context_is_not_accepted_as_formal(
+    private_host_source,
+):
+    # Safety outcome only. The request-classification conflict in the existing
+    # bridge is recorded separately; this is not proof of B02 classification.
+    from v3_test_helpers import synthetic_guard
+
+    _, policy = private_host_source
+    context = b.receive_release_context(policy=policy)
+    guard = synthetic_guard(policy)
+    before = deepcopy(guard)
+    with pytest.raises(ValueError, match="^B.release_context_scope_mismatch$"):
+        CashProof.release_guard(guard, policy, context, None)
+    assert guard == before
+
+
+def test_exact_replay_source_pin_does_not_allow_unregistered_source(tmp_path):
+    from qlab.dynamic_factor.execution_receipts.replay_files import REPLAY_FIXED_FILES
+
+    root = Path(b.__file__).parent
+    registered = root / "b_release_context.py"
+    assert REPLAY_FIXED_FILES["b_release_context.py"] == sha256(registered.read_bytes())
+    unregistered = tmp_path / "unregistered_source.py"
+    unregistered.write_text("# this source has no read grant\n", encoding="utf-8")
+    code = (
+        "import json,sys;from pathlib import Path;"
+        "from qlab.dynamic_factor.execution_receipts.replay_guard import install;"
+        "p=Path(sys.argv[1]);q=Path(sys.argv[3]);"
+        "install({str(p):sys.argv[2]});p.read_bytes();\n"
+        "try:q.read_bytes()\n"
+        "except ValueError as e:print(json.dumps({'reason':str(e)}))\n"
+        "else:raise AssertionError('unregistered source was read')\n"
+    )
+    run = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            "-c",
+            code,
+            str(registered),
+            REPLAY_FIXED_FILES["b_release_context.py"],
+            str(unregistered),
+        ],
+        cwd=Path(__file__).resolve().parents[2],
+        capture_output=True,
+        text=True,
+    )
+    assert run.returncode == 0, run.stderr
+    assert json.loads(run.stdout)["reason"] == (
+        "reference.replay_input_or_write_forbidden:" + str(unregistered)
+    )

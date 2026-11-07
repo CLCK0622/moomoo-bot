@@ -2,11 +2,13 @@
 
 from copy import deepcopy
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
+import tarfile
 
 import pytest
 
@@ -149,6 +151,25 @@ def test_F_LEGACY_01_separate_B_predicate_numeric_domain_equivalence(
     )
 
 
+def _fixed_legacy_source(repo, destination):
+    """Materialize the reviewed Git object; missing objects are a hard failure."""
+    head = "f827776c7a4b3f270ad87367191b06314a7f3c28"
+    archive = subprocess.run(
+        ["git", "archive", "--format=tar", head],
+        cwd=repo,
+        capture_output=True,
+    )
+    assert archive.returncode == 0, archive.stderr.decode()
+    destination.mkdir()
+    with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tree:
+        for member in tree.getmembers():
+            target = (destination / member.name).resolve()
+            assert destination.resolve() in target.parents
+            assert member.isfile() or member.isdir(), member.name
+        tree.extractall(destination)
+    return destination
+
+
 def test_F_LEGACY_01_frozen_review_34_actor_306_calls_original_bytes(
     tmp_path, record_property
 ):
@@ -165,6 +186,7 @@ def test_F_LEGACY_01_frozen_review_34_actor_306_calls_original_bytes(
     script = tmp_path / "independent_old_receipts.py"
     script.write_bytes((fixtures / "independent_old_receipts.py.fixture").read_bytes())
     repo = Path(__file__).resolve().parents[3]
+    repo = _fixed_legacy_source(repo, tmp_path / "f827776")
     command = [
         sys.executable,
         "-B",
@@ -201,6 +223,73 @@ def test_F_LEGACY_01_frozen_review_34_actor_306_calls_original_bytes(
             )
         ),
     )
+
+
+def test_B01_new_source_old_receipts_all_refused_before_reader_or_worker(
+    tmp_path, record_property
+):
+    fixtures = Path(__file__).parent / "fixtures/legacy-origin-b25r"
+    frozen = fixtures / "frozen-origin-inputs.json"
+    script = tmp_path / "independent_old_receipts.py"
+    raw = (fixtures / "independent_old_receipts.py.fixture").read_bytes()
+    script.write_bytes(raw)
+    # Run the original script unchanged; observe child-worker launches around it.
+    # This interpreter is the test driver, not a business worker.
+    wrapper = tmp_path / "observe_workers.py"
+    wrapper.write_text(
+        "import json,runpy,sys\n"
+        "script,audit_output=sys.argv[1:3]\n"
+        "sys.argv=[script]+sys.argv[3:]\n"
+        "workers=[]\n"
+        "def audit(event,args):\n"
+        "    if event.startswith(('subprocess.','os.exec','os.spawn')) or "
+        "event in {'os.fork','os.system'}: workers.append(event)\n"
+        "sys.addaudithook(audit)\n"
+        "runpy.run_path(script,run_name='__main__')\n"
+        "with open(audit_output,'w') as f: json.dump(workers,f)\n",
+        encoding="utf-8",
+    )
+    repo = Path(__file__).resolve().parents[3]
+    command = [
+        sys.executable,
+        "-B",
+        str(wrapper),
+        str(script),
+        str(tmp_path / "workers.json"),
+        str(repo),
+        str(tmp_path / "replay"),
+        str(frozen),
+    ]
+    env = dict(
+        os.environ, PYTHONPATH="", PYTHONNOUSERSITE="1", PYTHONDONTWRITEBYTECODE="1"
+    )
+    run = subprocess.run(command, cwd=repo / "qlab", env=env, capture_output=True)
+    assert run.returncode == 0, run.stderr.decode()
+    output = json.loads((tmp_path / "replay/observations.json").read_bytes())
+    rows = output["rows"]
+    assert output["old_receipts"] == 34 and len(rows) == 306
+    assert all(not row["result"]["ok"] for row in rows)
+    assert {row["result"]["reason"] for row in rows} == {
+        "B.zero_origin_or_actor_mismatch"
+    }
+    assert sum(len(row["actual_reader_calls"]) for row in rows) == 0
+    assert json.loads((tmp_path / "workers.json").read_bytes()) == []
+    assert script.read_bytes() == raw
+    record_property(
+        "new_source_old_receipts",
+        json.dumps(dict(argv=command, calls=306, accepted=0, reader=0, worker=0)),
+    )
+
+
+def test_B01_missing_fixed_legacy_git_object_fails_instead_of_skip(
+    monkeypatch, tmp_path
+):
+    def missing(*args, **kwargs):
+        return subprocess.CompletedProcess(args[0], 128, b"", b"missing Git object")
+
+    monkeypatch.setattr(subprocess, "run", missing)
+    with pytest.raises(AssertionError, match="missing Git object"):
+        _fixed_legacy_source(tmp_path, tmp_path / "absent")
 
 
 @pytest.mark.parametrize("kind", ["dict", "bool", "None", "stale"])

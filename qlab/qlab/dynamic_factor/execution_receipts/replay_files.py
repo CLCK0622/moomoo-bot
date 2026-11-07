@@ -111,6 +111,7 @@ REPLAY_SOURCE_FILES = [
 ]
 
 REPLAY_FIXED_FILES = {
+    "b_release_context.py": "79692b5d4bd722252b3a2d3781f0a642520aa3001d606e047d7cbf8f01f8173b",
     "fixtures/calendar-folds-v0.1.json": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
     "fixtures/common-calendar-v0.1.txt": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
     "fixtures/common-profile-v3.json": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",

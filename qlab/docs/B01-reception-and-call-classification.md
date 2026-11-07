@@ -1,4 +1,4 @@
-B01 reception and per-call classification (pending Gongbu approval)
+B01 reception and per-call classification
 
 Base: a98e61362193d0549a711c6127ed4aca6d39c139. B01 only. B02 is not implemented.
 
@@ -14,7 +14,14 @@ noncash_v3 gains only one precise import and the two same-object exports. Origin
 
 ## Dushui call sites
 
-Each new formal branch proposes explicit original host context/identity propagation. Existing explicitly diagnostic branches retain None/None. Formal roots or bindings cannot downgrade to diagnostic. This table is not implementation or approval of B02.
+The two 16-call tables were approved in Gongbu comment
+01a1b78f-16a1-7a28-83c1-f8107aef3a92. Classification is determined by the
+guard/request's formal BR1 schema or release fields, never by the presence of a
+context or expected bytes. Formal branches pass the original owner's context
+and expected bytes; diagnostic branches retain None/None. Context comes only
+from the owning object or explicit trusted-host parameters, never request JSON.
+Formal requests without context must refuse B.release_context_required.
+This table does not implement B02.
 
 | File:line | Caller -> callee | Classification |
 |---|---|---|
@@ -37,6 +44,25 @@ Each new formal branch proposes explicit original host context/identity propagat
 
 ## Yingshan original classification
 
-Use the attached unchanged eight-call-classification-DRAFT.csv/json from EVO881-B-on-R-df91ea1.zip (96eaa404d7f4bf96a43a4c623fc7885130fc4e8ad42aec55355e6a5e2ed61df1). All 16 call-site source SHA values match this base. Four explicit checker/checked bridge sites are formal; RiskBook.__init__:302 and RiskHistory.__init__:79 are diagnostic identity=None branches; ten remaining sites propose formal propagation if release_requested, retaining original diagnostic None/None. Await upstream per-call approval.
+Use the attached unchanged eight-call-classification-DRAFT.csv/json from EVO881-B-on-R-df91ea1.zip (96eaa404d7f4bf96a43a4c623fc7885130fc4e8ad42aec55355e6a5e2ed61df1). All 16 call-site source SHA values match this base. Four explicit checker/checked bridge sites are formal; RiskBook.__init__:302 and RiskHistory.__init__:79 remain EXISTING_DIAGNOSTIC_ONLY, including in B02. Ten remaining sites propagate context only for guard/request-classified formal calls, retaining original diagnostic None/None otherwise.
 
-execution.py is excluded. Any additional original-file requirement must be reported before edits. B02 starts only after both classification tables are accepted.
+execution.py is excluded. Any additional original-file requirement must be reported before edits. B02 starts only after B01 acceptance.
+
+## Closeout observations and unresolved crossover rule
+
+The existing execution_cash.CashProof.release_requested returns true when context
+or expected bytes are supplied, even with a diagnostic guard. Its current
+release_guard then invokes the common checker and refuses scope_mismatch.
+The refusal prevents promotion, but the classification itself contradicts the
+guard-only rule. No product change to the peer's eight files is included here.
+Interface v1.0.2 section 4 preserves diagnostic scope but does not explicitly
+choose whether surplus context/expected bytes must be ignored or rejected.
+That choice and ownership of the bridge correction require upstream clarification;
+the diagnostic-with-context test records the present safety outcome only.
+
+The added b_release_context.py replay grant is an exact full-SHA entry in
+REPLAY_FIXED_FILES. The audit hook and all other grants are unchanged.
+The old receipt success assertions run against the fixed f827776 Git object;
+absence of that object fails. A separate unchanged-script replay asserts all
+306 current-source calls refuse before readers or child workers. Fixture
+manifest and the three original file identities remain untouched.
