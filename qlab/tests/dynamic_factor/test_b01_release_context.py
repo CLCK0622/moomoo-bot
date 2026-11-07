@@ -209,6 +209,20 @@ def test_expected_identity_precedes_request_scope_and_cannot_reissue_A(
         )
 
 
+def test_C05_A_mismatch_precedes_missing_annotation_on_reload(private_host_source):
+    source, policy = private_host_source
+    context = b.receive_release_context(policy=policy)
+    wrong = json.loads(context.a_raw)
+    wrong["context_version"] = "OTHER_VERSION"
+    source["annotation_raw"] = b"{}"
+    with pytest.raises(ValueError, match="^B.release_context_acceptance_mismatch$"):
+        b.receive_release_context(policy=policy, a_raw=b._canonical(wrong))
+    with pytest.raises(
+        ValueError, match="^B.release_context_annotation_missing_or_invalid$"
+    ):
+        b.receive_release_context(policy=policy, a_raw=context.a_raw)
+
+
 @pytest.mark.parametrize(
     "change", ["mode", "synthetic", "catalog", "h_a", "signal_close", "sealed_at"]
 )

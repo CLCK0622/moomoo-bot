@@ -322,7 +322,7 @@ def _verify_release(source, policy):
     return r, p, publication, h_c, h_d, binding
 
 
-def _acceptance(source, policy):
+def _acceptance(source, policy, *, a_raw=None):
     try:
         r, p, publication, h_c, h_d, binding = _verify_release(source, policy)
         if source["expected_sha256"]["implementation_sha256"] != code_sha(
@@ -347,19 +347,9 @@ def _acceptance(source, policy):
             _fail("acceptance_mismatch")
         if _utc(source["accepted_at"]) < _utc(publication["created_at"]):
             _fail("acceptance_mismatch")
-        annotation = _json(source["annotation_raw"])
-        if (
-            sha256(source["annotation_raw"])
-            != source["expected_sha256"]["annotation_raw"]
-            or _canonical(annotation) != source["expected_annotation_bytes"]
-            or annotation["comment_id"] != ANNOTATION_COMMENT
-            or annotation["issue_id"] != ISSUE
-            or type(annotation["revision"]) is not int
-            or annotation["revision"] < 1
-            or type(annotation["content"]) is not str
-            or not annotation["content"]
-        ):
-            _fail("annotation_missing_or_invalid")
+        # Rebuild A from the independent host binding before checking the
+        # supplied annotation. C05 requires A mismatch to win a double fault.
+        annotation = _json(source["expected_annotation_bytes"], canonical=True)
         annotation_binding = {
             k: annotation[k] for k in ("issue_id", "comment_id", "revision")
         }
@@ -394,6 +384,24 @@ def _acceptance(source, policy):
             certifiable=False,
             seal_status="seal_pending",
         )
+        if a_raw is not None:
+            _json(a_raw, canonical=True)
+            if a_raw != _canonical(a):
+                _fail("acceptance_mismatch")
+        actual_annotation = _json(source["annotation_raw"])
+        if (
+            type(actual_annotation) is not dict
+            or sha256(source["annotation_raw"])
+            != source["expected_sha256"]["annotation_raw"]
+            or _canonical(actual_annotation) != source["expected_annotation_bytes"]
+            or actual_annotation.get("comment_id") != ANNOTATION_COMMENT
+            or actual_annotation.get("issue_id") != ISSUE
+            or type(actual_annotation.get("revision")) is not int
+            or actual_annotation["revision"] < 1
+            or type(actual_annotation.get("content")) is not str
+            or not actual_annotation["content"]
+        ):
+            _fail("annotation_missing_or_invalid")
         return a
     except (KeyError, TypeError, IndexError, UnicodeError) as exc:
         raise ValueError("B.release_context_encoding_invalid") from exc
@@ -402,7 +410,7 @@ def _acceptance(source, policy):
 def receive_release_context(*, policy, a_raw=None):
     """Host-only reception or reloading of the exact existing A. No re-signing."""
     source = _source()
-    a = _acceptance(source, policy)
+    a = _acceptance(source, policy, a_raw=a_raw)
     if source["expected_policy_binding_bytes"] != _canonical(_policy_binding(policy)):
         _fail("scope_mismatch")
     expected_a = _canonical(a)
@@ -455,7 +463,7 @@ def check_release_context(
         _fail("trust_binding_missing")
     fields, original = record
     source = _source()
-    a = _acceptance(source, policy)
+    a = _acceptance(source, policy, a_raw=fields["a_raw"])
     if source != original or _canonical(a) != fields["a_raw"]:
         _fail("acceptance_mismatch")
     identity = {

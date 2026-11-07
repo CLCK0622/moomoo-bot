@@ -66,3 +66,9 @@ The old receipt success assertions run against the fixed f827776 Git object;
 absence of that object fails. A separate unchanged-script replay asserts all
 306 current-source calls refuse before readers or child workers. Fixture
 manifest and the three original file identities remain untouched.
+
+C05 double-fault ordering is covered on A reload: the expected A is rebuilt
+from the independent host annotation binding, compared first, and then the
+actual annotation is checked. A mismatch plus a missing annotation refuses
+acceptance_mismatch; a matching A with the same missing annotation refuses
+annotation_missing_or_invalid. The source-read pin is updated with this change.
