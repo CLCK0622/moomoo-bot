@@ -12,7 +12,10 @@ from .contract import code_sha, digest, is_sha, result
 from .conventions import load_conventions
 from .state_v2 import necessary_state_known
 from .catalog_members import members
-from .b_release_context import ReleaseContext, check_release_context
+from .b_release_context import (
+    ReleaseContext as ReleaseContext,
+    check_release_context as check_release_context,
+)
 
 ACCEPTED_CATALOG_SHA256 = None
 CATALOG_REASON = "EVO883/01a18ca6-5887-71b9-b06d-7777e5139585: v21 protective registration; 61 fact UNKNOWN; runtime B release remains absent"
