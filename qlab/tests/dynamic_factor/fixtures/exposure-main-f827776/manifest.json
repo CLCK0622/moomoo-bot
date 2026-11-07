@@ -1,0 +1,26 @@
+{
+  "main_commit": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+  "review_archive_sha256": "4a6d2def88fc317489d326cf5c04aad8b2601af6c119824593e7fac2c3f8054b",
+  "files": {
+    "noncash_v3.py.fixture": {
+      "bytes": 19820,
+      "sha256": "08301f9d7a5ad5bdcd2fcaae8422dec9896e18b59d197a9c183e81057e106744"
+    },
+    "container_counterexample.py.fixture": {
+      "bytes": 2519,
+      "sha256": "60236dacc4c869b397bf40e75b023f67f66c84b5e822ac24b213ff01b5f31d5c"
+    },
+    "independent_exposure.py.fixture": {
+      "bytes": 6062,
+      "sha256": "09b35bae08df7d6183efaf39b579ef5c0a9c047b139bc7baee7ff61e543e976a"
+    },
+    "review-domain-summary.json": {
+      "bytes": 4477,
+      "sha256": "9f880d399e845932ca2ae9735be3a77d5fe4213a738608a32e28f9ee814da1d5"
+    },
+    "review-296-observations.json": {
+      "bytes": 147069,
+      "sha256": "4eba44cf90b9110b452930e574d9f9c3b64ac01b55183017aaedbf4da97ae45e"
+    }
+  }
+}

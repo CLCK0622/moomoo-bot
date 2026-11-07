@@ -1,8 +1,9 @@
-"""Independent sealed-input preparation entry; never generates returns.
+"""Legacy preparation plus a separately bound diagnostic replay entry.
 
 Run as `python -m qlab.dynamic_factor.reference_producer --inputs-root DIR`.
 The parent binds the four EVO-892 definitions and the shared train/warmup view.
-No result input or evaluator callback is accepted; execution belongs to EVO-886.
+The legacy main keeps returns empty. result_main replays only an owned fact
+program with the shared engines; neither entry accepts a caller return vector.
 """
 
 import argparse
@@ -123,10 +124,70 @@ def prepare(root, request, mechanisms=None):
         "returns": None,
         "sr": None,
         "reason": "reference_runtime_evidence_pending_EVO886_EVO891",
+        "seal_status": "seal_pending",
         "runtime_consumable": False,
         "certifiable": False,
         **request["profile_binding"],
     }
+
+
+def execution_main(expected):
+    """Read declared execution inputs only; C10 owns later core execution.
+
+    The host passes expected identities outside stdin. These expectations bind
+    transport, not trusted provenance. No economic decision or return is made.
+    """
+    from .execution_receipts.input_data import strict_json
+    from .execution_receipts.input_guard import install as install_execution
+    from .execution_receipts.input_reader import read_inputs as read_execution
+
+    parser = argparse.ArgumentParser(description=execution_main.__doc__)
+    parser.add_argument("--inputs-root", required=True)
+    args = parser.parse_args()
+    reads = []
+    try:
+        request = strict_json(input())
+        reads = install_execution(args.inputs_root)
+        data = read_execution(args.inputs_root, request, expected)
+        report = dict(
+            schema="EVO884.ExecutionInputTransport/v1",
+            run_id=expected["run_id"],
+            book_id=expected["book_id"],
+            member_id=expected["member_id"],
+            manifest_sha256=expected["manifest_sha256"],
+            transport_complete=True,
+            data=data,
+            economic_content_validated=False,
+            accounting_executed=False,
+            evidence_accepted=False,
+            seal_status="seal_pending",
+            complete=False,
+            returns=None,
+            sr=None,
+            reason="reference.C10_execution_and_source_reception_required",
+            runtime_consumable=False,
+            certifiable=False,
+        )
+    except (ValueError, KeyError, TypeError, OSError, AttributeError) as exc:
+        report = dict(
+            schema="EVO884.ExecutionInputTransport/v1",
+            transport_complete=False,
+            economic_content_validated=False,
+            accounting_executed=False,
+            evidence_accepted=False,
+            seal_status="seal_pending",
+            complete=False,
+            returns=None,
+            sr=None,
+            reason=str(exc)
+            if isinstance(exc, ValueError)
+            else "execution_input.invalid",
+            runtime_consumable=False,
+            certifiable=False,
+        )
+    report.update(accessed_roles=list(reads), reader_calls=len(reads))
+    print(json.dumps(report, sort_keys=True, allow_nan=False))
+    return 2
 
 
 def main(mechanisms=None):
@@ -159,8 +220,71 @@ def main(mechanisms=None):
         }
     report["accessed_roles"] = list(reads)
     report["reader_calls"] = len(reads)
+    report["seal_status"] = "seal_pending"
     print(json.dumps(report, sort_keys=True, allow_nan=False))
     return 2
+
+
+def result_main(
+    expected_sha256, expected_program_sha256, expected_reads, expected_facts_sha256=None
+):
+    """Recompute a bound fact program with the same cores inside the worker."""
+    from .execution_receipts.input_data import strict_json
+    from .execution_receipts.reference_result import check_transport, read_observation
+    from .execution_receipts.replay_guard import install as install_result
+    from .reference_execution import replay_execution
+    from .conventions import load_conventions
+    from .contract import digest
+    from .execution_receipts.input_facts import bind_program
+
+    policy = load_conventions()
+    reads = install_result(expected_reads)
+    try:
+        program = strict_json(input())
+        binding = None
+        if expected_facts_sha256 is not None:
+            if type(program) is not dict or set(program) != {"program", "facts"}:
+                raise ValueError("reference.closed_bound_program_required")
+            facts = program["facts"]
+            if digest(facts) != expected_facts_sha256:
+                raise ValueError("reference.worker_facts_binding_mismatch")
+            program = program["program"]
+            binding = bind_program(program, facts)
+        if digest(program) != expected_program_sha256:
+            raise ValueError("reference.worker_program_binding_mismatch")
+        observation = replay_execution(program, policy)
+        document = check_transport(read_observation(observation)[0], expected_sha256)
+        report = dict(
+            schema="EVO884.ReferenceResultTransport/v1",
+            observation=document,
+            observation_sha256=expected_sha256,
+            accessed_roles=[],
+            reader_calls=0,
+            worker_role="reference_diagnostic_execution",
+            execution_steps=len(program["operations"]),
+            protocol_read_paths=sorted(reads),
+            seal_status="seal_pending",
+            runtime_consumable=False,
+            certifiable=False,
+        )
+        if binding is not None:
+            report["input_fact_binding"] = binding
+        print(json.dumps(report, sort_keys=True, allow_nan=False))
+        return 0
+    except (ValueError, KeyError, TypeError, AttributeError) as exc:
+        print(
+            json.dumps(
+                dict(
+                    complete=False,
+                    returns=None,
+                    reader_calls=0,
+                    accessed_roles=[],
+                    reason=str(exc),
+                ),
+                sort_keys=True,
+            )
+        )
+        return 2
 
 
 if __name__ == "__main__":

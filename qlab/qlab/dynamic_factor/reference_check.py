@@ -23,6 +23,15 @@ MODULES = {
         "reference_inputs",
         "reference_guard",
         "reference_v3_scope",
+        "execution_receipts.input_data",
+        "execution_receipts.input_guard",
+        "execution_receipts.input_reader",
+        "execution_receipts.reference_result",
+        "execution_receipts.replay_guard",
+        "execution_receipts.input_facts",
+        "reference_execution",
+        "conventions",
+        "contract",
     },
     "reference_v3_scope": {
         "hashlib",
@@ -45,13 +54,32 @@ MODULES = {
     "input_scope": set(),
     "fold_split": {"dataclasses"},
     "reference_guard": {"os", "sys", "pathlib"},
+    "execution_receipts.input_data": {
+        "hashlib",
+        "json",
+        "math",
+        "reference_validation",
+    },
+    "execution_receipts.input_guard": {"os", "sys", "pathlib"},
+    "execution_receipts.input_reader": {"hashlib", "json", "pathlib", "input_data"},
 }
 
 
 def static_proof():
     graph, sources, reads = {}, {}, []
+    extension = {
+        "execution_receipts.input_data",
+        "execution_receipts.input_guard",
+        "execution_receipts.input_reader",
+        "execution_receipts.reference_result",
+        "execution_receipts.replay_guard",
+        "execution_receipts.input_facts",
+        "reference_execution",
+        "conventions",
+        "contract",
+    }
     for name, allowed in MODULES.items():
-        raw = (Path(__file__).parent / (name + ".py")).read_bytes()
+        raw = (Path(__file__).parent / (name.replace(".", "/") + ".py")).read_bytes()
         tree = ast.parse(raw)
         for statement in tree.body:
             if isinstance(
@@ -97,6 +125,7 @@ def static_proof():
                     "__import__",
                     "compile",
                     "open",
+                    "read_text",
                     "write_text",
                     "write_bytes",
                     "unlink",
@@ -104,13 +133,20 @@ def static_proof():
                 }:
                     raise ValueError("reference.static_call_forbidden")
                 if call == "read_bytes":
-                    if name != "reference_inputs":
+                    if name not in {
+                        "reference_inputs",
+                        "execution_receipts.input_reader",
+                    }:
                         raise ValueError("reference.static_reader_forbidden")
                     reads.append(
                         {
                             "module": name,
                             "line": node.lineno,
-                            "roles": ["panel", "benchmark", "profile"],
+                            "roles": (
+                                ["panel", "benchmark", "profile"]
+                                if name == "reference_inputs"
+                                else ["raw", "rights", "adv", "cash"]
+                            ),
                         }
                     )
         if not imports.issubset(allowed):
@@ -130,15 +166,98 @@ def static_proof():
             }
             if calls.get("install", 10**9) >= calls.get("prepare", -1):
                 raise ValueError("reference.audit_hook_must_precede_data_reads")
+            if name == "reference_producer_v3":
+                entry = next(
+                    n
+                    for n in tree.body
+                    if isinstance(n, ast.FunctionDef) and n.name == "execution_main"
+                )
+                result_entry = next(
+                    n
+                    for n in tree.body
+                    if isinstance(n, ast.FunctionDef) and n.name == "result_main"
+                )
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.ImportFrom) and node.module in extension:
+                        if not any(
+                            e.lineno < node.lineno <= e.end_lineno
+                            for e in (entry, result_entry)
+                        ):
+                            raise ValueError("reference.execution_import_outside_entry")
+                calls = {
+                    n.func.id: n.lineno
+                    for n in ast.walk(entry)
+                    if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+                }
+                if calls.get("install_execution", 10**9) >= calls.get(
+                    "read_execution", -1
+                ):
+                    raise ValueError("reference.audit_hook_must_precede_data_reads")
     return {
-        "import_graph": graph,
+        # Keep the original preparation entry's graph separately named. The
+        # complete module graph and the new dispatch graph are also published;
+        # no source bytes or source identities are excluded from the proof.
+        "import_graph": {
+            name: [dep for dep in deps if dep not in extension]
+            for name, deps in graph.items()
+            if name not in extension
+        },
+        "module_import_graph": graph,
+        "execution_preparation_import_graph": {
+            name: [
+                dep
+                for dep in deps
+                if dep
+                not in {
+                    "execution_receipts.reference_result",
+                    "execution_receipts.replay_guard",
+                    "execution_receipts.input_facts",
+                    "reference_execution",
+                    "conventions",
+                    "contract",
+                }
+            ]
+            for name, deps in graph.items()
+            if name
+            in {
+                "execution_receipts.input_data",
+                "execution_receipts.input_guard",
+                "execution_receipts.input_reader",
+                "reference_producer_v3",
+            }
+        },
+        "execution_result_import_graph": {
+            "reference_producer_v3": [
+                dep
+                for dep in graph["reference_producer_v3"]
+                if dep
+                in {
+                    "execution_receipts.input_data",
+                    "execution_receipts.reference_result",
+                    "execution_receipts.replay_guard",
+                    "execution_receipts.input_facts",
+                    "reference_execution",
+                    "conventions",
+                    "contract",
+                }
+            ]
+        },
         "source_files": sources,
-        "reader_sites": reads,
+        "reader_sites": [r for r in reads if r["module"] == "reference_inputs"],
+        "execution_preparation_reader_sites": [
+            r for r in reads if r["module"] == "execution_receipts.input_reader"
+        ],
         "source_sha256": digest(sources),
         "read_whitelist": {
             "panel": "panel.json",
             "benchmark": "benchmark.json",
             "profile": "profile.json",
+        },
+        "execution_preparation_read_whitelist": {
+            "raw": "raw.json",
+            "rights": "rights.json",
+            "adv": "adv.json",
+            "cash": "cash.json",
         },
         "forbidden_inputs": [
             "candidate_returns",
@@ -150,6 +269,388 @@ def static_proof():
         "shared_splitter_sha256": sources["fold_split.py"],
         "scope": "static proof for pinned trusted source, not an arbitrary Python OS sandbox",
     }
+
+
+# Separate C09/C10 segment: these names never become members of the old
+# preparation import_graph/reader_sites. Exact tokens, no prefix matching.
+EXECUTION_MODULES = {
+    "execution_receipts.input_run": {
+        "copy",
+        "json",
+        "weakref",
+        "contract",
+        "input_envelope",
+    },
+    "execution_receipts.input_facts": {
+        "copy",
+        "json",
+        "weakref",
+        "contract",
+        "execution_numbers",
+        "reference_validation",
+        "input_data",
+        "input_run",
+        "input_envelope",
+        "reference_boundary",
+    },
+    "execution_receipts.p4p7": {
+        "copy",
+        "json",
+        "weakref",
+        "contract",
+        "input_facts",
+        "reference_result",
+        "n_binding",
+        "input_data",
+        "reference_boundary",
+    },
+    "execution_receipts.input_envelope": {
+        "copy",
+        "datetime",
+        "contract",
+        "noncash_v3",
+        "reference_profile_v301",
+        "reference_v3_scope",
+    },
+    "execution_receipts.input_data": {
+        "hashlib",
+        "json",
+        "math",
+        "reference_validation",
+    },
+    "execution_receipts.input_reader": {"hashlib", "json", "pathlib", "input_data"},
+    "execution_receipts.input_guard": {"os", "sys", "pathlib"},
+    "execution_receipts.n_binding": {
+        "copy",
+        "gzip",
+        "pathlib",
+        "authority_host",
+        "authority_ledger",
+        "contract",
+        "reception_schema",
+        "reception_v2",
+        "reference_definition_v301",
+        "reference_profile_v301",
+        "reference_registry_v3",
+        "g14",
+    },
+    "execution_receipts.g14": {"pathlib", "contract", "reception_schema"},
+    "reference_execution": {
+        "copy",
+        "contract",
+        "execution_numbers",
+        "execution_accounting",
+        "execution_candidate",
+        "execution_returns",
+        "execution_risk_history",
+        "execution_startup",
+        "reference_definition_v301",
+        "reference_profile_v301",
+        "execution_receipts.reference_result",
+    },
+    "execution_receipts.reference_result": {
+        "copy",
+        "json",
+        "weakref",
+        "contract",
+        "execution_accounting",
+        "execution_projection",
+        "execution_returns",
+        "execution_risk",
+        "reference_profile_v301",
+        "reference_execution",
+    },
+    "execution_receipts.replay_guard": {
+        "hashlib",
+        "datetime",
+        "os",
+        "sys",
+        "pathlib",
+        "replay_files",
+        "execution_state",
+        "execution_exposure",
+        "lineage_schema",
+        "event_quarantine",
+        "fee_model",
+    },
+    "execution_receipts.replay_files": set(),
+}
+
+EXECUTION_FIXED_READS = (
+    (
+        "execution_receipts.n_binding",
+        "EVO883-SAR-v31-archive-acceptance-v1.json",
+        "31de871ec2564b34330d882e21f6f0e9edcfa169371dc5cfdf9aae28dc3412ab",
+    ),
+    (
+        "execution_receipts.n_binding",
+        "EVO891-B-ledger-v31.jsonl.gz",
+        "eed3021a7b0f44dd31c884daa8f375555ae64cf1c12dd8e72e7b790a01cd1328",
+    ),
+    (
+        "execution_receipts.g14",
+        "EVO883-G14-P1-adopted-protocol-v1.0.0.json",
+        "68200926a94cc672e7f0e47c14cc6473b68920576a7ade1028c07fb5c168334d",
+    ),
+)
+
+
+def execution_proof():
+    """Inspect the new orchestration/result branch independently of old proof.
+
+    Numeric and authority readers stay in the existing C13 proof, rather than
+    silently expanding the old preparation's three-file guarantee.
+    """
+    graph, sources, readers, fixed_seen, trees = {}, {}, [], set(), {}
+    forbidden = {
+        "open",
+        "read_text",
+        "write_bytes",
+        "write_text",
+        "exec",
+        "eval",
+        "compile",
+        "__import__",
+        "unlink",
+        "rename",
+    }
+    for name, allowed in EXECUTION_MODULES.items():
+        raw = (Path(__file__).parent / (name.replace(".", "/") + ".py")).read_bytes()
+        tree = ast.parse(raw)
+        trees[name] = tree
+        imports = set()
+        for statement in tree.body:
+            if isinstance(
+                statement, (ast.Import, ast.ImportFrom, ast.FunctionDef, ast.ClassDef)
+            ):
+                continue
+            if (
+                isinstance(statement, ast.Expr)
+                and isinstance(statement.value, ast.Constant)
+                and isinstance(statement.value.value, str)
+            ):
+                continue
+            if (
+                name == "execution_receipts.reference_result"
+                and isinstance(statement, ast.Assign)
+                and len(statement.targets) == 1
+                and isinstance(statement.targets[0], ast.Name)
+            ):
+                expected = {"_ISSUER": "object()", "_OWNED": "WeakKeyDictionary()"}
+                if ast.unparse(statement.value) == expected.get(
+                    statement.targets[0].id
+                ):
+                    continue
+            if (
+                name == "execution_receipts.input_run"
+                and isinstance(statement, ast.Assign)
+                and ast.unparse(statement)
+                in {"_RUNS = WeakKeyDictionary()", "_CONTEXTS = WeakKeyDictionary()"}
+            ):
+                continue
+            if (
+                name == "execution_receipts.input_facts"
+                and isinstance(statement, ast.Assign)
+                and ast.unparse(statement) == "_READS = WeakKeyDictionary()"
+            ):
+                continue
+            if (
+                name == "execution_receipts.p4p7"
+                and isinstance(statement, ast.Assign)
+                and ast.unparse(statement) == "_SIDECARS = WeakKeyDictionary()"
+            ):
+                continue
+            if isinstance(statement, ast.Assign):
+                try:
+                    ast.literal_eval(statement.value)
+                    continue
+                except (TypeError, ValueError):
+                    pass
+            raise ValueError("reference.execution_import_time_effect_forbidden")
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imports.update(n.name for n in node.names)
+            elif isinstance(node, ast.ImportFrom):
+                if node.module is None:
+                    imports.update(n.name for n in node.names)
+                else:
+                    imports.add(node.module)
+            elif isinstance(node, ast.Call):
+                call = (
+                    node.func.id
+                    if isinstance(node.func, ast.Name)
+                    else node.func.attr
+                    if isinstance(node.func, ast.Attribute)
+                    else ""
+                )
+                if call in forbidden:
+                    raise ValueError(
+                        "reference.execution_reader_or_dynamic_call_forbidden"
+                    )
+                if call == "read_bytes":
+                    expr = node.func.value
+                    if (
+                        name == "execution_receipts.replay_guard"
+                        and ast.unparse(expr) == "path"
+                    ):
+                        readers.append(
+                            dict(
+                                module=name,
+                                line=node.lineno,
+                                identity="host static proof's exact source/protocol file map, before stdin; no economic file path",
+                            )
+                        )
+                    elif (
+                        name == "execution_receipts.input_reader"
+                        and ast.unparse(expr) == "paths[role]"
+                    ):
+                        loops = [
+                            n
+                            for n in ast.walk(tree)
+                            if isinstance(n, ast.For)
+                            and isinstance(n.target, ast.Name)
+                            and n.target.id == "role"
+                        ]
+                        if len(loops) != 2 or any(
+                            ast.literal_eval(n.iter) != ("raw", "rights", "adv", "cash")
+                            for n in loops
+                        ):
+                            raise ValueError(
+                                "reference.execution_input_file_not_registered"
+                            )
+                        assigns = {
+                            ast.unparse(n)
+                            for n in ast.walk(tree)
+                            if isinstance(n, ast.Assign)
+                        }
+                        if (
+                            "path = root / (role + '.json')" not in assigns
+                            or "paths[role] = path" not in assigns
+                        ):
+                            raise ValueError(
+                                "reference.execution_input_file_not_registered"
+                            )
+                        readers.append(
+                            dict(
+                                module=name,
+                                line=node.lineno,
+                                files=[
+                                    "raw.json",
+                                    "rights.json",
+                                    "adv.json",
+                                    "cash.json",
+                                ],
+                                identity="original file SHA in immutable host preparation, before JSON/value parsing",
+                            )
+                        )
+                    elif (
+                        isinstance(expr, ast.BinOp)
+                        and isinstance(expr.op, ast.Div)
+                        and isinstance(expr.right, ast.Constant)
+                    ):
+                        match = next(
+                            (
+                                r
+                                for r in EXECUTION_FIXED_READS
+                                if r[:2] == (name, expr.right.value)
+                            ),
+                            None,
+                        )
+                        if match is None or match in fixed_seen:
+                            raise ValueError(
+                                "reference.execution_fixed_file_not_registered"
+                            )
+                        if (
+                            name == "execution_receipts.n_binding"
+                            and ast.unparse(expr.left) != "root"
+                        ):
+                            raise ValueError(
+                                "reference.execution_fixed_file_not_registered"
+                            )
+                        if (
+                            name == "execution_receipts.g14"
+                            and ast.unparse(expr.left)
+                            != "Path(__file__).parent / 'contracts'"
+                        ):
+                            raise ValueError(
+                                "reference.execution_fixed_file_not_registered"
+                            )
+                        fixed_seen.add(match)
+                        readers.append(
+                            dict(
+                                module=name,
+                                line=node.lineno,
+                                path="execution_receipts/contracts/" + match[1],
+                                sha256=match[2],
+                            )
+                        )
+                    else:
+                        raise ValueError(
+                            "reference.execution_reader_or_dynamic_call_forbidden"
+                        )
+        if not imports <= allowed:
+            raise ValueError("reference.execution_static_import_not_whitelisted")
+        graph[name] = sorted(imports)
+        sources[name] = sha256(raw)
+    if fixed_seen != set(EXECUTION_FIXED_READS) or len(readers) != 5:
+        raise ValueError("reference.execution_registered_reader_set_changed")
+    for _, filename, expected in EXECUTION_FIXED_READS:
+        raw = (
+            Path(__file__).parent / "execution_receipts" / "contracts" / filename
+        ).read_bytes()
+        if sha256(raw) != expected:
+            raise ValueError("reference.execution_fixed_file_identity_mismatch")
+    table = {
+        n.targets[0].id: ast.literal_eval(n.value)
+        for n in trees["execution_receipts.replay_files"].body
+        if isinstance(n, ast.Assign)
+    }
+    replay_files = dict(table["REPLAY_FIXED_FILES"])
+    root = Path(__file__).parent
+    for name in table["REPLAY_SOURCE_FILES"]:
+        if (
+            type(name) is not str
+            or "/" in name
+            or not name.endswith(".py")
+            or name in replay_files
+        ):
+            raise ValueError("reference.replay_source_file_not_registered")
+        replay_files[name] = sha256((root / name).read_bytes())
+    for name, expected in table["REPLAY_FIXED_FILES"].items():
+        if sha256((root / name).read_bytes()) != expected:
+            raise ValueError("reference.replay_fixed_file_identity_mismatch")
+    # Entrypoint ordering is structural, not a claim inferred from test success.
+    producer = ast.parse(
+        (Path(__file__).parent / "reference_producer_v3.py").read_bytes()
+    )
+    entry = next(
+        n
+        for n in producer.body
+        if isinstance(n, ast.FunctionDef) and n.name == "result_main"
+    )
+    calls = {
+        n.func.id: n.lineno
+        for n in ast.walk(entry)
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+    }
+    if calls.get("install_result", 10**9) >= calls.get("input", -1):
+        raise ValueError("reference.result_guard_must_precede_input")
+    return dict(
+        schema="EVO884.ReferenceExecutionProof/v1",
+        import_graph=graph,
+        import_whitelist={k: sorted(v) for k, v in EXECUTION_MODULES.items()},
+        source_files=sources,
+        source_sha256=digest(sources),
+        reader_sites=readers,
+        replay_file_sha256=replay_files,
+        worker_data_files=[],
+        worker_economic_file_roles=[],
+        worker_execution_role="reference_diagnostic_execution",
+        replay_compile_sources=table["REPLAY_COMPILE_SOURCES"],
+        guard_before_stdin=True,
+        seal_status="seal_pending",
+        scope="owned diagnostic orchestration and isolated same-engine replay; source authentication and formal runtime are separate",
+    )
 
 
 def verify_registry(registry, manifests, policy, first_performance_at):

@@ -1,0 +1,16 @@
+{
+  "actual_performance": null,
+  "actual_run_id": null,
+  "archive_sequence": 1386,
+  "archive_version": "v31",
+  "attempt": 661,
+  "book_N": 1313,
+  "certifiable": false,
+  "complete_N": null,
+  "design_count_archive_reference": 6,
+  "gate_N": null,
+  "kind": "reviewed_static_source_identity_and_B2_unavailable_metadata",
+  "runtime_consumable": false,
+  "schema": "EVO884.S.Scope/v1",
+  "source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774"
+}

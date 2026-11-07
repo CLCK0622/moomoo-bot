@@ -1,0 +1,2599 @@
+{
+  "baseline": "d4741989c6a36d11952953f90832e33e4addc8f1",
+  "read_only": true,
+  "scope": "proposed exact full-module inspection of newly entered execution modules; current trusted old helper edges retained, not auto-expanded",
+  "entries": {
+    "execution": {
+      "new_inspected_entry": false,
+      "old": [
+        "__future__",
+        "contract",
+        "conventions",
+        "fee_model",
+        "fees",
+        "input_scope",
+        "isolation",
+        "json",
+        "math",
+        "noncash_v3",
+        "pipeline",
+        "re",
+        "state_v2"
+      ],
+      "add": [
+        "execution_candidate"
+      ],
+      "proposed": [
+        "__future__",
+        "contract",
+        "conventions",
+        "execution_candidate",
+        "fee_model",
+        "fees",
+        "input_scope",
+        "isolation",
+        "json",
+        "math",
+        "noncash_v3",
+        "pipeline",
+        "re",
+        "state_v2"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "unqualified candidate import overlay"
+    },
+    "execution_accounting": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_cash",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_risk",
+        "execution_startup",
+        "fees",
+        "fractions",
+        "functools",
+        "input_scope",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "proposed": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_cash",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_risk",
+        "execution_startup",
+        "fees",
+        "fractions",
+        "functools",
+        "input_scope",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_amounts": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "decimal",
+        "execution",
+        "execution_closure",
+        "execution_numbers",
+        "fee_model",
+        "fees",
+        "fractions",
+        "input_scope",
+        "noncash_v3",
+        "re"
+      ],
+      "proposed": [
+        "decimal",
+        "execution",
+        "execution_closure",
+        "execution_numbers",
+        "fee_model",
+        "fees",
+        "fractions",
+        "input_scope",
+        "noncash_v3",
+        "re"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_candidate": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution",
+        "execution_accounting",
+        "execution_amounts",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_returns",
+        "execution_risk",
+        "execution_risk_history",
+        "execution_signals",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "proposed": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution",
+        "execution_accounting",
+        "execution_amounts",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_returns",
+        "execution_risk",
+        "execution_risk_history",
+        "execution_signals",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "unqualified candidate import overlay"
+    },
+    "execution_cash": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "copy",
+        "datetime",
+        "event_quarantine",
+        "execution_exposure",
+        "execution_numbers",
+        "execution_state",
+        "input_disposition",
+        "input_scope",
+        "json",
+        "lineage_schema",
+        "noncash_v3",
+        "reference_validation"
+      ],
+      "proposed": [
+        "contract",
+        "copy",
+        "datetime",
+        "event_quarantine",
+        "execution_exposure",
+        "execution_numbers",
+        "execution_state",
+        "input_disposition",
+        "input_scope",
+        "json",
+        "lineage_schema",
+        "noncash_v3",
+        "reference_validation"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_clock": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "copy",
+        "json",
+        "reference_definition_v301"
+      ],
+      "proposed": [
+        "contract",
+        "copy",
+        "json",
+        "reference_definition_v301"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_closure": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "copy",
+        "decimal",
+        "json",
+        "reference_definition_v301"
+      ],
+      "proposed": [
+        "contract",
+        "copy",
+        "decimal",
+        "json",
+        "reference_definition_v301"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_exposure": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [],
+      "proposed": [],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_numbers": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "decimal",
+        "fractions",
+        "re"
+      ],
+      "proposed": [
+        "decimal",
+        "fractions",
+        "re"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_projection": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3"
+      ],
+      "proposed": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_returns": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "copy",
+        "execution_accounting",
+        "execution_closure",
+        "execution_numbers",
+        "fees",
+        "fold_split",
+        "fractions",
+        "math",
+        "pipeline"
+      ],
+      "proposed": [
+        "contract",
+        "copy",
+        "execution_accounting",
+        "execution_closure",
+        "execution_numbers",
+        "fees",
+        "fold_split",
+        "fractions",
+        "math",
+        "pipeline"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_risk": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "conventions",
+        "copy",
+        "decimal",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_state",
+        "fractions",
+        "noncash_v3",
+        "re",
+        "reference_definition_v301"
+      ],
+      "proposed": [
+        "contract",
+        "conventions",
+        "copy",
+        "decimal",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_state",
+        "fractions",
+        "noncash_v3",
+        "re",
+        "reference_definition_v301"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_risk_history": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "conventions",
+        "copy",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_risk",
+        "execution_startup",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "proposed": [
+        "contract",
+        "conventions",
+        "copy",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_risk",
+        "execution_startup",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_signals": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "copy",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "math",
+        "noncash_v3",
+        "threading"
+      ],
+      "proposed": [
+        "contract",
+        "copy",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "math",
+        "noncash_v3",
+        "threading"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_startup": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "conventions",
+        "copy",
+        "execution",
+        "execution_closure",
+        "fees",
+        "functools",
+        "json",
+        "math",
+        "pipeline",
+        "reference_definition_v301",
+        "reference_profile_v301",
+        "reference_validation",
+        "threading"
+      ],
+      "proposed": [
+        "contract",
+        "conventions",
+        "copy",
+        "execution",
+        "execution_closure",
+        "fees",
+        "functools",
+        "json",
+        "math",
+        "pipeline",
+        "reference_definition_v301",
+        "reference_profile_v301",
+        "reference_validation",
+        "threading"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "execution_state": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "fees",
+        "state_v2"
+      ],
+      "proposed": [
+        "fees",
+        "state_v2"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "pipeline": {
+      "new_inspected_entry": false,
+      "old": [
+        "__future__",
+        "arm_n",
+        "contract",
+        "conventions",
+        "copy",
+        "dsr_v0",
+        "execution",
+        "fees",
+        "input_scope",
+        "isolation",
+        "json",
+        "math",
+        "pathlib",
+        "re",
+        "reference_registry",
+        "reference_registry_v3",
+        "statistics"
+      ],
+      "add": [
+        "execution_candidate"
+      ],
+      "proposed": [
+        "__future__",
+        "arm_n",
+        "contract",
+        "conventions",
+        "copy",
+        "dsr_v0",
+        "execution",
+        "execution_candidate",
+        "fees",
+        "input_scope",
+        "isolation",
+        "json",
+        "math",
+        "pathlib",
+        "re",
+        "reference_registry",
+        "reference_registry_v3",
+        "statistics"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [
+        "arm_n"
+      ],
+      "source_status": "unqualified candidate import overlay"
+    },
+    "reference_definition_v301": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "json",
+        "pathlib",
+        "reference_registry_v3"
+      ],
+      "proposed": [
+        "contract",
+        "json",
+        "pathlib",
+        "reference_registry_v3"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    },
+    "reference_profile_v301": {
+      "new_inspected_entry": true,
+      "old": [],
+      "add": [
+        "contract",
+        "reference_definition_v301",
+        "reference_registry_v3"
+      ],
+      "proposed": [
+        "contract",
+        "reference_definition_v301",
+        "reference_registry_v3"
+      ],
+      "delete": [],
+      "retained_unused_legacy": [],
+      "source_status": "current committed shared module"
+    }
+  },
+  "per_edge_negative_plan": [
+    {
+      "id": "I001",
+      "module": "execution",
+      "exact_import_module": "execution_candidate",
+      "import_lines": [
+        526
+      ],
+      "entry_kind": "existing entry additive edge",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_1",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I002",
+      "module": "execution_accounting",
+      "exact_import_module": "contract",
+      "import_lines": [
+        16
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_2",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I003",
+      "module": "execution_accounting",
+      "exact_import_module": "copy",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_3",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I004",
+      "module": "execution_accounting",
+      "exact_import_module": "decimal",
+      "import_lines": [
+        10
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_4",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I005",
+      "module": "execution_accounting",
+      "exact_import_module": "execution_amounts",
+      "import_lines": [
+        17
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_5",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I006",
+      "module": "execution_accounting",
+      "exact_import_module": "execution_cash",
+      "import_lines": [
+        18
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_6",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I007",
+      "module": "execution_accounting",
+      "exact_import_module": "execution_closure",
+      "import_lines": [
+        19
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_7",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I008",
+      "module": "execution_accounting",
+      "exact_import_module": "execution_numbers",
+      "import_lines": [
+        20
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_8",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I009",
+      "module": "execution_accounting",
+      "exact_import_module": "execution_projection",
+      "import_lines": [
+        21,
+        248
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_9",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I010",
+      "module": "execution_accounting",
+      "exact_import_module": "execution_risk",
+      "import_lines": [
+        22
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_10",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I011",
+      "module": "execution_accounting",
+      "exact_import_module": "execution_startup",
+      "import_lines": [
+        119
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_11",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I012",
+      "module": "execution_accounting",
+      "exact_import_module": "fees",
+      "import_lines": [
+        23
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_12",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I013",
+      "module": "execution_accounting",
+      "exact_import_module": "fractions",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_13",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I014",
+      "module": "execution_accounting",
+      "exact_import_module": "functools",
+      "import_lines": [
+        12
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_14",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I015",
+      "module": "execution_accounting",
+      "exact_import_module": "input_scope",
+      "import_lines": [
+        24
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_15",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I016",
+      "module": "execution_accounting",
+      "exact_import_module": "json",
+      "import_lines": [
+        13
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_16",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I017",
+      "module": "execution_accounting",
+      "exact_import_module": "noncash_v3",
+      "import_lines": [
+        25
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_17",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I018",
+      "module": "execution_accounting",
+      "exact_import_module": "reference_validation",
+      "import_lines": [
+        26
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_18",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I019",
+      "module": "execution_accounting",
+      "exact_import_module": "threading",
+      "import_lines": [
+        14
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_19",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I020",
+      "module": "execution_amounts",
+      "exact_import_module": "decimal",
+      "import_lines": [
+        20
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_20",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I021",
+      "module": "execution_amounts",
+      "exact_import_module": "execution",
+      "import_lines": [
+        5
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_21",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I022",
+      "module": "execution_amounts",
+      "exact_import_module": "execution_closure",
+      "import_lines": [
+        23
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_22",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I023",
+      "module": "execution_amounts",
+      "exact_import_module": "execution_numbers",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_23",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I024",
+      "module": "execution_amounts",
+      "exact_import_module": "fee_model",
+      "import_lines": [
+        24
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_24",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I025",
+      "module": "execution_amounts",
+      "exact_import_module": "fees",
+      "import_lines": [
+        6
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_25",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I026",
+      "module": "execution_amounts",
+      "exact_import_module": "fractions",
+      "import_lines": [
+        21
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_26",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I027",
+      "module": "execution_amounts",
+      "exact_import_module": "input_scope",
+      "import_lines": [
+        7
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_27",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I028",
+      "module": "execution_amounts",
+      "exact_import_module": "noncash_v3",
+      "import_lines": [
+        29
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_28",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I029",
+      "module": "execution_amounts",
+      "exact_import_module": "re",
+      "import_lines": [
+        3
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_29",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I030",
+      "module": "execution_candidate",
+      "exact_import_module": "contract",
+      "import_lines": [
+        14
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_30",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I031",
+      "module": "execution_candidate",
+      "exact_import_module": "copy",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_31",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I032",
+      "module": "execution_candidate",
+      "exact_import_module": "decimal",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_32",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I033",
+      "module": "execution_candidate",
+      "exact_import_module": "execution",
+      "import_lines": [
+        278
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_33",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I034",
+      "module": "execution_candidate",
+      "exact_import_module": "execution_accounting",
+      "import_lines": [
+        580,
+        453
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_34",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I035",
+      "module": "execution_candidate",
+      "exact_import_module": "execution_amounts",
+      "import_lines": [
+        15
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_35",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I036",
+      "module": "execution_candidate",
+      "exact_import_module": "execution_closure",
+      "import_lines": [
+        16
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_36",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I037",
+      "module": "execution_candidate",
+      "exact_import_module": "execution_numbers",
+      "import_lines": [
+        17
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_37",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I038",
+      "module": "execution_candidate",
+      "exact_import_module": "execution_projection",
+      "import_lines": [
+        256,
+        390
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_38",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I039",
+      "module": "execution_candidate",
+      "exact_import_module": "execution_returns",
+      "import_lines": [
+        504
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_39",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I040",
+      "module": "execution_candidate",
+      "exact_import_module": "execution_risk",
+      "import_lines": [
+        18
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_40",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I041",
+      "module": "execution_candidate",
+      "exact_import_module": "execution_risk_history",
+      "import_lines": [
+        581,
+        454
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_41",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I042",
+      "module": "execution_candidate",
+      "exact_import_module": "execution_signals",
+      "import_lines": [
+        19,
+        582
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_42",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I043",
+      "module": "execution_candidate",
+      "exact_import_module": "fractions",
+      "import_lines": [
+        10
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_43",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I044",
+      "module": "execution_candidate",
+      "exact_import_module": "input_scope",
+      "import_lines": [
+        20
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_44",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I045",
+      "module": "execution_candidate",
+      "exact_import_module": "isolation",
+      "import_lines": [
+        279
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_45",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I046",
+      "module": "execution_candidate",
+      "exact_import_module": "json",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_46",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I047",
+      "module": "execution_candidate",
+      "exact_import_module": "noncash_v3",
+      "import_lines": [
+        524
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_47",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I048",
+      "module": "execution_candidate",
+      "exact_import_module": "reference_validation",
+      "import_lines": [
+        21
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_48",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I049",
+      "module": "execution_candidate",
+      "exact_import_module": "threading",
+      "import_lines": [
+        12
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_49",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I050",
+      "module": "execution_cash",
+      "exact_import_module": "contract",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_50",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I051",
+      "module": "execution_cash",
+      "exact_import_module": "copy",
+      "import_lines": [
+        7
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_51",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I052",
+      "module": "execution_cash",
+      "exact_import_module": "datetime",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_52",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I053",
+      "module": "execution_cash",
+      "exact_import_module": "event_quarantine",
+      "import_lines": [
+        139
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_53",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I054",
+      "module": "execution_cash",
+      "exact_import_module": "execution_exposure",
+      "import_lines": [
+        107
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_54",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I055",
+      "module": "execution_cash",
+      "exact_import_module": "execution_numbers",
+      "import_lines": [
+        12
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_55",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I056",
+      "module": "execution_cash",
+      "exact_import_module": "execution_state",
+      "import_lines": [
+        108
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_56",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I057",
+      "module": "execution_cash",
+      "exact_import_module": "input_disposition",
+      "import_lines": [
+        13
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_57",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I058",
+      "module": "execution_cash",
+      "exact_import_module": "input_scope",
+      "import_lines": [
+        14
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_58",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I059",
+      "module": "execution_cash",
+      "exact_import_module": "json",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_59",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I060",
+      "module": "execution_cash",
+      "exact_import_module": "lineage_schema",
+      "import_lines": [
+        138
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_60",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I061",
+      "module": "execution_cash",
+      "exact_import_module": "noncash_v3",
+      "import_lines": [
+        167,
+        76
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_61",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I062",
+      "module": "execution_cash",
+      "exact_import_module": "reference_validation",
+      "import_lines": [
+        15
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_62",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I063",
+      "module": "execution_clock",
+      "exact_import_module": "contract",
+      "import_lines": [
+        6
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_63",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I064",
+      "module": "execution_clock",
+      "exact_import_module": "copy",
+      "import_lines": [
+        3
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_64",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I065",
+      "module": "execution_clock",
+      "exact_import_module": "json",
+      "import_lines": [
+        4
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_65",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I066",
+      "module": "execution_clock",
+      "exact_import_module": "reference_definition_v301",
+      "import_lines": [
+        7
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_66",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I067",
+      "module": "execution_closure",
+      "exact_import_module": "contract",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_67",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I068",
+      "module": "execution_closure",
+      "exact_import_module": "copy",
+      "import_lines": [
+        7
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_68",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I069",
+      "module": "execution_closure",
+      "exact_import_module": "decimal",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_69",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I070",
+      "module": "execution_closure",
+      "exact_import_module": "json",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_70",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I071",
+      "module": "execution_closure",
+      "exact_import_module": "reference_definition_v301",
+      "import_lines": [
+        12
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_71",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I072",
+      "module": "execution_numbers",
+      "exact_import_module": "decimal",
+      "import_lines": [
+        3
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_72",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I073",
+      "module": "execution_numbers",
+      "exact_import_module": "fractions",
+      "import_lines": [
+        4
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_73",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I074",
+      "module": "execution_numbers",
+      "exact_import_module": "re",
+      "import_lines": [
+        5
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_74",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I075",
+      "module": "execution_projection",
+      "exact_import_module": "contract",
+      "import_lines": [
+        13
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_75",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I076",
+      "module": "execution_projection",
+      "exact_import_module": "copy",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_76",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I077",
+      "module": "execution_projection",
+      "exact_import_module": "decimal",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_77",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I078",
+      "module": "execution_projection",
+      "exact_import_module": "execution_amounts",
+      "import_lines": [
+        14
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_78",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I079",
+      "module": "execution_projection",
+      "exact_import_module": "execution_closure",
+      "import_lines": [
+        15
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_79",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I080",
+      "module": "execution_projection",
+      "exact_import_module": "execution_risk",
+      "import_lines": [
+        16
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_80",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I081",
+      "module": "execution_projection",
+      "exact_import_module": "fractions",
+      "import_lines": [
+        10
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_81",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I082",
+      "module": "execution_projection",
+      "exact_import_module": "input_scope",
+      "import_lines": [
+        18
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_82",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I083",
+      "module": "execution_projection",
+      "exact_import_module": "isolation",
+      "import_lines": [
+        17
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_83",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I084",
+      "module": "execution_projection",
+      "exact_import_module": "json",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_84",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I085",
+      "module": "execution_projection",
+      "exact_import_module": "noncash_v3",
+      "import_lines": [
+        19
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_85",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I086",
+      "module": "execution_returns",
+      "exact_import_module": "contract",
+      "import_lines": [
+        13
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_86",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I087",
+      "module": "execution_returns",
+      "exact_import_module": "copy",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_87",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I088",
+      "module": "execution_returns",
+      "exact_import_module": "execution_accounting",
+      "import_lines": [
+        14
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_88",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I089",
+      "module": "execution_returns",
+      "exact_import_module": "execution_closure",
+      "import_lines": [
+        15
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_89",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I090",
+      "module": "execution_returns",
+      "exact_import_module": "execution_numbers",
+      "import_lines": [
+        16
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_90",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I091",
+      "module": "execution_returns",
+      "exact_import_module": "fees",
+      "import_lines": [
+        17
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_91",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I092",
+      "module": "execution_returns",
+      "exact_import_module": "fold_split",
+      "import_lines": [
+        18
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_92",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I093",
+      "module": "execution_returns",
+      "exact_import_module": "fractions",
+      "import_lines": [
+        10
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_93",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I094",
+      "module": "execution_returns",
+      "exact_import_module": "math",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_94",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I095",
+      "module": "execution_returns",
+      "exact_import_module": "pipeline",
+      "import_lines": [
+        19
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_95",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I096",
+      "module": "execution_risk",
+      "exact_import_module": "contract",
+      "import_lines": [
+        14
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_96",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I097",
+      "module": "execution_risk",
+      "exact_import_module": "conventions",
+      "import_lines": [
+        15
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_97",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I098",
+      "module": "execution_risk",
+      "exact_import_module": "copy",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_98",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I099",
+      "module": "execution_risk",
+      "exact_import_module": "decimal",
+      "import_lines": [
+        10
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_99",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I100",
+      "module": "execution_risk",
+      "exact_import_module": "execution_cash",
+      "import_lines": [
+        20
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_100",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I101",
+      "module": "execution_risk",
+      "exact_import_module": "execution_clock",
+      "import_lines": [
+        17
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_101",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I102",
+      "module": "execution_risk",
+      "exact_import_module": "execution_closure",
+      "import_lines": [
+        18
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_102",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I103",
+      "module": "execution_risk",
+      "exact_import_module": "execution_numbers",
+      "import_lines": [
+        16
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_103",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I104",
+      "module": "execution_risk",
+      "exact_import_module": "execution_state",
+      "import_lines": [
+        22
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_104",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I105",
+      "module": "execution_risk",
+      "exact_import_module": "fractions",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_105",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I106",
+      "module": "execution_risk",
+      "exact_import_module": "noncash_v3",
+      "import_lines": [
+        19,
+        597
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_106",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I107",
+      "module": "execution_risk",
+      "exact_import_module": "re",
+      "import_lines": [
+        12
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_107",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I108",
+      "module": "execution_risk",
+      "exact_import_module": "reference_definition_v301",
+      "import_lines": [
+        21
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_108",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I109",
+      "module": "execution_risk_history",
+      "exact_import_module": "contract",
+      "import_lines": [
+        12
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_109",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I110",
+      "module": "execution_risk_history",
+      "exact_import_module": "conventions",
+      "import_lines": [
+        13
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_110",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I111",
+      "module": "execution_risk_history",
+      "exact_import_module": "copy",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_111",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I112",
+      "module": "execution_risk_history",
+      "exact_import_module": "execution_cash",
+      "import_lines": [
+        287
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_112",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I113",
+      "module": "execution_risk_history",
+      "exact_import_module": "execution_clock",
+      "import_lines": [
+        14
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_113",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I114",
+      "module": "execution_risk_history",
+      "exact_import_module": "execution_closure",
+      "import_lines": [
+        15
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_114",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I115",
+      "module": "execution_risk_history",
+      "exact_import_module": "execution_numbers",
+      "import_lines": [
+        17
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_115",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I116",
+      "module": "execution_risk_history",
+      "exact_import_module": "execution_risk",
+      "import_lines": [
+        16
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_116",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I117",
+      "module": "execution_risk_history",
+      "exact_import_module": "execution_startup",
+      "import_lines": [
+        18
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_117",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I118",
+      "module": "execution_risk_history",
+      "exact_import_module": "json",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_118",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I119",
+      "module": "execution_risk_history",
+      "exact_import_module": "noncash_v3",
+      "import_lines": [
+        19
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_119",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I120",
+      "module": "execution_risk_history",
+      "exact_import_module": "reference_validation",
+      "import_lines": [
+        20
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_120",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I121",
+      "module": "execution_risk_history",
+      "exact_import_module": "threading",
+      "import_lines": [
+        10
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_121",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I122",
+      "module": "execution_signals",
+      "exact_import_module": "contract",
+      "import_lines": [
+        13
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_122",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I123",
+      "module": "execution_signals",
+      "exact_import_module": "copy",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_123",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I124",
+      "module": "execution_signals",
+      "exact_import_module": "execution_amounts",
+      "import_lines": [
+        15
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_124",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I125",
+      "module": "execution_signals",
+      "exact_import_module": "execution_closure",
+      "import_lines": [
+        14
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_125",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I126",
+      "module": "execution_signals",
+      "exact_import_module": "execution_risk",
+      "import_lines": [
+        16
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_126",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I127",
+      "module": "execution_signals",
+      "exact_import_module": "fractions",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_127",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I128",
+      "module": "execution_signals",
+      "exact_import_module": "math",
+      "import_lines": [
+        10
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_128",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I129",
+      "module": "execution_signals",
+      "exact_import_module": "noncash_v3",
+      "import_lines": [
+        17
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_129",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I130",
+      "module": "execution_signals",
+      "exact_import_module": "threading",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_130",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I131",
+      "module": "execution_startup",
+      "exact_import_module": "contract",
+      "import_lines": [
+        16
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_131",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I132",
+      "module": "execution_startup",
+      "exact_import_module": "conventions",
+      "import_lines": [
+        17
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_132",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I133",
+      "module": "execution_startup",
+      "exact_import_module": "copy",
+      "import_lines": [
+        10
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_133",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I134",
+      "module": "execution_startup",
+      "exact_import_module": "execution",
+      "import_lines": [
+        18
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_134",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I135",
+      "module": "execution_startup",
+      "exact_import_module": "execution_closure",
+      "import_lines": [
+        19
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_135",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I136",
+      "module": "execution_startup",
+      "exact_import_module": "fees",
+      "import_lines": [
+        20
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_136",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I137",
+      "module": "execution_startup",
+      "exact_import_module": "functools",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_137",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I138",
+      "module": "execution_startup",
+      "exact_import_module": "json",
+      "import_lines": [
+        12
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_138",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I139",
+      "module": "execution_startup",
+      "exact_import_module": "math",
+      "import_lines": [
+        13
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_139",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I140",
+      "module": "execution_startup",
+      "exact_import_module": "pipeline",
+      "import_lines": [
+        21
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_140",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I141",
+      "module": "execution_startup",
+      "exact_import_module": "reference_definition_v301",
+      "import_lines": [
+        22
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_141",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I142",
+      "module": "execution_startup",
+      "exact_import_module": "reference_profile_v301",
+      "import_lines": [
+        23
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_142",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I143",
+      "module": "execution_startup",
+      "exact_import_module": "reference_validation",
+      "import_lines": [
+        24
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_143",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I144",
+      "module": "execution_startup",
+      "exact_import_module": "threading",
+      "import_lines": [
+        14
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_144",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I145",
+      "module": "execution_state",
+      "exact_import_module": "fees",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_145",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I146",
+      "module": "execution_state",
+      "exact_import_module": "state_v2",
+      "import_lines": [
+        7
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_146",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I147",
+      "module": "pipeline",
+      "exact_import_module": "execution_candidate",
+      "import_lines": [
+        667,
+        682,
+        702
+      ],
+      "entry_kind": "existing entry additive edge",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_147",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I148",
+      "module": "reference_definition_v301",
+      "exact_import_module": "contract",
+      "import_lines": [
+        11
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_148",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I149",
+      "module": "reference_definition_v301",
+      "exact_import_module": "json",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_149",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I150",
+      "module": "reference_definition_v301",
+      "exact_import_module": "pathlib",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_150",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I151",
+      "module": "reference_definition_v301",
+      "exact_import_module": "reference_registry_v3",
+      "import_lines": [
+        12
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_151",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I152",
+      "module": "reference_profile_v301",
+      "exact_import_module": "contract",
+      "import_lines": [
+        8
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_152",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I153",
+      "module": "reference_profile_v301",
+      "exact_import_module": "reference_definition_v301",
+      "import_lines": [
+        9
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_153",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    },
+    {
+      "id": "I154",
+      "module": "reference_profile_v301",
+      "exact_import_module": "reference_registry_v3",
+      "import_lines": [
+        15
+      ],
+      "entry_kind": "new inspected module",
+      "planned_negative": "replace this exact module import in a private source mutation with __C13_UNLISTED_154",
+      "expected_reason": "scope.static_import_not_whitelisted",
+      "execution_status": "PLANNED_NOT_RUN; baseline final proof must first pass; do not claim a negative has run",
+      "registration": "submit with read points; not yet written into IMPORTS"
+    }
+  ]
+}

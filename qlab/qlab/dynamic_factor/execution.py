@@ -520,7 +520,16 @@ def nav_increment(M, P, prices, alpha, mu_Q, E, c_M, c_P, mu_cash=0, qqq="QQQ"):
     }
 
 
-def voluntary_trade_gate(request, *, conventions, ledger=None):
+def voluntary_trade_gate(request, *, conventions, ledger=None, execution=None):
+    if execution is not None:
+        from .execution_candidate import CandidateIntent
+
+        if (
+            type(execution) is not CandidateIntent
+            or conventions is not execution.policy
+        ):
+            raise ValueError("candidate.owned_preclose_intent_required")
+        return execution.next_open(request)
     # One predeclared signal in an accounting scope has one final optional plan.
     key = None
     if (
@@ -529,10 +538,22 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
         and request.get("signal_close")
     ):
         key = f"gain/{request['account_scope']}/{request['signal_close']}"
-    if key and ledger is not None:
+    if key and ledger is not None and conventions.document["version"] != "v3.0.0":
         saved = ledger.recorded(key + "/outcome")
         if saved is not None and saved["request_sha256"] == digest(request):
             return saved["report"]
+
+    def reject_isolated_optional(M, P, signal):
+        from .isolation import eligible_day
+
+        day = eligible_day(request["isolation_manifest"], signal, conventions)
+        if day["quantity_state"] != "VERIFIED_GE50":
+            raise OptionalRejected("gain." + day["quantity_state"] + "_no_new_tilt", M)
+        if any(
+            P.get(s, 0) > M.get(s, 0) and s not in day["eligible"] and s != "QQQ"
+            for s in P
+        ):
+            raise OptionalRejected("gain.isolated_optional_buy_forbidden", M)
 
     def calculate():
         price_basis_check(request["context"])
@@ -572,6 +593,11 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
             necessary_state_known(state)
             if state["inventory"] != original or state["cash"] != cash:
                 raise ValueError("state.required_state_identity_mismatch")
+        if conventions.document["version"] == "v3.0.0":
+            # Keep the original isolation refusals as diagnostic claims only.
+            # No quote, plan write, cached outcome or formal execution follows.
+            reject_isolated_optional(M, P, signal)
+            raise ValueError("candidate.shared_execution_intent_required")
         if (
             not finite(cash)
             or cash < 0
@@ -622,18 +648,7 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
             ):
                 raise ValueError("gain.plan_not_cash_feasible")
         if conventions.document["version"] in ("v2.0.0", "v3.0.0"):
-            from .isolation import eligible_day
-
-            day = eligible_day(request["isolation_manifest"], signal, conventions)
-            if day["quantity_state"] != "VERIFIED_GE50":
-                raise OptionalRejected(
-                    "gain." + day["quantity_state"] + "_no_new_tilt", M
-                )
-            if any(
-                P.get(s, 0) > M.get(s, 0) and s not in day["eligible"] and s != "QQQ"
-                for s in P
-            ):
-                raise OptionalRejected("gain.isolated_optional_buy_forbidden", M)
+            reject_isolated_optional(M, P, signal)
         qqq = conventions.profile["portfolio"]["base_ticker"]
         stocks = (set(original) | set(M) | set(P)) - {qqq}
         try:
@@ -695,10 +710,14 @@ def voluntary_trade_gate(request, *, conventions, ledger=None):
     if (
         key
         and ledger is not None
+        and conventions.document["version"] != "v3.0.0"
         and ledger.recorded(key + "/plan")
         == {"request_sha256": digest(request), **conventions.binding}
     ):
         ledger.record(
             key + "/outcome", {"request_sha256": digest(request), "report": report}
         )
+    if conventions.document["version"] == "v3.0.0":
+        report["seal_status"] = "seal_pending"
+        report["metrics"]["legacy_caller_M_diagnostic_only"] = True
     return report

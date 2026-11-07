@@ -1,0 +1,46 @@
+"""Replay identical older caller receipts, not reissued per-tree substitutes."""
+from pathlib import Path
+from copy import deepcopy
+import json,sys
+repo=Path(sys.argv[1]).resolve();out=Path(sys.argv[2]).resolve();out.mkdir(parents=True,exist_ok=True)
+sys.path[:0]=[str(repo/'qlab'),str(repo/'qlab/tests/dynamic_factor')]
+from qlab.dynamic_factor.contract import digest,canonical,sha256
+from qlab.dynamic_factor.conventions import load_conventions
+from qlab.dynamic_factor.noncash_v3 import zero_origin,acquisition_check,economic_read_receipt,no_dependency_receipt,actor_ids,ROUTES
+from v3_test_helpers import synthetic_guard,synthetic_zero_state
+p=load_conventions()
+if len(sys.argv)==3:
+    guard=synthetic_guard(p,blocked=[p.profile['universe'][0]]);state=synthetic_zero_state(guard);source=digest('B25R frozen legacy caller source')
+    receipts=[zero_origin(guard,a,state,source,p) for a in actor_ids(p)]
+    dataset=dict(guard=guard,state=state,receipts=receipts)
+    (out/'frozen-origin-inputs.json').write_bytes(canonical(dataset))
+else:dataset=json.loads(Path(sys.argv[3]).read_bytes())
+guard,state=dataset['guard'],dataset['state'];rows=[]
+def invoke(label,fn,calls):
+    try:r=dict(ok=True,value=fn())
+    except Exception as e:r=dict(ok=False,type=type(e).__name__,reason=str(e))
+    rows.append(dict(label=label,result=r,actual_reader_calls=deepcopy(calls)))
+for origin in dataset['receipts']:
+    actor=origin['actor'];before=deepcopy(origin)
+    for route in sorted(ROUTES):invoke(actor+'/acquisition/'+route,lambda:acquisition_check(guard,actor,origin,state,deepcopy(state),route,p),[])
+    bad=deepcopy(state);bad['cash']='15000'
+    invoke(actor+'/R2-after-valid-origin',lambda:acquisition_check(guard,actor,origin,state,bad,'buy',p),[])
+    calls=[]
+    def reader(symbol):calls.append(symbol);return 100.0
+    symbol=p.profile['universe'][1]
+    invoke(actor+'/numeric-boundary',lambda:economic_read_receipt(guard,'score',[symbol],reader,actor=actor,origin=origin,policy=p),calls)
+    invoke(actor+'/origin-before-missing-read-receipts',lambda:no_dependency_receipt(guard,actor,origin,{},p),[])
+    assert origin==before
+result=dict(dataset_raw_sha256=sha256(canonical(dataset)),old_receipts=len(dataset['receipts']),rows=rows)
+(out/'observations.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(dict(old_receipts=result['old_receipts'],calls=len(rows),accepted=sum(x['result']['ok'] for x in rows))))
+if '--expect-legacy-compatible' in sys.argv:
+    wrong=[]
+    for x in rows:
+        if '/acquisition/' in x['label'] or x['label'].endswith('/numeric-boundary'):
+            valid=x['result']['ok']
+        else:
+            expected='state.R2_necessary_state_unknown' if x['label'].endswith('/R2-after-valid-origin') else 'B.all_economic_consumers_required'
+            valid=not x['result']['ok'] and x['result'].get('reason')==expected
+        if not valid:wrong.append(x)
+    (out/'compatibility-errors.json').write_text(json.dumps(wrong,indent=2)+'\n')
+    assert not wrong, 'B25R legacy compatibility regression: '+str(len(wrong))+' actual calls differ'

@@ -1,0 +1,75 @@
+"""The ONLY comparison path: trusted oracle -> full observed bytes, no planner."""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+
+def sha(raw):return hashlib.sha256(raw).hexdigest()
+def canonical(obj):
+ return json.dumps(obj,ensure_ascii=False,sort_keys=True,separators=(',',':'),allow_nan=False).encode()
+
+def strict_json(raw):
+ def pairs(items):
+  result={}
+  for key,value in items:
+   if key in result:raise ValueError('DUPLICATE_JSON_KEY')
+   result[key]=value
+  return result
+ def invalid(value):raise ValueError('NONFINITE_JSON')
+ return json.loads(raw,object_pairs_hook=pairs,parse_constant=invalid)
+
+def trusted_case(manifest_path, trusted_manifest_sha):
+ path=Path(manifest_path)
+ raw=path.read_bytes()
+ if sha(raw)!=trusted_manifest_sha:raise ValueError('TRUSTED_SUITE_SHA_MISMATCH')
+ m=strict_json(raw);root=path.parent
+ source=(root/m['input_file']).read_bytes();expected=(root/m['expected_file']).read_bytes()
+ if sha(source)!=m['input_raw_sha256'] or sha(expected)!=m['expected_raw_sha256']:
+  raise ValueError('SEALED_INPUT_OR_EXPECTED_BYTES_CHANGED')
+ inp=strict_json(source);out=strict_json(expected)
+ if canonical(inp)!=source or sha(canonical(inp))!=m['logical_input_sha256']:
+  raise ValueError('SEALED_INPUT_NOT_CANONICAL')
+ if canonical(out)!=expected:raise ValueError('SEALED_EXPECTED_NOT_CANONICAL')
+ if sorted(out)!=m['required_top_output_keys']:raise ValueError('GOLDEN_OUTPUT_SCHEMA')
+ if out['input_sha256']!=m['logical_input_sha256']:raise ValueError('GOLDEN_INPUT_BINDING')
+ orders=out['net_orders']
+ if len(orders)!=m['expected_distinct_orders'] or len(orders)<2 or len({o['symbol'] for o in orders})!=len(orders):
+  raise ValueError('GOLDEN_MULTI_ORDER_COVERAGE_REQUIRED')
+ if orders==sorted(orders,key=lambda o:o['symbol']):raise ValueError('GOLDEN_MUST_DISTINGUISH_PRIORITY_FROM_TICKER_SORT')
+ if [o['priority'] for o in orders]!=list(range(1,len(orders)+1)):
+  raise ValueError('GOLDEN_PRIORITIES_INVALID')
+ for n,h in m['source_components'].items():
+  if sha((root/n).read_bytes())!=h:raise ValueError('GOLDEN_SOURCE_COMPONENT_CHANGED')
+ if sha((root/'fixed-order-fee-worksheet.json').read_bytes())!=m['fixed_order_fee_worksheet_sha256']:
+  raise ValueError('GOLDEN_WORKSHEET_CHANGED')
+ if sha((root/'derivation.md').read_bytes())!=m['derivation_sha256']:
+  raise ValueError('GOLDEN_DERIVATION_CHANGED')
+ return m,source,expected
+
+def compare(manifest_path, trusted_manifest_sha, observed_input, observed_output):
+ """No output sorting/canonicalization/field deletion before byte comparison."""
+ try:
+  m,source,expected=trusted_case(manifest_path,trusted_manifest_sha)
+  if sha(canonical(strict_json(observed_input)))!=m['logical_input_sha256']:
+   raise ValueError('OBSERVED_INPUT_NOT_SAME_LOGICAL_INPUT')
+  # Only the *input* object-key representation may differ. Arrays are untouched.
+  same=observed_output==expected
+  first=None
+  if not same:
+   first=next((i for i,(a,b) in enumerate(zip(expected,observed_output)) if a!=b),min(len(expected),len(observed_output)))
+  return dict(pass_exact_bytes=same,reason=None if same else 'FULL_RAW_BYTES_MISMATCH',
+   first_difference_byte=first,expected_sha256=m['expected_raw_sha256'],
+   observed_sha256=sha(observed_output),expected_bytes=len(expected),observed_bytes=len(observed_output))
+ except (ValueError,KeyError,TypeError,OSError) as exc:
+  return dict(pass_exact_bytes=False,reason=str(exc),first_difference_byte=None,
+              observed_sha256=sha(observed_output))
+
+def main():
+ p=argparse.ArgumentParser(description=__doc__)
+ p.add_argument('--manifest',required=True);p.add_argument('--trusted-suite-sha256',required=True)
+ p.add_argument('--input',required=True);p.add_argument('--observed',required=True)
+ a=p.parse_args()
+ r=compare(a.manifest,a.trusted_suite_sha256,Path(a.input).read_bytes(),Path(a.observed).read_bytes())
+ print(json.dumps(r,sort_keys=True))
+ return 0 if r['pass_exact_bytes'] else 1
+if __name__=='__main__':raise SystemExit(main())

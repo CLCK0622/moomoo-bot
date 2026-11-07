@@ -1,9 +1,10 @@
 """V3 P1-P7 source seals and receipt validators; no performance or N writer."""
 
-from .contract import digest, result, unavailable
+from .contract import digest, is_sha, result, unavailable
 from .conventions import load_conventions
 from .reference_check import static_proof, verify_registry
-from .reference_evidence import lineage_sources, timestamp
+from .reference_evidence import blob, lineage_sources, timestamp
+from .execution_receipts.input_data import require_resealed_evidence
 from .reference_registry_v3 import (
     HASHES,
     DISPATCH,
@@ -12,6 +13,20 @@ from .reference_registry_v3 import (
     registered_request,
 )
 from .fold_split import shared_views, reference_view, train_dates
+
+
+def prepare_execution_sidecar(observation, input_read, *, n_binding):
+    """Collect owned P4/P7 evidence; this never accepts SRC/AUTH or B."""
+    from .execution_receipts.p4p7 import prepare_sidecar
+
+    return prepare_sidecar(observation, input_read, n_binding=n_binding)
+
+
+def receive_execution_sidecar(sidecar):
+    """Formal reception remains fail-closed before any numerical read."""
+    from .execution_receipts.p4p7 import receive_sidecar
+
+    return receive_sidecar(sidecar)
 
 
 def seal_static(scope, sealed_at, policy=None):
@@ -143,6 +158,16 @@ def runtime_check(request, policy=None):
         seal = request["static_seal"]
         if seal_static(scope, seal["sealed_at"], p) != seal:
             raise ValueError("reference.static_seal_mismatch")
+        sidecars = request.get("sidecars")
+        if type(sidecars) is dict:
+            for sidecar in sidecars.values():
+                # Direct caller claims are not content-addressed sidecars.
+                # Preserve their original B/P4/P7 refusal rather than parsing
+                # them as if a trusted artifact had been supplied.
+                if is_sha(sidecar):
+                    require_resealed_evidence(
+                        blob(request.get("evidence_files", {}), sidecar)
+                    )
         # No B runtime release has been issued. Static candidate protection and
         # synthetic source/route witnesses cannot satisfy this external gate.
         if scope["B_catalog_release_sha256"] is None:
@@ -169,3 +194,105 @@ def runtime_check(request, policy=None):
             },
         )
     )
+
+
+def execution_readiness(
+    profile,
+    scope,
+    manifest,
+    *,
+    expected,
+    host_context,
+    installed_snapshot,
+    run_pin,
+    traces,
+    expected_run_ids,
+    stage_mapping,
+):
+    """Read-only pre-execution metadata reception; B stays an external gate.
+
+    P4's execution mechanism is inspected, not an invented actual-run receipt.
+    P7 consumes the original host reader, never a caller's numeric N. This
+    preflight cannot read a price, start a worker or issue a runtime capability.
+    The separate owned diagnostic/result channel never bypasses this gate.
+    """
+    from .execution_receipts.input_envelope import prepare_input_envelope
+    from .execution_receipts.n_binding import bind_execution_n
+    from .scope_proof import reference_execution_proof
+
+    report = dict(
+        schema="EVO884.ReferenceExecutionReadiness/v1",
+        complete=False,
+        returns=None,
+        sr=None,
+        reasons=[],
+        reader_calls=0,
+        accessed_roles=[],
+        worker_calls=0,
+        formal_N=None,
+        P4_actual_run=None,
+        P7_reader_receipt=None,
+        execution_proof=None,
+        remaining_external_gates=[],
+        seal_status="seal_pending",
+        runtime_consumable=False,
+        certifiable=False,
+    )
+    try:
+        preparation = prepare_input_envelope(profile, scope, manifest, **expected)
+        if not preparation["prepared"]:
+            raise ValueError(preparation["reasons"][0])
+        if (
+            stage_mapping["stage"] != "independent_reference"
+            or stage_mapping["run_id"] != manifest["run_id"]
+            or manifest["run_id"] not in expected_run_ids
+            or not any(
+                t["run_id"] == manifest["run_id"]
+                and t["member_id"] == manifest["member_id"]
+                for t in traces
+            )
+        ):
+            raise ValueError("reference.reference_run_attempt_binding_required")
+        received = bind_execution_n(
+            host_context=host_context,
+            installed_snapshot=installed_snapshot,
+            run_pin=run_pin,
+            traces=traces,
+            expected_run_ids=expected_run_ids,
+            stage_mapping=stage_mapping,
+        )
+        report["P7_reader_receipt"] = received
+        if received["formal_N_slot"] is None or received["reasons"]:
+            raise ValueError(
+                received["reasons"][0]
+                if received["reasons"]
+                else "reference.complete_N_required"
+            )
+        report["formal_N"] = received["formal_N_slot"]
+        report["execution_proof"] = reference_execution_proof(load_conventions())
+        # The original first-error B refusal below stays first. Enumerate the
+        # independent external obligations without substituting the N host for
+        # a source/permission receiver or treating this metadata preflight as
+        # actual P4 execution, resealing or runtime acceptance.
+        report["remaining_external_gates"] = [
+            dict(
+                gate="B_RUNTIME_RELEASE",
+                reason="reference.runtime_B_release_and_actual_proofs_missing",
+                accepted=False,
+            ),
+            dict(
+                gate="SRC_AUTH_RECEPTION",
+                reason="reference.SRC_AUTH_source_and_permission_reception_required",
+                accepted=False,
+            ),
+        ]
+        # A non-null release already fails the unchanged original scope
+        # validator. Do not synthesize an anchor or a replacement guard.
+        raise ValueError("reference.runtime_B_release_and_actual_proofs_missing")
+    except (ValueError, KeyError, TypeError, AttributeError, OSError) as exc:
+        report["reasons"] = [
+            str(exc)
+            if isinstance(exc, ValueError)
+            else "reference.execution_reception_invalid"
+        ]
+    return report

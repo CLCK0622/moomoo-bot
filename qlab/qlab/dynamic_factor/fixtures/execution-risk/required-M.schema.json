@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "EVO884.RequiredM/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "M",
+    "age_clock",
+    "book_id",
+    "certifiable",
+    "close_session",
+    "complete",
+    "cooldown_boundary",
+    "execution_binding_sha256",
+    "execution_closure_sha256",
+    "execution_session",
+    "origin_new_risk_enabled",
+    "original_state_sha256",
+    "reasons",
+    "required_exits",
+    "required_m_sha256",
+    "risk_source_sha256",
+    "ruling_sha256",
+    "runtime_consumable",
+    "schema",
+    "shared_contract_sha256",
+    "signal_sha256",
+    "snapshot_sha256"
+  ],
+  "properties": {
+    "M": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "合同口径（M-01/I09，机器裁定 SHA-256 03809f4527ece1012b18bb214aa23a39a7d8d52da4e573cdd57c03dc3dd13914；依据 v1 中文第169行、v3 /gain_model/plans、D12.D1.4–D1.5）：M 是由同一 D2 从原库存生成、必要动作之后拟剩余的非负整数持仓股数，不是数量上限或卖出差量；P 从 M 起步。二者都是计划，不证明已成交。选中计划的完整净订单相对原库存生成；P−M 只表示自愿调整差额，不能代替完整订单，也不能先成交 M 再成交 P。缺必要状态时按原 R2 保留库存、权益和意图，不默认为零或另造较小 M。本项属于既有合同解释，不计设计 N。",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "age_clock": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "entry_close_age",
+            "step_per_held_close"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "entry_close_age": {
+              "const": 1
+            },
+            "step_per_held_close": {
+              "const": 1
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "book_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "certifiable": {
+      "const": false
+    },
+    "close_session": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "cooldown_boundary": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "start_event",
+            "first_blocked_execution_offset",
+            "blocked_sessions"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "start_event": {
+              "const": "complete_exit_fill_open"
+            },
+            "first_blocked_execution_offset": {
+              "const": 1
+            },
+            "blocked_sessions": {
+              "const": 5
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "execution_session": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "origin_new_risk_enabled": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "original_state_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "required_exits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "quantity",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "required_m_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "risk_source_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ruling_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "runtime_consumable": {
+      "const": false
+    },
+    "schema": {
+      "const": "EVO884.RequiredM/v1"
+    },
+    "shared_contract_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signal_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "snapshot_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "execution_closure_sha256": {
+      "const": "7677b123fa2fe573343fad3fe3f43887c5f5d2c0fd7c12d9a1de8bc625162e1b"
+    },
+    "execution_binding_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "complete": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "M": {
+            "type": "object"
+          },
+          "origin_new_risk_enabled": {
+            "type": "object"
+          },
+          "age_clock": {
+            "type": "object",
+            "required": [
+              "entry_close_age",
+              "step_per_held_close"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "entry_close_age": {
+                "const": 1
+              },
+              "step_per_held_close": {
+                "const": 1
+              }
+            }
+          },
+          "cooldown_boundary": {
+            "type": "object",
+            "required": [
+              "start_event",
+              "first_blocked_execution_offset",
+              "blocked_sessions"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "start_event": {
+                "const": "complete_exit_fill_open"
+              },
+              "first_blocked_execution_offset": {
+                "const": 1
+              },
+              "blocked_sessions": {
+                "const": 5
+              }
+            }
+          },
+          "ruling_sha256": {
+            "const": "8cd32345adb5ebe16cb9020687091532c46f803f046d6c1527eeedee41407a5a"
+          },
+          "reasons": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}

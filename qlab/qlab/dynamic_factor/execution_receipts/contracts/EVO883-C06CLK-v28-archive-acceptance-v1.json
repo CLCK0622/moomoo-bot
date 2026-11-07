@@ -1,0 +1,80 @@
+{
+  "DSR": null,
+  "G14_gate_closed": false,
+  "L0_authorized": false,
+  "V": null,
+  "accepted_design_count": {
+    "EXEC_CLOSURE_charged": false,
+    "after": 3,
+    "before": 2,
+    "charge_record_sha256": "03590859bdc7b0ed83a5268b86429f8aff4636f74fb7123542cbdf1d3a490512",
+    "charge_seq": 1379,
+    "charge_sequences_for_formal_arm_projection": [
+      1373,
+      1377,
+      1379
+    ],
+    "document_OOS_increment": 0,
+    "formal_arm_projection_actually_run": false,
+    "increment_once": 1,
+    "single_history_budget_reset": false,
+    "this_acceptance_additional_charge": 0
+  },
+  "additional_attachment_location_evidence": "EVO883 authenticated issue.get attachment metadata; no chain rewrite needed",
+  "archive": {
+    "attempts": 661,
+    "book_N": 1313,
+    "file_bytes": 1089145,
+    "file_sha256": "64378745818ce4aa23f492e925ae4dd28b37306a3774dda85e67896311b64aed",
+    "filename": "EVO891-B-ledger-v28.jsonl",
+    "genesis_sha256": "b86ed0e55afabd8d2873db317cf93e35cb23d2a43905eda6e9961fcb921d44ab",
+    "ledger_id": "37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc",
+    "lines": 1381,
+    "n_high_water": 1313,
+    "seq": 1380,
+    "snapshot_sha256": "c3668d760cc50af8add7208a78e5981a257cc87a9162e86344e9d7410d0a68b2",
+    "tip": "8e87034167b9d8ad28a91c33b824eecb5cba59c1b47efbb982079e32ddecde4a"
+  },
+  "archive_continuation": {
+    "accepted_tip_for_next_append": "use seq1380 unless a newer accepted tip exists at write time",
+    "base_file_sha256": "d57cd84b6b8578e3cfac14d899fcf311eddab755608d4f573e465f1632c4cd08",
+    "base_seq": 1378,
+    "base_tip": "93a5f3b115e1651613d87f08de61d3b327c8aab31b95f8d77202d9fac1c0effb",
+    "prefix_bytes": 1082387,
+    "prefix_sha256": "d57cd84b6b8578e3cfac14d899fcf311eddab755608d4f573e465f1632c4cd08"
+  },
+  "authority_chain_project_tip_external_anchor_written": false,
+  "authority_installation_or_L1_L2_or_witness_release_accepted": false,
+  "certifiable": false,
+  "clock63_started": false,
+  "complete_N": null,
+  "engineering_handoff": {
+    "C06_actual_implementation_accepted": false,
+    "C12_design_count_archive_reference": {
+      "ledger_file_sha256": "64378745818ce4aa23f492e925ae4dd28b37306a3774dda85e67896311b64aed",
+      "scope": "AUTHOR_ARCHIVE_DESIGN_COUNT_ONLY",
+      "seq": 1380,
+      "tip": "8e87034167b9d8ad28a91c33b824eecb5cba59c1b47efbb982079e32ddecde4a",
+      "value": 3
+    },
+    "allowed_as_complete_N_or_gate_N": false,
+    "new_source_and_role_binding_and_non_author_review_still_required": true
+  },
+  "evidence": {
+    "DOC1_correct_index_sha256": "7b22f59591fe7a5605cebbd352f5d31bd0753ce6adb04655717bf871099b0e72",
+    "independent_verification_file": "independent-verification.json",
+    "independent_verification_sha256": "01f29beaaa7cda9beeb2da283324a5cd3b8bf6fb4dcb94f6bb8224a730380008",
+    "report_file": "EVO883-C06CLK-v28-review-v1.md",
+    "report_sha256": "e878314c9b58772b10dd398b6ccbe3b324d670c5a5a18d820c78296bddb264bb",
+    "source_package_sha256": "b031a4337ef0aec571c67a4f6b450dc0e1a7aff7586b5915f39b6bda1a8683dd"
+  },
+  "formal_N_bounds_certified": false,
+  "gate_N": null,
+  "historical_run_authorized": false,
+  "outcome": "ACCEPTED_AUTHOR_ARCHIVE_V28_DESIGN_COUNT_ONLY",
+  "runtime_consumable": false,
+  "schema": "EVO883.C06ClockArchiveAcceptance/v1",
+  "source_issue": "01a18b04-828a-7e2f-ba25-be0b6a75624b",
+  "trigger_comment": "01a19a59-d2fe-770c-b669-97a19d0a34cf",
+  "version": "1.0.0"
+}

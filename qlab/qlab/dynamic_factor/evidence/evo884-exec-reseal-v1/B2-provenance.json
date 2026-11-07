@@ -1,0 +1,8 @@
+{
+  "projection": "A complete accepted B2 history readout remains unavailable; only the current isolation-source binding is supplied. No missing dividend amounts, dates or TR values are recomputed.",
+  "source_file": "qlab/qlab/dynamic_factor/fixtures/disposition/EVO883-EVO891-disposition-draft-v1.json",
+  "source_pointer": "/VTI_disposition/formal_readout_current",
+  "source_sha256": "75685ab429e05a74fb5f1c9187c5da144b98b6932795569516f9137f8f608f87",
+  "source_value": "unavailable_full_frozen_history_report",
+  "synthetic_fixture_not_promoted": true
+}

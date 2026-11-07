@@ -1,0 +1,110 @@
+{
+  "cases": 296,
+  "B_predicate_mismatches": 0,
+  "numeric_or_type_refusals": 252,
+  "numeric_validator_differences": [
+    {
+      "case": "cash/type/int/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "category": "numeric-or-type-refusal",
+      "initial": false,
+      "old": {
+        "ok": false,
+        "type": "OverflowError",
+        "reason": "int too large to convert to float"
+      },
+      "new": {
+        "ok": false,
+        "type": "ValueError",
+        "reason": "state.R2_necessary_state_unknown"
+      },
+      "equal": false,
+      "same_legacy_input_validation": {
+        "ok": false,
+        "type": "OverflowError",
+        "reason": "int too large to convert to float"
+      },
+      "B_predicate_equal": true
+    },
+    {
+      "case": "nav/type/int/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "category": "numeric-or-type-refusal",
+      "initial": false,
+      "old": {
+        "ok": false,
+        "type": "OverflowError",
+        "reason": "int too large to convert to float"
+      },
+      "new": {
+        "ok": false,
+        "type": "ValueError",
+        "reason": "state.R2_necessary_state_unknown"
+      },
+      "equal": false,
+      "same_legacy_input_validation": {
+        "ok": false,
+        "type": "OverflowError",
+        "reason": "int too large to convert to float"
+      },
+      "B_predicate_equal": true
+    },
+    {
+      "case": "cash/type/int/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "category": "numeric-or-type-refusal",
+      "initial": true,
+      "old": {
+        "ok": false,
+        "type": "OverflowError",
+        "reason": "int too large to convert to float"
+      },
+      "new": {
+        "ok": false,
+        "type": "ValueError",
+        "reason": "state.R2_necessary_state_unknown"
+      },
+      "equal": false,
+      "same_legacy_input_validation": {
+        "ok": false,
+        "type": "OverflowError",
+        "reason": "int too large to convert to float"
+      },
+      "B_predicate_equal": true
+    },
+    {
+      "case": "nav/type/int/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "category": "numeric-or-type-refusal",
+      "initial": true,
+      "old": {
+        "ok": false,
+        "type": "OverflowError",
+        "reason": "int too large to convert to float"
+      },
+      "new": {
+        "ok": false,
+        "type": "ValueError",
+        "reason": "state.R2_necessary_state_unknown"
+      },
+      "equal": false,
+      "same_legacy_input_validation": {
+        "ok": false,
+        "type": "OverflowError",
+        "reason": "int too large to convert to float"
+      },
+      "B_predicate_equal": true
+    }
+  ],
+  "decimal_cases": 44,
+  "intentional_decimal_differences": 14,
+  "outside_plain_JSON": {
+    "case": "host-dict-subclass-overrides-keys",
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "scope": "not a plain JSON container; proves unqualified arbitrary-Python equivalence is false"
+  }
+}

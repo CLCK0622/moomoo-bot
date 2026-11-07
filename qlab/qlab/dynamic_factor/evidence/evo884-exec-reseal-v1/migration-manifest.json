@@ -1,0 +1,596 @@
+{
+  "B_release_frozen": "df91ea1229ae7d77736601116119455aa41018c7",
+  "B_release_nine_rows_included": false,
+  "carried_existing_C13_component_rows": [
+    {
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/C13-migration-draft.original.json",
+          "bytes": 8408,
+          "json_pointer": "/rows/7",
+          "recorded_value": {
+            "affected_bindings": [
+              "C05 startup source manifest; unchanged reference book identities are not reissued"
+            ],
+            "file": "qlab/qlab/dynamic_factor/execution_startup.py",
+            "final_reseal_new_sha256": null,
+            "literal_old_SHA_references": [],
+            "migration": "Keep old sources/receipts byte-for-byte for historical replay; no re-sign in this change; final R then one authorized reseal",
+            "observed_candidate_sha256": "4b675f45605e69869bab8135b77e1b82cca7d4a5a309f1549fc38ea10f0f1c72",
+            "old_sha256": "8bce00e43fcb043327caada9dd29e8420c5a9969b93e2125200e6b0f5d706cf1",
+            "why_required": "C05 source changes only for the approved candidate startup branch; reference snapshots remain byte-identical"
+          },
+          "sha256": "6afa20d89b1206c492bec20203158f711dde442ddbd71cd0667844af1badf469"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/execution_startup.py",
+      "historical_receipts_action": "不重发原四参考 book 身份，不改原测试/夹具",
+      "id": "CARRY-C13-execution_startup.py",
+      "invalidation_reason": "C05 source changes only for the approved candidate startup branch; reference snapshots remain byte-identical",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1execution_startup.py/sha256",
+          "recorded_value": "4b675f45605e69869bab8135b77e1b82cca7d4a5a309f1549fc38ea10f0f1c72"
+        },
+        {
+          "artifact": "read-dag.json",
+          "json_pointer": "/B2_isolation/source_files/execution_startup.py",
+          "recorded_value": "4b675f45605e69869bab8135b77e1b82cca7d4a5a309f1549fc38ea10f0f1c72"
+        }
+      ],
+      "new_sha256": "4b675f45605e69869bab8135b77e1b82cca7d4a5a309f1549fc38ea10f0f1c72",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "8bce00e43fcb043327caada9dd29e8420c5a9969b93e2125200e6b0f5d706cf1",
+      "old_source_head": "67e17fc9667895d360db4a08d41530fbbc836996",
+      "old_state": "PRESENT",
+      "replacement_target": "S 完整源码 manifest / B2 proof 的该组件源项；保留原 C13 草稿补充行，不新增授权或导出面"
+    },
+    {
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/C13-migration-draft.original.json",
+          "bytes": 8408,
+          "json_pointer": "/rows/8",
+          "recorded_value": {
+            "affected_bindings": [
+              "B2 isolation source_files/source_sha256",
+              "source_manifest and derived input digests",
+              "single combined C13/C09 final source seal"
+            ],
+            "file": "qlab/qlab/dynamic_factor/execution_candidate.py",
+            "final_reseal_new_sha256": null,
+            "literal_old_SHA_references": [],
+            "migration": "Keep old sources/receipts byte-for-byte for historical replay; no re-sign in this change; final R then one authorized reseal",
+            "observed_candidate_sha256": "2d6b77a2c8904f877d2fc4c80bec1ace708a2745ecc364ee071627fe94ea1c88",
+            "old_sha256": null,
+            "why_required": "New shared-execution adapter source must join the single final source seal"
+          },
+          "sha256": "6afa20d89b1206c492bec20203158f711dde442ddbd71cd0667844af1badf469"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/execution_candidate.py",
+      "historical_receipts_action": "不重发原四参考 book 身份，不改原测试/夹具",
+      "id": "CARRY-C13-execution_candidate.py",
+      "invalidation_reason": "New shared-execution adapter source must join the single final source seal",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1execution_candidate.py/sha256",
+          "recorded_value": "2d6b77a2c8904f877d2fc4c80bec1ace708a2745ecc364ee071627fe94ea1c88"
+        },
+        {
+          "artifact": "read-dag.json",
+          "json_pointer": "/B2_isolation/source_files/execution_candidate.py",
+          "recorded_value": "2d6b77a2c8904f877d2fc4c80bec1ace708a2745ecc364ee071627fe94ea1c88"
+        }
+      ],
+      "new_sha256": "2d6b77a2c8904f877d2fc4c80bec1ace708a2745ecc364ee071627fe94ea1c88",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": null,
+      "old_source_head": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "old_state": "ABSENT in old main; no prior module SHA",
+      "replacement_target": "S 完整源码 manifest / B2 proof 的该组件源项；保留原 C13 草稿补充行，不新增授权或导出面"
+    }
+  ],
+  "core_main_row_count": 7,
+  "core_row_count": 9,
+  "final": true,
+  "final_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+  "handoff_original_sha256": "056fae0f68e9d8abbdd2cebceb9450907b825ce758ef5a64c8b9d367008dff47",
+  "independent_review": "pending EVO887 S",
+  "input_sources": [
+    {
+      "artifact": "sources/C13-migration-draft.original.json",
+      "bytes": 8408,
+      "sha256": "6afa20d89b1206c492bec20203158f711dde442ddbd71cd0667844af1badf469"
+    },
+    {
+      "artifact": "sources/peer-MIGRATION-FOUR-ROWS.original.json",
+      "bytes": 9735,
+      "package": "EVO884-C09-C10-facts-2d45320.zip",
+      "package_member": "MIGRATION-FOUR-ROWS.json",
+      "package_sha256": "96356728460a975a1815a0b858c70c131273cf30163b8d0344b75bac77bac59e",
+      "sha256": "f6a114c05514de4c5edb6d4e1b066b9c6e420e7342558fa0474705ba2713d262"
+    },
+    {
+      "artifact": "sources/old-reference-and-B2-inputs.original.json",
+      "bytes": 158637,
+      "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+    },
+    {
+      "artifact": "sources/R047-C09-scope-observations.original.json",
+      "bytes": 73086,
+      "sha256": "a435590a7d4355e49dc12da71f6417e8c5e15be349c3dac44db5d4efa7f4eeef"
+    },
+    {
+      "artifact": "sources/R047-audit-MANIFEST.original.json",
+      "bytes": 879420,
+      "package": "EVO887-R-047c288-independent-audit.zip",
+      "package_member": "MANIFEST.json",
+      "package_sha256": "235e3305551aa31d20a3738783aae79ab16b013188ecd5bcb201f4df2aa9288a",
+      "sha256": "5996bbd8fde369e9d2b8226d4cb956a3b5f4ef0eb2fe1b96cc08fc09c5053b9c"
+    },
+    {
+      "artifact": "sources/C13-original-package-MANIFEST.json",
+      "bytes": 450649,
+      "package": "EVO884-C13-39823d5.zip",
+      "package_member": "MANIFEST.json",
+      "package_sha256": "1a3e50742f1a35d08a677745b00be5ea3997b6b01a7f3834de3f6e35d2728e86",
+      "sha256": "b17de92f5d1dc7264dc7631e5b1130b87f0a0c7d4d372472dc37f70035ee1230"
+    },
+    {
+      "artifact": "sources/R12-supplement-package-MANIFEST.json",
+      "bytes": 16460,
+      "sha256": "a1ec6c08a44914b78fa9bb2aae0c32c8e3026575cdd50842a8657348a500bebb"
+    }
+  ],
+  "new_SHA_policy": "Every new_sha256 is null until S fills actual final bytes; reviewed-head observations are separately supplied, never presumed final.",
+  "new_binding_installed": true,
+  "new_seal_generated": true,
+  "old_main": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+  "old_receipt_boundary": "The 9d3d... noncash 306/238/34 inputs and the 8d0e... B2/reference input set are separate frozen objects. Keep both raw; never substitute one for the other.",
+  "original_R_head": "047c2885ea9cd214553da94db207b69f17246c41",
+  "protected": {
+    "C12_ledger_version": "v31",
+    "C12_seq": 1386,
+    "N": 1313,
+    "attempt": 661,
+    "design_N": 6,
+    "formal_adoptions": "v3/v3.0.1, C06, G14-P1, EXEC-CLOSURE unchanged",
+    "oracle_1747_sha256": "b935b633e29830e30469d9f08bb2666bcb272c2bda2143b7011e7faecaa102b7"
+  },
+  "reviewed_head": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+  "rows": [
+    {
+      "author_verification_after_backfill": "营缮核对核心七件与固定 S 头原字节及实际 manifest 字段，不以自报 SHA 代替",
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/historical_reference_seal/sources/execution.py",
+          "recorded_value": "1e6fe3745836f844590d5b8bf56a4c621f9fde82041cd7524cede5c7948588fb",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/current_v3_request/static_seal/sources/execution.py",
+          "recorded_value": "1e6fe3745836f844590d5b8bf56a4c621f9fde82041cd7524cede5c7948588fb",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/B2_manifest/isolation_source_sha256",
+          "recorded_value": "f7e2b0cd1c3c78dd6b0f08a7e6ebb8301c5abcf6cad2be7dd02dc7b64feb7420",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/execution.py",
+      "group": "C13_main_three",
+      "historical_receipts_action": "保留原字节供旧源码重放，不重签或覆盖",
+      "id": "S-M01",
+      "invalidation_reason": "C13 改接 owned CandidateIntent/CandidateOpen，旧 v3 自报 M/P 路径退出，原隔离拒绝及禁旧写入保留；整文件源码身份变化。",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1execution.py/sha256",
+          "recorded_value": "d15958dabe5c67d2e47033a62253a2fd19fd6667cf15ca5dac8b3b49c91d9cd8"
+        },
+        {
+          "artifact": "static-seal.json",
+          "json_pointer": "/sources/execution.py",
+          "recorded_value": "d15958dabe5c67d2e47033a62253a2fd19fd6667cf15ca5dac8b3b49c91d9cd8"
+        },
+        {
+          "artifact": "read-dag.json",
+          "json_pointer": "/B2_isolation/source_files/execution.py",
+          "recorded_value": "d15958dabe5c67d2e47033a62253a2fd19fd6667cf15ca5dac8b3b49c91d9cd8"
+        }
+      ],
+      "new_sha256": "d15958dabe5c67d2e47033a62253a2fd19fd6667cf15ca5dac8b3b49c91d9cd8",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "1e6fe3745836f844590d5b8bf56a4c621f9fde82041cd7524cede5c7948588fb",
+      "old_source_head": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "replacement_target": "S 一次签发的参考 seal.sources；C13 三件另影响 B2 isolation_source_sha256 的完整源集合重算"
+    },
+    {
+      "author_verification_after_backfill": "营缮核对核心七件与固定 S 头原字节及实际 manifest 字段，不以自报 SHA 代替",
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/historical_reference_seal/sources/pipeline.py",
+          "recorded_value": "1857b83d8832be52207d673f077ffa0d7fd481ace09654f183e4fb240fe2b1cc",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/current_v3_request/static_seal/sources/pipeline.py",
+          "recorded_value": "1857b83d8832be52207d673f077ffa0d7fd481ace09654f183e4fb240fe2b1cc",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/B2_manifest/isolation_source_sha256",
+          "recorded_value": "f7e2b0cd1c3c78dd6b0f08a7e6ebb8301c5abcf6cad2be7dd02dc7b64feb7420",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/pipeline.py",
+      "group": "C13_main_three",
+      "historical_receipts_action": "保留原字节供旧源码重放，不重签或覆盖",
+      "id": "S-M02",
+      "invalidation_reason": "C13 仅从 owned C04/C07 观察接收益并连接共同收盘顺序，pending 正式拒收；整文件源码身份变化。",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1pipeline.py/sha256",
+          "recorded_value": "a7f4c35d0bb0c70507283fe525869d13b2d7cce6e6a53a5e2da6632e05cf8ffd"
+        },
+        {
+          "artifact": "static-seal.json",
+          "json_pointer": "/sources/pipeline.py",
+          "recorded_value": "a7f4c35d0bb0c70507283fe525869d13b2d7cce6e6a53a5e2da6632e05cf8ffd"
+        },
+        {
+          "artifact": "read-dag.json",
+          "json_pointer": "/B2_isolation/source_files/pipeline.py",
+          "recorded_value": "a7f4c35d0bb0c70507283fe525869d13b2d7cce6e6a53a5e2da6632e05cf8ffd"
+        }
+      ],
+      "new_sha256": "a7f4c35d0bb0c70507283fe525869d13b2d7cce6e6a53a5e2da6632e05cf8ffd",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "1857b83d8832be52207d673f077ffa0d7fd481ace09654f183e4fb240fe2b1cc",
+      "old_source_head": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "replacement_target": "S 一次签发的参考 seal.sources；C13 三件另影响 B2 isolation_source_sha256 的完整源集合重算"
+    },
+    {
+      "author_verification_after_backfill": "营缮核对核心七件与固定 S 头原字节及实际 manifest 字段，不以自报 SHA 代替",
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/historical_reference_seal/sources/scope_proof.py",
+          "recorded_value": "bb297549ef4b017ed332b7855bc495b04d1dfa2c7d5944bb8b0629d3cdeeb3e0",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/current_v3_request/static_seal/sources/scope_proof.py",
+          "recorded_value": "bb297549ef4b017ed332b7855bc495b04d1dfa2c7d5944bb8b0629d3cdeeb3e0",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/B2_manifest/isolation_source_sha256",
+          "recorded_value": "f7e2b0cd1c3c78dd6b0f08a7e6ebb8301c5abcf6cad2be7dd02dc7b64feb7420",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/scope_proof.py",
+      "group": "C13_main_three",
+      "historical_receipts_action": "保留原字节供旧源码重放，不重签或覆盖",
+      "id": "S-M03",
+      "invalidation_reason": "C13 精确 import/3+7 固定读取与已登记 filename 段，以及后续单列 C09/C10 proof 共同改变整文件和 B2 源集合摘要；不放宽旧门。",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1scope_proof.py/sha256",
+          "recorded_value": "cfe32704775a0750a2172adea9e6276f12773c8ac6179ddd3e114b317a7adbdb"
+        },
+        {
+          "artifact": "static-seal.json",
+          "json_pointer": "/sources/scope_proof.py",
+          "recorded_value": "cfe32704775a0750a2172adea9e6276f12773c8ac6179ddd3e114b317a7adbdb"
+        },
+        {
+          "artifact": "read-dag.json",
+          "json_pointer": "/B2_isolation/source_files/scope_proof.py",
+          "recorded_value": "cfe32704775a0750a2172adea9e6276f12773c8ac6179ddd3e114b317a7adbdb"
+        }
+      ],
+      "new_sha256": "cfe32704775a0750a2172adea9e6276f12773c8ac6179ddd3e114b317a7adbdb",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "bb297549ef4b017ed332b7855bc495b04d1dfa2c7d5944bb8b0629d3cdeeb3e0",
+      "old_source_head": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "replacement_target": "S 一次签发的参考 seal.sources；C13 三件另影响 B2 isolation_source_sha256 的完整源集合重算"
+    },
+    {
+      "author_verification_after_backfill": "营缮核对核心七件与固定 S 头原字节及实际 manifest 字段，不以自报 SHA 代替",
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/historical_reference_seal/sources/reference_boundary.py",
+          "recorded_value": "33d480e2974b9d524347ab41c16c09a96653a30c9c55c7652b8bd6e10f72fe1f",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/current_v3_request/static_seal/sources/reference_boundary.py",
+          "recorded_value": "33d480e2974b9d524347ab41c16c09a96653a30c9c55c7652b8bd6e10f72fe1f",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/reference_boundary.py",
+      "group": "C09_C10_main_four",
+      "historical_receipts_action": "保留原字节供旧源码重放，不重签或覆盖",
+      "id": "S-M04",
+      "invalidation_reason": "C09/C10 四文件 owned 读取、宿主全批预核和隔离结果绑定取代仅准备的旧边界；主文件源码身份变化。",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1reference_boundary.py/sha256",
+          "recorded_value": "ed8caec1c0ccc2c1052f6fd5e5aa671b288ffd1f07bf414e14a1c07c4d1e0dd2"
+        },
+        {
+          "artifact": "static-seal.json",
+          "json_pointer": "/sources/reference_boundary.py",
+          "recorded_value": "ed8caec1c0ccc2c1052f6fd5e5aa671b288ffd1f07bf414e14a1c07c4d1e0dd2"
+        }
+      ],
+      "new_sha256": "ed8caec1c0ccc2c1052f6fd5e5aa671b288ffd1f07bf414e14a1c07c4d1e0dd2",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "33d480e2974b9d524347ab41c16c09a96653a30c9c55c7652b8bd6e10f72fe1f",
+      "old_source_head": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "replacement_target": "S 一次签发的参考 seal.sources / static_proof / 独立 execution proof 对应源码项"
+    },
+    {
+      "author_verification_after_backfill": "营缮核对核心七件与固定 S 头原字节及实际 manifest 字段，不以自报 SHA 代替",
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/historical_reference_seal/sources/reference_check.py",
+          "recorded_value": "4f2d648890b99850cc54cf9f785c5a56dc293e67a528d1302b8159c83b2c233a",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/current_v3_request/static_seal/sources/reference_check.py",
+          "recorded_value": "4f2d648890b99850cc54cf9f785c5a56dc293e67a528d1302b8159c83b2c233a",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/reference_check.py",
+      "group": "C09_C10_main_four",
+      "historical_receipts_action": "保留原字节供旧源码重放，不重签或覆盖",
+      "id": "S-M05",
+      "invalidation_reason": "保留旧两字段语义，新增独立执行证明、精确新组件与读取站点、实际固定文件身份；67e17fc 后续变动须合并到最终 S 源集合。",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1reference_check.py/sha256",
+          "recorded_value": "33faf257044acf5b941a56cadecee5274e5161edbb2f5e263cfbdcc9a300d4e8"
+        },
+        {
+          "artifact": "static-seal.json",
+          "json_pointer": "/sources/reference_check.py",
+          "recorded_value": "33faf257044acf5b941a56cadecee5274e5161edbb2f5e263cfbdcc9a300d4e8"
+        }
+      ],
+      "new_sha256": "33faf257044acf5b941a56cadecee5274e5161edbb2f5e263cfbdcc9a300d4e8",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "4f2d648890b99850cc54cf9f785c5a56dc293e67a528d1302b8159c83b2c233a",
+      "old_source_head": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "replacement_target": "S 一次签发的参考 seal.sources / static_proof / 独立 execution proof 对应源码项"
+    },
+    {
+      "author_verification_after_backfill": "营缮核对核心七件与固定 S 头原字节及实际 manifest 字段，不以自报 SHA 代替",
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/historical_reference_seal/sources/reference_producer_v3.py",
+          "recorded_value": "9c0f485a87d07caf7f1ee1f95424eea18be406c756ea9c054c6efe89c9e22af8",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/current_v3_request/static_seal/sources/reference_producer_v3.py",
+          "recorded_value": "9c0f485a87d07caf7f1ee1f95424eea18be406c756ea9c054c6efe89c9e22af8",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/reference_producer_v3.py",
+      "group": "C09_C10_main_four",
+      "historical_receipts_action": "保留原字节供旧源码重放，不重签或覆盖",
+      "id": "S-M06",
+      "invalidation_reason": "新增独立四文件准备/共同引擎结果 worker 入口，校验同一输入事实与程序绑定；原源码 seal 不覆盖新增消费路径。",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1reference_producer_v3.py/sha256",
+          "recorded_value": "27dad19d579a78a10b1d8a51c400be762347d7161d2dc2645ccaa29f3c522d09"
+        },
+        {
+          "artifact": "static-seal.json",
+          "json_pointer": "/sources/reference_producer_v3.py",
+          "recorded_value": "27dad19d579a78a10b1d8a51c400be762347d7161d2dc2645ccaa29f3c522d09"
+        },
+        {
+          "artifact": "reference-static-proof.json",
+          "json_pointer": "/source_files/reference_producer_v3.py",
+          "recorded_value": "27dad19d579a78a10b1d8a51c400be762347d7161d2dc2645ccaa29f3c522d09"
+        }
+      ],
+      "new_sha256": "27dad19d579a78a10b1d8a51c400be762347d7161d2dc2645ccaa29f3c522d09",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "9c0f485a87d07caf7f1ee1f95424eea18be406c756ea9c054c6efe89c9e22af8",
+      "old_source_head": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "replacement_target": "S 一次签发的参考 seal.sources / static_proof / 独立 execution proof 对应源码项"
+    },
+    {
+      "author_verification_after_backfill": "营缮核对核心七件与固定 S 头原字节及实际 manifest 字段，不以自报 SHA 代替",
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/historical_reference_seal/sources/reference_v3_evidence.py",
+          "recorded_value": "07c50180ea6cdd8917e338214472404f21503c99bc3ffff3a0c089d8d19a2364",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        },
+        {
+          "artifact": "sources/old-reference-and-B2-inputs.original.json",
+          "bytes": 158637,
+          "json_pointer": "/current_v3_request/static_seal/sources/reference_v3_evidence.py",
+          "recorded_value": "07c50180ea6cdd8917e338214472404f21503c99bc3ffff3a0c089d8d19a2364",
+          "sha256": "8d0e82f4256f34dd0f7bebc23c10d809bbadfdb9de969af1f8cdb96c51d8e239"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/reference_v3_evidence.py",
+      "group": "C09_C10_main_four",
+      "historical_receipts_action": "保留原字节供旧源码重放，不重签或覆盖",
+      "id": "S-M07",
+      "invalidation_reason": "C09/C10 新 sidecar 和只读接收、两外门结构清单改变源码身份；保留 B 原码与 SRC/AUTH 具名拒绝及 pending 边界。",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1reference_v3_evidence.py/sha256",
+          "recorded_value": "c7e8f624aeed98d703d10749c80516eb4da90607e78c61db3bf08469cd76f204"
+        },
+        {
+          "artifact": "static-seal.json",
+          "json_pointer": "/sources/reference_v3_evidence.py",
+          "recorded_value": "c7e8f624aeed98d703d10749c80516eb4da90607e78c61db3bf08469cd76f204"
+        }
+      ],
+      "new_sha256": "c7e8f624aeed98d703d10749c80516eb4da90607e78c61db3bf08469cd76f204",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "07c50180ea6cdd8917e338214472404f21503c99bc3ffff3a0c089d8d19a2364",
+      "old_source_head": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "replacement_target": "S 一次签发的参考 seal.sources / static_proof / 独立 execution proof 对应源码项"
+    },
+    {
+      "author_verification_after_backfill": "原作者都水回填；营缮核行完整性与对象身份，非独审",
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "source_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/R047-audit-MANIFEST.original.json",
+          "bytes": 879420,
+          "json_pointer": "/files/244/sha256",
+          "package": "EVO887-R-047c288-independent-audit.zip",
+          "package_member": "MANIFEST.json",
+          "package_sha256": "235e3305551aa31d20a3738783aae79ab16b013188ecd5bcb201f4df2aa9288a",
+          "recorded_value": "0bdb4cedbd9559f5bffb6b62578a0d9b0823c7bb815ba3a4116bcd0fb74d4923",
+          "sha256": "5996bbd8fde369e9d2b8226d4cb956a3b5f4ef0eb2fe1b96cc08fc09c5053b9c"
+        },
+        {
+          "artifact": "sources/R047-C09-scope-observations.original.json",
+          "bytes": 73086,
+          "json_pointer": "/DAG/9/source_sha256",
+          "recorded_value": "0bdb4cedbd9559f5bffb6b62578a0d9b0823c7bb815ba3a4116bcd0fb74d4923",
+          "sha256": "a435590a7d4355e49dc12da71f6417e8c5e15be349c3dac44db5d4efa7f4eeef"
+        }
+      ],
+      "file": "qlab/qlab/dynamic_factor/reference_execution.py",
+      "group": "R_first_rework_C10",
+      "historical_receipts_action": "保留 R047 失败观察、旧程序与旧回执，不倒写原 R 退回历史",
+      "id": "S-M08",
+      "invalidation_reason": "7d0cd89 在录制的 C04 锁单内将同一 signal/原 snapshot 交 RiskHistory.prepare_open；R047 旧程序/观察的 compile_sources 与 C09/C10 execution_proof 源项已失效。该文件为本分支新增，不是第八件 main 原件。",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1qlab~1dynamic_factor~1reference_execution.py/sha256",
+          "recorded_value": "bdbe261f294865b92d735e1805b100218fc52906892017291e13ec42f8763416"
+        }
+      ],
+      "new_sha256": "bdbe261f294865b92d735e1805b100218fc52906892017291e13ec42f8763416",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "0bdb4cedbd9559f5bffb6b62578a0d9b0823c7bb815ba3a4116bcd0fb74d4923",
+      "old_source_head": "047c2885ea9cd214553da94db207b69f17246c41",
+      "replacement_target": "S 的 reference_check.execution_proof.source_files/reference_execution；scope_proof.reference_execution_proof.C09_C10 同项；execution_receipts.reference_result 的 compile_sources/程序与观察绑定"
+    },
+    {
+      "author_verification_after_backfill": "营缮核文档原字节与 S 包实际成员摘要",
+      "backfill_owner": "都水主事 / S",
+      "binding_kind": "document_bytes",
+      "corresponding_receipt_or_manifest": [
+        {
+          "artifact": "sources/C13-original-package-MANIFEST.json",
+          "bytes": 450649,
+          "json_pointer": "/files/2149/sha256",
+          "package": "EVO884-C13-39823d5.zip",
+          "package_member": "MANIFEST.json",
+          "package_sha256": "1a3e50742f1a35d08a677745b00be5ea3997b6b01a7f3834de3f6e35d2728e86",
+          "recorded_value": "f78514f9fac3c96f152afbe5e6026c78ec0039351b568c410e6bbfa7286085da",
+          "sha256": "b17de92f5d1dc7264dc7631e5b1130b87f0a0c7d4d372472dc37f70035ee1230"
+        },
+        {
+          "artifact": "sources/R12-supplement-package-MANIFEST.json",
+          "bytes": 16460,
+          "json_pointer": "/candidate-execution-C13.md/sha256",
+          "recorded_value": "8463ed3517d408a5580050f8c9d116fb523691b5dd6aeac3dc999e48efcbf8bd",
+          "sha256": "a1ec6c08a44914b78fa9bb2aae0c32c8e3026575cdd50842a8657348a500bebb"
+        }
+      ],
+      "file": "qlab/docs/candidate-execution-C13.md",
+      "group": "R_first_rework_C13_document",
+      "historical_receipts_action": "原 C13 包与原 HANDOFF 字节保留，S 包携当前文档与永久限定披露",
+      "id": "S-M09",
+      "invalidation_reason": "14ebe19 增加1747仅projection/4049完整封套及前史缺口披露，使原 C13 交件文档 SHA 不再覆盖当前文档；甲限定闭合仍按 R-D 回执，不以本条声明全面满足。",
+      "new_binding_receipt_or_manifest": [
+        {
+          "artifact": "source-inventory.json",
+          "json_pointer": "/files/qlab~1docs~1candidate-execution-C13.md/sha256",
+          "recorded_value": "8463ed3517d408a5580050f8c9d116fb523691b5dd6aeac3dc999e48efcbf8bd"
+        }
+      ],
+      "new_sha256": "8463ed3517d408a5580050f8c9d116fb523691b5dd6aeac3dc999e48efcbf8bd",
+      "new_source_commit": "14ebe19f1f2929b92379f4d3386a1a3c99cfe774",
+      "old_sha256": "f78514f9fac3c96f152afbe5e6026c78ec0039351b568c410e6bbfa7286085da",
+      "old_source_head": "047c2885ea9cd214553da94db207b69f17246c41",
+      "replacement_target": "S 交件包 MANIFEST 中该文档的实际源条目（由 S 记录实际成员名）；不是 Python reader/runtime seal 的新许可或运行时 pin"
+    }
+  ],
+  "schema": "EVO884.SMigrationHandoff/v1",
+  "signing_phase": "S author publication complete; pending independent S review"
+}

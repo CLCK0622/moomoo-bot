@@ -1,0 +1,6266 @@
+[
+  {
+    "case": "zero",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/AAPL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/AAPL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/AAPL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_UNKNOWN/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_UNKNOWN/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_UNKNOWN/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_CHILD_AAPL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_CHILD_AAPL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_CHILD_AAPL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/UNDECLARED/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/UNDECLARED/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/UNDECLARED/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/QQQ/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/QQQ/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/QQQ/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/ABBV/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/ABBV/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/ABBV/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/bool/True",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/bool/True",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/bool/False",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/bool/False",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/NoneType/None",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/NoneType/None",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/int/-1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/int/-1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/float/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/float/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/float/nan",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/float/nan",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/int64/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/int64/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/IntChild/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/IntChild/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/Decimal/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/Decimal/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/str/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/str/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/int/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/float/-0.0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/int/-1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/bool/True",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/NoneType/None",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/float/inf",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/float/nan",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/float64/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/IntChild/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/FloatChild/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/Decimal/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/int/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "OverflowError",
+      "reason": "int too large to convert to float"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "OverflowError",
+      "reason": "int too large to convert to float"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/0",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/1",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/0.1",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/15000.1234567890123456789",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/01",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/1.0",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/1e3",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/-1",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/NaN",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/\uff11",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/int/0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/float/-0.0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/int/-1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/bool/True",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/NoneType/None",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/float/inf",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/float/nan",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/float64/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/IntChild/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/FloatChild/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/Decimal/1",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/int/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "OverflowError",
+      "reason": "int too large to convert to float"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "OverflowError",
+      "reason": "int too large to convert to float"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/0",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/1",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/0.1",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/15000.1234567890123456789",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/01",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/1.0",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/1e3",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/-1",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/NaN",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/\uff11",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/",
+    "category": "separate-decimal-extension",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/inventory",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/cash",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/nav",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/age",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/origin",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/rights",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/receivables",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/unknown_components",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/initialization_count",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/None",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/{}",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/()",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/True",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/[{}]",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/[{'symbol': 'ABBV', 'side': 'BUY', 'quantity': -1}]",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/[{'symbol': 'ABBV', 'side': [], 'quantity': 1}]",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "TypeError",
+      "reason": "unhashable type: 'list'"
+    },
+    "new": {
+      "ok": false,
+      "type": "TypeError",
+      "reason": "unhashable type: 'list'"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "TypeError",
+      "reason": "unhashable type: 'list'"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/[{'symbol': 'ABBV', 'side': 'BUY', 'quantity': 1, 'extra': 0}]",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "R2-before-missing-inventory-before-rights-before-B",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing-inventory-before-rights-before-B",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "rights-before-inventory-before-pending",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "receivables-before-pending",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-before-valid-and-invalid-pending",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "ordered-pending/[{'symbol': 'ABBV', 'side': 'BUY', 'quantity': 1}, {'symbol': 'SYNTHETIC_CHILD_AAPL', 'side': 'BUY', 'quantity': 1}, {}]",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "ordered-pending/[{'symbol': 'ABBV', 'side': 'BUY', 'quantity': 1}, {}, {'symbol': 'SYNTHETIC_CHILD_AAPL', 'side': 'BUY', 'quantity': 1}]",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "ordered-pending/[{'symbol': 'SYNTHETIC_CHILD_AAPL', 'side': 'BUY', 'quantity': 1}, {'symbol': 'ABBV', 'side': 'BUY', 'quantity': 1}, {}]",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing-pending-and-inventory",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "zero-extra-inventory-allowed",
+    "category": "numeric-or-type-refusal",
+    "initial": false,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "zero",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/AAPL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/AAPL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/AAPL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/AAPL/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_UNKNOWN/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_UNKNOWN/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_UNKNOWN/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_UNKNOWN/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_CHILD_AAPL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_CHILD_AAPL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/SYNTHETIC_CHILD_AAPL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/SYNTHETIC_CHILD_AAPL/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/UNDECLARED/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/UNDECLARED/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/UNDECLARED/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/UNDECLARED/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/QQQ/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/QQQ/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/QQQ/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/QQQ/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/ABBV/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/ABBV/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "holding/ABBV/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/BUY/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/BUY/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/BUY/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/SELL/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/SELL/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending/ABBV/SELL/9223372036854775808",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/bool/True",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/bool/True",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/bool/False",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/bool/False",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/NoneType/None",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/NoneType/None",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/int/-1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/int/-1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/float/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/float/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/float/nan",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/float/nan",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/int64/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/int64/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/IntChild/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/IntChild/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/Decimal/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/Decimal/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-type/str/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-type/str/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/int/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/float/-0.0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/int/-1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/bool/True",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/NoneType/None",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/float/inf",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/float/nan",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/float64/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/IntChild/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/FloatChild/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/Decimal/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/type/int/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "OverflowError",
+      "reason": "int too large to convert to float"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "OverflowError",
+      "reason": "int too large to convert to float"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/0",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/1",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/0.1",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/15000.1234567890123456789",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/01",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/1.0",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/1e3",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/-1",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/NaN",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/\uff11",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "cash/decimal/",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/int/0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/float/-0.0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/int/-1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/bool/True",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/NoneType/None",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/float/inf",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/float/nan",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/float64/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/IntChild/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/FloatChild/1.0",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/Decimal/1",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/type/int/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "OverflowError",
+      "reason": "int too large to convert to float"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "OverflowError",
+      "reason": "int too large to convert to float"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/0",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/1",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/0.1",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/15000.1234567890123456789",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": false,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/01",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/1.0",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/1e3",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/-1",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/NaN",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/\uff11",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "nav/decimal/",
+    "category": "separate-decimal-extension",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/inventory",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/cash",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/nav",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/age",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/origin",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/rights",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/receivables",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/unknown_components",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing/initialization_count",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/None",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/{}",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/()",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/True",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/[{}]",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/[{'symbol': 'ABBV', 'side': 'BUY', 'quantity': -1}]",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/[{'symbol': 'ABBV', 'side': [], 'quantity': 1}]",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "TypeError",
+      "reason": "unhashable type: 'list'"
+    },
+    "new": {
+      "ok": false,
+      "type": "TypeError",
+      "reason": "unhashable type: 'list'"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "TypeError",
+      "reason": "unhashable type: 'list'"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "pending-container/[{'symbol': 'ABBV', 'side': 'BUY', 'quantity': 1, 'extra': 0}]",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.pending_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "R2-before-missing-inventory-before-rights-before-B",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "state.R2_necessary_state_unknown"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing-inventory-before-rights-before-B",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "rights-before-inventory-before-pending",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "receivables-before-pending",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.zero_exposure_unproven_or_old_rights"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "inventory-before-valid-and-invalid-pending",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.nonzero_initial_or_guarded_exposure"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "ordered-pending/[{'symbol': 'ABBV', 'side': 'BUY', 'quantity': 1}, {'symbol': 'SYNTHETIC_CHILD_AAPL', 'side': 'BUY', 'quantity': 1}, {}]",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "ordered-pending/[{'symbol': 'ABBV', 'side': 'BUY', 'quantity': 1}, {}, {'symbol': 'SYNTHETIC_CHILD_AAPL', 'side': 'BUY', 'quantity': 1}]",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "ordered-pending/[{'symbol': 'SYNTHETIC_CHILD_AAPL', 'side': 'BUY', 'quantity': 1}, {'symbol': 'ABBV', 'side': 'BUY', 'quantity': 1}, {}]",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.guarded_pending_buy"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "missing-pending-and-inventory",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "new": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": false,
+      "type": "ValueError",
+      "reason": "B.complete_inventory_zero_evidence_required"
+    },
+    "B_predicate_equal": true
+  },
+  {
+    "case": "zero-extra-inventory-allowed",
+    "category": "numeric-or-type-refusal",
+    "initial": true,
+    "old": {
+      "ok": true,
+      "value": null
+    },
+    "new": {
+      "ok": true,
+      "value": null
+    },
+    "equal": true,
+    "same_legacy_input_validation": {
+      "ok": true,
+      "value": null
+    },
+    "B_predicate_equal": true
+  }
+]
