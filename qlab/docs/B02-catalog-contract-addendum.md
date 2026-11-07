@@ -6,4 +6,6 @@ B02 对 release_context v1.0.3 第 2、4 节的补段（供 v1.0.4 合入）
 
 随后原样调用 catalog_v21.derive(policy)，原模块一字不改。其内部原有 SHA 校验保留。仅取其 catalog 与 request.catalog 作严格规范 JSON 字节比较；任何字段不符报 B.release_context_scope_mismatch。现有消费视图只由该单一派生函数产生，没有平行实现或隐藏包装。H_C 仍为 SHA256(C(R.catalog))，H_R/H_A/H_D 原语义不变，不能以消费视图摘要替代 H_C。
 
+派生前还将实际 policy.calendar 按冻结 common-calendar 的逐日 LF 编码重算 SHA，与 host 的 common_calendar_sha256 比较。只保留原 raw/manifest 但改动内存中的日期元组，同样在 derive 前报 scope_mismatch；不增加读取或改动日历规则。
+
 源代码变更依据为上述工部裁定；本段及私有机制测试不代表实际 A、来源许可、独审重封或运行放行。所有新源码读数仍 seal_pending。

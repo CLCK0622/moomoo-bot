@@ -461,6 +461,10 @@ def _consumer_catalog(source, release, policy):
     Gongbu 01a1b818-7cf9 permits R-bound receipt and frozen policy dependencies.
     The original module retains its own SHA checks on the subsequent re-read.
     """
+    binding = _json(source["expected_policy_binding_bytes"], canonical=True)
+    calendar_raw = "".join(day + "\n" for day in policy.calendar).encode("utf-8")
+    if sha256(calendar_raw) != binding["common_calendar_sha256"]:
+        _fail("scope_mismatch")
     v21 = release["accepted_input_manifest"]["entries"][0]
     expected = {
         v21[key]["file"]: v21[key]["raw_sha256"]

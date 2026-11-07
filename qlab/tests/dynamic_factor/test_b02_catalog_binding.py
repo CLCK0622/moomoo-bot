@@ -1,6 +1,7 @@
 """Existing derivation and R-bound metadata, explicit private-host controls."""
 
 from copy import deepcopy
+from dataclasses import replace
 import json
 
 import pytest
@@ -133,3 +134,23 @@ def test_local_original_drift_refuses_before_derive(
     with pytest.raises(ValueError, match="^B.release_context_release_mismatch$"):
         b.check_release_context(context, policy=policy, request=req)
     assert reads and calls == []
+
+
+def test_calendar_values_match_host_bound_calendar_before_derive(
+    private_host_source, monkeypatch
+):
+    _, policy = private_host_source
+    context = b.receive_release_context(policy=policy)
+    drifted = replace(policy, calendar=policy.calendar[:-1])
+    req = request(context)
+    req["catalog"] = catalog_v21.derive(drifted)["catalog"]
+    calls = []
+
+    def forbidden_derive(policy):
+        calls.append(1)
+        raise AssertionError("unbound calendar must not reach derivation")
+
+    monkeypatch.setattr(b, "_derive_catalog", forbidden_derive)
+    with pytest.raises(ValueError, match="^B.release_context_scope_mismatch$"):
+        b.check_release_context(context, policy=drifted, request=req)
+    assert calls == []
