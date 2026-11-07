@@ -10,7 +10,7 @@ import sys
 import pytest
 
 from qlab.dynamic_factor import b_release_context as b
-from qlab.dynamic_factor import noncash_v3, scope_proof
+from qlab.dynamic_factor import catalog_v21, noncash_v3, scope_proof
 from qlab.dynamic_factor.contract import code_sha, sha256
 from qlab.dynamic_factor.conventions import load_conventions
 from qlab.dynamic_factor.execution_cash import CashProof
@@ -98,7 +98,7 @@ def private_host_source(monkeypatch):
 
 def request(context):
     return dict(
-        catalog=json.loads(context.r_raw)["catalog"],
+        catalog=catalog_v21.derive(load_conventions())["catalog"],
         synthetic=False,
         mode="forward",
         sealed_at="2026-11-07T20:00:00Z",

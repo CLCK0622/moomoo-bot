@@ -70,7 +70,7 @@ def private_sources(tmp_path_factory):
     root = tmp_path_factory.mktemp("C13_PRIVATE_AST_ONLY")
     for source in ROOT.glob("*.py"):
         (root / source.name).write_bytes(source.read_bytes())
-    for _, relative, _ in scope_proof.FIXED_READS:
+    for _, relative, _ in scope_proof.FIXED_READS + scope_proof.B_RELEASE_FIXED_READS:
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((ROOT / relative).read_bytes())

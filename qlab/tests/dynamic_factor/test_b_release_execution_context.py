@@ -364,7 +364,7 @@ def test_B_step3_old_accounting_bytes_fail_the_exact_updated_source_pin(
     private.mkdir()
     for source in root.glob("*.py"):
         (private / source.name).write_bytes(source.read_bytes())
-    for _, relative, _ in scope_proof.FIXED_READS:
+    for _, relative, _ in scope_proof.FIXED_READS + scope_proof.B_RELEASE_FIXED_READS:
         target = private / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((root / relative).read_bytes())

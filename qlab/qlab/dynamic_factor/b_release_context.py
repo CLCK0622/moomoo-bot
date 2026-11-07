@@ -11,6 +11,11 @@ import io
 import json
 from weakref import WeakKeyDictionary
 
+from .catalog_v21 import (
+    BINDINGS as _CATALOG_BINDINGS,
+    FIXTURES as _CATALOG_FIXTURES,
+    derive as _derive_catalog,
+)
 from .contract import code_sha, sha256
 
 
@@ -450,6 +455,36 @@ def receive_release_context(*, policy, a_raw=None):
     return context
 
 
+def _consumer_catalog(source, release, policy):
+    """Use the original derivation only after all three local originals match R.
+
+    Gongbu 01a1b818-7cf9 permits R-bound receipt and frozen policy dependencies.
+    The original module retains its own SHA checks on the subsequent re-read.
+    """
+    v21 = release["accepted_input_manifest"]["entries"][0]
+    expected = {
+        v21[key]["file"]: v21[key]["raw_sha256"]
+        for key in ("catalog_csv", "CMI_guard", "accepted_receipt")
+    }
+    if expected != _CATALOG_BINDINGS:
+        _fail("release_mismatch")
+    for name in (
+        "EVO893-B-noncash-catalog-v21.csv",
+        "EVO893-B-CMI-guard-v21.json",
+        "EVO883-v21-final-receipt.json",
+    ):
+        try:
+            raw = (_CATALOG_FIXTURES / "catalog-v21" / name).read_bytes()
+        except OSError as exc:
+            raise ValueError("B.release_context_release_mismatch") from exc
+        if sha256(raw) != expected[name] or raw != source["original_inputs"][name]:
+            _fail("release_mismatch")
+    try:
+        return _derive_catalog(policy)["catalog"]
+    except (ValueError, OSError) as exc:
+        raise ValueError("B.release_context_release_mismatch") from exc
+
+
 def check_release_context(
     release_context, *, policy, request, expected_release_identity_bytes=None
 ) -> bytes:
@@ -505,13 +540,14 @@ def check_release_context(
         _fail("scope_mismatch")
     try:
         release = _json(fields["r_raw"], canonical=True)
+        catalog = _consumer_catalog(source, release, policy)
         required = {"h_r": fields["h_r"], "h_a": fields["h_a"], "h_d": fields["h_d"]}
         if (
             type(request) is not dict
             or request.get("synthetic") is not False
             or request.get("release_binding") != required
             or request.get("mode") not in {"history", "forward"}
-            or request.get("catalog") != release["catalog"]
+            or _canonical(request.get("catalog")) != _canonical(catalog)
         ):
             _fail("scope_mismatch")
         sealed = _utc(request["sealed_at"])

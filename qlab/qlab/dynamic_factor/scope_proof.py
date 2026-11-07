@@ -96,7 +96,15 @@ IMPORTS = {
         "catalog_members",
     },
     "catalog_members": set(),
-    "b_release_context": {"csv", "datetime", "io", "json", "weakref", "contract"},
+    "b_release_context": {
+        "catalog_v21",
+        "csv",
+        "datetime",
+        "io",
+        "json",
+        "weakref",
+        "contract",
+    },
     "catalog_v21": {"csv", "io", "json", "contract", "conventions"},
     "pending": {"__future__", "contract", "execution", "input_scope", "pipeline"},
     "validation": {
@@ -400,6 +408,25 @@ FIXED_READS = (
     ),
 )
 
+# B02 exact originals; separate from the unchanged C13 registrations above.
+B_RELEASE_FIXED_READS = (
+    (
+        "b_release_context",
+        "fixtures/catalog-v21/EVO893-B-noncash-catalog-v21.csv",
+        "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13",
+    ),
+    (
+        "b_release_context",
+        "fixtures/catalog-v21/EVO893-B-CMI-guard-v21.json",
+        "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77",
+    ),
+    (
+        "b_release_context",
+        "fixtures/catalog-v21/EVO883-v21-final-receipt.json",
+        "b8b930396e7caf42ad8bde0f2f7ff190c40f36fd4c4686964a39154926f6644a",
+    ),
+)
+
 # Bind the inspected helper bodies/roots as well as their call-site domain.
 # Accounting is re-pinned for B step 3 propagation; the other four stay unchanged.
 # Any byte drift, including a comment, fails;
@@ -599,6 +626,7 @@ def b2_isolation_proof(policy):
         )
     ]
     targets.extend(FIXED_READS)
+    targets.extend(B_RELEASE_FIXED_READS)
     for name, relative, expected in targets:
         raw = (root / relative).read_bytes()
         if expected is not None:
@@ -683,6 +711,7 @@ def b2_isolation_proof(policy):
     if set(gates) != set(ROLES) or len(readers) != 2:
         raise ValueError("scope.reader_or_role_set_changed")
     if file_reads != {
+        "b_release_context": 1,
         "catalog_v21": 1,
         "execution": 2,
         "pipeline": 1,
