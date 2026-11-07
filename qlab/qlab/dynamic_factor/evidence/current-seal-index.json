@@ -50,16 +50,20 @@
       "status": "historical_superseded"
     },
     {
+      "schema": "EVO884.HistoricalSealEntry/v1",
+      "status": "historical_superseded_by_S",
+      "historical_superseded_by_S": true,
       "attachments_retained": true,
-      "commit_binding": "Exact F3b HEAD is bound by the final clean-clone handoff; all 21 sources must match.",
-      "independent_review": "pending",
-      "path": "evo884-f3b-v1/static-seal.json",
-      "runtime_consumable": false,
-      "sealed_at": "2026-10-30T08:29:03Z",
-      "sha256": "1234962c58cf698b863b60ffa5ee957d04c6d36933cb4f46939478f0ef514465",
-      "source_count": 21,
-      "source_map_sha256": "6730b606d9ec90f2ecc9f1e965c61ce13213fe01726a8f078bf0cd67c6c2c6c3",
-      "status": "historical_superseded_by_S"
+      "entry": {
+    "commit_binding": "Exact F3b HEAD is bound by the final clean-clone handoff; all 21 sources must match.",
+    "independent_review": "pending",
+    "path": "evo884-f3b-v1/static-seal.json",
+    "runtime_consumable": false,
+    "sealed_at": "2026-10-30T08:29:03Z",
+    "sha256": "1234962c58cf698b863b60ffa5ee957d04c6d36933cb4f46939478f0ef514465",
+    "source_count": 21,
+    "source_map_sha256": "6730b606d9ec90f2ecc9f1e965c61ce13213fe01726a8f078bf0cd67c6c2c6c3"
+  }
     }
   ],
   "previous_index_sha256": "c436a67d62555f4b06f2b457866a5ae022fd9deb7d90e5122a6eb2840b298b7b",

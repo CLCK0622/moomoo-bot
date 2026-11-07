@@ -1,0 +1,45 @@
+{
+  "actual_performance_outputs": null,
+  "correction": "05:16 件是历史 45eb817 封存，已由 06:05:55 当前件替代；F3 修改 continuity.py 后，由本索引的新封存替代 06:05:55 件作为本次源码的有效入口。 F3b supersedes the 07:09:57Z seal; that file remains historical and matches 08c9d87 only.",
+  "current": {
+    "commit_binding": "Exact F3b HEAD is bound by the final clean-clone handoff; all 21 sources must match.",
+    "independent_review": "pending",
+    "path": "evo884-f3b-v1/static-seal.json",
+    "runtime_consumable": false,
+    "sealed_at": "2026-10-30T08:29:03Z",
+    "sha256": "1234962c58cf698b863b60ffa5ee957d04c6d36933cb4f46939478f0ef514465",
+    "source_count": 21,
+    "source_map_sha256": "6730b606d9ec90f2ecc9f1e965c61ce13213fe01726a8f078bf0cd67c6c2c6c3"
+  },
+  "historical": [
+    {
+      "attachments_retained": true,
+      "matches_F3_HEAD": false,
+      "matching_commit": "45eb817",
+      "path": "evo884-input-v1/static-seal.json",
+      "sealed_at": "2026-10-30T05:16:00Z",
+      "sha256": "9db661a0a4e4cda4e9a48c4527c52b91e69869968acb2d83aa3858d204d0a2f8",
+      "status": "historical_superseded"
+    },
+    {
+      "attachments_retained": true,
+      "matches_F3_HEAD": false,
+      "matching_commit": "6c63505f72135063162c1f55ecfaa03514f1fa32",
+      "path": "evo884-handoff-v1/static-seal.json",
+      "sealed_at": "2026-10-30T06:05:55Z",
+      "sha256": "3fa6a933326232eb1e0369da7f6136ebd08b762bcfd4900ffe4c23e629017b75",
+      "status": "historical_superseded"
+    },
+    {
+      "attachments_retained": true,
+      "matches_F3b_HEAD": false,
+      "matching_commit": "08c9d87ab4bef9abae6b5edabaf07c0adcb40052",
+      "path": "evo884-f3-t1-v1/static-seal.json",
+      "sealed_at": "2026-10-30T07:09:57Z",
+      "sha256": "171ea4f7a6533a1bdab81ff048d6e474dbc23a9c5d135a92e933a2c7029f1c3a",
+      "status": "historical_superseded"
+    }
+  ],
+  "schema": "EVO884.effective-seal-index/v1",
+  "scope": "F3b; one commit over 08c9d87. PR11 replay is bound separately by range-diff."
+}
