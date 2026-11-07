@@ -1,0 +1,419 @@
+{
+  "schema": "EVO883.BRuntimeReleaseAdoptedProtocol/v1",
+  "protocol_id": "B-RUNTIME-RELEASE-P1",
+  "version": "1.0.0",
+  "identity_zh": "B-RUNTIME-RELEASE-P1 v1.0.0 共同协议修订",
+  "status": "ADOPTED_COMMON_PROTOCOL_NOT_RUNTIME_ACCEPTANCE",
+  "approved_proposal_three_sources": [
+    {
+      "file": "EVO883-B-RUNTIME-RELEASE-clause-proposal-v1.0.0.md",
+      "sha256": "a26de6e43af7908b8b92355657fbefabfc1c80c130342e79d8781e97741abc48",
+      "bytes": 24927,
+      "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+      "comment_id": "01a19db9-f405-7a38-96c3-34450b74fe2a",
+      "attachment_id": "01a19db9-f108-7b44-8e35-d0b5582636f9",
+      "created_at": "2026-11-02T19:26:11Z"
+    },
+    {
+      "file": "EVO883-B-RUNTIME-RELEASE-clause-proposal-v1.0.0.json",
+      "sha256": "16030b4c7fde30de7e288da8a0a04a149d159a42ef9d8e8a7551a7e52e1cca20",
+      "bytes": 22408,
+      "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+      "comment_id": "01a19db9-f405-7a38-96c3-34450b74fe2a",
+      "attachment_id": "01a19db9-f190-79c1-9af9-a3a99ee4fd37",
+      "created_at": "2026-11-02T19:26:11Z"
+    },
+    {
+      "file": "EVO883-B-RUNTIME-RELEASE-clause-proposal-v1.0.0-review.zip",
+      "sha256": "63d4e869d8cf1055e62e52d25f1e27d0201389677d0a265f3539bbbf365f97b6",
+      "bytes": 262439,
+      "issue_id": "01a18a61-21a5-7763-8cd3-9c781f80499d",
+      "comment_id": "01a19db9-f405-7a38-96c3-34450b74fe2a",
+      "attachment_id": "01a19db9-f31b-7dfd-97ad-df029bcc5de7",
+      "created_at": "2026-11-02T19:26:11Z"
+    }
+  ],
+  "authority": {
+    "deputy_countersign_comment_id": "01a19dbe-cab6-73d9-b6a4-10423e482a16",
+    "deputy_countersign_created_at": "2026-11-02T19:31:29Z",
+    "deputy_revision": 1,
+    "chief_adoption_comment_id": "01a19dbf-8791-7a52-b89a-cc2c9e9fc96b",
+    "adopted_at": "2026-11-02T19:32:17Z",
+    "chief_revision": 1,
+    "publication_dispatch_comment_id": "01a19dc0-24db-731e-90e7-85db1792555a",
+    "dispatch_revision": 1,
+    "authority_comment_bodies": "authority-comments.json",
+    "publication_platform_time_and_formal_file_SHA": "separate publication-binding.json after actual attachment readback; no self-hash or future timestamp",
+    "adoption_or_publication_replaces_D12_T0_or_L0": false
+  },
+  "adopted_clauses": [
+    {
+      "id": "BR.P1",
+      "title": "身份、责任与三段接收",
+      "text": "拟将正式B运行时发布分为：户部在EVO-938发布的不可变事实核心R；记录R实际平台附件/发布评论身份的分离公布封套P；原可信接收方按已采用条款对该版本身份、输入及限定范围重算形成的接收核验回执A。R的建议schema为EVO938.BRuntimeCatalogRelease/v1，明确release_id、版本、适用policy/profile/calendar、用途及覆盖域；这是元数据发布身份，不是已核收的完整B运行证明。条款须先经次辅会签、首辅明确采用并形成正式采用件；本提案SHA不能代替该采用件。户部是发布件唯一writer；发布后由吏部登记真实公布身份，接收方逐项重验原已核输入，不能把接收一致性当作新增事实终裁。本提案不另设一轮人工事实审批；未经规定接收核验不准填正式接受字段。正式运行接收还须第三步工程另行授权、独审重封及全部原门；发布或核收元数据均不授L0。"
+    },
+    {
+      "id": "BR.P2",
+      "title": "仅用已核收输入、分离自指与事实缺口",
+      "text": "R的数据输入仅限已核收v21目录、CMI终裁、S1至S5及隔离名单；冻结合同、采用/核收评论只作行政与规则绑定，不是新增市场事实。输入清单逐件记录原文件名、版本、原字节SHA、平台附件/评论ID及revision、核收件SHA和被接受的字段/证券线/日期/角色范围。S1至S5中的不闭合、冲突或限定采用回执照录；有交件不等于该字段已证。缺清单或无核收依据时不得伪造引用、补零或用同名较新件替换。首份R的catalog应逐值保留已核收v21规范目录及CMI防护映射；S1至S5和隔离名单单列为字段/角色/日期证据，不借此清除目录UNKNOWN。超出这四类输入或需把UNKNOWN改为CLEAR的主张，须原权限线另行核收，不能由本发布任务自填。R不含自己的文件SHA、当前上传后才出现的附件ID/平台时点、或依赖R而生成的实际运行证明；P在R真实上传后用CLI读回R附件ID/revision/created_at并绑定R，不把P自己的附件或尚未产生的发布评论预填进P。writer的一次发布评论随后公布R/P两份SHA；原可信接收方在该评论出现后读回其ID/revision/created_at，按原已核范围重算A，绑定R/P原字节、真实发布评论及正式条款采用身份。A是接收结果，不作为自签的信任来源；若另行公布A，其附件/交件身份在分离的实际读回记录绑定，不预填未来ID。逐producer零起点、无取得与无经济读取证明另在R之后形成；它们未齐时按字段写未验证，不把元数据核收冒充三证明。"
+    },
+    {
+      "id": "BR.P3",
+      "title": "目录事实、防护、UNKNOWN与隔离分别保留",
+      "text": "v21仍是accepted_static_registration_not_runtime_B_release，旧文件及核收范围不改；R只以新的正式发布身份引用它，不倒改静态目录。初始事实计数仍为ADP/APD/CMCSA三名未闭合、包括CMI在内61名UNKNOWN；按既有统一谓词导出的防护集合为ADP/APD/CMCSA/CMI，其他60名为一般UNKNOWN，不能把两个计数混成四笔已证非现金派发或把61名全部转B。CMI保留fact_state=UNKNOWN、guard_pending_review=true；自愿投标交换不等于已证全体持有人按比例派发，12.0298、7股上限差等不得推成权益、TR或现金。旧B_membership=null不是无保护消费许可；R中另用明确的protective_membership及reason标注防护结果，不能改写底层事实。children空列表只表示已登记子证券列表为空，不证明无旧权益或未知子证券。每名保留事实状态、防护状态、逐字段/角色隔离范围、来源和null理由；UNKNOWN不贡献L，不补价格、标签、现金或F=1。已核字段不越范围升级证券线、独立性、权益或执行。E(t)、L/U和GE50/LT50/UNKNOWN仍由原共同派生计算，隔离不会删除U64身份，也不是卖出、零持仓或清空旧权益。"
+    },
+    {
+      "id": "BR.P4",
+      "title": "两类SHA的唯一语义与无环绑定",
+      "text": "拟定义C(x)为UTF-8、ensure_ascii=false、sort_keys=true、紧凑分隔、无NaN/Infinity、无重复JSON键且无尾换行的规范JSON字节；发布核心R必须按此编码，H_R=SHA256(R原字节)。H_C=SHA256(C(R.catalog))是规范目录内容哈希；H_D是发布核心中具名derivation_payload的C编码哈希，该payload仅含已核输入绑定、冻结规则/适用域、事实和防护/隔离派生，不含H_R、guard或scope哈希。P和A分别按实际原字节取H_P/H_A，不把它们当H_R。正式guard.catalog_sha256与guard.accepted_catalog_sha256均填H_C；guard及scope、静态seal的B_catalog_release_sha256均填H_R。隔离逐日回执的B_catalog_sha256填H_C；synthetic_catalog_sha256在真实路径为null。新增具名B_release_acceptance_sha256填H_A；B_derivation_sha256填H_D。各层原有自摘要按除去其自身摘要字段后的同一C编码重算，并逐层绑定上一层实际对象。H_C不是v21 CSV文件SHA、终裁SHA、ZIP SHA或R文件SHA；H_R也不是任意catalog哈希。旧compiler把guard.accepted_catalog_sha256直接复制到scope.B_catalog_release_sha256的别名关系在新正式路径必须显式拆开，不能靠两字段相等过关。"
+    },
+    {
+      "id": "BR.P5",
+      "title": "单一canonical guard/scope及信任来源",
+      "text": "拟规定一条共同接收/派生逻辑：host先按原责任线核对正式条款采用件、R/P原字节与平台真实发布身份，并从其自有受信绑定取得期待SHA，继而按同一接收规则生成A/H_A；提交的A至多用于逐值对照，不能充当接受自身的依据；调用方请求、路径、approved=true或自行重算的哈希不能制造信任。release_context须携带这些已绑定原件、期待SHA与其接受范围，由原可信host入口提供，不能是从不可信请求反序列化后自称受信的字典；本提案不假定现有AUTH/安装已完成。接着核全部允许输入、U64顺序、共同calendar/profile、时点和范围，重算H_C/H_D及既有members谓词，构造唯一正式guard；由同一guard与已核隔离/字段证据按原规则派生各scope和E(t)。新正式guard建议显式schema=EVO883.BRuntimeGuard/v1，scope建议显式schema=EVO900.reference-shared-scope/v3-BR1；后者只是接口身份，不是策略v4。guard.request须含绑定H_R/H_A/H_D、mode和真实封存/信息截止的具名release_binding，synthetic=false；不是往旧guard表面追加两个SHA。新guard携带H_C/H_R/H_A/H_D、B/unknown/children、原事实计数、全部原policy绑定和canonical摘要，catalog_registration_only=false。该值只说明来源是正式R，不把原v21 registration_only改为false。不同producer消费同一R/派生规则及对应日期同一E(t)，各自账本与逐producer证明仍分开。返回的guard/scope保持runtime_consumable=false、certifiable=false；是否放行仍由原总闸判定。\n\n同一已接受 release_context 固定一份 A 的原字节、接收方 / 实现身份及真实核收时点证据。各消费者和 C06 重建 guard 时复核该 A 及其绑定，使用同一 H_A；不得因本次调用时间、进程或 consumer 不同重新签发 A 并替换 H_A。重算必须来自独立受信绑定及原输入，不能信任 A 自述。新接收结果另立版本、显式核收和传播，不静默替换旧上下文；逐 producer 运行证明继续分开。"
+    },
+    {
+      "id": "BR.P6",
+      "title": "与现行拒绝门和C06 checked_guard同步",
+      "text": "现行39823d5上，reference_v3_scope.py:161–166的非空拒绝与reference_v3_evidence.py:157–162的缺件/后续证明拒绝继续有效，不因本提案放开。正式条款采用件及 R / P 发布身份齐备后，工部方可按另获授权实施共同接收核验、A 生成及正向通道；A 不是实施该接收器的先决条件。正式接收分支实际放行前，R / P / A 核验、实现独审重封及全部原门必须满足。A 缺失或核验失败期间保持拒绝、数值 reader / worker 不启动。正式分支仅把一律拒非空替换为上述具名接收契约的全部核验；任意非空、null、半填、不可信或跨版本混填仍拒绝，且数值reader/worker启动前拒绝。非空H_R不替代P4/P7、完整N、实际DAG、状态或运行授权；不得只删除runtime的raise。共同checked_guard在正式路径必须使用同一release_context、policy和request从头重建并逐字段核对，而非只校验guard自摘要；C06 execution_risk.py:296须拿同一上下文重跑。C03/C04/C08、隔离派生、参考及全部现金/权益/数值消费者调用该共同核验，不另写参考专用防护副本或用全局mutable pin。缺上下文、不同R/核收件、删发布字段、把真实改synthetic或回退静态guard均拒绝。C06拒绝保留原库存、现金、权益、年龄、意图、latch、风险状态及日期，不把对账失败转成新交易日。旧回执仅对旧源码/原范围继续有效；新接口不得把旧静态对象升级为正式runtime接受件。"
+    },
+    {
+      "id": "BR.P7",
+      "title": "发布接受不替代运行三证明及原数值门",
+      "text": "R/P/A只闭合发布身份和限定事实/派生输入，不证明任何producer已零起点、全过程无取得或经济消费者不读取。guard形成后，按各候选probe、实际meta、监控和四参考自己的身份、book/run/attempt、源码及guard/scope形成独立原始状态、取得路径和数值读取回执；不能交换actor、套用别账本或把目录哈希当真实读取证明。三证明引用H_R、H_A及实际guard/scope，不把它们反装进R形成循环自证。股票/子证券、挂单、迁移、交换、实物派发和旧权益等取得路线及score/label/calibration/holdings/cash/order消费者保留原覆盖。旧持仓或必要权益、现金/估值未知走原R2、保留状态，不因隔离而删现金行、补零或合成平仓。发布件中可以列证明义务和未验证状态，不能由writer只靠四类静态输入签发实际运行证明。QQQ与其他不可隔离必要基准仍走自身数据/权益门，不获卫星豁免；完整N/V/DSR、严格人数、真实来源、预算、独审封存和独立L0全部另验。"
+    },
+    {
+      "id": "BR.P8",
+      "title": "时点、更新与偏差披露",
+      "text": "R/P/A均须有实际版本、信息收到时点与平台公布/核收时点，彼此分列，不替代D12 T0或L0。历史模式按原v3全3191日登记域，在本版实际参考/策略绩效之前封存R、范围和派生；首个绩效时间须沿原运行/时间锚证据核收，不能只信请求自报。历史B依据事后事件/证据可得性，会有可用性选择及非point-in-time偏差，须明确披露，不写成前向无前视保证。前向模式只准用signal-close时已收到、已核收且已发布可用的对应版本；后到信息不回写旧决定、旧R或旧日数。任何新证据只追加新版本/原权限核收，是否可用于继续及N/预算后果仍照原条款；本次EVO-938不扩为持续新取数任务。发现新未闭合事件仍按原v3防护/R2，未知或既有敞口不自动迁移、复活、清算或重设63/126时钟。发布前后均不恢复已暂停的历史对照。"
+    },
+    {
+      "id": "BR.P9",
+      "title": "N、OOS与收费单列",
+      "text": "本接受域、正式配置身份与共同派生契约作为一份实质修订，正式采用时计一次共同设计 N +1，仅此次文档修订 OOS +0。由原唯一台账 writer 核最新已核收锚与设计计数，绑定最终采用件 SHA、采用评论及真实时点续链，再交原线核收；若届时基数仍为 4，则 4→5，否则先核差异，不预填。R / P / A 的同文发布、核收、角色 / fold 传播不重复收费；真实评价、失败 / 重试及未来实质变更仍依原规则处理。\n\nEVO-938 的 R / P 发布 writer 身份不自动授予台账写权限。\n\n依据是本次新增正式接收与配置契约，不以「加 N 使 DSR 更严」为前提；归档设计计数不代替完整分臂 N 或有效试验数，本次对 DSR 的影响未实算。账面 1313、既有 attempt、唯一历史预算与 63 / 126 钟不重置、不机械改数。\n\n实际B发布身份及输入掩码是正式配置身份的一部分，未来真实评价、失败/重试仍按原完整分臂投影核收，不能声称发布接入一律免N。唯一历史令牌、账户、旧attempt、累计高水位及63/126钟均不重置。"
+    },
+    {
+      "id": "BR.P10",
+      "title": "采用顺序、工程差量与迁移",
+      "text": "正式条款采用件及 R / P 发布身份齐备后，工部方可按另获授权实施共同接收核验、A 生成及正向通道；A 不是实施该接收器的先决条件。正式接收分支实际放行前，R / P / A 核验、实现独审重封及全部原门必须满足。A 缺失或核验失败期间保持拒绝、数值 reader / worker 不启动。\n\n当前不改reference_v3_scope.py或C06；本提案不扩任何main文件权限。后续工程须逐项报价列出noncash共同核验、scope/evidence、compiler中两种SHA拆分、隔离逐日字段、C06及全部调用方上下文传播、三证明/来源sidecar与静态seal绑定等影响；这里只列需求，不授权修改。不得用新包装层绕过原消费者。原件和旧seal保留；新源码失配仍拒绝，不改旧oracle/费用期望；新接口的新seal在核准整包复审与重封前为seal_pending，不能认证。C09/C10现阶段仍按首辅甲交付：其他条件全齐时唯一剩余拒绝为B门、收益null、reader=0；B正向通道另线完成后，B发布门仍只是L0硬前置之一。"
+    }
+  ],
+  "three_adoption_modifications_chief_verbatim": {
+    "P5_append": "同一已接受 release_context 固定一份 A 的原字节、接收方 / 实现身份及真实核收时点证据。各消费者和 C06 重建 guard 时复核该 A 及其绑定，使用同一 H_A；不得因本次调用时间、进程或 consumer 不同重新签发 A 并替换 H_A。重算必须来自独立受信绑定及原输入，不能信任 A 自述。新接收结果另立版本、显式核收和传播，不静默替换旧上下文；逐 producer 运行证明继续分开。",
+    "P6_P10_bridge": "正式条款采用件及 R / P 发布身份齐备后，工部方可按另获授权实施共同接收核验、A 生成及正向通道；A 不是实施该接收器的先决条件。正式接收分支实际放行前，R / P / A 核验、实现独审重封及全部原门必须满足。A 缺失或核验失败期间保持拒绝、数值 reader / worker 不启动。",
+    "P9_adoption_result": "本接受域、正式配置身份与共同派生契约作为一份实质修订，正式采用时计一次共同设计 N +1，仅此次文档修订 OOS +0。由原唯一台账 writer 核最新已核收锚与设计计数，绑定最终采用件 SHA、采用评论及真实时点续链，再交原线核收；若届时基数仍为 4，则 4→5，否则先核差异，不预填。R / P / A 的同文发布、核收、角色 / fold 传播不重复收费；真实评价、失败 / 重试及未来实质变更仍依原规则处理。"
+  },
+  "rule_text_precedence": {
+    "formal_adoption_modifications_control_over_historical_proposal_requests": true,
+    "unchanged_source_words_proposed_or_future_do_not_make_adopted_rules_unapproved": true,
+    "P9_source_no_charge_request_and_undecided_future_charge_are_historical_not_current_adoption": true,
+    "P6_P10_source_A_before_implementation_precondition_superseded": true,
+    "only_P5_P6_P9_P10_and_T11_changed_in_operational_rule_fields": true,
+    "original_proposal_three_files_preserved_under_approved_source": true
+  },
+  "hash_field_mapping": [
+    {
+      "field": "guard.catalog_sha256",
+      "value": "H_C=SHA256(C(R.catalog))"
+    },
+    {
+      "field": "guard.accepted_catalog_sha256",
+      "value": "H_C; only after exact R/P/A acceptance; never self-reported"
+    },
+    {
+      "field": "guard.B_catalog_release_sha256",
+      "value": "H_R=SHA256(raw canonical R)"
+    },
+    {
+      "field": "scope.B_catalog_release_sha256",
+      "value": "H_R; not the compiler's old H_C alias"
+    },
+    {
+      "field": "static_seal.B_catalog_release_sha256",
+      "value": "H_R; regenerated under independently reviewed new code"
+    },
+    {
+      "field": "day.B_catalog_sha256",
+      "value": "H_C"
+    },
+    {
+      "field": "day.synthetic_catalog_sha256",
+      "value": "null on actual runtime path"
+    },
+    {
+      "field": "B_release_acceptance_sha256",
+      "value": "H_A=SHA256(actual recomputed reception receipt A); not an incoming trust assertion"
+    },
+    {
+      "field": "B_derivation_sha256",
+      "value": "H_D=SHA256(C(R.derivation_payload)); excludes R/guard/scope/self hashes"
+    },
+    {
+      "field": "noncash_guard_manifest_sha256",
+      "value": "digest(all canonical guard fields except this digest)"
+    },
+    {
+      "field": "scope_sha256",
+      "value": "digest(all canonical scope fields except this digest)"
+    }
+  ],
+  "release_field_contract": {
+    "not_a_release_instance": true,
+    "core_R_required_sections": [
+      "schema_and_release_id_version",
+      "formal_clause_adoption_sha256",
+      "policy_profile_calendar_domain_bindings",
+      "accepted_input_manifest",
+      "catalog",
+      "derivation_payload_and_sha256",
+      "per_symbol_fact_guard_quarantine_scope_and_null_reasons",
+      "proof_obligations_and_UNVERIFIED_status",
+      "information_cutoff_and_limitations"
+    ],
+    "P_required_sections": [
+      "core_raw_sha256",
+      "actual_core_attachment_id_revision_created_at",
+      "authorized_writer_assignment_binding",
+      "core_version_and_formal_adoption_sha256"
+    ],
+    "A_required_sections": [
+      "core_raw_sha256",
+      "publication_P_raw_sha256",
+      "actual_R_P_publication_comment_id_revision_created_at",
+      "formal_clause_adoption_sha256",
+      "accepted_input_manifest_and_fact_scope",
+      "recomputed_source_and_canonical_derivation_checks",
+      "unverified_runtime_obligations",
+      "receiver_and_implementation_identity",
+      "optional_platform_delivery_readback_is_detached_not_a_trust_source"
+    ],
+    "no_self_file_hash_or_future_platform_identity_in_own_document": true,
+    "release_bytes_or_platform_times_prefilled_by_this_proposal": false,
+    "allowed_data_input_categories": [
+      "accepted_v21_catalog",
+      "accepted_CMI_final_ruling",
+      "accepted_S1",
+      "accepted_S2",
+      "accepted_S3",
+      "accepted_S4",
+      "accepted_S5",
+      "accepted_quarantine_manifest"
+    ],
+    "data_claim_missing_or_conflicting": "retain_UNKNOWN_or_conflict_and_reason_no_imputation_no_runtime_credit",
+    "known_v21_source_bindings": {
+      "EVO893-B-noncash-catalog-v21.csv": "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13",
+      "EVO893-B-CMI-guard-v21.json": "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77",
+      "EVO883-v21-final-receipt.json": "b8b930396e7caf42ad8bde0f2f7ff190c40f36fd4c4686964a39154926f6644a"
+    },
+    "CMI_final_receipt_sha256_from_accepted_v21_binding": "cdd7954a20102e1053f932fe559153b26336475afdb41b772004795708bf3c4e",
+    "S1_S5_or_quarantine_claimed_newly_fact_certified_by_this_proposal": false,
+    "writer_must_bind_exact_already_accepted_versions_not_assume_additional_inputs": true,
+    "metadata_numeric_evidence": "preserve_received_source_strings_or_null_with_reason_not_new_prices_ratios_or_cash_values",
+    "A_is_recomputed_reception_output_not_a_new_human_fact_approval_or_self_signed_trust_root": true,
+    "A_lifecycle": {
+      "scope": "one accepted release_context",
+      "fixed": [
+        "A_raw_bytes",
+        "receiver_identity",
+        "implementation_identity",
+        "actual_reception_acceptance_time_evidence"
+      ],
+      "all_consumers_and_C06_use_same_H_A": true,
+      "reissue_A_due_to_call_time_process_or_consumer": false,
+      "recheck_from_independent_trusted_bindings_and_original_inputs": true,
+      "trust_A_self_claims": false,
+      "new_acceptance_result": "new explicit version, acceptance and propagation; no silent context replacement",
+      "per_producer_runtime_proofs_remain_separate": true,
+      "exact_chief_wording": "同一已接受 release_context 固定一份 A 的原字节、接收方 / 实现身份及真实核收时点证据。各消费者和 C06 重建 guard 时复核该 A 及其绑定，使用同一 H_A；不得因本次调用时间、进程或 consumer 不同重新签发 A 并替换 H_A。重算必须来自独立受信绑定及原输入，不能信任 A 自述。新接收结果另立版本、显式核收和传播，不静默替换旧上下文；逐 producer 运行证明继续分开。"
+    }
+  },
+  "A_lifecycle_adopted": {
+    "scope": "one accepted release_context",
+    "fixed": [
+      "A_raw_bytes",
+      "receiver_identity",
+      "implementation_identity",
+      "actual_reception_acceptance_time_evidence"
+    ],
+    "all_consumers_and_C06_use_same_H_A": true,
+    "reissue_A_due_to_call_time_process_or_consumer": false,
+    "recheck_from_independent_trusted_bindings_and_original_inputs": true,
+    "trust_A_self_claims": false,
+    "new_acceptance_result": "new explicit version, acceptance and propagation; no silent context replacement",
+    "per_producer_runtime_proofs_remain_separate": true,
+    "exact_chief_wording": "同一已接受 release_context 固定一份 A 的原字节、接收方 / 实现身份及真实核收时点证据。各消费者和 C06 重建 guard 时复核该 A 及其绑定，使用同一 H_A；不得因本次调用时间、进程或 consumer 不同重新签发 A 并替换 H_A。重算必须来自独立受信绑定及原输入，不能信任 A 自述。新接收结果另立版本、显式核收和传播，不静默替换旧上下文；逐 producer 运行证明继续分开。"
+  },
+  "implementation_and_use_preconditions": {
+    "implementation": "formal adopted clauses and actual R/P publication identity plus separately granted engineering authority",
+    "A_required_before_implementing_the_receiver": false,
+    "actual_release_of_formal_reception": "R/P/A verification plus independently reviewed implementation resealing and every original gate",
+    "A_absent_or_invalid": "keep_refusal_numeric_reader_and_worker_not_started",
+    "this_publication_authorizes_code_modification": false,
+    "exact_chief_wording": "正式条款采用件及 R / P 发布身份齐备后，工部方可按另获授权实施共同接收核验、A 生成及正向通道；A 不是实施该接收器的先决条件。正式接收分支实际放行前，R / P / A 核验、实现独审重封及全部原门必须满足。A 缺失或核验失败期间保持拒绝、数值 reader / worker 不启动。"
+  },
+  "future_acceptance_specs_not_executed": [
+    {
+      "id": "T01",
+      "case": "null or half-filled catalog/release fields on formal path",
+      "expected": "reject_before_numeric_reader; current refusal retained until authorized implementation"
+    },
+    {
+      "id": "T02",
+      "case": "random non-null hashes with recomputed guard self-digest",
+      "expected": "reject_untrusted_R_P_A"
+    },
+    {
+      "id": "T03",
+      "case": "CSV/ZIP/receipt hash substituted for H_C or H_R; two hashes swapped",
+      "expected": "reject_typed_binding_mismatch"
+    },
+    {
+      "id": "T04",
+      "case": "trusted R/P/A metadata complete but P4/P7/N/runtime proof missing",
+      "expected": "B_metadata_acceptance_only; remaining_gate_rejects_returns_null_no_permission"
+    },
+    {
+      "id": "T05",
+      "case": "CMI UNKNOWN silently changed to CLEAR or protection removed",
+      "expected": "reject_against_bound_v21_CMI_receipt"
+    },
+    {
+      "id": "T06",
+      "case": "all 61 UNKNOWN converted to B or all 60 general UNKNOWN given L credit",
+      "expected": "reject_fact_guard_or_eligibility_mismatch"
+    },
+    {
+      "id": "T07",
+      "case": "S1 raw-open receipt used to certify source independence/rights/security line",
+      "expected": "reject_scope_overclaim"
+    },
+    {
+      "id": "T08",
+      "case": "extra input outside four authorized categories or unaccepted replacement version",
+      "expected": "reject_source_manifest"
+    },
+    {
+      "id": "T09",
+      "case": "static v21 guard, synthetic object or proposal SHA presented as adopted runtime release",
+      "expected": "reject_no_legacy_or_synthetic_fallback"
+    },
+    {
+      "id": "T10",
+      "case": "C06 checks different R/A or only checks self-rehashed guard",
+      "expected": "reject_guard_identity_before_state_or_date_advances"
+    },
+    {
+      "id": "T11",
+      "case": "同一已接受release_context固定A原字节、接收方/实现身份和真实核收时点证据；跨消费者及C06、不同调用时间/进程重复重建；另设混用不同版本A的负例",
+      "expected": "复核同一固定A及独立受信绑定/原输入，H_A和canonical guard原字节稳定；不得按调用时间/进程/consumer重新签发A；混用不同版本A一律拒绝，拒绝前数值reader/worker不启动"
+    },
+    {
+      "id": "T12",
+      "case": "child list empty but old/unproven rights or necessary exposure remains",
+      "expected": "original_R2_preserve_state_no_zeroing_or_auto_liquidation"
+    },
+    {
+      "id": "T13",
+      "case": "candidate/reference/meta use different release or mask for same date",
+      "expected": "reject_shared_derivation_mismatch"
+    },
+    {
+      "id": "T14",
+      "case": "borrow one actor/book's origin/routes/reads as another's",
+      "expected": "reject_actor_book_guard_scope_binding"
+    },
+    {
+      "id": "T15",
+      "case": "late forward evidence backdated before signal close",
+      "expected": "reject_no_old_order_rewrite_no_clock_reset"
+    },
+    {
+      "id": "T16",
+      "case": "release published after actual first current-version performance",
+      "expected": "history_preperformance_gate_reject; no_relabeling_as_presealed"
+    },
+    {
+      "id": "T17",
+      "case": "same metadata accepted but schema/profile/U64/calendar or mode differs",
+      "expected": "reject_exact_scope_mismatch"
+    },
+    {
+      "id": "T18",
+      "case": "duplicate keys, NaN, self-hash cycle or noncanonical core bytes",
+      "expected": "reject_core_encoding_or_hash_graph"
+    },
+    {
+      "id": "T19",
+      "case": "old source with old receipt replays successfully",
+      "expected": "old_scope_only; no_new_runtime_acceptance_claim"
+    },
+    {
+      "id": "T20",
+      "case": "new source with old seal or seal_pending",
+      "expected": "reject_official_receipt_until_new_authorized_review_and_reseal"
+    }
+  ],
+  "counting_adoption_result": {
+    "authorized_common_design_N_increment_once": 1,
+    "OOS_increment_only_this_document_revision": 0,
+    "same_text_publication_reception_role_fold_propagation_additional_charge": 0,
+    "sole_authority_chain_writer_must_check_latest_accepted_anchor_and_count": true,
+    "if_latest_accepted_base_is_4_then_5_otherwise_reconcile_first": true,
+    "actual_design_count_or_latest_anchor_prefilled_by_publication": null,
+    "archive_or_authority_chain_written_this_publication": false,
+    "new_design_charge_already_appended_or_accepted": false,
+    "EVO938_release_writer_role_grants_ledger_write_authority": false,
+    "complete_factor_N_or_effective_trials_substituted_by_archive_design_count": false,
+    "DSR_effect_computed_or_stricter_DSR_claimed": false,
+    "book_N_or_existing_attempts_mechanically_incremented": false,
+    "real_evaluation_failure_retry_or_future_substantive_change_exemption": false,
+    "single_history_budget_account_or_63_126_clock_reset": false,
+    "exact_chief_wording": "本接受域、正式配置身份与共同派生契约作为一份实质修订，正式采用时计一次共同设计 N +1，仅此次文档修订 OOS +0。由原唯一台账 writer 核最新已核收锚与设计计数，绑定最终采用件 SHA、采用评论及真实时点续链，再交原线核收；若届时基数仍为 4，则 4→5，否则先核差异，不预填。R / P / A 的同文发布、核收、角色 / fold 传播不重复收费；真实评价、失败 / 重试及未来实质变更仍依原规则处理。",
+    "fee_reason_and_evidence_boundary_chief_verbatim": "依据是本次新增正式接收与配置契约，不以「加 N 使 DSR 更严」为前提；归档设计计数不代替完整分臂 N 或有效试验数，本次对 DSR 的影响未实算。账面 1313、既有 attempt、唯一历史预算与 63 / 126 钟不重置、不机械改数。"
+  },
+  "rollout_responsibility": {
+    "publication_by_Hanlin": "this adopted document only",
+    "next_dispatch_by_Libu": "sole ledger writer append once on latest accepted anchor; then original acceptance line; EVO938 activation owned by Libu",
+    "current_dispatch_sequence_verbatim": "三步按先例串行：先发布，再续链，再把 EVO-938 转为 todo。",
+    "EVO938_R_P_delivery_window": "3 calendar days; A generation and per-producer proofs are not included",
+    "R_P_in_hand": "engineering quote and schedule, then chief authorization, implementation/review/reseal",
+    "this_publication_changes_EVO938_status_or_dispatches_writer": false
+  },
+  "preserved_frozen_sources": [
+    {
+      "path": "g14-proposal/inputs/EVO883-prereg-v3.json",
+      "sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+      "modified": false
+    },
+    {
+      "path": "freeze-v3.0.1/EVO883-D12-shared-execution-contract-v3.0.1.json",
+      "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "modified": false
+    },
+    {
+      "path": "freeze-v3.0.1/EVO883-D12-common-profile-v3.0.1.json",
+      "sha256": "07b71b3fc59dc6dae1c96cadd3155622a18f4c4ad29b7c69b8f79c1455efc2d3",
+      "modified": false
+    }
+  ],
+  "publication_boundaries": {
+    "adopted": true,
+    "original_proposal_itself_is_formal_adoption_credential": false,
+    "R_P_A_created": false,
+    "runtime_guard_or_scope_created": false,
+    "product_code_or_frozen_bytes_modified": false,
+    "authority_ledger_written": false,
+    "new_market_source_requests": 0,
+    "strategy_reference_probe_pytest_or_product_runs": 0,
+    "N_V_DSR_computed": false,
+    "future_T01_T20_executed": false,
+    "B_release_or_reception_implementation_verified": false,
+    "G_gate_or_strict_eligible_count_passed": false,
+    "three_day_R_P_feasibility_or_L0_date_verified": false,
+    "runtime_consumable": false,
+    "certifiable": false,
+    "L0_authorized": false,
+    "history_resumed": false,
+    "clock63_started": false
+  }
+}

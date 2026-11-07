@@ -1,0 +1,101 @@
+{
+  "schema": "EVO883.v21.catalog_and_author_supplement.final_receipt.1",
+  "status": "accepted_static_registration_not_runtime_B_release",
+  "authority": {
+    "frozen_strategy_version": "v3",
+    "published_merged_final_comment": "01a18c9f-e186-79b2-a6fa-ba219e04b4f6",
+    "published_merged_final_sha256": "cdd7954a20102e1053f932fe559153b26336475afdb41b772004795708bf3c4e",
+    "new_design_policy_or_frozen_bytes": false
+  },
+  "accepted_inputs": {
+    "author_supplement_package_sha256": "f1752d9c188fe5377f356ddbde52bc724561ac4cda930fc0f580de5cf59f6035",
+    "author_supplement_machine_sha256": "40d75597ad67a54d9152dd23457661b442c257b8008bd02bd22cd093a9b1d8ce",
+    "v21_package_sha256": "9e6096092da6d9d948ee22861f3ee12248ff4edc03b1e4ce4315cabf72dde6ba",
+    "v21_catalog_sha256": "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13",
+    "v21_CMI_guard_sha256": "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77"
+  },
+  "independent_static_verification": {
+    "manifest_items": {"supplement": 11, "v21": 8},
+    "strict_JSON_files": 11,
+    "trusted_supplement_input_bindings": 6,
+    "sections_equal_to_published_final": 7,
+    "v19_rows": 64,
+    "v21_rows": 64,
+    "original_columns_preserved_in_order": 27,
+    "new_columns": ["fact_state", "candidate_guard"],
+    "new_column_cells": 128,
+    "old_column_changes": [
+      {"symbol": "CMI", "column": "lead"},
+      {"symbol": "CMI", "column": "B_membership"},
+      {"symbol": "CMI", "column": "status_reason"}
+    ],
+    "submitted_diff_equals_independent_diff": true,
+    "submitted_producer_code_executed": false
+  },
+  "adoption": {
+    "fact_counts": {"known_unclosed": 3, "UNKNOWN_including_CMI": 61},
+    "initial_required_guards": ["ADP", "APD", "CMCSA"],
+    "credible_candidate_guard_pending_review": ["CMI"],
+    "remaining_general_UNKNOWN_names": 60,
+    "CMI_fact_state": "UNKNOWN",
+    "CMI_guard_pending_review": true,
+    "CMI_fact_certified_as_fourth_passive_distribution": false,
+    "runtime_B_membership_release": null,
+    "candidate_guard_column_controls_guard_not_legacy_B_membership_text": true,
+    "guard_untriggered_is_clearance_or_verified_complement": false,
+    "general_UNKNOWN_becomes_blanket_B_or_LT50": false,
+    "exchange_ratio_12_0298_used_as_holdings_TR_label_or_cash_factor": false,
+    "cap_minus_reported_exchange_7_certifies_actual_residual": false,
+    "required_rights_values_and_dates_unknown_remain_null": true,
+    "all_actual_virtual_and_reference_producers_bind_same_B_derivation": true,
+    "three_engineering_proofs_are_still_required": [
+      "zero_initial_exposure_including_rights_and_pending_orders",
+      "no_acquisition_across_all_routes",
+      "no_economic_value_consumer_read_or_derivation"
+    ],
+    "old_rights_inventory_or_cash_erasable": false,
+    "necessary_state_unknown": "original_R2_stop_preserve_state",
+    "review_precedence": [
+      "frozen_v3_policy",
+      "published_v19_v20_v20_1_final_rulings_within_their_scopes",
+      "this_catalog_column_adoption_overlay",
+      "inherited_snapshot_metadata_only"
+    ],
+    "inherited_snapshot_caveat": {
+      "fields": ["row_type", "searched_scope", "item_2_01_status"],
+      "includes": "CMI old no-event row label and pre-v20 Item 2.01 source availability descriptions",
+      "not_current_negative_evidence_or_consumer_clearance": true,
+      "does_not_override_v20_eight_transaction_and_R07_label_mismatch_rulings": true,
+      "requires_rebuilding_closed_packages": false
+    }
+  },
+  "runtime": {
+    "runtime_consumable": false,
+    "certifiable": false,
+    "B_catalog_sealed_or_runtime_release": false,
+    "strict_eligible_count": null,
+    "quantity_gate_passed": false,
+    "complete_N": null,
+    "n_complete": false,
+    "V": null,
+    "DSR": null,
+    "EVO886_release": false,
+    "clock63_started": false,
+    "R3_proven": false
+  },
+  "ledger_baseline_not_reaudited": {
+    "seq": 1362,
+    "tip": "d3936cd573e40c1d5ebcfd1308d69f42109fb245dcea529fb4031735f372f2da",
+    "book_N": 1313,
+    "new_attempts_or_publication_trials": 0
+  },
+  "handoff": "吏部将v21目录与CMI字段SHA并入既有目录、工程、参考和独审绑定；不重复派工或查询，不发布运行B。",
+  "boundaries": {
+    "new_source_queries_authorized": 0,
+    "external_market_or_source_requests": 0,
+    "OpenD_or_account_requests": 0,
+    "strategy_pytest_settlement_or_eligibility_runs": 0,
+    "authority_ledger_or_frozen_writes": 0,
+    "R12_v20_raw_fact_reaudit_or_new_engineering_acceptance": false
+  }
+}

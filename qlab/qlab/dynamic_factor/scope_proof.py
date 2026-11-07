@@ -85,6 +85,7 @@ IMPORTS = {
     "scope_reader": {"contract", "input_scope", "json", "pathlib"},
     "input_scope": set(),
     "noncash_v3": {
+        "b_release_context",
         "copy",
         "datetime",
         "contract",
@@ -95,6 +96,7 @@ IMPORTS = {
         "catalog_members",
     },
     "catalog_members": set(),
+    "b_release_context": {"csv", "datetime", "io", "json", "weakref", "contract"},
     "catalog_v21": {"csv", "io", "json", "contract", "conventions"},
     "pending": {"__future__", "contract", "execution", "input_scope", "pipeline"},
     "validation": {

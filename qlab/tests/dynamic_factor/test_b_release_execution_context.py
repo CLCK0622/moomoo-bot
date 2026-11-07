@@ -1,4 +1,4 @@
-"""B propagation controls. No B01 receiver, A issuance or formal positive path.
+"""B propagation controls after B01 exports; no real reception or runtime approval.
 
 The two explicitly named test doubles below only observe delegation/refusals.
 They are never installed as the canonical ReleaseContext or a host issuer.
@@ -86,10 +86,8 @@ def identity(version="A-test-version-one"):
     )
 
 
-def unavailable(call):
-    with pytest.raises(
-        ValueError, match="^B.release_context_implementation_unavailable$"
-    ):
+def rejected_context(call, reason="type_mismatch"):
+    with pytest.raises(ValueError, match="^B.release_context_" + reason + "$"):
         call()
 
 
@@ -99,10 +97,13 @@ def test_T10_real_bridge_without_B01_refuses_formal_guard_and_has_no_reader(cont
     guard = deepcopy(args["guard"])
     guard["schema"] = "EVO883.BRuntimeGuard/v1"
     before = deepcopy(guard)
-    unavailable(lambda: RiskBook.release_guard(guard, args["policy"], context))
+    rejected_context(
+        lambda: RiskBook.release_guard(guard, args["policy"], context),
+        "required" if context is None else "type_mismatch",
+    )
     assert guard == before
-    assert not hasattr(noncash_v3, "ReleaseContext")
-    assert not hasattr(noncash_v3, "check_release_context")
+    assert noncash_v3.ReleaseContext is not ReleaseContextTestDouble
+    assert callable(noncash_v3.check_release_context)
 
 
 @pytest.mark.parametrize(
@@ -119,10 +120,10 @@ def test_T13_each_role_uses_real_refusal_not_a_test_double_positive(
     _, args, _ = case(role=role, member=member, recipe=recipe)
     before = deepcopy(args["state"])
     book = RiskBook(**args, release_context=ReleaseContextTestDouble())
-    unavailable(book.snapshot)
+    rejected_context(book.snapshot)
     assert args["state"] == before
     assert book._state == before
-    assert book._reasons == ["B.release_context_implementation_unavailable"]
+    assert book._reasons == ["B.release_context_type_mismatch"]
 
 
 @pytest.mark.parametrize("point", ["account", "history", "project", "candidate-cache"])
@@ -145,7 +146,7 @@ def test_T10_retained_book_refuses_before_advancing_or_returning_cached_success(
             )
         }
         row.update(asof=book._date + "T20:00:00Z", fees_x2=book._fees)
-        unavailable(
+        rejected_context(
             lambda: book.observe_close(
                 book._date,
                 row,
@@ -159,14 +160,14 @@ def test_T10_retained_book_refuses_before_advancing_or_returning_cached_success(
         book, inputs, *_ = account()
         before = deepcopy(book._state), book._date, deepcopy(book._orders)
         book._release_context = ReleaseContextTestDouble()
-        unavailable(book.snapshot)
+        rejected_context(book.snapshot)
         assert (book._state, book._date, book._orders) == before
     elif point == "project":
         inputs, args, signal = case()
         book = RiskBook(**args)
         snap = book.snapshot()
         book._release_context = ReleaseContextTestDouble()
-        unavailable(
+        rejected_context(
             lambda: project(
                 inputs,
                 risk_book=book,
@@ -187,7 +188,7 @@ def test_T10_retained_book_refuses_before_advancing_or_returning_cached_success(
         out = intent.next_open(opened)
         assert out["complete"] and out["seal_status"] == "seal_pending"
         intent._book._release_context = ReleaseContextTestDouble()
-        unavailable(lambda: intent.next_open(opened))
+        rejected_context(lambda: intent.next_open(opened))
         assert intent._result == out
 
 
@@ -204,10 +205,10 @@ def test_T11_diagnostic_probe_observes_the_same_context_and_bytes_then_refuses(
         with pytest.raises(ValueError, match="TEST_ONLY"):
             RiskBook.release_guard(args["guard"], args["policy"], context, binding)
     assert probe.calls == [(context, binding)]
-    unavailable(
+    rejected_context(
         lambda: RiskBook.release_guard(args["guard"], args["policy"], context, binding)
     )
-    assert not hasattr(noncash_v3, "ReleaseContext")
+    assert noncash_v3.ReleaseContext is not ReleaseContextTestDouble
 
 
 @pytest.mark.parametrize(
@@ -296,7 +297,7 @@ def test_T20_changed_history_source_is_refused_before_any_event_replay(monkeypat
     assert calls == []
 
 
-def test_T10_exact_cost_bridge_does_not_call_original_fee_when_context_is_unavailable(
+def test_T10_exact_cost_bridge_does_not_call_original_fee_when_context_is_rejected_context(
     monkeypatch,
 ):
     from qlab.dynamic_factor import fee_model
@@ -307,7 +308,7 @@ def test_T10_exact_cost_bridge_does_not_call_original_fee_when_context_is_unavai
     cost = ExactOrderCosts(
         args["policy"], signal["execution_session"], "research_restored"
     )
-    unavailable(
+    rejected_context(
         lambda: cost.quote_exact(
             {"QQQ": 1},
             {"QQQ": Decimal("100")},
@@ -323,7 +324,7 @@ def test_T13_fixed_signal_checks_context_before_consuming_history_numbers():
     _, args, _ = case()
     # Invalid values must not be consumed before the missing receiver is rejected.
     values = {"AAPL": ["NOT_A_NUMBER"] * 21, "COST": ["NOT_A_NUMBER"] * 21}
-    unavailable(
+    rejected_context(
         lambda: fixed_scores(
             "F1-L020",
             values,

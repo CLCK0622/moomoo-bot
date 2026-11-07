@@ -1,0 +1,179 @@
+{
+  "schema": "EVO883.diagnostic_evidence_acceptance.v1",
+  "version": "1.0.0",
+  "created_at_utc": "2026-10-30T08:51:33.967499+00:00",
+  "reviewer_agent_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+  "issue_id": "01a18a63-02ca-77bc-a7bf-9f0769ed8bbf",
+  "trigger_comment_id": "01a18bf9-a92c-719f-aba8-d70634008b9a",
+  "input_zip_sha256": "b3d9d28585ad87980a3908b0369a5b296ede307e2b2b63b4f7254f4463dc8f80",
+  "decision": "ACCEPT_SCOPED_DIAGNOSTIC_EVIDENCE_NO_FORMAL_ADOPTION_OR_RUN_RELEASE",
+  "independent_checks": {
+    "input_zip_sha256": "b3d9d28585ad87980a3908b0369a5b296ede307e2b2b63b4f7254f4463dc8f80",
+    "manifest_items": 23,
+    "strict_JSON_files": 8,
+    "log": {
+      "requests": 39,
+      "status_200": 39,
+      "cache_hits": 0,
+      "distinct_urls": 39,
+      "min_adjacent_start_interval_seconds": 1.442,
+      "reported_cap": 45,
+      "logged_requests_within_cap": true
+    },
+    "raw_public_responses_independently_SHA_and_size_matched": 39,
+    "raw_bytes": 503532318,
+    "source_quote_bindings_checked": 66,
+    "candidates": 40,
+    "declaration_rows": 31,
+    "unmatched_rows": 15,
+    "author_verdict_distribution_recounted": {
+      "不适用": 11,
+      "金额一致，日期未证": 3,
+      "通过": 9,
+      "金额一致，除息日不一致": 1,
+      "金额近似一致": 2,
+      "金额不一致": 14
+    },
+    "unmatched_overlap_with_amount_conflict_rows": 13,
+    "calendar_scope": {
+      "sha256": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+      "date_membership": {
+        "2019-11-27": true,
+        "2019-11-28": false,
+        "2019-11-29": true
+      },
+      "proves_event_duplicate_or_actual_ex": false
+    },
+    "original_ex_dates_certified_by_this_check": false,
+    "all_true_missing_distributions_certified": false,
+    "S2_S3_candidate_rows": 12,
+    "S4_prior_fact_index_SHA_matches": true,
+    "CEG_quoted_row_volume_arithmetic": {
+      "mean_first_10": 140240.7,
+      "Feb02_divided_by_mean_first10": 170.14249073200574,
+      "scope": "Arithmetic on submitted diagnostic rows only; not independent re-read of frozen parquet or security mapping."
+    },
+    "reviewer_network_requests": 0,
+    "reviewer_OpenD_calls": 0,
+    "reviewer_upstream_programs_or_strategy_runs": 0,
+    "reviewer_source_sha256": "f6cf19a4d0c4d02352179afe3dc4c134154c8e5f8fe28dbb265d3b94e579a9a8",
+    "limits": "Integrity, source-quote bindings, table counts and static-method review. Matching a quote does not validate its event mapping, completeness, ex-date inference or cash availability."
+  },
+  "accepted_evidence_scope": [
+    "39 public SEC raw responses independently SHA/size-matched read-only to the submitted log; 38 Barrick/CIK submission headers checked.",
+    "66 nonempty declaration/candidate quote bindings and candidate filing SHA bindings checked.",
+    "23 manifest items, 8 strict JSON, table counts and logged 39/45 request budget checked.",
+    "Conditional comparison counts retained as author diagnostics, not formal event passes.",
+    "S2-S4 source plans and limitations accepted as planning input only."
+  ],
+  "adoption_constraints": {
+    "nine_diagnostic_passes_are_formally_verified_events": false,
+    "record_to_ex_rule": {
+      "state": "INCOMPLETE_SCOPE",
+      "missing": [
+        "applicable security/exchange mapping",
+        "non-delivery and exchange-designation branches",
+        "applicable settlement/trading calendar evidence"
+      ],
+      "independent_second_source_for_every_event_is_new_hard_requirement": false,
+      "accepted_route": "Direct applicable evidence or a fully evidenced applicable rule/calendar derivation."
+    },
+    "2019_Nov27_Nov28_duplicate_identity_certified": false,
+    "ratio_mismatch_repair_authorized": false,
+    "Barnes_eleven_rows_per_event_attribution_certified": false,
+    "capital_return": {
+      "type_evidence_accepted": true,
+      "source_amount_0_14": "APPROXIMATE_ESTIMATE_SUBJECT_TO_CHANGE",
+      "vendor_0_1405_exact_amount_verified": false,
+      "separate_same_date_regular_dividend_amount": "0.09",
+      "non_dividend_means_no_cash_entitlement": false,
+      "new_tax_or_valuation_algorithm_authorized": false
+    },
+    "unmatched": {
+      "rows": 15,
+      "also_in_14_amount_conflict_rows": 13,
+      "other_regular_dividend_rows": 2,
+      "independent_additional_15_missing_events": false,
+      "scope": "No same amount under the author derived-ex +/-3-calendar-day window and 0.005 diagnostic tolerance; not complete event absence or an exhaustive missing-event inventory."
+    },
+    "2015_Nov23_candidate_Barrick_amount": "UNVERIFIED_EMPTY_IN_TABLE",
+    "S2_S3": {
+      "candidate_rows": 12,
+      "any_price_path_proven_closed": false,
+      "quarter_range_or_tax_value_replaces_required_market_price": false,
+      "delisting_flag_proves_history_coverage": false,
+      "same_vendor_is_independent_second_source": false,
+      "same_vendor_is_automatically_disqualified_by_a_new_rule": false,
+      "security_identity_field_contract_and_unique_mapping_required": true
+    },
+    "S4": {
+      "issuer_WI_market_arrangement_proves_vendor_cached_rows": false,
+      "cached_ten_rows_to_be_deleted": false,
+      "frozen_start_to_be_moved": false,
+      "proposed_documents_and_basicinfo_guarantee_historical_row_mapping": false,
+      "volume_arithmetic_scope": "Submitted diagnostic rows only, not an independent frozen parquet or market verification."
+    },
+    "wrong_line_propagation": [
+      "cash distributions",
+      "inverted raw prices",
+      "TR",
+      "labels and training/reference dependencies",
+      "continuous inventory and cash"
+    ],
+    "unknown_target_distribution_amounts_are_zero": false
+  },
+  "rule_source_reused": {
+    "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/11140",
+    "prior_review": "EVO893 v9",
+    "retained_raw_sha256": "2672e1dc72f664f59c766dd4d167a959a18e7eb857a325bb707c846844cdd4de",
+    "new_request_this_turn": false,
+    "full_page_redistributed": false
+  },
+  "resource_and_version_boundaries": {
+    "S1_already_authorized_and_owned_elsewhere": true,
+    "S2_S4_new_query_authorization_granted_here": false,
+    "unused_six_requests_transferred_to_other_purposes": false,
+    "diagnostic_planning_is_runtime_adoption": false,
+    "same_definition_evidence_may_be_versioned_v1_input_subject_to_adoption_review": true,
+    "rules_not_changed_and_performance_budget_not_consumed_here": true
+  },
+  "limits": {
+    "all_frozen_291_files_rehashed_this_turn": false,
+    "frozen_CEG_parquet_independently_reread_this_turn": false,
+    "complete_historical_distribution_inventory_verified": false,
+    "new_public_HTTP_requests": 0,
+    "new_market_or_OpenD_queries": 0,
+    "author_program_strategy_probe_settlement_or_return_reconstruction_runs": 0,
+    "new_performance_attempts": 0,
+    "full_503MB_source_responses_redistributed": false
+  },
+  "unchanged_runtime_state": {
+    "book_anchor_seq": 1236,
+    "book_anchor_tip": "a927eab05e12e42f7a460ef0505c6a0cda766c3946150c1964a3e676fd803ef7",
+    "book_high_water": 1197,
+    "book_is_certified_deduplicated_count_or_lower_bound": false,
+    "n_complete": false,
+    "complete_N": null,
+    "certified_factor_arm_N": null,
+    "strict_eligible_count": null,
+    "V": null,
+    "DSR": null,
+    "runtime_consumable": false,
+    "certifiable": false,
+    "clock_63_days_started": false,
+    "R3_proven_triggered": false,
+    "EVO883_status": "in_review",
+    "EVO886_status": "backlog",
+    "frozen_bytes_or_ledger_rows_modified": false
+  },
+  "handoff": "Record as diagnostic increment. Carry component-state corrections, source/market mappings and propagation into later adoption evidence on the existing lines; do not redo the packet, 64-name pull or previously closed items merely for this receipt.",
+  "evidence_files": {
+    "EVO883-EVO893-v10-ruling.md": "802397c5f50480405000a5a6a11594ace50e5ffa93a03891acddc64a5a4ac50b",
+    "reviewer-verification-v10.json": "425b3a9839260d50f6359529746d95c97dd802316fa99781d8a39a7fe8307a5f",
+    "reviewer-raw-source-index.json": "0e009b7aabc28748b0d43bffb7dd18276d1bfb22546ba78dc42f1bb9f84956d4",
+    "reviewer-quote-bindings.json": "1fcf02abb28e05437265d59d65e63d7815554cbaac94d9828cc24080724556dc",
+    "reviewer-unmatched-overlap.json": "bbc206ff71c2d5a5a8d335c4db815e90b73c92eaf385b3d357c99ade58a53667",
+    "reviewer-candidate-scope-overlay-v10.json": "3f3707f60b94794e0f9692a7f8b2e5ac2c56542f466a56a2572d686384cbef5b",
+    "verify_v10.py": "f6cf19a4d0c4d02352179afe3dc4c134154c8e5f8fe28dbb265d3b94e579a9a8"
+  }
+}

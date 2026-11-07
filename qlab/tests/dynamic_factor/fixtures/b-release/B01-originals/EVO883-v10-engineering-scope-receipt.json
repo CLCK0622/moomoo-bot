@@ -1,0 +1,112 @@
+{
+  "schema": "EVO883.v10.engineering-scope-review.v1",
+  "issue_id": "01a18a63-02ca-77bc-a7bf-9f0769ed8bbf",
+  "trigger_comment_id": "01a18c0f-ec2a-77fb-939f-1750378e618e",
+  "reviewer_agent_id": "fa762edf-7550-407e-bd75-3203fbf9c37e",
+  "decision": "ACCEPT_SCOPED_EVIDENCE_AND_INTERFACE_GUIDANCE_WITH_THIS_OVERLAY",
+  "source_package_sha256": "be9da427bb2d24d2e393a06194608862f9045ddfd5e88b8b52be0df3225bd5f7",
+  "author_machine_sha256": "0f9811006c529051f2941bdc69fc916be8209e5e822acbd23464abd2109fbdd1",
+  "author_input_binding_sha256": "006c0740e48ba37d8274f90a1d921593b3ca53d95e0401029f273bc22ec916ca",
+  "frozen_prereg_sha256": "3139ab15b8cb53b3c7cdc81816ce9fa4a6ad1862fb836dcde88f1cc31235447f",
+  "frozen_interface_sha256": "1767b7cf844721468f506e984c303c49e8ff58c395515404187d403661abe97b",
+  "common_profile_sha256": "4292eb477baffafaeff24441ab36936580608f70d2c8672d94d596fc772686b3",
+  "precedence": [
+    "frozen_contract_and_later_final_rulings",
+    "this_scoped_overlay",
+    "author_draft_as_historical_evidence_and_guidance"
+  ],
+  "accepted": {
+    "historical_candidate_rows": 40,
+    "actual_exdates_certified_from_nine_derived_matches": 0,
+    "unmatched_relation_rows": 15,
+    "unmatched_components": {
+      "same_statements_as_amount_conflicts": 13,
+      "separate_regular_0_09_dividends": ["BARRICK_DECL_11", "BARRICK_DECL_13"],
+      "regular_dividends_are_same_cash_component_as_return_of_capital": false,
+      "candidate_date_or_filing_link_implies_duplicate_entitlement": false,
+      "additional_15_missing_payments_certified": false
+    },
+    "S1": {
+      "prior_final_field_receipt_sha256": "ff8dee166c469310b915f903a32164351647e61dd8340437ffa09b45da9e0442",
+      "merged_csv_sha256": "68ade2686e49d444a973c4533048531223c88b158fff56a32e676c6888557842",
+      "symbol": "BRK.B",
+      "source_field": "open_none",
+      "target_field": "raw_open",
+      "from_date": "2013-10-29",
+      "to_date": "2026-07-09",
+      "rows": 3191,
+      "K7_input_sha256": "ca058bd8f866b85db073820718e43082a6812c9134261b239d6e58797b8662e7",
+      "K7_data_row_1based": 188,
+      "source_evidence_gap_closed": true,
+      "engineering_read_binding_accepted_by_this_review": false,
+      "capture_surface": "SDK_RETURNED_DATAFRAME_CSV_NOT_PROTOCOL_BYTES",
+      "independent_second_source": false,
+      "upgrades_other_fields_or_eligibility": false
+    },
+    "suggested_business_negative_examples": 7,
+    "business_negative_examples_executed_by_this_review": 0,
+    "author_350_check_audit_reproduced_by_this_review": false
+  },
+  "engineering_scope_overrides": [
+    {
+      "target_pointer": "/propagation_rules/0",
+      "target_rule_id": "P_RAW_ANCHOR",
+      "rule": "Trace actual role, file, factor and anchor lineage. Wrong cash attribution requires dependency quarantine where supported or unknown, but does not itself prove every raw numerical value wrong. No cash-row deletion as recovery proof."
+    },
+    {
+      "target_pointer": "/propagation_rules/2",
+      "target_rule_id": "P_INTEGER_CASH",
+      "rule": "Unknown amount or entitlement invalidates affected receivable/NAV only where an actual or unresolved entitled holding feeds that state. Keep known cash and unresolved components separate. Proven absence of entitlement does not itself invalidate the whole strategy NAV; analytical-index/label dependencies are assessed separately."
+    },
+    {
+      "target_pointer": "/propagation_rules/1",
+      "target_rule_id": "P_FEATURES_AND_LABELS",
+      "rule": "H10 cash entitlement dates t+2..t+11; H5 t+2..t+6. Entry at t+1 ex-open grants no event-day cash. Do not shift an unverified candidate ex-date onto a calendar day, or infer that raw endpoints/history/calibration are restored."
+    },
+    {
+      "target_pointer": "/propagation_rules/4",
+      "target_rule_id": "P_STATE_CONTINUITY",
+      "rule": "R2 stops the formal path when necessary state becomes indeterminate. Retain all 77 folds and attempt/date/N/budget evidence. A supported reconciliation checkpoint is not an approved generic restart procedure; no automatic resume, fold skip, capital reset or good-slice concatenation."
+    },
+    {
+      "target_pointer": "/S2_S3_S4/S3",
+      "rule": "Same-vendor retrieval cannot be called an independent second source. Do not introduce an independent-second-provider hard gate where the frozen field-evidence contract does not require one. Source/security-line and range proof must still close the actual field dependency."
+    },
+    {
+      "target_pointer": "/version_impact",
+      "rule": "Same-definition factual corrections may be versioned v1 inputs. A changed numeric result or corrected factual event type alone does not force v2. New estimation, valuation, threshold, calendar, panel or source-qualification rules require version review. Actual performance recomputation/retry remains subject to N and the historical budget."
+    }
+  ],
+  "later_rulings_preserved": {
+    "v10_final_receipt_sha256": "834bf9546dda93c3fb613833b59ac87842c2825b71c11bc09edc13608f5d42e4",
+    "v11_v111_final_receipt_sha256": "bfe11a443bb97424d7644805a3484bdeb897808a4e4f39d98f3a7f1135ad72be",
+    "v111_42_rows_replaced_by_older_40_row_view": false,
+    "v9_seq1236_N1197_is_current_authority_anchor": false,
+    "current_reviewed_book_anchor": {
+      "seq": 1354,
+      "tip": "cc762241b3e467833a75f0fc7fd82e516c682ce638cd08bfe9f87b73817ec250",
+      "book_N": 1313,
+      "certified_deduplicated_total_or_lower_bound": false
+    },
+    "n_complete": false,
+    "complete_N": null,
+    "certified_factor_arm_N": null,
+    "candidate_factor_arm_N": 253,
+    "G1G_037_clarification_requirement_preserved": true,
+    "S4_later_evidence_replaced_by_old_source_plan": false
+  },
+  "runtime_consumable": false,
+  "certifiable": false,
+  "strict_eligible_count": null,
+  "V": null,
+  "DSR": null,
+  "EVO886_release": false,
+  "R3_confirmed": false,
+  "day63_clock_started": false,
+  "new_query_permission": false,
+  "authoritative_ledger_rows_appended": 0,
+  "frozen_bytes_changed": false,
+  "status": "in_progress",
+  "outstanding_issue_work": "S4 independent draft remains in the existing review task; no duplicate dispatch.",
+  "handoff": "Record this scope overlay on the existing EVO884/EVO887 engineering work and EVO886 minimum-set progress; do not request a duplicate full package or reopen closed source checks."
+}
