@@ -1,0 +1,32 @@
+{
+  "C1": {
+    "actual_A_issued": false,
+    "implementation_id": "4d5d3e5a44e6a5e2d7b1cae25b94ef9addcf8be208ed5a908118fe13ddf7e06e",
+    "independent_review": "pending BR-A; test copies are not authority",
+    "trust_root_present": false
+  },
+  "C1_R1": {
+    "actual_A_issued": false,
+    "implementation_id": "3bf62aa7a16f3b87ec82062619b9d01925233e6eed385e95c476fc29890b4eaa",
+    "independent_review": "pending BR-A; test copies are not authority",
+    "trust_root_present": false
+  },
+  "L0": false,
+  "actual_B_acceptance": null,
+  "actual_SRC_AUTH_reception": null,
+  "actual_performance": null,
+  "actual_run_id": null,
+  "archive_sequence": 1386,
+  "archive_version": "v31",
+  "attempt": 661,
+  "book_N": 1313,
+  "certifiable": false,
+  "complete_N": null,
+  "design_count_archive_reference": 6,
+  "gate_N": null,
+  "independent_review": "pending EVO887 B delta",
+  "kind": "B_delta_source_identity_pending_independent_review",
+  "runtime_consumable": false,
+  "schema": "EVO884.B.SourceScope/v1",
+  "source_commit": "192fbf9362896494ebb5969247d93a8430d7773b"
+}

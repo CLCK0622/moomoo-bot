@@ -1,0 +1,232 @@
+{
+  "execution_preparation_import_graph": {
+    "execution_receipts.input_data": [
+      "hashlib",
+      "json",
+      "math",
+      "reference_validation"
+    ],
+    "execution_receipts.input_guard": [
+      "os",
+      "pathlib",
+      "sys"
+    ],
+    "execution_receipts.input_reader": [
+      "hashlib",
+      "input_data",
+      "json",
+      "pathlib"
+    ],
+    "reference_producer_v3": [
+      "argparse",
+      "b_release_context",
+      "execution_receipts.input_data",
+      "execution_receipts.input_envelope",
+      "execution_receipts.input_guard",
+      "execution_receipts.input_reader",
+      "fold_split",
+      "hashlib",
+      "json",
+      "reference_guard",
+      "reference_inputs",
+      "reference_v3_scope"
+    ]
+  },
+  "execution_preparation_read_whitelist": {
+    "adv": "adv.json",
+    "cash": "cash.json",
+    "raw": "raw.json",
+    "rights": "rights.json"
+  },
+  "execution_preparation_reader_sites": [
+    {
+      "line": 54,
+      "module": "execution_receipts.input_reader",
+      "roles": [
+        "raw",
+        "rights",
+        "adv",
+        "cash"
+      ]
+    }
+  ],
+  "execution_result_import_graph": {
+    "reference_producer_v3": [
+      "contract",
+      "conventions",
+      "execution_receipts.input_data",
+      "execution_receipts.input_facts",
+      "execution_receipts.reference_result",
+      "execution_receipts.replay_guard",
+      "reference_execution"
+    ]
+  },
+  "forbidden_inputs": [
+    "candidate_returns",
+    "candidate_SR",
+    "pool",
+    "meta_returns",
+    "meta_SR"
+  ],
+  "import_graph": {
+    "catalog_members": [],
+    "fold_split": [
+      "dataclasses"
+    ],
+    "input_scope": [],
+    "reference_guard": [
+      "os",
+      "pathlib",
+      "sys"
+    ],
+    "reference_inputs": [
+      "hashlib",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "reference_producer": [
+      "argparse",
+      "fold_split",
+      "hashlib",
+      "json",
+      "reference_guard",
+      "reference_inputs"
+    ],
+    "reference_producer_v3": [
+      "argparse",
+      "b_release_context",
+      "execution_receipts.input_envelope",
+      "fold_split",
+      "hashlib",
+      "json",
+      "reference_guard",
+      "reference_inputs",
+      "reference_v3_scope"
+    ],
+    "reference_v3_scope": [
+      "catalog_members",
+      "hashlib",
+      "json",
+      "math",
+      "noncash_v3",
+      "reference_validation"
+    ],
+    "reference_validation": [
+      "datetime",
+      "hashlib",
+      "json",
+      "math"
+    ]
+  },
+  "module_import_graph": {
+    "catalog_members": [],
+    "execution_receipts.input_data": [
+      "hashlib",
+      "json",
+      "math",
+      "reference_validation"
+    ],
+    "execution_receipts.input_guard": [
+      "os",
+      "pathlib",
+      "sys"
+    ],
+    "execution_receipts.input_reader": [
+      "hashlib",
+      "input_data",
+      "json",
+      "pathlib"
+    ],
+    "fold_split": [
+      "dataclasses"
+    ],
+    "input_scope": [],
+    "reference_guard": [
+      "os",
+      "pathlib",
+      "sys"
+    ],
+    "reference_inputs": [
+      "hashlib",
+      "input_scope",
+      "json",
+      "pathlib"
+    ],
+    "reference_producer": [
+      "argparse",
+      "fold_split",
+      "hashlib",
+      "json",
+      "reference_guard",
+      "reference_inputs"
+    ],
+    "reference_producer_v3": [
+      "argparse",
+      "b_release_context",
+      "contract",
+      "conventions",
+      "execution_receipts.input_data",
+      "execution_receipts.input_envelope",
+      "execution_receipts.input_facts",
+      "execution_receipts.input_guard",
+      "execution_receipts.input_reader",
+      "execution_receipts.reference_result",
+      "execution_receipts.replay_guard",
+      "fold_split",
+      "hashlib",
+      "json",
+      "reference_execution",
+      "reference_guard",
+      "reference_inputs",
+      "reference_v3_scope"
+    ],
+    "reference_v3_scope": [
+      "catalog_members",
+      "hashlib",
+      "json",
+      "math",
+      "noncash_v3",
+      "reference_validation"
+    ],
+    "reference_validation": [
+      "datetime",
+      "hashlib",
+      "json",
+      "math"
+    ]
+  },
+  "read_whitelist": {
+    "benchmark": "benchmark.json",
+    "panel": "panel.json",
+    "profile": "profile.json"
+  },
+  "reader_sites": [
+    {
+      "line": 38,
+      "module": "reference_inputs",
+      "roles": [
+        "panel",
+        "benchmark",
+        "profile"
+      ]
+    }
+  ],
+  "scope": "static proof for pinned trusted source, not an arbitrary Python OS sandbox",
+  "shared_splitter_sha256": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+  "source_files": {
+    "catalog_members.py": "a4afc328161064689e24c85dfa1e3d946fd1c4fc7563701fd90e08864e82a82b",
+    "execution_receipts.input_data.py": "d0e86374390f6dab660e2c68eb25390f714120c184abd085fbad781ca6acec68",
+    "execution_receipts.input_guard.py": "8c49c72ad42886285270c3ef99f2051c6c0c656927e348eac56a6211ad6507b7",
+    "execution_receipts.input_reader.py": "ca5e3fc1c1a336428b784904d5fa85f880f78c39c500718ff6a4909b5f0bb30a",
+    "fold_split.py": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+    "input_scope.py": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+    "reference_guard.py": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+    "reference_inputs.py": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+    "reference_producer.py": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+    "reference_producer_v3.py": "a7fcff5592195a86923aaf667660ce988323c4bce1a0070432fcbdb65a560e26",
+    "reference_v3_scope.py": "131eaf7725102c1b86a51146c60f3019faa79bd1f73e0aa585ac3e743590244a",
+    "reference_validation.py": "77854b5e4671bf3634bf22e7f49602c90ab47f87e19d394d688e12c6ec078019"
+  },
+  "source_sha256": "69fe15d8eed8e983767f2c86c680249f1710dc70a8ea4e9e83013f2156d8029f"
+}
