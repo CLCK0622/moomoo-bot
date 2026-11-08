@@ -3,23 +3,23 @@
   "correction": "05:16 件是历史 45eb817 封存，已由 06:05:55 当前件替代；F3 修改 continuity.py 后，由本索引的新封存替代 06:05:55 件作为本次源码的有效入口。 F3b supersedes the 07:09:57Z seal; that file remains historical and matches 08c9d87 only. S appends the reviewed execution closure and replaces the current source lookup; every prior seal stays historical.",
   "current": {
     "B2_manifest": {
-      "path": "evo884-c1-v8-v1/B2-unavailable-manifest.json",
-      "sha256": "e8ba9cd2ac8e605f564a071d865408ff191792ed22d78128009200a580e99f79"
+      "path": "evo884-c1-v8-supplement-v1/B2-unavailable-manifest.json",
+      "sha256": "c6d5c65f77e6b7537a3304fd7fd6fc4a45b84fd1af2c309cbe58407d1b8615cf"
     },
     "binding_publication": {
-      "bytes": 1717,
-      "path": "evo884-c1-v8-v1/binding-publication.json",
-      "sha256": "0e883c572f0e3b8a5bc380f3fd529ce6107b71a0c98152a44b288de070e928bd"
+      "bytes": 1728,
+      "path": "evo884-c1-v8-supplement-v1/binding-publication.json",
+      "sha256": "ce6212ea5c70fc8410a779f1c1e48c87a18004dbc66761585f3a695caeaa8191"
     },
     "commit_binding": "C1 source head; final handoff commit binds all static outputs",
     "independent_review": "pending BR-A-D",
-    "path": "evo884-c1-v8-v1/static-seal.json",
+    "path": "evo884-c1-v8-supplement-v1/static-seal.json",
     "runtime_consumable": false,
-    "sealed_at": "2026-11-08T16:59:55.051555Z",
-    "sha256": "c61dc563230538fb26c4e870f40948eb2fdd586d96aecb78f70a398f8a08f486",
-    "source_commit": "71c6d006ba12e63483fd2aa00e05e99f6c64cb61",
+    "sealed_at": "2026-11-08T17:58:32.479640Z",
+    "sha256": "0b5dab84dc9302f4faeb21c85303a08e52cd084cf42e84a321918d3a29ee4749",
+    "source_commit": "99a1ae1dd3bec0fc811bdc3338e22b5aa4fbe822",
     "source_count": 52,
-    "source_map_sha256": "b424232b6d557d2c6fff5bc06f67ca701ff9bde30698f7622e85e9db5e810336"
+    "source_map_sha256": "4aec231cbf1633e878d3a0dbca69b533eac1370bea0eddffd94ffe90537a0757"
   },
   "historical": [
     {
@@ -194,9 +194,35 @@
   "historical_superseded_by_C1_V8": true,
   "schema": "EVO884.HistoricalSealEntry/v1",
   "status": "historical_superseded_by_C1_V8"
+},
+{
+  "attachments_retained": true,
+  "entry": {
+    "B2_manifest": {
+      "path": "evo884-c1-v8-v1/B2-unavailable-manifest.json",
+      "sha256": "e8ba9cd2ac8e605f564a071d865408ff191792ed22d78128009200a580e99f79"
+    },
+    "binding_publication": {
+      "bytes": 1717,
+      "path": "evo884-c1-v8-v1/binding-publication.json",
+      "sha256": "0e883c572f0e3b8a5bc380f3fd529ce6107b71a0c98152a44b288de070e928bd"
+    },
+    "commit_binding": "C1 source head; final handoff commit binds all static outputs",
+    "independent_review": "pending BR-A-D",
+    "path": "evo884-c1-v8-v1/static-seal.json",
+    "runtime_consumable": false,
+    "sealed_at": "2026-11-08T16:59:55.051555Z",
+    "sha256": "c61dc563230538fb26c4e870f40948eb2fdd586d96aecb78f70a398f8a08f486",
+    "source_commit": "71c6d006ba12e63483fd2aa00e05e99f6c64cb61",
+    "source_count": 52,
+    "source_map_sha256": "b424232b6d557d2c6fff5bc06f67ca701ff9bde30698f7622e85e9db5e810336"
+  },
+  "historical_superseded_by_C1_V8": true,
+  "schema": "EVO884.HistoricalSealEntry/v1",
+  "status": "historical_superseded_by_C1_V8"
 }
   ],
-  "previous_index_sha256": "781c84302950580734ca44c9c05b220c2bba1ef162d0a40e418aaeda43faaa31",
+  "previous_index_sha256": "3d30305f733405e9df1fe56ec1f9e74d727c5bff671157f91d416ad11146ae1f",
   "schema": "EVO884.effective-seal-index/v1",
   "scope": "C1 source identity only; B/S history immutable; B/SRC-AUTH/L0 remain closed."
 }

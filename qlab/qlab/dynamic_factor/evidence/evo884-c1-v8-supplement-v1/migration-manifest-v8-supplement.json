@@ -320,7 +320,7 @@
       "file": "qlab/qlab/dynamic_factor/scope_proof.py",
       "id": "B:qlab/qlab/dynamic_factor/scope_proof.py",
       "new_binding": "C1 source-inventory or versioned migration source/test record",
-      "new_sha256": "8da863fa6f2aa13e691d64574d0343d5d484d386019b9a9ce256cc3466866d4d",
+      "new_sha256": "c54103c2eee403bd2b8be7f32c1a448c9286a8afec4f524ce7e7336d057e3492",
       "old_sha256": "cfe32704775a0750a2172adea9e6276f12773c8ac6179ddd3e114b317a7adbdb",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "B release-context propagation changes source/document binding; preserve S originals and bind complete B head"
@@ -338,7 +338,7 @@
       "file": "qlab/tests/dynamic_factor/test_execution_reseal.py",
       "id": "B:qlab/tests/dynamic_factor/test_execution_reseal.py",
       "new_binding": "C1 source-inventory or versioned migration source/test record",
-      "new_sha256": "1fd5ff4728d070c8ded413c7d82af2ad030fbe975319a83063a366f899b6b7b4",
+      "new_sha256": "461886f078247949cb5a37a8920b75d00f3d655d17a142245ba66397f86c429d",
       "old_sha256": "d037afdc41ad0b4939e539bb208ffc1901db0631ae9480e07ae8ab0371a7e999",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "S original assertions replay on fixed S; add strict B current and two mutation controls"
@@ -347,7 +347,7 @@
       "file": "qlab/tests/dynamic_factor/test_seal_index_rework.py",
       "id": "B:qlab/tests/dynamic_factor/test_seal_index_rework.py",
       "new_binding": "C1 source-inventory or versioned migration source/test record",
-      "new_sha256": "aa1c3dd77f1e293c05d4d67bb321e3dbe68257f4b3d3786e08c0e6fe2e61a9d9",
+      "new_sha256": "225712272b233914fc13e41a6cbb7814825959b34f5fc10554fc0a7a40290a63",
       "old_sha256": "2f1c36080ec120239c6a9fc1eee7e6b60e0970a7ac176673e61e9e8010a5fca4",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "S original assertions replay on fixed S; add strict B current and two mutation controls"
@@ -489,93 +489,109 @@
       "old_sha256": "3d30305f733405e9df1fe56ec1f9e74d727c5bff671157f91d416ad11146ae1f",
       "path": "qlab/qlab/dynamic_factor/evidence/current-seal-index.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/B2-unavailable-manifest.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/binding-publication.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/index-registration.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "external delivery MANIFEST.json"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/migration-manifest-v8-supplement.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/previous-index.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/read-dag.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/reference-static-proof.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/scope.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/source-inventory.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-supplement-v1/static-seal.json",
       "phase": "reseal",
-      "reason": "propagated source binding"
+      "reason": "propagated source binding",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
+      "new_sha256": "c54103c2eee403bd2b8be7f32c1a448c9286a8afec4f524ce7e7336d057e3492",
       "old_sha256": "8da863fa6f2aa13e691d64574d0343d5d484d386019b9a9ce256cc3466866d4d",
       "path": "qlab/qlab/dynamic_factor/scope_proof.py",
       "phase": "code_and_tests",
       "reason": "B2 import closure identity and three contract controls"
     },
     {
+      "new_sha256": "a55b40415bf3f5406a77c50181ecaf49a0730f1c192b92b62f629aa4471dde1a",
       "old_sha256": "6da257493347d5390bc94d03c07b2e00332b7c6885b6608bda13b308ed84fc8d",
       "path": "qlab/tests/dynamic_factor/test_c1_v8.py",
       "phase": "code_and_tests",
       "reason": "B2 import closure identity and three contract controls"
     },
     {
+      "new_sha256": "e481aac672e16cf9f15e24772c40afaf00cdc5d8e440bbcb3ba2bc4def6fb5e6",
       "old_sha256": null,
       "path": "qlab/tests/dynamic_factor/test_c1_v8_supplement.py",
       "phase": "code_and_tests",
       "reason": "B2 import closure identity and three contract controls"
     },
     {
+      "new_sha256": "461886f078247949cb5a37a8920b75d00f3d655d17a142245ba66397f86c429d",
       "old_sha256": "1fd5ff4728d070c8ded413c7d82af2ad030fbe975319a83063a366f899b6b7b4",
       "path": "qlab/tests/dynamic_factor/test_execution_reseal.py",
       "phase": "code_and_tests",
       "reason": "B2 import closure identity and three contract controls"
     },
     {
+      "new_sha256": "225712272b233914fc13e41a6cbb7814825959b34f5fc10554fc0a7a40290a63",
       "old_sha256": "aa1c3dd77f1e293c05d4d67bb321e3dbe68257f4b3d3786e08c0e6fe2e61a9d9",
       "path": "qlab/tests/dynamic_factor/test_seal_index_rework.py",
       "phase": "code_and_tests",
@@ -664,7 +680,7 @@
     "static": "Keep entire-module __file__/globals/setattr rejection and exact path-provenance AST binding."
   },
   "complete_N": null,
-  "final_source_commit": "71c6d006ba12e63483fd2aa00e05e99f6c64cb61",
+  "final_source_commit": "99a1ae1dd3bec0fc811bdc3338e22b5aa4fbe822",
   "fixes": {
     "AUDIT_ORDER": "Restore legacy targets loop and all checks through file_reads byte-for-byte except receiver 1->4. Append fixed original inspection only after it. Compare dual-fault first refusal with archived d9.",
     "ROOT_ISSUE": "Require issue_id; existing publication raw bytes and SHA immutable.",
@@ -769,13 +785,13 @@
       "reason": "No syntactic bypass and no dynamic-code exception. The legacy compile ban stays unchanged."
     }
   ],
-  "phase": "PRELISTED_BEFORE_V8_SUPPLEMENT",
+  "phase": "C1_V8_SUPPLEMENT_FINALIZED_PENDING_GONGBU",
   "predecessor_manifest": {
     "file": "qlab/qlab/dynamic_factor/evidence/evo884-c1-v8-v1/migration-manifest-v8.json",
     "sha256": "15b4d2b49468d804f555ef84dca84ef4299598c1a2f98a0e11fd94b10f897c83"
   },
-  "prelisting_commit": "9b76376",
-  "prelisting_sha256": "1d140ca48f9bb1e04a6af2f8d8191daf3b055a3895c1f730a9d56ff3e011bc4b",
+  "prelisting_commit": "ee0e990",
+  "prelisting_sha256": "58046e2b0925ea4e38a11500aab3b1ba0f78afc497b7c2cd453b2c871b2e5109",
   "receiver_implementation_id": "2392a96137102c00ba0b91e460291618b4f3f4567e1a4765660e871b847cddd1",
   "reviewed_audit_functions": {
     "_b_release_adapter_scope": "_b_release_adapter_scope(tree, audit_tree):\n    \"\"\"Exact call ASTs, fixed original loop, and self-read SHA-only use.\"\"\"\n    try:\n        _b_release_audit_structure(audit_tree)\n        expected_source = B_RELEASE_MODULE_TEMPLATE\n        for index, value in reversed(list(enumerate(B_RELEASE_FIXED_LITERALS))):\n            expected_source = expected_source.replace(\n                \"V8_FIXED_LITERAL_\" + str(index), value\n            )\n        expected_tree = ast.parse(expected_source)\n        if ast.dump(tree, include_attributes=False) != ast.dump(\n            expected_tree, include_attributes=False\n        ):\n            raise ValueError\n        if len(B_RELEASE_PATH_ONLY_READS) != 2 or set(B_RELEASE_PATH_ONLY_READS) != {\n            (\n                \"b_release_context\",\n                \"b_release_originals/trust-root-platform-readback.json\",\n            ),\n            (\"b_release_context\", \"b_release_context.py\"),\n        }:\n            raise ValueError\n        fn = next(\n            n\n            for n in tree.body\n            if isinstance(n, ast.FunctionDef) and n.name == \"_read_trusted_release\"\n        )\n        if fn.args.args or fn.args.kwonlyargs or fn.args.vararg or fn.args.kwarg:\n            raise ValueError\n        expected = ast.literal_eval(\n            next(\n                n.value\n                for n in ast.walk(fn)\n                if isinstance(n, ast.Assign)\n                and len(n.targets) == 1\n                and isinstance(n.targets[0], ast.Name)\n                and n.targets[0].id == \"original_sha256\"\n            )\n        )\n        rows = tuple(\n            (\"b_release_context\", \"b_release_originals/\" + name, value)\n            for name, value in expected.items()\n        )\n        if (\n            len(rows) != 15\n            or rows != B_RELEASE_ADAPTER_READS\n            or any(\n                type(value) is not str\n                or len(value) != 64\n                or any(c not in \"0123456789abcdef\" for c in value)\n                for value in expected.values()\n            )\n        ):\n            raise ValueError\n        reads = [\n            n\n            for n in ast.walk(fn)\n            if isinstance(n, ast.Call)\n            and isinstance(n.func, ast.Attribute)\n            and n.func.attr == \"read_bytes\"\n        ]\n        expressions = {\n            \"root\": '(Path(__file__).parent / \"b_release_originals\" / \"trust-root-platform-readback.json\").read_bytes()',\n            \"self\": \"Path.read_bytes(self_path)\",\n            \"original\": '(Path(__file__).parent / \"b_release_originals\" / name).read_bytes()',\n        }\n        if len(reads) != 3 or {ast.dump(n) for n in reads} != {\n            ast.dump(ast.parse(expr, mode=\"eval\").body) for expr in expressions.values()\n        }:\n            raise ValueError\n        # V7: the self-read argument and its co_filename provenance are exact ASTs.\n        # No literal, caller/env path or descriptor-call alternative is allowed.\n        # Scan the WHOLE module, including bindings outside the reader body.\n        for node in ast.walk(tree):\n            if isinstance(node, ast.Name):\n                if node.id in {\"globals\", \"setattr\"}:\n                    raise ValueError\n                if isinstance(node.ctx, (ast.Store, ast.Del)) and node.id in {\n                    \"__file__\",\n                    \"Path\",\n                    \"compile\",\n                    \"_read_trusted_release\",\n                }:\n                    raise ValueError\n            if isinstance(node, ast.Attribute):\n                if node.attr in {\"globals\", \"setattr\", \"__setattr__\"}:\n                    raise ValueError\n                if node.attr == \"__file__\" and isinstance(\n                    node.ctx, (ast.Store, ast.Del)\n                ):\n                    raise ValueError\n            if isinstance(node, ast.Subscript) and isinstance(\n                node.ctx, (ast.Store, ast.Del)\n            ):\n                if (\n                    isinstance(node.slice, ast.Constant)\n                    and node.slice.value == \"__file__\"\n                ):\n                    raise ValueError\n            if isinstance(\n                node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)\n            ) and node.name in {\"__file__\", \"Path\", \"compile\"}:\n                raise ValueError\n            if isinstance(node, ast.arg) and node.arg in {\n                \"__file__\",\n                \"Path\",\n                \"compile\",\n            }:\n                raise ValueError\n            if isinstance(node, ast.ExceptHandler) and node.name in {\n                \"__file__\",\n                \"Path\",\n                \"compile\",\n            }:\n                raise ValueError\n            if isinstance(node, ast.alias) and (\n                node.asname or node.name.split(\".\")[0]\n            ) in {\"__file__\", \"compile\"}:\n                raise ValueError\n        imports = [\n            n for n in ast.walk(fn) if isinstance(n, (ast.Import, ast.ImportFrom))\n        ]\n        if len(imports) != 1 or ast.dump(imports[0]) != ast.dump(\n            ast.parse(\"from pathlib import Path\").body[0]\n        ):\n            raise ValueError\n        if (\n            sum(\n                isinstance(n, ast.alias) and (n.asname or n.name) == \"Path\"\n                for n in ast.walk(tree)\n            )\n            != 1\n        ):\n            raise ValueError\n        prelude = ast.parse(\n            'try:\\n    self_path = Path(_read_trusted_release.__code__.co_filename).resolve()\\n    if type(__file__) is not str or self_path != Path(__file__).resolve():\\n        _fail(\"acceptance_mismatch\")\\nexcept (NameError, AttributeError, OSError, RuntimeError, TypeError) as exc:\\n    raise ValueError(\"B.release_context_acceptance_mismatch\") from exc\\n'\n        ).body\n        binding = ast.parse(\n            'try:\\n    self_raw = Path.read_bytes(self_path)\\nexcept OSError as exc:\\n    raise ValueError(\"B.release_context_acceptance_mismatch\") from exc\\nimplementation_id = sha256(self_raw)\\n'\n        ).body\n\n        def exact_sequence(statements, expected):\n            wanted = [ast.dump(n) for n in expected]\n            actual = [ast.dump(n) for n in statements]\n            return (\n                sum(actual[i : i + len(wanted)] == wanted for i in range(len(actual)))\n                == 1\n            )\n\n        if not exact_sequence(fn.body, prelude):\n            raise ValueError\n        containers = [n.body for n in ast.walk(fn) if isinstance(n, ast.Try)]\n        if sum(exact_sequence(body, binding) for body in containers) != 1:\n            raise ValueError\n        if (\n            sum(isinstance(n, ast.Name) and n.id == \"compile\" for n in ast.walk(tree))\n            != 0\n        ):\n            raise ValueError\n        if (\n            sum(\n                isinstance(n, ast.Name)\n                and n.id == \"self_raw\"\n                and isinstance(n.ctx, ast.Load)\n                for n in ast.walk(fn)\n            )\n            != 1\n        ):\n            raise ValueError\n        if (\n            sum(\n                isinstance(n, ast.Name)\n                and n.id == \"self_path\"\n                and isinstance(n.ctx, ast.Store)\n                for n in ast.walk(fn)\n            )\n            != 1\n        ):\n            raise ValueError\n        audit_fn = next(\n            n\n            for n in audit_tree.body\n            if isinstance(n, ast.FunctionDef) and n.name == \"b2_isolation_proof\"\n        )\n        audit_loop = ast.parse(\n            'for name, relative, expected in B_RELEASE_ADAPTER_READS + B_RELEASE_IMPORT_READS:\\n    raw = Path.read_bytes(root / relative)\\n    if name == \"contract\" and raw != B_RELEASE_CONTRACT_TEMPLATE.encode(\"utf-8\"):\\n        raise ValueError(\"scope.file_access_not_whitelisted\")\\n    if sha256(raw) != expected:\\n        raise ValueError(\"scope.file_access_not_whitelisted\")\\n    if (name, relative, expected) in B_RELEASE_IMPORT_READS:\\n        sources[name + \".py\"] = sha256(raw)\\n        trees[name] = ast.parse(raw)'\n        ).body[0]\n        if sum(ast.dump(n) == ast.dump(audit_loop) for n in audit_fn.body) != 1:\n            raise ValueError\n        loops = [\n            n\n            for n in ast.walk(fn)\n            if isinstance(n, ast.For)\n            and ast.dump(n.iter)\n            == ast.dump(ast.parse(\"original_sha256.items()\", mode=\"eval\").body)\n        ]\n        if len(loops) != 1 or ast.dump(loops[0].target) != ast.dump(\n            ast.parse(\"for name, expected in original_sha256.items(): pass\")\n            .body[0]\n            .target\n        ):\n            raise ValueError\n    except (ValueError, TypeError, KeyError, StopIteration, AttributeError) as exc:\n        raise ValueError(\"scope.file_access_not_whitelisted\") from exc\n    return {\n        \"sha256_reads\": [dict(module=m, path=p, sha256=s) for m, p, s in rows],\n        \"path_only_reads\": [\n            dict(module=m, path=p) for m, p in B_RELEASE_PATH_ONLY_READS\n        ],\n        \"exact_adapter_read_sites\": 3,\n        \"self_read_argument\": \"self_path = Path(_read_trusted_release.__code__.co_filename).resolve()\",\n        \"self_read_use\": \"co_filename / resolved __file__ equality; fixed self bytes SHA -> implementation_id\",\n        \"import_filename_path_binding\": True,\n        \"post_import_process_tamper_defense\": False,\n        \"additional_fixed_audit_read_sites\": 1,\n        \"additional_fixed_compile_sites\": 0,\n        \"dynamic_code_exceptions\": [],\n        \"root_sha_in_code\": False,\n    }",
