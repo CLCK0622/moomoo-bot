@@ -4,7 +4,7 @@
     {
       "file": "qlab/docs/B01-reception-and-call-classification.md",
       "id": "B:qlab/docs/B01-reception-and-call-classification.md",
-      "new_binding": "migration manifest source/test record",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "cc1560ee93c32553cdcabb5a86ff1f54bdb3260941cd54aa76f4c3bee2ea2b8e",
       "old_sha256": null,
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -13,7 +13,7 @@
     {
       "file": "qlab/docs/B02-catalog-contract-addendum.md",
       "id": "B:qlab/docs/B02-catalog-contract-addendum.md",
-      "new_binding": "migration manifest source/test record",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "6fd4dc6f2734f02918c7fb73fee1b01d7d15085c2faf41ec3c5ad332787aff3c",
       "old_sha256": null,
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -22,7 +22,7 @@
     {
       "file": "qlab/docs/B04-release-channel.md",
       "id": "B:qlab/docs/B04-release-channel.md",
-      "new_binding": "migration manifest source/test record",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "fde612c10b259b64b38789953a3134f3327152199a6af57c65c7fc9292096289",
       "old_sha256": null,
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -31,7 +31,7 @@
     {
       "file": "qlab/docs/b-release-context-interface-v1.md",
       "id": "B:qlab/docs/b-release-context-interface-v1.md",
-      "new_binding": "migration manifest source/test record",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "71146e948982d079c31718886ef1b32b2b7fd095e093759d68cbe7242c762611",
       "old_sha256": null,
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -40,7 +40,7 @@
     {
       "file": "qlab/docs/candidate-execution-C13.md",
       "id": "B:qlab/docs/candidate-execution-C13.md",
-      "new_binding": "migration manifest source/test record",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "fe4ad719a0a5e55ba011e2faf424d81b876d84cf3ce45f9c46b2577fe8634670",
       "old_sha256": "8463ed3517d408a5580050f8c9d116fb523691b5dd6aeac3dc999e48efcbf8bd",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -49,7 +49,7 @@
     {
       "file": "qlab/docs/execution-projection-C03.md",
       "id": "B:qlab/docs/execution-projection-C03.md",
-      "new_binding": "migration manifest source/test record",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "f6b0cc5d06739dd85785e943206b2f5e475cfb60a816dee90cf905ceccb30b9e",
       "old_sha256": "1b1a755587ac58167d6a1e79e90407e8815e5c8d9aba3368ab51e944d856e7df",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -58,7 +58,7 @@
     {
       "file": "qlab/docs/reference-risk-C06.md",
       "id": "B:qlab/docs/reference-risk-C06.md",
-      "new_binding": "migration manifest source/test record",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "3e6038380e2ae4ef98e9143c4b7289e6395e4896b724a735b8863beeec37b702",
       "old_sha256": "98a6655813b21cfa3f92a470b502e0e76c4ced20ab87ee82060e97ffa609e814",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -67,8 +67,8 @@
     {
       "file": "qlab/qlab/dynamic_factor/b_release_context.py",
       "id": "B:qlab/qlab/dynamic_factor/b_release_context.py",
-      "new_binding": "source-inventory.json",
-      "new_sha256": "06ae23db293803a832fc616d538c6a90ca9c5f84e4900464f60bf3ea46f785b3",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
+      "new_sha256": "4d5d3e5a44e6a5e2d7b1cae25b94ef9addcf8be208ed5a908118fe13ddf7e06e",
       "old_sha256": null,
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "B release-context propagation changes source/document binding; preserve S originals and bind complete B head"
@@ -76,7 +76,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/event_quarantine.py",
       "id": "B:qlab/qlab/dynamic_factor/event_quarantine.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "1245c801165b5da94178585932634f6745dc05f2490c64ebbf96b0c4bd32c2c6",
       "old_sha256": "cb5de67103acbbcbb68bdd7f64d160f3fcfb65ff224773d618cef8d1497d61d5",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -85,7 +85,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_accounting.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_accounting.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "f8101633e86d2ee42e75dd66793ae0e153f1454e38ce008cc10bd2d6611a5a4a",
       "old_sha256": "36ba63882a55e97e6d040b48ed15fcdf7246ba1f27f16faa47414adb585d0e6d",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -94,7 +94,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_amounts.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_amounts.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "18b2cdf6edaa43c7fd489e63eb8bdac8e209f5a06b317ff2aa1d3f306a4e245d",
       "old_sha256": "4adc622b4cc622cc03cffd9c1dde57df63b63e298f975790d17abe601573e58c",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -103,7 +103,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_candidate.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_candidate.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "90d1a9dcbe46b9881450d1770003212e1daea0b14f3d8e15d90e5f4b1563d16e",
       "old_sha256": "2d6b77a2c8904f877d2fc4c80bec1ace708a2745ecc364ee071627fe94ea1c88",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -112,7 +112,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_cash.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_cash.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "a49653574a53ccab01552e18cdecf9f6d41481a7d63c49175904683651150348",
       "old_sha256": "1c7169cc540e70049ba4fac4a4745c83d3c6b1013c3431fb1ea535bfc1e33f20",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -121,7 +121,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_projection.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_projection.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "d7a30669a8cfc019318c35e648ea3cd9bea7129e57b12bcd93da0751afa8f5cc",
       "old_sha256": "28928c55e5e490a815e137e58eb9935b09c36fa687d0ddb46ed34e5f7706ec44",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -130,7 +130,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_receipts/input_envelope.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_receipts/input_envelope.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "fc9366049b8d4495ef03103617e897a29780bd0b17ceee26c6c9f9354ed3fd1c",
       "old_sha256": "b4f6efbc580d95eb590614d80c5234ffadc3c4c82c8ac358c97f18416ced81f4",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -139,7 +139,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_receipts/input_facts.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_receipts/input_facts.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "8ea6048eb366fc831fe43fc62a5b4d009bd8519a7d91b0a5b641ac478f095fd6",
       "old_sha256": "b2ce087702905ecd06a373ffb7b4a70a35204d8067b4b91b5985cbe8a27331e5",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -148,7 +148,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_receipts/input_run.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_receipts/input_run.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "94c7fb4064d33c585476f2006e3ab9435c056535ad3626b9042fa4dda7395698",
       "old_sha256": "5125008773f010b68a775f67d04e5477182dbb85e832058a22cb7788953a7b1b",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -157,7 +157,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_receipts/p4p7.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_receipts/p4p7.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "8081c024baeee8b177b382ecb5a9a68abba3b10e2e2e5dbdec36c7d10b6e2243",
       "old_sha256": "b72cb1d1cf80200f7f4c307b7b1d6b8084fe1ade40032e4c1a545dfaef90033b",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -166,7 +166,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_receipts/reference_result.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_receipts/reference_result.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "d876daf07745bc3889971dd5ef7fccf4fce0f15051fcd9c6c7722fedd99bf36f",
       "old_sha256": "c48dd33f9026e8f5244a8bdd319c6eb4aff61f5ac54f4f1a4cdf217d02014c8c",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -175,8 +175,8 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_receipts/replay_files.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_receipts/replay_files.py",
-      "new_binding": "source-inventory.json",
-      "new_sha256": "6ced8621bdc16a3b2600cb69852382e093adb172413c43376bdc917466f6ce9c",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
+      "new_sha256": "14955a7f0a425cca5608705d2fc0cd196cdda679ba45fd08d54db898ab71d9ef",
       "old_sha256": "10ef941445e7b3b8d36738f2268b6ed224b7d61acaa0591a971117110c9a5237",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "B release-context propagation changes source/document binding; preserve S originals and bind complete B head"
@@ -184,7 +184,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_risk.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_risk.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "b1b616126da4b831dba193f338ca9654c9de148bf1dc0b74d9723448faea8ab3",
       "old_sha256": "7d7cb02ad41c431d631b0206c22a8f03533f5bc4b775fffdb0b9049788d3cc31",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -193,7 +193,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_risk_history.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_risk_history.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "da55c683a2b281b1ece42850e0c4d49dbe81a921bfbb17c0a013a10330ba84d4",
       "old_sha256": "02bcac959075eeb6c326f6fa66351ee9f42ab0d496dc94a9f8fe70682c0c805b",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -202,7 +202,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/execution_signals.py",
       "id": "B:qlab/qlab/dynamic_factor/execution_signals.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "226c83a62f887ebf7720452c8ae045bceb699ab6cf7774446a5c72d28db5c0cb",
       "old_sha256": "f5748a558b33b43c2348ed16668abb91c867086ff5c56bd19627727440a39d8c",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -211,7 +211,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/isolation.py",
       "id": "B:qlab/qlab/dynamic_factor/isolation.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "910cccfd6fa0fa74405a393cba180ec5a65bceac99d5543722b68e87a7ec20a1",
       "old_sha256": "0d4d780f8ea9076d418c382113eb872daaf11be1340975f66eb6bb19889126ca",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -220,7 +220,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/k5.py",
       "id": "B:qlab/qlab/dynamic_factor/k5.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "96be5e8a8de9176b3cd24c766f08a4dc24a7d5db158a4bab2c0a468618d8bf97",
       "old_sha256": "70c9a7dad040103356fb2c016813c8f544105b7af44084319006d353c8659981",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -229,7 +229,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/noncash_v3.py",
       "id": "B:qlab/qlab/dynamic_factor/noncash_v3.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "ce439592adc936c8715e7515dfb7f6dc8261847a15a737eadf281329cff47ccd",
       "old_sha256": "08301f9d7a5ad5bdcd2fcaae8422dec9896e18b59d197a9c183e81057e106744",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -238,7 +238,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/reference_boundary.py",
       "id": "B:qlab/qlab/dynamic_factor/reference_boundary.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "c84f966aceae70c84734dd2e469b32677c3878327a0a58a916ad389166ddbe05",
       "old_sha256": "ed8caec1c0ccc2c1052f6fd5e5aa671b288ffd1f07bf414e14a1c07c4d1e0dd2",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -247,7 +247,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/reference_check.py",
       "id": "B:qlab/qlab/dynamic_factor/reference_check.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "27c4085c2acc18693d074e70d43961e0620110c37e606b65f46d8a683d11fa98",
       "old_sha256": "33faf257044acf5b941a56cadecee5274e5161edbb2f5e263cfbdcc9a300d4e8",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -256,7 +256,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/reference_compile_v3.py",
       "id": "B:qlab/qlab/dynamic_factor/reference_compile_v3.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "1d1fcdd8c277f811438b60fe673b49e2b3d80f53ff08ce4e86810c1d3f1979bc",
       "old_sha256": "fdfd2e267771d128ca527182293cfd741c498603262d7b7cbe60ac44484cb430",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -265,7 +265,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/reference_day_inputs.py",
       "id": "B:qlab/qlab/dynamic_factor/reference_day_inputs.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "aa524e97008749e03c96090e887c803f672f9d7f6486644c41d066d59f481322",
       "old_sha256": "66c06ad520bbf08f90598f5e8db111c8173c36c27cfdb78d344410688f98dc86",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -274,7 +274,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/reference_execution.py",
       "id": "B:qlab/qlab/dynamic_factor/reference_execution.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "ef856b951103be4c345e7b305d1600c0ce0e1fd559f65f70e95ce541d62384f7",
       "old_sha256": "bdbe261f294865b92d735e1805b100218fc52906892017291e13ec42f8763416",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -283,7 +283,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/reference_noncash.py",
       "id": "B:qlab/qlab/dynamic_factor/reference_noncash.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "c923f8589fee07e50c7ee2904edf1ec73ea91b7de2651b6ab545af988a918b2b",
       "old_sha256": "4f16e332ae821be91d1fb8b8ab43e0174e9d5bdfa1f98347ff9d56b6fb6861e4",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -292,7 +292,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/reference_producer_v3.py",
       "id": "B:qlab/qlab/dynamic_factor/reference_producer_v3.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "a7fcff5592195a86923aaf667660ce988323c4bce1a0070432fcbdb65a560e26",
       "old_sha256": "27dad19d579a78a10b1d8a51c400be762347d7161d2dc2645ccaa29f3c522d09",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -301,7 +301,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/reference_v3_evidence.py",
       "id": "B:qlab/qlab/dynamic_factor/reference_v3_evidence.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "5a14b98477783da356026be254654ead0787f65d5512add64b846d2132881238",
       "old_sha256": "c7e8f624aeed98d703d10749c80516eb4da90607e78c61db3bf08469cd76f204",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -310,7 +310,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/reference_v3_scope.py",
       "id": "B:qlab/qlab/dynamic_factor/reference_v3_scope.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "131eaf7725102c1b86a51146c60f3019faa79bd1f73e0aa585ac3e743590244a",
       "old_sha256": "3fd474ea4d3df792bbe96eccb56cc23aaf09aa058cb6453a35d00216d9e8754f",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -319,8 +319,8 @@
     {
       "file": "qlab/qlab/dynamic_factor/scope_proof.py",
       "id": "B:qlab/qlab/dynamic_factor/scope_proof.py",
-      "new_binding": "source-inventory.json",
-      "new_sha256": "fba2660e51611b1b9ed818b0338ab77dd771958bd776e97a978260103fd80965",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
+      "new_sha256": "dcaf0309a3e3a7d8464e487e3b731d66d0652bb1483d86df5f016fc9cb8a0ae5",
       "old_sha256": "cfe32704775a0750a2172adea9e6276f12773c8ac6179ddd3e114b317a7adbdb",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "B release-context propagation changes source/document binding; preserve S originals and bind complete B head"
@@ -328,7 +328,7 @@
     {
       "file": "qlab/qlab/dynamic_factor/valuation.py",
       "id": "B:qlab/qlab/dynamic_factor/valuation.py",
-      "new_binding": "source-inventory.json",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "4b0a18ebb18b2706926e344a94fd5da32b0f06b969a34d9da294e91ffffb8a8d",
       "old_sha256": "5cf69bb26737b11cc0089cd972ec3f6cb3d047287e9331427d5dc70104b82dba",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -337,8 +337,8 @@
     {
       "file": "qlab/tests/dynamic_factor/test_execution_reseal.py",
       "id": "B:qlab/tests/dynamic_factor/test_execution_reseal.py",
-      "new_binding": "migration manifest source/test record",
-      "new_sha256": "86955011a951bcdc035868c2e9e3504ee46c457aecbfdb011c52e989cfa97b60",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
+      "new_sha256": "15350f8034e92becacb4f7b94cb346370c2e62d17d5b94e9d4d044ff843622e6",
       "old_sha256": "d037afdc41ad0b4939e539bb208ffc1901db0631ae9480e07ae8ab0371a7e999",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "S original assertions replay on fixed S; add strict B current and two mutation controls"
@@ -346,8 +346,8 @@
     {
       "file": "qlab/tests/dynamic_factor/test_seal_index_rework.py",
       "id": "B:qlab/tests/dynamic_factor/test_seal_index_rework.py",
-      "new_binding": "migration manifest source/test record",
-      "new_sha256": "c5ca65adc2497ece7283f3d65a27137e20eb8602c78325c8ac23a1b2264a28d3",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
+      "new_sha256": "2a10061d1d986cc4f1fca20e09b2aaa6a739558f123b5d94a3d9b9e04aa28afb",
       "old_sha256": "2f1c36080ec120239c6a9fc1eee7e6b60e0970a7ac176673e61e9e8010a5fca4",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "S original assertions replay on fixed S; add strict B current and two mutation controls"
@@ -355,7 +355,7 @@
     {
       "file": "qlab/tests/dynamic_factor/test_v3_consumers.py",
       "id": "B:qlab/tests/dynamic_factor/test_v3_consumers.py",
-      "new_binding": "migration manifest source/test record",
+      "new_binding": "C1 source-inventory or versioned migration source/test record",
       "new_sha256": "d62cd8dd37dd33d89dc3425b6bb022277feebba150e09d3a64ce17d9d25b9d46",
       "old_sha256": "afe74383c27286dcab261bceeda5cfa7fa07bc34569e1d9ecf752c280255ea12",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
@@ -365,127 +365,127 @@
   "C1_base": "d9e38874a43f44c8efc45eb85398645d0babd53d",
   "C1_rows": [
     {
-      "new_sha256": null,
+      "new_sha256": "4d5d3e5a44e6a5e2d7b1cae25b94ef9addcf8be208ed5a908118fe13ddf7e06e",
       "old_sha256": "06ae23db293803a832fc616d538c6a90ca9c5f84e4900464f60bf3ea46f785b3",
       "path": "qlab/qlab/dynamic_factor/b_release_context.py",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "dcaf0309a3e3a7d8464e487e3b731d66d0652bb1483d86df5f016fc9cb8a0ae5",
       "old_sha256": "fba2660e51611b1b9ed818b0338ab77dd771958bd776e97a978260103fd80965",
       "path": "qlab/qlab/dynamic_factor/scope_proof.py",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "14955a7f0a425cca5608705d2fc0cd196cdda679ba45fd08d54db898ab71d9ef",
       "old_sha256": "6ced8621bdc16a3b2600cb69852382e093adb172413c43376bdc917466f6ce9c",
       "path": "qlab/qlab/dynamic_factor/execution_receipts/replay_files.py",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "6788c63713fd6d0f752607d6fc589e58ae7adb31da98f99a5eb54e8797127f13",
       "old_sha256": null,
       "path": "qlab/tests/dynamic_factor/test_c1_trusted_release.py",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "15350f8034e92becacb4f7b94cb346370c2e62d17d5b94e9d4d044ff843622e6",
       "old_sha256": "86955011a951bcdc035868c2e9e3504ee46c457aecbfdb011c52e989cfa97b60",
       "path": "qlab/tests/dynamic_factor/test_execution_reseal.py",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "2a10061d1d986cc4f1fca20e09b2aaa6a739558f123b5d94a3d9b9e04aa28afb",
       "old_sha256": "c5ca65adc2497ece7283f3d65a27137e20eb8602c78325c8ac23a1b2264a28d3",
       "path": "qlab/tests/dynamic_factor/test_seal_index_rework.py",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "ff5da6ef748d5f1fca592559e73656d5283e28ec9d279b65b3ac0fd5943069ff",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO883-B-RUNTIME-RELEASE-P1-adopted-protocol-v1.0.0.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "834bf9546dda93c3fb613833b59ac87842c2825b71c11bc09edc13608f5d42e4",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO883-EVO893-v10-ruling.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "ff8dee166c469310b915f903a32164351647e61dd8340437ffa09b45da9e0442",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO883-S1-BRKB-field-receipt.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "9b5fd1e87a2cae26df8a0c1a8ee9fbd880c07234e05a9253ff9886d4dcb7711f",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO883-S2-v14-field-receipt.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "1df425a328539f4cddfe3d574feabc1b753fc0abe2ff15d318634aee7dff3836",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO883-S3-v12-final-receipt.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "d44ce4e0b13d68a129f6aca0ad2187f459ea978f117510cc48d910fb8b44b11f",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO883-S4-v11-receipt.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "4da26596777a62595664ba9b9e17480113f96ccbd2c1d0226df083ac2e7ecc0f",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO883-v10-engineering-scope-receipt.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "cdd7954a20102e1053f932fe559153b26336475afdb41b772004795708bf3c4e",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO883-v20.1-final-receipt.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "b8b930396e7caf42ad8bde0f2f7ff190c40f36fd4c4686964a39154926f6644a",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO883-v21-final-receipt.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO893-B-CMI-guard-v21.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO893-B-noncash-catalog-v21.csv",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "4a4b24b0a6ee2b6b561d285fa6f3f9233960959500b6e02fc137c83ca31deae1",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO938-B-runtime-release-P-v1.0.0.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "68f06b15ded4cb1ec5219a5456a2e0f0f376cab54a9e3ac33aee653dacfa877c",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/EVO938-B-runtime-release-R-v1.0.0.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "d25ba025d42fea6ad908566384f97f6fd1ed567eb1f4474bba46105e9aa77c81",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/annotation-platform-readback.json",
       "phase": "code_and_tests"
     },
     {
-      "new_sha256": null,
+      "new_sha256": "f847be9a107b9293e134bfc4d9a03a3c3cb1eeb823f40991d7b8d28d1533455e",
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/b_release_originals/publication-platform-readback.json",
       "phase": "code_and_tests"
@@ -494,67 +494,78 @@
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/static-seal.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/source-inventory.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/read-dag.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/B2-unavailable-manifest.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/reference-static-proof.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/scope.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/previous-index.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/binding-publication.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/index-registration.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "external delivery MANIFEST.json"
     },
     {
       "new_sha256": null,
       "old_sha256": null,
       "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-reseal-v1/migration-manifest-v5.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     },
     {
       "new_sha256": null,
       "old_sha256": "0f6b19f34a55aa8e0284f87473f7c56a6b3004f250fcc61e33b1a91a1c9f4cc1",
       "path": "qlab/qlab/dynamic_factor/evidence/current-seal-index.json",
-      "phase": "reseal"
+      "phase": "reseal",
+      "resolved_by": "index-registration.json/output_bindings (detached to prevent cycles)"
     }
   ],
   "actual_A_issued": false,
@@ -567,16 +578,49 @@
   "certifiable": false,
   "changes_current_seal_index": true,
   "complete_N": null,
+  "final_source_commit": "88c78b2e0151b00b160c3cf179ed92b45b89c1ec",
   "gate_N": null,
   "index_cycle_rule": "publication does not bind the new index; index-registration binds index outside publication",
   "input_inventory_count": 232,
   "old_artifacts_action": "Keep B v1, v3/v4, test successor v1 and all S/history bytes; C1 outputs in a new versioned directory",
-  "phase": "PRELISTED_BEFORE_CODE",
+  "phase": "C1_SOURCE_FINALIZED_PENDING_BR_A",
   "predecessor_manifest": {
     "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/migration-manifest-v4.json",
     "sha256": "259d300a33eae3094ee9506ecc52c405f73f661cc498af74642fe8e2778265ab"
   },
-  "receiver_implementation_id": null,
+  "prelisting_commit": "b583f40",
+  "prelisting_sha256": "1e62292ed60c69da511634f7b24f7ac0f495816e01757b7ef87362ee7e095815",
+  "receiver_implementation_id": "4d5d3e5a44e6a5e2d7b1cae25b94ef9addcf8be208ed5a908118fe13ddf7e06e",
+  "root_registration_data_contract": {
+    "author_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+    "content": "strict JSON, no Markdown wrapper",
+    "content_exact_keys": [
+      "schema",
+      "context_version",
+      "receiver_id",
+      "implementation_id",
+      "r_sha256",
+      "p_sha256",
+      "adoption_sha256",
+      "policy_binding",
+      "run_time_binding",
+      "purpose",
+      "limitations"
+    ],
+    "content_schema": "EVO884.BReleaseTrustRegistration/v1",
+    "format": "one original platform comment readback object",
+    "issue_id": "01a19dab-15f2-7e58-96a0-cf92c87162c2",
+    "no_root_sha_in_code": true,
+    "no_test_root_in_C1": true,
+    "path": "qlab/qlab/dynamic_factor/b_release_originals/trust-root-platform-readback.json",
+    "receiver_id": "gongbu.original-host:5a307571-9534-4bbc-932c-93ffc9c94d73",
+    "run_time_binding_keys": [
+      "mode",
+      "first_performance_at",
+      "signal_close"
+    ],
+    "time_evidence": "Only platform comment created_at; not local clock or a caller field"
+  },
   "rows": [
     {
       "author_verification_after_backfill": "营缮核对核心七件与固定 S 头原字节及实际 manifest 字段，不以自报 SHA 代替",
