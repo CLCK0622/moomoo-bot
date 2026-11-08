@@ -190,6 +190,7 @@ def test_same_source_static_decision_and_private_runtime_observation(
     repo = tmp_path / "scope_copy"
     target = repo / "qlab/qlab/dynamic_factor"
     shutil.copytree(ROOT, target)
+    shutil.copyfile(ROOT.parent / "__init__.py", target.parent / "__init__.py")
     shutil.copyfile(module, target / "b_release_context.py")
     assert sha256((target / "b_release_context.py").read_bytes()) == identity
     static = child(SCOPE_CHILD, repo, cwd=tmp_path)
@@ -227,6 +228,7 @@ def test_other_inspected_source_rejects_dependency_binding_changes(tmp_path, sta
     repo = tmp_path / "scope_copy"
     root = repo / "qlab/qlab/dynamic_factor"
     shutil.copytree(ROOT, root)
+    shutil.copyfile(ROOT.parent / "__init__.py", root.parent / "__init__.py")
     path = root / "valuation.py"
     path.write_text(path.read_text() + "\n" + statement + "\n")
     assert child(SCOPE_CHILD, repo, cwd=tmp_path)["status"] == "REJECTED"
@@ -236,8 +238,8 @@ def test_literal_template_precedes_candidate_and_compares_docstrings():
     assert not re.search(r"[0-9a-f]{64}", scope.B_RELEASE_MODULE_TEMPLATE)
     proof = scope.b2_isolation_proof(load_conventions())
     assert proof["C1_dependency_scope"] == dict(
-        module_count=39,
-        fixed_source_count=37,
+        module_count=42,
+        fixed_source_count=40,
         hits=[],
         unresolved_changes=[],
         docstrings_compared=True,
