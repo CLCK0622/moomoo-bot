@@ -144,7 +144,7 @@ def _B_current_checks():
     for name, binding in inventory.items():
         value = (repo / name).read_bytes()
         assert sha256(value) == binding["sha256"] and len(value) == binding["bytes"]
-    migration = json.loads((folder / "migration-manifest-v3.json").read_bytes())
+    migration = json.loads((folder / "migration-manifest-v4.json").read_bytes())
     assert len(migration["rows"]) == S_ORIGINAL_ROWS == 9
     assert len(migration["B_rows"]) == B_ROWS == 40
     for row in migration["B_rows"]:

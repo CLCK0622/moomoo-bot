@@ -1,4 +1,3 @@
-import ast
 from pathlib import Path
 
 import pytest
@@ -148,6 +147,8 @@ def test_static_proof_refuses_missing_numeric_guard_instead_of_hash_only(monkeyp
     def changed(path):
         raw = original(path)
         if path.name == "noncash_v3.py":
+            import ast
+
             tree = ast.parse(raw)
             function = next(
                 node
@@ -163,9 +164,8 @@ def test_static_proof_refuses_missing_numeric_guard_instead_of_hash_only(monkeyp
                 and node.value.func.id == "assert_consumer_symbols"
             ]
             assert len(guards) == 1  # The mutation must remove the real guard.
-            guard = guards[0]
-            lines = raw.splitlines(keepends=True)
-            raw = b"".join(lines[: guard.lineno - 1] + lines[guard.end_lineno :])
+            rows = raw.splitlines(keepends=True)
+            raw = b"".join(rows[: guards[0].lineno - 1] + rows[guards[0].end_lineno :])
         return raw
 
     monkeypatch.setattr(Path, "read_bytes", changed)

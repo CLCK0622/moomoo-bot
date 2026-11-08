@@ -1,0 +1,72 @@
+{
+  "approved_S_followers": [
+    {
+      "exact_single_filename_follow": true,
+      "new_sha256": "86955011a951bcdc035868c2e9e3504ee46c457aecbfdb011c52e989cfa97b60",
+      "old_sha256": "8e29cc166772fc16c08998a87136461437bfa96553dc008c214be159aac9734b",
+      "path": "qlab/tests/dynamic_factor/test_execution_reseal.py"
+    },
+    {
+      "exact_single_filename_follow": true,
+      "new_sha256": "c5ca65adc2497ece7283f3d65a27137e20eb8602c78325c8ac23a1b2264a28d3",
+      "old_sha256": "c75c7a08ae4b42c310b28caf9fd5f14d8168ed275861463df01e6030f86f6dc4",
+      "path": "qlab/tests/dynamic_factor/test_seal_index_rework.py"
+    }
+  ],
+  "authorization_comment": "01a1b9a4-6c64-76db-b2df-fefe1df60225",
+  "certifiable": false,
+  "current_seal_index_changed": false,
+  "entries": [
+    {
+      "authorization_comment": "01a1b9a4-6c64-76db-b2df-fefe1df60225",
+      "bytes": 8475,
+      "existing_seal_inventory_DAG_publication_binding": false,
+      "new_sha256": "d62cd8dd37dd33d89dc3425b6bb022277feebba150e09d3a64ce17d9d25b9d46",
+      "old_sha256": "afe74383c27286dcab261bceeda5cfa7fa07bc34569e1d9ecf752c280255ea12",
+      "old_source_head": "f827776c7a4b3f270ad87367191b06314a7f3c28",
+      "path": "qlab/tests/dynamic_factor/test_v3_consumers.py",
+      "previous_B_head": "7177a0d2a95389655b90fd90107bb4420eff1ca5",
+      "previous_B_sha256": "3338df7fa0c466745a04f7cb5cda75dc2b0fb0999786bd850a8e214350d2f1cb",
+      "provenance_only": true,
+      "reason": "F-B-CARRIER-SCOPE: AST import local to approved mutation; exact-one deletion and original refusal retained"
+    },
+    {
+      "authorization_comment": "01a1b78f-16a1-7a28-83c1-f8107aef3a92",
+      "bytes": 13176,
+      "existing_seal_inventory_DAG_publication_binding": false,
+      "new_sha256": "f72c3d663252c8198bdba358bb302b055873d86a0554a6a3fe68e32e72425769",
+      "old_sha256": "4ccee52ae46bba36751341be930a4885ac846009630c0020126eb0207f71590b",
+      "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
+      "path": "qlab/tests/dynamic_factor/test_execution_exposure.py",
+      "previous_B_head": "7177a0d2a95389655b90fd90107bb4420eff1ca5",
+      "previous_B_sha256": "f72c3d663252c8198bdba358bb302b055873d86a0554a6a3fe68e32e72425769",
+      "provenance_only": true,
+      "reason": "B01: original success assertions replay fixed main; new current-source rejection before reader/worker"
+    },
+    {
+      "authorization_comment": "01a1b80a-a59a-79ce-be37-9c28a1dd3e61",
+      "bytes": 14183,
+      "existing_seal_inventory_DAG_publication_binding": false,
+      "new_sha256": "e4427d3a9edb8ba45417c7f63ac695eb3bce1625aa0caa2a6d840a355d4f28e0",
+      "old_sha256": "5e84a5e761d0e115ed838e98ae8eec4da7c46358ff8bd16f6a80c5ec77821fe7",
+      "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
+      "path": "qlab/tests/dynamic_factor/test_c13_scope_proof.py",
+      "previous_B_head": "7177a0d2a95389655b90fd90107bb4420eff1ca5",
+      "previous_B_sha256": "e4427d3a9edb8ba45417c7f63ac695eb3bce1625aa0caa2a6d840a355d4f28e0",
+      "provenance_only": true,
+      "reason": "B02: fixture copy includes exactly registered B release fixed reads; original assertions retained"
+    }
+  ],
+  "independent_report": {
+    "platform_attachment_id": "01a1b9a1-92a5-77ab-af8c-1deddbae529d",
+    "sections": [
+      6,
+      9
+    ],
+    "sha256": "f17f7a355b879372e13b3646349d26a12569b13eca88a8150757ebb81b76a701"
+  },
+  "product_reseal": false,
+  "rework_base": "7177a0d2a95389655b90fd90107bb4420eff1ca5",
+  "runtime_consumable": false,
+  "schema": "EVO884.B.TestTraceability/v1"
+}
