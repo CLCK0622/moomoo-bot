@@ -1,0 +1,74 @@
+{
+  "actual_A_issued": false,
+  "authorization_comment": "01a1b9a4-6c64-76db-b2df-fefe1df60225",
+  "certifiable": false,
+  "current_seal_index": {
+    "file": "qlab/qlab/dynamic_factor/evidence/current-seal-index.json",
+    "sha256": "0f6b19f34a55aa8e0284f87473f7c56a6b3004f250fcc61e33b1a91a1c9f4cc1",
+    "unchanged": true
+  },
+  "explanation": "Tests are outside the existing 52-source seal and 217-entry inventory. This detached versioned test binding supersedes only the three current test row identities; v3/publication/index and all old source bindings remain immutable.",
+  "independent_review": "pending BR-D",
+  "predecessor_manifest": {
+    "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/migration-manifest-v3.json",
+    "sha256": "4b8b17aa151d74b35ad24f924b73caa4433bdc0e3605711bed46eb0d72352c0d"
+  },
+  "prelisting_commit": "b8c16c0d46ed690a5f8b4b5af330a31a2a14efa2",
+  "prelisting_sha256": "e68d063039aea7e3003ea4e0ab0b6ead5ab878b128510abc6a01f204d2c584e7",
+  "rework_base": "7177a0d2a95389655b90fd90107bb4420eff1ca5",
+  "runtime_consumable": false,
+  "schema": "EVO884.B.TestBindingSuccessor/v1",
+  "source_head": "273e858889c8d8a1add5f40cc771a3fe382790d9",
+  "source_reseal": false,
+  "successor_manifest": {
+    "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/migration-manifest-v4.json",
+    "sha256": "259d300a33eae3094ee9506ecc52c405f73f661cc498af74642fe8e2778265ab"
+  },
+  "superseded_test_rows": [
+    {
+      "file": "qlab/tests/dynamic_factor/test_execution_reseal.py",
+      "new_sha256": "86955011a951bcdc035868c2e9e3504ee46c457aecbfdb011c52e989cfa97b60",
+      "previous_sha256": "8e29cc166772fc16c08998a87136461437bfa96553dc008c214be159aac9734b"
+    },
+    {
+      "file": "qlab/tests/dynamic_factor/test_seal_index_rework.py",
+      "new_sha256": "c5ca65adc2497ece7283f3d65a27137e20eb8602c78325c8ac23a1b2264a28d3",
+      "previous_sha256": "c75c7a08ae4b42c310b28caf9fd5f14d8168ed275861463df01e6030f86f6dc4"
+    },
+    {
+      "file": "qlab/tests/dynamic_factor/test_v3_consumers.py",
+      "new_sha256": "d62cd8dd37dd33d89dc3425b6bb022277feebba150e09d3a64ce17d9d25b9d46",
+      "previous_sha256": "3338df7fa0c466745a04f7cb5cda75dc2b0fb0999786bd850a8e214350d2f1cb"
+    }
+  ],
+  "test_traceability": {
+    "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/test-traceability-v1.json",
+    "sha256": "7c2fe35f3cbc7a622faa8b89dcf28eade70d414f12cf4e809e6e696fe8796662"
+  },
+  "unchanged_source_bindings": {
+    "B2-unavailable-manifest.json": {
+      "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/B2-unavailable-manifest.json",
+      "sha256": "3794e3b1af4f1a4800264c9b2c1cc1d084ed76d275336872fe837d9eac200514"
+    },
+    "binding-publication.json": {
+      "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/binding-publication.json",
+      "sha256": "6db0ad44153391d00a21aa66aa2b27168cfc16177cbd7f15f0e8d4656196ab1e"
+    },
+    "index-registration.json": {
+      "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/index-registration.json",
+      "sha256": "f5284e59de32b2a63003d43967abd485a669f060236d94e2c9c6edd2e31adc7a"
+    },
+    "read-dag.json": {
+      "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/read-dag.json",
+      "sha256": "898027676919a616e447b2729966137153faeec7b0ec4d9a4070c776ec0be59f"
+    },
+    "source-inventory.json": {
+      "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/source-inventory.json",
+      "sha256": "4a550e5a0202cef168b4f199ac2a00ee0373ade82b73f8d2c41349186e89c091"
+    },
+    "static-seal.json": {
+      "file": "qlab/qlab/dynamic_factor/evidence/evo884-b-reseal-v1/static-seal.json",
+      "sha256": "cc2931cb93e59dd7d3bfbfbe10e1384e19d30f56f2f6e02cc3706060ba6645ac"
+    }
+  }
+}
