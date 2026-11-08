@@ -1,0 +1,2191 @@
+{
+  "B2_isolation": {
+    "B2_only_readout_entry": "valuation.benchmark_valuation(symbol=VTI)",
+    "B2_series_capability_for_strategy_roles": false,
+    "B_release_adapter_scope": {
+      "additional_fixed_audit_read_sites": 1,
+      "additional_fixed_compile_sites": 0,
+      "dynamic_code_exceptions": [],
+      "exact_adapter_read_sites": 3,
+      "import_filename_path_binding": true,
+      "path_only_reads": [
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/trust-root-platform-readback.json"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_context.py"
+        }
+      ],
+      "post_import_process_tamper_defense": false,
+      "root_sha_in_code": false,
+      "self_read_argument": "self_path = Path(_read_trusted_release.__code__.co_filename).resolve()",
+      "self_read_use": "co_filename / resolved __file__ equality; fixed self bytes SHA -> implementation_id",
+      "sha256_reads": [
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO883-B-RUNTIME-RELEASE-P1-adopted-protocol-v1.0.0.json",
+          "sha256": "ff5da6ef748d5f1fca592559e73656d5283e28ec9d279b65b3ac0fd5943069ff"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO883-EVO893-v10-ruling.json",
+          "sha256": "834bf9546dda93c3fb613833b59ac87842c2825b71c11bc09edc13608f5d42e4"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO883-S1-BRKB-field-receipt.json",
+          "sha256": "ff8dee166c469310b915f903a32164351647e61dd8340437ffa09b45da9e0442"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO883-S2-v14-field-receipt.json",
+          "sha256": "9b5fd1e87a2cae26df8a0c1a8ee9fbd880c07234e05a9253ff9886d4dcb7711f"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO883-S3-v12-final-receipt.json",
+          "sha256": "1df425a328539f4cddfe3d574feabc1b753fc0abe2ff15d318634aee7dff3836"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO883-S4-v11-receipt.json",
+          "sha256": "d44ce4e0b13d68a129f6aca0ad2187f459ea978f117510cc48d910fb8b44b11f"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO883-v10-engineering-scope-receipt.json",
+          "sha256": "4da26596777a62595664ba9b9e17480113f96ccbd2c1d0226df083ac2e7ecc0f"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO883-v20.1-final-receipt.json",
+          "sha256": "cdd7954a20102e1053f932fe559153b26336475afdb41b772004795708bf3c4e"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO883-v21-final-receipt.json",
+          "sha256": "b8b930396e7caf42ad8bde0f2f7ff190c40f36fd4c4686964a39154926f6644a"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO893-B-CMI-guard-v21.json",
+          "sha256": "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO893-B-noncash-catalog-v21.csv",
+          "sha256": "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO938-B-runtime-release-P-v1.0.0.json",
+          "sha256": "4a4b24b0a6ee2b6b561d285fa6f3f9233960959500b6e02fc137c83ca31deae1"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/EVO938-B-runtime-release-R-v1.0.0.json",
+          "sha256": "68f06b15ded4cb1ec5219a5456a2e0f0f376cab54a9e3ac33aee653dacfa877c"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/annotation-platform-readback.json",
+          "sha256": "d25ba025d42fea6ad908566384f97f6fd1ed567eb1f4474bba46105e9aa77c81"
+        },
+        {
+          "module": "b_release_context",
+          "path": "b_release_originals/publication-platform-readback.json",
+          "sha256": "f847be9a107b9293e134bfc4d9a03a3c3cb1eeb823f40991d7b8d28d1533455e"
+        }
+      ]
+    },
+    "C13_coverage_boundary": "Registered 3+7 fixed reads only; existing transitive helper reads retain original mechanisms and are not claimed fully covered by this table",
+    "C13_filename_registration_scope": {
+      "guarantee": "Pinned owned source and static assignments; no arbitrary host mutation sandbox claim",
+      "historical_witness": {
+        "assignments": 1,
+        "constant": "HISTORICAL_V4_WITNESS_INPUT",
+        "literal_filename": "EVO891-B-ledger-v4.tip.json",
+        "scope": "historical diagnostic only",
+        "source_identity_bound": true
+      },
+      "registrations": {
+        "conventions": [
+          "provenance.json",
+          "provenance-v2.json",
+          "provenance-v3.json"
+        ],
+        "historical_authority": [
+          "EVO891-B-ledger-v4.tip.json"
+        ],
+        "input_disposition": [
+          "qqq-events-v1.csv"
+        ]
+      },
+      "unverified_not_in_table": [
+        "R056",
+        "R057",
+        "R058",
+        "R059",
+        "R060"
+      ]
+    },
+    "C13_registered_fixed_reads": [
+      {
+        "module": "execution_closure",
+        "path": "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.json",
+        "sha256": "7677b123fa2fe573343fad3fe3f43887c5f5d2c0fd7c12d9a1de8bc625162e1b"
+      },
+      {
+        "module": "execution_closure",
+        "path": "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.md",
+        "sha256": "34f25ce19dcf8687f7068b62f751c83573a858997ab11fa0096794157f3a373f"
+      },
+      {
+        "module": "execution_clock",
+        "path": "fixtures/execution-v3.0.1/EVO883-C06-CLOCK-adopted-protocol-v1.0.0.json",
+        "sha256": "8cd32345adb5ebe16cb9020687091532c46f803f046d6c1527eeedee41407a5a"
+      },
+      {
+        "module": "reference_definition_v301",
+        "path": "fixtures/execution-v3.0.1/EVO883-D12-shared-execution-contract-v3.0.1.json",
+        "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496"
+      },
+      {
+        "module": "reference_definition_v301",
+        "path": "fixtures/execution-v3.0.1/EVO883-D12-common-profile-v3.0.1.json",
+        "sha256": "07b71b3fc59dc6dae1c96cadd3155622a18f4c4ad29b7c69b8f79c1455efc2d3"
+      },
+      {
+        "module": "reference_definition_v301",
+        "path": "fixtures/execution-v3.0.1/EVO883-D12-addendum-v3.0.1.md",
+        "sha256": "f540dce44e00b7077a94d3155f55db5fdba700b7a48911ec03697724b8dfa8c9"
+      },
+      {
+        "module": "reference_registry_v3",
+        "path": "fixtures/evo892-v3/candidate_reference_manifest.json",
+        "sha256": "bcce6f17f3515d66eb5b87569720740efb6eb70eca2d774a853be8e3cdecb4a4"
+      },
+      {
+        "module": "reference_registry_v3",
+        "path": "fixtures/evo892-v3/predeclared_reference_registry.json",
+        "sha256": "f531d65a5ad54fc68a8be40bc25cbb3987d0aeedd4c2c345ed334b1599445c48"
+      },
+      {
+        "module": "reference_registry_v3",
+        "path": "fixtures/evo892-v3/meta_reference_manifest.json",
+        "sha256": "964e9903e13bd618777f00652bad09272d7aa4ddbb3cec2c28371a8378002ae6"
+      },
+      {
+        "module": "execution_accounting",
+        "path": "fixtures/fee_params_x1.json",
+        "sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2"
+      }
+    ],
+    "C13_registry_call_scope": {
+      "DISPATCH_members": [
+        "CREF-F1-L020",
+        "CREF-F3-L020",
+        "MREF-F2-L020",
+        "MREF-F4-L020"
+      ],
+      "entry_functions": [
+        "reference_definition_v301.member_definition",
+        "reference_profile_v301.solo_profile"
+      ],
+      "literal_filenames": [
+        "candidate_reference_manifest.json",
+        "meta_reference_manifest.json",
+        "predeclared_reference_registry.json"
+      ],
+      "other_HASHES_granted": false,
+      "reached_reader": "reference_registry_v3.member_spec -> artifact",
+      "registered_request_is_entry": false
+    },
+    "C1_call_blindspot_scope": {
+      "exceptions": [],
+      "hits": [],
+      "module_count": 39,
+      "modules": [
+        "b_release_context",
+        "catalog_members",
+        "catalog_v21",
+        "continuity",
+        "conventions",
+        "execution",
+        "execution_accounting",
+        "execution_amounts",
+        "execution_candidate",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_exposure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_returns",
+        "execution_risk",
+        "execution_risk_history",
+        "execution_signals",
+        "execution_startup",
+        "execution_state",
+        "folds",
+        "historical_authority",
+        "input_disposition",
+        "input_scope",
+        "isolation",
+        "k5",
+        "noncash_v3",
+        "pending",
+        "pipeline",
+        "reference_definition_v301",
+        "reference_inputs",
+        "reference_profile_v301",
+        "reference_registry_v3",
+        "scope_proof",
+        "scope_reader",
+        "state_v2",
+        "validation",
+        "valuation"
+      ]
+    },
+    "certifiable": false,
+    "common_profile_sha256": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",
+    "conventions_sha256": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+    "conventions_status": "FROZEN_DESIGN_INTERFACE_EXECUTION_GATES_UNMET",
+    "conventions_version": "v3.0.0",
+    "guarded_consumers": {
+      "admission": {
+        "function": "select_pool",
+        "guard_line": 264,
+        "module": "pipeline"
+      },
+      "calibration": {
+        "function": "calibrate_gain",
+        "guard_line": 361,
+        "module": "execution"
+      },
+      "features": {
+        "function": "_features",
+        "guard_line": 56,
+        "module": "folds"
+      },
+      "holdings_cash": {
+        "function": "integer_cash_valuation",
+        "guard_line": 179,
+        "module": "valuation"
+      },
+      "orders": {
+        "function": "_tool",
+        "guard_line": 158,
+        "module": "execution"
+      },
+      "qqq_labels": {
+        "function": "_run_walk_forward_unbound",
+        "guard_line": 76,
+        "module": "folds"
+      },
+      "reference": {
+        "function": "read_inputs",
+        "guard_line": 21,
+        "module": "reference_inputs"
+      }
+    },
+    "import_graph": {
+      "b_release_context": [
+        "catalog_v21",
+        "contract",
+        "csv",
+        "datetime",
+        "io",
+        "json",
+        "pathlib",
+        "weakref"
+      ],
+      "catalog_members": [],
+      "catalog_v21": [
+        "contract",
+        "conventions",
+        "csv",
+        "io",
+        "json"
+      ],
+      "continuity": [
+        "authority_host",
+        "contract",
+        "conventions",
+        "copy",
+        "fees",
+        "historical_authority",
+        "input_disposition",
+        "input_scope",
+        "k5",
+        "state_v2"
+      ],
+      "execution": [
+        "__future__",
+        "contract",
+        "conventions",
+        "execution_candidate",
+        "fee_model",
+        "fees",
+        "input_scope",
+        "isolation",
+        "json",
+        "math",
+        "noncash_v3",
+        "pipeline",
+        "re",
+        "state_v2"
+      ],
+      "execution_accounting": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_cash",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_risk",
+        "execution_startup",
+        "fees",
+        "fractions",
+        "functools",
+        "input_scope",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "execution_amounts": [
+        "decimal",
+        "execution",
+        "execution_closure",
+        "execution_numbers",
+        "fee_model",
+        "fees",
+        "fractions",
+        "input_scope",
+        "noncash_v3",
+        "re"
+      ],
+      "execution_candidate": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution",
+        "execution_accounting",
+        "execution_amounts",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_returns",
+        "execution_risk",
+        "execution_risk_history",
+        "execution_signals",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "execution_cash": [
+        "contract",
+        "copy",
+        "datetime",
+        "event_quarantine",
+        "execution_exposure",
+        "execution_numbers",
+        "execution_state",
+        "input_disposition",
+        "input_scope",
+        "json",
+        "lineage_schema",
+        "noncash_v3",
+        "reference_validation"
+      ],
+      "execution_clock": [
+        "contract",
+        "copy",
+        "json",
+        "reference_definition_v301"
+      ],
+      "execution_closure": [
+        "contract",
+        "copy",
+        "decimal",
+        "json",
+        "reference_definition_v301"
+      ],
+      "execution_exposure": [],
+      "execution_numbers": [
+        "decimal",
+        "fractions",
+        "re"
+      ],
+      "execution_projection": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3"
+      ],
+      "execution_returns": [
+        "contract",
+        "copy",
+        "execution_accounting",
+        "execution_closure",
+        "execution_numbers",
+        "fees",
+        "fold_split",
+        "fractions",
+        "math",
+        "pipeline"
+      ],
+      "execution_risk": [
+        "contract",
+        "conventions",
+        "copy",
+        "decimal",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_state",
+        "fractions",
+        "noncash_v3",
+        "re",
+        "reference_definition_v301"
+      ],
+      "execution_risk_history": [
+        "contract",
+        "conventions",
+        "copy",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_risk",
+        "execution_startup",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "execution_signals": [
+        "contract",
+        "copy",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "math",
+        "noncash_v3",
+        "threading"
+      ],
+      "execution_startup": [
+        "contract",
+        "conventions",
+        "copy",
+        "execution",
+        "execution_closure",
+        "fees",
+        "functools",
+        "json",
+        "math",
+        "pipeline",
+        "reference_definition_v301",
+        "reference_profile_v301",
+        "reference_validation",
+        "threading"
+      ],
+      "execution_state": [
+        "fees",
+        "state_v2"
+      ],
+      "folds": [
+        "__future__",
+        "continuity",
+        "contract",
+        "conventions",
+        "dataclasses",
+        "fees",
+        "fold_split",
+        "input_scope",
+        "json",
+        "pipeline",
+        "validation"
+      ],
+      "input_scope": [],
+      "isolation": [
+        "contract",
+        "conventions",
+        "copy",
+        "datetime",
+        "event_quarantine",
+        "fees",
+        "input_scope",
+        "math",
+        "noncash_v3"
+      ],
+      "k5": [
+        "contract",
+        "conventions",
+        "csv",
+        "decimal",
+        "fees",
+        "input_scope",
+        "io",
+        "isolation",
+        "json",
+        "noncash_v3"
+      ],
+      "noncash_v3": [
+        "b_release_context",
+        "catalog_members",
+        "catalog_v21",
+        "contract",
+        "conventions",
+        "copy",
+        "datetime",
+        "state_v2"
+      ],
+      "pending": [
+        "__future__",
+        "contract",
+        "execution",
+        "input_scope",
+        "pipeline"
+      ],
+      "pipeline": [
+        "__future__",
+        "contract",
+        "conventions",
+        "copy",
+        "dsr_v0",
+        "execution",
+        "execution_candidate",
+        "fees",
+        "input_scope",
+        "isolation",
+        "json",
+        "math",
+        "pathlib",
+        "re",
+        "reference_registry",
+        "reference_registry_v3",
+        "statistics"
+      ],
+      "reference_definition_v301": [
+        "contract",
+        "json",
+        "pathlib",
+        "reference_registry_v3"
+      ],
+      "reference_inputs": [
+        "hashlib",
+        "input_scope",
+        "json",
+        "pathlib"
+      ],
+      "reference_profile_v301": [
+        "contract",
+        "reference_definition_v301",
+        "reference_registry_v3"
+      ],
+      "reference_registry_v3": [
+        "contract",
+        "json",
+        "pathlib"
+      ],
+      "scope_proof": [
+        "ast",
+        "contract",
+        "conventions",
+        "input_disposition",
+        "input_scope",
+        "json",
+        "noncash_v3",
+        "pathlib",
+        "reference_check"
+      ],
+      "scope_reader": [
+        "contract",
+        "input_scope",
+        "json",
+        "pathlib"
+      ],
+      "state_v2": [
+        "contract",
+        "conventions",
+        "copy",
+        "fees",
+        "input_scope"
+      ],
+      "validation": [
+        "__future__",
+        "contract",
+        "conventions",
+        "datetime",
+        "fees",
+        "input_disposition",
+        "scope_proof",
+        "valuation"
+      ],
+      "valuation": [
+        "__future__",
+        "contract",
+        "conventions",
+        "csv",
+        "fees",
+        "input_disposition",
+        "input_scope",
+        "io",
+        "k5",
+        "math",
+        "noncash_v3"
+      ]
+    },
+    "import_whitelist": {
+      "b_release_context": [
+        "catalog_v21",
+        "contract",
+        "csv",
+        "datetime",
+        "io",
+        "json",
+        "pathlib",
+        "weakref"
+      ],
+      "catalog_members": [],
+      "catalog_v21": [
+        "contract",
+        "conventions",
+        "csv",
+        "io",
+        "json"
+      ],
+      "continuity": [
+        "authority_host",
+        "authority_ledger",
+        "contract",
+        "conventions",
+        "copy",
+        "fees",
+        "historical_authority",
+        "input_disposition",
+        "input_scope",
+        "k5",
+        "state_v2"
+      ],
+      "execution": [
+        "__future__",
+        "contract",
+        "conventions",
+        "execution_candidate",
+        "fee_model",
+        "fees",
+        "input_scope",
+        "isolation",
+        "json",
+        "math",
+        "noncash_v3",
+        "pipeline",
+        "re",
+        "state_v2"
+      ],
+      "execution_accounting": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_cash",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_risk",
+        "execution_startup",
+        "fees",
+        "fractions",
+        "functools",
+        "input_scope",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "execution_amounts": [
+        "decimal",
+        "execution",
+        "execution_closure",
+        "execution_numbers",
+        "fee_model",
+        "fees",
+        "fractions",
+        "input_scope",
+        "noncash_v3",
+        "re"
+      ],
+      "execution_candidate": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution",
+        "execution_accounting",
+        "execution_amounts",
+        "execution_closure",
+        "execution_numbers",
+        "execution_projection",
+        "execution_returns",
+        "execution_risk",
+        "execution_risk_history",
+        "execution_signals",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "execution_cash": [
+        "contract",
+        "copy",
+        "datetime",
+        "event_quarantine",
+        "execution_exposure",
+        "execution_numbers",
+        "execution_state",
+        "input_disposition",
+        "input_scope",
+        "json",
+        "lineage_schema",
+        "noncash_v3",
+        "reference_validation"
+      ],
+      "execution_clock": [
+        "contract",
+        "copy",
+        "json",
+        "reference_definition_v301"
+      ],
+      "execution_closure": [
+        "contract",
+        "copy",
+        "decimal",
+        "json",
+        "reference_definition_v301"
+      ],
+      "execution_exposure": [],
+      "execution_numbers": [
+        "decimal",
+        "fractions",
+        "re"
+      ],
+      "execution_projection": [
+        "contract",
+        "copy",
+        "decimal",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "input_scope",
+        "isolation",
+        "json",
+        "noncash_v3"
+      ],
+      "execution_returns": [
+        "contract",
+        "copy",
+        "execution_accounting",
+        "execution_closure",
+        "execution_numbers",
+        "fees",
+        "fold_split",
+        "fractions",
+        "math",
+        "pipeline"
+      ],
+      "execution_risk": [
+        "contract",
+        "conventions",
+        "copy",
+        "decimal",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_state",
+        "fractions",
+        "noncash_v3",
+        "re",
+        "reference_definition_v301"
+      ],
+      "execution_risk_history": [
+        "contract",
+        "conventions",
+        "copy",
+        "execution_cash",
+        "execution_clock",
+        "execution_closure",
+        "execution_numbers",
+        "execution_risk",
+        "execution_startup",
+        "json",
+        "noncash_v3",
+        "reference_validation",
+        "threading"
+      ],
+      "execution_signals": [
+        "contract",
+        "copy",
+        "execution_amounts",
+        "execution_closure",
+        "execution_risk",
+        "fractions",
+        "math",
+        "noncash_v3",
+        "threading"
+      ],
+      "execution_startup": [
+        "contract",
+        "conventions",
+        "copy",
+        "execution",
+        "execution_closure",
+        "fees",
+        "functools",
+        "json",
+        "math",
+        "pipeline",
+        "reference_definition_v301",
+        "reference_profile_v301",
+        "reference_validation",
+        "threading"
+      ],
+      "execution_state": [
+        "fees",
+        "state_v2"
+      ],
+      "folds": [
+        "__future__",
+        "continuity",
+        "contract",
+        "conventions",
+        "dataclasses",
+        "fees",
+        "fold_split",
+        "input_scope",
+        "json",
+        "pipeline",
+        "validation"
+      ],
+      "input_scope": [],
+      "isolation": [
+        "contract",
+        "conventions",
+        "copy",
+        "datetime",
+        "event_quarantine",
+        "fees",
+        "input_scope",
+        "math",
+        "noncash_v3"
+      ],
+      "k5": [
+        "contract",
+        "conventions",
+        "csv",
+        "decimal",
+        "fees",
+        "input_scope",
+        "io",
+        "isolation",
+        "json",
+        "noncash_v3"
+      ],
+      "noncash_v3": [
+        "b_release_context",
+        "catalog_members",
+        "catalog_v21",
+        "contract",
+        "conventions",
+        "copy",
+        "datetime",
+        "fees",
+        "state_v2"
+      ],
+      "pending": [
+        "__future__",
+        "contract",
+        "execution",
+        "input_scope",
+        "pipeline"
+      ],
+      "pipeline": [
+        "__future__",
+        "arm_n",
+        "contract",
+        "conventions",
+        "copy",
+        "dsr_v0",
+        "execution",
+        "execution_candidate",
+        "fees",
+        "input_scope",
+        "isolation",
+        "json",
+        "math",
+        "pathlib",
+        "re",
+        "reference_registry",
+        "reference_registry_v3",
+        "statistics"
+      ],
+      "reference_definition_v301": [
+        "contract",
+        "json",
+        "pathlib",
+        "reference_registry_v3"
+      ],
+      "reference_inputs": [
+        "hashlib",
+        "input_scope",
+        "json",
+        "pathlib"
+      ],
+      "reference_profile_v301": [
+        "contract",
+        "reference_definition_v301",
+        "reference_registry_v3"
+      ],
+      "scope_proof": [
+        "ast",
+        "contract",
+        "conventions",
+        "input_disposition",
+        "input_scope",
+        "json",
+        "noncash_v3",
+        "pathlib",
+        "reference_check"
+      ],
+      "scope_reader": [
+        "contract",
+        "input_scope",
+        "json",
+        "pathlib"
+      ],
+      "state_v2": [
+        "contract",
+        "conventions",
+        "copy",
+        "fees",
+        "input_scope"
+      ],
+      "validation": [
+        "__future__",
+        "contract",
+        "conventions",
+        "datetime",
+        "fees",
+        "input_disposition",
+        "scope_proof",
+        "valuation"
+      ],
+      "valuation": [
+        "__future__",
+        "contract",
+        "conventions",
+        "csv",
+        "fees",
+        "input_disposition",
+        "input_scope",
+        "io",
+        "k5",
+        "math",
+        "noncash_v3"
+      ]
+    },
+    "k5_scoped_quote_read_whitelist": [
+      "k5/S2-field-receipt-v1.json",
+      "k5/VSNT-open-close-none.csv"
+    ],
+    "market_reader_sites": [
+      {
+        "line": 38,
+        "module": "reference_inputs"
+      },
+      {
+        "line": 29,
+        "module": "scope_reader"
+      }
+    ],
+    "non_market_read_whitelist": {
+      "catalog_v21": [
+        "catalog-v21/EVO893-B-noncash-catalog-v21.csv",
+        "catalog-v21/EVO893-B-CMI-guard-v21.json",
+        "catalog-v21/EVO883-v21-final-receipt.json"
+      ],
+      "conventions": [
+        "provenance.json",
+        "provenance-v2.json",
+        "provenance-v3.json"
+      ],
+      "execution": [
+        "fee_params_x2.json",
+        "fee_schedule.json"
+      ],
+      "historical_authority": [
+        "EVO891-B-ledger-v4.tip.json"
+      ],
+      "input_disposition": [
+        "qqq-events-v1.csv"
+      ],
+      "pipeline": [
+        "predeclared_reference_registry.json",
+        "candidate_reference_manifest.json",
+        "meta_reference_manifest.json"
+      ],
+      "scope_proof": [
+        "current pinned Python sources"
+      ],
+      "valuation": [
+        "qqq-events-v1.csv"
+      ]
+    },
+    "prereg_sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+    "prereg_version": "v3",
+    "profile_sha256": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+    "reference_benchmark_symbol": "QQQ",
+    "reference_file_whitelist": {
+      "benchmark": "benchmark.json",
+      "panel": "panel.json",
+      "profile": "profile.json"
+    },
+    "runtime_consumable": false,
+    "schema": "EVO884.B2-isolation-proof/v1",
+    "scope": "Pinned owned Python entrypoints and declared source/header identities; caller adapters and independent market-source correctness require separate acceptance. No arbitrary native-code sandbox claim.",
+    "scope_ruling_sha256": "730931cdd7b9c2f62db9841438235e0aa4887f27ef4a842844d63b6570fd7ede",
+    "seal_status": "seal_pending",
+    "source_files": {
+      "b_release_context.py": "cd8487d9bc1bfa0ee0fb5dce297c521a4ba6b89c4c090e06ae51583d60d2b09e",
+      "catalog_members.py": "a4afc328161064689e24c85dfa1e3d946fd1c4fc7563701fd90e08864e82a82b",
+      "catalog_v21.py": "12c3b0d33dcee4518ba39905d49f06fa55b62865f4ec041a5e0cf7f4a4189ab4",
+      "continuity.py": "ee759682cd58c80195d5acf5e51ca2705f897f4144cd8c8eb99fb0ea5f658f95",
+      "conventions.py": "4b98838d3fca24664470c1e2fb65921eefc3d93a7bfb9331e857d65f0205064a",
+      "execution.py": "d15958dabe5c67d2e47033a62253a2fd19fd6667cf15ca5dac8b3b49c91d9cd8",
+      "execution_accounting.py": "f8101633e86d2ee42e75dd66793ae0e153f1454e38ce008cc10bd2d6611a5a4a",
+      "execution_amounts.py": "18b2cdf6edaa43c7fd489e63eb8bdac8e209f5a06b317ff2aa1d3f306a4e245d",
+      "execution_candidate.py": "90d1a9dcbe46b9881450d1770003212e1daea0b14f3d8e15d90e5f4b1563d16e",
+      "execution_cash.py": "a49653574a53ccab01552e18cdecf9f6d41481a7d63c49175904683651150348",
+      "execution_clock.py": "c1f9563c645110335cdbf006328b3cee4d1d8952d8433ffd5306b91d07e8ecf6",
+      "execution_closure.py": "998ef21c68825ab9254489f29b12095c8dc0d4b3f6f14e507e8fbea6808615ae",
+      "execution_exposure.py": "8af9951b19fb454637440f98d74b4a4567cc4b8f8aebefbee647b18e1a4dbaed",
+      "execution_numbers.py": "b31df6da61dbde3a864164e31bd8590debf2941040e301f8511914ccd4933aa2",
+      "execution_projection.py": "d7a30669a8cfc019318c35e648ea3cd9bea7129e57b12bcd93da0751afa8f5cc",
+      "execution_returns.py": "75d09e78605c6951cbaec3c914e7fdfc8090f646ddbd74078d8ceb4a0ec5f83c",
+      "execution_risk.py": "b1b616126da4b831dba193f338ca9654c9de148bf1dc0b74d9723448faea8ab3",
+      "execution_risk_history.py": "da55c683a2b281b1ece42850e0c4d49dbe81a921bfbb17c0a013a10330ba84d4",
+      "execution_signals.py": "226c83a62f887ebf7720452c8ae045bceb699ab6cf7774446a5c72d28db5c0cb",
+      "execution_startup.py": "4b675f45605e69869bab8135b77e1b82cca7d4a5a309f1549fc38ea10f0f1c72",
+      "execution_state.py": "8e8129e63d084552ce308d84737d1b2851413e438ead3c247cfc3e69e32b4cf4",
+      "folds.py": "d6f052976cc2bafacf3b7814a1fdf801e71c471ca4aca3b2813471e0666ccb02",
+      "historical_authority.py": "fb401e78c115876d73f9f5a6cece6d7d820927c9cd1222dad49eca983629fcce",
+      "input_disposition.py": "515945c2ee3de0d8e9a1ec0087f8087b5750258d013ada6ed08060f50e872d65",
+      "input_scope.py": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+      "isolation.py": "910cccfd6fa0fa74405a393cba180ec5a65bceac99d5543722b68e87a7ec20a1",
+      "k5.py": "96be5e8a8de9176b3cd24c766f08a4dc24a7d5db158a4bab2c0a468618d8bf97",
+      "noncash_v3.py": "ce439592adc936c8715e7515dfb7f6dc8261847a15a737eadf281329cff47ccd",
+      "pending.py": "3a1625313ea1d5491a8d0670a6698176ed80bdd98e7efd37a1447b2878349c06",
+      "pipeline.py": "a7f4c35d0bb0c70507283fe525869d13b2d7cce6e6a53a5e2da6632e05cf8ffd",
+      "reference_definition_v301.py": "95a51f2f5c5d3473254e247ac8d1b408c4f89c9253b3622ee2fe4d7941ef1a55",
+      "reference_inputs.py": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+      "reference_profile_v301.py": "184f15302f003356a9d41027ab5fd84fa5917e796f96adee5374a714edc3ccd3",
+      "reference_registry_v3.py": "90ff033cb06bbedce4315ec04bb7c84b8a300fdd133015db58a23b1f7fee997a",
+      "scope_proof.py": "ab6864f8e663f89760cfab1249f8d260d2d0fb20817299787dac0b66eea5b283",
+      "scope_reader.py": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38",
+      "state_v2.py": "0c31a71defe68d23126ada28b15dbd3b6574b661508d53f0d1697a9ed1492e2c",
+      "validation.py": "5d3d6d97ab350c14bf9e5d62f51b2d42244f4466f9ed7636d7eb77d7c4a2be8d",
+      "valuation.py": "4b0a18ebb18b2706926e344a94fd5da32b0f06b969a34d9da294e91ffffb8a8d"
+    },
+    "source_sha256": "694bed3779e6bdf6559e80a7a4a47026096538b7e8959923be2f4bc29455f321",
+    "strategy_market_file_whitelist": "<frozen_symbol>.json, matching symbol header and SHA, exact supplied frozen date vector; no link/alias/path expansion",
+    "strategy_market_symbol_whitelist": [
+      "AAPL",
+      "ABBV",
+      "ABNB",
+      "ABT",
+      "ACN",
+      "ADBE",
+      "ADI",
+      "ADP",
+      "ADSK",
+      "AEP",
+      "AJG",
+      "ALL",
+      "AMAT",
+      "AMD",
+      "AMGN",
+      "AMZN",
+      "ANET",
+      "AON",
+      "APD",
+      "APH",
+      "APO",
+      "APP",
+      "AVGO",
+      "AXP",
+      "B",
+      "BA",
+      "BAC",
+      "BE",
+      "BKNG",
+      "BKR",
+      "BLK",
+      "BMY",
+      "BNY",
+      "BRK.B",
+      "BSX",
+      "C",
+      "CAH",
+      "CARR",
+      "CAT",
+      "CB",
+      "CDNS",
+      "CEG",
+      "CI",
+      "CIEN",
+      "CL",
+      "CMCSA",
+      "CME",
+      "CMG",
+      "CMI",
+      "COF",
+      "COHR",
+      "COIN",
+      "COP",
+      "COR",
+      "COST",
+      "CRDO",
+      "CRH",
+      "CRM",
+      "CRWD",
+      "CSCO",
+      "CSX",
+      "CTAS",
+      "CVNA",
+      "CVS",
+      "QQQ"
+    ]
+  },
+  "actual_run_B_proofs": null,
+  "candidate_and_shared_execution": {
+    "guard_before_stdin": true,
+    "import_graph": {
+      "execution_receipts.g14": [
+        "contract",
+        "pathlib",
+        "reception_schema"
+      ],
+      "execution_receipts.input_data": [
+        "hashlib",
+        "json",
+        "math",
+        "reference_validation"
+      ],
+      "execution_receipts.input_envelope": [
+        "contract",
+        "conventions",
+        "copy",
+        "datetime",
+        "noncash_v3",
+        "reference_profile_v301",
+        "reference_v3_scope"
+      ],
+      "execution_receipts.input_facts": [
+        "contract",
+        "copy",
+        "execution_numbers",
+        "input_data",
+        "input_envelope",
+        "input_run",
+        "json",
+        "reference_boundary",
+        "reference_validation",
+        "weakref"
+      ],
+      "execution_receipts.input_guard": [
+        "os",
+        "pathlib",
+        "sys"
+      ],
+      "execution_receipts.input_reader": [
+        "hashlib",
+        "input_data",
+        "json",
+        "pathlib"
+      ],
+      "execution_receipts.input_run": [
+        "contract",
+        "copy",
+        "input_envelope",
+        "json",
+        "weakref"
+      ],
+      "execution_receipts.n_binding": [
+        "authority_host",
+        "authority_ledger",
+        "contract",
+        "copy",
+        "g14",
+        "gzip",
+        "pathlib",
+        "reception_schema",
+        "reception_v2",
+        "reference_definition_v301",
+        "reference_profile_v301",
+        "reference_registry_v3"
+      ],
+      "execution_receipts.p4p7": [
+        "contract",
+        "copy",
+        "input_data",
+        "input_envelope",
+        "input_facts",
+        "json",
+        "n_binding",
+        "reference_boundary",
+        "reference_noncash",
+        "reference_result",
+        "weakref"
+      ],
+      "execution_receipts.reference_result": [
+        "contract",
+        "copy",
+        "execution_accounting",
+        "execution_cash",
+        "execution_projection",
+        "execution_returns",
+        "execution_risk",
+        "json",
+        "reference_execution",
+        "reference_profile_v301",
+        "weakref"
+      ],
+      "execution_receipts.replay_files": [],
+      "execution_receipts.replay_guard": [
+        "datetime",
+        "event_quarantine",
+        "execution_exposure",
+        "execution_state",
+        "fee_model",
+        "hashlib",
+        "lineage_schema",
+        "os",
+        "pathlib",
+        "replay_files",
+        "sys"
+      ],
+      "reference_execution": [
+        "contract",
+        "copy",
+        "execution_accounting",
+        "execution_candidate",
+        "execution_numbers",
+        "execution_receipts.reference_result",
+        "execution_returns",
+        "execution_risk_history",
+        "execution_startup",
+        "reference_definition_v301",
+        "reference_profile_v301"
+      ]
+    },
+    "import_whitelist": {
+      "execution_receipts.g14": [
+        "contract",
+        "pathlib",
+        "reception_schema"
+      ],
+      "execution_receipts.input_data": [
+        "hashlib",
+        "json",
+        "math",
+        "reference_validation"
+      ],
+      "execution_receipts.input_envelope": [
+        "contract",
+        "conventions",
+        "copy",
+        "datetime",
+        "noncash_v3",
+        "reference_profile_v301",
+        "reference_v3_scope"
+      ],
+      "execution_receipts.input_facts": [
+        "contract",
+        "copy",
+        "execution_numbers",
+        "input_data",
+        "input_envelope",
+        "input_run",
+        "json",
+        "reference_boundary",
+        "reference_validation",
+        "weakref"
+      ],
+      "execution_receipts.input_guard": [
+        "os",
+        "pathlib",
+        "sys"
+      ],
+      "execution_receipts.input_reader": [
+        "hashlib",
+        "input_data",
+        "json",
+        "pathlib"
+      ],
+      "execution_receipts.input_run": [
+        "contract",
+        "copy",
+        "input_envelope",
+        "json",
+        "weakref"
+      ],
+      "execution_receipts.n_binding": [
+        "authority_host",
+        "authority_ledger",
+        "contract",
+        "copy",
+        "g14",
+        "gzip",
+        "pathlib",
+        "reception_schema",
+        "reception_v2",
+        "reference_definition_v301",
+        "reference_profile_v301",
+        "reference_registry_v3"
+      ],
+      "execution_receipts.p4p7": [
+        "contract",
+        "copy",
+        "input_data",
+        "input_envelope",
+        "input_facts",
+        "json",
+        "n_binding",
+        "reference_boundary",
+        "reference_noncash",
+        "reference_result",
+        "weakref"
+      ],
+      "execution_receipts.reference_result": [
+        "contract",
+        "copy",
+        "execution_accounting",
+        "execution_cash",
+        "execution_projection",
+        "execution_returns",
+        "execution_risk",
+        "json",
+        "reference_execution",
+        "reference_profile_v301",
+        "weakref"
+      ],
+      "execution_receipts.replay_files": [],
+      "execution_receipts.replay_guard": [
+        "datetime",
+        "event_quarantine",
+        "execution_exposure",
+        "execution_state",
+        "fee_model",
+        "hashlib",
+        "lineage_schema",
+        "os",
+        "pathlib",
+        "replay_files",
+        "sys"
+      ],
+      "reference_execution": [
+        "contract",
+        "copy",
+        "execution_accounting",
+        "execution_candidate",
+        "execution_numbers",
+        "execution_receipts.reference_result",
+        "execution_returns",
+        "execution_risk_history",
+        "execution_startup",
+        "reference_definition_v301",
+        "reference_profile_v301"
+      ]
+    },
+    "reader_sites": [
+      {
+        "files": [
+          "raw.json",
+          "rights.json",
+          "adv.json",
+          "cash.json"
+        ],
+        "identity": "original file SHA in immutable host preparation, before JSON/value parsing",
+        "line": 54,
+        "module": "execution_receipts.input_reader"
+      },
+      {
+        "line": 60,
+        "module": "execution_receipts.n_binding",
+        "path": "execution_receipts/contracts/EVO883-SAR-v31-archive-acceptance-v1.json",
+        "sha256": "31de871ec2564b34330d882e21f6f0e9edcfa169371dc5cfdf9aae28dc3412ab"
+      },
+      {
+        "line": 61,
+        "module": "execution_receipts.n_binding",
+        "path": "execution_receipts/contracts/EVO891-B-ledger-v31.jsonl.gz",
+        "sha256": "eed3021a7b0f44dd31c884daa8f375555ae64cf1c12dd8e72e7b790a01cd1328"
+      },
+      {
+        "line": 13,
+        "module": "execution_receipts.g14",
+        "path": "execution_receipts/contracts/EVO883-G14-P1-adopted-protocol-v1.0.0.json",
+        "sha256": "68200926a94cc672e7f0e47c14cc6473b68920576a7ade1028c07fb5c168334d"
+      },
+      {
+        "identity": "host static proof's exact source/protocol file map, before stdin; no economic file path",
+        "line": 39,
+        "module": "execution_receipts.replay_guard"
+      }
+    ],
+    "replay_compile_sources": [
+      "1533+21*k",
+      "b_k",
+      "b_k+20",
+      "b_k+41<=M-1",
+      "b_k-1281",
+      "b_k-22",
+      "max(family_variance,independent_floor)",
+      "population_m3/population_m2**1.5",
+      "population_m4/population_m2**2"
+    ],
+    "replay_file_sha256": {
+      "__init__.py": "06af6993da8dcb49ff75936b7b5e327424b753802687d92dda74033c15efd797",
+      "__main__.py": "19cf89e91741f33ca5e948c1eedf42103fb5fa383a6040e232caed12a8e70986",
+      "arm_n.py": "c7804341f914e1fe3cf57cad723897fe8f6dec800efb0e3f458c2753955f3b49",
+      "authority_binding.py": "1355476871e9c8a083187f3e5853bc2e129683f4969a48da174bfb3c5cb0cc62",
+      "authority_harness.py": "0365490e6cba4ba8e9421d9f7650059beb701f6a334d55acdf2a346f00e2423c",
+      "authority_host.py": "d09ce53c29dc76d6978bba629d5e1666584d8114cefe2ed34dd7822aa664f436",
+      "authority_install_receipt.py": "2b41c7b960545f330889aa1cea2fba8cd195d1ac4cac4823659b50c268ad5fd6",
+      "authority_ledger.py": "a696c5d81bed8f19226cb9489f32b456277f98c51d7d884d3894bc4c4bf09120",
+      "authority_prefix.py": "82f396c560f5de88ea75a14adad2734f7377f7e97088278a841480d5d77a1352",
+      "authority_record_types.py": "fd2383b35be0f78bc616f2838285a50cde61ba12d5a65f16536de72a362765fd",
+      "authority_release.py": "e2e593791314f68c3618f8620533c05db9b55c6f04e41e159b5f20548ab70217",
+      "b2_inputs.py": "da9f69aaaf420cea971887314ee53ea78af5e7f335e92251b79c4bafbf7fe261",
+      "b_release_context.py": "cd8487d9bc1bfa0ee0fb5dce297c521a4ba6b89c4c090e06ae51583d60d2b09e",
+      "catalog_members.py": "a4afc328161064689e24c85dfa1e3d946fd1c4fc7563701fd90e08864e82a82b",
+      "catalog_v21.py": "12c3b0d33dcee4518ba39905d49f06fa55b62865f4ec041a5e0cf7f4a4189ab4",
+      "continuity.py": "ee759682cd58c80195d5acf5e51ca2705f897f4144cd8c8eb99fb0ea5f658f95",
+      "contract.py": "ff198c8d9ad05e7f2664af8120a9f6e3d21a242e3ef19e9f0b5cbb65a5beacbb",
+      "conventions.py": "4b98838d3fca24664470c1e2fb65921eefc3d93a7bfb9331e857d65f0205064a",
+      "disposition_harness.py": "2008b39696cdb5edf6cbf4e1dc9180863286fe86aab8b12b00de05a692daa283",
+      "dsr_v0.py": "3fc53de16da71acf5fa0852c3552881584cc37c2c71903339e085059a8b803d3",
+      "event_quarantine.py": "1245c801165b5da94178585932634f6745dc05f2490c64ebbf96b0c4bd32c2c6",
+      "execution.py": "d15958dabe5c67d2e47033a62253a2fd19fd6667cf15ca5dac8b3b49c91d9cd8",
+      "execution_accounting.py": "f8101633e86d2ee42e75dd66793ae0e153f1454e38ce008cc10bd2d6611a5a4a",
+      "execution_amounts.py": "18b2cdf6edaa43c7fd489e63eb8bdac8e209f5a06b317ff2aa1d3f306a4e245d",
+      "execution_candidate.py": "90d1a9dcbe46b9881450d1770003212e1daea0b14f3d8e15d90e5f4b1563d16e",
+      "execution_cash.py": "a49653574a53ccab01552e18cdecf9f6d41481a7d63c49175904683651150348",
+      "execution_clock.py": "c1f9563c645110335cdbf006328b3cee4d1d8952d8433ffd5306b91d07e8ecf6",
+      "execution_closure.py": "998ef21c68825ab9254489f29b12095c8dc0d4b3f6f14e507e8fbea6808615ae",
+      "execution_exposure.py": "8af9951b19fb454637440f98d74b4a4567cc4b8f8aebefbee647b18e1a4dbaed",
+      "execution_numbers.py": "b31df6da61dbde3a864164e31bd8590debf2941040e301f8511914ccd4933aa2",
+      "execution_projection.py": "d7a30669a8cfc019318c35e648ea3cd9bea7129e57b12bcd93da0751afa8f5cc",
+      "execution_returns.py": "75d09e78605c6951cbaec3c914e7fdfc8090f646ddbd74078d8ceb4a0ec5f83c",
+      "execution_risk.py": "b1b616126da4b831dba193f338ca9654c9de148bf1dc0b74d9723448faea8ab3",
+      "execution_risk_history.py": "da55c683a2b281b1ece42850e0c4d49dbe81a921bfbb17c0a013a10330ba84d4",
+      "execution_signals.py": "226c83a62f887ebf7720452c8ae045bceb699ab6cf7774446a5c72d28db5c0cb",
+      "execution_startup.py": "4b675f45605e69869bab8135b77e1b82cca7d4a5a309f1549fc38ea10f0f1c72",
+      "execution_state.py": "8e8129e63d084552ce308d84737d1b2851413e438ead3c247cfc3e69e32b4cf4",
+      "f1f2_harness.py": "b2ba2f2a06d88697cf222569fd41a31b72c8a1bd015add4e6d97d85f36878328",
+      "f3_harness.py": "b024420d2d28b9c3a70653a72a1fbf0691cef81d842b6df95063a716e3a755f1",
+      "f3b_harness.py": "4710ec84dd2466a443e6626ed7870d138777e4b810da36e7c9c23fcd417a1b9f",
+      "fee_model.py": "8dc35cdfe2ddc1d24cd7e2be0640ca0566cc9e0f3f697f577af44c9e5a75422f",
+      "fees.py": "144ee2bb1b9ca8bd24e480afcd0968e0fa711444ca520c6c6a72d8cf6d628e9a",
+      "fixture_inventory.py": "c14a21457ad6ede85e1527e7d4f16fd094f1309e58af4d3af76a99643708e425",
+      "fixtures/calendar-folds-v0.1.json": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+      "fixtures/catalog-v21/EVO883-v21-final-receipt.json": "b8b930396e7caf42ad8bde0f2f7ff190c40f36fd4c4686964a39154926f6644a",
+      "fixtures/catalog-v21/EVO893-B-CMI-guard-v21.json": "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77",
+      "fixtures/catalog-v21/EVO893-B-noncash-catalog-v21.csv": "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13",
+      "fixtures/common-calendar-v0.1.txt": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+      "fixtures/common-profile-v3.json": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",
+      "fixtures/conventions-v0.1.json": "2e65c77849b936d44c864b056be134e030ddf7f27e746072b70fffe631acf69b",
+      "fixtures/conventions-v3.0.0.json": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+      "fixtures/evo892-v3/candidate_reference_manifest.json": "bcce6f17f3515d66eb5b87569720740efb6eb70eca2d774a853be8e3cdecb4a4",
+      "fixtures/evo892-v3/meta_reference_manifest.json": "964e9903e13bd618777f00652bad09272d7aa4ddbb3cec2c28371a8378002ae6",
+      "fixtures/evo892-v3/predeclared_reference_registry.json": "f531d65a5ad54fc68a8be40bc25cbb3987d0aeedd4c2c345ed334b1599445c48",
+      "fixtures/execution-v3.0.1/EVO883-C06-CLOCK-adopted-protocol-v1.0.0.json": "8cd32345adb5ebe16cb9020687091532c46f803f046d6c1527eeedee41407a5a",
+      "fixtures/execution-v3.0.1/EVO883-D12-addendum-v3.0.1.md": "f540dce44e00b7077a94d3155f55db5fdba700b7a48911ec03697724b8dfa8c9",
+      "fixtures/execution-v3.0.1/EVO883-D12-common-profile-v3.0.1.json": "07b71b3fc59dc6dae1c96cadd3155622a18f4c4ad29b7c69b8f79c1455efc2d3",
+      "fixtures/execution-v3.0.1/EVO883-D12-shared-execution-contract-v3.0.1.json": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+      "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.json": "7677b123fa2fe573343fad3fe3f43887c5f5d2c0fd7c12d9a1de8bc625162e1b",
+      "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.md": "34f25ce19dcf8687f7068b62f751c83573a858997ab11fa0096794157f3a373f",
+      "fixtures/fee_params_x1.json": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+      "fixtures/fee_params_x2.json": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+      "fixtures/fee_schedule.json": "c400412f361a659290289517adf640e1fc2610560e203dc79bf76975e87c7fd9",
+      "fixtures/historical-seed-e51f8023.jsonl": "76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b",
+      "fixtures/noncash-exposure-policy-v3.json": "7230a447be8446edbca2e1c1001dfd4748e81b8d99e7d7dbda3e67c16ef790e8",
+      "fixtures/prereg-v3.json": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+      "fixtures/provenance-v2.json": "02b1d075b5a25acdbc3e82c594efed3778eca2710bdcb539c1df4f5b9c7bff30",
+      "fixtures/provenance-v3.json": "c40a43af7ff6f1638e1a25df17a7bd19f81287f71c5e1f6a9ae0a0489c0e406d",
+      "fixtures/provenance.json": "5a0bf6403b061dc27b0096c2dc72cc3e5ca0b554fa86ddbdac0ba58a08d9d111",
+      "fold_split.py": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+      "folds.py": "d6f052976cc2bafacf3b7814a1fdf801e71c471ca4aca3b2813471e0666ccb02",
+      "harness.py": "f5880289c56779384439ed85b87f7f56ede1fc0064cfd1a97184dab96739acfc",
+      "harness_helpers.py": "3bb5677bef3365b5ea57f48bf3635b6fee7158aacf699d771cf18c9e0d7ea971",
+      "historical_authority.py": "fb401e78c115876d73f9f5a6cece6d7d820927c9cd1222dad49eca983629fcce",
+      "input_disposition.py": "515945c2ee3de0d8e9a1ec0087f8087b5750258d013ada6ed08060f50e872d65",
+      "input_scope.py": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+      "invariance_harness.py": "a118dcbc4af14c66c88096f9afecbc664ae395365003e642fd42e58fc71eb6b7",
+      "isolation.py": "910cccfd6fa0fa74405a393cba180ec5a65bceac99d5543722b68e87a7ec20a1",
+      "k5.py": "96be5e8a8de9176b3cd24c766f08a4dc24a7d5db158a4bab2c0a468618d8bf97",
+      "ledger.py": "c0cb8154c060f7215671baf434b27cc65e87b9a696b643f97079096e59b4f28c",
+      "ledger_anchor.py": "0c26b1a34cdf42b337404a06ad4f633c1fd5651d909008f6923fb20925ea9b57",
+      "lineage_schema.py": "9e4c242339fd72d3396306a0f0f7959d6f1080b8c89efe61f4444d9ce18290c7",
+      "noncash_v3.py": "ce439592adc936c8715e7515dfb7f6dc8261847a15a737eadf281329cff47ccd",
+      "pending.py": "3a1625313ea1d5491a8d0670a6698176ed80bdd98e7efd37a1447b2878349c06",
+      "pipeline.py": "a7f4c35d0bb0c70507283fe525869d13b2d7cce6e6a53a5e2da6632e05cf8ffd",
+      "quarantine_harness.py": "9ee13780af365573773af2e3c729b34a84458847916731e4c11fc01315685c2f",
+      "receipts.py": "4647fafba46f5d5ae39401f1129c73eebb8dd5e6de6c91d82f23aea403803e8d",
+      "reception_entrypoints_v3.py": "a7e550628833d24b37e9b78744369f7ea8e8f06788eeb2473e9ab1c3c2e5ede9",
+      "reception_schema.py": "f425f7f753bf74867707071d81e4c83d7106be97a03c2e3bcbe0939ff7bf22fe",
+      "reception_v2.py": "98c2a2dd88025b449600179c511dc4403d6bd3ad35d02380cffa09d9a3d6849a",
+      "reference_boundary.py": "c84f966aceae70c84734dd2e469b32677c3878327a0a58a916ad389166ddbe05",
+      "reference_check.py": "27c4085c2acc18693d074e70d43961e0620110c37e606b65f46d8a683d11fa98",
+      "reference_compile_v3.py": "1d1fcdd8c277f811438b60fe673b49e2b3d80f53ff08ce4e86810c1d3f1979bc",
+      "reference_day_inputs.py": "aa524e97008749e03c96090e887c803f672f9d7f6486644c41d066d59f481322",
+      "reference_definition_v301.py": "95a51f2f5c5d3473254e247ac8d1b408c4f89c9253b3622ee2fe4d7941ef1a55",
+      "reference_evidence.py": "a0957a30907c25d4976e0dbf950afae346fca549bc249cd85f7807595e698ff1",
+      "reference_execution.py": "ef856b951103be4c345e7b305d1600c0ce0e1fd559f65f70e95ce541d62384f7",
+      "reference_guard.py": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+      "reference_harness.py": "6ab77b3279bc8e567603858cf3eba513adfb6987e3483c739a9ff6e353112a8b",
+      "reference_inputs.py": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+      "reference_noncash.py": "c923f8589fee07e50c7ee2904edf1ec73ea91b7de2651b6ab545af988a918b2b",
+      "reference_producer.py": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+      "reference_producer_v3.py": "a7fcff5592195a86923aaf667660ce988323c4bce1a0070432fcbdb65a560e26",
+      "reference_profile_v301.py": "184f15302f003356a9d41027ab5fd84fa5917e796f96adee5374a714edc3ccd3",
+      "reference_registry.py": "689ced79a2df37ffa857f14451dfaa66d0df412f31dadc39cbb7ba5f2afb45b8",
+      "reference_registry_v3.py": "90ff033cb06bbedce4315ec04bb7c84b8a300fdd133015db58a23b1f7fee997a",
+      "reference_v3_evidence.py": "5a14b98477783da356026be254654ead0787f65d5512add64b846d2132881238",
+      "reference_v3_scope.py": "131eaf7725102c1b86a51146c60f3019faa79bd1f73e0aa585ac3e743590244a",
+      "reference_validation.py": "77854b5e4671bf3634bf22e7f49602c90ab47f87e19d394d688e12c6ec078019",
+      "scope_harness.py": "6c49e01cc7e8ef036c0703247005d32a3975c99716e5391dff4417afa92fe382",
+      "scope_proof.py": "ab6864f8e663f89760cfab1249f8d260d2d0fb20817299787dac0b66eea5b283",
+      "scope_reader.py": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38",
+      "state_v2.py": "0c31a71defe68d23126ada28b15dbd3b6574b661508d53f0d1697a9ed1492e2c",
+      "statistics.py": "e32f700d08fa41aea264b296d3e4bec0a9713c16c549ce6f6239a47bd2b6a297",
+      "v1_harness.py": "7c27d3f80082b43600a9de1734cb0bfdba9ee6e20f1f0cca42abf919fe633ae5",
+      "validation.py": "5d3d6d97ab350c14bf9e5d62f51b2d42244f4466f9ed7636d7eb77d7c4a2be8d",
+      "valuation.py": "4b0a18ebb18b2706926e344a94fd5da32b0f06b969a34d9da294e91ffffb8a8d"
+    },
+    "schema": "EVO884.ReferenceExecutionProof/v1",
+    "scope": "owned diagnostic orchestration and isolated same-engine replay; source authentication and formal runtime are separate",
+    "seal_status": "seal_pending",
+    "source_files": {
+      "execution_receipts.g14": "3b91e04f01aa01210454208347a8cc01a6bf673607625dde98067494cb378c05",
+      "execution_receipts.input_data": "d0e86374390f6dab660e2c68eb25390f714120c184abd085fbad781ca6acec68",
+      "execution_receipts.input_envelope": "fc9366049b8d4495ef03103617e897a29780bd0b17ceee26c6c9f9354ed3fd1c",
+      "execution_receipts.input_facts": "8ea6048eb366fc831fe43fc62a5b4d009bd8519a7d91b0a5b641ac478f095fd6",
+      "execution_receipts.input_guard": "8c49c72ad42886285270c3ef99f2051c6c0c656927e348eac56a6211ad6507b7",
+      "execution_receipts.input_reader": "ca5e3fc1c1a336428b784904d5fa85f880f78c39c500718ff6a4909b5f0bb30a",
+      "execution_receipts.input_run": "94c7fb4064d33c585476f2006e3ab9435c056535ad3626b9042fa4dda7395698",
+      "execution_receipts.n_binding": "d1a02ce9121e6c2204024d8df45a8e13459bd4060c59fde8083ee938efb9c573",
+      "execution_receipts.p4p7": "8081c024baeee8b177b382ecb5a9a68abba3b10e2e2e5dbdec36c7d10b6e2243",
+      "execution_receipts.reference_result": "d876daf07745bc3889971dd5ef7fccf4fce0f15051fcd9c6c7722fedd99bf36f",
+      "execution_receipts.replay_files": "b1b1b51ca0a7a10ecdc54c90fcc94c33f91a7699fd802fcdb89d5baae6e67235",
+      "execution_receipts.replay_guard": "69dde6531d3e6f464fd87fd086aa099b3005541ec6008413ea764f75028e732f",
+      "reference_execution": "ef856b951103be4c345e7b305d1600c0ce0e1fd559f65f70e95ce541d62384f7"
+    },
+    "source_sha256": "259177ac9873041136219dd664af943120e1c4cf9831888758af741c7de50f00",
+    "worker_data_files": [],
+    "worker_economic_file_roles": [],
+    "worker_execution_role": "reference_diagnostic_execution"
+  },
+  "prior_synthetic_ledger_B_coverage": {
+    "path": "evo884-exec-reseal-v1/ledger-B-coverage.json",
+    "scope": "unchanged historical synthetic-only coverage, not actual B/A/SRC/AUTH",
+    "sha256": "07bb27dafc178d7a5b8e887b12c6d154c24d8e9bf0a66e91506cd2538216eac2"
+  },
+  "reference_execution": {
+    "C09_C10": {
+      "guard_before_stdin": true,
+      "import_graph": {
+        "execution_receipts.g14": [
+          "contract",
+          "pathlib",
+          "reception_schema"
+        ],
+        "execution_receipts.input_data": [
+          "hashlib",
+          "json",
+          "math",
+          "reference_validation"
+        ],
+        "execution_receipts.input_envelope": [
+          "contract",
+          "conventions",
+          "copy",
+          "datetime",
+          "noncash_v3",
+          "reference_profile_v301",
+          "reference_v3_scope"
+        ],
+        "execution_receipts.input_facts": [
+          "contract",
+          "copy",
+          "execution_numbers",
+          "input_data",
+          "input_envelope",
+          "input_run",
+          "json",
+          "reference_boundary",
+          "reference_validation",
+          "weakref"
+        ],
+        "execution_receipts.input_guard": [
+          "os",
+          "pathlib",
+          "sys"
+        ],
+        "execution_receipts.input_reader": [
+          "hashlib",
+          "input_data",
+          "json",
+          "pathlib"
+        ],
+        "execution_receipts.input_run": [
+          "contract",
+          "copy",
+          "input_envelope",
+          "json",
+          "weakref"
+        ],
+        "execution_receipts.n_binding": [
+          "authority_host",
+          "authority_ledger",
+          "contract",
+          "copy",
+          "g14",
+          "gzip",
+          "pathlib",
+          "reception_schema",
+          "reception_v2",
+          "reference_definition_v301",
+          "reference_profile_v301",
+          "reference_registry_v3"
+        ],
+        "execution_receipts.p4p7": [
+          "contract",
+          "copy",
+          "input_data",
+          "input_envelope",
+          "input_facts",
+          "json",
+          "n_binding",
+          "reference_boundary",
+          "reference_noncash",
+          "reference_result",
+          "weakref"
+        ],
+        "execution_receipts.reference_result": [
+          "contract",
+          "copy",
+          "execution_accounting",
+          "execution_cash",
+          "execution_projection",
+          "execution_returns",
+          "execution_risk",
+          "json",
+          "reference_execution",
+          "reference_profile_v301",
+          "weakref"
+        ],
+        "execution_receipts.replay_files": [],
+        "execution_receipts.replay_guard": [
+          "datetime",
+          "event_quarantine",
+          "execution_exposure",
+          "execution_state",
+          "fee_model",
+          "hashlib",
+          "lineage_schema",
+          "os",
+          "pathlib",
+          "replay_files",
+          "sys"
+        ],
+        "reference_execution": [
+          "contract",
+          "copy",
+          "execution_accounting",
+          "execution_candidate",
+          "execution_numbers",
+          "execution_receipts.reference_result",
+          "execution_returns",
+          "execution_risk_history",
+          "execution_startup",
+          "reference_definition_v301",
+          "reference_profile_v301"
+        ]
+      },
+      "import_whitelist": {
+        "execution_receipts.g14": [
+          "contract",
+          "pathlib",
+          "reception_schema"
+        ],
+        "execution_receipts.input_data": [
+          "hashlib",
+          "json",
+          "math",
+          "reference_validation"
+        ],
+        "execution_receipts.input_envelope": [
+          "contract",
+          "conventions",
+          "copy",
+          "datetime",
+          "noncash_v3",
+          "reference_profile_v301",
+          "reference_v3_scope"
+        ],
+        "execution_receipts.input_facts": [
+          "contract",
+          "copy",
+          "execution_numbers",
+          "input_data",
+          "input_envelope",
+          "input_run",
+          "json",
+          "reference_boundary",
+          "reference_validation",
+          "weakref"
+        ],
+        "execution_receipts.input_guard": [
+          "os",
+          "pathlib",
+          "sys"
+        ],
+        "execution_receipts.input_reader": [
+          "hashlib",
+          "input_data",
+          "json",
+          "pathlib"
+        ],
+        "execution_receipts.input_run": [
+          "contract",
+          "copy",
+          "input_envelope",
+          "json",
+          "weakref"
+        ],
+        "execution_receipts.n_binding": [
+          "authority_host",
+          "authority_ledger",
+          "contract",
+          "copy",
+          "g14",
+          "gzip",
+          "pathlib",
+          "reception_schema",
+          "reception_v2",
+          "reference_definition_v301",
+          "reference_profile_v301",
+          "reference_registry_v3"
+        ],
+        "execution_receipts.p4p7": [
+          "contract",
+          "copy",
+          "input_data",
+          "input_envelope",
+          "input_facts",
+          "json",
+          "n_binding",
+          "reference_boundary",
+          "reference_noncash",
+          "reference_result",
+          "weakref"
+        ],
+        "execution_receipts.reference_result": [
+          "contract",
+          "copy",
+          "execution_accounting",
+          "execution_cash",
+          "execution_projection",
+          "execution_returns",
+          "execution_risk",
+          "json",
+          "reference_execution",
+          "reference_profile_v301",
+          "weakref"
+        ],
+        "execution_receipts.replay_files": [],
+        "execution_receipts.replay_guard": [
+          "datetime",
+          "event_quarantine",
+          "execution_exposure",
+          "execution_state",
+          "fee_model",
+          "hashlib",
+          "lineage_schema",
+          "os",
+          "pathlib",
+          "replay_files",
+          "sys"
+        ],
+        "reference_execution": [
+          "contract",
+          "copy",
+          "execution_accounting",
+          "execution_candidate",
+          "execution_numbers",
+          "execution_receipts.reference_result",
+          "execution_returns",
+          "execution_risk_history",
+          "execution_startup",
+          "reference_definition_v301",
+          "reference_profile_v301"
+        ]
+      },
+      "reader_sites": [
+        {
+          "files": [
+            "raw.json",
+            "rights.json",
+            "adv.json",
+            "cash.json"
+          ],
+          "identity": "original file SHA in immutable host preparation, before JSON/value parsing",
+          "line": 54,
+          "module": "execution_receipts.input_reader"
+        },
+        {
+          "line": 60,
+          "module": "execution_receipts.n_binding",
+          "path": "execution_receipts/contracts/EVO883-SAR-v31-archive-acceptance-v1.json",
+          "sha256": "31de871ec2564b34330d882e21f6f0e9edcfa169371dc5cfdf9aae28dc3412ab"
+        },
+        {
+          "line": 61,
+          "module": "execution_receipts.n_binding",
+          "path": "execution_receipts/contracts/EVO891-B-ledger-v31.jsonl.gz",
+          "sha256": "eed3021a7b0f44dd31c884daa8f375555ae64cf1c12dd8e72e7b790a01cd1328"
+        },
+        {
+          "line": 13,
+          "module": "execution_receipts.g14",
+          "path": "execution_receipts/contracts/EVO883-G14-P1-adopted-protocol-v1.0.0.json",
+          "sha256": "68200926a94cc672e7f0e47c14cc6473b68920576a7ade1028c07fb5c168334d"
+        },
+        {
+          "identity": "host static proof's exact source/protocol file map, before stdin; no economic file path",
+          "line": 39,
+          "module": "execution_receipts.replay_guard"
+        }
+      ],
+      "replay_compile_sources": [
+        "1533+21*k",
+        "b_k",
+        "b_k+20",
+        "b_k+41<=M-1",
+        "b_k-1281",
+        "b_k-22",
+        "max(family_variance,independent_floor)",
+        "population_m3/population_m2**1.5",
+        "population_m4/population_m2**2"
+      ],
+      "replay_file_sha256": {
+        "__init__.py": "06af6993da8dcb49ff75936b7b5e327424b753802687d92dda74033c15efd797",
+        "__main__.py": "19cf89e91741f33ca5e948c1eedf42103fb5fa383a6040e232caed12a8e70986",
+        "arm_n.py": "c7804341f914e1fe3cf57cad723897fe8f6dec800efb0e3f458c2753955f3b49",
+        "authority_binding.py": "1355476871e9c8a083187f3e5853bc2e129683f4969a48da174bfb3c5cb0cc62",
+        "authority_harness.py": "0365490e6cba4ba8e9421d9f7650059beb701f6a334d55acdf2a346f00e2423c",
+        "authority_host.py": "d09ce53c29dc76d6978bba629d5e1666584d8114cefe2ed34dd7822aa664f436",
+        "authority_install_receipt.py": "2b41c7b960545f330889aa1cea2fba8cd195d1ac4cac4823659b50c268ad5fd6",
+        "authority_ledger.py": "a696c5d81bed8f19226cb9489f32b456277f98c51d7d884d3894bc4c4bf09120",
+        "authority_prefix.py": "82f396c560f5de88ea75a14adad2734f7377f7e97088278a841480d5d77a1352",
+        "authority_record_types.py": "fd2383b35be0f78bc616f2838285a50cde61ba12d5a65f16536de72a362765fd",
+        "authority_release.py": "e2e593791314f68c3618f8620533c05db9b55c6f04e41e159b5f20548ab70217",
+        "b2_inputs.py": "da9f69aaaf420cea971887314ee53ea78af5e7f335e92251b79c4bafbf7fe261",
+        "b_release_context.py": "cd8487d9bc1bfa0ee0fb5dce297c521a4ba6b89c4c090e06ae51583d60d2b09e",
+        "catalog_members.py": "a4afc328161064689e24c85dfa1e3d946fd1c4fc7563701fd90e08864e82a82b",
+        "catalog_v21.py": "12c3b0d33dcee4518ba39905d49f06fa55b62865f4ec041a5e0cf7f4a4189ab4",
+        "continuity.py": "ee759682cd58c80195d5acf5e51ca2705f897f4144cd8c8eb99fb0ea5f658f95",
+        "contract.py": "ff198c8d9ad05e7f2664af8120a9f6e3d21a242e3ef19e9f0b5cbb65a5beacbb",
+        "conventions.py": "4b98838d3fca24664470c1e2fb65921eefc3d93a7bfb9331e857d65f0205064a",
+        "disposition_harness.py": "2008b39696cdb5edf6cbf4e1dc9180863286fe86aab8b12b00de05a692daa283",
+        "dsr_v0.py": "3fc53de16da71acf5fa0852c3552881584cc37c2c71903339e085059a8b803d3",
+        "event_quarantine.py": "1245c801165b5da94178585932634f6745dc05f2490c64ebbf96b0c4bd32c2c6",
+        "execution.py": "d15958dabe5c67d2e47033a62253a2fd19fd6667cf15ca5dac8b3b49c91d9cd8",
+        "execution_accounting.py": "f8101633e86d2ee42e75dd66793ae0e153f1454e38ce008cc10bd2d6611a5a4a",
+        "execution_amounts.py": "18b2cdf6edaa43c7fd489e63eb8bdac8e209f5a06b317ff2aa1d3f306a4e245d",
+        "execution_candidate.py": "90d1a9dcbe46b9881450d1770003212e1daea0b14f3d8e15d90e5f4b1563d16e",
+        "execution_cash.py": "a49653574a53ccab01552e18cdecf9f6d41481a7d63c49175904683651150348",
+        "execution_clock.py": "c1f9563c645110335cdbf006328b3cee4d1d8952d8433ffd5306b91d07e8ecf6",
+        "execution_closure.py": "998ef21c68825ab9254489f29b12095c8dc0d4b3f6f14e507e8fbea6808615ae",
+        "execution_exposure.py": "8af9951b19fb454637440f98d74b4a4567cc4b8f8aebefbee647b18e1a4dbaed",
+        "execution_numbers.py": "b31df6da61dbde3a864164e31bd8590debf2941040e301f8511914ccd4933aa2",
+        "execution_projection.py": "d7a30669a8cfc019318c35e648ea3cd9bea7129e57b12bcd93da0751afa8f5cc",
+        "execution_returns.py": "75d09e78605c6951cbaec3c914e7fdfc8090f646ddbd74078d8ceb4a0ec5f83c",
+        "execution_risk.py": "b1b616126da4b831dba193f338ca9654c9de148bf1dc0b74d9723448faea8ab3",
+        "execution_risk_history.py": "da55c683a2b281b1ece42850e0c4d49dbe81a921bfbb17c0a013a10330ba84d4",
+        "execution_signals.py": "226c83a62f887ebf7720452c8ae045bceb699ab6cf7774446a5c72d28db5c0cb",
+        "execution_startup.py": "4b675f45605e69869bab8135b77e1b82cca7d4a5a309f1549fc38ea10f0f1c72",
+        "execution_state.py": "8e8129e63d084552ce308d84737d1b2851413e438ead3c247cfc3e69e32b4cf4",
+        "f1f2_harness.py": "b2ba2f2a06d88697cf222569fd41a31b72c8a1bd015add4e6d97d85f36878328",
+        "f3_harness.py": "b024420d2d28b9c3a70653a72a1fbf0691cef81d842b6df95063a716e3a755f1",
+        "f3b_harness.py": "4710ec84dd2466a443e6626ed7870d138777e4b810da36e7c9c23fcd417a1b9f",
+        "fee_model.py": "8dc35cdfe2ddc1d24cd7e2be0640ca0566cc9e0f3f697f577af44c9e5a75422f",
+        "fees.py": "144ee2bb1b9ca8bd24e480afcd0968e0fa711444ca520c6c6a72d8cf6d628e9a",
+        "fixture_inventory.py": "c14a21457ad6ede85e1527e7d4f16fd094f1309e58af4d3af76a99643708e425",
+        "fixtures/calendar-folds-v0.1.json": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
+        "fixtures/catalog-v21/EVO883-v21-final-receipt.json": "b8b930396e7caf42ad8bde0f2f7ff190c40f36fd4c4686964a39154926f6644a",
+        "fixtures/catalog-v21/EVO893-B-CMI-guard-v21.json": "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77",
+        "fixtures/catalog-v21/EVO893-B-noncash-catalog-v21.csv": "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13",
+        "fixtures/common-calendar-v0.1.txt": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
+        "fixtures/common-profile-v3.json": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",
+        "fixtures/conventions-v0.1.json": "2e65c77849b936d44c864b056be134e030ddf7f27e746072b70fffe631acf69b",
+        "fixtures/conventions-v3.0.0.json": "dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b",
+        "fixtures/evo892-v3/candidate_reference_manifest.json": "bcce6f17f3515d66eb5b87569720740efb6eb70eca2d774a853be8e3cdecb4a4",
+        "fixtures/evo892-v3/meta_reference_manifest.json": "964e9903e13bd618777f00652bad09272d7aa4ddbb3cec2c28371a8378002ae6",
+        "fixtures/evo892-v3/predeclared_reference_registry.json": "f531d65a5ad54fc68a8be40bc25cbb3987d0aeedd4c2c345ed334b1599445c48",
+        "fixtures/execution-v3.0.1/EVO883-C06-CLOCK-adopted-protocol-v1.0.0.json": "8cd32345adb5ebe16cb9020687091532c46f803f046d6c1527eeedee41407a5a",
+        "fixtures/execution-v3.0.1/EVO883-D12-addendum-v3.0.1.md": "f540dce44e00b7077a94d3155f55db5fdba700b7a48911ec03697724b8dfa8c9",
+        "fixtures/execution-v3.0.1/EVO883-D12-common-profile-v3.0.1.json": "07b71b3fc59dc6dae1c96cadd3155622a18f4c4ad29b7c69b8f79c1455efc2d3",
+        "fixtures/execution-v3.0.1/EVO883-D12-shared-execution-contract-v3.0.1.json": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496",
+        "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.json": "7677b123fa2fe573343fad3fe3f43887c5f5d2c0fd7c12d9a1de8bc625162e1b",
+        "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.md": "34f25ce19dcf8687f7068b62f751c83573a858997ab11fa0096794157f3a373f",
+        "fixtures/fee_params_x1.json": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2",
+        "fixtures/fee_params_x2.json": "a81bb5790638e9730dec666a695bbb797ab1ec7fe817e666f744193cfa6f9044",
+        "fixtures/fee_schedule.json": "c400412f361a659290289517adf640e1fc2610560e203dc79bf76975e87c7fd9",
+        "fixtures/historical-seed-e51f8023.jsonl": "76ece03d62628a2ca2f0cb089103deaa26584ae9522fdde101df782a738a8f0b",
+        "fixtures/noncash-exposure-policy-v3.json": "7230a447be8446edbca2e1c1001dfd4748e81b8d99e7d7dbda3e67c16ef790e8",
+        "fixtures/prereg-v3.json": "53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421",
+        "fixtures/provenance-v2.json": "02b1d075b5a25acdbc3e82c594efed3778eca2710bdcb539c1df4f5b9c7bff30",
+        "fixtures/provenance-v3.json": "c40a43af7ff6f1638e1a25df17a7bd19f81287f71c5e1f6a9ae0a0489c0e406d",
+        "fixtures/provenance.json": "5a0bf6403b061dc27b0096c2dc72cc3e5ca0b554fa86ddbdac0ba58a08d9d111",
+        "fold_split.py": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af",
+        "folds.py": "d6f052976cc2bafacf3b7814a1fdf801e71c471ca4aca3b2813471e0666ccb02",
+        "harness.py": "f5880289c56779384439ed85b87f7f56ede1fc0064cfd1a97184dab96739acfc",
+        "harness_helpers.py": "3bb5677bef3365b5ea57f48bf3635b6fee7158aacf699d771cf18c9e0d7ea971",
+        "historical_authority.py": "fb401e78c115876d73f9f5a6cece6d7d820927c9cd1222dad49eca983629fcce",
+        "input_disposition.py": "515945c2ee3de0d8e9a1ec0087f8087b5750258d013ada6ed08060f50e872d65",
+        "input_scope.py": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe",
+        "invariance_harness.py": "a118dcbc4af14c66c88096f9afecbc664ae395365003e642fd42e58fc71eb6b7",
+        "isolation.py": "910cccfd6fa0fa74405a393cba180ec5a65bceac99d5543722b68e87a7ec20a1",
+        "k5.py": "96be5e8a8de9176b3cd24c766f08a4dc24a7d5db158a4bab2c0a468618d8bf97",
+        "ledger.py": "c0cb8154c060f7215671baf434b27cc65e87b9a696b643f97079096e59b4f28c",
+        "ledger_anchor.py": "0c26b1a34cdf42b337404a06ad4f633c1fd5651d909008f6923fb20925ea9b57",
+        "lineage_schema.py": "9e4c242339fd72d3396306a0f0f7959d6f1080b8c89efe61f4444d9ce18290c7",
+        "noncash_v3.py": "ce439592adc936c8715e7515dfb7f6dc8261847a15a737eadf281329cff47ccd",
+        "pending.py": "3a1625313ea1d5491a8d0670a6698176ed80bdd98e7efd37a1447b2878349c06",
+        "pipeline.py": "a7f4c35d0bb0c70507283fe525869d13b2d7cce6e6a53a5e2da6632e05cf8ffd",
+        "quarantine_harness.py": "9ee13780af365573773af2e3c729b34a84458847916731e4c11fc01315685c2f",
+        "receipts.py": "4647fafba46f5d5ae39401f1129c73eebb8dd5e6de6c91d82f23aea403803e8d",
+        "reception_entrypoints_v3.py": "a7e550628833d24b37e9b78744369f7ea8e8f06788eeb2473e9ab1c3c2e5ede9",
+        "reception_schema.py": "f425f7f753bf74867707071d81e4c83d7106be97a03c2e3bcbe0939ff7bf22fe",
+        "reception_v2.py": "98c2a2dd88025b449600179c511dc4403d6bd3ad35d02380cffa09d9a3d6849a",
+        "reference_boundary.py": "c84f966aceae70c84734dd2e469b32677c3878327a0a58a916ad389166ddbe05",
+        "reference_check.py": "27c4085c2acc18693d074e70d43961e0620110c37e606b65f46d8a683d11fa98",
+        "reference_compile_v3.py": "1d1fcdd8c277f811438b60fe673b49e2b3d80f53ff08ce4e86810c1d3f1979bc",
+        "reference_day_inputs.py": "aa524e97008749e03c96090e887c803f672f9d7f6486644c41d066d59f481322",
+        "reference_definition_v301.py": "95a51f2f5c5d3473254e247ac8d1b408c4f89c9253b3622ee2fe4d7941ef1a55",
+        "reference_evidence.py": "a0957a30907c25d4976e0dbf950afae346fca549bc249cd85f7807595e698ff1",
+        "reference_execution.py": "ef856b951103be4c345e7b305d1600c0ce0e1fd559f65f70e95ce541d62384f7",
+        "reference_guard.py": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3",
+        "reference_harness.py": "6ab77b3279bc8e567603858cf3eba513adfb6987e3483c739a9ff6e353112a8b",
+        "reference_inputs.py": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099",
+        "reference_noncash.py": "c923f8589fee07e50c7ee2904edf1ec73ea91b7de2651b6ab545af988a918b2b",
+        "reference_producer.py": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c",
+        "reference_producer_v3.py": "a7fcff5592195a86923aaf667660ce988323c4bce1a0070432fcbdb65a560e26",
+        "reference_profile_v301.py": "184f15302f003356a9d41027ab5fd84fa5917e796f96adee5374a714edc3ccd3",
+        "reference_registry.py": "689ced79a2df37ffa857f14451dfaa66d0df412f31dadc39cbb7ba5f2afb45b8",
+        "reference_registry_v3.py": "90ff033cb06bbedce4315ec04bb7c84b8a300fdd133015db58a23b1f7fee997a",
+        "reference_v3_evidence.py": "5a14b98477783da356026be254654ead0787f65d5512add64b846d2132881238",
+        "reference_v3_scope.py": "131eaf7725102c1b86a51146c60f3019faa79bd1f73e0aa585ac3e743590244a",
+        "reference_validation.py": "77854b5e4671bf3634bf22e7f49602c90ab47f87e19d394d688e12c6ec078019",
+        "scope_harness.py": "6c49e01cc7e8ef036c0703247005d32a3975c99716e5391dff4417afa92fe382",
+        "scope_proof.py": "ab6864f8e663f89760cfab1249f8d260d2d0fb20817299787dac0b66eea5b283",
+        "scope_reader.py": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38",
+        "state_v2.py": "0c31a71defe68d23126ada28b15dbd3b6574b661508d53f0d1697a9ed1492e2c",
+        "statistics.py": "e32f700d08fa41aea264b296d3e4bec0a9713c16c549ce6f6239a47bd2b6a297",
+        "v1_harness.py": "7c27d3f80082b43600a9de1734cb0bfdba9ee6e20f1f0cca42abf919fe633ae5",
+        "validation.py": "5d3d6d97ab350c14bf9e5d62f51b2d42244f4466f9ed7636d7eb77d7c4a2be8d",
+        "valuation.py": "4b0a18ebb18b2706926e344a94fd5da32b0f06b969a34d9da294e91ffffb8a8d"
+      },
+      "schema": "EVO884.ReferenceExecutionProof/v1",
+      "scope": "owned diagnostic orchestration and isolated same-engine replay; source authentication and formal runtime are separate",
+      "seal_status": "seal_pending",
+      "source_files": {
+        "execution_receipts.g14": "3b91e04f01aa01210454208347a8cc01a6bf673607625dde98067494cb378c05",
+        "execution_receipts.input_data": "d0e86374390f6dab660e2c68eb25390f714120c184abd085fbad781ca6acec68",
+        "execution_receipts.input_envelope": "fc9366049b8d4495ef03103617e897a29780bd0b17ceee26c6c9f9354ed3fd1c",
+        "execution_receipts.input_facts": "8ea6048eb366fc831fe43fc62a5b4d009bd8519a7d91b0a5b641ac478f095fd6",
+        "execution_receipts.input_guard": "8c49c72ad42886285270c3ef99f2051c6c0c656927e348eac56a6211ad6507b7",
+        "execution_receipts.input_reader": "ca5e3fc1c1a336428b784904d5fa85f880f78c39c500718ff6a4909b5f0bb30a",
+        "execution_receipts.input_run": "94c7fb4064d33c585476f2006e3ab9435c056535ad3626b9042fa4dda7395698",
+        "execution_receipts.n_binding": "d1a02ce9121e6c2204024d8df45a8e13459bd4060c59fde8083ee938efb9c573",
+        "execution_receipts.p4p7": "8081c024baeee8b177b382ecb5a9a68abba3b10e2e2e5dbdec36c7d10b6e2243",
+        "execution_receipts.reference_result": "d876daf07745bc3889971dd5ef7fccf4fce0f15051fcd9c6c7722fedd99bf36f",
+        "execution_receipts.replay_files": "b1b1b51ca0a7a10ecdc54c90fcc94c33f91a7699fd802fcdb89d5baae6e67235",
+        "execution_receipts.replay_guard": "69dde6531d3e6f464fd87fd086aa099b3005541ec6008413ea764f75028e732f",
+        "reference_execution": "ef856b951103be4c345e7b305d1600c0ce0e1fd559f65f70e95ce541d62384f7"
+      },
+      "source_sha256": "259177ac9873041136219dd664af943120e1c4cf9831888758af741c7de50f00",
+      "worker_data_files": [],
+      "worker_economic_file_roles": [],
+      "worker_execution_role": "reference_diagnostic_execution"
+    },
+    "C09_component_readers": {
+      "execution_receipts.g14": [
+        {
+          "line": 13,
+          "module": "execution_receipts.g14",
+          "path": "execution_receipts/contracts/EVO883-G14-P1-adopted-protocol-v1.0.0.json",
+          "sha256": "68200926a94cc672e7f0e47c14cc6473b68920576a7ade1028c07fb5c168334d"
+        }
+      ],
+      "execution_receipts.input_data": [],
+      "execution_receipts.input_envelope": [],
+      "execution_receipts.input_facts": [],
+      "execution_receipts.input_guard": [],
+      "execution_receipts.input_reader": [
+        {
+          "files": [
+            "raw.json",
+            "rights.json",
+            "adv.json",
+            "cash.json"
+          ],
+          "identity": "original file SHA in immutable host preparation, before JSON/value parsing",
+          "line": 54,
+          "module": "execution_receipts.input_reader"
+        }
+      ],
+      "execution_receipts.input_run": [],
+      "execution_receipts.n_binding": [
+        {
+          "line": 60,
+          "module": "execution_receipts.n_binding",
+          "path": "execution_receipts/contracts/EVO883-SAR-v31-archive-acceptance-v1.json",
+          "sha256": "31de871ec2564b34330d882e21f6f0e9edcfa169371dc5cfdf9aae28dc3412ab"
+        },
+        {
+          "line": 61,
+          "module": "execution_receipts.n_binding",
+          "path": "execution_receipts/contracts/EVO891-B-ledger-v31.jsonl.gz",
+          "sha256": "eed3021a7b0f44dd31c884daa8f375555ae64cf1c12dd8e72e7b790a01cd1328"
+        }
+      ],
+      "execution_receipts.p4p7": [],
+      "execution_receipts.reference_result": [],
+      "execution_receipts.replay_files": [],
+      "execution_receipts.replay_guard": [
+        {
+          "identity": "host static proof's exact source/protocol file map, before stdin; no economic file path",
+          "line": 39,
+          "module": "execution_receipts.replay_guard"
+        }
+      ],
+      "reference_execution": []
+    },
+    "C09_fixed_input_files": [
+      {
+        "module": "execution_receipts.n_binding",
+        "path": "execution_receipts/contracts/EVO883-SAR-v31-archive-acceptance-v1.json",
+        "sha256": "31de871ec2564b34330d882e21f6f0e9edcfa169371dc5cfdf9aae28dc3412ab"
+      },
+      {
+        "module": "execution_receipts.n_binding",
+        "path": "execution_receipts/contracts/EVO891-B-ledger-v31.jsonl.gz",
+        "sha256": "eed3021a7b0f44dd31c884daa8f375555ae64cf1c12dd8e72e7b790a01cd1328"
+      },
+      {
+        "module": "execution_receipts.g14",
+        "path": "execution_receipts/contracts/EVO883-G14-P1-adopted-protocol-v1.0.0.json",
+        "sha256": "68200926a94cc672e7f0e47c14cc6473b68920576a7ade1028c07fb5c168334d"
+      }
+    ],
+    "C09_numeric_input_files": [
+      "raw.json",
+      "rights.json",
+      "adv.json",
+      "cash.json"
+    ],
+    "coverage_boundary": "C09 four-file reader is separately registered before fact binding; the result worker consumes only the exact owned read facts and common-engine program, with individually registered metadata files; old component entries retain their original meanings",
+    "runtime_consumable": false,
+    "schema": "EVO884.ReferenceExecutionScope/v1",
+    "seal_status": "seal_pending",
+    "shared_execution_source_sha256": "694bed3779e6bdf6559e80a7a4a47026096538b7e8959923be2f4bc29455f321",
+    "shared_fixed_reads": [
+      {
+        "module": "execution_closure",
+        "path": "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.json",
+        "sha256": "7677b123fa2fe573343fad3fe3f43887c5f5d2c0fd7c12d9a1de8bc625162e1b"
+      },
+      {
+        "module": "execution_closure",
+        "path": "fixtures/execution-v3.0.1/EVO883-EXEC-CLOSURE-adopted-protocol-v0.1.0.md",
+        "sha256": "34f25ce19dcf8687f7068b62f751c83573a858997ab11fa0096794157f3a373f"
+      },
+      {
+        "module": "execution_clock",
+        "path": "fixtures/execution-v3.0.1/EVO883-C06-CLOCK-adopted-protocol-v1.0.0.json",
+        "sha256": "8cd32345adb5ebe16cb9020687091532c46f803f046d6c1527eeedee41407a5a"
+      },
+      {
+        "module": "reference_definition_v301",
+        "path": "fixtures/execution-v3.0.1/EVO883-D12-shared-execution-contract-v3.0.1.json",
+        "sha256": "f7a0623da88a7e2874ef5e372750ad04a1edca9796acc0c3fee02616f766a496"
+      },
+      {
+        "module": "reference_definition_v301",
+        "path": "fixtures/execution-v3.0.1/EVO883-D12-common-profile-v3.0.1.json",
+        "sha256": "07b71b3fc59dc6dae1c96cadd3155622a18f4c4ad29b7c69b8f79c1455efc2d3"
+      },
+      {
+        "module": "reference_definition_v301",
+        "path": "fixtures/execution-v3.0.1/EVO883-D12-addendum-v3.0.1.md",
+        "sha256": "f540dce44e00b7077a94d3155f55db5fdba700b7a48911ec03697724b8dfa8c9"
+      },
+      {
+        "module": "reference_registry_v3",
+        "path": "fixtures/evo892-v3/candidate_reference_manifest.json",
+        "sha256": "bcce6f17f3515d66eb5b87569720740efb6eb70eca2d774a853be8e3cdecb4a4"
+      },
+      {
+        "module": "reference_registry_v3",
+        "path": "fixtures/evo892-v3/predeclared_reference_registry.json",
+        "sha256": "f531d65a5ad54fc68a8be40bc25cbb3987d0aeedd4c2c345ed334b1599445c48"
+      },
+      {
+        "module": "reference_registry_v3",
+        "path": "fixtures/evo892-v3/meta_reference_manifest.json",
+        "sha256": "964e9903e13bd618777f00652bad09272d7aa4ddbb3cec2c28371a8378002ae6"
+      },
+      {
+        "module": "execution_accounting",
+        "path": "fixtures/fee_params_x1.json",
+        "sha256": "7e24f9e9b25802a7d4b50bd4b089a60d288b8f8f448ea92aac9482816b7ffdb2"
+      }
+    ]
+  }
+}
