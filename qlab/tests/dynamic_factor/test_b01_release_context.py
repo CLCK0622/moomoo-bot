@@ -50,6 +50,21 @@ def private_host_source(monkeypatch):
         receiver_id="PRIVATE_TEST_ONLY_receiver",
         accepted_at="2026-11-07T20:00:00Z",
     )
+    # TEST_ONLY full comment evidence; it carries the same registration identity.
+    time_evidence = dict(
+        type="comment",
+        author_type="agent",
+        author_id="cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+        issue_id="01a19dab-15f2-7e58-96a0-cf92c87162c2",
+        id="TEST_ONLY_PRIVATE_REGISTRATION",
+        revision=1,
+        created_at=time["accepted_at"],
+        content=json.dumps(
+            dict(
+                context_version=time["context_version"], receiver_id=time["receiver_id"]
+            )
+        ),
+    )
     inputs = {}
     for entry in r["accepted_input_manifest"]["entries"][:-1]:
         item = entry["accepted_receipt"]
@@ -64,13 +79,13 @@ def private_host_source(monkeypatch):
         original_inputs=inputs,
         publication_raw=b._canonical(publication),
         annotation_raw=b._canonical(annotation),
-        acceptance_time_evidence_raw=b._canonical(time),
+        acceptance_time_evidence_raw=b._canonical(time_evidence),
         **time,
         implementation_id="PRIVATE_TEST_ONLY_implementation",
         expected_policy_binding_bytes=b._canonical(b._policy_binding(policy)),
         expected_publication_bytes=b._canonical(publication),
         expected_annotation_bytes=b._canonical(annotation),
-        expected_acceptance_time_bytes=b._canonical(time),
+        expected_acceptance_time_bytes=b._canonical(time_evidence),
         run_time_binding_bytes=b._canonical(
             dict(
                 mode="forward",

@@ -92,7 +92,7 @@ def _read_trusted_release():
 
     C1 deliberately omits the root file. C2 installs only the platform comment
     readback after BR-A. Its content is the strict JSON registration below;
-    platform created_at supplies both acceptance and runtime time evidence.
+    platform created_at supplies acceptance evidence; performance is a separate event.
     No request, environment, cwd or caller parameter selects an input.
     """
     from pathlib import Path
@@ -231,18 +231,26 @@ def _read_trusted_release():
             accepted_at=accepted_at,
         )
         run = registration["run_time_binding"]
-        if (
-            type(run) is not dict
-            or set(run) != {"mode", "first_performance_at", "signal_close"}
-            or run["mode"] not in {"history", "forward"}
-        ):
+        if type(run) is not dict or run.get("mode") not in {"history", "forward"}:
             _fail("trust_binding_missing")
-        if _utc(run["first_performance_at"]) <= _utc(accepted_at):
-            _fail("scope_mismatch")
+        if run.get("first_performance_at") is None:
+            if (
+                set(run)
+                != {"mode", "first_performance_at", "signal_close", "performance_state"}
+                or run["performance_state"] != "pre_performance"
+            ):
+                _fail("trust_binding_missing")
+        else:
+            if set(run) != {"mode", "first_performance_at", "signal_close"}:
+                _fail("trust_binding_missing")
+            if _utc(run["first_performance_at"]) <= _utc(accepted_at):
+                _fail("scope_mismatch")
         if run["mode"] == "history":
             if run["signal_close"] is not None:
                 _fail("scope_mismatch")
-        elif _utc(run["signal_close"]) < _utc(accepted_at):
+        elif run["first_performance_at"] is not None and _utc(
+            run["signal_close"]
+        ) < _utc(accepted_at):
             _fail("scope_mismatch")
         source = dict(
             r_raw=r_raw,
@@ -251,13 +259,13 @@ def _read_trusted_release():
             original_inputs=inputs,
             publication_raw=_canonical(publication),
             annotation_raw=_canonical(annotation),
-            acceptance_time_evidence_raw=_canonical(time),
+            acceptance_time_evidence_raw=root_raw,
             **time,
             implementation_id=implementation_id,
             expected_policy_binding_bytes=_canonical(registration["policy_binding"]),
             expected_publication_bytes=_canonical(publication),
             expected_annotation_bytes=_canonical(annotation),
-            expected_acceptance_time_bytes=_canonical(time),
+            expected_acceptance_time_bytes=_canonical(root),
             run_time_binding_bytes=_canonical(run),
         )
         source["expected_sha256"] = {
@@ -530,12 +538,18 @@ def _acceptance(source, policy, *, a_raw=None):
             sha256(source["acceptance_time_evidence_raw"])
             != source["expected_sha256"]["acceptance_time_evidence_raw"]
             or _canonical(time) != source["expected_acceptance_time_bytes"]
-            or time
-            != {
-                "context_version": source["context_version"],
-                "receiver_id": source["receiver_id"],
-                "accepted_at": source["accepted_at"],
-            }
+            or type(time) is not dict
+            or time.get("type") != "comment"
+            or time.get("author_type") != "agent"
+            or time.get("author_id") != "cc562115-7ef6-4b8f-b4b6-a5b7584b1340"
+            or time.get("issue_id") != "01a19dab-15f2-7e58-96a0-cf92c87162c2"
+            or time.get("created_at") != source["accepted_at"]
+            or type(time.get("content")) is not str
+            or type(_json(time["content"].encode("utf-8"))) is not dict
+            or _json(time["content"].encode("utf-8")).get("context_version")
+            != source["context_version"]
+            or _json(time["content"].encode("utf-8")).get("receiver_id")
+            != source["receiver_id"]
         ):
             _fail("acceptance_mismatch")
         if _utc(source["accepted_at"]) < _utc(publication["created_at"]):
@@ -743,24 +757,36 @@ def check_release_context(
         ):
             _fail("scope_mismatch")
         sealed = _utc(request["sealed_at"])
-        if sealed < _utc(a["accepted_at"]):
+        accepted = _utc(a["accepted_at"])
+        if sealed < accepted:
             _fail("scope_mismatch")
         run = a["run_time_binding"]
-        if (
-            type(run) is not dict
-            or set(run) != {"mode", "first_performance_at", "signal_close"}
-            or run["mode"] != request["mode"]
-            or run["first_performance_at"] != request.get("first_performance_at")
-            or run["signal_close"] != request.get("signal_close")
-        ):
+        if type(run) is not dict or run.get("mode") != request["mode"]:
             _fail("scope_mismatch")
-        if request["mode"] == "history":
+        if run.get("first_performance_at") is None:
             if (
-                sealed >= _utc(run["first_performance_at"])
-                or run["signal_close"] is not None
+                set(run)
+                != {"mode", "first_performance_at", "signal_close", "performance_state"}
+                or run["performance_state"] != "pre_performance"
             ):
                 _fail("scope_mismatch")
-        elif _utc(run["signal_close"]) < sealed:
+            first = _utc(request["first_performance_at"])
+            signal_close = request.get("signal_close")
+            if first <= accepted:
+                _fail("scope_mismatch")
+        else:
+            if (
+                set(run) != {"mode", "first_performance_at", "signal_close"}
+                or run["first_performance_at"] != request.get("first_performance_at")
+                or run["signal_close"] != request.get("signal_close")
+            ):
+                _fail("scope_mismatch")
+            first = _utc(run["first_performance_at"])
+            signal_close = run["signal_close"]
+        if request["mode"] == "history":
+            if sealed >= first or signal_close is not None:
+                _fail("scope_mismatch")
+        elif _utc(signal_close) < sealed or _utc(signal_close) < accepted:
             _fail("scope_mismatch")
     except (KeyError, TypeError) as exc:
         raise ValueError("B.release_context_scope_mismatch") from exc
