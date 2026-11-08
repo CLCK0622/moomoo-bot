@@ -298,7 +298,9 @@ class ReferenceExecution:
         return out
 
 
-def replay_execution(program, policy):
+def replay_execution(
+    program, policy, *, release_context=None, expected_release_identity_bytes=None
+):
     """Recompute an owned fact program; no arbitrary callback or result input."""
     if (
         type(program) is not dict
@@ -311,7 +313,12 @@ def replay_execution(program, policy):
     if type(initial) is not dict or set(initial) != {"startup", "history", "run_id"}:
         raise ValueError("reference.closed_execution_genesis_required")
     source = StartupBook(**initial["startup"], policy=policy)
-    history = RiskHistory(**initial["history"], policy=policy)
+    history = RiskHistory(
+        **initial["history"],
+        policy=policy,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
     execution = ReferenceExecution(
         source,
         history,

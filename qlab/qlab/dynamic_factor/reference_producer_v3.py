@@ -131,7 +131,41 @@ def prepare(root, request, mechanisms=None):
     }
 
 
-def execution_main(expected):
+def worker_release(preflight, *, release_context=None):
+    """Local host reloads the existing A; no capability comes from stdin."""
+    if preflight is None:
+        if release_context is not None:
+            raise ValueError("B.release_context_scope_mismatch")
+        return None, None
+    from .b_release_context import receive_release_context
+    from .conventions import load_conventions
+    from .execution_receipts.input_envelope import release_identity
+
+    if type(preflight) is not dict or set(preflight) != {
+        "scope",
+        "identity_bytes",
+        "a_raw",
+    }:
+        raise ValueError("B.release_context_encoding_invalid")
+    policy = load_conventions()
+    if release_context is None:
+        release_context = receive_release_context(
+            policy=policy, a_raw=preflight["a_raw"]
+        )
+    identity = release_identity(
+        preflight["scope"],
+        policy=policy,
+        release_context=release_context,
+        expected_release_identity_bytes=preflight["identity_bytes"],
+    )
+    if identity is None:
+        raise ValueError("B.release_context_scope_mismatch")
+    if release_context.a_raw != preflight["a_raw"]:
+        raise ValueError("B.release_context_acceptance_mismatch")
+    return release_context, identity
+
+
+def execution_main(expected, *, release_context=None):
     """Read declared execution inputs only; C10 owns later core execution.
 
     The host passes expected identities outside stdin. These expectations bind
@@ -147,6 +181,9 @@ def execution_main(expected):
     reads = []
     try:
         request = strict_json(input())
+        _, identity = worker_release(
+            expected.get("release_preflight"), release_context=release_context
+        )
         reads = install_execution(args.inputs_root)
         data = read_execution(args.inputs_root, request, expected)
         report = dict(
@@ -168,6 +205,11 @@ def execution_main(expected):
             runtime_consumable=False,
             certifiable=False,
         )
+        if identity is not None:
+            report.update(
+                schema="EVO884.ExecutionInputTransport/v1-BR1",
+                release_context_binding=json.loads(identity),
+            )
     except (ValueError, KeyError, TypeError, OSError, AttributeError) as exc:
         report = dict(
             schema="EVO884.ExecutionInputTransport/v1",
@@ -226,7 +268,13 @@ def main(mechanisms=None):
 
 
 def result_main(
-    expected_sha256, expected_program_sha256, expected_reads, expected_facts_sha256=None
+    expected_sha256,
+    expected_program_sha256,
+    expected_reads,
+    expected_facts_sha256=None,
+    release_preflight=None,
+    *,
+    release_context=None,
 ):
     """Recompute a bound fact program with the same cores inside the worker."""
     from .execution_receipts.input_data import strict_json
@@ -238,8 +286,12 @@ def result_main(
     from .execution_receipts.input_facts import bind_program
 
     policy = load_conventions()
-    reads = install_result(expected_reads)
+    reads = []
     try:
+        release_context, identity = worker_release(
+            release_preflight, release_context=release_context
+        )
+        reads = install_result(expected_reads)
         program = strict_json(input())
         binding = None
         if expected_facts_sha256 is not None:
@@ -249,11 +301,25 @@ def result_main(
             if digest(facts) != expected_facts_sha256:
                 raise ValueError("reference.worker_facts_binding_mismatch")
             program = program["program"]
-            binding = bind_program(program, facts)
+            binding = bind_program(
+                program,
+                facts,
+                release_context=release_context,
+                expected_release_identity_bytes=identity,
+            )
         if digest(program) != expected_program_sha256:
             raise ValueError("reference.worker_program_binding_mismatch")
-        observation = replay_execution(program, policy)
-        document = check_transport(read_observation(observation)[0], expected_sha256)
+        observation = replay_execution(
+            program,
+            policy,
+            release_context=release_context,
+            expected_release_identity_bytes=identity,
+        )
+        document = check_transport(
+            read_observation(observation)[0],
+            expected_sha256,
+            expected_release_identity_bytes=identity,
+        )
         report = dict(
             schema="EVO884.ReferenceResultTransport/v1",
             observation=document,
@@ -269,6 +335,11 @@ def result_main(
         )
         if binding is not None:
             report["input_fact_binding"] = binding
+        if identity is not None:
+            report.update(
+                schema="EVO884.ReferenceResultTransport/v1-BR1",
+                release_context_binding=json.loads(identity),
+            )
         print(json.dumps(report, sort_keys=True, allow_nan=False))
         return 0
     except (ValueError, KeyError, TypeError, AttributeError) as exc:

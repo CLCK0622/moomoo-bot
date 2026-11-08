@@ -32,6 +32,8 @@ MODULES = {
         "reference_execution",
         "conventions",
         "contract",
+        "b_release_context",
+        "execution_receipts.input_envelope",
     },
     "reference_v3_scope": {
         "noncash_v3",
@@ -178,11 +180,16 @@ def static_proof():
                     for n in tree.body
                     if isinstance(n, ast.FunctionDef) and n.name == "result_main"
                 )
+                release_entry = next(
+                    n
+                    for n in tree.body
+                    if isinstance(n, ast.FunctionDef) and n.name == "worker_release"
+                )
                 for node in ast.walk(tree):
                     if isinstance(node, ast.ImportFrom) and node.module in extension:
                         if not any(
                             e.lineno < node.lineno <= e.end_lineno
-                            for e in (entry, result_entry)
+                            for e in (entry, result_entry, release_entry)
                         ):
                             raise ValueError("reference.execution_import_outside_entry")
                 calls = {
@@ -194,6 +201,17 @@ def static_proof():
                     "read_execution", -1
                 ):
                     raise ValueError("reference.audit_hook_must_precede_data_reads")
+                for worker, installer in (
+                    (entry, "install_execution"),
+                    (result_entry, "install_result"),
+                ):
+                    sites = {
+                        n.func.id: n.lineno
+                        for n in ast.walk(worker)
+                        if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+                    }
+                    if sites.get("worker_release", 10**9) >= sites.get(installer, -1):
+                        raise ValueError("B.release_context_required")
     return {
         # Keep the original preparation entry's graph separately named. The
         # complete module graph and the new dispatch graph are also published;
@@ -304,6 +322,8 @@ EXECUTION_MODULES = {
         "n_binding",
         "input_data",
         "reference_boundary",
+        "input_envelope",
+        "reference_noncash",
     },
     "execution_receipts.input_envelope": {
         "copy",
@@ -312,6 +332,7 @@ EXECUTION_MODULES = {
         "noncash_v3",
         "reference_profile_v301",
         "reference_v3_scope",
+        "conventions",
     },
     "execution_receipts.input_data": {
         "hashlib",
@@ -360,6 +381,7 @@ EXECUTION_MODULES = {
         "execution_risk",
         "reference_profile_v301",
         "reference_execution",
+        "execution_cash",
     },
     "execution_receipts.replay_guard": {
         "hashlib",
@@ -446,19 +468,25 @@ def execution_proof():
                 name == "execution_receipts.input_run"
                 and isinstance(statement, ast.Assign)
                 and ast.unparse(statement)
-                in {"_RUNS = WeakKeyDictionary()", "_CONTEXTS = WeakKeyDictionary()"}
+                in {
+                    "_RUNS = WeakKeyDictionary()",
+                    "_CONTEXTS = WeakKeyDictionary()",
+                    "_RELEASES = WeakKeyDictionary()",
+                }
             ):
                 continue
             if (
                 name == "execution_receipts.input_facts"
                 and isinstance(statement, ast.Assign)
-                and ast.unparse(statement) == "_READS = WeakKeyDictionary()"
+                and ast.unparse(statement)
+                in {"_READS = WeakKeyDictionary()", "_RELEASES = WeakKeyDictionary()"}
             ):
                 continue
             if (
                 name == "execution_receipts.p4p7"
                 and isinstance(statement, ast.Assign)
-                and ast.unparse(statement) == "_SIDECARS = WeakKeyDictionary()"
+                and ast.unparse(statement)
+                in {"_SIDECARS = WeakKeyDictionary()", "_PROOFS = WeakKeyDictionary()"}
             ):
                 continue
             if isinstance(statement, ast.Assign):

@@ -5,11 +5,12 @@ import json
 from weakref import WeakKeyDictionary
 
 from ..contract import digest
-from .input_envelope import prepare_input_envelope
+from .input_envelope import prepare_input_envelope, release_identity
 
 
 _RUNS = WeakKeyDictionary()
 _CONTEXTS = WeakKeyDictionary()
+_RELEASES = WeakKeyDictionary()
 
 
 class InputPreparation:
@@ -33,6 +34,17 @@ def prepare(profile, scope, manifest, **expected):
     run = object.__new__(InputPreparation)
     _RUNS[run] = (deepcopy(request), deepcopy(binding))
     _CONTEXTS[run] = (deepcopy(profile), deepcopy(scope))
+    context = expected.get("release_context")
+    raw = release_identity(
+        scope,
+        policy=expected.get("policy"),
+        release_context=context,
+        expected_release_identity_bytes=expected.get("expected_release_identity_bytes"),
+    )
+    _RELEASES[run] = (context, raw, expected.get("policy"))
+    if raw is not None:
+        # Bootstrap metadata is plain JSON; the native context stays local.
+        _CONTEXTS[run] = json.loads(json.dumps([profile, scope], allow_nan=False))
     return run
 
 
@@ -45,3 +57,15 @@ def read_preparation(run):
 def read_context(run):
     read_preparation(run)
     return deepcopy(_CONTEXTS[run])
+
+
+def read_release(run):
+    read_preparation(run)
+    context, raw, policy = _RELEASES[run]
+    release_identity(
+        _CONTEXTS[run][1],
+        policy=policy,
+        release_context=context,
+        expected_release_identity_bytes=raw,
+    )
+    return context, raw

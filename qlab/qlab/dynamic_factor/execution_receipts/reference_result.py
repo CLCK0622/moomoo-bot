@@ -131,6 +131,12 @@ def issue_observation(execution, *, benchmark, expected_benchmark_sha256):
             runtime_consumable=False,
             certifiable=False,
         )
+        identity = account._check_release()
+        if identity is not None:
+            document.update(
+                schema="EVO884.ReferenceExecutionObservation/v1-BR1",
+                release_context_binding=json.loads(identity),
+            )
         cap = ReferenceObservation(_ISSUER)
         _OWNED[cap] = (series, canonical(document), canonical(program))
         return cap
@@ -159,12 +165,33 @@ def read_program(observation):
     return json.loads(raw), sha256(raw)
 
 
-def check_transport(document, expected_sha256):
+def read_release(observation):
+    document, _ = read_observation(observation)
+    account = _OWNED[observation][0]._account
+    identity = account._check_release()
+    if identity is not None and document.get("release_context_binding") != json.loads(
+        identity
+    ):
+        raise ValueError("B.release_context_persistent_identity_mismatch")
+    return account._release_context, identity
+
+
+def check_transport(document, expected_sha256, *, expected_release_identity_bytes=None):
     """Only the host-owned exact serialized result may cross this entry."""
     if sha256(canonical(document)) != expected_sha256:
         raise ValueError("reference.worker_observation_binding_mismatch")
+    formal = expected_release_identity_bytes is not None
+    if formal:
+        from ..execution_cash import CashProof
+
+        binding = CashProof.binding_value(expected_release_identity_bytes)
+        if document.get("release_context_binding") != binding:
+            raise ValueError("B.release_context_persistent_identity_mismatch")
+    elif "release_context_binding" in document:
+        raise ValueError("B.release_context_scope_mismatch")
     if (
-        document.get("schema") != "EVO884.ReferenceExecutionObservation/v1"
+        document.get("schema")
+        != "EVO884.ReferenceExecutionObservation/v1" + ("-BR1" if formal else "")
         or document.get("complete") is not True
         or document.get("seal_status") != "seal_pending"
         or document.get("execution_verified") is not False

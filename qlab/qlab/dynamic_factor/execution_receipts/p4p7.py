@@ -10,12 +10,19 @@ from weakref import WeakKeyDictionary
 
 from ..contract import canonical, digest, sha256
 from .input_facts import read_facts
-from .reference_result import read_observation, read_program
+from .reference_result import (
+    read_observation,
+    read_program,
+    read_release as observation_release,
+)
+from .input_facts import read_release as facts_release
+from .input_envelope import release_identity
 from .n_binding import bind_execution_n, execution_configurations
 from .input_data import require_resealed_evidence
 
 
 _SIDECARS = WeakKeyDictionary()
+_PROOFS = WeakKeyDictionary()
 
 
 class ExecutionSidecar:
@@ -23,12 +30,36 @@ class ExecutionSidecar:
         raise TypeError("reference.owned_P4_P7_required")
 
 
-def prepare_sidecar(observation, input_read, *, n_binding):
+def prepare_sidecar(observation, input_read, *, n_binding, reference_proofs=None):
     from ..reference_boundary import run_execution_result
 
     doc, obs_sha = read_observation(observation)
     program, program_sha = read_program(observation)
     facts, facts_sha = read_facts(input_read)
+    context, identity = observation_release(observation)
+    if facts_release(input_read)[1] != identity:
+        raise ValueError("B.release_context_persistent_identity_mismatch")
+    release_identity(
+        facts["scope"],
+        release_context=context,
+        expected_release_identity_bytes=identity,
+    )
+    if identity is not None:
+        from ..reference_noncash import validate_packet
+
+        actor = "reference/" + doc["scope"]["member_id"]
+        if type(reference_proofs) is not dict or set(reference_proofs) != {actor}:
+            raise ValueError("reference.separate_three_proofs_required")
+        validate_packet(
+            facts["scope"]["guard"],
+            actor,
+            reference_proofs[actor],
+            scope=facts["scope"],
+            release_context=context,
+            expected_release_identity_bytes=identity,
+        )
+    elif reference_proofs is not None:
+        raise ValueError("B.release_context_scope_mismatch")
     m, scope = facts["manifest"], doc["scope"]
     # P7 consumes the original sole reader and actual chain attempt map. The
     # wire caller cannot submit a numeric N or a copied acceptance receipt.
@@ -102,7 +133,25 @@ def prepare_sidecar(observation, input_read, *, n_binding):
         certifiable=False,
     )
     cap = object.__new__(ExecutionSidecar)
+    if identity is not None:
+        body.update(
+            schema="EVO884.ReferenceP4P7Sidecar/v1-BR1",
+            release_context_binding=json.loads(identity),
+            B_catalog_release_sha256=context.h_r,
+        )
+        body["P4"]["release_context_binding"] = json.loads(identity)
+        body["P7"]["release_context_binding"] = json.loads(identity)
+        body["three_proof_publication_binding"] = dict(
+            actor=actor,
+            release_context_binding=json.loads(identity),
+            packet_sha256=digest(reference_proofs[actor]),
+            proofs={
+                name: digest(reference_proofs[actor][name])
+                for name in ("zero_origin", "no_acquisition", "economic_no_read")
+            },
+        )
     _SIDECARS[cap] = (observation, input_read, canonical(body), dict(n_binding))
+    _PROOFS[cap] = deepcopy(reference_proofs)
     return cap
 
 
@@ -111,6 +160,31 @@ def read_sidecar(cap):
         raise ValueError("reference.owned_P4_P7_required")
     observation, input_read, raw, n_binding = _SIDECARS[cap]
     doc = json.loads(raw)
+    _, identity = observation_release(observation)
+    if facts_release(input_read)[1] != identity:
+        raise ValueError("B.release_context_persistent_identity_mismatch")
+    if identity is not None and any(
+        value != json.loads(identity)
+        for value in (
+            doc.get("release_context_binding"),
+            doc["P4"].get("release_context_binding"),
+            doc["P7"].get("release_context_binding"),
+        )
+    ):
+        raise ValueError("B.release_context_persistent_identity_mismatch")
+    if identity is not None:
+        actor = "reference/" + doc["scope"]["member_id"]
+        proofs = _PROOFS[cap]
+        if doc["three_proof_publication_binding"] != dict(
+            actor=actor,
+            release_context_binding=json.loads(identity),
+            packet_sha256=digest(proofs[actor]),
+            proofs={
+                name: digest(proofs[actor][name])
+                for name in ("zero_origin", "no_acquisition", "economic_no_read")
+            },
+        ):
+            raise ValueError("B.release_context_persistent_identity_mismatch")
     if (
         read_observation(observation)[1] != doc["observation_sha256"]
         or read_facts(input_read)[1] != doc["input_facts_sha256"]
@@ -121,7 +195,7 @@ def read_sidecar(cap):
     return doc, sha256(raw)
 
 
-def receive_sidecar(cap):
+def receive_sidecar(cap, *, release_context=None, expected_release_identity_bytes=None):
     """Current formal entry fails closed before any numeric reader/worker.
 
     A future reseal/source receiver requires its separately approved contract;
@@ -142,8 +216,41 @@ def receive_sidecar(cap):
         reasons=[],
     )
     try:
+        if type(cap) is ExecutionSidecar and cap in _SIDECARS:
+            observation, input_read, raw, _ = _SIDECARS[cap]
+            declared = json.loads(raw)
+            formal = declared.get("schema") == "EVO884.ReferenceP4P7Sidecar/v1-BR1"
+            if not formal and (
+                release_context is not None
+                or expected_release_identity_bytes is not None
+            ):
+                raise ValueError("B.release_context_scope_mismatch")
+            if formal:
+                if release_context is None:
+                    raise ValueError("B.release_context_required")
+                if expected_release_identity_bytes is None:
+                    raise ValueError("B.release_context_persistent_identity_required")
+                checked = release_identity(
+                    read_facts(input_read)[0]["scope"],
+                    release_context=release_context,
+                    expected_release_identity_bytes=expected_release_identity_bytes,
+                )
+                if declared.get("release_context_binding") != json.loads(checked):
+                    raise ValueError("B.release_context_persistent_identity_mismatch")
         doc, identity = read_sidecar(cap)
         report["sidecar_sha256"] = identity
+        if doc["schema"] == "EVO884.ReferenceP4P7Sidecar/v1-BR1":
+            observation, input_read, _, _ = _SIDECARS[cap]
+            _, owner_identity = observation_release(observation)
+            checked = release_identity(
+                read_facts(input_read)[0]["scope"],
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
+            )
+            if expected_release_identity_bytes is None or checked != owner_identity:
+                raise ValueError("B.release_context_persistent_identity_mismatch")
+        elif release_context is not None or expected_release_identity_bytes is not None:
+            raise ValueError("B.release_context_scope_mismatch")
         require_resealed_evidence(doc)
         # No B publication or SRC/AUTH reception object exists in this phase.
         # Retain the original refusal rather than a permissive placeholder.

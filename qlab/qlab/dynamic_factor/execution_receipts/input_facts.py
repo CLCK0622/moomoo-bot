@@ -12,10 +12,15 @@ from ..contract import canonical, digest, sha256
 from ..execution_numbers import amount
 from ..reference_validation import utc_instant
 from .input_data import validate_data
-from .input_run import read_preparation, read_context
+from .input_run import (
+    read_preparation,
+    read_context,
+    read_release as preparation_release,
+)
 
 
 _READS = WeakKeyDictionary()
+_RELEASES = WeakKeyDictionary()
 ROLES = ("raw", "rights", "adv", "cash")
 
 
@@ -28,6 +33,7 @@ def read_files(root, preparation):
     """Acquire from the real isolated reader, never from a serialized report."""
     from ..reference_boundary import run_isolated
 
+    context, identity = preparation_release(preparation)
     request, _ = read_preparation(preparation)
     report = run_isolated(root, request, input_preparation=preparation)
     if report["transport_complete"] is not True:
@@ -41,8 +47,16 @@ def read_files(root, preparation):
         data=report["data"],
         boundary=report["access_boundary_receipt"],
     )
+    if identity is not None:
+        if report.get("release_context_binding") != json.loads(identity):
+            raise ValueError("B.release_context_persistent_identity_mismatch")
+        document.update(
+            schema="EVO884.ReadExecutionFacts/v1-BR1",
+            release_context_binding=json.loads(identity),
+        )
     cap = object.__new__(InputRead)
     _READS[cap] = canonical(document)
+    _RELEASES[cap] = preparation
     return cap
 
 
@@ -53,22 +67,45 @@ def read_facts(cap):
     return json.loads(raw), sha256(raw)
 
 
-def bind_program(program, facts):
+def read_release(cap):
+    read_facts(cap)
+    return preparation_release(_RELEASES[cap])
+
+
+def bind_program(
+    program, facts, *, release_context=None, expected_release_identity_bytes=None
+):
     """Check every original market cell before the sole engine is replayed.
 
     Selection signals and the separate analytical-TR benchmark retain their own
     identities; the four-file receipt does not authenticate either source.
     Numerical equality uses C04's canonical amount reader, never new rounding.
     """
+    formal = (
+        type(facts) is dict
+        and facts.get("schema") == "EVO884.ReadExecutionFacts/v1-BR1"
+    )
     if (
         type(facts) is not dict
-        or set(facts) != {"schema", "manifest", "profile", "scope", "data", "boundary"}
-        or facts["schema"] != "EVO884.ReadExecutionFacts/v1"
+        or set(facts)
+        != {"schema", "manifest", "profile", "scope", "data", "boundary"}
+        | ({"release_context_binding"} if formal else set())
+        or facts["schema"]
+        != "EVO884.ReadExecutionFacts/v1" + ("-BR1" if formal else "")
     ):
         raise ValueError("reference.closed_read_facts_required")
-    from .input_envelope import prepare_input_envelope
+    from .input_envelope import prepare_input_envelope, release_identity
 
     m, scope = facts["manifest"], facts["scope"]
+    identity = release_identity(
+        scope,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
+    if formal != (identity is not None) or (
+        formal and facts["release_context_binding"] != json.loads(identity)
+    ):
+        raise ValueError("B.release_context_persistent_identity_mismatch")
     checked = prepare_input_envelope(
         facts["profile"],
         scope,
@@ -78,6 +115,8 @@ def bind_program(program, facts):
         expected_manifest_sha256=digest(m),
         expected_scope_sha256=m["scope_sha256"],
         expected_profile_sha256=m["profile_sha256"],
+        release_context=release_context,
+        expected_release_identity_bytes=identity,
     )
     if not checked["prepared"]:
         raise ValueError(checked["reasons"][0])
@@ -92,6 +131,8 @@ def bind_program(program, facts):
     ):
         raise ValueError("reference.input_execution_identity_mismatch")
     boundary = facts["boundary"]
+    if formal and boundary.get("release_context_binding") != json.loads(identity):
+        raise ValueError("B.release_context_persistent_identity_mismatch")
     if (
         boundary["declared_input_manifest"] != m
         or boundary["source_acceptance"] != "not_checked"

@@ -9,7 +9,13 @@ from copy import deepcopy
 from datetime import date
 
 from ..contract import digest, is_sha
-from ..noncash_v3 import CONSUMERS, assert_consumer_symbols
+from ..noncash_v3 import (
+    CONSUMERS,
+    assert_consumer_symbols,
+    checked_guard,
+    check_release_context,
+)
+from ..conventions import load_conventions
 from ..reference_profile_v301 import validate_solo_profile
 from ..reference_v3_scope import validate_scope
 
@@ -39,6 +45,28 @@ BINDING_KEYS = (
     "prereg_sha256",
     "common_profile_sha256",
 )
+
+
+def release_identity(
+    scope, *, policy=None, release_context=None, expected_release_identity_bytes=None
+):
+    """Recheck the owned host capability; a serialized identity is not trust."""
+    policy = policy or load_conventions()
+    guard = scope["guard"]
+    checked_guard(
+        guard,
+        policy,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
+    if guard.get("schema") != "EVO883.BRuntimeGuard/v1":
+        return None
+    return check_release_context(
+        release_context,
+        policy=policy,
+        request=guard["request"],
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
 
 
 def _dates(values):

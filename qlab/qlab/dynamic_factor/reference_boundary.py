@@ -230,19 +230,38 @@ def run_execution_result(observation, *, input_read=None):
     The worker replays only the immutable fact program issued by the owned book
     and must reproduce its full C07 result. No caller return vector is sent.
     """
-    from .execution_receipts.reference_result import read_observation, read_program
+    from .execution_receipts.reference_result import (
+        read_observation,
+        read_program,
+        read_release,
+    )
     from .scope_proof import reference_execution_proof
     from .conventions import load_conventions
     from .contract import canonical
 
     document, expected_sha256 = read_observation(observation)
     program, expected_program_sha256 = read_program(observation)
+    context, identity = read_release(observation)
+    preflight = (
+        None
+        if identity is None
+        else dict(
+            scope={"guard": program["initial"]["history"]["guard"]},
+            identity_bytes=identity,
+            a_raw=context.a_raw,
+        )
+    )
     facts = binding = None
     if input_read is not None:
         from .execution_receipts.input_facts import read_facts, bind_program
 
         facts, facts_sha256 = read_facts(input_read)
-        binding = bind_program(program, facts)
+        binding = bind_program(
+            program,
+            facts,
+            release_context=context,
+            expected_release_identity_bytes=identity,
+        )
     proof = reference_execution_proof(load_conventions())
     source_root = Path(__file__).parent
     expected_reads = {
@@ -260,7 +279,10 @@ def run_execution_result(observation, *, input_read=None):
         + repr(expected_program_sha256)
         + ","
         + repr(expected_reads)
-        + ("," + repr(facts_sha256) if facts is not None else "")
+        + ","
+        + repr(facts_sha256 if facts is not None else None)
+        + ","
+        + repr(preflight)
         + "))"
     )
     child = subprocess.run(
@@ -299,6 +321,11 @@ def run_execution_result(observation, *, input_read=None):
     )
     if binding is not None:
         expected["input_fact_binding"] = binding
+    if identity is not None:
+        expected.update(
+            schema="EVO884.ReferenceResultTransport/v1-BR1",
+            release_context_binding=json.loads(identity),
+        )
     if (
         canonical(report) != canonical(expected)
         or type(report["protocol_read_paths"]) is not list
@@ -309,6 +336,8 @@ def run_execution_result(observation, *, input_read=None):
     # Check the actual owned account again after the child exits.
     if read_observation(observation)[1] != expected_sha256:
         raise ValueError("reference.observation_account_drift")
+    if read_release(observation)[1] != identity:
+        raise ValueError("B.release_context_persistent_identity_mismatch")
     report["source_proof_sha256"] = digest(proof)
     return report
 
@@ -351,16 +380,19 @@ def run_execution_family(observations, *, input_reads=None):
         raise ValueError("reference.separate_books_same_family_binding_required")
     if input_reads is not None:
         from .execution_receipts.input_facts import read_facts, bind_program
-        from .execution_receipts.reference_result import read_program
+        from .execution_receipts.reference_result import read_program, read_release
 
         if type(input_reads) is not dict or set(input_reads) != set(DISPATCH):
             raise ValueError("reference.closed_four_owned_input_reads_required")
         # Preflight every member before the first result child. A missing or
         # foreign read capability cannot silently take the diagnostic fallback.
         for member in sorted(DISPATCH):
+            context, identity = read_release(observations[member])
             bind_program(
                 read_program(observations[member])[0],
                 read_facts(input_reads[member])[0],
+                release_context=context,
+                expected_release_identity_bytes=identity,
             )
     outputs = {
         m: run_execution_result(observations[m], input_read=input_reads[m])
@@ -381,11 +413,25 @@ def run_execution_family(observations, *, input_reads=None):
 
 
 def _run_input_preparation(root, request, preparation):
-    from .execution_receipts.input_run import read_preparation
+    from .execution_receipts.input_run import (
+        read_preparation,
+        read_context,
+        read_release,
+    )
     from .reference_check import static_proof
     from .contract import canonical
 
     owned, expected = read_preparation(preparation)
+    context, identity = read_release(preparation)
+    if identity is not None:
+        expected = dict(
+            expected,
+            release_preflight=dict(
+                scope=read_context(preparation)[1],
+                identity_bytes=identity,
+                a_raw=context.a_raw,
+            ),
+        )
     if canonical(request) != canonical(owned):
         raise ValueError("execution_input.host_request_binding_mismatch")
     proof = static_proof()
@@ -441,9 +487,15 @@ def _run_input_preparation(root, request, preparation):
         raise ValueError("execution_input.unexpected_worker_output")
     if report["transport_complete"]:
         fields |= {"run_id", "book_id", "member_id", "manifest_sha256", "data"}
+        if identity is not None:
+            fields.add("release_context_binding")
+            if report.get("release_context_binding") != json.loads(identity):
+                raise ValueError("B.release_context_persistent_identity_mismatch")
     if (
         set(report) != fields
-        or report.get("schema") != "EVO884.ExecutionInputTransport/v1"
+        or report.get("schema")
+        != "EVO884.ExecutionInputTransport/v1"
+        + ("-BR1" if identity is not None and report["transport_complete"] else "")
         or report.get("seal_status") != "seal_pending"
         or report.get("returns") is not None
         or report.get("sr") is not None
@@ -491,4 +543,11 @@ def _run_input_preparation(root, request, preparation):
         isolated_child=True,
         seal_status="seal_pending",
     )
+    if identity is not None:
+        if read_release(preparation)[1] != identity:
+            raise ValueError("B.release_context_persistent_identity_mismatch")
+        report["access_boundary_receipt"].update(
+            schema="EVO884.ExecutionInputBoundary/v1-BR1",
+            release_context_binding=json.loads(identity),
+        )
     return report

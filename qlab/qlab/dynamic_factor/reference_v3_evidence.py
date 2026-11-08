@@ -15,22 +15,54 @@ from .reference_registry_v3 import (
 from .fold_split import shared_views, reference_view, train_dates
 
 
-def prepare_execution_sidecar(observation, input_read, *, n_binding):
+def prepare_execution_sidecar(
+    observation, input_read, *, n_binding, reference_proofs=None
+):
     """Collect owned P4/P7 evidence; this never accepts SRC/AUTH or B."""
     from .execution_receipts.p4p7 import prepare_sidecar
 
-    return prepare_sidecar(observation, input_read, n_binding=n_binding)
+    return prepare_sidecar(
+        observation, input_read, n_binding=n_binding, reference_proofs=reference_proofs
+    )
 
 
-def receive_execution_sidecar(sidecar):
+def receive_execution_sidecar(
+    sidecar, *, release_context=None, expected_release_identity_bytes=None
+):
     """Formal reception remains fail-closed before any numerical read."""
     from .execution_receipts.p4p7 import receive_sidecar
 
-    return receive_sidecar(sidecar)
+    return receive_sidecar(
+        sidecar,
+        release_context=release_context,
+        expected_release_identity_bytes=expected_release_identity_bytes,
+    )
 
 
-def seal_static(scope, sealed_at, policy=None):
+def seal_static(
+    scope,
+    sealed_at,
+    policy=None,
+    *,
+    release_context=None,
+    expected_release_identity_bytes=None,
+):
     p = policy or load_conventions()
+    from .execution_receipts.input_envelope import release_identity
+
+    identity = None
+    if (
+        scope.get("schema", "").endswith("-BR1")
+        or scope.get("B_catalog_release_sha256") is not None
+        or release_context is not None
+        or expected_release_identity_bytes is not None
+    ):
+        identity = release_identity(
+            scope,
+            policy=p,
+            release_context=release_context,
+            expected_release_identity_bytes=expected_release_identity_bytes,
+        )
     anchor = artifact("platform-anchor.json")["document"]
     if (
         not timestamp(anchor["created_at"])
@@ -66,6 +98,16 @@ def seal_static(scope, sealed_at, policy=None):
         certifiable=False,
         first_reference_performance_at=None,
     )
+    if identity is not None:
+        import json
+
+        payload.update(
+            schema="EVO900.reference-static-seal/v3-BR1",
+            B_catalog_release_sha256=release_context.h_r,
+            B_release_acceptance_sha256=release_context.h_a,
+            B_catalog_sha256=release_context.h_c,
+            release_context_binding=json.loads(identity),
+        )
     return dict(payload, static_seal_sha256=digest(payload))
 
 
@@ -132,7 +174,9 @@ def lineage_proof(scope, sealed_at, policy=None):
     )
 
 
-def runtime_check(request, policy=None):
+def runtime_check(
+    request, policy=None, *, release_context=None, expected_release_identity_bytes=None
+):
     p = policy or load_conventions()
     reasons = []
     try:
@@ -146,6 +190,14 @@ def runtime_check(request, policy=None):
             "evidence_files",
             "complete_N_receipt",
         }
+        formal = (
+            type(request) is dict
+            and request.get("schema") == "EVO884.ReferenceRuntimeRequest/v1-BR1"
+        )
+        if formal:
+            allowed |= {"schema", "release_context_binding"}
+        elif release_context is not None or expected_release_identity_bytes is not None:
+            raise ValueError("B.release_context_scope_mismatch")
         if set(request) - allowed:
             raise ValueError("reference.v3_runtime_schema_or_old_V_forbidden")
         verify_registry(
@@ -156,7 +208,30 @@ def runtime_check(request, policy=None):
         )
         scope = request["scope"]
         seal = request["static_seal"]
-        if seal_static(scope, seal["sealed_at"], p) != seal:
+        if formal:
+            from .execution_receipts.input_envelope import release_identity
+            from .execution_cash import CashProof
+
+            identity = release_identity(
+                scope,
+                policy=p,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
+            )
+            if identity is None or request[
+                "release_context_binding"
+            ] != CashProof.binding_value(identity):
+                raise ValueError("B.release_context_persistent_identity_mismatch")
+        if (
+            seal_static(
+                scope,
+                seal["sealed_at"],
+                p,
+                release_context=release_context,
+                expected_release_identity_bytes=expected_release_identity_bytes,
+            )
+            != seal
+        ):
             raise ValueError("reference.static_seal_mismatch")
         sidecars = request.get("sidecars")
         if type(sidecars) is dict:
