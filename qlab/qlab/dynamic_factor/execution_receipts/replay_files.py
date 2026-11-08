@@ -114,7 +114,7 @@ REPLAY_FIXED_FILES = {
     "fixtures/catalog-v21/EVO893-B-noncash-catalog-v21.csv": "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13",
     "fixtures/catalog-v21/EVO893-B-CMI-guard-v21.json": "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77",
     "fixtures/catalog-v21/EVO883-v21-final-receipt.json": "b8b930396e7caf42ad8bde0f2f7ff190c40f36fd4c4686964a39154926f6644a",
-    "b_release_context.py": "4d5d3e5a44e6a5e2d7b1cae25b94ef9addcf8be208ed5a908118fe13ddf7e06e",
+    "b_release_context.py": "3bf62aa7a16f3b87ec82062619b9d01925233e6eed385e95c476fc29890b4eaa",
     "fixtures/calendar-folds-v0.1.json": "d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74",
     "fixtures/common-calendar-v0.1.txt": "de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb",
     "fixtures/common-profile-v3.json": "0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464",

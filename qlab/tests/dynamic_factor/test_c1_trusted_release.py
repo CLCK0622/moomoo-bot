@@ -164,7 +164,8 @@ def test_every_original_SHA_mismatch_rejected_in_child(copied_host, tmp_path, na
 
 
 @pytest.mark.parametrize(
-    "fault", ["author", "issue", "duplicate_key", "extra_key", "bound_R"]
+    "fault",
+    ["author", "issue", "missing_issue", "duplicate_key", "extra_key", "bound_R"],
 )
 def test_root_structure_and_original_bindings_are_checked(copied_host, tmp_path, fault):
     _, originals, readback, registration = copied_host
@@ -173,6 +174,8 @@ def test_root_structure_and_original_bindings_are_checked(copied_host, tmp_path,
         readback["author_id"] = "TEST_ONLY_OTHER_AUTHOR"
     elif fault == "issue":
         readback["issue_id"] = "TEST_ONLY_OTHER_ISSUE"
+    elif fault == "missing_issue":
+        readback.pop("issue_id")
     elif fault == "extra_key":
         registration["override_root"] = "/TEST_ONLY_IGNORED"
     elif fault == "bound_R":

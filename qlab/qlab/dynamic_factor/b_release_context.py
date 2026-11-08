@@ -98,6 +98,13 @@ def _read_trusted_release():
     from pathlib import Path
 
     try:
+        live_code = _read_trusted_release.__code__
+        if type(__file__) is not str or __file__ != live_code.co_filename:
+            _fail("acceptance_mismatch")
+    except (NameError, AttributeError, TypeError) as exc:
+        raise ValueError("B.release_context_acceptance_mismatch") from exc
+
+    try:
         root_raw = (
             Path(__file__).parent
             / "b_release_originals"
@@ -117,8 +124,7 @@ def _read_trusted_release():
             or type(root.get("revision")) is not int
             or root["revision"] < 1
             or type(root.get("content")) is not str
-            or root.get("issue_id", "01a19dab-15f2-7e58-96a0-cf92c87162c2")
-            != "01a19dab-15f2-7e58-96a0-cf92c87162c2"
+            or root.get("issue_id") != "01a19dab-15f2-7e58-96a0-cf92c87162c2"
         ):
             _fail("trust_binding_missing")
         accepted_at = root["created_at"]
@@ -151,7 +157,67 @@ def _read_trusted_release():
             _fail("trust_binding_missing")
         # Anti-cycle: the root SHA is data-only, never embedded in any code.
         # This sole self-read is used only for the module implementation_id.
-        implementation_id = sha256(Path.read_bytes(Path(__file__)))
+        # Only compile this one fixed self-read; never execute the compiled module.
+        try:
+            self_raw = Path.read_bytes(Path(__file__))
+            compiled_module = compile.__call__(
+                self_raw, live_code.co_filename, "exec", dont_inherit=True, optimize=-1
+            )
+        except (OSError, SyntaxError, ValueError, TypeError) as exc:
+            raise ValueError("B.release_context_acceptance_mismatch") from exc
+        code_type = type(live_code)
+
+        def same_constant(left, right):
+            if type(left) is not type(right):
+                return False
+            if type(left) is code_type:
+                return same_code(left, right)
+            if type(left) is tuple:
+                return len(left) == len(right) and all(
+                    same_constant(a, b) for a, b in zip(left, right)
+                )
+            return left == right
+
+        def same_code(left, right):
+            attributes = (
+                "co_argcount",
+                "co_posonlyargcount",
+                "co_kwonlyargcount",
+                "co_nlocals",
+                "co_stacksize",
+                "co_flags",
+                "co_code",
+                "co_names",
+                "co_varnames",
+                "co_freevars",
+                "co_cellvars",
+                "co_filename",
+                "co_name",
+                "co_firstlineno",
+            )
+            optional = ("co_lnotab", "co_linetable", "co_exceptiontable", "co_qualname")
+            return (
+                type(left) is type(right) is code_type
+                and all(getattr(left, key) == getattr(right, key) for key in attributes)
+                and all(
+                    hasattr(left, key) == hasattr(right, key)
+                    and (
+                        not hasattr(left, key)
+                        or getattr(left, key) == getattr(right, key)
+                    )
+                    for key in optional
+                )
+                and same_constant(left.co_consts, right.co_consts)
+            )
+
+        candidates = [
+            value
+            for value in compiled_module.co_consts
+            if type(value) is code_type and value.co_name == "_read_trusted_release"
+        ]
+        if len(candidates) != 1 or not same_code(candidates[0], live_code):
+            _fail("acceptance_mismatch")
+        implementation_id = sha256(self_raw)
         if registration["implementation_id"] != implementation_id:
             _fail("acceptance_mismatch")
         original_sha256 = {

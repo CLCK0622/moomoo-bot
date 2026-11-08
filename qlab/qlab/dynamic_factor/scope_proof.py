@@ -517,7 +517,7 @@ B_RELEASE_PATH_ONLY_READS = (
 )
 
 
-def _b_release_adapter_scope(tree):
+def _b_release_adapter_scope(tree, audit_tree):
     """Exact call ASTs, fixed original loop, and self-read SHA-only use."""
     try:
         if len(B_RELEASE_PATH_ONLY_READS) != 2 or set(B_RELEASE_PATH_ONLY_READS) != {
@@ -578,18 +578,146 @@ def _b_release_adapter_scope(tree):
             raise ValueError
         # In particular the self-read argument AST must be EXACTLY Path(__file__)
         # (not a literal, alias, env/request expression or runtime path test).
-        identity = ast.parse(
-            "implementation_id = sha256(Path.read_bytes(Path(__file__)))"
-        ).body[0]
-        if sum(ast.dump(n) == ast.dump(identity) for n in ast.walk(fn)) != 1:
-            raise ValueError
-        for n in ast.walk(fn):
-            if (
-                isinstance(n, ast.Name)
-                and isinstance(n.ctx, ast.Store)
-                and n.id in {"Path", "__file__"}
+        # Scan the WHOLE module, including bindings outside the reader body.
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Name):
+                if node.id in {"globals", "setattr"}:
+                    raise ValueError
+                if isinstance(node.ctx, (ast.Store, ast.Del)) and node.id in {
+                    "__file__",
+                    "Path",
+                    "compile",
+                    "_read_trusted_release",
+                }:
+                    raise ValueError
+            if isinstance(node, ast.Attribute):
+                if node.attr in {"globals", "setattr", "__setattr__"}:
+                    raise ValueError
+                if node.attr == "__file__" and isinstance(
+                    node.ctx, (ast.Store, ast.Del)
+                ):
+                    raise ValueError
+            if isinstance(node, ast.Subscript) and isinstance(
+                node.ctx, (ast.Store, ast.Del)
             ):
+                if (
+                    isinstance(node.slice, ast.Constant)
+                    and node.slice.value == "__file__"
+                ):
+                    raise ValueError
+            if isinstance(
+                node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+            ) and node.name in {"__file__", "Path", "compile"}:
                 raise ValueError
+            if isinstance(node, ast.arg) and node.arg in {
+                "__file__",
+                "Path",
+                "compile",
+            }:
+                raise ValueError
+            if isinstance(node, ast.ExceptHandler) and node.name in {
+                "__file__",
+                "Path",
+                "compile",
+            }:
+                raise ValueError
+            if isinstance(node, ast.alias) and (
+                node.asname or node.name.split(".")[0]
+            ) in {"__file__", "compile"}:
+                raise ValueError
+        imports = [
+            n for n in ast.walk(fn) if isinstance(n, (ast.Import, ast.ImportFrom))
+        ]
+        if len(imports) != 1 or ast.dump(imports[0]) != ast.dump(
+            ast.parse("from pathlib import Path").body[0]
+        ):
+            raise ValueError
+        if (
+            sum(
+                isinstance(n, ast.alias) and (n.asname or n.name) == "Path"
+                for n in ast.walk(tree)
+            )
+            != 1
+        ):
+            raise ValueError
+        prelude = ast.parse(
+            'try:\n    live_code = _read_trusted_release.__code__\n    if type(__file__) is not str or __file__ != live_code.co_filename:\n        _fail("acceptance_mismatch")\nexcept (NameError, AttributeError, TypeError) as exc:\n    raise ValueError("B.release_context_acceptance_mismatch") from exc\n'
+        ).body
+        binding = ast.parse(
+            '# Only compile this one fixed self-read; never execute the compiled module.\ntry:\n    self_raw = Path.read_bytes(Path(__file__))\n    compiled_module = compile.__call__(\n        self_raw, live_code.co_filename, "exec", dont_inherit=True, optimize=-1\n    )\nexcept (OSError, SyntaxError, ValueError, TypeError) as exc:\n    raise ValueError("B.release_context_acceptance_mismatch") from exc\ncode_type = type(live_code)\n\ndef same_constant(left, right):\n    if type(left) is not type(right):\n        return False\n    if type(left) is code_type:\n        return same_code(left, right)\n    if type(left) is tuple:\n        return len(left) == len(right) and all(\n            same_constant(a, b) for a, b in zip(left, right)\n        )\n    return left == right\n\ndef same_code(left, right):\n    attributes = (\n        "co_argcount", "co_posonlyargcount", "co_kwonlyargcount", "co_nlocals",\n        "co_stacksize", "co_flags", "co_code", "co_names", "co_varnames",\n        "co_freevars", "co_cellvars", "co_filename", "co_name", "co_firstlineno",\n    )\n    optional = ("co_lnotab", "co_linetable", "co_exceptiontable", "co_qualname")\n    return (\n        type(left) is type(right) is code_type\n        and all(getattr(left, key) == getattr(right, key) for key in attributes)\n        and all(\n            hasattr(left, key) == hasattr(right, key)\n            and (not hasattr(left, key) or getattr(left, key) == getattr(right, key))\n            for key in optional\n        )\n        and same_constant(left.co_consts, right.co_consts)\n    )\n\ncandidates = [\n    value for value in compiled_module.co_consts\n    if type(value) is code_type and value.co_name == "_read_trusted_release"\n]\nif len(candidates) != 1 or not same_code(candidates[0], live_code):\n    _fail("acceptance_mismatch")\nimplementation_id = sha256(self_raw)\n'
+        ).body
+
+        def exact_sequence(statements, expected):
+            wanted = [ast.dump(n) for n in expected]
+            actual = [ast.dump(n) for n in statements]
+            return (
+                sum(actual[i : i + len(wanted)] == wanted for i in range(len(actual)))
+                == 1
+            )
+
+        if not exact_sequence(fn.body, prelude):
+            raise ValueError
+        containers = [n.body for n in ast.walk(fn) if isinstance(n, ast.Try)]
+        if sum(exact_sequence(body, binding) for body in containers) != 1:
+            raise ValueError
+        compile_calls = [
+            n
+            for n in ast.walk(tree)
+            if isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Attribute)
+            and n.func.attr == "__call__"
+            and isinstance(n.func.value, ast.Name)
+            and n.func.value.id == "compile"
+        ]
+        expected_compile = ast.parse(
+            'compile.__call__(self_raw, live_code.co_filename, "exec", dont_inherit=True, optimize=-1)',
+            mode="eval",
+        ).body
+        if len(compile_calls) != 1 or ast.dump(compile_calls[0]) != ast.dump(
+            expected_compile
+        ):
+            raise ValueError
+        if (
+            sum(isinstance(n, ast.Name) and n.id == "compile" for n in ast.walk(tree))
+            != 1
+        ):
+            raise ValueError
+        if (
+            sum(
+                isinstance(n, ast.Name)
+                and n.id == "self_raw"
+                and isinstance(n.ctx, ast.Load)
+                for n in ast.walk(fn)
+            )
+            != 2
+        ):
+            raise ValueError
+        # This additive fixed metadata read has its own exact AST registration.
+        # Legacy direct read_bytes/compile guard and counts above stay untouched.
+        audit_reads = [
+            n
+            for n in ast.walk(audit_tree)
+            if isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Attribute)
+            and n.func.attr == "__call__"
+            and isinstance(n.func.value, ast.Attribute)
+            and n.func.value.attr == "read_bytes"
+        ]
+        expected_read = ast.parse(
+            "Path.read_bytes.__call__(root / relative)", mode="eval"
+        ).body
+        if len(audit_reads) != 1 or ast.dump(audit_reads[0]) != ast.dump(expected_read):
+            raise ValueError
+        audit_fn = next(
+            n
+            for n in audit_tree.body
+            if isinstance(n, ast.FunctionDef) and n.name == "b2_isolation_proof"
+        )
+        audit_loop = ast.parse(
+            'for _, relative, expected in B_RELEASE_ADAPTER_READS:\n    raw = Path.read_bytes.__call__(root / relative)\n    if sha256(raw) != expected:\n        raise ValueError("scope.file_access_not_whitelisted")'
+        ).body[0]
+        if sum(ast.dump(n) == ast.dump(audit_loop) for n in audit_fn.body) != 1:
+            raise ValueError
         loops = [
             n
             for n in ast.walk(fn)
@@ -612,7 +740,10 @@ def _b_release_adapter_scope(tree):
         ],
         "exact_adapter_read_sites": 3,
         "self_read_argument": "Path(__file__)",
-        "self_read_use": "sha256 -> implementation_id only",
+        "self_read_use": "compile-only live-code comparison, then sha256 -> implementation_id",
+        "live_code_binding": True,
+        "additional_fixed_audit_read_sites": 1,
+        "additional_fixed_compile_sites": 1,
         "root_sha_in_code": False,
     }
 
@@ -817,35 +948,7 @@ def b2_isolation_proof(policy):
     ]
     targets.extend(FIXED_READS)
     targets.extend(B_RELEASE_FIXED_READS)
-
-    def adapter_targets():
-        yield from targets
-        # Preserve the old C13 refusal sites before inspecting C1 originals.
-        # A missing new file must not mask an original scope violation.
-        _candidate_registry_scope(trees, sources)
-        _filename_read_scope(trees, sources)
-        # Same exact old read-domain/count guard, also before new artifact I/O.
-        # Its original check below is retained unchanged.
-        if {
-            "b_release_context": 4,
-            "catalog_v21": 1,
-            "execution": 2,
-            "pipeline": 1,
-            "reference_inputs": 1,
-            "scope_proof": 2,
-            "scope_reader": 1,
-            "valuation": 1,
-            "k5": 2,
-            "execution_accounting": 1,
-            "execution_clock": 1,
-            "execution_closure": 2,
-            "reference_definition_v301": 1,
-            "reference_registry_v3": 1,
-        } != file_reads:
-            raise ValueError("scope.file_access_not_whitelisted")
-        yield from B_RELEASE_ADAPTER_READS
-
-    for name, relative, expected in adapter_targets():
+    for name, relative, expected in targets:
         raw = (root / relative).read_bytes()
         if expected is not None:
             if sha256(raw) != expected:
@@ -945,10 +1048,17 @@ def b2_isolation_proof(policy):
         "reference_registry_v3": 1,
     }:
         raise ValueError("scope.file_access_not_whitelisted")
-    adapter_scope = _b_release_adapter_scope(trees["b_release_context"])
     registry_scope = _candidate_registry_scope(trees, sources)
     filename_scope = _filename_read_scope(trees, sources)
     ref = static_proof()
+    # C1-R1 additive stage, after every original guard in its original order.
+    adapter_scope = _b_release_adapter_scope(
+        trees["b_release_context"], trees["scope_proof"]
+    )
+    for _, relative, expected in B_RELEASE_ADAPTER_READS:
+        raw = Path.read_bytes.__call__(root / relative)
+        if sha256(raw) != expected:
+            raise ValueError("scope.file_access_not_whitelisted")
     return {
         "schema": "EVO884.B2-isolation-proof/v1",
         "scope_ruling_sha256": HASHES["EVO883-EVO886-minimum-scope-ruling-v1.json"],
