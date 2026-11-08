@@ -31,7 +31,7 @@ S_ORIGINAL_ROWS = 9
 S_ORIGINAL_SOURCES = 52
 B_ROWS = 40
 B_SOURCES = 52
-B_INVENTORY = 232
+B_INVENTORY = 233
 _S_REPLAY_RESULTS = {}
 
 
@@ -124,8 +124,8 @@ def _B_current_checks():
     root = ROOT
     repo = root.parents[2]
     index = json.loads((root / "evidence/current-seal-index.json").read_bytes())
-    assert index["current"]["path"] == "evo884-c1-v8-supplement-v1/static-seal.json"
-    folder = root / "evidence/evo884-c1-v8-supplement-v1"
+    assert index["current"]["path"] == "evo884-c1-v9-v1/static-seal.json"
+    folder = root / "evidence/evo884-c1-v9-v1"
     raw = (folder / "static-seal.json").read_bytes()
     assert index["current"]["sha256"] == sha256(raw)
     seal = json.loads(raw)
@@ -140,11 +140,11 @@ def _B_current_checks():
         assert sha256((root / name).read_bytes()) == expected
     verify_seal(seal)
     inventory = json.loads((folder / "source-inventory.json").read_bytes())["files"]
-    assert len(inventory) == B_INVENTORY == 232
+    assert len(inventory) == B_INVENTORY == 233
     for name, binding in inventory.items():
         value = (repo / name).read_bytes()
         assert sha256(value) == binding["sha256"] and len(value) == binding["bytes"]
-    migration = json.loads((folder / "migration-manifest-v8-supplement.json").read_bytes())
+    migration = json.loads((folder / "migration-manifest-v9.json").read_bytes())
     assert len(migration["rows"]) == S_ORIGINAL_ROWS == 9
     assert len(migration["B_rows"]) == B_ROWS == 40
     for row in migration["B_rows"]:
@@ -383,7 +383,7 @@ def test_TEST_ONLY_B_and_S_identity_mutations_stay_red(monkeypatch, mutation):
             or "reference.static_seal_mismatch" in result.stdout
         )
         return
-    folder = ROOT / "evidence/evo884-c1-v8-supplement-v1"
+    folder = ROOT / "evidence/evo884-c1-v9-v1"
     seal_path = folder / "static-seal.json"
     index_path = ROOT / "evidence/current-seal-index.json"
     seal = json.loads(seal_path.read_bytes())
