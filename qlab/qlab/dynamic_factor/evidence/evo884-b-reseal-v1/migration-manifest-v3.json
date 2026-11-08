@@ -338,7 +338,7 @@
       "file": "qlab/tests/dynamic_factor/test_execution_reseal.py",
       "id": "B:qlab/tests/dynamic_factor/test_execution_reseal.py",
       "new_binding": "migration manifest source/test record",
-      "new_sha256": null,
+      "new_sha256": "8e29cc166772fc16c08998a87136461437bfa96553dc008c214be159aac9734b",
       "old_sha256": "d037afdc41ad0b4939e539bb208ffc1901db0631ae9480e07ae8ab0371a7e999",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "S original assertions replay on fixed S; add strict B current and two mutation controls"
@@ -347,7 +347,7 @@
       "file": "qlab/tests/dynamic_factor/test_seal_index_rework.py",
       "id": "B:qlab/tests/dynamic_factor/test_seal_index_rework.py",
       "new_binding": "migration manifest source/test record",
-      "new_sha256": null,
+      "new_sha256": "c75c7a08ae4b42c310b28caf9fd5f14d8168ed275861463df01e6030f86f6dc4",
       "old_sha256": "2f1c36080ec120239c6a9fc1eee7e6b60e0970a7ac176673e61e9e8010a5fca4",
       "old_source_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
       "reason": "S original assertions replay on fixed S; add strict B current and two mutation controls"
@@ -463,15 +463,18 @@
   "certifiable": false,
   "changes_current_seal_index": true,
   "complete_N": null,
+  "final_source_commit": "192fbf9362896494ebb5969247d93a8430d7773b",
   "gate_N": null,
   "index_cycle_rule": "publication does not reference new index; only index-registration records new index SHA, outside publication bindings",
   "input_inventory_count": 217,
   "old_S_artifacts_action": "all original bytes immutable; assertions replay fixed S",
-  "phase": "B07_prelisted_before_test_migration_and_reseal",
+  "phase": "B_source_bindings_generated_pending_independent_review",
   "predecessor_manifest": {
     "file": "qlab/qlab/dynamic_factor/evidence/evo884-exec-reseal-v1/migration-manifest-v2.json",
     "sha256": "d628fe319b849f5fdf50235962a57d9eb161b5d7821c7900bf8e9010f89469cf"
   },
+  "prelisting_commit": "e288a2beeae169102e9e91a3cec6146295f2837d",
+  "prelisting_sha256": "616ca5c6807b5a4fd85dbadaa9001dc792da12f9c9b0841c62b014d1cee2d9f1",
   "previous_S_head": "2d4bac0c9c787b9abc17178989bb3a1dadf72827",
   "protected": {
     "accounting_pin": "f8101633e86d2ee42e75dd66793ae0e153f1454e38ce008cc10bd2d6611a5a4a",
@@ -538,6 +541,11 @@
       "reason": "Switch sole current to B, preserve all S/history objects and original raw index"
     }
   ],
+  "row_semantics": {
+    "B_rows": "the only active forty B migration rows",
+    "carried_existing_C13_component_rows": "historical S supplemental rows",
+    "rows": "immutable historical S nine rows"
+  },
   "rows": [
     {
       "author_verification_after_backfill": "营缮核对核心七件与固定 S 头原字节及实际 manifest 字段，不以自报 SHA 代替",

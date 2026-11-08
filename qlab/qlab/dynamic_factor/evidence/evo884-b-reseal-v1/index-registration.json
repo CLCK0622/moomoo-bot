@@ -1,0 +1,54 @@
+{
+  "historical_objects": [
+    {
+      "byte_equal": true,
+      "new_sha256": "78cedb7dc441c5d50d56cfadda61ad4dc5c652cd000e9d3d76a4b06213cef873",
+      "old_sha256": "78cedb7dc441c5d50d56cfadda61ad4dc5c652cd000e9d3d76a4b06213cef873",
+      "position": 0
+    },
+    {
+      "byte_equal": true,
+      "new_sha256": "4583c7f39c810b288cc5a632189f53dcf80376968ba8eae6c4aad8064ee19e55",
+      "old_sha256": "4583c7f39c810b288cc5a632189f53dcf80376968ba8eae6c4aad8064ee19e55",
+      "position": 1
+    },
+    {
+      "byte_equal": true,
+      "new_sha256": "282aef132311d9faf7b9c872e319492d1bed346ac26590e4547050b521887767",
+      "old_sha256": "282aef132311d9faf7b9c872e319492d1bed346ac26590e4547050b521887767",
+      "position": 2
+    },
+    {
+      "byte_equal": true,
+      "new_sha256": "6b89d06ba90d4ce94e5025d6150679fb76322fb6f7ef65353ae54e5bccd421d7",
+      "old_sha256": "6b89d06ba90d4ce94e5025d6150679fb76322fb6f7ef65353ae54e5bccd421d7",
+      "position": 3
+    }
+  ],
+  "index_path": "qlab/qlab/dynamic_factor/evidence/current-seal-index.json",
+  "migration_manifest_sha256": "4b8b17aa151d74b35ad24f924b73caa4433bdc0e3605711bed46eb0d72352c0d",
+  "new_index_sha256": "0f6b19f34a55aa8e0284f87473f7c56a6b3004f250fcc61e33b1a91a1c9f4cc1",
+  "old_index_sha256": "7677829a417a52f43cb19f63e49ef745d915b398b45c531d6399957f29a50766",
+  "predecessor_manifest": {
+    "file": "qlab/qlab/dynamic_factor/evidence/evo884-exec-reseal-v1/migration-manifest-v2.json",
+    "sha256": "d628fe319b849f5fdf50235962a57d9eb161b5d7821c7900bf8e9010f89469cf"
+  },
+  "prelisting_commit": "e288a2beeae169102e9e91a3cec6146295f2837d",
+  "previous_current_keys": [
+    "B2_manifest",
+    "binding_publication",
+    "commit_binding",
+    "independent_review",
+    "path",
+    "runtime_consumable",
+    "sealed_at",
+    "sha256",
+    "source_commit",
+    "source_count",
+    "source_map_sha256"
+  ],
+  "previous_current_raw_bytes": 948,
+  "previous_current_raw_sha256": "02544ddab75116e1b0f2ba1ec5565ea519726a4988f82c4a598f5f5c68ae4cc2",
+  "publication_does_not_reference_new_index": true,
+  "schema": "EVO884.BIndexRegistration/v1"
+}

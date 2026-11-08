@@ -1,0 +1,46 @@
+{
+  "authorization_comment": "01a1b8df-b049-7d36-a119-9c716a0363fb",
+  "bindings": {
+    "B2-unavailable-manifest.json": {
+      "bytes": 58187,
+      "sha256": "3794e3b1af4f1a4800264c9b2c1cc1d084ed76d275336872fe837d9eac200514"
+    },
+    "migration-manifest-v3.json": {
+      "bytes": 55672,
+      "sha256": "4b8b17aa151d74b35ad24f924b73caa4433bdc0e3605711bed46eb0d72352c0d"
+    },
+    "previous-index.json": {
+      "bytes": 3491,
+      "sha256": "7677829a417a52f43cb19f63e49ef745d915b398b45c531d6399957f29a50766"
+    },
+    "read-dag.json": {
+      "bytes": 76264,
+      "sha256": "898027676919a616e447b2729966137153faeec7b0ec4d9a4070c776ec0be59f"
+    },
+    "reference-static-proof.json": {
+      "bytes": 5869,
+      "sha256": "d63db7b97c15dcd8c29ab79a3bbfbd4b5d0614b4eb9bb3fc44df8b73cbbcc418"
+    },
+    "scope.json": {
+      "bytes": 583,
+      "sha256": "5eefa2eb2bacca1c0c995bcda00148863472441b6a3dc7e492c65764418a2719"
+    },
+    "source-inventory.json": {
+      "bytes": 38651,
+      "sha256": "4a550e5a0202cef168b4f199ac2a00ee0373ade82b73f8d2c41349186e89c091"
+    },
+    "static-seal.json": {
+      "bytes": 5668,
+      "sha256": "cc2931cb93e59dd7d3bfbfbe10e1384e19d30f56f2f6e02cc3706060ba6645ac"
+    }
+  },
+  "certifiable": false,
+  "independent_review": "pending EVO887 B delta",
+  "issuance": "one B delta static source binding publication; not A or runtime permission",
+  "issued_at_utc": "2026-11-08T02:48:24.977492Z",
+  "issuer_agent_id": "5a307571-9534-4bbc-932c-93ffc9c94d73",
+  "publication_sha256": "0599297fa6199afd748f8888c0f1beaaf8b743299c289efc7bc6b7d6045d52fe",
+  "runtime_consumable": false,
+  "schema": "EVO884.B.SourceBindingPublication/v1",
+  "source_commit": "192fbf9362896494ebb5969247d93a8430d7773b"
+}
