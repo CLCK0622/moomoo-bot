@@ -1,0 +1,1081 @@
+{
+  "additional_hits": [],
+  "authorization_comment": "01a1bb27-d7d4-7edf-9e09-011183d75cec",
+  "authorized_remediation_hits": [
+    {
+      "column": 30,
+      "expression": "compile.__call__",
+      "line": 163,
+      "path": "qlab/qlab/dynamic_factor/b_release_context.py"
+    },
+    {
+      "column": 14,
+      "expression": "Path.read_bytes.__call__",
+      "line": 1059,
+      "path": "qlab/qlab/dynamic_factor/scope_proof.py"
+    }
+  ],
+  "exceptions": [],
+  "files": [
+    {
+      "hits": [],
+      "path": "qlab/qlab/__init__.py",
+      "sha256": "304235cd17e4b3b6c3a0a921695d864d74e48cb1f7c5920b73af466ed07a72c2"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/brokers/__init__.py",
+      "sha256": "ff28e5f40719615678049064f7a3a0abb2d85689c1bce5868d8c99e540d36c90"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/brokers/base.py",
+      "sha256": "00ecb7bd2c3d79454b640c580348994054dc35be52216074a0ab040c2bb0abd9"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/brokers/moomoo_opend.py",
+      "sha256": "7ebb89297838b50ed08579f7888256d9ac56e7968656c39abf12f9cc832cfa50"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/brokers/paper.py",
+      "sha256": "4be20c330a15fe19704eae34ce53cd059af31bcb2bc8c393009f1d5d5ac2df1a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/config.py",
+      "sha256": "f4225f1fdaf50fd941068e03813bd2af6c5d4aa2a0062d3303cf89346b481847"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/datasource.py",
+      "sha256": "933d2e6673084ade69babf30a505ea8c4953dcb7d472434988a536f712128308"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/__init__.py",
+      "sha256": "06af6993da8dcb49ff75936b7b5e327424b753802687d92dda74033c15efd797"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/__main__.py",
+      "sha256": "19cf89e91741f33ca5e948c1eedf42103fb5fa383a6040e232caed12a8e70986"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/arm_n.py",
+      "sha256": "c7804341f914e1fe3cf57cad723897fe8f6dec800efb0e3f458c2753955f3b49"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/authority_binding.py",
+      "sha256": "1355476871e9c8a083187f3e5853bc2e129683f4969a48da174bfb3c5cb0cc62"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/authority_harness.py",
+      "sha256": "0365490e6cba4ba8e9421d9f7650059beb701f6a334d55acdf2a346f00e2423c"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/authority_host.py",
+      "sha256": "d09ce53c29dc76d6978bba629d5e1666584d8114cefe2ed34dd7822aa664f436"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/authority_install_receipt.py",
+      "sha256": "2b41c7b960545f330889aa1cea2fba8cd195d1ac4cac4823659b50c268ad5fd6"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/authority_ledger.py",
+      "sha256": "a696c5d81bed8f19226cb9489f32b456277f98c51d7d884d3894bc4c4bf09120"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/authority_prefix.py",
+      "sha256": "82f396c560f5de88ea75a14adad2734f7377f7e97088278a841480d5d77a1352"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/authority_record_types.py",
+      "sha256": "fd2383b35be0f78bc616f2838285a50cde61ba12d5a65f16536de72a362765fd"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/authority_release.py",
+      "sha256": "e2e593791314f68c3618f8620533c05db9b55c6f04e41e159b5f20548ab70217"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/b2_inputs.py",
+      "sha256": "da9f69aaaf420cea971887314ee53ea78af5e7f335e92251b79c4bafbf7fe261"
+    },
+    {
+      "hits": [
+        {
+          "column": 30,
+          "expression": "compile.__call__",
+          "line": 163
+        }
+      ],
+      "path": "qlab/qlab/dynamic_factor/b_release_context.py",
+      "sha256": "3bf62aa7a16f3b87ec82062619b9d01925233e6eed385e95c476fc29890b4eaa"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/catalog_members.py",
+      "sha256": "a4afc328161064689e24c85dfa1e3d946fd1c4fc7563701fd90e08864e82a82b"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/catalog_v21.py",
+      "sha256": "12c3b0d33dcee4518ba39905d49f06fa55b62865f4ec041a5e0cf7f4a4189ab4"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/continuity.py",
+      "sha256": "ee759682cd58c80195d5acf5e51ca2705f897f4144cd8c8eb99fb0ea5f658f95"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/contract.py",
+      "sha256": "ff198c8d9ad05e7f2664af8120a9f6e3d21a242e3ef19e9f0b5cbb65a5beacbb"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/conventions.py",
+      "sha256": "4b98838d3fca24664470c1e2fb65921eefc3d93a7bfb9331e857d65f0205064a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/disposition_harness.py",
+      "sha256": "2008b39696cdb5edf6cbf4e1dc9180863286fe86aab8b12b00de05a692daa283"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/dsr_v0.py",
+      "sha256": "3fc53de16da71acf5fa0852c3552881584cc37c2c71903339e085059a8b803d3"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/event_quarantine.py",
+      "sha256": "1245c801165b5da94178585932634f6745dc05f2490c64ebbf96b0c4bd32c2c6"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution.py",
+      "sha256": "d15958dabe5c67d2e47033a62253a2fd19fd6667cf15ca5dac8b3b49c91d9cd8"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_accounting.py",
+      "sha256": "f8101633e86d2ee42e75dd66793ae0e153f1454e38ce008cc10bd2d6611a5a4a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_amounts.py",
+      "sha256": "18b2cdf6edaa43c7fd489e63eb8bdac8e209f5a06b317ff2aa1d3f306a4e245d"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_candidate.py",
+      "sha256": "90d1a9dcbe46b9881450d1770003212e1daea0b14f3d8e15d90e5f4b1563d16e"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_cash.py",
+      "sha256": "a49653574a53ccab01552e18cdecf9f6d41481a7d63c49175904683651150348"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_clock.py",
+      "sha256": "c1f9563c645110335cdbf006328b3cee4d1d8952d8433ffd5306b91d07e8ecf6"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_closure.py",
+      "sha256": "998ef21c68825ab9254489f29b12095c8dc0d4b3f6f14e507e8fbea6808615ae"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_exposure.py",
+      "sha256": "8af9951b19fb454637440f98d74b4a4567cc4b8f8aebefbee647b18e1a4dbaed"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_numbers.py",
+      "sha256": "b31df6da61dbde3a864164e31bd8590debf2941040e301f8511914ccd4933aa2"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_projection.py",
+      "sha256": "d7a30669a8cfc019318c35e648ea3cd9bea7129e57b12bcd93da0751afa8f5cc"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/__init__.py",
+      "sha256": "a966fe8f058c21d701d1227dbf225819011a17a012f98130ede94ff09384d8d4"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/collection.py",
+      "sha256": "79d2fa3eda125106024257538c8dca0536a7b689b6903088adf123c0b553fcd1"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/g14.py",
+      "sha256": "3b91e04f01aa01210454208347a8cc01a6bf673607625dde98067494cb378c05"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/input_data.py",
+      "sha256": "d0e86374390f6dab660e2c68eb25390f714120c184abd085fbad781ca6acec68"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/input_envelope.py",
+      "sha256": "fc9366049b8d4495ef03103617e897a29780bd0b17ceee26c6c9f9354ed3fd1c"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/input_facts.py",
+      "sha256": "8ea6048eb366fc831fe43fc62a5b4d009bd8519a7d91b0a5b641ac478f095fd6"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/input_guard.py",
+      "sha256": "8c49c72ad42886285270c3ef99f2051c6c0c656927e348eac56a6211ad6507b7"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/input_reader.py",
+      "sha256": "ca5e3fc1c1a336428b784904d5fa85f880f78c39c500718ff6a4909b5f0bb30a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/input_run.py",
+      "sha256": "94c7fb4064d33c585476f2006e3ab9435c056535ad3626b9042fa4dda7395698"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/n_binding.py",
+      "sha256": "d1a02ce9121e6c2204024d8df45a8e13459bd4060c59fde8083ee938efb9c573"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/p4p7.py",
+      "sha256": "8081c024baeee8b177b382ecb5a9a68abba3b10e2e2e5dbdec36c7d10b6e2243"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/reference_result.py",
+      "sha256": "d876daf07745bc3889971dd5ef7fccf4fce0f15051fcd9c6c7722fedd99bf36f"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/replay_files.py",
+      "sha256": "75a13fcfcd9c19cac8ae8ba3c7dd1e4fb846b6f794c5bf735d9b1b0bfee364be"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_receipts/replay_guard.py",
+      "sha256": "69dde6531d3e6f464fd87fd086aa099b3005541ec6008413ea764f75028e732f"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_returns.py",
+      "sha256": "75d09e78605c6951cbaec3c914e7fdfc8090f646ddbd74078d8ceb4a0ec5f83c"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_risk.py",
+      "sha256": "b1b616126da4b831dba193f338ca9654c9de148bf1dc0b74d9723448faea8ab3"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_risk_history.py",
+      "sha256": "da55c683a2b281b1ece42850e0c4d49dbe81a921bfbb17c0a013a10330ba84d4"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_signals.py",
+      "sha256": "226c83a62f887ebf7720452c8ae045bceb699ab6cf7774446a5c72d28db5c0cb"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_startup.py",
+      "sha256": "4b675f45605e69869bab8135b77e1b82cca7d4a5a309f1549fc38ea10f0f1c72"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/execution_state.py",
+      "sha256": "8e8129e63d084552ce308d84737d1b2851413e438ead3c247cfc3e69e32b4cf4"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/f1f2_harness.py",
+      "sha256": "b2ba2f2a06d88697cf222569fd41a31b72c8a1bd015add4e6d97d85f36878328"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/f3_harness.py",
+      "sha256": "b024420d2d28b9c3a70653a72a1fbf0691cef81d842b6df95063a716e3a755f1"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/f3b_harness.py",
+      "sha256": "4710ec84dd2466a443e6626ed7870d138777e4b810da36e7c9c23fcd417a1b9f"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/fee_model.py",
+      "sha256": "8dc35cdfe2ddc1d24cd7e2be0640ca0566cc9e0f3f697f577af44c9e5a75422f"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/fees.py",
+      "sha256": "144ee2bb1b9ca8bd24e480afcd0968e0fa711444ca520c6c6a72d8cf6d628e9a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/fixture_inventory.py",
+      "sha256": "c14a21457ad6ede85e1527e7d4f16fd094f1309e58af4d3af76a99643708e425"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/fixtures/evo891/EVO891-B-ledger-v2.py",
+      "sha256": "36ab3dd0cfc7d9c68a0e9ab2f0cc5774f0f7ccb260a2db61b36abbe040181969"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/fold_split.py",
+      "sha256": "400c417527ca0ed4e04e2c4e4c76fd84c0ae2faf54bf0788f9fca29e7e1c95af"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/folds.py",
+      "sha256": "d6f052976cc2bafacf3b7814a1fdf801e71c471ca4aca3b2813471e0666ccb02"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/harness.py",
+      "sha256": "f5880289c56779384439ed85b87f7f56ede1fc0064cfd1a97184dab96739acfc"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/harness_helpers.py",
+      "sha256": "3bb5677bef3365b5ea57f48bf3635b6fee7158aacf699d771cf18c9e0d7ea971"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/historical_authority.py",
+      "sha256": "fb401e78c115876d73f9f5a6cece6d7d820927c9cd1222dad49eca983629fcce"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/input_disposition.py",
+      "sha256": "515945c2ee3de0d8e9a1ec0087f8087b5750258d013ada6ed08060f50e872d65"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/input_scope.py",
+      "sha256": "3449f22061560251e19a21268da4c0cee911edc0864e19e08f1cf05b89a91bbe"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/invariance_harness.py",
+      "sha256": "a118dcbc4af14c66c88096f9afecbc664ae395365003e642fd42e58fc71eb6b7"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/isolation.py",
+      "sha256": "910cccfd6fa0fa74405a393cba180ec5a65bceac99d5543722b68e87a7ec20a1"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/k5.py",
+      "sha256": "96be5e8a8de9176b3cd24c766f08a4dc24a7d5db158a4bab2c0a468618d8bf97"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/ledger.py",
+      "sha256": "c0cb8154c060f7215671baf434b27cc65e87b9a696b643f97079096e59b4f28c"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/ledger_anchor.py",
+      "sha256": "0c26b1a34cdf42b337404a06ad4f633c1fd5651d909008f6923fb20925ea9b57"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/lineage_schema.py",
+      "sha256": "9e4c242339fd72d3396306a0f0f7959d6f1080b8c89efe61f4444d9ce18290c7"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/noncash_v3.py",
+      "sha256": "ce439592adc936c8715e7515dfb7f6dc8261847a15a737eadf281329cff47ccd"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/pending.py",
+      "sha256": "3a1625313ea1d5491a8d0670a6698176ed80bdd98e7efd37a1447b2878349c06"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/pipeline.py",
+      "sha256": "a7f4c35d0bb0c70507283fe525869d13b2d7cce6e6a53a5e2da6632e05cf8ffd"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/prefreeze/__init__.py",
+      "sha256": "84d81ebd721a184e5ec145d8f245390580c36ae760abd8c8f1634421c47dfff5"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/prefreeze/collection.py",
+      "sha256": "7cad0f84521efd7e6a357184ddb9222eae8330e28ca0ddbefb1a3160ca77c6cf"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/quarantine_harness.py",
+      "sha256": "9ee13780af365573773af2e3c729b34a84458847916731e4c11fc01315685c2f"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/receipts.py",
+      "sha256": "4647fafba46f5d5ae39401f1129c73eebb8dd5e6de6c91d82f23aea403803e8d"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reception_entrypoints_v3.py",
+      "sha256": "a7e550628833d24b37e9b78744369f7ea8e8f06788eeb2473e9ab1c3c2e5ede9"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reception_schema.py",
+      "sha256": "f425f7f753bf74867707071d81e4c83d7106be97a03c2e3bcbe0939ff7bf22fe"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reception_v2.py",
+      "sha256": "98c2a2dd88025b449600179c511dc4403d6bd3ad35d02380cffa09d9a3d6849a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_boundary.py",
+      "sha256": "c84f966aceae70c84734dd2e469b32677c3878327a0a58a916ad389166ddbe05"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_check.py",
+      "sha256": "27c4085c2acc18693d074e70d43961e0620110c37e606b65f46d8a683d11fa98"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_compile_v3.py",
+      "sha256": "1d1fcdd8c277f811438b60fe673b49e2b3d80f53ff08ce4e86810c1d3f1979bc"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_day_inputs.py",
+      "sha256": "aa524e97008749e03c96090e887c803f672f9d7f6486644c41d066d59f481322"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_definition_v301.py",
+      "sha256": "95a51f2f5c5d3473254e247ac8d1b408c4f89c9253b3622ee2fe4d7941ef1a55"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_evidence.py",
+      "sha256": "a0957a30907c25d4976e0dbf950afae346fca549bc249cd85f7807595e698ff1"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_execution.py",
+      "sha256": "ef856b951103be4c345e7b305d1600c0ce0e1fd559f65f70e95ce541d62384f7"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_guard.py",
+      "sha256": "0e0d55ff4632856c59e2627b9da54a621fbd0c64804d6070742c536686e08fd3"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_harness.py",
+      "sha256": "6ab77b3279bc8e567603858cf3eba513adfb6987e3483c739a9ff6e353112a8b"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_inputs.py",
+      "sha256": "0b9ce35ecdb6806f3469b8ce3e662c659743a6192fc0a80aba28038abb233099"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_noncash.py",
+      "sha256": "c923f8589fee07e50c7ee2904edf1ec73ea91b7de2651b6ab545af988a918b2b"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_producer.py",
+      "sha256": "9b354f6d2288d76f515ed16d95f1003469d9c9e7bf92d6af9ff596d38ea6e81c"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_producer_v3.py",
+      "sha256": "a7fcff5592195a86923aaf667660ce988323c4bce1a0070432fcbdb65a560e26"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_profile_v301.py",
+      "sha256": "184f15302f003356a9d41027ab5fd84fa5917e796f96adee5374a714edc3ccd3"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_registry.py",
+      "sha256": "689ced79a2df37ffa857f14451dfaa66d0df412f31dadc39cbb7ba5f2afb45b8"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_registry_v3.py",
+      "sha256": "90ff033cb06bbedce4315ec04bb7c84b8a300fdd133015db58a23b1f7fee997a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_v3_evidence.py",
+      "sha256": "5a14b98477783da356026be254654ead0787f65d5512add64b846d2132881238"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_v3_scope.py",
+      "sha256": "131eaf7725102c1b86a51146c60f3019faa79bd1f73e0aa585ac3e743590244a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/reference_validation.py",
+      "sha256": "77854b5e4671bf3634bf22e7f49602c90ab47f87e19d394d688e12c6ec078019"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/scope_harness.py",
+      "sha256": "6c49e01cc7e8ef036c0703247005d32a3975c99716e5391dff4417afa92fe382"
+    },
+    {
+      "hits": [
+        {
+          "column": 14,
+          "expression": "Path.read_bytes.__call__",
+          "line": 1059
+        }
+      ],
+      "path": "qlab/qlab/dynamic_factor/scope_proof.py",
+      "sha256": "0eec5cf89e10e9156a6b2e0eda0f71f58ab16ddd8ebdd874d11c9ba4b566ff87"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/scope_reader.py",
+      "sha256": "3bbb0be2fa7b80e63e2879e947d0268b0f3c93c667ca8815b660afac7dc41f38"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/state_v2.py",
+      "sha256": "0c31a71defe68d23126ada28b15dbd3b6574b661508d53f0d1697a9ed1492e2c"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/statistics.py",
+      "sha256": "e32f700d08fa41aea264b296d3e4bec0a9713c16c549ce6f6239a47bd2b6a297"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/v1_harness.py",
+      "sha256": "7c27d3f80082b43600a9de1734cb0bfdba9ee6e20f1f0cca42abf919fe633ae5"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/validation.py",
+      "sha256": "5d3d6d97ab350c14bf9e5d62f51b2d42244f4466f9ed7636d7eb77d7c4a2be8d"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/dynamic_factor/valuation.py",
+      "sha256": "4b0a18ebb18b2706926e344a94fd5da32b0f06b969a34d9da294e91ffffb8a8d"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/engine.py",
+      "sha256": "b432395a34e9ee5074e1f679d12525825e11344bc796db3c4a7c273d3d72eb76"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/__init__.py",
+      "sha256": "bec4644fc1af8a39fe37285f416764315a8e06405331988c559735eb36f49cfe"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/backtest.py",
+      "sha256": "7d3374cc490ce4a3774e1433a0f10390b473a2871146f855ebc3a18dff81555f"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/bars.py",
+      "sha256": "492522a0dbdd18913a17b0a38a6fd4e9f9ea4ae7d3d0684e578e247507ec9172"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/datafetch/__init__.py",
+      "sha256": "ea59b45e7d942487f456d3aeef692683ba2430d6dd90bdd1a59fe91abf73ab1b"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/datafetch/fetch_all.py",
+      "sha256": "c42cefa2e92f0ed931544ab2dc2af0858b5988a688cc7feb59102abf1a8877f3"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/datafetch/fred_vintage.py",
+      "sha256": "02c840512c8db7810d8de317f3a1a9cb293b79ff7b59c02c414cc94d455fdf8e"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/datafetch/fred_yields.py",
+      "sha256": "8e67ee22e172bba05822239f0d9d1fa99e2c0974d858a3a93f5080451af536be"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/datafetch/opend_daily.py",
+      "sha256": "0f14d530f4c3c76750ef6a3b8b9e77e200ee184fa6e97de8f0810575ead15dd7"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/datafetch/prices.py",
+      "sha256": "3ae25573a8c15d3412716b668acd0edab11abe9fc6c9109b1ec485ee10c161d3"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/datafetch/sec_earnings.py",
+      "sha256": "6c5b3a953d76da579c92ad5f2664f3e439cd24fdecf9c540a591f3e68d035229"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/datafetch/universe.py",
+      "sha256": "7f4d8d950b322ebad8e4cd1a33bc3f6a9902f67d618b807685070978cda058f4"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/eventsource.py",
+      "sha256": "b05df89fbea4871423fb82b653c665d82e1839ac4de6cfba286eba0a3fddac07"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/gates.py",
+      "sha256": "e29ad38536c0339c23275293f212900839245bec366d787ca4904091089301d4"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/metrics.py",
+      "sha256": "29a7753b99885c04f167be798aebb123cc3d646a3cdc87b0b8e20ac9f8a1f418"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/multiple_testing.py",
+      "sha256": "99fde0f522ce50c3ccb869f5704114ad2aa71b416d97adbed504b688087f587a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/options.py",
+      "sha256": "9853c02a466f3537314462d54210d22c35850a1f94dafbdf754ff9b158e99312"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/report.py",
+      "sha256": "161722d00e933cbb1ea0cf8659fccb63e7a9efc5b1905685ca54b089a436b868"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/run_events.py",
+      "sha256": "07cf2839e9f7ece4cb40d7f756c278b6bbe00c926d98ad43ace8bd3a82b1c63f"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/significance.py",
+      "sha256": "ad35ecc6dbf444c0a3e498e645eda5b277233a37a6eb4b6430d5649b4061fcdf"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/strategy.py",
+      "sha256": "d6ed946d7929be9b3c9d8cc6a168def218214657a60a97c453096aefed24f4c0"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/surprise.py",
+      "sha256": "234696817d732f7ab741854afeb1dce33bc81bf14f84c2418ac43fb90bcc5fae"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/events/timing.py",
+      "sha256": "1698afd5a87b729080f05fceb5521529aebbb8e61cb2f15976c6977e44ec38be"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/__init__.py",
+      "sha256": "d62d1e6c27bcc909530a48bf57519583868bb125bad68944965f9d51294769cb"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/adapter.py",
+      "sha256": "faed72d9d10cc9917730654d40b8ba41f5fd0b049fee28bb2525e94676a6ac13"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/archive.py",
+      "sha256": "1e9fe35e24c1d190300222196da88e26ad223de5c62bd55473491996f683de9a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/arm_n.py",
+      "sha256": "06eacea5c9c6092d1b43b854cf7949443ee58d1af69b24544104f5f69ef6d0f3"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/contract.py",
+      "sha256": "e57fbcc9f8fb8b4485958126222b4dae640faae347f15486ae313981aba10b20"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/harness.py",
+      "sha256": "3d19fe95494c4afa169300bb7603329bd9e5793e316e3cb639e528a80879e528"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/intent.py",
+      "sha256": "4c0e47fb6690068fc3b3394220ac5a855e65cdd37266b17c4e1074578700c0e0"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/lifecycle.py",
+      "sha256": "07010efd47286daa68c128cca3e5519565b84780a8d00418d7d11d8f0abead59"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/milestone.py",
+      "sha256": "390ae7e5c135836d90e0cbb22537283dde8722bfc89ed6e9c14779141b5ed28a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/reference.py",
+      "sha256": "ac8f2916c0e96bcf07990dd1dc1e573fea4e1fc7eefaff0a84b1eeac6e44e82e"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/runtime.py",
+      "sha256": "b62d9802ddfba9b82406b13eab00287b099484d392495fa2b9c8875f00017288"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/snapshot.py",
+      "sha256": "2c93efd55b784d1e84669b8d89a566b39de5f6d2f99dee6f2848b696238d3865"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/llm_direct/synthetic.py",
+      "sha256": "33bb60c7c11d29d95a100b5f6004e48cfa754b9111479d561d97623b26237168"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/observability.py",
+      "sha256": "4fc1e91dcda58a55d0dc7981ee42aa74c755a9b41c7f17e2ebe09ba3fca2fec2"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/opend_kline_depth_probe.py",
+      "sha256": "30e628ab875406c605fd30c2d7b6b09eb469fceb467ca3d5b4777d058487a6d1"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/opend_probe.py",
+      "sha256": "a07f6104eb8ee66c08a3f96c7be77bb11527eaccdd919061ff1a74fd02da0a37"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/opend_session_probe.py",
+      "sha256": "d618155eb9784e973e8c22c19fad9810e3dc754f87ae7b0e488cbd414f957b91"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/params.py",
+      "sha256": "9f5340b904ab1eae88c5e706cf87ce2802667e6173a37e0206c69c3a1a0d3048"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/risk.py",
+      "sha256": "68f1b20e63a49b544c8d9f8f5efefb59c070105c26bc20cd9685dd469b2a7a94"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/run_paper.py",
+      "sha256": "bce5cf907ac9c6fb304b095b1edbe6b7cb9f8a3bad63fc4e3b80ab3588893d83"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/runner.py",
+      "sha256": "725b726658b0f5faccc8ca14888f318447667d756c55d55fd9adae5c95703537"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/shadow15k/__init__.py",
+      "sha256": "0007e498101775baa450895c22c486ad0de5b882b6d6fd1ed64bdaa48efe2dbc"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/shadow15k/b4_harness.py",
+      "sha256": "8c2e23862fb75d0215e3b4bab4d2054b2a446db06aef9edf8ed8eee9ad8d9124"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/shadow15k/cash.py",
+      "sha256": "0378871c5e4213cccfb295c919a9626b8cb56ff32dc4f9dee8800820920f36d9"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/shadow15k/cash_harness.py",
+      "sha256": "ed6181e503ce87a25fb9dba037e819c94cb64d42fbcc2bb3ecba761f4d6233b2"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/shadow15k/contract.py",
+      "sha256": "99fee2b38c87eb8fea7c1d17238056f43bbb7b95a178cd9e372cdea24f2a3ec8"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/shadow15k/fees.py",
+      "sha256": "c26460ffd7c8dcc722ed737007b4ad4ecf9919e7b5ab2149991c47e382001748"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/shadow15k/harness.py",
+      "sha256": "b5881982b79283c4aef8acd262a2c469765b79aa36e0217e6fcc86daaa732fbe"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/shadow15k/ledger.py",
+      "sha256": "a6bd7c68cf7fec0fe5052249dbb8a878b1732e34940ddf573ae08f4b04d5509e"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/shadow15k/policy.py",
+      "sha256": "335ae77cc0dd6733a3463dfc49e22168c52c01ab60831279eb5638a07e15fd4a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/signals.py",
+      "sha256": "3550d378f1526a51f7d958ed4a125f2598804a7b87995a828162fdcd889affa9"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/book.py",
+      "sha256": "17b7679ff35c586b65de55affab7cd3c33c56e19963494a1516b260ae0f6cacc"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/carry_evaluate.py",
+      "sha256": "cacd8dc794e125279acfa35410e237c64cb22dfdb0956ea9b3d77f06dc67b038"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/carry_rates_signals.py",
+      "sha256": "b71b85cf7e22f8f5c93bef80c2fc6561d2c659d4218db720582e57ef792bd0e8"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/carry_signals.py",
+      "sha256": "249f56a6758da977c83bef1408f1848fa2fb270babcce886a3c97bf505831c24"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/evaluate.py",
+      "sha256": "874872b4cd9d7cdf4f519773254b90d23bfc49ea2813021762f8d2c5068839f1"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/fetch_carry_data.py",
+      "sha256": "10761843d85ddb8ed853aa843696ef6c238e3f92d38ed757c6e10bf3de15d1fb"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/fetch_residual_data.py",
+      "sha256": "ebb83289c127defc93320b74cc0cd80a82116cea0b9c816940fdbbdd33b46ed4"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/gem_signals.py",
+      "sha256": "9aeca0d7c181ce7af15949ffd8f55a178a3e51299e8e2fcd1b5c5431715ac960"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/momentum_evaluate.py",
+      "sha256": "2a81e9b0929cd01dbaad816820b80daec673869928439016dbc4a0690bb2ef15"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/momentum_signals.py",
+      "sha256": "71c7828dce522dcb39caa2f8705f1cc8c87970403d18fd2d4aa0df2e5ca7068e"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/multifactor_signals.py",
+      "sha256": "b60b1a6aa104481b228fbae5224987f30adcf30d2bc302e7bc088e8daf5c5393"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/residmom_signals.py",
+      "sha256": "ae96b68713d713c9c87d1cad0e98abc56d6a51247f631bf65f63fc4f0814907d"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/residual_evaluate.py",
+      "sha256": "c95697b228ff3f535b6f5445fcc7270ef9a33539ff9bfee68f450ec7410d6b3b"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/residual_signals.py",
+      "sha256": "c307043f29dd3ada30f0e2e0aa5b359e2088b8969e93b42146f75c7b58363e54"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/resolve_universe.py",
+      "sha256": "56b8031a6625e2f55555bb91936bbe20a3dd6c751c5618fff8aa3441dba7d0e2"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/run_alpha_mining.py",
+      "sha256": "3232b34941afb2087da85a7c7ee3aa6a1768187cd5634ba803809d19ae087be0"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/run_carry.py",
+      "sha256": "96b19dbaf687d1debafa921273a574a1c3c3ac68b463fcc546c42ea376ea2e69"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/run_carry_rates.py",
+      "sha256": "c839fde9f3122d0d2d7515fb0fb64661a31321cb56046dad09e3c15cd5c9e985"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/run_fomc_seasonality.py",
+      "sha256": "2a5d063a94affc31e5e0c653696119d38bbe6c13f8adde6f2009e930ee0d12af"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/run_gem_certify.py",
+      "sha256": "444f84316de4bb58f8ba3c93b78593a4ca78be7ba224023a096ced0b1ced299a"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/run_momentum.py",
+      "sha256": "dbf26480e7ae1e0aba52f4ad9b2ba29b28f82dcef9e1c856e76a1215f6728c1b"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/run_multifactor.py",
+      "sha256": "94652435f7180fedc9182d4985f6c134ff0b06d37366ebf8c71113114de8bb86"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/run_residual.py",
+      "sha256": "da4ec4b62c12d5440c6ff7a3f8907d8133ea882074e91be2a0c0229d6209ebcc"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/run_swing.py",
+      "sha256": "72f7f5be906fc2f3b8d8273072d1708e36da8060075f6607a2d8c735bd1324e4"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/signals.py",
+      "sha256": "97c1598c31fa340b1378bc640d5a3a73db2dacc085c11d73f665fe46ebdf097e"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/swing/strategies.py",
+      "sha256": "29a52aed1b930cf4dfbe70773331435dcba4644582c65ab0d853da0b830ca78d"
+    },
+    {
+      "hits": [],
+      "path": "qlab/qlab/synthetic.py",
+      "sha256": "42f9d06ff964b258277103017dabeebdc855373a6a3fc0231743848b349d933a"
+    }
+  ],
+  "head": "34b00fa6545fece67fc00a755838450f04d97e1c",
+  "hit_count": 2,
+  "hits": [
+    {
+      "column": 30,
+      "expression": "compile.__call__",
+      "line": 163,
+      "path": "qlab/qlab/dynamic_factor/b_release_context.py"
+    },
+    {
+      "column": 14,
+      "expression": "Path.read_bytes.__call__",
+      "line": 1059,
+      "path": "qlab/qlab/dynamic_factor/scope_proof.py"
+    }
+  ],
+  "mode": "read-only AST; no product import or execution",
+  "production_target_count": 39,
+  "production_targets": [
+    "b_release_context",
+    "catalog_members",
+    "catalog_v21",
+    "continuity",
+    "conventions",
+    "execution",
+    "execution_accounting",
+    "execution_amounts",
+    "execution_candidate",
+    "execution_cash",
+    "execution_clock",
+    "execution_closure",
+    "execution_exposure",
+    "execution_numbers",
+    "execution_projection",
+    "execution_returns",
+    "execution_risk",
+    "execution_risk_history",
+    "execution_signals",
+    "execution_startup",
+    "execution_state",
+    "folds",
+    "historical_authority",
+    "input_disposition",
+    "input_scope",
+    "isolation",
+    "k5",
+    "noncash_v3",
+    "pending",
+    "pipeline",
+    "reference_definition_v301",
+    "reference_inputs",
+    "reference_profile_v301",
+    "reference_registry_v3",
+    "scope_proof",
+    "scope_reader",
+    "state_v2",
+    "validation",
+    "valuation"
+  ],
+  "rule_source": "def forbidden_call(node):\n    forbidden = ('open', 'eval', 'exec', '__import__', 'compile', 'read_bytes')\n    if not isinstance(node, ast.Attribute) or node.attr != '__call__':\n        return False\n    value = node.value\n    return (\n        isinstance(value, ast.Name) and value.id in forbidden\n        or isinstance(value, ast.Attribute) and value.attr in forbidden\n    )",
+  "scanned_at": "2026-11-08T12:38:21.512610+00:00",
+  "schema": "EVO884.V7PrelistingHitReport/v1",
+  "superset_python_count": 197
+}
