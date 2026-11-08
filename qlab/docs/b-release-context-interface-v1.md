@@ -1,4 +1,7 @@
-release_context 共同接口规格 v1.0.3（正式／诊断交叉分类具名拒绝）
+release_context 共同接口规格 v1.0.4（catalog 重算绑定与 S05 故障模型）
+
+v1.0.4 按工部 `01a1b881-e84a`、`01a1b88a-b68f` 合入已核 B02 catalog 合同并澄清 S05。
+下文 v1.0.0–v1.0.3 的“待实现／待裁／先行头”表述保留为版本历史；B01/B02 已核收于 `6046038`，本版实跑结果以固定头交件证据为准，仍不形成实际 A 或运行许可。
 
 v1.0.3 按工部 `01a1b7bd-23f3-7b32-8483-db0b504a1f22` 澄清第4节的交叉分类。
 v1.0.2 已核合同保留；本版只修桥侧分类门，不改变12码、共同 checker、数值域或既有前置顺序。
@@ -131,6 +134,18 @@ reference_compile_v3、reference_noncash、execution_receipts/input_envelope 调
 不请求修改 zero_exposure/state、费用算法或旧 golden。两个既定再导出本身足够，
 冲突在内部参数边，不在 B01 返回类型或增加公共出口。
 
+### 2.2 catalog 正式消费视图、重算绑定与输入核验（v1.0.4）
+
+依据工部 01a1b812-e60f 与 01a1b818-7cf9。正式 guard.request.catalog 唯一格式沿用现有 universe/calendar_sha256/entries 消费视图；R.catalog 保留发布 payload 原字节身份，不直接作为消费视图，也不添加旧字段。zero_exposure 和九函数原逻辑不变。
+
+共同 checker 重核 R/P/A、host 期待值及冻结 policy 后，逐件核对 FIXTURES 中原 v21 CSV、CMI guard、v21 final receipt 的 SHA 与 R 的 accepted-input manifest，并逐字节比对同一 host 的已核原件；不符或缺件先报 B.release_context_release_mismatch，不调用 derive。三件读取均逐路径、逐完整 SHA 登记。回执为 R /accepted_input_manifest/entries/0/accepted_receipt 已接受的原件，不增加新的事实来源。U64 顺序、完整 calendar 来自同一冻结 policy，REGISTERED_AT 仍为原模块常量。
+
+随后原样调用 catalog_v21.derive(policy)，原模块一字不改。其内部原有 SHA 校验保留。仅取其 catalog 与 request.catalog 作严格规范 JSON 字节比较；任何字段不符报 B.release_context_scope_mismatch。现有消费视图只由该单一派生函数产生，没有平行实现或隐藏包装。H_C 仍为 SHA256(C(R.catalog))，H_R/H_A/H_D 原语义不变，不能以消费视图摘要替代 H_C。
+
+派生前还将实际 policy.calendar 按冻结 common-calendar 的逐日 LF 编码重算 SHA，与 host 的 common_calendar_sha256 比较。只保留原 raw/manifest 但改动内存中的日期元组，同样在 derive 前报 scope_mismatch；不增加读取或改动日历规则。
+
+源代码变更依据为上述工部裁定；本段及私有机制测试不代表实际 A、来源许可、独审重封或运行放行。所有新源码读数仍 seal_pending。
+
 ## 3. 固定属性
 
 属性均为只读。非空 str/bytes 必须按精确内置类型检查，SHA 为 64 位小写十六进制 str。
@@ -246,6 +261,13 @@ host 传来的能力或期待 bytes 不得把旧诊断回执升格为正式回�
 拒绝多余参数不改变原 state/book/guard 身份前置；restore 仍先核 raw/source，再核能力。
 该规则使用已有 scope_mismatch 码，不增加码，也不把该码提升为所有入口的全局最高优先级。
 
+### 4.0.2 catalog 重核在共同 checker 内的顺序（v1.0.4）
+
+第 2.2 节的输入身份核验先于原 `catalog_v21.derive(policy)`；三件缺失或字节／SHA不符报
+`B.release_context_release_mismatch`，不进入 derive。冻结日历 LF 摘要／派生消费视图不符报
+`B.release_context_scope_mismatch`。H_C 仍绑定 R.catalog 原发布 payload，不能拿消费视图摘要替代。
+这属于 checker 内部顺序；原入口 schema、时间、原状态和 restore 来源优先级保持第 4.1／4.2 节约定。
+
 ### 4.1 入口位置与拒绝顺序
 
 12 行是码义集合，不是全局排序；persistent_identity 两码还涉及 restore 数据门，
@@ -272,7 +294,7 @@ seal 的“原结构”是各分支定义允许的闭集；新正式键的允许
 
 ### 4.2 双缺陷矩阵（合同预期与当前实物分开）
 
-下面 S/K/C 行描述 B01/B02 已实现时的合同预期，**本轮未实跑正式能力正控或这些未来分支**。
+下面 S/K/C 行列合同预期；v1.0.4 的真实私有 host 实跑结果在本次固定头交件逐行提供，不能用规格文字代替验收。
 每行其余字段须有效且足以到达所列门；“缺 context”指已识别的新正式分支，不能回退诊断。
 R 行是 0cb4ba9 已存在 restore 语句的静态顺序；不是本轮产品执行结果。
 
@@ -282,7 +304,9 @@ R 行是 0cb4ba9 已存在 restore 语句的静态顺序；不是本轮产品执
 | S02 seal | sealed_at 缺时区 + 缺 context | B.timezone_required；未进 checker |
 | S03 seal | 历史 sealed_at 不早于 first_performance_at + 缺 context | B.not_sealed_before_performance；未进 checker |
 | S04 seal | U64 catalog 不完整 + context 类型错 | B.full_U64_catalog_required；未进 checker |
-| S05 seal | 原前置全有效，B01 出口缺件 + 缺 context | B.release_context_implementation_unavailable；不回退 |
+| S05a 动态桥（如 CashProof.release_guard） | 调用时解析的 B01 出口缺件 + 缺 context | B.release_context_implementation_unavailable；不接替身、不回退 |
+| S05b 静态入口（seal_guard／checked_guard） | b_release_context 不可用或导入失败 | noncash_v3 模块导入即 ImportError；任何入口执行不到，reader／worker／checker 均0 |
+| S05c TEST_ONLY 篡改 | 已导入模块后运行时删除公开 checker 再导出 | 不限定异常类别或具名码；须先于 reader／worker／checker 抛异常，状态不推进 |
 | K01 checked | guard 非 dict + 缺 context | B.guard_identity_mismatch；不取 request |
 | K02 checked | guard 缺 request + 缺 context | 原 KeyError('request')；未进 seal |
 | K03 checked | request 时间无时区 + guard 摘要错 | B.timezone_required；未比较重建结果 |
@@ -306,7 +330,7 @@ R 行是 0cb4ba9 已存在 restore 语句的静态顺序；不是本轮产品执
 | E02 CashProof.check | 原 state/book/guard 身份错 + context 混版 | accounting.cash_proof_state_or_scope_mismatch；未核 release |
 
 R04 与 R05 刻意区分“磁盘根缺键”和“host 期待缺失”，不可统称缺绑定后随意选码。
-S05 与 R09 也刻意不同：unavailable 不是覆盖所有入口的全局最高优先级。
+S05a 与 R09 刻意不同：unavailable 不是全局最高优先级。S05b 的出口在模块导入时静态绑定，真实缺件表现为整个模块导入失败；导入后删名属于 S05c 测试篡改，不在 S05a／S05b 的正常缺件模型内。
 表中拒绝均不得推进 reader/worker、事件或日期；这一不推进条件须在完整 B 头真实联调取证，
 本次静态顺序核查不能替代 T10/T11/T19/T20 验收。
 
