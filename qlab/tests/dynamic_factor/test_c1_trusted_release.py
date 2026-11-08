@@ -227,9 +227,7 @@ def test_audit_rejects_any_other_self_read_argument_AST(monkeypatch, expression)
     current = Path(b.__file__)
     raw = (
         current.read_text()
-        .replace(
-            "Path.read_bytes(Path(__file__))", "Path.read_bytes(" + expression + ")"
-        )
+        .replace("Path.read_bytes(self_path)", "Path.read_bytes(" + expression + ")")
         .encode()
     )
     monkeypatch.setattr(
@@ -283,9 +281,17 @@ def test_original_registrations_and_other_counts_are_byte_unchanged():
     old_map, new_map = ast.literal_eval(old_counts), ast.literal_eval(new_counts)
     assert old_map.pop("b_release_context") == 1
     assert new_map.pop("b_release_context") == 4
+    assert old_map.pop("scope_proof") == 2
+    assert new_map.pop("scope_proof") == 3
     assert old_map == new_map
     old_text = ast.get_source_segment(base, old_counts).splitlines()
     new_text = ast.get_source_segment(current, new_counts).splitlines()
-    assert [s for s in old_text if '"b_release_context"' not in s] == [
-        s for s in new_text if '"b_release_context"' not in s
+    assert [
+        s
+        for s in old_text
+        if '"b_release_context"' not in s and '"scope_proof"' not in s
+    ] == [
+        s
+        for s in new_text
+        if '"b_release_context"' not in s and '"scope_proof"' not in s
     ]

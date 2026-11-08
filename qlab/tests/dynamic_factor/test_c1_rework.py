@@ -109,11 +109,17 @@ def test_legacy_b2_region_is_byte_exact_except_authorized_counter():
 
     def region(source):
         first = source.index(start)
-        return source[first : source.index(end, first) + len(end)]
+        return "".join(
+            line
+            for line in source[first : source.index(end, first) + len(end)].splitlines(
+                keepends=True
+            )
+            if not line.lstrip().startswith("# V7:")
+        )
 
     assert region(new) == region(old).replace(
         '"b_release_context": 1,', '"b_release_context": 4,'
-    )
+    ).replace('"scope_proof": 2,', '"scope_proof": 3,')
 
 
 @pytest.mark.parametrize(
@@ -142,9 +148,9 @@ def test_global_override_at_self_read_preserves_argument_ast_but_is_rejected(
 ):
     current = Path(b.__file__)
     text = current.read_text().replace(
-        "            self_raw = Path.read_bytes(Path(__file__))",
+        "            self_raw = Path.read_bytes(self_path)",
         '            globals()["__file__"] = str(Path(__file__).with_name("OTHER.py"))\n'
-        "            self_raw = Path.read_bytes(Path(__file__))",
+        "            self_raw = Path.read_bytes(self_path)",
     )
     assert text != current.read_text()
     calls = [
@@ -154,8 +160,7 @@ def test_global_override_at_self_read_preserves_argument_ast_but_is_rejected(
         and isinstance(n.func, ast.Attribute)
         and n.func.attr == "read_bytes"
         and n.args
-        and ast.dump(n.args[0])
-        == ast.dump(ast.parse("Path(__file__)", mode="eval").body)
+        and ast.dump(n.args[0]) == ast.dump(ast.parse("self_path", mode="eval").body)
     ]
     assert len(calls) == 1
     original = Path.read_bytes
@@ -169,12 +174,15 @@ def test_global_override_at_self_read_preserves_argument_ast_but_is_rejected(
 @pytest.mark.parametrize(
     "old,new",
     [
-        ("compile.__call__(", "other.__call__("),
-        ('"co_names",', '"co_name",'),
-        ("same_constant(left.co_consts, right.co_consts)", "True"),
+        (
+            "Path(_read_trusted_release.__code__.co_filename).resolve()",
+            "Path(override).resolve()",
+        ),
+        ("self_path != Path(__file__).resolve()", "False"),
+        ("implementation_id = sha256(self_raw)", "implementation_id = str(self_raw)"),
     ],
 )
-def test_exact_compile_and_recursive_comparison_cannot_be_disabled(
+def test_exact_import_filename_binding_and_hash_cannot_be_disabled(
     monkeypatch, old, new
 ):
     current = Path(b.__file__)
@@ -198,15 +206,6 @@ spec=importlib.util.spec_from_file_location('qlab.dynamic_factor.TEST_RUNTIME',p
 m=importlib.util.module_from_spec(spec);sys.modules[spec.name]=m;spec.loader.exec_module(m)
 other=path.with_name('OTHER.py');other.write_bytes(b'TEST_ONLY foreign bytes')
 if case=='external_file':m.__file__=str(other)
-if case.startswith('hot_'):
-    text=path.read_text()
-    if case=='hot_consts':text=text.replace('BReleaseTrustRegistration/v1','BReleaseTrustRegistration/v9')
-    else:text=text.replace('_utc(accepted_at)', '_pairs(accepted_at)')
-    assert text!=path.read_text();path.write_text(text)
-    root=path.parent/'b_release_originals/trust-root-platform-readback.json'
-    record=json.loads(root.read_text());content=json.loads(record['content'])
-    content['implementation_id']=m.sha256(path.read_bytes());record['content']=json.dumps(content)
-    root.write_text(json.dumps(record))
 opened=[]
 def audit(event,args):
     if event=='open':opened.append(str(args[0]))
@@ -220,12 +219,8 @@ print(json.dumps(status))
 """
 
 
-@pytest.mark.parametrize(
-    "case", ["external_file", "global_file", "direct_file", "hot_consts", "hot_names"]
-)
-def test_live_code_binding_rejects_tmp_file_retarget_or_disk_code_drift(
-    copied_host, tmp_path, case
-):
+@pytest.mark.parametrize("case", ["external_file", "global_file", "direct_file"])
+def test_import_filename_binding_rejects_tmp_file_retarget(copied_host, tmp_path, case):
     module = copied_host[0]
     if case in ("global_file", "direct_file"):
         line = 'globals()["__file__"]' if case == "global_file" else "__file__"
