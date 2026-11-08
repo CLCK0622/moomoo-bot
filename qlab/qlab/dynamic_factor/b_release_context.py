@@ -88,8 +88,187 @@ def _utc(value):
 
 
 def _read_trusted_release():
-    """Original host adapter only; no request, path, env or N-host override."""
-    _fail("trust_binding_missing")
+    """Fixed package originals and original-authority platform registration.
+
+    C1 deliberately omits the root file. C2 installs only the platform comment
+    readback after BR-A. Its content is the strict JSON registration below;
+    platform created_at supplies both acceptance and runtime time evidence.
+    No request, environment, cwd or caller parameter selects an input.
+    """
+    from pathlib import Path
+
+    try:
+        root_raw = (
+            Path(__file__).parent
+            / "b_release_originals"
+            / "trust-root-platform-readback.json"
+        ).read_bytes()
+    except OSError as exc:
+        raise ValueError("B.release_context_trust_binding_missing") from exc
+    try:
+        root = _json(root_raw)
+        if (
+            type(root) is not dict
+            or root.get("type") != "comment"
+            or root.get("author_type") != "agent"
+            or root.get("author_id") != "cc562115-7ef6-4b8f-b4b6-a5b7584b1340"
+            or type(root.get("id")) is not str
+            or not root["id"]
+            or type(root.get("revision")) is not int
+            or root["revision"] < 1
+            or type(root.get("content")) is not str
+            or root.get("issue_id", "01a19dab-15f2-7e58-96a0-cf92c87162c2")
+            != "01a19dab-15f2-7e58-96a0-cf92c87162c2"
+        ):
+            _fail("trust_binding_missing")
+        accepted_at = root["created_at"]
+        _utc(accepted_at)
+        registration = _json(root["content"].encode("utf-8"))
+        if type(registration) is not dict or set(registration) != {
+            "schema",
+            "context_version",
+            "receiver_id",
+            "implementation_id",
+            "r_sha256",
+            "p_sha256",
+            "adoption_sha256",
+            "policy_binding",
+            "run_time_binding",
+            "purpose",
+            "limitations",
+        }:
+            _fail("trust_binding_missing")
+        if (
+            registration["schema"] != "EVO884.BReleaseTrustRegistration/v1"
+            or registration["receiver_id"]
+            != "gongbu.original-host:5a307571-9534-4bbc-932c-93ffc9c94d73"
+            or any(
+                type(registration[k]) is not str or not registration[k]
+                for k in ("context_version", "purpose", "limitations")
+            )
+            or type(registration["policy_binding"]) is not dict
+        ):
+            _fail("trust_binding_missing")
+        # Anti-cycle: the root SHA is data-only, never embedded in any code.
+        # This sole self-read is used only for the module implementation_id.
+        implementation_id = sha256(Path.read_bytes(Path(__file__)))
+        if registration["implementation_id"] != implementation_id:
+            _fail("acceptance_mismatch")
+        original_sha256 = {
+            "EVO883-B-RUNTIME-RELEASE-P1-adopted-protocol-v1.0.0.json": "ff5da6ef748d5f1fca592559e73656d5283e28ec9d279b65b3ac0fd5943069ff",
+            "EVO883-EVO893-v10-ruling.json": "834bf9546dda93c3fb613833b59ac87842c2825b71c11bc09edc13608f5d42e4",
+            "EVO883-S1-BRKB-field-receipt.json": "ff8dee166c469310b915f903a32164351647e61dd8340437ffa09b45da9e0442",
+            "EVO883-S2-v14-field-receipt.json": "9b5fd1e87a2cae26df8a0c1a8ee9fbd880c07234e05a9253ff9886d4dcb7711f",
+            "EVO883-S3-v12-final-receipt.json": "1df425a328539f4cddfe3d574feabc1b753fc0abe2ff15d318634aee7dff3836",
+            "EVO883-S4-v11-receipt.json": "d44ce4e0b13d68a129f6aca0ad2187f459ea978f117510cc48d910fb8b44b11f",
+            "EVO883-v10-engineering-scope-receipt.json": "4da26596777a62595664ba9b9e17480113f96ccbd2c1d0226df083ac2e7ecc0f",
+            "EVO883-v20.1-final-receipt.json": "cdd7954a20102e1053f932fe559153b26336475afdb41b772004795708bf3c4e",
+            "EVO883-v21-final-receipt.json": "b8b930396e7caf42ad8bde0f2f7ff190c40f36fd4c4686964a39154926f6644a",
+            "EVO893-B-CMI-guard-v21.json": "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77",
+            "EVO893-B-noncash-catalog-v21.csv": "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13",
+            "EVO938-B-runtime-release-P-v1.0.0.json": "4a4b24b0a6ee2b6b561d285fa6f3f9233960959500b6e02fc137c83ca31deae1",
+            "EVO938-B-runtime-release-R-v1.0.0.json": "68f06b15ded4cb1ec5219a5456a2e0f0f376cab54a9e3ac33aee653dacfa877c",
+            "annotation-platform-readback.json": "d25ba025d42fea6ad908566384f97f6fd1ed567eb1f4474bba46105e9aa77c81",
+            "publication-platform-readback.json": "f847be9a107b9293e134bfc4d9a03a3c3cb1eeb823f40991d7b8d28d1533455e",
+        }
+        originals = {}
+        for name, expected in original_sha256.items():
+            try:
+                raw = (
+                    Path(__file__).parent / "b_release_originals" / name
+                ).read_bytes()
+            except OSError as exc:
+                raise ValueError("B.release_context_release_mismatch") from exc
+            if sha256(raw) != expected:
+                _fail("release_mismatch")
+            originals[name] = raw
+        r_raw = originals["EVO938-B-runtime-release-R-v1.0.0.json"]
+        p_raw = originals["EVO938-B-runtime-release-P-v1.0.0.json"]
+        adoption_raw = originals[
+            "EVO883-B-RUNTIME-RELEASE-P1-adopted-protocol-v1.0.0.json"
+        ]
+        if (
+            registration["r_sha256"] != sha256(r_raw)
+            or registration["p_sha256"] != sha256(p_raw)
+            or registration["adoption_sha256"] != sha256(adoption_raw)
+        ):
+            _fail("release_mismatch")
+        r, p = _json(r_raw, canonical=True), _json(p_raw, canonical=True)
+        readback = _json(originals["publication-platform-readback.json"])
+        publication = dict(
+            comment_id=readback["id"],
+            revision=readback["revision"],
+            created_at=readback["created_at"],
+            R=dict(sha256=sha256(r_raw), platform=p["actual_core_attachment"]),
+            P=dict(sha256=sha256(p_raw)),
+        )
+        readback = _json(originals["annotation-platform-readback.json"])
+        annotation = dict(
+            issue_id=ISSUE,
+            comment_id=readback["id"],
+            revision=readback["revision"],
+            content=readback["content"],
+        )
+        inputs = {}
+        for entry in r["accepted_input_manifest"]["entries"][:-1]:
+            name = entry["accepted_receipt"]["file"]
+            inputs[name] = originals[name]
+        for key in ("catalog_csv", "CMI_guard"):
+            name = r["accepted_input_manifest"]["entries"][0][key]["file"]
+            inputs[name] = originals[name]
+        time = dict(
+            context_version=registration["context_version"],
+            receiver_id=registration["receiver_id"],
+            accepted_at=accepted_at,
+        )
+        run = registration["run_time_binding"]
+        if (
+            type(run) is not dict
+            or set(run) != {"mode", "first_performance_at", "signal_close"}
+            or run["mode"] not in {"history", "forward"}
+        ):
+            _fail("trust_binding_missing")
+        if _utc(run["first_performance_at"]) <= _utc(accepted_at):
+            _fail("scope_mismatch")
+        if run["mode"] == "history":
+            if run["signal_close"] is not None:
+                _fail("scope_mismatch")
+        elif _utc(run["signal_close"]) < _utc(accepted_at):
+            _fail("scope_mismatch")
+        source = dict(
+            r_raw=r_raw,
+            p_raw=p_raw,
+            adoption_raw=adoption_raw,
+            original_inputs=inputs,
+            publication_raw=_canonical(publication),
+            annotation_raw=_canonical(annotation),
+            acceptance_time_evidence_raw=_canonical(time),
+            **time,
+            implementation_id=implementation_id,
+            expected_policy_binding_bytes=_canonical(registration["policy_binding"]),
+            expected_publication_bytes=_canonical(publication),
+            expected_annotation_bytes=_canonical(annotation),
+            expected_acceptance_time_bytes=_canonical(time),
+            run_time_binding_bytes=_canonical(run),
+        )
+        source["expected_sha256"] = {
+            k: sha256(source[k])
+            for k in (
+                "r_raw",
+                "p_raw",
+                "adoption_raw",
+                "publication_raw",
+                "annotation_raw",
+                "acceptance_time_evidence_raw",
+            )
+        }
+        source["expected_sha256"].update(
+            implementation_sha256=implementation_id,
+            original_inputs={name: sha256(raw) for name, raw in inputs.items()},
+        )
+        return source
+    except (KeyError, TypeError, AttributeError, IndexError, UnicodeError) as exc:
+        raise ValueError("B.release_context_encoding_invalid") from exc
 
 
 class ReleaseContext:

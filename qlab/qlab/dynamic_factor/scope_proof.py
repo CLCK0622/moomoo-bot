@@ -97,6 +97,7 @@ IMPORTS = {
     },
     "catalog_members": set(),
     "b_release_context": {
+        "pathlib",
         "catalog_v21",
         "csv",
         "datetime",
@@ -427,6 +428,195 @@ B_RELEASE_FIXED_READS = (
     ),
 )
 
+
+# C1 exact package originals; the old B02/C13 tables remain unchanged.
+B_RELEASE_ADAPTER_READS = (
+    (
+        "b_release_context",
+        "b_release_originals/EVO883-B-RUNTIME-RELEASE-P1-adopted-protocol-v1.0.0.json",
+        "ff5da6ef748d5f1fca592559e73656d5283e28ec9d279b65b3ac0fd5943069ff",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO883-EVO893-v10-ruling.json",
+        "834bf9546dda93c3fb613833b59ac87842c2825b71c11bc09edc13608f5d42e4",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO883-S1-BRKB-field-receipt.json",
+        "ff8dee166c469310b915f903a32164351647e61dd8340437ffa09b45da9e0442",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO883-S2-v14-field-receipt.json",
+        "9b5fd1e87a2cae26df8a0c1a8ee9fbd880c07234e05a9253ff9886d4dcb7711f",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO883-S3-v12-final-receipt.json",
+        "1df425a328539f4cddfe3d574feabc1b753fc0abe2ff15d318634aee7dff3836",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO883-S4-v11-receipt.json",
+        "d44ce4e0b13d68a129f6aca0ad2187f459ea978f117510cc48d910fb8b44b11f",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO883-v10-engineering-scope-receipt.json",
+        "4da26596777a62595664ba9b9e17480113f96ccbd2c1d0226df083ac2e7ecc0f",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO883-v20.1-final-receipt.json",
+        "cdd7954a20102e1053f932fe559153b26336475afdb41b772004795708bf3c4e",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO883-v21-final-receipt.json",
+        "b8b930396e7caf42ad8bde0f2f7ff190c40f36fd4c4686964a39154926f6644a",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO893-B-CMI-guard-v21.json",
+        "08ed088405cbefa9bd24e8cb0756d5d10a62b105153b9cfba02af504d9371f77",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO893-B-noncash-catalog-v21.csv",
+        "5040272302cf675b99e0b954669dde72bfc6431f47fb9d835f3acb6f408d1a13",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO938-B-runtime-release-P-v1.0.0.json",
+        "4a4b24b0a6ee2b6b561d285fa6f3f9233960959500b6e02fc137c83ca31deae1",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/EVO938-B-runtime-release-R-v1.0.0.json",
+        "68f06b15ded4cb1ec5219a5456a2e0f0f376cab54a9e3ac33aee653dacfa877c",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/annotation-platform-readback.json",
+        "d25ba025d42fea6ad908566384f97f6fd1ed567eb1f4474bba46105e9aa77c81",
+    ),
+    (
+        "b_release_context",
+        "b_release_originals/publication-platform-readback.json",
+        "f847be9a107b9293e134bfc4d9a03a3c3cb1eeb823f40991d7b8d28d1533455e",
+    ),
+)
+
+# Anti-cycle: the trust-root SHA cannot enter code; the module SHA cannot be
+# embedded in itself or this audit gate. Exactly these TWO path-only entries
+# are authorized. A third requires approval from the original authority line.
+B_RELEASE_PATH_ONLY_READS = (
+    ("b_release_context", "b_release_originals/trust-root-platform-readback.json"),
+    ("b_release_context", "b_release_context.py"),
+)
+
+
+def _b_release_adapter_scope(tree):
+    """Exact call ASTs, fixed original loop, and self-read SHA-only use."""
+    try:
+        if len(B_RELEASE_PATH_ONLY_READS) != 2 or set(B_RELEASE_PATH_ONLY_READS) != {
+            (
+                "b_release_context",
+                "b_release_originals/trust-root-platform-readback.json",
+            ),
+            ("b_release_context", "b_release_context.py"),
+        }:
+            raise ValueError
+        fn = next(
+            n
+            for n in tree.body
+            if isinstance(n, ast.FunctionDef) and n.name == "_read_trusted_release"
+        )
+        if fn.args.args or fn.args.kwonlyargs or fn.args.vararg or fn.args.kwarg:
+            raise ValueError
+        expected = ast.literal_eval(
+            next(
+                n.value
+                for n in ast.walk(fn)
+                if isinstance(n, ast.Assign)
+                and len(n.targets) == 1
+                and isinstance(n.targets[0], ast.Name)
+                and n.targets[0].id == "original_sha256"
+            )
+        )
+        rows = tuple(
+            ("b_release_context", "b_release_originals/" + name, value)
+            for name, value in expected.items()
+        )
+        if (
+            len(rows) != 15
+            or rows != B_RELEASE_ADAPTER_READS
+            or any(
+                type(value) is not str
+                or len(value) != 64
+                or any(c not in "0123456789abcdef" for c in value)
+                for value in expected.values()
+            )
+        ):
+            raise ValueError
+        reads = [
+            n
+            for n in ast.walk(fn)
+            if isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Attribute)
+            and n.func.attr == "read_bytes"
+        ]
+        expressions = {
+            "root": '(Path(__file__).parent / "b_release_originals" / "trust-root-platform-readback.json").read_bytes()',
+            "self": "Path.read_bytes(Path(__file__))",
+            "original": '(Path(__file__).parent / "b_release_originals" / name).read_bytes()',
+        }
+        if len(reads) != 3 or {ast.dump(n) for n in reads} != {
+            ast.dump(ast.parse(expr, mode="eval").body) for expr in expressions.values()
+        }:
+            raise ValueError
+        # In particular the self-read argument AST must be EXACTLY Path(__file__)
+        # (not a literal, alias, env/request expression or runtime path test).
+        identity = ast.parse(
+            "implementation_id = sha256(Path.read_bytes(Path(__file__)))"
+        ).body[0]
+        if sum(ast.dump(n) == ast.dump(identity) for n in ast.walk(fn)) != 1:
+            raise ValueError
+        for n in ast.walk(fn):
+            if (
+                isinstance(n, ast.Name)
+                and isinstance(n.ctx, ast.Store)
+                and n.id in {"Path", "__file__"}
+            ):
+                raise ValueError
+        loops = [
+            n
+            for n in ast.walk(fn)
+            if isinstance(n, ast.For)
+            and ast.dump(n.iter)
+            == ast.dump(ast.parse("original_sha256.items()", mode="eval").body)
+        ]
+        if len(loops) != 1 or ast.dump(loops[0].target) != ast.dump(
+            ast.parse("for name, expected in original_sha256.items(): pass")
+            .body[0]
+            .target
+        ):
+            raise ValueError
+    except (ValueError, TypeError, KeyError, StopIteration, AttributeError) as exc:
+        raise ValueError("scope.file_access_not_whitelisted") from exc
+    return {
+        "sha256_reads": [dict(module=m, path=p, sha256=s) for m, p, s in rows],
+        "path_only_reads": [
+            dict(module=m, path=p) for m, p in B_RELEASE_PATH_ONLY_READS
+        ],
+        "exact_adapter_read_sites": 3,
+        "self_read_argument": "Path(__file__)",
+        "self_read_use": "sha256 -> implementation_id only",
+        "root_sha_in_code": False,
+    }
+
+
 # Bind the inspected helper bodies/roots as well as their call-site domain.
 # Accounting is re-pinned for B step 3 propagation; the other four stay unchanged.
 # Any byte drift, including a comment, fails;
@@ -627,7 +817,35 @@ def b2_isolation_proof(policy):
     ]
     targets.extend(FIXED_READS)
     targets.extend(B_RELEASE_FIXED_READS)
-    for name, relative, expected in targets:
+
+    def adapter_targets():
+        yield from targets
+        # Preserve the old C13 refusal sites before inspecting C1 originals.
+        # A missing new file must not mask an original scope violation.
+        _candidate_registry_scope(trees, sources)
+        _filename_read_scope(trees, sources)
+        # Same exact old read-domain/count guard, also before new artifact I/O.
+        # Its original check below is retained unchanged.
+        if {
+            "b_release_context": 4,
+            "catalog_v21": 1,
+            "execution": 2,
+            "pipeline": 1,
+            "reference_inputs": 1,
+            "scope_proof": 2,
+            "scope_reader": 1,
+            "valuation": 1,
+            "k5": 2,
+            "execution_accounting": 1,
+            "execution_clock": 1,
+            "execution_closure": 2,
+            "reference_definition_v301": 1,
+            "reference_registry_v3": 1,
+        } != file_reads:
+            raise ValueError("scope.file_access_not_whitelisted")
+        yield from B_RELEASE_ADAPTER_READS
+
+    for name, relative, expected in adapter_targets():
         raw = (root / relative).read_bytes()
         if expected is not None:
             if sha256(raw) != expected:
@@ -711,7 +929,7 @@ def b2_isolation_proof(policy):
     if set(gates) != set(ROLES) or len(readers) != 2:
         raise ValueError("scope.reader_or_role_set_changed")
     if file_reads != {
-        "b_release_context": 1,
+        "b_release_context": 4,
         "catalog_v21": 1,
         "execution": 2,
         "pipeline": 1,
@@ -727,6 +945,7 @@ def b2_isolation_proof(policy):
         "reference_registry_v3": 1,
     }:
         raise ValueError("scope.file_access_not_whitelisted")
+    adapter_scope = _b_release_adapter_scope(trees["b_release_context"])
     registry_scope = _candidate_registry_scope(trees, sources)
     filename_scope = _filename_read_scope(trees, sources)
     ref = static_proof()
@@ -753,6 +972,7 @@ def b2_isolation_proof(policy):
             {"module": module, "path": path, "sha256": expected}
             for module, path, expected in FIXED_READS
         ],
+        "B_release_adapter_scope": adapter_scope,
         "C13_registry_call_scope": registry_scope,
         "C13_filename_registration_scope": filename_scope,
         "C13_coverage_boundary": "Registered 3+7 fixed reads only; existing transitive helper reads retain original mechanisms and are not claimed fully covered by this table",
