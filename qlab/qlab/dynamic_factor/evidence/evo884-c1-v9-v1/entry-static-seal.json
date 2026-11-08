@@ -1,0 +1,38 @@
+{
+  "actual_A_issued": false,
+  "auditor": {
+    "bytes": 204528,
+    "sha256": "585437899399c91ca4f93e9cbc0d0091bdab0cbfac565bff60863012ddcb9a50"
+  },
+  "controlled_startup": {
+    "actual_argv_required_in_A": true,
+    "allowed_cwd": "repository root resolved from fixed entry path",
+    "command": [
+      "python",
+      "-I",
+      "-S",
+      "-B",
+      "qlab/tools/c1_source_preflight.py"
+    ]
+  },
+  "independent_review": "pending Gongbu and BR-A-D",
+  "legacy_52_source_seal": {
+    "bytes": 5668,
+    "sha256": "7862906117db06cab03c03e25ff7d2d2f1b3b9d3b195a255d9726a325093ddb8"
+  },
+  "registration": {
+    "kind": "complete_AST_with_one_auditor_SHA_placeholder",
+    "path": "../../tools/c1_source_preflight.py",
+    "path_only": false
+  },
+  "runtime_consumable": false,
+  "schema": "EVO884.C1EntryStaticSeal/v1",
+  "sealed_at": "2026-11-08T21:00:53.486503Z",
+  "source_commit": "14a712952b1b567ef3fd3d0f4a2b8b113834b83a",
+  "sources": {
+    "qlab/tools/c1_source_preflight.py": {
+      "bytes": 24628,
+      "sha256": "638f85578ac2eeb74067b7c0e0c78a361af8eea8510d4a7753c2b399f1bd4277"
+    }
+  }
+}

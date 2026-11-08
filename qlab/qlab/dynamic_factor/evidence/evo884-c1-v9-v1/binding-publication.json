@@ -1,0 +1,50 @@
+{
+  "authorization_comment": "01a1bccf-3df4-75f6-a492-4d078041fcf2",
+  "bindings": {
+    "B2-unavailable-manifest.json": {
+      "bytes": 58187,
+      "sha256": "f731f0f1a1190f950cd7c8d183c7f5a740ceced23a77adfa4073e930f6635cde"
+    },
+    "entry-static-seal.json": {
+      "bytes": 1112,
+      "sha256": "55c04f1fd18d24b5cd97896b7e81e69cbe0221ef3aa48f5d8c3e07ef003de041"
+    },
+    "migration-manifest-v9.json": {
+      "bytes": 267903,
+      "sha256": "7a87e0ea7f19eb28cf79607ceed0882d20b57db43197106f83b929fb54333acc"
+    },
+    "previous-index.json": {
+      "bytes": 10003,
+      "sha256": "8fe2981fad29d9e3c2db8b5ede34e2719a339c2ab3961ecc20a4a9ff349eb04e"
+    },
+    "read-dag.json": {
+      "bytes": 86719,
+      "sha256": "3148e616cb5ae0a29fcea319c098b4ecb425d8feb860c58db180baa468abbd3a"
+    },
+    "reference-static-proof.json": {
+      "bytes": 5869,
+      "sha256": "d63db7b97c15dcd8c29ab79a3bbfbd4b5d0614b4eb9bb3fc44df8b73cbbcc418"
+    },
+    "scope.json": {
+      "bytes": 4450,
+      "sha256": "5046f62680dfb91df13cd821e108db6f47519e4c5b348e6eefeb6382f9cb9088"
+    },
+    "source-inventory.json": {
+      "bytes": 41813,
+      "sha256": "db4017defc1d2f02ef5630941763c7e7a0345eb6618f92ade5ddfc73e13e9b88"
+    },
+    "static-seal.json": {
+      "bytes": 5668,
+      "sha256": "7862906117db06cab03c03e25ff7d2d2f1b3b9d3b195a255d9726a325093ddb8"
+    }
+  },
+  "certifiable": false,
+  "independent_review": "pending BR-A-D",
+  "issuance": "C1 static source successor; no actual A or runtime authority",
+  "issued_at_utc": "2026-11-08T21:00:53.486503Z",
+  "issuer_agent_id": "5a307571-9534-4bbc-932c-93ffc9c94d73",
+  "publication_sha256": "5038d92c6e06be344fc5b905d04c30285f9b79e9ae043fbede276a1334a0f70c",
+  "runtime_consumable": false,
+  "schema": "EVO884.C1.SourceBindingPublication/v1",
+  "source_commit": "14a712952b1b567ef3fd3d0f4a2b8b113834b83a"
+}

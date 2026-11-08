@@ -1,0 +1,98 @@
+{
+  "C1": {
+    "actual_A_issued": false,
+    "implementation_id": "4d5d3e5a44e6a5e2d7b1cae25b94ef9addcf8be208ed5a908118fe13ddf7e06e",
+    "independent_review": "pending BR-A; test copies are not authority",
+    "trust_root_present": false
+  },
+  "C1_R1": {
+    "actual_A_issued": false,
+    "implementation_id": "3bf62aa7a16f3b87ec82062619b9d01925233e6eed385e95c476fc29890b4eaa",
+    "independent_review": "pending BR-A; test copies are not authority",
+    "trust_root_present": false
+  },
+  "C1_V8": {
+    "L0_prerequisite": "Implement and independently review equality of request first_performance_at to the first same-version attempt platform time from the unique writer.",
+    "actual_A_issued": false,
+    "implementation_id": "2392a96137102c00ba0b91e460291618b4f3f4567e1a4765660e871b847cddd1",
+    "independent_review": "pending BR-A-D; test copies are not authority",
+    "limitations": [
+      "Interpreter, standard library and file mapping are assumed unchanged externally.",
+      "Post-load object replacement, file changes and filesystem races are outside the static conclusion.",
+      "Request first_performance_at is supplied by consumers and is not yet bound to the authoritative attempt chain.",
+      "Forward signal_close provenance from the locked-intent record is a consumer responsibility; context checker only compares request times."
+    ],
+    "trust_root_present": false
+  },
+  "C1_V8_SUPPLEMENT": {
+    "code_files": [
+      "qlab/qlab/dynamic_factor/scope_proof.py",
+      "qlab/tests/dynamic_factor/test_c1_v8.py",
+      "qlab/tests/dynamic_factor/test_c1_v8_supplement.py",
+      "qlab/tests/dynamic_factor/test_execution_reseal.py",
+      "qlab/tests/dynamic_factor/test_seal_index_rework.py"
+    ],
+    "contract_identity": "Exact reviewed contract source bytes, checked before its SHA function; comments and docstrings included.",
+    "legacy_guards": "unchanged through static_proof; existing 39-module receipt retained; three additional modules also checked",
+    "limitations": [
+      "Reviewed auditor and interpreter/standard library are the evaluation premise.",
+      "Runtime object replacement, post-load file changes and filesystem races are outside the static claim."
+    ],
+    "negative_controls": [
+      "Path.resolve top-level binding",
+      "Path.read_bytes function-local binding",
+      "sha256 body change",
+      "sha256 body returning the previous source identity"
+    ],
+    "registered_source_count": 40,
+    "scanned_module_count": 42
+  },
+  "C1_V9": {
+    "C1_dependency_closed": true,
+    "actual_A_issued": false,
+    "auditor_sha256": "585437899399c91ca4f93e9cbc0d0091bdab0cbfac565bff60863012ddcb9a50",
+    "controlled_startup": {
+      "actual_argv_required_in_A": true,
+      "allowed_cwd": "repository root resolved from fixed entry path",
+      "command": [
+        "python",
+        "-I",
+        "-S",
+        "-B",
+        "qlab/tools/c1_source_preflight.py"
+      ]
+    },
+    "entry_sha256": "638f85578ac2eeb74067b7c0e0c78a361af8eea8510d4a7753c2b399f1bd4277",
+    "independent_review": "pending Gongbu and BR-A-D",
+    "limitations": [
+      "Entry identity requires independent review, seal tests and controlled startup; S entry AST check is post-execution consistency, not an execution trust bootstrap.",
+      "Interpreter and standard library unchanged externally are premises; post-load file changes, arbitrary process object replacement and filesystem races are not fully certified.",
+      "Actual A and C2 are not produced; startup argv and cwd must later be recorded in actual A."
+    ],
+    "receiver_sha256": "2392a96137102c00ba0b91e460291618b4f3f4567e1a4765660e871b847cddd1",
+    "registration": {
+      "kind": "complete_AST_with_one_auditor_SHA_placeholder",
+      "path": "../../tools/c1_source_preflight.py",
+      "path_only": false
+    },
+    "trust_root_present": false
+  },
+  "L0": false,
+  "actual_B_acceptance": null,
+  "actual_SRC_AUTH_reception": null,
+  "actual_performance": null,
+  "actual_run_id": null,
+  "archive_sequence": 1386,
+  "archive_version": "v31",
+  "attempt": 661,
+  "book_N": 1313,
+  "certifiable": false,
+  "complete_N": null,
+  "design_count_archive_reference": 6,
+  "gate_N": null,
+  "independent_review": "pending EVO887 B delta",
+  "kind": "B_delta_source_identity_pending_independent_review",
+  "runtime_consumable": false,
+  "schema": "EVO884.B.SourceScope/v1",
+  "source_commit": "192fbf9362896494ebb5969247d93a8430d7773b"
+}
