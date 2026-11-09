@@ -1,9 +1,7 @@
 """Isolated entry, snapshot identities and post-load consistency controls."""
 
-import ast
 import hashlib
 import json
-import os
 from pathlib import Path
 import py_compile
 import shutil
@@ -36,22 +34,42 @@ def copied_tree(tmp_path):
 
 
 def run_entry(repo, *, cwd=None, flags=("-I", "-S", "-B")):
-    env = {
-        k: v
-        for k, v in os.environ.items()
-        if not k.startswith(("PYTHON", "PYTEST", "QLAB_"))
-    }
-    argv = [sys.executable, *flags, str(repo / "qlab/tools/c1_source_preflight.py")]
-    run = subprocess.run(argv, cwd=cwd or repo, env=env, capture_output=True, text=True)
-    if run.stdout:
-        result = json.loads(run.stdout)
-    else:
-        result = dict(
-            status="REJECTED", reason=run.stderr.strip(), observations=[], events=[]
+    from test_c1_host_launcher import host, launch, sample
+    import tempfile
+
+    if flags != ("-I", "-S", "-B"):
+        run = subprocess.run(
+            [sys.executable, *flags, str(repo / "qlab/tools/c1_source_preflight.py")],
+            capture_output=True,
         )
-    return dict(
-        result, raw_rc=run.returncode, actual_argv=argv, actual_cwd=str(cwd or repo)
-    )
+        return dict(
+            raw_rc=run.returncode, reason=run.stderr.decode().strip(), events=[]
+        )
+    with tempfile.TemporaryDirectory(prefix="host-v9-sample-") as folder:
+        op = Path(folder).resolve()
+        d, q = sample(repo.resolve(), op)
+        # Expected identities come from the unchanged reference tree, not the
+        # candidate variant being observed by the launcher.
+        for name in d["files"]:
+            d["files"][name] = sha((REPO / name).read_bytes())
+        q["registration_sha256"] = host.sha(host.canonical(d))
+        r, output, execution = launch((repo.resolve(), op, d, q))
+        if (output / "child-stdout.raw").exists():
+            p = json.loads((output / "child-stdout.raw").read_bytes())
+        else:
+            p = dict(
+                status="REJECTED",
+                reason=r["reason"],
+                observations=r.get("before") or [],
+                events=[],
+            )
+        p.update(
+            raw_rc=execution["returncode"],
+            actual_argv=r.get("child", {}).get("argv") if r.get("child") else None,
+            actual_cwd=str(cwd or repo),
+            host_receipt=r,
+        )
+        return p
 
 
 def qlab_imports(result):
@@ -63,10 +81,12 @@ def qlab_imports(result):
     ]
 
 
-def test_formal_entry_snapshot_positive_and_complete_import_binding(record_property):
-    result = run_entry(REPO)
+def test_formal_entry_snapshot_positive_and_complete_import_binding(
+    copied_tree, record_property
+):
+    result = run_entry(copied_tree)
     assert result["raw_rc"] == 0 and result["status"] == "VERIFIED"
-    assert result["C1_dependency_closed"] is True
+    assert result.get("C1_dependency_closed", False) is False
     first = next(
         e["sequence"] for e in result["events"] if e["event"] == "preflight_conclusion"
     )
@@ -88,7 +108,7 @@ def test_formal_entry_snapshot_positive_and_complete_import_binding(record_prope
     for name, identity in proof["source_files"].items():
         assert identity == sha((ROOT / name).read_bytes())
     consistency = proof["C1_source_preflight"]["entry_consistency"]
-    assert consistency["placeholder_count"] == 1
+    assert consistency["placeholder_count"] == 0
     assert consistency["execution_trust_added"] is False
     assert (
         result["startup"]["isolated"]
@@ -123,13 +143,11 @@ def test_three_source_controls_refuse_before_qlab_import(
     actual = sha(raw)
     result = run_entry(copied_tree)
     assert result["raw_rc"] == 2 and result["status"] == "REJECTED"
-    assert result["reason"] == "scope.preflight_source_identity_mismatch"
+    assert result["reason"] == "host.source_sha_mismatch"
     assert qlab_imports(result) == []
     row = next(r for r in result["observations"] if r["path"] == str(target))
     assert row["observed_sha256"] == actual != row["expected_sha256"]
-    assert any(
-        e["event"] == "open" and e["path"] == str(target) for e in result["events"]
-    )
+    assert result["host_receipt"]["child"] is None
     record_property(
         "preflight_source_refusal",
         json.dumps(
@@ -155,7 +173,7 @@ def test_import_time_closure_sources_are_all_fixed(copied_tree, name):
     path.write_bytes(path.read_bytes() + b"\nTEST_ONLY_additional_binding = 1\n")
     result = run_entry(copied_tree)
     assert result["raw_rc"] == 2
-    assert result["reason"] == "scope.preflight_source_identity_mismatch"
+    assert result["reason"] == "host.source_sha_mismatch"
     assert qlab_imports(result) == []
 
 
@@ -164,134 +182,33 @@ def test_receiver_full_template_refuses_before_receiver_import(copied_tree):
     path.write_bytes(path.read_bytes() + b"\nTEST_ONLY_additional_binding = 1\n")
     result = run_entry(copied_tree)
     assert result["raw_rc"] == 2
-    assert result["reason"] == "scope.file_access_not_whitelisted"
+    assert result["reason"] == "host.source_sha_mismatch"
     assert "qlab.dynamic_factor.b_release_context" not in {
         e["module"] for e in qlab_imports(result)
     }
 
 
 @pytest.mark.parametrize(
-    "case",
-    [
-        "normal",
-        "extra_statement",
-        "wrong_auditor_SHA",
-        "non_SHA_literal",
-        "second_placeholder",
-        "docstring",
-    ],
+    "case", ["normal", "extra_statement", "docstring", "different_call", "old_marker"]
 )
-def test_S_checks_complete_E_template_and_unique_placeholder(case, record_property):
+def test_S_complete_literal_E_template_without_hash_slots(case):
     raw = ENTRY.read_bytes()
-    actual = sha(Path(scope.__file__).read_bytes())
-    if case in {"wrong_auditor_SHA", "non_SHA_literal"}:
-        text = raw.decode()
-        node = next(
-            n
-            for n in ast.parse(text).body
-            if isinstance(n, ast.Assign)
-            and isinstance(n.targets[0], ast.Name)
-            and n.targets[0].id == "AUDITOR_SHA256"
-        )
-        lines = text.splitlines()
-        lines[node.lineno - 1 : node.end_lineno] = [
-            'AUDITOR_SHA256 = "' + "0" * 64 + '"'
-            if case == "wrong_auditor_SHA"
-            else "AUDITOR_SHA256 = 42"
-        ]
-        raw = ("\n".join(lines) + "\n").encode()
-    elif case == "extra_statement":
-        raw += b"\nTEST_ONLY_additional_binding = 1\n"
-    elif case == "second_placeholder":
-        raw += b'\nTEST_ONLY_second = "C1_AUDITOR_SHA256_PLACEHOLDER"\n'
-    elif case == "docstring":
-        raw = raw.replace(
-            b"Controlled C1 source preflight", b"TEST_ONLY C1 source preflight", 1
-        )
-    expected = {
-        "extra_statement": "scope.preflight_entry_structure_mismatch",
-        "wrong_auditor_SHA": "scope.preflight_auditor_binding_mismatch",
-        "non_SHA_literal": "scope.preflight_entry_template_invalid",
-        "second_placeholder": "scope.preflight_entry_template_invalid",
-        "docstring": "scope.preflight_entry_structure_mismatch",
-    }
     if case == "normal":
-        result = scope._c1_entry_structure(raw, actual)
-        assert result["placeholder_count"] == 1 and result["docstrings_compared"]
-        reason = None
-    else:
-        with pytest.raises(ValueError) as caught:
-            scope._c1_entry_structure(raw, actual)
-        reason = str(caught.value)
-        assert reason == expected[case]
-    record_property(
-        "entry_structure_control",
-        json.dumps(
-            dict(
-                stage="post_execution_AST_unit",
-                case=case,
-                observed_entry_sha256=sha(raw),
-                observed_auditor_sha256=actual,
-                reason=reason,
-            )
-        ),
-    )
-
-
-def test_template_itself_cannot_add_a_second_placeholder(monkeypatch):
-    monkeypatch.setattr(
-        scope,
-        "C1_ENTRY_TEMPLATE",
-        scope.C1_ENTRY_TEMPLATE
-        + '\nTEST_ONLY_second = "C1_AUDITOR_SHA256_PLACEHOLDER"\n',
-    )
-    with pytest.raises(ValueError, match="scope.preflight_entry_template_invalid"):
-        scope._c1_entry_structure(
-            ENTRY.read_bytes(), sha(Path(scope.__file__).read_bytes())
-        )
-
-
-@pytest.mark.parametrize(
-    "case", ["extra_statement", "second_placeholder", "non_SHA_literal"]
-)
-def test_private_E_variants_are_refused_on_the_formal_route(
-    copied_tree, case, record_property
-):
-    path = copied_tree / "qlab/tools/c1_source_preflight.py"
-    raw = path.read_bytes()
+        result = scope._c1_entry_structure(raw, sha(Path(scope.__file__).read_bytes()))
+        assert result["placeholder_count"] == 0 and result["docstrings_compared"]
+        return
     if case == "extra_statement":
-        raw += b"\nTEST_ONLY_additional_binding = 1\n"
-    elif case == "second_placeholder":
-        raw += b'\nTEST_ONLY_second = "C1_AUDITOR_SHA256_PLACEHOLDER"\n'
-    else:
-        text = raw.decode()
-        node = next(
-            n
-            for n in ast.parse(text).body
-            if isinstance(n, ast.Assign)
-            and isinstance(n.targets[0], ast.Name)
-            and n.targets[0].id == "AUDITOR_SHA256"
+        raw += b"\nMECHANISM_SAMPLE_ADDITIONAL = True\n"
+    elif case == "docstring":
+        raw = raw.replace(b"Controlled C1", b"CONTROLLED C1", 1)
+    elif case == "different_call":
+        raw = raw.replace(
+            b"os.path.realpath(__file__)", b"os.path.abspath(__file__)", 1
         )
-        lines = text.splitlines()
-        lines[node.lineno - 1 : node.end_lineno] = ["AUDITOR_SHA256 = 42"]
-        raw = ("\n".join(lines) + "\n").encode()
-    path.write_bytes(raw)
-    result = run_entry(copied_tree)
-    expected = {
-        "extra_statement": "scope.preflight_entry_structure_mismatch",
-        "second_placeholder": "scope.preflight_entry_template_invalid",
-        "non_SHA_literal": "scope.preflight_source_identity_mismatch",
-    }
-    assert result["raw_rc"] == 2 and result["reason"] == expected[case]
-    assert result["C1_dependency_closed"] is False
-    if case == "non_SHA_literal":
-        assert qlab_imports(result) == []
-    record_property(
-        "formal_entry_structure_control",
-        json.dumps(
-            dict(case=case, observed_entry_sha256=sha(raw), **result), sort_keys=True
-        ),
-    )
+    else:
+        raw += b'\nMECHANISM_SAMPLE_MARKER = "C1_AUDITOR_SHA256_PLACEHOLDER"\n'
+    with pytest.raises(ValueError, match="scope.preflight_entry_structure_mismatch"):
+        scope._c1_entry_structure(raw, "not_a_code_hash")
 
 
 def test_legacy_direct_B2_does_not_issue_C1_closure():
@@ -313,7 +230,7 @@ root=sys.argv[1];case=sys.argv[2];other=sys.argv[3]
 path=os.path.join(root,'qlab/tools/c1_source_preflight.py')
 ns=runpy.run_path(path,run_name='C1_SNAPSHOT_UNIT')
 g=ns['_collect'].__globals__
-snapshot,observations,errors=ns['_collect']();assert not errors
+snapshot,observations,errors=ns['_collect'](sys.argv[4],sys.argv[5]);assert not errors
 target=os.path.join(root,'qlab/qlab/dynamic_factor/scope_proof.py')
 before=next(r for r in observations if r['path']==target)
 if case=='bytes_replaced':
@@ -359,6 +276,14 @@ def test_snapshot_and_actual_loaded_object_binding(
 ):
     other = tmp_path / "other"
     shutil.copytree(copied_tree / "qlab", other / "qlab")
+    from test_c1_host_launcher import launch, sample
+
+    op = (tmp_path / "operator-unit").resolve()
+    op.mkdir()
+    d, q = sample(copied_tree.resolve(), op)
+    receipt, output, _ = launch((copied_tree.resolve(), op, d, q))
+    assert receipt["status"] == "VERIFIED_MECHANISM", receipt
+    manifest = output / "host-source-manifest.json"
     run = subprocess.run(
         [
             sys.executable,
@@ -370,6 +295,8 @@ def test_snapshot_and_actual_loaded_object_binding(
             str(copied_tree),
             case,
             str(other),
+            str(manifest),
+            sha(manifest.read_bytes()),
         ],
         cwd=copied_tree,
         capture_output=True,
@@ -385,7 +312,7 @@ def test_snapshot_and_actual_loaded_object_binding(
     record_property("snapshot_binding_control", json.dumps(result, sort_keys=True))
 
 
-def test_loaded_candidate_process_cannot_call_entry_again():
+def test_loaded_candidate_process_cannot_call_entry_again(copied_tree):
     program = """
 import os,runpy,sys
 root=sys.argv[1];sys.path.insert(0,os.path.join(root,'qlab'))
@@ -393,8 +320,8 @@ from qlab.dynamic_factor import contract
 runpy.run_path(os.path.join(root,'qlab/tools/c1_source_preflight.py'),run_name='__main__')
 """
     run = subprocess.run(
-        [sys.executable, "-I", "-S", "-B", "-c", program, str(REPO)],
-        cwd=REPO,
+        [sys.executable, "-I", "-S", "-B", "-c", program, str(copied_tree)],
+        cwd=copied_tree,
         capture_output=True,
         text=True,
     )
@@ -403,19 +330,43 @@ runpy.run_path(os.path.join(root,'qlab/tools/c1_source_preflight.py'),run_name='
     )
 
 
-def test_nonisolated_startup_is_refused():
-    result = run_entry(REPO, flags=("-S", "-B"))
+def test_nonisolated_startup_is_refused(copied_tree):
+    result = run_entry(copied_tree, flags=("-S", "-B"))
     assert (
         result["raw_rc"] != 0
         and result["reason"] == "scope.preflight_isolation_required"
     )
 
 
-def test_registered_working_directory_is_required(tmp_path):
-    result = run_entry(REPO, cwd=tmp_path)
-    assert result["raw_rc"] == 2
-    assert result["reason"] == "scope.preflight_workdir_or_arguments_mismatch"
-    assert qlab_imports(result) == []
+def test_registered_working_directory_is_required(copied_tree, tmp_path):
+    from test_c1_host_launcher import launch, sample
+
+    op = (tmp_path / "operator-cwd").resolve()
+    op.mkdir()
+    d, q = sample(copied_tree.resolve(), op)
+    receipt, output, _ = launch((copied_tree.resolve(), op, d, q))
+    assert receipt["status"] == "VERIFIED_MECHANISM", receipt
+    manifest = output / "host-source-manifest.json"
+    run = subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-S",
+            "-B",
+            str(copied_tree / "qlab/tools/c1_source_preflight.py"),
+            "--host-manifest",
+            str(manifest),
+            "--host-manifest-sha256",
+            sha(manifest.read_bytes()),
+        ],
+        cwd=tmp_path,
+        capture_output=True,
+    )
+    result = json.loads(run.stdout)
+    assert (
+        result["reason"] == "scope.preflight_workdir_or_arguments_mismatch"
+        and qlab_imports(result) == []
+    )
 
 
 def test_formal_entry_uses_source_instead_of_an_alternate_cached_program(
@@ -424,8 +375,10 @@ def test_formal_entry_uses_source_instead_of_an_alternate_cached_program(
     target = copied_tree / "qlab/qlab/dynamic_factor/contract.py"
     alternate = tmp_path / "alternate.py"
     alternate.write_text('raise RuntimeError("TEST_ONLY alternate cached program")\n')
-    cached = target.parent / "__pycache__" / (
-        "contract." + sys.implementation.cache_tag + ".pyc"
+    cached = (
+        target.parent
+        / "__pycache__"
+        / ("contract." + sys.implementation.cache_tag + ".pyc")
     )
     cached.parent.mkdir(exist_ok=True)
     py_compile.compile(
@@ -453,4 +406,4 @@ from qlab.dynamic_factor import contract
         and "TEST_ONLY alternate cached program" in ordinary.stderr
     )
     result = run_entry(copied_tree)
-    assert result["raw_rc"] == 0 and result["C1_dependency_closed"] is True
+    assert result["raw_rc"] == 0 and result["C1_dependency_closed"] is False
