@@ -855,6 +855,81 @@
     "stop_if_estimate_above_agent_days": 2.5,
     "tests": "tmp directories exclusively; mechanism samples only"
   },
+  "host_first_rework": {
+    "authorization_comments": [
+      "01a1be42-f1ff-794e-a741-651d94bccdf7",
+      "01a1be43-3afb-71eb-970a-8518f61c9bc4",
+      "01a1be43-d9eb-7870-863b-1bd9980ba3ca"
+    ],
+    "base_commit": "f3486addaeb68b8846beba1c61fbf560286dd9ad",
+    "budget_agent_days": 0.5,
+    "filename_policy": "Logical v11 successor in the existing v10 filename; no twenty-first path. Predecessor bytes remain at the immutable base commit.",
+    "immutable": "E, S, receiver and every test except the launcher test retain exact base bytes. Static seal, entry seal, B2, DAG, scope and all historical index entries unchanged.",
+    "phase": "PRELISTED_BEFORE_HOST_FIRST_REWORK",
+    "predecessor": {
+      "git_commit": "f3486addaeb68b8846beba1c61fbf560286dd9ad",
+      "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/migration-manifest-v10.json",
+      "sha256": "209de52a3adf29207db410cbff75bc314becb476d77d67b05ba389b1528f72f5"
+    },
+    "receipt_contract": "Evaluate requested canonical entry path before opening registered files. Continue all registered source/data SHA checks. Record reason as primary and secondary_reasons as ordered distinct additional codes; retain every mismatching source row and SHA-check completion. No child on any refusal.",
+    "refusal_order": [
+      "host.entry_path_not_registered",
+      "host.source_sha_mismatch"
+    ],
+    "review": "Reuse previously passed independent items 2-5; one subsequent differential review remains pending.",
+    "rows": [
+      {
+        "new_sha256": null,
+        "old_sha256": "f946c2766f562d4658111f70d54ef3ea1a8b14bf310194774eeda26998ea67db",
+        "path": "qlab/tools/c1_host_launcher.py",
+        "phase": "code_and_tests"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "6f14038262a7d0c51ad20b8537d8377c375ed0b51857748dfcdd792731167dba",
+        "path": "qlab/tests/dynamic_factor/test_c1_host_launcher.py",
+        "phase": "code_and_tests"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "209de52a3adf29207db410cbff75bc314becb476d77d67b05ba389b1528f72f5",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/migration-manifest-v10.json",
+        "phase": "prelisting"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "20733f8cf99c9d18bb23676d91c14326c41255a67c8bbf0058913a02e1ccb416",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/host-static-seal.json",
+        "phase": "reseal"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "8c954a138d57645605b4f24a7db472c520f0a8f8267948890b15f0a34780737e",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/source-inventory.json",
+        "phase": "reseal"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "52204dc9b806216dba2c6b3277d39636639e4ef0373343cd318279ad1c9855e3",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/binding-publication.json",
+        "phase": "reseal"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "8368070c4e3e7b13dfc86e2414f09d35fe9bbbc5f3563b6009e6cd0c6bb5310d",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/index-registration.json",
+        "phase": "reseal"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "79f077c821dc7f0d911fd2be2a3b1ca8f512bb4b2f8f90696d43135f524b9b31",
+        "path": "qlab/qlab/dynamic_factor/evidence/current-seal-index.json",
+        "phase": "reseal"
+      }
+    ],
+    "schema": "EVO884.C1HostMigrationSupplement/v11",
+    "tests": "Fresh tmp copies; no real D/Q0/Q1, registration, C2 or A. Reserved operator does not participate."
+  },
   "host_rows": [
     {
       "new_sha256": "f946c2766f562d4658111f70d54ef3ea1a8b14bf310194774eeda26998ea67db",
