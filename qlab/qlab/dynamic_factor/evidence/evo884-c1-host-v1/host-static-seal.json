@@ -7,12 +7,12 @@
   "independent_review": "pending non-author review on final head",
   "runtime_consumable": false,
   "schema": "EVO884.C1HostStaticSeal/v1",
-  "sealed_at": "2026-11-09T01:09:41.154899Z",
-  "source_commit": "d74e7a240d54036400ed33fa31005f599c49116b",
+  "sealed_at": "2026-11-09T03:12:36.796074Z",
+  "source_commit": "a63d456d56a100a1cbed2b721dedb91d9f71180f",
   "sources": {
     "qlab/tools/c1_host_launcher.py": {
-      "bytes": 35741,
-      "sha256": "f946c2766f562d4658111f70d54ef3ea1a8b14bf310194774eeda26998ea67db"
+      "bytes": 36840,
+      "sha256": "09d482b97d31000ae963b045d24a6d7c1c68ff53ad93ca9b851717baae1712db"
     }
   }
 }

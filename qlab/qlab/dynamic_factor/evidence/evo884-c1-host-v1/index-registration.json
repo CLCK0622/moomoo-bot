@@ -1,12 +1,16 @@
 {
+  "host_first_rework": {
+    "base_commit": "f3486addaeb68b8846beba1c61fbf560286dd9ad",
+    "previous_effective_index_sha256": "79f077c821dc7f0d911fd2be2a3b1ca8f512bb4b2f8f90696d43135f524b9b31"
+  },
   "index_path": "qlab/qlab/dynamic_factor/evidence/current-seal-index.json",
-  "migration_manifest_sha256": "209de52a3adf29207db410cbff75bc314becb476d77d67b05ba389b1528f72f5",
-  "new_index_sha256": "79f077c821dc7f0d911fd2be2a3b1ca8f512bb4b2f8f90696d43135f524b9b31",
+  "migration_manifest_sha256": "8f85bd1fb0048a8610e3449c63fc716b00c5d3429a566654c8d1a6d905206059",
+  "new_index_sha256": "9712bb96dd3bb8e4fb8ed622529e264798f5e5a3291ef19b247f5238e120ab59",
   "old_index_sha256": "74c98074fc83fb45dc542b43a4c234795575360e1aa46b6a04a95542fe05dba1",
   "output_bindings": {
     "qlab/qlab/dynamic_factor/evidence/current-seal-index.json": {
       "bytes": 12742,
-      "sha256": "79f077c821dc7f0d911fd2be2a3b1ca8f512bb4b2f8f90696d43135f524b9b31"
+      "sha256": "9712bb96dd3bb8e4fb8ed622529e264798f5e5a3291ef19b247f5238e120ab59"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/B2-unavailable-manifest.json": {
       "bytes": 58187,
@@ -14,7 +18,7 @@
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/binding-publication.json": {
       "bytes": 2003,
-      "sha256": "52204dc9b806216dba2c6b3277d39636639e4ef0373343cd318279ad1c9855e3"
+      "sha256": "444a722c7352f064fc7625ff691e23bdba8ea96993e48932d4ee1d4a01e9aba9"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/entry-static-seal.json": {
       "bytes": 1480,
@@ -22,11 +26,11 @@
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/host-static-seal.json": {
       "bytes": 579,
-      "sha256": "20733f8cf99c9d18bb23676d91c14326c41255a67c8bbf0058913a02e1ccb416"
+      "sha256": "90b924651dddb1475a2d1c7197bfb8dd347cca0d840572c9c0869805d6444ce7"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/migration-manifest-v10.json": {
-      "bytes": 279039,
-      "sha256": "209de52a3adf29207db410cbff75bc314becb476d77d67b05ba389b1528f72f5"
+      "bytes": 283454,
+      "sha256": "8f85bd1fb0048a8610e3449c63fc716b00c5d3429a566654c8d1a6d905206059"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/previous-index.json": {
       "bytes": 11274,
@@ -46,15 +50,15 @@
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/source-inventory.json": {
       "bytes": 41965,
-      "sha256": "8c954a138d57645605b4f24a7db472c520f0a8f8267948890b15f0a34780737e"
+      "sha256": "b9fe6536c115197d8a6cc8b9c060c61f9cec35f8b4e5468fd620c941dea2a839"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/static-seal.json": {
       "bytes": 5668,
       "sha256": "01af0c13e268e5a0d3c858f40bac5ac0c608af7905ff3e07b91eaaff2567cba1"
     }
   },
-  "prelisting_commit": "7e8eda3",
-  "prelisting_sha256": "b33808014e8875ce4bd41512939bb18826310bbc0b15446e287a4b878d2befdc",
+  "prelisting_commit": "10c8c47fed2150ca028a16bbe001764e7af5edd5",
+  "prelisting_sha256": "9dd6212dc14ceae3c0457cb839fcc1f5f867b86e3f4672ef4b04adae028b055b",
   "publication_does_not_reference_new_index": true,
   "schema": "EVO884.C1IndexRegistration/v1"
 }

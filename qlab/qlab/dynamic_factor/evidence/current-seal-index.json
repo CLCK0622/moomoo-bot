@@ -14,12 +14,12 @@
     "C1_host_seal": {
       "bytes": 579,
       "path": "evo884-c1-host-v1/host-static-seal.json",
-      "sha256": "20733f8cf99c9d18bb23676d91c14326c41255a67c8bbf0058913a02e1ccb416"
+      "sha256": "90b924651dddb1475a2d1c7197bfb8dd347cca0d840572c9c0869805d6444ce7"
     },
     "binding_publication": {
       "bytes": 2003,
       "path": "evo884-c1-host-v1/binding-publication.json",
-      "sha256": "52204dc9b806216dba2c6b3277d39636639e4ef0373343cd318279ad1c9855e3"
+      "sha256": "444a722c7352f064fc7625ff691e23bdba8ea96993e48932d4ee1d4a01e9aba9"
     },
     "commit_binding": "C1 source head; final handoff commit binds all static outputs",
     "independent_review": "pending BR-A-D",

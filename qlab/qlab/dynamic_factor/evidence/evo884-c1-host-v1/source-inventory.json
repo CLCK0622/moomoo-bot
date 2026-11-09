@@ -929,8 +929,8 @@
       "sha256": "4b0a18ebb18b2706926e344a94fd5da32b0f06b969a34d9da294e91ffffb8a8d"
     },
     "qlab/tools/c1_host_launcher.py": {
-      "bytes": 35741,
-      "sha256": "f946c2766f562d4658111f70d54ef3ea1a8b14bf310194774eeda26998ea67db"
+      "bytes": 36840,
+      "sha256": "09d482b97d31000ae963b045d24a6d7c1c68ff53ad93ca9b851717baae1712db"
     },
     "qlab/tools/c1_source_preflight.py": {
       "bytes": 25628,
@@ -938,5 +938,5 @@
     }
   },
   "schema": "EVO884.B.SourceInventory/v1",
-  "source_commit": "d74e7a240d54036400ed33fa31005f599c49116b"
+  "source_commit": "a63d456d56a100a1cbed2b721dedb91d9f71180f"
 }
