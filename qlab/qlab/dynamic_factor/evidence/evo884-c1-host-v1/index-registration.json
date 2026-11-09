@@ -1,40 +1,80 @@
 {
+  "C2_registration": {
+    "actual_A_issued": false,
+    "data_commit": "68ef22bc42cbbac38a99b0dd8470d47c340008be",
+    "non_author_verification": "pending Gongbu",
+    "readback_bindings": {
+      "qlab/qlab/dynamic_factor/b_release_originals/trust-root-platform-readback.json": {
+        "author_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+        "body_bytes": 2905,
+        "body_sha256": "5dc9c5ba7645fb0b6fec3cff41e149c96d7b7dc0bfe85ae9c8a1c046547fe910",
+        "body_tail_LF": false,
+        "bytes": 3768,
+        "comment_id": "01a1be9e-b0b5-7646-abe2-8125a1837db5",
+        "created_at": "2026-11-09T04:43:53Z",
+        "issue_id": "01a19dab-15f2-7e58-96a0-cf92c87162c2",
+        "revision": 1,
+        "sha256": "a934bca5a60a4ad50d4c30e93dc1669ffbcdea8f0abed3dfed6b4377f90aae87"
+      },
+      "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/host-registration-platform-readback.json": {
+        "author_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+        "body_bytes": 13466,
+        "body_sha256": "9d2a7d84a29415c0a770443066c6028df58ee3c4091188e76edbfe14f9feb48b",
+        "body_tail_LF": false,
+        "bytes": 14485,
+        "comment_id": "01a1be9e-b2b7-714f-bc61-126a624fad74",
+        "created_at": "2026-11-09T04:43:53Z",
+        "issue_id": "01a19dab-15f2-7e58-96a0-cf92c87162c2",
+        "revision": 1,
+        "sha256": "05c8511e60ef4ede64ab76ebef503b4ab9c3dbe366318503382f80d8e57b27ed"
+      }
+    },
+    "source_base": "660588144f4cdb7cb0e39195dbc0f83de87b628c"
+  },
   "host_first_rework": {
     "base_commit": "f3486addaeb68b8846beba1c61fbf560286dd9ad",
     "previous_effective_index_sha256": "79f077c821dc7f0d911fd2be2a3b1ca8f512bb4b2f8f90696d43135f524b9b31"
   },
   "index_path": "qlab/qlab/dynamic_factor/evidence/current-seal-index.json",
-  "migration_manifest_sha256": "8f85bd1fb0048a8610e3449c63fc716b00c5d3429a566654c8d1a6d905206059",
-  "new_index_sha256": "9712bb96dd3bb8e4fb8ed622529e264798f5e5a3291ef19b247f5238e120ab59",
-  "old_index_sha256": "74c98074fc83fb45dc542b43a4c234795575360e1aa46b6a04a95542fe05dba1",
+  "migration_manifest_sha256": "772c8cbb8385eb869fafec6bad0b57208a4d0318694e2e9724dbe66342d35a85",
+  "new_index_sha256": "cd3701183b20962a3ade5544f7be9c424c4b9e8fd822682fafcf8d53ad2447b4",
+  "old_index_sha256": "9712bb96dd3bb8e4fb8ed622529e264798f5e5a3291ef19b247f5238e120ab59",
   "output_bindings": {
+    "qlab/qlab/dynamic_factor/b_release_originals/trust-root-platform-readback.json": {
+      "bytes": 3768,
+      "sha256": "a934bca5a60a4ad50d4c30e93dc1669ffbcdea8f0abed3dfed6b4377f90aae87"
+    },
     "qlab/qlab/dynamic_factor/evidence/current-seal-index.json": {
-      "bytes": 12742,
-      "sha256": "9712bb96dd3bb8e4fb8ed622529e264798f5e5a3291ef19b247f5238e120ab59"
+      "bytes": 15791,
+      "sha256": "cd3701183b20962a3ade5544f7be9c424c4b9e8fd822682fafcf8d53ad2447b4"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/B2-unavailable-manifest.json": {
       "bytes": 58187,
       "sha256": "76e8a14c677d083b4ea548a1aad99516751d877e7e7e0f85419da7549243a52f"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/binding-publication.json": {
-      "bytes": 2003,
-      "sha256": "444a722c7352f064fc7625ff691e23bdba8ea96993e48932d4ee1d4a01e9aba9"
+      "bytes": 2441,
+      "sha256": "ebe25a2d2d2df2653e9dd3894f24bd5679c836ea01a7383d8ea2b85f8b5af80e"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/entry-static-seal.json": {
       "bytes": 1480,
       "sha256": "7488f372ccf120a4ca1da6eff96daa250c0d83c4b12c4edf229136d9ca927948"
     },
+    "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/host-registration-platform-readback.json": {
+      "bytes": 14485,
+      "sha256": "05c8511e60ef4ede64ab76ebef503b4ab9c3dbe366318503382f80d8e57b27ed"
+    },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/host-static-seal.json": {
-      "bytes": 579,
-      "sha256": "90b924651dddb1475a2d1c7197bfb8dd347cca0d840572c9c0869805d6444ce7"
+      "bytes": 1910,
+      "sha256": "2721eae56e7967b86a06d02e61f8a51090e319fb69676db70e6f4d2b9f432878"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/migration-manifest-v10.json": {
-      "bytes": 283454,
-      "sha256": "8f85bd1fb0048a8610e3449c63fc716b00c5d3429a566654c8d1a6d905206059"
+      "bytes": 290685,
+      "sha256": "772c8cbb8385eb869fafec6bad0b57208a4d0318694e2e9724dbe66342d35a85"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/previous-index.json": {
-      "bytes": 11274,
-      "sha256": "74c98074fc83fb45dc542b43a4c234795575360e1aa46b6a04a95542fe05dba1"
+      "bytes": 12742,
+      "sha256": "9712bb96dd3bb8e4fb8ed622529e264798f5e5a3291ef19b247f5238e120ab59"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/read-dag.json": {
       "bytes": 86807,
@@ -45,20 +85,20 @@
       "sha256": "d63db7b97c15dcd8c29ab79a3bbfbd4b5d0614b4eb9bb3fc44df8b73cbbcc418"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/scope.json": {
-      "bytes": 6048,
-      "sha256": "fe961ca668cc861e7cd2c2fc287033082e425b5d376fa6eba0219a390b5983da"
+      "bytes": 7793,
+      "sha256": "bdf6ad37d74fd7c86feb4463bc85f5e1821045a029f593077be98103872264ff"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/source-inventory.json": {
-      "bytes": 41965,
-      "sha256": "b9fe6536c115197d8a6cc8b9c060c61f9cec35f8b4e5468fd620c941dea2a839"
+      "bytes": 43177,
+      "sha256": "669bc0f53dced86c6963e2b3f122845f33d0d349626331281883afaa291acc93"
     },
     "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/static-seal.json": {
       "bytes": 5668,
       "sha256": "01af0c13e268e5a0d3c858f40bac5ac0c608af7905ff3e07b91eaaff2567cba1"
     }
   },
-  "prelisting_commit": "10c8c47fed2150ca028a16bbe001764e7af5edd5",
-  "prelisting_sha256": "9dd6212dc14ceae3c0457cb839fcc1f5f867b86e3f4672ef4b04adae028b055b",
+  "prelisting_commit": "214ba43d41f3b5cc52a732b2fd923c304b7780d0",
+  "prelisting_sha256": "66ba0080dee454ea2a9c85bf8926a181988509e6d400ca459e36f4dedbce4979",
   "publication_does_not_reference_new_index": true,
   "schema": "EVO884.C1IndexRegistration/v1"
 }

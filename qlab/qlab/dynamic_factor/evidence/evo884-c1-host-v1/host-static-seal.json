@@ -1,14 +1,42 @@
 {
+  "C2_non_author_verification": "pending Gongbu",
+  "data_commit": "68ef22bc42cbbac38a99b0dd8470d47c340008be",
   "entry_static_seal": {
     "bytes": 1480,
     "sha256": "7488f372ccf120a4ca1da6eff96daa250c0d83c4b12c4edf229136d9ca927948"
   },
   "formal_result": false,
   "independent_review": "pending non-author review on final head",
+  "registration_readbacks": {
+    "qlab/qlab/dynamic_factor/b_release_originals/trust-root-platform-readback.json": {
+      "author_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+      "body_bytes": 2905,
+      "body_sha256": "5dc9c5ba7645fb0b6fec3cff41e149c96d7b7dc0bfe85ae9c8a1c046547fe910",
+      "body_tail_LF": false,
+      "bytes": 3768,
+      "comment_id": "01a1be9e-b0b5-7646-abe2-8125a1837db5",
+      "created_at": "2026-11-09T04:43:53Z",
+      "issue_id": "01a19dab-15f2-7e58-96a0-cf92c87162c2",
+      "revision": 1,
+      "sha256": "a934bca5a60a4ad50d4c30e93dc1669ffbcdea8f0abed3dfed6b4377f90aae87"
+    },
+    "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/host-registration-platform-readback.json": {
+      "author_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+      "body_bytes": 13466,
+      "body_sha256": "9d2a7d84a29415c0a770443066c6028df58ee3c4091188e76edbfe14f9feb48b",
+      "body_tail_LF": false,
+      "bytes": 14485,
+      "comment_id": "01a1be9e-b2b7-714f-bc61-126a624fad74",
+      "created_at": "2026-11-09T04:43:53Z",
+      "issue_id": "01a19dab-15f2-7e58-96a0-cf92c87162c2",
+      "revision": 1,
+      "sha256": "05c8511e60ef4ede64ab76ebef503b4ab9c3dbe366318503382f80d8e57b27ed"
+    }
+  },
   "runtime_consumable": false,
   "schema": "EVO884.C1HostStaticSeal/v1",
-  "sealed_at": "2026-11-09T03:12:36.796074Z",
-  "source_commit": "a63d456d56a100a1cbed2b721dedb91d9f71180f",
+  "sealed_at": "2026-11-09T04:54:25.090960Z",
+  "source_commit": "660588144f4cdb7cb0e39195dbc0f83de87b628c",
   "sources": {
     "qlab/tools/c1_host_launcher.py": {
       "bytes": 36840,
