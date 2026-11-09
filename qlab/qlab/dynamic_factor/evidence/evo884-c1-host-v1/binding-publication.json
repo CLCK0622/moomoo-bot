@@ -1,0 +1,54 @@
+{
+  "authorization_comment": "01a1bd7b-c569-7c17-9607-7d24bdccda2b",
+  "bindings": {
+    "B2-unavailable-manifest.json": {
+      "bytes": 58187,
+      "sha256": "76e8a14c677d083b4ea548a1aad99516751d877e7e7e0f85419da7549243a52f"
+    },
+    "entry-static-seal.json": {
+      "bytes": 1480,
+      "sha256": "7488f372ccf120a4ca1da6eff96daa250c0d83c4b12c4edf229136d9ca927948"
+    },
+    "host-static-seal.json": {
+      "bytes": 579,
+      "sha256": "20733f8cf99c9d18bb23676d91c14326c41255a67c8bbf0058913a02e1ccb416"
+    },
+    "migration-manifest-v10.json": {
+      "bytes": 279039,
+      "sha256": "209de52a3adf29207db410cbff75bc314becb476d77d67b05ba389b1528f72f5"
+    },
+    "previous-index.json": {
+      "bytes": 11274,
+      "sha256": "74c98074fc83fb45dc542b43a4c234795575360e1aa46b6a04a95542fe05dba1"
+    },
+    "read-dag.json": {
+      "bytes": 86807,
+      "sha256": "5a39ea9a233d2ee846059661b5bbf94ccedda0e8976c6c73aa4ad0344b30d67f"
+    },
+    "reference-static-proof.json": {
+      "bytes": 5869,
+      "sha256": "d63db7b97c15dcd8c29ab79a3bbfbd4b5d0614b4eb9bb3fc44df8b73cbbcc418"
+    },
+    "scope.json": {
+      "bytes": 6048,
+      "sha256": "fe961ca668cc861e7cd2c2fc287033082e425b5d376fa6eba0219a390b5983da"
+    },
+    "source-inventory.json": {
+      "bytes": 41965,
+      "sha256": "8c954a138d57645605b4f24a7db472c520f0a8f8267948890b15f0a34780737e"
+    },
+    "static-seal.json": {
+      "bytes": 5668,
+      "sha256": "01af0c13e268e5a0d3c858f40bac5ac0c608af7905ff3e07b91eaaff2567cba1"
+    }
+  },
+  "certifiable": false,
+  "independent_review": "pending BR-A-D",
+  "issuance": "C1 static source successor; no actual A or runtime authority",
+  "issued_at_utc": "2026-11-09T01:09:41.154899Z",
+  "issuer_agent_id": "5a307571-9534-4bbc-932c-93ffc9c94d73",
+  "publication_sha256": "8e5be9e25cae91a7c11069c986a226387f238ef69185199a3b7b681b88b73e8b",
+  "runtime_consumable": false,
+  "schema": "EVO884.C1.SourceBindingPublication/v1",
+  "source_commit": "d74e7a240d54036400ed33fa31005f599c49116b"
+}

@@ -1,0 +1,126 @@
+{
+  "C1": {
+    "actual_A_issued": false,
+    "implementation_id": "4d5d3e5a44e6a5e2d7b1cae25b94ef9addcf8be208ed5a908118fe13ddf7e06e",
+    "independent_review": "pending BR-A; test copies are not authority",
+    "trust_root_present": false
+  },
+  "C1_HOST": {
+    "C1_dependency_closed": false,
+    "actual_A_issued": false,
+    "auditor_sha256": "b22e8ba24a3fefff16d46e543d6dd0171842531bd20be6d945de246c63d41bff",
+    "controlled_startup": {
+      "cwd": "registered repository root for E; registered outside-repository operator directory for L",
+      "entry": "registered interpreter -I -S -B canonical_E --host-manifest canonical_M --host-manifest-sha256 H(M)",
+      "formal_intake": "L finalize/intake: live authenticated D/Q0/Q1 and R/F mandatory",
+      "launcher": "registered interpreter -I -S -B canonical_L launch --registration D_payload --precheck Q0_payload --registration-ref D_ref --q0-ref Q0_ref --entry canonical_E --output operator_directory/c1-host-runs/run_id",
+      "mechanism_sample": "L observe: never eligible for formal intake"
+    },
+    "entry_sha256": "7c6f35e14d53fd8d99dfda7dff693993476241d511e357cc8627c950a1f0fa51",
+    "formal_result": false,
+    "host_contract": {
+      "Q0_Q1_issue": "01a18a63-0661-763c-8801-934689b0954e",
+      "agent_day_hours": 8,
+      "construction_order": [
+        "D",
+        "Q0",
+        "M",
+        "P",
+        "R",
+        "Q1",
+        "F"
+      ],
+      "entry_expected_hashes": "registration data only; fixed filenames remain in E",
+      "formal_intake": "R,Q1,F required; live authenticated D/Q0/Q1 readback required; no test signing switch",
+      "immutable_receiver_sha256": "2392a96137102c00ba0b91e460291618b4f3f4567e1a4765660e871b847cddd1",
+      "operation_directory_created": false,
+      "operation_directory_proposed": "/Users/clck/multica-c1-operations/evo884",
+      "operator_author_id": null,
+      "operator_qualification": "independent of authors and reviewer; reserved for future D",
+      "quote_agent_days": [
+        1.5,
+        2.5,
+        4
+      ],
+      "receiver_unchanged": true,
+      "source_hashes": "L/E/S hashes are data only; no own or reciprocal hash literals",
+      "stop_if_estimate_above_agent_days": 2.5,
+      "tests": "tmp directories exclusively; mechanism samples only"
+    },
+    "independent_review": "pending Gongbu and BR-A-D",
+    "limitations": [
+      "Only observed pre/post consistency; no complete execution-image proof.",
+      "No coverage for change-and-restore during TOCTOU, arbitrary same-UID interference, or changed OS/interpreter/standard library.",
+      "Request timing and forward signal_close origin are consumer declarations, not authoritative chain binding.",
+      "Formal outer intake is additional to the unchanged receiver API; direct receiver output is not formal A.",
+      "New L/E/S require independent review on the final head; v9 evidence does not substitute."
+    ],
+    "receiver_sha256": "2392a96137102c00ba0b91e460291618b4f3f4567e1a4765660e871b847cddd1",
+    "registration": {
+      "kind": "complete_AST_host_manifest_consumer",
+      "path": "../../tools/c1_source_preflight.py",
+      "path_only": false
+    },
+    "trust_root_present": false
+  },
+  "C1_R1": {
+    "actual_A_issued": false,
+    "implementation_id": "3bf62aa7a16f3b87ec82062619b9d01925233e6eed385e95c476fc29890b4eaa",
+    "independent_review": "pending BR-A; test copies are not authority",
+    "trust_root_present": false
+  },
+  "C1_V8": {
+    "L0_prerequisite": "Implement and independently review equality of request first_performance_at to the first same-version attempt platform time from the unique writer.",
+    "actual_A_issued": false,
+    "implementation_id": "2392a96137102c00ba0b91e460291618b4f3f4567e1a4765660e871b847cddd1",
+    "independent_review": "pending BR-A-D; test copies are not authority",
+    "limitations": [
+      "Interpreter, standard library and file mapping are assumed unchanged externally.",
+      "Post-load object replacement, file changes and filesystem races are outside the static conclusion.",
+      "Request first_performance_at is supplied by consumers and is not yet bound to the authoritative attempt chain.",
+      "Forward signal_close provenance from the locked-intent record is a consumer responsibility; context checker only compares request times."
+    ],
+    "trust_root_present": false
+  },
+  "C1_V8_SUPPLEMENT": {
+    "code_files": [
+      "qlab/qlab/dynamic_factor/scope_proof.py",
+      "qlab/tests/dynamic_factor/test_c1_v8.py",
+      "qlab/tests/dynamic_factor/test_c1_v8_supplement.py",
+      "qlab/tests/dynamic_factor/test_execution_reseal.py",
+      "qlab/tests/dynamic_factor/test_seal_index_rework.py"
+    ],
+    "contract_identity": "Exact reviewed contract source bytes, checked before its SHA function; comments and docstrings included.",
+    "legacy_guards": "unchanged through static_proof; existing 39-module receipt retained; three additional modules also checked",
+    "limitations": [
+      "Reviewed auditor and interpreter/standard library are the evaluation premise.",
+      "Runtime object replacement, post-load file changes and filesystem races are outside the static claim."
+    ],
+    "negative_controls": [
+      "Path.resolve top-level binding",
+      "Path.read_bytes function-local binding",
+      "sha256 body change",
+      "sha256 body returning the previous source identity"
+    ],
+    "registered_source_count": 40,
+    "scanned_module_count": 42
+  },
+  "L0": false,
+  "actual_B_acceptance": null,
+  "actual_SRC_AUTH_reception": null,
+  "actual_performance": null,
+  "actual_run_id": null,
+  "archive_sequence": 1386,
+  "archive_version": "v31",
+  "attempt": 661,
+  "book_N": 1313,
+  "certifiable": false,
+  "complete_N": null,
+  "design_count_archive_reference": 6,
+  "gate_N": null,
+  "independent_review": "pending EVO887 B delta",
+  "kind": "B_delta_source_identity_pending_independent_review",
+  "runtime_consumable": false,
+  "schema": "EVO884.B.SourceScope/v1",
+  "source_commit": "192fbf9362896494ebb5969247d93a8430d7773b"
+}

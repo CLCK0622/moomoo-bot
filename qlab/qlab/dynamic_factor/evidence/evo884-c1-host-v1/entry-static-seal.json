@@ -1,0 +1,34 @@
+{
+  "actual_A_issued": false,
+  "auditor": {
+    "bytes": 205325,
+    "sha256": "b22e8ba24a3fefff16d46e543d6dd0171842531bd20be6d945de246c63d41bff"
+  },
+  "controlled_startup": {
+    "cwd": "registered repository root for E; registered outside-repository operator directory for L",
+    "entry": "registered interpreter -I -S -B canonical_E --host-manifest canonical_M --host-manifest-sha256 H(M)",
+    "formal_intake": "L finalize/intake: live authenticated D/Q0/Q1 and R/F mandatory",
+    "launcher": "registered interpreter -I -S -B canonical_L launch --registration D_payload --precheck Q0_payload --registration-ref D_ref --q0-ref Q0_ref --entry canonical_E --output operator_directory/c1-host-runs/run_id",
+    "mechanism_sample": "L observe: never eligible for formal intake"
+  },
+  "independent_review": "pending Gongbu and BR-A-D",
+  "legacy_52_source_seal": {
+    "bytes": 5668,
+    "sha256": "01af0c13e268e5a0d3c858f40bac5ac0c608af7905ff3e07b91eaaff2567cba1"
+  },
+  "registration": {
+    "kind": "complete_AST_host_manifest_consumer",
+    "path": "../../tools/c1_source_preflight.py",
+    "path_only": false
+  },
+  "runtime_consumable": false,
+  "schema": "EVO884.C1EntryStaticSeal/v1",
+  "sealed_at": "2026-11-09T01:09:41.154899Z",
+  "source_commit": "d74e7a240d54036400ed33fa31005f599c49116b",
+  "sources": {
+    "qlab/tools/c1_source_preflight.py": {
+      "bytes": 25628,
+      "sha256": "7c6f35e14d53fd8d99dfda7dff693993476241d511e357cc8627c950a1f0fa51"
+    }
+  }
+}

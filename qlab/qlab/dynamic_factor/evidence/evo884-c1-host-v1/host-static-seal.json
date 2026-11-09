@@ -1,0 +1,18 @@
+{
+  "entry_static_seal": {
+    "bytes": 1480,
+    "sha256": "7488f372ccf120a4ca1da6eff96daa250c0d83c4b12c4edf229136d9ca927948"
+  },
+  "formal_result": false,
+  "independent_review": "pending non-author review on final head",
+  "runtime_consumable": false,
+  "schema": "EVO884.C1HostStaticSeal/v1",
+  "sealed_at": "2026-11-09T01:09:41.154899Z",
+  "source_commit": "d74e7a240d54036400ed33fa31005f599c49116b",
+  "sources": {
+    "qlab/tools/c1_host_launcher.py": {
+      "bytes": 35741,
+      "sha256": "f946c2766f562d4658111f70d54ef3ea1a8b14bf310194774eeda26998ea67db"
+    }
+  }
+}
