@@ -5,6 +5,9 @@ intake always reads D/Q0/Q1 through the authenticated platform CLI. Local JSON,
 file mode bits and matching digests alone never establish provenance. Changes
 restored between observations, same-UID interference and changed host/runtime
 libraries are outside this mechanism. The receiver API remains unchanged.
+Requested-entry validation precedes registered-file reads. Path refusal has
+priority over source SHA refusal; all source SHA checks finish and both codes
+remain in the receipt when both conditions fail.
 """
 
 import argparse
@@ -33,7 +36,9 @@ LIMIT = 16 * 1024 * 1024
 
 
 class Refusal(ValueError):
-    pass
+    def __init__(self, code, secondary_reasons=()):
+        super().__init__(code)
+        self.secondary_reasons = list(secondary_reasons)
 
 
 def require(condition, code):
@@ -255,11 +260,28 @@ def precheck(d, q0):
     fields(q0["registration_ref"], "comment_id revision")
 
 
-def collect(d, requested_entry, observations=None, held=None):
+def entry_path_check(root, requested_entry):
+    actual = os.path.abspath(requested_entry)
+    registered = os.path.join(root, ENTRY)
+    return dict(
+        requested=actual,
+        registered=registered,
+        accepted=actual == registered and os.path.realpath(actual) == actual,
+    )
+
+
+def collect(d, requested_entry, observations=None, held=None, checks=None):
     root = registration(d)
+    checks = {} if checks is None else checks
+    if "entry_path" not in checks:
+        checks["entry_path"] = entry_path_check(root, requested_entry)
+    checks["source_sha_complete"] = False
     observations = [] if observations is None else observations
     snapshots = []
-    # Identity refusal has precedence over a simultaneous requested-name error.
+    reasons = (
+        [] if checks["entry_path"]["accepted"] else ["host.entry_path_not_registered"]
+    )
+    # Finish source checks even when the requested entry is not registered.
     for relative, expected in sorted(d["files"].items()):
         if relative == LAUNCHER:
             continue
@@ -272,17 +294,16 @@ def collect(d, requested_entry, observations=None, held=None):
             role="source" if relative.endswith(".py") else "data",
         )
         observations.append(row)
-        require(row["observed_sha256"] == expected, "host.source_sha_mismatch")
+        if row["observed_sha256"] != expected:
+            reasons.append("host.source_sha_mismatch")
         if relative != LAUNCHER:
             snapshots.append(
                 dict(row, raw_base64=base64.b64encode(raw).decode("ascii"))
             )
-    actual_entry = os.path.abspath(requested_entry)
-    require(
-        actual_entry == os.path.join(root, ENTRY)
-        and os.path.realpath(actual_entry) == actual_entry,
-        "host.entry_path_not_registered",
-    )
+    checks["source_sha_complete"] = True
+    if reasons:
+        reasons = list(dict.fromkeys(reasons))
+        raise Refusal(reasons[0], reasons[1:])
     return observations, snapshots
 
 
@@ -358,6 +379,8 @@ def observe(d, q0, folder, requested_entry, control_paths, platform_evidence=Non
         schema="EVO884.C1HostLaunchReceipt/v1",
         status="REJECTED",
         reason=None,
+        secondary_reasons=[],
+        checks={},
         failure_stage="precheck",
         formal_result=False,
         C1_dependency_closed=False,
@@ -390,13 +413,14 @@ def observe(d, q0, folder, requested_entry, control_paths, platform_evidence=Non
     )
     held = []
     try:
+        root = registration(d)
+        r["checks"]["entry_path"] = entry_path_check(root, requested_entry)
         control_reads = [identity(path, held) for path in control_paths]
         require(
             [raw for raw, _ in control_reads] == [canonical(d), canonical(q0)],
             "host.manifest_changed",
         )
         r["controls_before"] = [row for _, row in control_reads]
-        root = registration(d)
         precheck(d, q0)
         require(
             os.path.abspath(__file__) == os.path.join(root, LAUNCHER),
@@ -427,7 +451,7 @@ def observe(d, q0, folder, requested_entry, control_paths, platform_evidence=Non
         )
         r["interpreter_before"] = python_before
         r["before"] = []
-        before, snapshots = collect(d, requested_entry, r["before"], held)
+        before, snapshots = collect(d, requested_entry, r["before"], held, r["checks"])
         launcher = q0["launcher_identity"]
         require(
             launcher["path"] == os.path.join(root, LAUNCHER)
@@ -568,6 +592,7 @@ def observe(d, q0, folder, requested_entry, control_paths, platform_evidence=Non
         r["reason_detail"] = str(exc)
     except (ValueError, OSError) as exc:
         r["reason"] = str(exc)
+        r["secondary_reasons"] = getattr(exc, "secondary_reasons", [])
     r["finished_at"] = datetime.now(timezone.utc).isoformat()
     try:
         save(folder, "host-launch-receipt.json", canonical(r))

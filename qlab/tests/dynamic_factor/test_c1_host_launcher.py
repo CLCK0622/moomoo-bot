@@ -150,6 +150,9 @@ def test_host_positive_pending_formal_intake(tree, record_property):
     assert r["status"] == "VERIFIED_MECHANISM", r
     assert r["formal_result"] is r["C1_dependency_closed"] is False
     assert r["before"] == r["after"] and len(r["before"]) == 99
+    assert r["checks"]["entry_path"]["accepted"]
+    assert r["checks"]["source_sha_complete"]
+    assert r["secondary_reasons"] == []
     assert len(r["held_after"]) == 102
     assert r["interpreter_before"] == r["interpreter_after"]
     p = json.loads((output / "candidate-proof.json").read_bytes())
@@ -202,11 +205,77 @@ def test_original_path_experiments_and_separate_sha_guard(tree, case, record_pro
     r, output, run = launch(tree, requested)
     expected = (
         "host.source_sha_mismatch"
-        if case.startswith("registered_change")
-        else "host.entry_path_not_registered"
+        if case == "registered_change_only"
+        else ("host.entry_path_not_registered")
     )
     assert r["reason"] == expected and r["child"] is None
+    assert r["secondary_reasons"] == (
+        ["host.source_sha_mismatch"] if case == "registered_change_and_renamed" else []
+    )
+    assert r["checks"]["entry_path"]["accepted"] == (case == "registered_change_only")
+    assert r["checks"]["source_sha_complete"] and len(r["before"]) == 99
+    mismatches = [
+        row for row in r["before"] if row["observed_sha256"] != row["expected_sha256"]
+    ]
+    assert [row["path"] for row in mismatches] == (
+        [str(original)] if case.startswith("registered_change") else []
+    )
     record(record_property, "path_experiment_" + case, r, output, run)
+
+
+@pytest.mark.parametrize("changed_sources", [0, 1, 2])
+def test_path_check_precedes_reads_and_sha_checks_finish(
+    tree, monkeypatch, changed_sources, record_property
+):
+    repo, op, d, q = tree
+    other = repo / "qlab/tools/MECHANISM_SAMPLE_renamed_entry.py"
+    other.write_bytes((repo / ENTRY).read_bytes())
+    for name in [ENTRY, DF + "/contract.py"][:changed_sources]:
+        path = repo / name
+        path.write_bytes(path.read_bytes() + b"\nMECHANISM_SAMPLE_ADDED = True\n")
+    controls = [op / "D.json", op / "Q0.json"]
+    for path, value in zip(controls, [d, q]):
+        path.write_bytes(host.canonical(value))
+    output = op / "observations"
+    output.mkdir()
+    events = []
+    real_check, real_identity = host.entry_path_check, host.identity
+
+    def check(*args):
+        result = real_check(*args)
+        events.append(dict(event="entry_path_check", result=result))
+        return result
+
+    def identity(path, *args):
+        events.append(dict(event="registered_read", path=str(path)))
+        return real_identity(path, *args)
+
+    monkeypatch.chdir(op)
+    monkeypatch.setattr(host, "__file__", str(repo / HOST))
+    monkeypatch.setattr(sys, "path", [])
+    # Match a fresh launcher's module state during in-process observation.
+    for name in list(sys.modules):
+        if name == "qlab" or name.startswith("qlab."):
+            monkeypatch.delitem(sys.modules, name)
+    monkeypatch.setattr(host, "entry_path_check", check)
+    monkeypatch.setattr(host, "identity", identity)
+    r = host.observe(d, q, str(output), str(other), list(map(str, controls)))
+    assert events[0]["event"] == "entry_path_check"
+    assert not events[0]["result"]["accepted"]
+    assert len([e for e in events if e["event"] == "registered_read"]) == 102
+    assert len(r["before"]) == 99 and r["checks"]["source_sha_complete"]
+    assert (
+        sum(row["observed_sha256"] != row["expected_sha256"] for row in r["before"])
+        == changed_sources
+    )
+    assert r["reason"] == "host.entry_path_not_registered" and r["child"] is None
+    assert r["secondary_reasons"] == (
+        ["host.source_sha_mismatch"] if changed_sources else []
+    )
+    record_property(
+        "path_check_read_order",
+        json.dumps(dict(receipt=r, events=events), sort_keys=True),
+    )
 
 
 @pytest.mark.parametrize(
