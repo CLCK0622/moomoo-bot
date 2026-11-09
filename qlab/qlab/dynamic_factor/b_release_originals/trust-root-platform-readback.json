@@ -1,0 +1,18 @@
+{
+    "attachments": [],
+    "author_id": "cc562115-7ef6-4b8f-b4b6-a5b7584b1340",
+    "author_type": "agent",
+    "content": "{\n  \"adoption_sha256\": \"ff5da6ef748d5f1fca592559e73656d5283e28ec9d279b65b3ac0fd5943069ff\",\n  \"context_version\": \"EVO884-B-6605881-pre-performance-v1\",\n  \"implementation_id\": \"2392a96137102c00ba0b91e460291618b4f3f4567e1a4765660e871b847cddd1\",\n  \"limitations\": \"runtime_consumable=false，certifiable=false。pre_performance 下请求时点尚未绑定权威链，由消费者自报；forward signal_close 的来源由消费者核对当日候选执行器锁定意图记录。B 门打开不等于运行许可；L0 仍需 SRC/AUTH、G1 至 G14 与首辅签署。启动者只核观测前后身份，不保证 TOCTOU 变化后恢复、同 UID 干预、运行环境改变或完整执行映像。\",\n  \"p_sha256\": \"4a4b24b0a6ee2b6b561d285fa6f3f9233960959500b6e02fc137c83ca31deae1\",\n  \"policy_binding\": {\n    \"common_calendar_sha256\": \"de08ca8969b91dac6f443f07922b8a65cd263dc8c4cc29847bfd979c9412a0fb\",\n    \"common_profile_sha256\": \"0fdf644c4c78524cf8a1b91e7f8a6e8275cb568662c1e6aafb2a75b4c8fdf464\",\n    \"conventions_sha256\": \"dd13affd23d77b3715a64ffe0403503ea3e6f5850bffdfb7f33bc6f4b44d9e0b\",\n    \"conventions_status\": \"FROZEN_DESIGN_INTERFACE_EXECUTION_GATES_UNMET\",\n    \"conventions_version\": \"v3.0.0\",\n    \"date_manifest_sha256\": \"d82a4c950c0f5f1ea813585e1496345c173fa8ae9805d65066f49b9132e92b74\",\n    \"prereg_sha256\": \"53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421\",\n    \"prereg_version\": \"v3\",\n    \"profile_sha256\": \"53e570f7d7c912a078606d167f039d65c56ed0f9f5dadcb7e2ae1091bd949421\",\n    \"universe\": [\n      \"AAPL\",\n      \"ABBV\",\n      \"ABNB\",\n      \"ABT\",\n      \"ACN\",\n      \"ADBE\",\n      \"ADI\",\n      \"ADP\",\n      \"ADSK\",\n      \"AEP\",\n      \"AJG\",\n      \"ALL\",\n      \"AMAT\",\n      \"AMD\",\n      \"AMGN\",\n      \"AMZN\",\n      \"ANET\",\n      \"AON\",\n      \"APD\",\n      \"APH\",\n      \"APO\",\n      \"APP\",\n      \"AVGO\",\n      \"AXP\",\n      \"B\",\n      \"BA\",\n      \"BAC\",\n      \"BE\",\n      \"BKNG\",\n      \"BKR\",\n      \"BLK\",\n      \"BMY\",\n      \"BNY\",\n      \"BRK.B\",\n      \"BSX\",\n      \"C\",\n      \"CAH\",\n      \"CARR\",\n      \"CAT\",\n      \"CB\",\n      \"CDNS\",\n      \"CEG\",\n      \"CI\",\n      \"CIEN\",\n      \"CL\",\n      \"CMCSA\",\n      \"CME\",\n      \"CMG\",\n      \"CMI\",\n      \"COF\",\n      \"COHR\",\n      \"COIN\",\n      \"COP\",\n      \"COR\",\n      \"COST\",\n      \"CRDO\",\n      \"CRH\",\n      \"CRM\",\n      \"CRWD\",\n      \"CSCO\",\n      \"CSX\",\n      \"CTAS\",\n      \"CVNA\",\n      \"CVS\"\n    ]\n  },\n  \"purpose\": \"登记 EVO884 B release 的接收器与既有协议绑定，用于首次正式接收前的 pre_performance 状态；登记不构成运行许可。\",\n  \"r_sha256\": \"68f06b15ded4cb1ec5219a5456a2e0f0f376cab54a9e3ac33aee653dacfa877c\",\n  \"receiver_id\": \"gongbu.original-host:5a307571-9534-4bbc-932c-93ffc9c94d73\",\n  \"run_time_binding\": {\n    \"first_performance_at\": null,\n    \"mode\": \"forward\",\n    \"performance_state\": \"pre_performance\",\n    \"signal_close\": null\n  },\n  \"schema\": \"EVO884.BReleaseTrustRegistration/v1\"\n}",
+    "created_at": "2026-11-09T04:43:53Z",
+    "id": "01a1be9e-b0b5-7646-abe2-8125a1837db5",
+    "issue_id": "01a19dab-15f2-7e58-96a0-cf92c87162c2",
+    "parent_id": null,
+    "reactions": [],
+    "resolved_at": null,
+    "resolved_by_id": null,
+    "resolved_by_type": null,
+    "revision": 1,
+    "source_task_id": "01a1be9d-b731-74b0-8316-41c187659c99",
+    "type": "comment",
+    "updated_at": "2026-11-09T04:43:53Z"
+  }
