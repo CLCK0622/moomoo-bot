@@ -708,6 +708,126 @@
       "phase": "code_and_tests"
     }
   ],
+  "C2_registration": {
+    "accepted_at": "2026-11-09T04:43:53Z",
+    "authorization_comments": [
+      "01a1be9f-aa91-7c5a-bfd1-ce1a74ec4d0b",
+      "01a1bea0-3b53-750c-8e97-99943654f00d",
+      "01a1bea1-1bc3-7cc1-ae5f-4fe04e076163"
+    ],
+    "base_commit": "660588144f4cdb7cb0e39195dbc0f83de87b628c",
+    "gate_evidence_sha256": "7d7249a0aac1a00bbc847324e6dc76b91d3a11fe4c539a500b0cf7be823acf1a",
+    "gate_scope": "Actual root and D CLI bytes; whole L live_preflight/registration/precheck with an in-memory Q0 mechanism scaffold only. No real Q0 or operator action, no launch or A.",
+    "gates": {
+      "B": false,
+      "L0": false,
+      "SRC_AUTH": false,
+      "actual_A_issued": false
+    },
+    "interpreter_frozen_until": "step 4 complete; no uv Python upgrade or cleanup",
+    "non_author_review": "pending Gongbu verification",
+    "phase": "PRELISTED_BEFORE_C2_DATA",
+    "readback_rules": "CLI --thread exact top-level comment --tail 0 --output json; no compact. Root is exact selected object byte span; D is full stdout. No added fields, LF or reencoding.",
+    "registrations": [
+      {
+        "CLI_bytes": 3775,
+        "CLI_sha256": "87b21327b7750c7bfde1135da3f44bd19f34be9cac8e942056c5c31be9f85b94",
+        "body_bytes": 2905,
+        "body_sha256": "5dc9c5ba7645fb0b6fec3cff41e149c96d7b7dc0bfe85ae9c8a1c046547fe910",
+        "body_tail_LF": false,
+        "comment_id": "01a1be9e-b0b5-7646-abe2-8125a1837db5",
+        "created_at": "2026-11-09T04:43:53Z",
+        "kind": "trust-root"
+      },
+      {
+        "CLI_bytes": 14485,
+        "CLI_sha256": "05c8511e60ef4ede64ab76ebef503b4ab9c3dbe366318503382f80d8e57b27ed",
+        "body_bytes": 13466,
+        "body_sha256": "9d2a7d84a29415c0a770443066c6028df58ee3c4091188e76edbfe14f9feb48b",
+        "body_tail_LF": false,
+        "comment_id": "01a1be9e-b2b7-714f-bc61-126a624fad74",
+        "created_at": "2026-11-09T04:43:53Z",
+        "kind": "host-D"
+      }
+    ],
+    "rows": [
+      {
+        "new_sha256": null,
+        "old_sha256": "8f85bd1fb0048a8610e3449c63fc716b00c5d3429a566654c8d1a6d905206059",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/migration-manifest-v10.json",
+        "phase": "prelisting",
+        "resolved_by": "index-registration.json/output_bindings"
+      },
+      {
+        "bytes": 3768,
+        "new_sha256": "a934bca5a60a4ad50d4c30e93dc1669ffbcdea8f0abed3dfed6b4377f90aae87",
+        "old_sha256": null,
+        "path": "qlab/qlab/dynamic_factor/b_release_originals/trust-root-platform-readback.json",
+        "phase": "data"
+      },
+      {
+        "bytes": 14485,
+        "new_sha256": "05c8511e60ef4ede64ab76ebef503b4ab9c3dbe366318503382f80d8e57b27ed",
+        "old_sha256": null,
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/host-registration-platform-readback.json",
+        "phase": "data"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "b9fe6536c115197d8a6cc8b9c060c61f9cec35f8b4e5468fd620c941dea2a839",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/source-inventory.json",
+        "phase": "reseal",
+        "resolved_by": "index-registration.json/output_bindings"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "90b924651dddb1475a2d1c7197bfb8dd347cca0d840572c9c0869805d6444ce7",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/host-static-seal.json",
+        "phase": "reseal",
+        "resolved_by": "index-registration.json/output_bindings"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "fe961ca668cc861e7cd2c2fc287033082e425b5d376fa6eba0219a390b5983da",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/scope.json",
+        "phase": "reseal",
+        "resolved_by": "index-registration.json/output_bindings"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "74c98074fc83fb45dc542b43a4c234795575360e1aa46b6a04a95542fe05dba1",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/previous-index.json",
+        "phase": "reseal",
+        "resolved_by": "index-registration.json/output_bindings"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "444a722c7352f064fc7625ff691e23bdba8ea96993e48932d4ee1d4a01e9aba9",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/binding-publication.json",
+        "phase": "reseal",
+        "resolved_by": "index-registration.json/output_bindings"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "60b4fa135272b71980151a069694e9ae1dfb05aa8dde2e882dea8d6c564e6d0a",
+        "path": "qlab/qlab/dynamic_factor/evidence/evo884-c1-host-v1/index-registration.json",
+        "phase": "reseal",
+        "resolved_by": "external delivery MANIFEST.json"
+      },
+      {
+        "new_sha256": null,
+        "old_sha256": "9712bb96dd3bb8e4fb8ed622529e264798f5e5a3291ef19b247f5238e120ab59",
+        "path": "qlab/qlab/dynamic_factor/evidence/current-seal-index.json",
+        "phase": "reseal",
+        "resolved_by": "index-registration.json/output_bindings"
+      }
+    ],
+    "runtime_registration_rule": "Step 3 --registration uses L.canonical(parsed D), UTF-8 sorted compact JSON plus one LF, SHA 1c0731cc9cfb88e2e5f5c18ed1eaeecfae615e14da81bf2378946d2baca86a09. This runtime input is distinct from the unchanged archived CLI readback. Q0.registration_sha256=sha256(L.canonical(d)).",
+    "schema": "EVO884.C2RegistrationDataMigration/v12",
+    "source_base": "Reviewed source bytes remain at 6605881; fixed source map 100 and code seals unchanged. C2 adds only authority data and its propagation.",
+    "source_code_changes": 0,
+    "tests_changes": 0
+  },
   "actual_A_issued": false,
   "auditor_sha256": "b22e8ba24a3fefff16d46e543d6dd0171842531bd20be6d945de246c63d41bff",
   "authorization_comment": "01a1bccf-3df4-75f6-a492-4d078041fcf2",
