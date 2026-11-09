@@ -1,7 +1,7 @@
-"""C1 copied-host controls. All registrations here are TEST_ONLY tmp data.
+"""C1 copied-host controls with the C2 production readback identity.
 
-No trusted source is monkeypatched. Child processes import the copied product
-module; the production package never contains a registration or actual A.
+Synthetic registrations and A samples stay in tmp child processes. The
+production trust-root readback is checked against its exact C2 file SHA.
 """
 
 import ast
@@ -122,10 +122,10 @@ def write_root(copied_host):
     (originals / ROOT_NAME).write_text(json.dumps(readback), encoding="utf-8")
 
 
-def test_production_C1_missing_root_still_refuses():
-    assert not (ROOT / "b_release_originals" / ROOT_NAME).exists()
-    with pytest.raises(ValueError, match="^B.release_context_trust_binding_missing$"):
-        b.receive_release_context(policy=load_conventions())
+def test_production_C2_root_matches_committed_readback():
+    assert sha256((ROOT / "b_release_originals" / ROOT_NAME).read_bytes()) == (
+        "a934bca5a60a4ad50d4c30e93dc1669ffbcdea8f0abed3dfed6b4377f90aae87"
+    )
 
 
 def test_tmp_copied_host_accepts_and_reloads_exact_test_A(copied_host, tmp_path):
@@ -134,7 +134,9 @@ def test_tmp_copied_host_accepts_and_reloads_exact_test_A(copied_host, tmp_path)
     assert result["accepted_at"] == copied_host[2]["created_at"]
     assert result["implementation_id"] == sha256(copied_host[0].read_bytes())
     assert run_copy(copied_host, tmp_path) == result
-    assert not (ROOT / "b_release_originals" / ROOT_NAME).exists()
+    assert sha256((ROOT / "b_release_originals" / ROOT_NAME).read_bytes()) == (
+        "a934bca5a60a4ad50d4c30e93dc1669ffbcdea8f0abed3dfed6b4377f90aae87"
+    )
 
 
 def test_missing_root_rejected_in_child(copied_host, tmp_path):
@@ -159,7 +161,12 @@ def test_every_original_SHA_mismatch_rejected_in_child(copied_host, tmp_path, na
     path = copied_host[1] / name
     path.write_bytes(path.read_bytes() + b"\nTEST_ONLY corruption")
     assert run_copy(copied_host, tmp_path) == dict(
-        status="REJECTED", reason="B.release_context_release_mismatch"
+        status="REJECTED",
+        reason=(
+            "B.release_context_encoding_invalid"
+            if name == ROOT_NAME
+            else "B.release_context_release_mismatch"
+        ),
     )
 
 
