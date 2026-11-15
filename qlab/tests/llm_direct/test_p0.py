@@ -16,7 +16,7 @@ from qlab.llm_direct import launcher as launcher_module
 from qlab.llm_direct import preflight as p0
 from qlab.llm_direct.archive import Archive
 from qlab.llm_direct.contract import bindings, canonical, digest, sha
-from qlab.llm_direct.launcher import BinaryBinding, SubprocessLauncher, candidate_argv
+from qlab.llm_direct.launcher import BinaryBinding, ConfigBinding, SubprocessLauncher, candidate_argv
 
 START = "2026-11-15T17:00:00Z"
 END = "2026-11-15T17:00:01Z"
@@ -114,9 +114,15 @@ class FakeProvider(p0.EvidencePort):
         ), **self.changes)
 
 
+class UnknownProvider(p0.EvidencePort):
+    def extract(self, stdout, context):
+        return None
+
+
 class FakeProcess:
-    def __init__(self, binding, *, mode="success"):
+    def __init__(self, binding, *, mode="success", stdout=None):
         self.binding, self.mode, self.calls = binding, mode, []
+        self.stdout = stdout
 
     def __call__(self, argv, **kwargs):
         self.calls.append((argv, kwargs))
@@ -132,7 +138,7 @@ class FakeProcess:
             self.binding.executable.write_bytes(b"changed during synthetic dispatch")
         return subprocess.CompletedProcess(
             argv, 7 if self.mode == "failure" else 0,
-            b'RAW_PRIVATE_STREAM owner@example.test org-private-123\n',
+            self.stdout if self.stdout is not None else b'RAW_PRIVATE_STREAM owner@example.test org-private-123\n',
             b'Authorization: Bearer secret-token\nowner@example.test',
         )
 
@@ -144,11 +150,33 @@ def receipts(**changes):
     ]), **changes)
 
 
-def dispatch(ar, binding, *, process=None, provider=None, authority=None, proof=None, config=True):
-    process = process or FakeProcess(binding)
-    transport = SubprocessLauncher(
-        binding, runner=process, config_dir=ar.anchor / "chosen-config" if config else None,
+def isolated_config(ar, name="chosen-config"):
+    # Explicit test approval of newly created empty directories. No auth data.
+    root = ar.anchor / "approved-configs"
+    root.mkdir(mode=0o700, exist_ok=True)
+    directory = root / name
+    directory.mkdir(mode=0o700, exist_ok=True)
+    identity = [
+        dict(device=p.lstat().st_dev, inode=p.lstat().st_ino) for p in (root, directory)
+    ]
+    return ConfigBinding(
+        root, directory, directory.resolve(), digest(identity),
+        sha(b"OFFLINE_TEST_ONLY:isolated-directory-approval"),
     )
+
+
+def dispatch(
+    ar, binding, *, process=None, provider=None, authority=None, proof=None,
+    config=True, transport_changes=None,
+):
+    process = process or FakeProcess(binding)
+    approved = isolated_config(ar) if config else None
+    transport_args = dict(
+        runner=process, config_dir=approved.directory if approved else None,
+        config_binding=approved,
+    )
+    transport_args.update(transport_changes or {})
+    transport = SubprocessLauncher(binding, **transport_args)
     report = p0.run_preflight(
         ar, binding, "case", receipts=proof if proof is not None else receipts(),
         authority=authority or FakeAuthority(), evidence_port=provider or FakeProvider(),
@@ -320,7 +348,7 @@ def test_transport_itself_refuses_without_dispatch_authorization(ar, binding):
 @pytest.mark.parametrize("mode", ["wrong_version", "binary_change", "failure", "timeout"])
 def test_binary_and_process_failures_retain_evidence_without_retry(ar, binding, small_input, mode):
     process = FakeProcess(binding, mode=mode)
-    report, _ = dispatch(ar, binding, process=process, provider=p0.EvidencePort())
+    report, _ = dispatch(ar, binding, process=process, provider=UnknownProvider())
     assert not report["checks"]["provider_context_and_requests_verified"]
     assert report["N_request_delta"] is None
     assert len([argv for argv, _ in process.calls if "-p" in argv]) <= 1
@@ -478,6 +506,222 @@ def test_cli_has_no_dispatch_flag():
     with pytest.raises(SystemExit) as exc:
         p0.main(["--run-id", "case", "--dispatch"])
     assert exc.value.code == 2
+
+
+@pytest.mark.parametrize("sources", [
+    ["--setting-sources", "", "--setting-sources=user"],
+    ["--setting-sources=", "--setting-sources", ""],
+    ["--setting-sources=", "--setting-sources="],
+    ["--setting-sources", "", "--setting-sources", ""],
+    ["--setting-sources=user"], ["--setting-sources", "user"],
+    ["--setting-sources"], [],
+])
+def test_all_source_argument_forms_reject_duplicates_or_nonempty(
+    ar, binding, small_input, monkeypatch, sources,
+):
+    original = candidate_argv
+
+    def changed(*args):
+        argv = original(*args)
+        index = argv.index("--setting-sources")
+        return argv[:index] + sources + argv[index + 2:]
+
+    monkeypatch.setattr(launcher_module, "candidate_argv", changed)
+    process = FakeProcess(binding)
+    report, _ = dispatch(ar, binding, process=process)
+    assert process.calls == []
+    assert report["launch_rejection"] == "settings_sources_must_be_empty"
+
+
+def test_one_inline_empty_source_is_parsed_as_empty(ar, binding, small_input, monkeypatch):
+    original = candidate_argv
+
+    def inline(*args):
+        argv = original(*args)
+        index = argv.index("--setting-sources")
+        return argv[:index] + ["--setting-sources="] + argv[index + 2:]
+
+    monkeypatch.setattr(launcher_module, "candidate_argv", inline)
+    report, process = dispatch(ar, binding)
+    assert report["checks"]["execution_completed"]
+    assert len([argv for argv, _ in process.calls if "-p" in argv]) == 1
+
+
+@pytest.mark.parametrize("inherited", [False, True])
+def test_unimplemented_provider_is_rejected_before_any_subprocess(
+    ar, binding, small_input, inherited,
+):
+    class InheritsStub(p0.EvidencePort):
+        pass
+
+    process = FakeProcess(binding)
+    provider = InheritsStub() if inherited else p0.EvidencePort()
+    with pytest.raises(ValueError, match="provider_extraction_adapter_required"):
+        dispatch(ar, binding, process=process, provider=provider)
+    assert process.calls == []
+    report = p0.manifest(ar)
+    assert not report["checks"]["dispatch_recorded"]
+    assert report["dispatch_gate_reason"] == "provider_extraction_adapter_required"
+
+
+@pytest.mark.parametrize("escaped", [
+    '{"schema":"arm_n.fixture_receipt/v1"}',
+    r'{"schema":"arm_n.fixture_receipt\/v1"}',
+    r'{"schema":"arm_n.fixture_receipt\u002fv1"}',
+    r'{"sch\u0065ma":"arm_n.fixture_receipt\u002fv1"}',
+    r'{"wrapped":{"schema":"arm_n.fixture_receipt\u002fv1"}}',
+])
+@pytest.mark.parametrize("where", ["reservation", "append"])
+def test_structured_fixture_schemas_cannot_be_escaped(
+    ar, binding, small_input, escaped, where,
+):
+    class PermissiveAuthority(FakeAuthority):
+        def verify_before_dispatch(self, context, proof):
+            return dict(
+                chain_id=p0.AUTHORITY_CHAIN_ID, arm_tag=p0.ARM,
+                configuration_id=context["configuration_id"], purpose=p0.PURPOSE, verified=True,
+            )
+
+        def append_attempt(self, context, attempt):
+            return escaped.encode()
+
+        def verify_append(self, context, attempt, receipt):
+            pytest.fail("fixture append reached authority verification")
+
+    process = FakeProcess(binding)
+    authority = PermissiveAuthority()
+    if where == "reservation":
+        with pytest.raises(ValueError, match="fixture_receipt_not_authoritative"):
+            dispatch(
+                ar, binding, process=process, authority=authority,
+                proof=receipts(reservation=escaped.encode()),
+            )
+        assert process.calls == []
+    else:
+        report, _ = dispatch(ar, binding, process=process, authority=authority)
+        assert not report["checks"]["authority_append_verified"]
+        appended = next(e["body"] for e in ar.events() if e["body"]["kind"] == "p0_append_receipt")
+        assert ar.get(appended["receipt_sha256"]) == escaped.encode()
+        assert not appended["verified"]
+    assert p0.manifest(ar)["authority_receipt_status"] == "回执不可用"
+
+
+@pytest.mark.parametrize("values", [
+    {"overageEnabled": True, "errorCode": "rate_limit"},
+    {"overageEnabled": False, "errorCode": None},
+    {},
+    {"errorCode": "credits_required"},
+])
+@pytest.mark.parametrize("nested", [False, True])
+def test_usage_events_are_projected_without_inventing_disabled_state(
+    ar, binding, small_input, values, nested,
+):
+    event = dict(type="rate_limit_event")
+    if nested:
+        event["rate_limit_info"] = values
+    else:
+        event.update(values)
+    raw = canonical(event) + b"\n"
+    process = FakeProcess(binding, stdout=raw)
+    report, _ = dispatch(ar, binding, process=process, provider=UnknownProvider())
+    attempt = next(e["body"] for e in ar.events() if e["body"]["kind"] == "p0_attempt")
+    for key in ("overageEnabled", "errorCode"):
+        expected = values.get(key, "unknown")
+        assert attempt[key] == report[key] == expected
+        assert attempt[key + "_present"] == report[key + "_present"] == (key in values)
+    assert attempt["usage_events"] == report["usage_events"]
+    assert ar.get(attempt["raw_output_sha256"]) == raw
+    assert report["N_request_delta"] is None
+    assert not report["checks"]["provider_context_and_requests_verified"]
+
+
+def test_usage_history_keeps_values_before_a_later_missing_event(ar, binding, small_input):
+    raw = b"\n".join([
+        canonical(dict(type="rate_limit_event", overageEnabled=True)),
+        canonical(dict(type="rate_limit_event", errorCode="credits_required")),
+        canonical(dict(type="rate_limit_event")),
+    ])
+    report, _ = dispatch(ar, binding, process=FakeProcess(binding, stdout=raw))
+    assert report["overageEnabled"] == report["errorCode"] == "unknown"
+    assert report["usage_events"][0]["overageEnabled"] is True
+    assert report["usage_events"][1]["errorCode"] == "credits_required"
+    assert report["usage_events"][2]["overageEnabled_present"] is False
+
+
+@pytest.mark.parametrize("kind", ["shared", "symlink", "relative", "dotdot", "unapproved", "missing_binding"])
+def test_config_isolation_rejected_before_first_version_probe(
+    ar, binding, small_input, monkeypatch, tmp_path, kind,
+):
+    approved = isolated_config(ar)
+    fake_home = tmp_path / "fake-home"
+    shared = fake_home / ".claude"
+    shared.mkdir(mode=0o700, parents=True)
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+    selected, supplied = approved.directory, approved
+    if kind == "shared":
+        selected = shared
+        supplied = replace(approved, directory=shared, realpath=shared)
+    elif kind == "symlink":
+        selected = approved.root / "shared-link"
+        selected.symlink_to(shared, target_is_directory=True)
+        supplied = replace(approved, directory=selected, realpath=selected)
+    elif kind == "relative":
+        selected = Path("approved-configs") / "chosen-config"
+    elif kind == "dotdot":
+        selected = approved.root / ".." / "approved-configs" / "chosen-config"
+    elif kind == "unapproved":
+        root = ar.anchor / "unapproved-configs"
+        root.mkdir(mode=0o700)
+        selected = root / "chosen-config"
+        selected.mkdir(mode=0o700)
+        supplied = replace(approved, root=root, directory=selected, realpath=selected)
+    elif kind == "missing_binding":
+        supplied = None
+    process = FakeProcess(binding)
+    if kind == "relative":
+        with pytest.raises(ValueError, match="absolute_config_location"):
+            dispatch(ar, binding, process=process, transport_changes=dict(
+                config_dir=selected, config_binding=supplied,
+            ))
+    else:
+        report, _ = dispatch(ar, binding, process=process, transport_changes=dict(
+            config_dir=selected, config_binding=supplied,
+        ))
+        assert report["launch_rejection"] == "isolated_config_not_verified"
+    assert process.calls == []
+
+
+def test_both_version_probes_use_one_verified_config_directory(ar, binding, small_input):
+    approved = isolated_config(ar)
+    report, process = dispatch(ar, binding)
+    assert report["checks"]["execution_completed"]
+    probes = [kwargs for argv, kwargs in process.calls if argv[-1] == "--version"]
+    assert len(probes) == 2
+    assert {kwargs["env"]["CLAUDE_CONFIG_DIR"] for kwargs in probes} == {str(approved.realpath)}
+    context = next(e["body"]["context"] for e in ar.events() if e["body"]["kind"] == "p0_plan")
+    assert context["config_isolation_binding"] == approved.manifest()
+
+
+@pytest.mark.parametrize("replace_after", ["version", "dispatch"])
+def test_config_identity_swap_is_rejected_before_the_next_subprocess(
+    ar, binding, small_input, replace_after,
+):
+    approved = isolated_config(ar)
+
+    class ConfigSwapProcess(FakeProcess):
+        def __call__(self, argv, **kwargs):
+            result = super().__call__(argv, **kwargs)
+            trigger = argv[-1] == "--version" if replace_after == "version" else "-p" in argv
+            if trigger:
+                approved.directory.rename(approved.root / "original-config")
+                approved.directory.mkdir(mode=0o700)
+            return result
+
+    process = ConfigSwapProcess(binding)
+    report, _ = dispatch(ar, binding, process=process)
+    assert not report["checks"]["binary_verified"]
+    assert len([argv for argv, _ in process.calls if argv[-1] == "--version"]) == 1
+    assert len([argv for argv, _ in process.calls if "-p" in argv]) == (replace_after == "dispatch")
 
 
 def test_archive_refuses_escape_before_any_directory_creation(tmp_path):

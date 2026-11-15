@@ -37,6 +37,7 @@ class LaunchRejected(ValueError):
         "metered_route_environment_forbidden", "unapproved_child_environment",
         "updates_not_disabled", "bare_forbidden", "settings_sources_must_be_empty",
         "separate_dispatch_authorization_required",
+        "isolated_config_not_verified",
     }
 
     def __init__(self, code):
@@ -99,6 +100,75 @@ class BinaryBinding:
         return actual
 
 
+@dataclass(frozen=True)
+class ConfigBinding:
+    """An externally approved isolation identity, never an auth-store installer.
+
+    Approval validation belongs to the trusted authority adapter. The launcher
+    independently checks this exact canonical root, real path and directory
+    identity before each subprocess. No directory contents are read here.
+    """
+
+    root: Path
+    directory: Path
+    realpath: Path
+    identity_sha256: str
+    approval_sha256: str
+
+    def manifest(self):
+        if not is_sha(self.identity_sha256) or not is_sha(self.approval_sha256):
+            raise LaunchRejected("isolated_config_not_verified")
+        return dict(
+            root_sha256=sha(str(self.root).encode()),
+            directory_sha256=sha(str(self.directory).encode()),
+            realpath_sha256=sha(str(self.realpath).encode()),
+            identity_sha256=self.identity_sha256, approval_sha256=self.approval_sha256,
+        )
+
+    def verify(self, selected):
+        self.manifest()
+        root, directory, realpath = map(Path, (self.root, self.directory, self.realpath))
+        shared = [
+            Path.home() / ".claude", Path.home() / ".config",
+            Path.home() / "Library" / "Application Support" / "Claude",
+        ]
+        root_name, directory_name = str(root).casefold(), str(directory).casefold()
+        # Reject shared paths lexically, without opening or resolving them.
+        if (
+            selected is None or Path(selected) != directory
+            or not all(p.is_absolute() for p in (root, directory, realpath))
+            or root not in directory.parents or realpath != directory
+            or any(
+                str(p).casefold() == root_name
+                or str(p).casefold().startswith(root_name.rstrip("/") + "/")
+                or str(p).casefold() == directory_name
+                or directory_name.startswith(str(p).casefold() + "/")
+                for p in shared
+            )
+            or FORBIDDEN.intersection(p.lower() for p in directory.parts)
+            or any(FORBIDDEN_LINE.search(p) for p in directory.parts)
+        ):
+            raise LaunchRejected("isolated_config_not_verified")
+        try:
+            if (
+                root != root.resolve(strict=True)
+                or directory != directory.resolve(strict=True)
+                or any(p.is_symlink() for p in [directory, *directory.parents])
+            ):
+                raise LaunchRejected("isolated_config_not_verified")
+            identities = []
+            for path in (root, directory):
+                info = path.lstat()
+                if not stat.S_ISDIR(info.st_mode) or info.st_mode & 0o077:
+                    raise LaunchRejected("isolated_config_not_verified")
+                identities.append(dict(device=info.st_dev, inode=info.st_ino))
+            if digest(identities) != self.identity_sha256:
+                raise LaunchRejected("isolated_config_not_verified")
+        except (OSError, RuntimeError):
+            raise LaunchRejected("isolated_config_not_verified") from None
+        return str(realpath)
+
+
 def candidate_argv(binding, prompt, schema):
     """Preserve every frozen flag; nonexistent flags need a reviewed revision."""
     binding.manifest()
@@ -155,12 +225,13 @@ def verify_launch_configuration(argv, env):
         raise LaunchRejected("updates_not_disabled")
     if "--bare" in argv or any(a.startswith("--bare=") for a in argv):
         raise LaunchRejected("bare_forbidden")
-    if (
-        argv.count("--setting-sources") != 1
-        or argv.index("--setting-sources") + 1 >= len(argv)
-        or argv[argv.index("--setting-sources") + 1] != ""
-        or any(a == "--settings" or a.startswith("--settings=") for a in argv)
-    ):
+    sources = []
+    for index, arg in enumerate(argv):
+        if arg == "--setting-sources":
+            sources.append(argv[index + 1] if index + 1 < len(argv) else None)
+        elif arg.startswith("--setting-sources="):
+            sources.append(arg.split("=", 1)[1])
+    if sources != [""] or any(a == "--settings" or a.startswith("--settings=") for a in argv):
         raise LaunchRejected("settings_sources_must_be_empty")
 
 
@@ -177,7 +248,10 @@ class LaunchResult:
 
 
 class SubprocessLauncher:
-    def __init__(self, binding, *, runner=None, timeout_seconds=60, config_dir=None):
+    def __init__(
+        self, binding, *, runner=None, timeout_seconds=60, config_dir=None,
+        config_binding=None,
+    ):
         if type(timeout_seconds) is not int or not 1 <= timeout_seconds <= 300:
             raise ValueError("launcher.bounded_timeout_required")
         self.binding = binding
@@ -186,8 +260,21 @@ class SubprocessLauncher:
         if config_dir is not None and not Path(config_dir).is_absolute():
             raise ValueError("launcher.absolute_config_location_required")
         self.config_dir = config_dir
+        if config_binding is not None and not isinstance(config_binding, ConfigBinding):
+            raise LaunchRejected("isolated_config_not_verified")
+        self.config_binding = config_binding
 
-    def _version(self, cwd, env):
+    @staticmethod
+    def _verify_config(config, selected, env=None):
+        if not isinstance(config, ConfigBinding):
+            raise LaunchRejected("isolated_config_not_verified")
+        realpath = config.verify(selected)
+        if env is not None and env.get("CLAUDE_CONFIG_DIR") != realpath:
+            raise LaunchRejected("isolated_config_not_verified")
+        return realpath
+
+    def _version(self, cwd, env, config, selected):
+        self._verify_config(config, selected, env)
         result = self.runner(
             [str(self.binding.executable), "--version"],
             input=b"", capture_output=True, timeout=5, check=False,
@@ -202,12 +289,15 @@ class SubprocessLauncher:
         plan_sha = digest(self.plan(prompt, schema))
         if not callable(authorize) or authorize(plan_sha) is not True:
             raise LaunchRejected("separate_dispatch_authorization_required")
+        config, selected = self.config_binding, self.config_dir
+        real_config = self._verify_config(config, selected)
         before = self.binding.fingerprint()
-        env = child_environment(workdir, config_dir=self.config_dir)
+        env = child_environment(workdir, config_dir=real_config)
         argv = candidate_argv(self.binding, prompt, schema)
         verify_launch_configuration(argv, env)
-        version_before = self._version(workdir, env)
+        version_before = self._version(workdir, env, config, selected)
         self.binding.fingerprint()
+        self._verify_config(config, selected, env)
         # The caller must archive its dispatch claim before entering this method.
         try:
             process = self.runner(
@@ -225,7 +315,7 @@ class SubprocessLauncher:
         after, version_after = None, None
         try:
             after = self.binding.fingerprint()
-            version_after = self._version(workdir, env)
+            version_after = self._version(workdir, env, config, selected)
         except (OSError, ValueError, subprocess.SubprocessError):
             pass
         return LaunchResult(
@@ -243,6 +333,9 @@ class SubprocessLauncher:
             inherited_environment=False,
             config_location_sha256=(
                 sha(str(self.config_dir).encode()) if self.config_dir is not None else None
+            ),
+            config_isolation_binding=(
+                self.config_binding.manifest() if self.config_binding is not None else None
             ),
             context_input_sha256=sha(canonical(dict(
                 system_prompt_sha256=sha(prompt), output_schema_sha256=sha(schema),

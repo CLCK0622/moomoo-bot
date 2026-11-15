@@ -167,11 +167,16 @@ PYTHONPATH=qlab:. python3 -B -m qlab.llm_direct.preflight \
 
 `--cli-version`, `--binary-sha256`, `--binding-approval-sha256` and optional
 `--config-dir` describe the proposed binding/launch plan. Changing a parameter
-is not approval of a changed binding. Configuration location is not selected by
-default for dispatch; a supplied location is only passed as a path, never read,
-created or populated by this module. Choosing shared or isolated authentication
-must wait for the chief's evidence-B2 decision. No credentials are copied and
-there is no authentication implementation here.
+is not approval of a changed binding. Dispatch additionally requires an external
+approved `ConfigBinding`: canonical isolated root, directory/realpath, directory
+device/inode digest and approval digest. The trusted authority adapter verifies
+that approval against the sealed configuration. Shared default directories,
+symlinks, relative/parent aliases, unapproved roots and changed directory
+identities refuse before any subprocess. Both version probes use and recheck
+the same binding. Directory metadata is checked; contents are never read,
+created or populated. There is no default allowance or authentication
+implementation. The chief's current boundary forbids using existing shared
+login state; no credentials are copied or login/account commands run.
 
 P0 has a distinct archive identity and host root:
 `.llm-direct-preflight/<run-id>/`; offline injected tests use `p0_offline_test`,
@@ -179,14 +184,16 @@ never the real-preflight identity. Old `offline_synthetic` databases retain
 their exact schema, identity and hash-chain recipe. All P0 archives and child
 working directories are ignored by Git. Raw stdout/visible stream stays in
 private local blobs. Stderr is fully redacted with its original hash and byte
-count retained. Public `manifest()` exports only fixed categories, flags and
-hashes, without account/email/request IDs, paths, receipts or raw streams.
+count retained. Public `manifest()` exports fixed categories, flags, hashes and
+the required usage-event fields, without account/email/request IDs, paths,
+receipts or raw streams.
 Only that manifest and its hash may be uploaded to the issue as an external
 anchor; `--verify` opens SQLite read-only and optionally checks that anchor.
 
 The programmatic `run_preflight()` seam requires separately supplied, reviewed
 `AuthorityPort` and `EvidencePort` implementations. Both default to refusal or
-unknown; **no production adapter is shipped**. `Receipts` requires a separate
+unknown; an explicit base or inherited-stub `EvidencePort` refuses before
+dispatch. **No production adapter is shipped**. `Receipts` requires a separate
 chief dispatch grant, EVO-891 reservation bound to this arm/configuration/P0
 purpose, append-readiness evidence, existing-subscription route proof, and
 external proof that usage credits are disabled (or an official client refusal
@@ -195,8 +202,10 @@ records the reason in the manifest. A JSON assertion is not a trusted receipt.
 The normalized reservation identity must match chain
 `37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc`,
 arm `EVO896_LLMCLI`, this configuration and P0 purpose. An
-`arm_n.fixture_receipt/v1` input is always rejected, even if an adapter mistakenly
-accepts it; the manifest reports `回执不可用`. Evidence A found the current formal
+`arm_n.fixture_receipt/v1` input is rejected by its decoded JSON schema, including
+escaped keys/slashes and nested objects, for both reservation and append, even
+if an adapter mistakenly accepts it; the manifest reports `回执不可用`.
+Evidence A found the current formal
 route cannot issue these receipts. This PR leaves `authority_host.py` and
 `authority_ledger.py` untouched and does not supply a fixture writer or installer.
 The complete historical own-arm N is not a P0 prerequisite under the chief's
@@ -206,9 +215,14 @@ Layer-1 paid API routes are rejected before any version probe or model process:
 environment categories (API keys, tokens/authentication, custom endpoints and
 cloud providers) are constants checked in addition to a closed allowlist;
 `--bare` and settings overrides are refused; `--setting-sources` must occur
-exactly once with an empty value. The child's environment is constructed from
+exactly once with an empty value across standalone and `--setting-sources=`
+forms. The child's environment is constructed from
 scratch with both update-disable flags. Account-side usage credits cannot be
 inferred from this construction and require the separate external proof.
+Attempts and manifests project observed `overageEnabled` and `errorCode`
+unchanged, with presence flags and `unknown` for absent fields. Ordered
+`usage_events` preserve earlier observations, including `credits_required`.
+These post-dispatch observations never authorize dispatch or infer account state.
 
 Only one dispatch claim can be inserted, transactionally, even across racing
 callers or restarts. After a crash the claim stays incomplete and forbids retry.

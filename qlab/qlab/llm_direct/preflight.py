@@ -57,6 +57,8 @@ class AuthorityPort:
     assertion. Return the normalized verified identity: chain_id, arm_tag,
     configuration_id, purpose and verified=True. This does not replace checking
     original signed/anchored evidence. No production implementation is included.
+    Verify the exact config isolation binding/approval against the trusted
+    approved record in the sealed context as well.
     """
 
     def verify_before_dispatch(self, context, receipts):
@@ -94,6 +96,71 @@ class EvidencePort:
     def extract(self, stdout, context):
         return None
 
+    def implemented(self):
+        return callable(self.extract) and type(self).extract is not EvidencePort.extract
+
+
+def fixture_receipt(raw):
+    """Inspect parsed schema values, including JSON-escaped and nested schemas."""
+    schemas = []
+
+    def object_pairs(pairs):
+        schemas.extend(value for key, value in pairs if key == "schema")
+        return dict(pairs)
+
+    try:
+        json.loads(raw, object_pairs_hook=object_pairs)
+    except (ValueError, UnicodeError, TypeError):
+        return False
+    return "arm_n.fixture_receipt/v1" in schemas
+
+
+def usage_projection(stdout):
+    """Retain observed event values; absence never means overage is disabled.
+
+    This is post-dispatch evidence only. It cannot satisfy the external usage
+    credit proof gate. Keep every observation rather than erasing earlier events.
+    """
+    events = []
+
+    def fields(node, index):
+        if isinstance(node, dict):
+            if any(key in node for key in ("overageEnabled", "errorCode")):
+                events.append(dict(
+                    event_index=index,
+                    overageEnabled=node.get("overageEnabled", "unknown"),
+                    errorCode=node.get("errorCode", "unknown"),
+                    overageEnabled_present="overageEnabled" in node,
+                    errorCode_present="errorCode" in node,
+                ))
+            for value in node.values():
+                fields(value, index)
+        elif isinstance(node, list):
+            for value in node:
+                fields(value, index)
+
+    for index, line in enumerate(stdout.splitlines()):
+        try:
+            event = json.loads(line)
+        except (ValueError, UnicodeError):
+            continue
+        previous = len(events)
+        fields(event, index)
+        if isinstance(event, dict) and event.get("type") == "rate_limit_event" and len(events) == previous:
+            events.append(dict(
+                event_index=index, overageEnabled="unknown", errorCode="unknown",
+                overageEnabled_present=False, errorCode_present=False,
+            ))
+    latest = events[-1] if events else dict(
+        overageEnabled="unknown", errorCode="unknown",
+        overageEnabled_present=False, errorCode_present=False,
+    )
+    return dict(
+        overageEnabled=latest["overageEnabled"], errorCode=latest["errorCode"],
+        overageEnabled_present=latest["overageEnabled_present"],
+        errorCode_present=latest["errorCode_present"], usage_events=events,
+    )
+
 
 def _require_archive(archive):
     if archive.mode not in {"p0_subscription_preflight", "p0_offline_test"}:
@@ -124,6 +191,7 @@ def prepare(archive, binding, run_id, *, launcher=None):
         model_binding_sha256=digest(main["model_binding"]),
         binary_binding=binding.manifest(), prompt_sha256=sha(prompt),
         launch_plan_sha256=digest(transport),
+        config_isolation_binding=transport["config_isolation_binding"],
         schema_sha256=sha(schema), input_sha256=sha(input_bytes),
         aggregation_rule_sha256=digest(dict(max_dispatches=1, market_outcomes=False)),
         authority_chain="EVO-891", authority_chain_id=AUTHORITY_CHAIN_ID,
@@ -192,7 +260,7 @@ def run_preflight(
         receipts.blobs()
     except ValueError:
         gate(False, "required_proof_missing_including_usage_credits")
-    if any(b"arm_n.fixture_receipt/v1" in raw for raw in receipts.blobs().values()):
+    if any(fixture_receipt(raw) for raw in receipts.blobs().values()):
         gate(False, "fixture_receipt_not_authoritative")
     try:
         identity = authority.verify_before_dispatch(json.loads(canonical(context)), receipts)
@@ -205,7 +273,7 @@ def run_preflight(
     if not verified:
         gate(False, "dispatch_receipts_or_subscription_unverified")
     timestamp(start)
-    if not isinstance(evidence_port, EvidencePort):
+    if not isinstance(evidence_port, EvidencePort) or not evidence_port.implemented():
         gate(False, "provider_extraction_adapter_required")
     if launcher.config_dir is None:
         gate(False, "config_location_not_selected")
@@ -285,6 +353,7 @@ def run_preflight(
         binary_verified=binary_ok, completed=completed,
         evidence_sha256s=evidence_blobs, error_kind=error,
         launch_rejection=launch_rejection,
+        **usage_projection(stdout),
         requires_extended_audit=(not known),
         blob_sha256s=[raw_sha, stderr_sha] + list(evidence_blobs.values()),
     )
@@ -299,7 +368,7 @@ def run_preflight(
         if isinstance(receipt, bytes) and receipt:
             receipt_sha = archive.put(receipt)
             if (
-                b"arm_n.fixture_receipt/v1" not in receipt
+                not fixture_receipt(receipt)
                 and authority.verify_append(
                     json.loads(canonical(context)), json.loads(canonical(attempt)), receipt,
                 ) is True
@@ -319,7 +388,7 @@ def run_preflight(
 
 
 def manifest(archive, *, expected_tip=None):
-    """Hash-only export; raw streams, identifiers and paths never leave the host."""
+    """Public hashes/checks/usage fields; no raw streams, identifiers or paths."""
     _require_archive(archive)
     events = archive.events()
     tip = digest(events[-1]) if events else digest(archive.identity)
@@ -353,6 +422,10 @@ def manifest(archive, *, expected_tip=None):
         ),
         argv_is_tested=False,
         launch_rejection=attempt.get("launch_rejection") if attempt else None,
+        **{key: (attempt.get(key, default) if attempt else default) for key, default in dict(
+            overageEnabled="unknown", errorCode="unknown",
+            overageEnabled_present=False, errorCode_present=False, usage_events=[],
+        ).items()},
         blob_sha256s=sorted({h for e in events for h in e["body"].get("blob_sha256s", [])}),
         N_config_delta=0, N_request_delta=attempt["N_request_delta"] if attempt else None,
         requires_extended_audit=bool(
