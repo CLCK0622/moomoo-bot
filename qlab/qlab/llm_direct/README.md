@@ -143,6 +143,103 @@ unknown submission, missing marks, dividend receivables and available cash keep
 the original accounting kernel's null/reconciliation/idempotency semantics.
 Actual forward-reference execution is still disabled.
 
+## P0 offline wiring (EVO-1019)
+
+Chief approvals `01a1e008-4a74` and `01a1e011-0381` permit implementation and
+offline tests. **They do not permit a real model request.** The preflight CLI
+has only prepare and read-only verify operations, no dispatch switch. It never
+opens the binary, probes its version, reads a credential store or starts a CLI
+session. Binary version, binary SHA and binding-approval SHA are parameters;
+defaults retain the restored 2.1.306 binding. The frozen candidate argv is used
+verbatim. Its flags were checked against the recovered binary's help by the
+separate evidence-B owner; the combined invocation is still untested.
+
+From the repository root, prepare a hash-only manifest without running Claude:
+
+```sh
+PYTHONPATH=qlab:. python3 -B -m qlab.llm_direct.preflight \
+  --run-id review-example \
+  --binary /independent/binary-directory/claude \
+  --binary-root /independent/binary-directory
+PYTHONPATH=qlab:. python3 -B -m qlab.llm_direct.preflight \
+  --run-id review-example --verify --expected-tip <archive_tip_sha256>
+```
+
+`--cli-version`, `--binary-sha256`, `--binding-approval-sha256` and optional
+`--config-dir` describe the proposed binding/launch plan. Changing a parameter
+is not approval of a changed binding. Configuration location is not selected by
+default for dispatch; a supplied location is only passed as a path, never read,
+created or populated by this module. Choosing shared or isolated authentication
+must wait for the chief's evidence-B2 decision. No credentials are copied and
+there is no authentication implementation here.
+
+P0 has a distinct archive identity and host root:
+`.llm-direct-preflight/<run-id>/`; offline injected tests use `p0_offline_test`,
+never the real-preflight identity. Old `offline_synthetic` databases retain
+their exact schema, identity and hash-chain recipe. All P0 archives and child
+working directories are ignored by Git. Raw stdout/visible stream stays in
+private local blobs. Stderr is fully redacted with its original hash and byte
+count retained. Public `manifest()` exports only fixed categories, flags and
+hashes, without account/email/request IDs, paths, receipts or raw streams.
+Only that manifest and its hash may be uploaded to the issue as an external
+anchor; `--verify` opens SQLite read-only and optionally checks that anchor.
+
+The programmatic `run_preflight()` seam requires separately supplied, reviewed
+`AuthorityPort` and `EvidencePort` implementations. Both default to refusal or
+unknown; **no production adapter is shipped**. `Receipts` requires a separate
+chief dispatch grant, EVO-891 reservation bound to this arm/configuration/P0
+purpose, append-readiness evidence, existing-subscription route proof, and
+external proof that usage credits are disabled (or an official client refusal
+mechanism applies). Missing/invalid proof closes the gate before any process and
+records the reason in the manifest. A JSON assertion is not a trusted receipt.
+The normalized reservation identity must match chain
+`37a3871d39df8a641f64d39b335338c0f1d66bb1e20ed9b6c4cf456a508f02cc`,
+arm `EVO896_LLMCLI`, this configuration and P0 purpose. An
+`arm_n.fixture_receipt/v1` input is always rejected, even if an adapter mistakenly
+accepts it; the manifest reports `回执不可用`. Evidence A found the current formal
+route cannot issue these receipts. This PR leaves `authority_host.py` and
+`authority_ledger.py` untouched and does not supply a fixture writer or installer.
+The complete historical own-arm N is not a P0 prerequisite under the chief's
+clarification, and `G09_N_passed` remains false.
+
+Layer-1 paid API routes are rejected before any version probe or model process:
+environment categories (API keys, tokens/authentication, custom endpoints and
+cloud providers) are constants checked in addition to a closed allowlist;
+`--bare` and settings overrides are refused; `--setting-sources` must occur
+exactly once with an empty value. The child's environment is constructed from
+scratch with both update-disable flags. Account-side usage credits cannot be
+inferred from this construction and require the separate external proof.
+
+Only one dispatch claim can be inserted, transactionally, even across racing
+callers or restarts. After a crash the claim stays incomplete and forbids retry.
+The transport checks the isolated regular binary's SHA/version before and after,
+passes argv/stdin without a shell, and retains available partial timeout output.
+An OS/process crash may leave only an incomplete claim; it never licenses a new
+request. An unavailable append receipt or unaccounted/internal/multiple requests
+stays unknown, with no automatic repair/retry or extended audit mapping. Stop and
+report that evidence for chief authorization rather than expanding this budget.
+
+Provider extraction must bind each provider model/request, complete effective
+system/user/tool/managed-policy context and the actual request map. The bounded
+initial seam accepts one fully evidenced request; real stream extraction is
+still unverified. Fake metadata, `system/init.model`, or model-generated identity
+claims cannot establish it. No P0 overall PASS state is introduced. The manifest
+retains `VERSION_UNVERIFIED`, `argv_is_tested=false`, `runtime_consumable=false`
+and `certifiable=false`; it neither invokes `Runtime.freeze()` nor starts S0,
+L0, the 63-day clock, a market evaluation or a shadow-ledger transaction.
+
+Offline validation (all process calls injected, no installed CLI execution):
+
+```sh
+PYTHONPATH=qlab:. PYTHONDONTWRITEBYTECODE=1 python3 -B -m pytest \
+  qlab/tests/llm_direct -q -p no:cacheprovider
+```
+
+Independent review and the same-PR security review remain required. Reviewers
+must independently recalculate the recovered binary SHA; this PR has neither
+downloaded nor read that binary. Authentication, usage-credit evidence, actual
+provider visibility and the single real request remain separate release gates.
+
 ## N wiring and reference books
 
 The shared `dynamic_factor.arm_n` implementation is used only by explicit formal

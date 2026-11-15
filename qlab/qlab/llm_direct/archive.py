@@ -1,4 +1,4 @@
-"""Private synthetic archive: durable raw bytes, transactional immutable events."""
+"""Private, mode-bound archives of durable bytes and immutable events."""
 
 from __future__ import annotations
 
@@ -13,35 +13,52 @@ from qlab.shadow15k.ledger import FORBIDDEN, FORBIDDEN_LINE
 from .contract import canonical, digest, sha
 
 PHYSICAL_ROOT = (Path(__file__).resolve().parents[3] / ".llm-direct-offline").resolve()
+PREFLIGHT_ROOT = Path(__file__).resolve().parents[3] / ".llm-direct-preflight"
+MODES = {
+    "offline_synthetic": "llm_direct.archive/v1",
+    "p0_subscription_preflight": "llm_direct.p0.archive/v1",
+    "p0_offline_test": "llm_direct.p0.archive/v1",
+}
 
 
 class Archive:
-    def __init__(self, root):
-        self.anchor = PHYSICAL_ROOT
+    def __init__(self, root, *, mode="offline_synthetic", readonly=False):
+        if mode not in MODES:
+            raise ValueError("archive.unknown_mode")
+        self.mode = mode
+        self.identity = dict(mode=mode, schema=MODES[mode])
+        self.readonly = readonly
+        self.anchor = PHYSICAL_ROOT if mode == "offline_synthetic" else PREFLIGHT_ROOT
         self.root = Path(root).absolute()
         self._check()
-        self.root.mkdir(parents=True, exist_ok=True)
+        if not readonly:
+            self.anchor.mkdir(parents=True, exist_ok=True, mode=0o700)
+            self.root.mkdir(parents=True, exist_ok=True, mode=0o700)
         self.blobs = self.root / "blobs"
-        self.blobs.mkdir(exist_ok=True)
+        if not readonly:
+            self.blobs.mkdir(exist_ok=True, mode=0o700)
         self.path = self.root / "archive.sqlite3"
         with self._db() as db:
             tables = {
                 r[0]
                 for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")
             }
-            if tables and tables != {"identity", "events"}:
+            if (readonly or tables) and tables != {"identity", "events"}:
                 raise ValueError("archive.foreign_database")
-            db.execute("CREATE TABLE IF NOT EXISTS identity (body TEXT NOT NULL)")
-            db.execute(
-                "CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, body TEXT NOT NULL, event_hash TEXT NOT NULL)"
-            )
+            if not readonly:
+                db.execute("CREATE TABLE IF NOT EXISTS identity (body TEXT NOT NULL)")
+                db.execute(
+                    "CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, body TEXT NOT NULL, event_hash TEXT NOT NULL)"
+                )
             rows = db.execute("SELECT body FROM identity").fetchall()
-            identity = '{"mode":"offline_synthetic","schema":"llm_direct.archive/v1"}'
-            if rows and rows != [(identity,)]:
+            identity = canonical(self.identity).decode()
+            if (readonly or rows) and rows != [(identity,)]:
                 raise ValueError("archive.identity_mismatch")
-            if not rows:
+            if not rows and not readonly:
                 db.execute("INSERT INTO identity VALUES (?)", (identity,))
             self._events(db)
+        if mode != "offline_synthetic" and not readonly:
+            self.path.chmod(0o600)
 
     def _check(self):
         path = self.root.resolve()
@@ -81,12 +98,17 @@ class Archive:
         @contextmanager
         def connection():
             self._check()
-            db = sqlite3.connect(str(self.path), isolation_level=None, timeout=30)
+            target = self.path.as_uri() + "?mode=ro" if self.readonly else str(self.path)
+            db = sqlite3.connect(
+                target, uri=self.readonly, isolation_level=None, timeout=30
+            )
             try:
-                db.execute("PRAGMA synchronous=FULL")
-                db.execute("BEGIN IMMEDIATE")
+                if not self.readonly:
+                    db.execute("PRAGMA synchronous=FULL")
+                    db.execute("BEGIN IMMEDIATE")
                 yield db
-                db.execute("COMMIT")
+                if not self.readonly:
+                    db.execute("COMMIT")
             except BaseException:
                 if db.in_transaction:
                     db.execute("ROLLBACK")
@@ -97,26 +119,30 @@ class Archive:
         return connection()
 
     def put(self, raw):
+        if self.readonly:
+            raise ValueError("archive.readonly")
         if not isinstance(raw, bytes):
             raise ValueError("archive.bytes_required")
-        self._check()
-        h = sha(raw)
-        p = self.blobs / h
-        try:
-            fd = os.open(str(p), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-        except FileExistsError:
-            if p.read_bytes() != raw:
-                raise ValueError("archive.blob_conflict")
-        else:
-            with os.fdopen(fd, "wb") as f:
-                f.write(raw)
-                f.flush()
-                os.fsync(f.fileno())
-            fd = os.open(str(self.blobs), os.O_RDONLY)
+        # Use the same cross-process lock as event readers/writers. Otherwise a
+        # second put/get can observe an O_EXCL file before its bytes are fsynced.
+        with self._db():
+            h = sha(raw)
+            p = self.blobs / h
             try:
-                os.fsync(fd)
-            finally:
-                os.close(fd)
+                fd = os.open(str(p), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            except FileExistsError:
+                if p.read_bytes() != raw:
+                    raise ValueError("archive.blob_conflict")
+            else:
+                with os.fdopen(fd, "wb") as f:
+                    f.write(raw)
+                    f.flush()
+                    os.fsync(f.fileno())
+                fd = os.open(str(self.blobs), os.O_RDONLY)
+                try:
+                    os.fsync(fd)
+                finally:
+                    os.close(fd)
         return h
 
     def get(self, h):
@@ -137,9 +163,7 @@ class Archive:
         if any(sha(raw.encode()) != h for raw, h in stored):
             raise ValueError("archive.event_hash_corrupt")
         events = [json.loads(raw) for raw, _ in stored]
-        previous = digest(
-            {"schema": "llm_direct.archive/v1", "mode": "offline_synthetic"}
-        )
+        previous = digest(self.identity)
         for e in events:
             if e["previous_hash"] != previous:
                 raise ValueError("archive.chain_corrupt")
@@ -152,13 +176,17 @@ class Archive:
         with self._db() as db:
             return self._events(db)
 
-    def append(self, event_id, body, *, validate=None):
+    def append(self, event_id, body, *, validate=None, require_new=False):
+        if self.readonly:
+            raise ValueError("archive.readonly")
         # BEGIN IMMEDIATE holds validation and insertion in the same transaction.
         body = json.loads(canonical(body))
         with self._db() as db:
             events = self._events(db)
             old = next((e for e in events if e["id"] == event_id), None)
             if old:
+                if require_new:
+                    raise ValueError("archive.event_already_claimed")
                 if old["body"] != body:
                     raise ValueError("archive.event_identity_conflict")
                 return old
@@ -171,9 +199,7 @@ class Archive:
                 body=body,
                 previous_hash=digest(events[-1])
                 if events
-                else digest(
-                    {"schema": "llm_direct.archive/v1", "mode": "offline_synthetic"}
-                ),
+                else digest(self.identity),
             )
             db.execute(
                 "INSERT INTO events VALUES (?, ?, ?)",
